@@ -14,15 +14,15 @@ Person m=2 x=20  y=0   z=0
 Person m=3 x=0   y=-20 z=0
 Person m=4 x=0   y=20  z=0
 
-Tree1 m=0 x=-20 y=-10 z=0 h=10 degree=8 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
+Tree1 m=0 x=-20 y=-10 z=0 h=10 degree=9 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
 Tree1 m=0 x=20  y=-10 z=0 h=10 degree=8 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
-Tree1 m=0 x=20  y=10  z=0 h=10 degree=8 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
-Tree1 m=0 x=-20 y=10  z=0 h=10 degree=8 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
+Tree1 m=0 x=20  y=10  z=0 h=10 degree=7 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
+Tree1 m=0 x=-20 y=10  z=0 h=10 degree=6 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
 
-Tree1 m=49 x=-10 y=-20 z=0 h=10
-Tree1 m=50 x=10  y=-20 z=0 h=10
-Tree1 m=51 x=10  y=20  z=0 h=10
-Tree1 m=52 x=-10 y=20  z=0 h=10
+Tree2 m=4 x=-10 y=-20 z=0 h=10
+Tree2 m=5 x=10  y=-20 z=0 h=10
+Tree2 m=6 x=10  y=20  z=0 h=10
+Tree2 m=7 x=-10 y=20  z=0 h=10
 
 Select nothing
 
@@ -54,6 +54,7 @@ Left
 +MapZoom 3
 next layer
 # skip urban studies for now
+next graph index
 next graph index
 next graph index
 next graph index

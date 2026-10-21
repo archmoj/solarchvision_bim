@@ -10,7 +10,7 @@ Delete all
 Delete All Model2Ds
 
 Tree1 m=0 x=-20 y=-10 z=0 h=10 degree=8 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
-Tree2 m=48 x=-10 y=-20 z=0 h=10
+Tree2 m=1 x=0 y=-20 z=0 h=15
 
 Person m=5 x=-20 y=-20 z=0
 Person m=6 x=-15 y=-20 z=0
@@ -20,18 +20,18 @@ Select nothing
 
 Hide Sun Path
 
-Toggle Impact Type
 =======
 S.W.
 Prebake Viewport
+Toggle Impact Type
 
 Skin Potential (Passive)
 REC.png skin-passive
 
-Toggle Impact Type
 =======
 S.W.
 Direct Normal Radiation
+Toggle Impact Type
 
 Skin Potential (Active)
 REC.png skin-active
