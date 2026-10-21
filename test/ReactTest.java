@@ -187,14 +187,14 @@ class ReactTest {
   // ================= one-off callbacks =======================================
 
   @Test
-  void applyStudyJEnd_noOp_whenOldEqualsNew () {
+  void applyCaseBarAndBake_noOp_whenOldEqualsNew () {
     app.UI_caseBar.update = false;
-    app.react.applyStudyJEnd.run(100, 100);
+    app.react.applyCaseBarAndBake.run(100, 100);
     assertFalse(app.UI_caseBar.update);
   }
 
   @Test
-  void applyStudyJEnd_flagsImpactAndWindRoseImagesForRebuild_whenChanged () {
+  void applyCaseBarAndBake_flagsImpactAndWindRoseImagesForRebuild_whenChanged () {
     app.UI_caseBar.update = false;
     app.allSolarImpacts.rebuild_Image_array = false;
     app.allWindRoses.rebuild_Image_array = false;
@@ -203,7 +203,7 @@ class ReactTest {
     // so this must actually be the field's new value for the call to be safe
     app.STUDY.endDay = 100;
 
-    app.react.applyStudyJEnd.run(90, 100);
+    app.react.applyCaseBarAndBake.run(90, 100);
 
     assertTrue(app.UI_caseBar.update);
     assertTrue(app.allSolarImpacts.rebuild_Image_array);
