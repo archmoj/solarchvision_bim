@@ -35,6 +35,77 @@ class STUDYTest {
     assertFalse(app.STUDY.isInHourlyRange(12)); // strictly between end and start -> excluded
   }
 
+  // ================= effectiveDayTime ===================================
+  // The fix for the hour-range over-extrapolation bug: funcs.DayTime()
+  // (astronomical daylight duration) clamped to the duration of the
+  // user's own selected hour range, via isInHourlyRange(), whenever that
+  // range is narrower than the full day. SolarImpacts.pde, calculate_
+  // GlobalSolar_array.pde, calculate_VertexSolar_array.pde and STUDY.pde's
+  // own plotImpact_global() all extrapolate valuesSUM/valuesNUM (an
+  // average over only the hours actually satisfying isInHourlyRange())
+  // into a day total by multiplying by this duration - restricting the
+  // range down to a single hour used to still multiply by the full day's
+  // daylight duration as if that one hour's value were a fair day-average,
+  // which is what these tests guard against regressing.
+
+  // Mid-latitude, near summer solstice - plain DayTime() is comfortably
+  // more than 7 hours here, so the clamping tests below exercise genuine
+  // clamping rather than a degenerate edge case.
+  static final float TEST_LAT = 45f;
+  static final float TEST_DATE_ANGLE = 90f;
+
+  @Test
+  void effectiveDayTime_defaultRange_isUnchangedFromPlainDayTime () {
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
+
+    float plain = app.funcs.DayTime(TEST_LAT, TEST_DATE_ANGLE);
+    float effective = app.STUDY.effectiveDayTime(TEST_LAT, TEST_DATE_ANGLE);
+
+    assertEquals(plain, effective, 0.0001f, "the default, unrestricted range must give exactly the same value every existing consistency test was built against");
+  }
+
+  @Test
+  void effectiveDayTime_singleHourRange_clampsToOneHour () {
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+
+    float plain = app.funcs.DayTime(TEST_LAT, TEST_DATE_ANGLE);
+    assertTrue(plain > 1f, "sanity check: plain DayTime should be well above 1 hour here");
+
+    assertEquals(1f, app.STUDY.effectiveDayTime(TEST_LAT, TEST_DATE_ANGLE), 0.0001f);
+  }
+
+  @Test
+  void effectiveDayTime_sevenHourRange_clampsToSevenHours () {
+    app.STUDY.startHour = 9;
+    app.STUDY.endHour = 15; // 9,10,11,12,13,14,15 -> 7 hours
+
+    float plain = app.funcs.DayTime(TEST_LAT, TEST_DATE_ANGLE);
+    assertTrue(plain > 7f, "sanity check: plain DayTime should be well above 7 hours here");
+
+    assertEquals(7f, app.STUDY.effectiveDayTime(TEST_LAT, TEST_DATE_ANGLE), 0.0001f);
+  }
+
+  @Test
+  void effectiveDayTime_wrappingRange_countsHoursAcrossMidnightCorrectly () {
+    app.STUDY.startHour = 22;
+    app.STUDY.endHour = 2; // 22,23,0,1,2 -> 5 hours, wraps past midnight
+
+    assertEquals(5f, app.STUDY.effectiveDayTime(TEST_LAT, TEST_DATE_ANGLE), 0.0001f);
+  }
+
+  @Test
+  void effectiveDayTime_rangeWiderThanDayTime_stillYieldsPlainDayTime () {
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 20; // 21 hours - wider than any plausible DayTime at this latitude/date
+
+    float plain = app.funcs.DayTime(TEST_LAT, TEST_DATE_ANGLE);
+    float effective = app.STUDY.effectiveDayTime(TEST_LAT, TEST_DATE_ANGLE);
+
+    assertEquals(plain, effective, 0.0001f, "a selected range wider than the astronomical day must not inflate the result beyond the plain DayTime()");
+  }
+
   // ================= computeWrappedDayIndex (newly extracted) ==========
 
   @Test
