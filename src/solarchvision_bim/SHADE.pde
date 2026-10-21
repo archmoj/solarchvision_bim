@@ -170,6 +170,7 @@ class SHADE {
     if (isSolarImpactShade()) {
       if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_multiplier = allFaces.activeColorscaleFactor;
       if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorscaleFactor;
+      PAL_multiplier = STUDY.paletteColorscaleMultiplier(PAL_multiplier);
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_multiplier = allSolids.colorScaleFactor;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_multiplier = Terrain.colorScaleFactor;

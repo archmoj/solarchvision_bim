@@ -311,6 +311,7 @@ class WIN3D {
         direction = allFaces.passiveColorscaleDirection;
         multiplier = allFaces.passiveColorscaleFactor;
       }
+      multiplier = STUDY.paletteColorscaleMultiplier(multiplier);
       draw_pal = true;
     }
 
