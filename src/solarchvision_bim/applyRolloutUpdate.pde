@@ -13,7 +13,9 @@ void applyRolloutUpdate() {
   pre_STUDY_startHour = STUDY.startHour;
   pre_STUDY_endHour = STUDY.endHour;
   pre_STUDY_endDay = STUDY.endDay;
+  pre_STUDY_dayIncrement = STUDY.dayIncrement;
   pre_impactDisplayDay = impactDisplayDay;
+
   pre_STUDY_Setup = STUDY.plotLayoutIndex;
   pre_currentDataSource = currentDataSource;
   pre_TIME_Year = TIME.year;
@@ -126,24 +128,26 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  react.caseBarOnly.run(pre_sampleYearStart, sampleYearStart);
-  react.caseBarOnly.run(pre_sampleYearEnd, sampleYearEnd);
+  react.applyCaseBarAndBake.run(pre_sampleYearStart, sampleYearStart);
+  react.applyCaseBarAndBake.run(pre_sampleYearEnd, sampleYearEnd);
 
-  react.caseBarOnly.run(pre_sampleMemberStart, sampleMemberStart);
+  react.applyCaseBarAndBake.run(pre_sampleMemberStart, sampleMemberStart);
 
-  react.caseBarOnly.run(pre_sampleMemberEnd, sampleMemberEnd);
+  react.applyCaseBarAndBake.run(pre_sampleMemberEnd, sampleMemberEnd);
 
-  react.caseBarOnly.run(pre_sampleStationStart, sampleStationStart);
+  react.applyCaseBarAndBake.run(pre_sampleStationStart, sampleStationStart);
 
-  react.caseBarOnly.run(pre_sampleStationEnd, sampleStationEnd);
+  react.applyCaseBarAndBake.run(pre_sampleStationEnd, sampleStationEnd);
 
-  react.caseBarOnly.run(pre_STUDY_daysMergedCount, STUDY.daysMergedCount);
+  react.applyCaseBarAndBake.run(pre_STUDY_daysMergedCount, STUDY.daysMergedCount);
 
-  react.caseBarOnly.run(pre_STUDY_startHour, STUDY.startHour);
+  react.applyCaseBarAndBake.run(pre_STUDY_startHour, STUDY.startHour);
 
-  react.caseBarOnly.run(pre_STUDY_endHour, STUDY.endHour);
+  react.applyCaseBarAndBake.run(pre_STUDY_endHour, STUDY.endHour);
 
-  react.applyStudyJEnd.run(pre_STUDY_endDay, STUDY.endDay);
+  react.applyCaseBarAndBake.run(pre_STUDY_endDay, STUDY.endDay);
+
+  react.applyCaseBarAndBake.run(pre_STUDY_dayIncrement, STUDY.dayIncrement);
 
   react.caseBarOnly.run(pre_impactDisplayDay, impactDisplayDay);
 
@@ -294,6 +298,8 @@ int pre_STUDY_daysMergedCount;
 int pre_STUDY_startHour;
 int pre_STUDY_endHour;
 int pre_STUDY_endDay;
+float pre_STUDY_dayIncrement;
+
 int pre_STUDY_Setup;
 
 int pre_impactDisplayDay;

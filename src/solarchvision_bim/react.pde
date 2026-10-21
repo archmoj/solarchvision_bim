@@ -81,14 +81,13 @@ class react {
   };
 
   // One-off follow-up callbacks (each used by exactly one spinner).
-  OnChange applyStudyJEnd = (o, n) -> {
+  OnChange applyCaseBarAndBake = (o, n) -> {
     if (o == n) return;
-    UI_caseBar.revise();
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
-    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    allSolarImpacts.rebuild_Image_array = true;
-    allWindRoses.rebuild_Image_array = true;
     allSections.resize_solarImpact_array();
+
+    find_which_bakings_to_regenerate();
+    regenerate_desired_bakings();
+    UI_caseBar.revise();
   };
   // TIME.updateDate() derives month/day/hour from date (the inverse of
   // applyTimeChange, which derives date from month/day). The original
@@ -103,6 +102,10 @@ class react {
   OnChange applyTimeDate = (o, n) -> {
     TIME.updateDate();
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
+
+    find_which_bakings_to_regenerate();
+    regenerate_desired_bakings();
+    UI_caseBar.revise();
   };
 
   // UI_caseBar's "Days" tab left-click handler nudges TIME.beginDay by
@@ -114,8 +117,12 @@ class react {
   // command's own update2 (updateWIN3D) flag.
   OnChange applyBeginDayChange = (o, n) -> {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
+
     find_which_bakings_to_regenerate();
+    regenerate_desired_bakings();
+    UI_caseBar.revise();
   };
+
   OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Terrain.update_textures(); model_changed(); };
   OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Terrain.update_mesh(); model_changed(); };
   OnChange applyCurrentCamera = (o, n) -> {

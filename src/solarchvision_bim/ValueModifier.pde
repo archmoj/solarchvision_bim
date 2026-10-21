@@ -32,7 +32,7 @@ class ValueModifier {
         (v) -> { STUDY.endDay = int(v); },
         s1, s2, s3,
         u1, u2, u3,
-        react.applyStudyJEnd);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.endDay, s1, s2, s3);
     }
@@ -54,7 +54,8 @@ class ValueModifier {
         () -> STUDY.dayIncrement,
         (v) -> { STUDY.dayIncrement = v; },
         s1, s2, s3,
-        u1, u2, u3);
+        u1, u2, u3,
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.dayIncrement, s1, s2, s3);
     }
@@ -77,7 +78,7 @@ class ValueModifier {
         (v) -> { STUDY.daysMergedCount = int(v); },
         s1, s2, s3,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.daysMergedCount, s1, s2, s3);
     }
@@ -221,7 +222,7 @@ class ValueModifier {
         (v) -> { STUDY.startHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.startHour, s1, s2, s3);
     }
@@ -244,7 +245,7 @@ class ValueModifier {
         (v) -> { STUDY.endHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.endHour, s1, s2, s3);
     }
@@ -263,7 +264,7 @@ class ValueModifier {
         (v) -> { sampleYearStart = int(v); },
         () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleYearStart, climateEngineeringStart, climateArchiveEnd, 1);
     }
@@ -282,7 +283,7 @@ class ValueModifier {
         (v) -> { sampleYearEnd = int(v); },
         () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleYearEnd, climateEngineeringStart, climateArchiveEnd, 1);
     }
@@ -301,7 +302,7 @@ class ValueModifier {
         (v) -> { sampleMemberStart = int(v); },
         () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleMemberStart, ensembleForecastStart, ensembleForecastEnd, 1);
     }
@@ -320,7 +321,7 @@ class ValueModifier {
         (v) -> { sampleMemberEnd = int(v); },
         () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleMemberEnd, ensembleForecastStart, ensembleForecastEnd, 1);
     }
@@ -339,7 +340,7 @@ class ValueModifier {
         (v) -> { sampleStationStart = int(v); },
         () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleStationStart, ensembleObservationStart, ensembleObservationEnd, 1);
     }
@@ -358,7 +359,7 @@ class ValueModifier {
         (v) -> { sampleStationEnd = int(v); },
         () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
-        react.caseBarOnly);
+        react.applyCaseBarAndBake);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, sampleStationEnd, ensembleObservationStart, ensembleObservationEnd, 1);
     }

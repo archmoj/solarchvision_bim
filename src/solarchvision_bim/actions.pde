@@ -628,8 +628,8 @@ void build_allActions() {
   putAction("Active Shade", () -> {
     WIN3D.impactTypeIndex = Impact_ACTIVE;
 
-    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    VertexSolar_rebuild_array = true;
 
     view_changed();
   });
@@ -637,8 +637,8 @@ void build_allActions() {
   putAction("Passive Shade", () -> {
     WIN3D.impactTypeIndex = Impact_PASSIVE;
 
-    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    VertexSolar_rebuild_array = true;
 
     view_changed();
   });
@@ -1360,8 +1360,8 @@ void build_allActions() {
 
   putAction("Toggle Impact Type", () -> {
     WIN3D.impactTypeIndex = (WIN3D.impactTypeIndex + 1) % numberOfImpactVariations;
-    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    VertexSolar_rebuild_array = true;
     WIN3D.showSolarImpactOverride = true;
     view_changed();
   });
@@ -1471,8 +1471,8 @@ void build_allActions() {
   });
 
   putAction("Recalculate Solar Impact", () -> {
-    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    VertexSolar_rebuild_array = true;
     view_changed();
   });
 

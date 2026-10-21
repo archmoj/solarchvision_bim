@@ -134,18 +134,10 @@ void HTMLprintVtexture (float u, float v) {
 
 void find_which_bakings_to_regenerate () {
 
-  if (WIN3D.shadingMode == SHADE.Global_Solar) {
-    GlobalSolar_rebuild_array = true;
-  }
-  if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
-    VertexSolar_rebuild_array = true;
-  }
-  if (allSolarImpacts.displayImage) {
-    allSolarImpacts.rebuild_Image_array = true;
-  }
-  if (allWindRoses.displayImage) {
-    allWindRoses.rebuild_Image_array = true;
-  }
+  GlobalSolar_rebuild_array = true;
+  VertexSolar_rebuild_array = true;
+  allSolarImpacts.rebuild_Image_array = true;
+  allWindRoses.rebuild_Image_array = true;
 }
 
 void regenerate_desired_bakings () {
