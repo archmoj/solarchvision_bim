@@ -48,7 +48,7 @@ void calculate_VertexSolar_array () {
     if (day_now_j < 0) day_now_j = (day_now_j + 365) % 365;
 
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
-    TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
+    TS_DayTime[jIdx] = funcs.roundTo(STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
     int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
     if (nk == -1) continue;

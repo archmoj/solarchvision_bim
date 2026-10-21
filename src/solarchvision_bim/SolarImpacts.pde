@@ -608,7 +608,7 @@ class SolarImpacts {
           float valuesMUL = 0;
 
           if (valuesNUM != 0) {
-            valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
+            valuesMUL = STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
           }
 
           this.dayValuesMUL[j + 1] = valuesMUL;

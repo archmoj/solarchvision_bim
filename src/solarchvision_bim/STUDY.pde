@@ -189,6 +189,41 @@ class STUDY {
     return result;
   }
 
+  // The day's own energy-extrapolation duration: funcs.DayTime() (the
+  // astronomical daylight duration, from sunrise to sunset) clamped to
+  // the duration of the user's own selected hour range (startHour/
+  // endHour, via isInHourlyRange()) whenever that range is narrower than
+  // the full day.
+  //
+  // SolarImpacts.pde, calculate_GlobalSolar_array.pde and calculate_
+  // VertexSolar_array.pde all extrapolate a sum of hourly samples into a
+  // total energy value the same way: average-per-sample (valuesSUM /
+  // valuesNUM) times this duration. That's a sound "average times
+  // duration equals total" approach when the sampled hours span a fair
+  // cross-section of the day - but valuesNUM only counts hours actually
+  // satisfying isInHourlyRange(), so once the user narrows that range
+  // (down to a single hour, say), the "average" stops being a day-
+  // representative average and becomes just that hour's own value -
+  // often close to the day's peak, not its mean. Multiplying a near-peak
+  // value by the full day's daylight duration as if it still represented
+  // a fair average is exactly the over-extrapolation this clamps.
+  //
+  // For the default, unrestricted range (every one of the 24 integer
+  // hours satisfies isInHourlyRange()), selectedRangeHours is 24, so this
+  // returns the plain astronomical DayTime() unchanged - the same value
+  // all three pipelines already used before this existed, and the same
+  // one their own existing consistency tests were built against.
+  float effectiveDayTime (float Latitude, float DateAngle) {
+    float astronomicalDayTime = funcs.DayTime(Latitude, DateAngle);
+
+    int selectedRangeHours = 0;
+    for (int h = 0; h < 24; h++) {
+      if (this.isInHourlyRange(h)) selectedRangeHours++;
+    }
+
+    return min(astronomicalDayTime, selectedRangeHours);
+  }
+
   // Maps (j, j_ADD) - a plotted day column and its within-join-window
   // offset - to the actual day-of-year index (0-364) those two values
   // represent, wrapping around the year boundary either direction.
@@ -2725,7 +2760,7 @@ class STUDY {
           if (valuesNUM != 0) {
             //float valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
             //float valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
-            float valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
+            float valuesMUL = funcs.roundTo(this.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
 
             valuesSUM_RAD *= valuesMUL;
             valuesSUM_EFF_P *= valuesMUL;

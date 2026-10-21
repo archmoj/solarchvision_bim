@@ -173,7 +173,7 @@ void calculate_GlobalSolar_array () {
         if (valuesNUM != 0) {
           //float valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
           //float valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
-          float valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
+          float valuesMUL = funcs.roundTo(STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
 
           valuesSUM_RAD *= valuesMUL;
           valuesSUM_EFF_P *= valuesMUL;
