@@ -1339,6 +1339,7 @@ void build_allActions() {
     if (WIN3D.currentCameraIndex > allCameras.num - 1) WIN3D.currentCameraIndex = 0;
     WIN3D.apply_currentCameraIndex();
     modify_Viewport_Title();
+    view_changed();
   });
 
   putAction("Previous Camera", () -> {
@@ -1354,6 +1355,7 @@ void build_allActions() {
     if (WIN3D.currentCameraIndex < 0) WIN3D.currentCameraIndex = max(0, allCameras.num - 1);
     WIN3D.apply_currentCameraIndex();
     modify_Viewport_Title();
+    view_changed();
   });
 
   putAction("Toggle Impact Type", () -> {
@@ -1361,68 +1363,83 @@ void build_allActions() {
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
     WIN3D.showSolarImpactOverride = true;
+    view_changed();
   });
 
   putAction("Zoom Out", () -> {
     if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ += WIN3D.positionStep * overallScale;
     else WIN3D.zoom /= pow(2.0, 0.25);
+    view_changed();
   });
 
   putAction("Zoom In", () -> {
     if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ -= WIN3D.positionStep * overallScale;
     else WIN3D.zoom *= pow(2.0, 0.25);
+    view_changed();
   });
 
   putAction("Turn View Left", () -> {
     WIN3D.rotationZ += WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
+    view_changed();
   });
 
   putAction("Turn View Right", () -> {
     WIN3D.rotationZ -= WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
+    view_changed();
   });
 
   putAction("Turn View Up", () -> {
     WIN3D.rotationX -= WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
+    view_changed();
   });
 
   putAction("Turn View Down", () -> {
     WIN3D.rotationX += WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
+    view_changed();
   });
 
   putAction("Pan Left", () -> {
     WIN3D.positionX += WIN3D.positionStep * overallScale;
+    view_changed();
   });
 
   putAction("Pan Right", () -> {
     WIN3D.positionX -= WIN3D.positionStep * overallScale;
+    view_changed();
   });
 
   putAction("Pan Forward", () -> {
     WIN3D.positionY += WIN3D.positionStep * overallScale;
+    view_changed();
   });
 
   putAction("Pan Backward", () -> {
     WIN3D.positionY -= WIN3D.positionStep * overallScale;
+    view_changed();
   });
 
   putAction("Dolly Away From Selection", () -> {
     WIN3D.move_3DViewport_towards_Selection(2.0);
+    view_changed();
   });
 
   putAction("Dolly Toward Selection", () -> {
     WIN3D.move_3DViewport_towards_Selection(0.5);
+    view_changed();
   });
 
   putAction("Narrow Field of View", () -> {
     WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
+    view_changed();
   });
 
   putAction("Widen Field of View", () -> {
     WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
+    view_changed();
   });
 
   putAction("Advance Troposphere Time", () -> {
@@ -1443,57 +1460,70 @@ void build_allActions() {
     impactDisplayDay += 1;
     if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
     WIN3D.showSolarImpactOverride = true;
+    view_changed();
   });
 
   putAction("Previous Impact Day", () -> {
     impactDisplayDay -= 1;
     if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
     WIN3D.showSolarImpactOverride = true;
+    view_changed();
   });
 
   putAction("Recalculate Solar Impact", () -> {
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    view_changed();
   });
 
   putAction("Shade Time +1 Hour", () -> {
     adjustShadeTime(1);
+    view_changed();
   });
 
   putAction("Shade Time -1 Hour", () -> {
     adjustShadeTime(-1);
+    view_changed();
   });
 
   putAction("Shade Time +1 Day", () -> {
     adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
+    view_changed();
   });
 
   putAction("Shade Time -1 Day", () -> {
     adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
+    view_changed();
   });
 
   putAction("Nudge Closer to Selection", () -> {
     moveWin3DTowardsSelection(-0.5);
+    view_changed();
   });
 
   putAction("Nudge Away from Selection", () -> {
     moveWin3DTowardsSelection(0.5);
+    view_changed();
   });
 
   putAction("Orbit Up Around Selection", () -> {
     WIN3D.rotateZ_3DViewport_around_Selection(-WIN3D.rotationStep);
+    view_changed();
   });
 
   putAction("Orbit Down Around Selection", () -> {
     WIN3D.rotateZ_3DViewport_around_Selection(WIN3D.rotationStep);
+    view_changed();
   });
 
   putAction("Orbit Left Around Selection", () -> {
     WIN3D.rotateXY_3DViewport_around_Selection(-WIN3D.rotationStep);
+    view_changed();
   });
 
   putAction("Orbit Right Around Selection", () -> {
     WIN3D.rotateXY_3DViewport_around_Selection(WIN3D.rotationStep);
+    view_changed();
   });
 
   putAction("Increase Tool Parameter", () -> {

@@ -432,11 +432,6 @@ class WIN3D {
     text(txt, pal_ox + 0.5 * pal_length, pal_oy - txtSize);
   }
 
-  void reviseViews () {
-    this.revise();
-    UI_rollout.revise();
-  }
-
   // --- Continuous key-hold navigation ---------------------------------
   // Processing 4's P2D/P3D (JOGL/NEWT) windowing surface, unlike v2, does
   // not forward the OS's key-repeat events while a key is held down: a
@@ -624,19 +619,15 @@ class WIN3D {
     switch (keyCode) {
       case DOWN:
         callAction("Orbit Down Around Selection");
-        reviseViews();
         break;
       case LEFT:
         callAction("Orbit Left Around Selection");
-        reviseViews();
         break;
       case RIGHT:
         callAction("Orbit Right Around Selection");
-        reviseViews();
         break;
       case UP:
         callAction("Orbit Up Around Selection");
-        reviseViews();
         break;
     }
   }
@@ -647,13 +638,11 @@ class WIN3D {
       case TAB:
         if (shiftDown) {
           callAction("Toggle Impact Type");
-          reviseViews();
         }
         break;
 
       case DELETE:
         callAction("Delete Selection");
-        reviseViews();
         break;
 
       // '0' has always been an exact duplicate of ',' (see "Zoom Out"'s
@@ -661,12 +650,10 @@ class WIN3D {
       case ',':
       case '0':
         callAction("Zoom Out");
-        reviseViews();
         break;
 
       case '.':
         callAction("Zoom In");
-        reviseViews();
         break;
 
       case '5':
@@ -683,64 +670,50 @@ class WIN3D {
 
       case '4':
         callAction("Turn View Left");
-        reviseViews();
         break;
       case '6':
         callAction("Turn View Right");
-        reviseViews();
         break;
       case '8':
         callAction("Turn View Up");
-        reviseViews();
         break;
       case '2':
         callAction("Turn View Down");
-        reviseViews();
         break;
 
       case '1':
         callAction("Pan Left");
-        reviseViews();
         break;
       case '3':
         callAction("Pan Right");
-        reviseViews();
         break;
       case '7':
         callAction("Pan Forward");
-        reviseViews();
         break;
       case '9':
         callAction("Pan Backward");
-        reviseViews();
         break;
 
       case '*':
         callAction("Dolly Away From Selection");
-        reviseViews();
         break;
       case '/':
         callAction("Dolly Toward Selection");
-        reviseViews();
         break;
 
       case '+':
         callAction("Narrow Field of View");
-        reviseViews();
         break;
       case '-':
         callAction("Widen Field of View");
-        reviseViews();
         break;
 
       case 'c':
         callAction("Next Camera");
-        reviseViews();
         break;
 
       case 'C':
         callAction("Previous Camera");
-        reviseViews();
         break;
 
       case 't':
@@ -752,16 +725,13 @@ class WIN3D {
 
       case 'd':
         callAction("Next Impact Day");
-        reviseViews();
         break;
       case 'D':
         callAction("Previous Impact Day");
-        reviseViews();
         break;
 
       case ENTER:
         callAction("Recalculate Solar Impact");
-        reviseViews();
         break;
 
       case ' ':
