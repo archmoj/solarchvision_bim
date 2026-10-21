@@ -81,6 +81,16 @@ void update_frame_layout () {
     if (Moon3D != null) Moon3D.win3DCache = null;
     if (Earth3D != null) Earth3D.win3DCache = null;
 
+    // Sun3D keeps a SECOND, separate WIN3D cache besides win3DCache above
+    // - win3DCache_gridSegments, built by drawGrid() for the sun-path
+    // grid lines. Its own win3DCache_gridIsValid() bakes WIN3D.scale into
+    // the cached segment coordinates (see drawGridSegment()) but never
+    // checks WIN3D.scale itself, so - unlike win3DCache above - nulling
+    // win3DCache doesn't also cover this one. Null it the same way, or
+    // the grid keeps replaying at the old viewport's scale after a
+    // resize.
+    if (Sun3D != null) Sun3D.win3DCache_gridSegments = null;
+
     // See win3DOverlay_resyncGenerationAfterResize()'s own comment: the
     // model_changed() call just above was for the new WIN3D.graphics
     // context, not an actual geometry edit, so don't let it falsely hide

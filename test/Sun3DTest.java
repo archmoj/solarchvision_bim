@@ -407,6 +407,61 @@ class Sun3DTest {
     assertDoesNotThrow(() -> app.Sun3D.draw());
   }
 
+  // ================= win3DCache_gridIsValid / win3DCache_gridRecordState ===========
+  // drawGrid() itself touches WIN3D.graphics unconditionally (see this
+  // file's own header comment), so isn't callable here - but the cache
+  // check/record pair it defers to is plain state, same boundary as
+  // win3DCache_isValid()/win3DCache_recordState() above.
+  //
+  // Regression coverage for the "Enlarge 3D Viewport leaves the sun-path
+  // grid at the old scale" bug: drawGridSegment() bakes WIN3D.scale into
+  // each cached segment's own coordinates (see Sun3D.pde's own comment on
+  // this cache), but win3DCache_gridIsValid() never checks WIN3D.scale -
+  // so nothing about the cache's own key notices a viewport resize.
+  // update_frame_layout.pde already nulled the sun disc's win3DCache on
+  // resize (for the exact same WIN3D.graphics-recreated reason, see that
+  // file's own comment) but missed this second, separate cache entirely;
+  // the fix nulls win3DCache_gridSegments there too. update_frame_layout()
+  // itself isn't directly testable here (its createGraphics() call needs
+  // a real sketch surface - see FileSelectedTest.java's own comment on
+  // the identical limitation, and SolarImpactsTest.java's equivalent
+  // "Enlarge 3D Viewport hides the solar-impact overlay" regression
+  // tests), so this exercises the fix at the level it actually operates:
+  // the cache's own null check.
+
+  @Test
+  void gridIsValid_isFalse_assoonAsTheSegmentsAreNull_evenIfEveryOtherKeyStillMatches () {
+    app.Sun3D.win3DCache_gridSegments = new java.util.ArrayList<float[]>();
+    app.Sun3D.win3DCache_gridRecordState(2.5f, 1, 365);
+
+    assertTrue(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 365), "sanity: matching key with real segments must hit");
+
+    app.Sun3D.win3DCache_gridSegments = null; // what update_frame_layout.pde's fix now does on a viewport resize
+
+    assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 365),
+      "nulling the segments must force a rebuild even though station latitude/s_SunPath/start_j/end_j - the only fields win3DCache_gridIsValid() itself compares - never changed");
+  }
+
+  @Test
+  void gridIsValid_missesOnAnyKeyMismatch_stationLatOrSSunPathOrDayRange () {
+    // setUp() already set STATION's latitude to 43.7 - recorded here for
+    // this test's own 10f/back-to-43.7 round trip to be self-contained
+    // and readable without relying on that.
+    app.STATION.setLatitude(43.7f);
+    app.Sun3D.win3DCache_gridSegments = new java.util.ArrayList<float[]>();
+    app.Sun3D.win3DCache_gridRecordState(2.5f, 1, 365);
+
+    assertTrue(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 365), "sanity: matching key must hit");
+
+    app.STATION.setLatitude(10f);
+    assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 365), "a station latitude change must miss");
+
+    app.STATION.setLatitude(43.7f);
+    assertFalse(app.Sun3D.win3DCache_gridIsValid(3.0f, 1, 365), "an s_SunPath change must miss");
+    assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 2, 365), "a start_j change must miss");
+    assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 300), "an end_j change must miss");
+  }
+
   // ================= to_XML / from_XML round trip ==================================
 
   @Test
