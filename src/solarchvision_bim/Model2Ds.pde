@@ -72,16 +72,25 @@ class Model2Ds {
     int n1 = this.peopleFileCount;
     int n2 = this.peopleFileCount + this.treesFileCount;
 
-    int n = m;
+    int n = abs(m);
+
+    boolean aPerson = t.equals("PEOPLE");
+    boolean aTree = t.equals("TREES");
 
     if (n == 0) {
-      if (t.equals("PEOPLE")) n = int(random(1, 1 + n1));
-      else if (t.equals("TREES")) n = int(random(1 + n1, 1 + n2));
+      if (aPerson) n = int(random(1, 1 + n1));
+      else if (aTree) n = int(random(1 + n1, 1 + n2));
+    } else {
+      if (aPerson && (n > n1)) n = n1;
+      else if (aTree) {
+        if (n < n1) n = n1 + n;
+      }
     }
 
-    int d = 1;
-    int r = int(random(2));
-    if (r == 0) d = -1;
+    int d =
+      m > 0 ? 1 :
+      m < 0 ? -1 :
+      int(random(2)) == 0 ? -1 : 1;
 
     int[] Temp_MAP = {
       d * n
