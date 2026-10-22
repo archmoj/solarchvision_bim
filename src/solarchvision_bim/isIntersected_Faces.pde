@@ -479,12 +479,29 @@ float[] intersectAll (float[] ray_pnt, float[] ray_dir) {
 }
 
 float[] intersectAll (float[] ray_pnt, float[] ray_dir, int firstGuess) {
+  RayStampState rayStamp = getRayStampState();
+  int[] currentRayStampRef = { rayStamp.currentRayStamp };
+  float[] result = intersectAll(ray_pnt, ray_dir, firstGuess, rayStamp.faceTestStamp, currentRayStampRef);
+  rayStamp.currentRayStamp = currentRayStampRef[0];
+  return result;
+}
+
+// Explicit-stamp overload - see isIntersected_Faces()'s own explicit-
+// stamp overload below for why this exists. ShadeViewport.pde's parallel
+// pass calls this one, with each chunk's own plain local faceTestStamp/
+// currentRayStamp, instead of the ThreadLocal-backed overload above -
+// ThreadLocal.get() measurably contributed to stray hit/miss flips under
+// real multi-core concurrency there (narrowed down empirically, chunk by
+// chunk, against a single stray-pixel scene); a plain local array/holder
+// that one thread owns outright for a chunk's whole duration doesn't
+// have that problem.
+float[] intersectAll (float[] ray_pnt, float[] ray_dir, int firstGuess, int[] faceTestStamp, int[] currentRayStampRef) {
   float[] return_point = {
     -1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined,
     FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined
   };
 
-  int f = isIntersected_Faces(ray_pnt, ray_dir, firstGuess);
+  int f = isIntersected_Faces(ray_pnt, ray_dir, firstGuess, false, faceTestStamp, currentRayStampRef);
   if (f <= 0) return return_point; // no hit
 
   float[] P = new float[3];
@@ -553,6 +570,31 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
 // person to be a hittable, visible face - defaults to false and so never
 // excludes anyone.
 int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boolean ignoreNonShadowCasters) {
+  // See RayStampState's own comment above: this thread's own array +
+  // counter, not a shared one. Boxed in a 1-element array so the explicit-
+  // stamp overload below can both read and update it by reference.
+  RayStampState rayStamp = getRayStampState();
+  int[] currentRayStampRef = { rayStamp.currentRayStamp };
+  int result = isIntersected_Faces(ray_pnt, ray_dir, firstGuess, ignoreNonShadowCasters, rayStamp.faceTestStamp, currentRayStampRef);
+  rayStamp.currentRayStamp = currentRayStampRef[0];
+  return result;
+}
+
+// Explicit-stamp overload, taking the per-ray-cast dedup bookkeeping
+// (faceTestStamp, currentRayStampRef) as plain parameters instead of
+// pulling them from the ThreadLocal RayStampState above. The 4-arg
+// overload above still goes through the ThreadLocal for every other
+// caller (preBakeViewport.pde, calculate_VertexSolar_array.pde,
+// mouseClicked, the single-threaded case, etc.) - behavior unchanged
+// there. ShadeViewport.pde's parallel pass calls this overload instead,
+// with each chunk's own plain local arrays: see its own comment on why -
+// ThreadLocal.get(), not the grid walk or RayStampState's own dedup
+// logic itself, turned out to be the actual source of stray per-pixel
+// hit/miss corruption there under real multi-core concurrency.
+// currentRayStampRef is a 1-element array used as a mutable int holder,
+// so the bumped counter is visible to the caller afterward the same way
+// the ThreadLocal path keeps it on RayStampState.
+int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boolean ignoreNonShadowCasters, int[] faceTestStamp, int[] currentRayStampRef) {
   float[] P = new float[3];
 
   // fast-path candidate: test the previous hit first, but do NOT return
@@ -600,11 +642,9 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boole
     tDeltaZ = cellSizeZ / abs(ray_dir[2]);
   }
 
-  // See RayStampState's own comment above: this thread's own array +
-  // counter, not a shared one.
-  RayStampState rayStamp = getRayStampState();
-  rayStamp.currentRayStamp++;
-  if (firstGuess > 0) rayStamp.faceTestStamp[firstGuess] = rayStamp.currentRayStamp; // don't retest it
+  currentRayStampRef[0]++;
+  int currentRayStamp = currentRayStampRef[0];
+  if (firstGuess > 0) faceTestStamp[firstGuess] = currentRayStamp; // don't retest it
 
   int safetyCounter = gridNx + gridNy + gridNz + 4; // traversal can't exceed this many steps
 
@@ -617,8 +657,8 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boole
 
     for (int k = 0; k < cellFaces.size(); k++) {
       int f = cellFaces.get(k);
-      if (rayStamp.faceTestStamp[f] == rayStamp.currentRayStamp) continue; // already tested this ray
-      rayStamp.faceTestStamp[f] = rayStamp.currentRayStamp;
+      if (faceTestStamp[f] == currentRayStamp) continue; // already tested this ray
+      faceTestStamp[f] = currentRayStamp;
       if (ignoreNonShadowCasters && !faceCastsShadow(f)) continue;
 
       float dist = testFaceHit(f, ray_pnt, ray_dir, P);

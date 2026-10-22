@@ -200,18 +200,33 @@ void ShadeViewport () {
   // only its own np's slot of Shade_RGBA.pixels[]/faceEdgeHit[]/
   // faceEdgeNormalX,Y,Z[] - so there's nothing for two pixels' work to
   // race on, same reasoning as preBakeViewport.pde's own parallel
-  // ray-casting loop (see that loop's own comment). isIntersected_Faces()
-  // is already safe to call from multiple threads at once (see
-  // RayStampState's own comment in isIntersected_Faces.pde); unlike
-  // preBakeViewport.pde's diffuse/direct rays, the single shadow ray this
-  // function casts per pixel has always been called with firstGuess=0 (no
-  // coherence hint carried between pixels even before this), so there's
-  // no per-chunk local hint state needed here. ray_start/ray_direction
-  // used to be declared once above the loop and mutated in place every
-  // pixel - each pixel below now gets its own fresh pair instead, same as
-  // preBakeViewport.pde's own loop: matches that proven-safe pattern
-  // exactly, rather than reusing one mutable pair per chunk across many
-  // pixels on the same thread.
+  // ray-casting loop (see that loop's own comment). ray_start/
+  // ray_direction used to be declared once above the loop and mutated in
+  // place every pixel - each pixel below now gets its own fresh pair
+  // instead, same as preBakeViewport.pde's own loop: matches that
+  // proven-safe pattern exactly, rather than reusing one mutable pair
+  // per chunk across many pixels on the same thread.
+  //
+  // intersectAll()/isIntersected_Faces() are called here through their
+  // explicit-stamp overloads (isIntersected_Faces.pde), passing each
+  // chunk's own plain local faceTestStampLocal/currentRayStampLocal,
+  // rather than through the ThreadLocal-backed overloads every other
+  // caller still uses (preBakeViewport.pde, calculate_VertexSolar_array.
+  // pde, mouseClicked, etc. - unaffected). ThreadLocal.get(), not the
+  // grid walk or its dedup logic itself, turned out to be the actual
+  // source of stray per-pixel hit/miss corruption here under real
+  // multi-core concurrency - narrowed down empirically against a
+  // single-triangle scene simple enough that nothing else could explain
+  // it. A plain local array/counter that one thread owns outright for a
+  // chunk's whole duration doesn't have that problem: declared once per
+  // chunk below (not once per pixel - this lambda runs start to finish
+  // on one thread, so there's no one else to share these with), reused
+  // across every pixel that chunk processes, the same way the
+  // ThreadLocal path reuses one RayStampState across every pixel a given
+  // thread ever touches. The single shadow ray this function casts per
+  // pixel has always been called with firstGuess=0 (no coherence hint
+  // carried between pixels even before any of this), so there's nothing
+  // else to seed here beyond the stamp state itself.
   //
   // Chunking also matches preBakeViewport.pde's own choice, not a single
   // big chunk per thread: numChunks here comes out far larger than
@@ -234,6 +249,9 @@ void ShadeViewport () {
     final int npTo = min(totalPixels, chunkStart + chunkSize);
 
     pass1Futures.add(executor.submit(() -> {
+      int[] faceTestStampLocal = new int[faceTestStampSize];
+      int[] currentRayStampLocal = { 0 };
+
       for (int np = npFrom; np < npTo; np++) {
         int Image_X_i = np % RES1;
         int Image_Y_i = np / RES1;
@@ -262,7 +280,7 @@ void ShadeViewport () {
         ray_direction[1] = ray_end[1] - ray_start[1];
         ray_direction[2] = ray_end[2] - ray_start[2];
 
-        float[] RxP = intersectAll(ray_start, ray_direction);
+        float[] RxP = intersectAll(ray_start, ray_direction, 0, faceTestStampLocal, currentRayStampLocal);
 
         if (RxP[0] >= 0) {
           int hitFace = (int) RxP[0];
@@ -363,7 +381,7 @@ void ShadeViewport () {
             float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
             float valuesSUM_RAD = SkyMask; // diffuse radiation
-            if (isIntersected_Faces(ray_start, ray_direction, 0, true) == 0) {
+            if (isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
               float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
               if (SunMask <= 0) SunMask = 0; // removes backing faces
 
