@@ -424,6 +424,7 @@ void ShadeViewport () {
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
 
+  /*
   // DIAGNOSTIC BUILD: redundantly recompute just the primary ray's hit/
   // miss decision for every pixel, single-threaded, with its own fresh
   // local stamp state (no sharing with anything the parallel pass above
@@ -487,6 +488,7 @@ void ShadeViewport () {
     }
     println("Self-verification: " + mismatches + " / " + totalPixels + " pixels disagreed between the parallel run and a fresh single-threaded recompute.");
   }
+*/
 
   // Second pass for the face-edges mode: now that every pixel's hit face
   // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
