@@ -2,9 +2,18 @@ void preBakeViewport () {
 
   int preBakeViewport_startMillis = millis();
 
+  // Every message this function itself prints - per-file "saved" lines,
+  // phase timings - is buffered here and flushed with one print() right
+  // before returning, instead of each going to the console as it
+  // happens. There's no longer a live progress bar to buffer in the
+  // first place: see the ray-casting loop's own comment below for why it
+  // was dropped once this function's own output was already fully
+  // deferred to the end, and the loop itself went parallel.
+  StringBuilder preBakeLog = new StringBuilder();
+
   showWaitCursor();
 
-  println("PreBaking for Direct and Diffuse models. Please wait...");
+  preBakeLog.append("PreBaking for Direct and Diffuse models. Please wait...\n");
 
   // Force a fresh build - see ShadeViewport.pde's own comment on this:
   // Model2Ds.addToFaceGrid()'s tree/person billboards are camera-facing,
@@ -24,7 +33,7 @@ void preBakeViewport () {
   // preBakeViewport_startMillis, which stays fixed for the one final
   // grand-total line.
   int phaseStartMillis = millis();
-  println("buildFaceGrid() finished in " + nf((phaseStartMillis - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
+  preBakeLog.append("buildFaceGrid() finished in " + nf((phaseStartMillis - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s\n");
 
   cameraIndex = 0;
 
@@ -102,8 +111,12 @@ void preBakeViewport () {
 
   PImage[][] Direct_RGBA = new PImage [n_Map][2];
 
-  int[] lastHitDirect = new int [n_Map]; // zero-filled by default
-  int[] lastHitDiffuse = new int [DiffuseVectors.length]; // zero-filled by default
+  // lastHitDirect/lastHitDiffuse (the isIntersected_Faces() firstGuess
+  // coherence hints) used to be single arrays shared and carried across
+  // every pixel in raster order. Now that the pixel loop below is
+  // parallelized, each chunk gets its own fresh pair instead - see that
+  // loop's own comment on why this doesn't change any pixel's final
+  // value, only how much of the hint survives at a chunk boundary.
 
   float[][] UnitDiffuseVectors = new float [DiffuseVectors.length][3];
   for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
@@ -117,182 +130,212 @@ void preBakeViewport () {
     }
   }
 
-  float Progress = 0;
-  float printed_Progress = 0;
-  StringBuilder barBuffer = new StringBuilder();
+  // Parallel ray-casting: every pixel's work (intersectAll() for the
+  // primary ray, then DiffuseVectors.length + n_Map secondary rays off
+  // that hit point) reads only data that's fixed for the whole bake
+  // (camera, geometry, sun/sky directions) and writes only to indices
+  // (np, and np within its own m-indexed slot) that no other pixel ever
+  // touches - Diffuse_Matrix[][np], Direct_RGBA[m][SHD].pixels[np] - so
+  // there's nothing for two pixels' work to race on. The one piece of
+  // state that WAS shared and mutated across pixels before - the
+  // lastHitDirect/lastHitDiffuse firstGuess hints - only ever affects how
+  // fast isIntersected_Faces() finds a ray's nearest hit, never which
+  // face it finds (that function's own comment, and
+  // FaceIntersectionTest's firstGuess-correctness tests), so giving each
+  // chunk below its own fresh copies instead of one shared pair doesn't
+  // change a single pixel's final value - only how much of that
+  // coherence survives at a chunk boundary. isIntersected_Faces() itself
+  // is safe to call from multiple threads at once - see RayStampState's
+  // own comment in isIntersected_Faces.pde for what had to change there
+  // first to make that true.
+  //
+  // No live progress bar any more: this function's own output is already
+  // fully buffered into preBakeLog and only printed once, at the very
+  // end (see that variable's own comment) - so a bar nobody can see
+  // while it's happening bought nothing, and accurately drawing one
+  // against pixels finishing out of order across threads would have been
+  // real added complexity for that same nonexistent benefit.
+  int numThreads = max(1, Runtime.getRuntime().availableProcessors());
+  int totalPixels = RES1 * RES2;
+  // Several chunks per thread, not one: a pixel that hits geometry costs
+  // far more (DiffuseVectors.length + n_Map secondary ray casts) than one
+  // that misses straight into transparent background, so splitting into
+  // more, smaller chunks than threads lets the pool's own work queue even
+  // that unevenness out across threads, instead of some thread getting
+  // stuck with a geometry-heavy region while others, done with their
+  // mostly-background chunks, sit idle.
+  int numChunks = min(totalPixels, numThreads * 8);
+  int chunkSize = (totalPixels + numChunks - 1) / numChunks; // ceiling division
 
-  progressBarHeader();
-  for (int np = 0; np < (RES1 * RES2); np++) {
-    int Image_X = np % RES1;
-    int Image_Y = np / RES1;
+  java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
+  java.util.List<java.util.concurrent.Future<?>> futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
 
-    if (control != USER_AUTO) {
-      Progress = 100 * np / float(RES1 * RES2);
-      float delta = floor(Progress - printed_Progress);
-      if (delta >= 1) {
-        barBuffer.setLength(0);
-        for (int c = 0; c < delta; c++) {
-          barBuffer.append('█');
+  for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
+    final int npFrom = chunkStart;
+    final int npTo = min(totalPixels, chunkStart + chunkSize);
+
+    futures.add(executor.submit(() -> {
+      int[] lastHitDirect_local = new int[n_Map]; // zero-filled, fresh per chunk - see this loop's own comment above
+      int[] lastHitDiffuse_local = new int[DiffuseVectors.length];
+
+      for (int np = npFrom; np < npTo; np++) {
+        int Image_X = np % RES1;
+        int Image_Y = np / RES1;
+
+        Image_X -= 0.5 * WIN3D.dX;
+        Image_Y -= 0.5 * WIN3D.dY;
+
+        float[] ray_direction = new float [3];
+
+        float[] ray_start = {
+          WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ
+        };
+
+        float[] ray_end = WIN3D.calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
+
+        ray_start[0] /= overallScale;
+        ray_start[1] /= overallScale;
+        ray_start[2] /= overallScale;
+
+        ray_end[0] /= overallScale;
+        ray_end[1] /= overallScale;
+        ray_end[2] /= overallScale;
+
+        if (WIN3D.projectionTypeIndex == 0) {
+          float[] ray_center = WIN3D.calculate_Click3D(0, 0);
+
+          ray_center[0] /= overallScale;
+          ray_center[1] /= overallScale;
+          ray_center[2] /= overallScale;
+
+          ray_start[0] += ray_end[0] - ray_center[0];
+          ray_start[1] += ray_end[1] - ray_center[1];
+          ray_start[2] += ray_end[2] - ray_center[2];
         }
-        print(barBuffer.toString()); // one print() call instead of `delta` calls
-        printed_Progress = floor(Progress);
-      }
-    }
 
-    Image_X -= 0.5 * WIN3D.dX;
-    Image_Y -= 0.5 * WIN3D.dY;
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
 
 
-    float[] ray_direction = new float [3];
+        float[] RxP = intersectAll(ray_start, ray_direction);
 
-    float[] ray_start = {
-      WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ
-    };
+        if (RxP[0] >= 0) {
 
-    float[] ray_end = WIN3D.calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
+          float[] face_norm = {RxP[5], RxP[6], RxP[7]};
+          face_norm = funcs.vec3_unit(face_norm);
 
-    ray_start[0] /= overallScale;
-    ray_start[1] /= overallScale;
-    ray_start[2] /= overallScale;
+          for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
 
-    ray_end[0] /= overallScale;
-    ray_end[1] /= overallScale;
-    ray_end[2] /= overallScale;
+            float SkyMask = funcs.vec_dot(UnitDiffuseVectors[n_Ray], face_norm);
 
-    if (WIN3D.projectionTypeIndex == 0) {
-      float[] ray_center = WIN3D.calculate_Click3D(0, 0);
+            // A backing direction (this face's normal points away from it)
+            // contributes 0 to both Diffuse_Matrix rows regardless of
+            // whether isIntersected_Faces() below would find it occluded -
+            // SHD=0 adds SkyMask (0 either way) and SHD=1 adds either
+            // SkyMask (0) or a flat 0, same result. So there's nothing the
+            // ray cast could change here: skip it rather than pay for it
+            // only to throw the result away. This is often true for roughly
+            // half of DiffuseVectors on a vertical wall, and for nearly all
+            // of them on a downward-facing underside.
+            if (SkyMask <= 0) continue;
 
-      ray_center[0] /= overallScale;
-      ray_center[1] /= overallScale;
-      ray_center[2] /= overallScale;
+            // when SHD = 0;
+            Diffuse_Matrix[0][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
 
-      ray_start[0] += ray_end[0] - ray_center[0];
-      ray_start[1] += ray_end[1] - ray_center[1];
-      ray_start[2] += ray_end[2] - ray_center[2];
-    }
+            // new trace
+            ray_start[0] = RxP[1];
+            ray_start[1] = RxP[2];
+            ray_start[2] = RxP[3];
 
-    ray_direction[0] = ray_end[0] - ray_start[0];
-    ray_direction[1] = ray_end[1] - ray_start[1];
-    ray_direction[2] = ray_end[2] - ray_start[2];
+            ray_direction[0] = DiffuseVectors[n_Ray][0];
+            ray_direction[1] = DiffuseVectors[n_Ray][1];
+            ray_direction[2] = DiffuseVectors[n_Ray][2];
 
+            lastHitDiffuse_local[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse_local[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
-    float[] RxP = intersectAll(ray_start, ray_direction);
-
-    if (RxP[0] >= 0) {
-
-      int f = int(RxP[0]);
-
-      float[] COL = {
-        0, 0, 0, 0
-      };
-
-      float[] face_norm = {RxP[5], RxP[6], RxP[7]};
-      face_norm = funcs.vec3_unit(face_norm);
-
-      {
-
-        for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
-
-          float SkyMask = funcs.vec_dot(UnitDiffuseVectors[n_Ray], face_norm);
-
-          // A backing direction (this face's normal points away from it)
-          // contributes 0 to both Diffuse_Matrix rows regardless of
-          // whether isIntersected_Faces() below would find it occluded -
-          // SHD=0 adds SkyMask (0 either way) and SHD=1 adds either
-          // SkyMask (0) or a flat 0, same result. So there's nothing the
-          // ray cast could change here: skip it rather than pay for it
-          // only to throw the result away. This is often true for roughly
-          // half of DiffuseVectors on a vertical wall, and for nearly all
-          // of them on a downward-facing underside.
-          if (SkyMask <= 0) continue;
-
-          // when SHD = 0;
-          Diffuse_Matrix[0][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
-
-          // new trace
-          ray_start[0] = RxP[1];
-          ray_start[1] = RxP[2];
-          ray_start[2] = RxP[3];
-
-          ray_direction[0] = DiffuseVectors[n_Ray][0];
-          ray_direction[1] = DiffuseVectors[n_Ray][1];
-          ray_direction[2] = DiffuseVectors[n_Ray][2];
-
-          lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
-
-          // when SHD = 1;
-          if (lastHitDiffuse[n_Ray] == 0) {
-            Diffuse_Matrix[1][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
+            // when SHD = 1;
+            if (lastHitDiffuse_local[n_Ray] == 0) {
+              Diffuse_Matrix[1][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
+            }
+            // else: already left at its default 0 - no occluded-sky contribution.
           }
-          // else: already left at its default 0 - no occluded-sky contribution.
+
+          for (int m = 0; m < n_Map; m++) {
+
+            // Below the horizon, both SHD=0 and SHD=1 come out color(0, 255)
+            // regardless of what isIntersected_Faces() below would find - a
+            // sun that isn't up can't light this pixel whether or not
+            // something would otherwise have shaded it. Map_SunBelowHorizon[m]
+            // depends only on m, not on this pixel, so this also skips every
+            // other field the ray cast would otherwise need (ray_direction,
+            // SunMask) for the same reason. Nothing the ray cast could change
+            // here: skip it rather than pay for it only to throw the result
+            // away.
+            if (Map_SunBelowHorizon[m]) {
+              Direct_RGBA[m][0].pixels[np] = color(0, 255);
+              Direct_RGBA[m][1].pixels[np] = color(0, 255);
+              continue;
+            }
+
+            // new trace
+            ray_start[0] = RxP[1];
+            ray_start[1] = RxP[2];
+            ray_start[2] = RxP[3];
+
+            ray_direction[0] = Map_DirectVector[m][0];
+            ray_direction[1] = Map_DirectVector[m][1];
+            ray_direction[2] = Map_DirectVector[m][2];
+
+            float SunMask = funcs.vec_dot(Map_UnitDirectVector[m], face_norm);
+            //if (SunMask <= 0) SunMask = 0; // removes backing faces
+
+            // when SHD = 0;
+            Direct_RGBA[m][0].pixels[np] = color(255 * SunMask, 255);
+
+            // when SHD = 1;
+
+            lastHitDirect_local[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect_local[m], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
+
+            if (lastHitDirect_local[m] == 0) {
+              Direct_RGBA[m][1].pixels[np] = color(255 * SunMask, 255);
+            }
+            else Direct_RGBA[m][1].pixels[np] = color(0, 255);
+          }
+        }
+        else {
+
+          for (int m = 0; m < n_Map; m++) {
+            for (int SHD = 0; SHD <= 1; SHD++) {
+              Direct_RGBA[m][SHD].pixels[np] = color(0,0,0,0);
+            }
+          }
+
+          for (int SHD = 0; SHD <= 1; SHD++) {
+            Diffuse_Matrix[SHD][np] = FLOAT_undefined;
+          }
+
         }
       }
-
-
-      for (int m = 0; m < n_Map; m++) {
-
-        // Below the horizon, both SHD=0 and SHD=1 come out color(0, 255)
-        // regardless of what isIntersected_Faces() below would find - a
-        // sun that isn't up can't light this pixel whether or not
-        // something would otherwise have shaded it. Map_SunBelowHorizon[m]
-        // depends only on m, not on this pixel, so this also skips every
-        // other field the ray cast would otherwise need (ray_direction,
-        // SunMask) for the same reason. Nothing the ray cast could change
-        // here: skip it rather than pay for it only to throw the result
-        // away.
-        if (Map_SunBelowHorizon[m]) {
-          Direct_RGBA[m][0].pixels[np] = color(0, 255);
-          Direct_RGBA[m][1].pixels[np] = color(0, 255);
-          continue;
-        }
-
-        // new trace
-        ray_start[0] = RxP[1];
-        ray_start[1] = RxP[2];
-        ray_start[2] = RxP[3];
-
-        ray_direction[0] = Map_DirectVector[m][0];
-        ray_direction[1] = Map_DirectVector[m][1];
-        ray_direction[2] = Map_DirectVector[m][2];
-
-        float SunMask = funcs.vec_dot(Map_UnitDirectVector[m], face_norm);
-        //if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-        // when SHD = 0;
-        Direct_RGBA[m][0].pixels[np] = color(255 * SunMask, 255);
-
-        // when SHD = 1;
-
-        lastHitDirect[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
-
-        if (lastHitDirect[m] == 0) {
-          Direct_RGBA[m][1].pixels[np] = color(255 * SunMask, 255);
-        }
-        else Direct_RGBA[m][1].pixels[np] = color(0, 255);
-      }
-    }
-    else {
-
-      for (int m = 0; m < n_Map; m++) {
-        for (int SHD = 0; SHD <= 1; SHD++) {
-          Direct_RGBA[m][SHD].pixels[np] = color(0,0,0,0);
-        }
-      }
-
-      for (int SHD = 0; SHD <= 1; SHD++) {
-        Diffuse_Matrix[SHD][np] = FLOAT_undefined;
-      }
-
-    }
-
+    }));
   }
 
-  for(int c = 0; c < floor(100 - printed_Progress); c++) {
-    print("█");
+  // Propagate any worker's exception rather than losing it - a silent
+  // partial bake (some pixels never written because their chunk's thread
+  // died) would be far worse than failing loudly here.
+  for (java.util.concurrent.Future<?> future : futures) {
+    try {
+      future.get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    } catch (java.util.concurrent.ExecutionException e) {
+      throw new RuntimeException(e.getCause());
+    }
   }
-  println();
+  executor.shutdown();
 
-  println("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  preBakeLog.append("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
   phaseStartMillis = millis();
 
   for (int m = 0; m < n_Map; m++) {
@@ -309,11 +352,11 @@ void preBakeViewport () {
 
       Direct_RGBA[m][SHD].save(File_Name + ".png");
 
-      println(File_Name + ".png");
+      preBakeLog.append(File_Name + ".png\n");
     }
   }
 
-  println("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  preBakeLog.append("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
   phaseStartMillis = millis();
 
   PImage[] Diffuse_RGBA = new PImage [2];
@@ -347,10 +390,10 @@ void preBakeViewport () {
 
     Diffuse_RGBA[SHD].save(File_Name + ".png");
 
-    println(File_Name + ".png");
+    preBakeLog.append(File_Name + ".png\n");
   }
 
-  println("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  preBakeLog.append("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
 
   // Bake the Model2Ds-only (tree/person) visibility mask alongside the
   // Direct/Diffuse images just saved above, at this same prebake
@@ -365,7 +408,7 @@ void preBakeViewport () {
   float preShadingQuality = WIN3D.shadingQuality;
   WIN3D.shadingQuality = 1;
 
-  println("Baking Model2Ds visibility mask (ShadeViewport() call #1 below)...");
+  preBakeLog.append("Baking Model2Ds visibility mask (ShadeViewport() call #1 below)...\n");
   noShadeOnlyVisible2DTextures = true;
   ShadeViewport();
   noShadeOnlyVisible2DTextures = false;
@@ -386,7 +429,7 @@ void preBakeViewport () {
   WIN3D.dX = pre_faceEdges_dX * FACE_EDGE_RESOLUTION_MULTIPLIER;
   WIN3D.dY = pre_faceEdges_dY * FACE_EDGE_RESOLUTION_MULTIPLIER;
 
-  println("Baking face-edges texture at " + FACE_EDGE_RESOLUTION_MULTIPLIER + "x resolution (ShadeViewport() call #2 below)...");
+  preBakeLog.append("Baking face-edges texture at " + FACE_EDGE_RESOLUTION_MULTIPLIER + "x resolution (ShadeViewport() call #2 below)...\n");
   noShadeOnlyVisibleFaceEdges = true;
   ShadeViewport();
   noShadeOnlyVisibleFaceEdges = false;
@@ -403,7 +446,10 @@ void preBakeViewport () {
   WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
 
   // Includes the two ShadeViewport() calls above (2Ds mask, face-edges
-  // texture) - each also prints its own elapsed time on the way, so this
-  // total and their two sub-totals are both visible, not just the sum.
-  println("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
+  // texture) - each also prints its own elapsed time on the way (live,
+  // not buffered into preBakeLog - see that variable's own comment), so
+  // this total and their two sub-totals are both visible, not just the sum.
+  preBakeLog.append("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s\n");
+
+  print(preBakeLog.toString()); // single flush - everything above printed here, not as it happened
 }
