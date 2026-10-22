@@ -135,10 +135,23 @@ void preBakeViewport () {
   // FaceIntersectionTest's firstGuess-correctness tests), so giving each
   // chunk below its own fresh copies instead of one shared pair doesn't
   // change a single pixel's final value - only how much of that
-  // coherence survives at a chunk boundary. isIntersected_Faces() itself
-  // is safe to call from multiple threads at once - see RayStampState's
-  // own comment in isIntersected_Faces.pde for what had to change there
-  // first to make that true.
+  // coherence survives at a chunk boundary.
+  //
+  // intersectAll()/isIntersected_Faces() are called here through their
+  // explicit-stamp overloads (isIntersected_Faces.pde), passing each
+  // chunk's own plain local faceTestStampLocal/currentRayStampLocal,
+  // rather than through the ThreadLocal-backed overloads this loop used
+  // to go through (and that every other caller - mouseClicked,
+  // calculate_VertexSolar_array.pde, etc. - still does; unaffected).
+  // ShadeViewport.pde's own parallel pass hit stray per-pixel hit/miss
+  // corruption traced to ThreadLocal.get() itself under real multi-core
+  // concurrency, not to the grid walk or its dedup logic - see that
+  // file's own comment on how that was narrowed down - and this loop
+  // calls the very same ThreadLocal-backed isIntersected_Faces() from
+  // multiple threads at once, so it carries the identical exposure even
+  // without a report of it having been noticed here yet. A plain local
+  // array/counter that one thread owns outright for a chunk's whole
+  // duration doesn't have that problem.
   //
   // The progress bar tracks completed CHUNKS now, not individual pixels:
   // chunks finish concurrently and out of order across threads, so
@@ -184,6 +197,8 @@ void preBakeViewport () {
     futures.add(executor.submit(() -> {
       int[] lastHitDirect_local = new int[n_Map]; // zero-filled, fresh per chunk - see this loop's own comment above
       int[] lastHitDiffuse_local = new int[DiffuseVectors.length];
+      int[] faceTestStampLocal = new int[faceTestStampSize];
+      int[] currentRayStampLocal = { 0 };
 
       for (int np = npFrom; np < npTo; np++) {
         int Image_X = np % RES1;
@@ -225,7 +240,7 @@ void preBakeViewport () {
         ray_direction[2] = ray_end[2] - ray_start[2];
 
 
-        float[] RxP = intersectAll(ray_start, ray_direction);
+        float[] RxP = intersectAll(ray_start, ray_direction, 0, faceTestStampLocal, currentRayStampLocal);
 
         if (RxP[0] >= 0) {
 
@@ -259,7 +274,7 @@ void preBakeViewport () {
             ray_direction[1] = DiffuseVectors[n_Ray][1];
             ray_direction[2] = DiffuseVectors[n_Ray][2];
 
-            lastHitDiffuse_local[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse_local[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
+            lastHitDiffuse_local[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse_local[n_Ray], true, faceTestStampLocal, currentRayStampLocal); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
             // when SHD = 1;
             if (lastHitDiffuse_local[n_Ray] == 0) {
@@ -302,7 +317,7 @@ void preBakeViewport () {
 
             // when SHD = 1;
 
-            lastHitDirect_local[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect_local[m], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
+            lastHitDirect_local[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect_local[m], true, faceTestStampLocal, currentRayStampLocal); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
             if (lastHitDirect_local[m] == 0) {
               Direct_RGBA[m][1].pixels[np] = color(255 * SunMask, 255);
