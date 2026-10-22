@@ -19,6 +19,13 @@ void preBakeViewport () {
   }
   buildFaceGrid();
 
+  // Per-phase breakdown, to find out where time actually goes instead of
+  // guessing: reset after each phase's own print below. Separate from
+  // preBakeViewport_startMillis, which stays fixed for the one final
+  // grand-total line.
+  int phaseStartMillis = millis();
+  println("buildFaceGrid() finished in " + nf((phaseStartMillis - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
+
   cameraIndex = 0;
 
   allSolarImpacts.sectionType = 1; // <<<<< so that it analyzed later!
@@ -285,6 +292,9 @@ void preBakeViewport () {
   }
   println();
 
+  println("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  phaseStartMillis = millis();
+
   for (int m = 0; m < n_Map; m++) {
 
     for (int SHD = 0; SHD <= 1; SHD++) {
@@ -302,6 +312,9 @@ void preBakeViewport () {
       println(File_Name + ".png");
     }
   }
+
+  println("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  phaseStartMillis = millis();
 
   PImage[] Diffuse_RGBA = new PImage [2];
 
@@ -337,7 +350,7 @@ void preBakeViewport () {
     println(File_Name + ".png");
   }
 
-
+  println("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
 
   // Bake the Model2Ds-only (tree/person) visibility mask alongside the
   // Direct/Diffuse images just saved above, at this same prebake
@@ -352,6 +365,7 @@ void preBakeViewport () {
   float preShadingQuality = WIN3D.shadingQuality;
   WIN3D.shadingQuality = 1;
 
+  println("Baking Model2Ds visibility mask (ShadeViewport() call #1 below)...");
   noShadeOnlyVisible2DTextures = true;
   ShadeViewport();
   noShadeOnlyVisible2DTextures = false;
@@ -372,6 +386,7 @@ void preBakeViewport () {
   WIN3D.dX = pre_faceEdges_dX * FACE_EDGE_RESOLUTION_MULTIPLIER;
   WIN3D.dY = pre_faceEdges_dY * FACE_EDGE_RESOLUTION_MULTIPLIER;
 
+  println("Baking face-edges texture at " + FACE_EDGE_RESOLUTION_MULTIPLIER + "x resolution (ShadeViewport() call #2 below)...");
   noShadeOnlyVisibleFaceEdges = true;
   ShadeViewport();
   noShadeOnlyVisibleFaceEdges = false;
