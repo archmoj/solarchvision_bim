@@ -91,7 +91,10 @@ final int SHADE_STEP_DAYS = 30; //90;
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
+boolean isShadingViewport = false;
+
 void ShadeViewport () {
+  isShadingViewport = true;
   int ShadeViewport_startMillis = millis();
 
   int DATE_ANGLE = SHADE_DATE_ANGLE;
@@ -584,6 +587,8 @@ void ShadeViewport () {
   }
 
   println("ShadeViewport() finished in " + nf((millis() - ShadeViewport_startMillis) / 1000.0, 0, 2) + "s");
+
+  isShadingViewport = false;
 }
 
 void adjustShadeTime (int steps) {
