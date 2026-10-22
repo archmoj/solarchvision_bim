@@ -48,7 +48,7 @@ void model_added () {
   selection_changed();
 }
 
-boolean should_rebuildFaceGrid = true;
+volatile boolean should_rebuildFaceGrid = true;
 
 void model_changed () {
   should_rebuildFaceGrid = true;

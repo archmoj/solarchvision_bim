@@ -91,7 +91,7 @@ final int SHADE_STEP_DAYS = 30; //90;
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
-boolean isShadingViewport = false;
+volatile boolean isShadingViewport = false;
 
 void ShadeViewport () {
   isShadingViewport = true;
@@ -136,18 +136,6 @@ void ShadeViewport () {
   Shade_RGBA = createImage(RES1, RES2, ARGB);
   Shade_RGBA.loadPixels();
 
-  // DIAGNOSTIC BUILD: every pixel write below goes into this plain int[]
-  // first, not into Shade_RGBA.pixels[] directly - a bisection of the
-  // user's own hypothesis, that PImage's own pixel storage (vs. a bare
-  // Java array) is where the still-remaining stray dots come from.
-  // Shade_RGBA.pixels[] is copied from this buffer in one single-
-  // threaded System.arraycopy() right before updatePixels(), after both
-  // parallel passes have finished - so during the whole parallel section,
-  // nothing touches Shade_RGBA itself at all. If the dots persist against
-  // this buffer, PImage is cleared as a suspect and the remaining race is
-  // in the computation itself; if they disappear, the hypothesis is
-  // confirmed and every write below should stay routed through a plain
-  // buffer like this one permanently, not just for this test.
   int[] shadeBuffer = new int[RES1 * RES2];
 
   // Maps an offset in RES1/RES2 pixel space back to the click-space
