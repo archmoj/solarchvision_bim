@@ -186,6 +186,22 @@ void preBakeViewport () {
 
         for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
 
+          float SkyMask = funcs.vec_dot(UnitDiffuseVectors[n_Ray], face_norm);
+
+          // A backing direction (this face's normal points away from it)
+          // contributes 0 to both Diffuse_Matrix rows regardless of
+          // whether isIntersected_Faces() below would find it occluded -
+          // SHD=0 adds SkyMask (0 either way) and SHD=1 adds either
+          // SkyMask (0) or a flat 0, same result. So there's nothing the
+          // ray cast could change here: skip it rather than pay for it
+          // only to throw the result away. This is often true for roughly
+          // half of DiffuseVectors on a vertical wall, and for nearly all
+          // of them on a downward-facing underside.
+          if (SkyMask <= 0) continue;
+
+          // when SHD = 0;
+          Diffuse_Matrix[0][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
+
           // new trace
           ray_start[0] = RxP[1];
           ray_start[1] = RxP[2];
@@ -195,24 +211,33 @@ void preBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
 
-          float SkyMask = funcs.vec_dot(UnitDiffuseVectors[n_Ray], face_norm);
-          if (SkyMask < 0) SkyMask = 0; // removes backing faces
-
-          // when SHD = 0;
-          Diffuse_Matrix[0][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
-
           lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
           // when SHD = 1;
           if (lastHitDiffuse[n_Ray] == 0) {
             Diffuse_Matrix[1][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
           }
-          else Diffuse_Matrix[1][np] += 0;
+          // else: already left at its default 0 - no occluded-sky contribution.
         }
       }
 
 
       for (int m = 0; m < n_Map; m++) {
+
+        // Below the horizon, both SHD=0 and SHD=1 come out color(0, 255)
+        // regardless of what isIntersected_Faces() below would find - a
+        // sun that isn't up can't light this pixel whether or not
+        // something would otherwise have shaded it. Map_SunBelowHorizon[m]
+        // depends only on m, not on this pixel, so this also skips every
+        // other field the ray cast would otherwise need (ray_direction,
+        // SunMask) for the same reason. Nothing the ray cast could change
+        // here: skip it rather than pay for it only to throw the result
+        // away.
+        if (Map_SunBelowHorizon[m]) {
+          Direct_RGBA[m][0].pixels[np] = color(0, 255);
+          Direct_RGBA[m][1].pixels[np] = color(0, 255);
+          continue;
+        }
 
         // new trace
         ray_start[0] = RxP[1];
@@ -227,14 +252,14 @@ void preBakeViewport () {
         //if (SunMask <= 0) SunMask = 0; // removes backing faces
 
         // when SHD = 0;
-        Direct_RGBA[m][0].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);
+        Direct_RGBA[m][0].pixels[np] = color(255 * SunMask, 255);
 
         // when SHD = 1;
 
         lastHitDirect[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
         if (lastHitDirect[m] == 0) {
-          Direct_RGBA[m][1].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);
+          Direct_RGBA[m][1].pixels[np] = color(255 * SunMask, 255);
         }
         else Direct_RGBA[m][1].pixels[np] = color(0, 255);
       }
