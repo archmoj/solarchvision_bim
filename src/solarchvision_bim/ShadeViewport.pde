@@ -208,19 +208,22 @@ void ShadeViewport () {
   // coherence hint carried between pixels even before this), so there's
   // no per-chunk local hint state needed here. ray_start/ray_direction
   // used to be declared once above the loop and mutated in place every
-  // pixel - now each chunk below gets its own pair instead, since sharing
-  // one mutable pair across threads would let two pixels' in-flight rays
-  // stomp on each other.
+  // pixel - each pixel below now gets its own fresh pair instead, same as
+  // preBakeViewport.pde's own loop: matches that proven-safe pattern
+  // exactly, rather than reusing one mutable pair per chunk across many
+  // pixels on the same thread.
   //
-  // Unlike preBakeViewport.pde's own loop, there's no per-pixel shortcut
-  // here that skips most of the work (no below-the-horizon / backing-face
-  // early-out) - every pixel pays roughly the same cost (one primary ray,
-  // optionally one shadow ray) - so there's much less load imbalance to
-  // correct for, and one chunk per thread is enough; no need for
-  // preBakeViewport.pde's extra chunks-per-thread split.
+  // Chunking also matches preBakeViewport.pde's own choice, not a single
+  // big chunk per thread: numChunks here comes out far larger than
+  // numThreads (chunkSize works out to roughly numThreads pixels per
+  // chunk), so the pool's own work queue keeps handing out many small
+  // chunks over the run instead of each thread claiming one giant,
+  // unbroken range for the whole pass. totalPixels can be smaller than
+  // numThreads (a tiny test image, say), so numChunks is floored at 1 to
+  // avoid a division by zero in chunkSize below.
   int numThreads = max(1, Runtime.getRuntime().availableProcessors());
   int totalPixels = RES1 * RES2;
-  int numChunks = max(1, min(totalPixels, numThreads));
+  int numChunks = max(1, totalPixels / numThreads);
   int chunkSize = (totalPixels + numChunks - 1) / numChunks; // ceiling division
 
   java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
@@ -231,14 +234,14 @@ void ShadeViewport () {
     final int npTo = min(totalPixels, chunkStart + chunkSize);
 
     pass1Futures.add(executor.submit(() -> {
-      float[] ray_start = new float[3];
-      float[] ray_direction = new float[3];
-
       for (int np = npFrom; np < npTo; np++) {
         int Image_X_i = np % RES1;
         int Image_Y_i = np / RES1;
         float Image_X = Image_X_i - halfRES1;
         float Image_Y = Image_Y_i - halfRES2;
+
+        float[] ray_start = new float[3];
+        float[] ray_direction = new float[3];
 
         float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
         ray_end[0] *= invScale;
