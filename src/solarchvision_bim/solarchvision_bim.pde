@@ -106,6 +106,8 @@ int InitializationStep = 0;
 int stepAfterInitialization = 0;
 
 void draw () {
+  if (isShadingViewport) return;
+
   WIN3D.processHeldKey();
   UI_menuBar.processHeldKey();
   UI_consoleBar.processHeldKey();
@@ -157,17 +159,19 @@ void draw () {
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {
-        draw_WIN3D_layers();
-        draw_STUDY_hover();
-        draw_UI_layers();
+        if (!isShadingViewport) {
+          draw_WIN3D_layers();
+          draw_STUDY_hover();
+          draw_UI_layers();
 
-        if(stepAfterInitialization == 1) {
-          UI_consoleBar.drawEmptyDirective();
-        }
+          if(stepAfterInitialization == 1) {
+            UI_consoleBar.drawEmptyDirective();
+          }
 
-        if (FRAME_record_IMG) {
-          RecordFrame();
-          FRAME_record_IMG = false;
+          if (FRAME_record_IMG) {
+            RecordFrame();
+            FRAME_record_IMG = false;
+          }
         }
       }
     }
@@ -194,6 +198,7 @@ void draw () {
 }
 
 void keyPressed (KeyEvent e) {
+  if (isShadingViewport) return;
 
   if (frameCount > Last_initializationStep) {
 
@@ -277,6 +282,7 @@ void keyPressed (KeyEvent e) {
 }
 
 void keyReleased () {
+  if (isShadingViewport) return;
 
   WIN3D.keyReleased();
   UI_menuBar.keyReleased();

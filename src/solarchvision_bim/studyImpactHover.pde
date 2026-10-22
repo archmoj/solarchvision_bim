@@ -87,6 +87,8 @@ boolean studyHover_wasShownLastFrame = false;
 // relative to WIN3D.draw(), for the same reason: this has to run whether
 // or not STUDY itself redrew this particular frame.
 void draw_STUDY_hover () {
+  if (isShadingViewport) return;
+
   if (!STUDY.include) return;
 
   if (STUDY.renderGeneration != studyHover_capturedGeneration) {

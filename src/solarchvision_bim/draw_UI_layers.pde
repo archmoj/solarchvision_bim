@@ -1,4 +1,6 @@
 void draw_UI_layers () {
+  if (isShadingViewport) return;
+
   if(updateBars) {
     updateBars = false;
     UI_menuBar.revise();
