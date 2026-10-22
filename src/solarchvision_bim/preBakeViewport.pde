@@ -2,18 +2,9 @@ void preBakeViewport () {
 
   int preBakeViewport_startMillis = millis();
 
-  // Every message this function itself prints - per-file "saved" lines,
-  // phase timings - is buffered here and flushed with one print() right
-  // before returning, instead of each going to the console as it
-  // happens. There's no longer a live progress bar to buffer in the
-  // first place: see the ray-casting loop's own comment below for why it
-  // was dropped once this function's own output was already fully
-  // deferred to the end, and the loop itself went parallel.
-  StringBuilder preBakeLog = new StringBuilder();
-
   showWaitCursor();
 
-  preBakeLog.append("PreBaking for Direct and Diffuse models. Please wait...\n");
+  println("PreBaking for Direct and Diffuse models. Please wait...");
 
   // Force a fresh build - see ShadeViewport.pde's own comment on this:
   // Model2Ds.addToFaceGrid()'s tree/person billboards are camera-facing,
@@ -33,7 +24,7 @@ void preBakeViewport () {
   // preBakeViewport_startMillis, which stays fixed for the one final
   // grand-total line.
   int phaseStartMillis = millis();
-  preBakeLog.append("buildFaceGrid() finished in " + nf((phaseStartMillis - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s\n");
+  println("buildFaceGrid() finished in " + nf((phaseStartMillis - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
 
   cameraIndex = 0;
 
@@ -149,12 +140,16 @@ void preBakeViewport () {
   // own comment in isIntersected_Faces.pde for what had to change there
   // first to make that true.
   //
-  // No live progress bar any more: this function's own output is already
-  // fully buffered into preBakeLog and only printed once, at the very
-  // end (see that variable's own comment) - so a bar nobody can see
-  // while it's happening bought nothing, and accurately drawing one
-  // against pixels finishing out of order across threads would have been
-  // real added complexity for that same nonexistent benefit.
+  // The progress bar tracks completed CHUNKS now, not individual pixels:
+  // chunks finish concurrently and out of order across threads, so
+  // there's no single increasing np to measure percent-through-the-image
+  // against any more. Each chunk, on finishing, grabs progressPrintLock
+  // and prints however many of the 100 block characters its own
+  // completion newly covers (same floor()-based delta as the old
+  // per-pixel version, just keyed on chunks-done instead of
+  // pixels-done) - so the bar still reaches exactly 100 characters when
+  // the last chunk finishes, same as before, just filled in out of
+  // left-to-right order as whichever chunk happens to finish next.
   int numThreads = max(1, Runtime.getRuntime().availableProcessors());
   int totalPixels = RES1 * RES2;
   // Several chunks per thread, not one: a pixel that hits geometry costs
@@ -166,6 +161,18 @@ void preBakeViewport () {
   // mostly-background chunks, sit idle.
   int numChunks = min(totalPixels, numThreads * 8);
   int chunkSize = (totalPixels + numChunks - 1) / numChunks; // ceiling division
+
+  // completedChunks is only ever mutated inside the synchronized block
+  // below, alongside printedBlocks - the lock, not the atomic increment,
+  // is what keeps two threads from computing overlapping block-character
+  // ranges, so a plain int[1] holder (mutable through the lambda's
+  // effectively-final reference to it) is enough; no actual AtomicInteger
+  // needed.
+  final int[] completedChunks = {0};
+  final int[] printedBlocks = {0};
+  final Object progressPrintLock = new Object();
+
+  if (control != USER_AUTO) progressBarHeader();
 
   java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
   java.util.List<java.util.concurrent.Future<?>> futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
@@ -317,6 +324,21 @@ void preBakeViewport () {
 
         }
       }
+
+      if (control != USER_AUTO) {
+        synchronized (progressPrintLock) {
+          int done = ++completedChunks[0];
+          int targetBlocks = floor(100.0f * done / numChunks);
+          if (targetBlocks > printedBlocks[0]) {
+            StringBuilder barBuffer = new StringBuilder();
+            for (int c = printedBlocks[0]; c < targetBlocks; c++) {
+              barBuffer.append('█');
+            }
+            print(barBuffer.toString()); // one print() call instead of `delta` calls
+            printedBlocks[0] = targetBlocks;
+          }
+        }
+      }
     }));
   }
 
@@ -335,7 +357,19 @@ void preBakeViewport () {
   }
   executor.shutdown();
 
-  preBakeLog.append("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
+  // Rounding each chunk's own target down to whole block characters can
+  // leave the bar a character or two short of 100 once every chunk has
+  // actually finished (same as the old per-pixel version's own
+  // wrap-up) - top it up here, single-threaded, now that nothing's
+  // still writing to printedBlocks.
+  if (control != USER_AUTO) {
+    for (int c = printedBlocks[0]; c < 100; c++) {
+      print("█");
+    }
+    println();
+  }
+
+  println("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
   phaseStartMillis = millis();
 
   for (int m = 0; m < n_Map; m++) {
@@ -352,11 +386,11 @@ void preBakeViewport () {
 
       Direct_RGBA[m][SHD].save(File_Name + ".png");
 
-      preBakeLog.append(File_Name + ".png\n");
+      println(File_Name + ".png");
     }
   }
 
-  preBakeLog.append("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
+  println("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
   phaseStartMillis = millis();
 
   PImage[] Diffuse_RGBA = new PImage [2];
@@ -390,10 +424,10 @@ void preBakeViewport () {
 
     Diffuse_RGBA[SHD].save(File_Name + ".png");
 
-    preBakeLog.append(File_Name + ".png\n");
+    println(File_Name + ".png");
   }
 
-  preBakeLog.append("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s\n");
+  println("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
 
   // Bake the Model2Ds-only (tree/person) visibility mask alongside the
   // Direct/Diffuse images just saved above, at this same prebake
@@ -408,7 +442,7 @@ void preBakeViewport () {
   float preShadingQuality = WIN3D.shadingQuality;
   WIN3D.shadingQuality = 1;
 
-  preBakeLog.append("Baking Model2Ds visibility mask (ShadeViewport() call #1 below)...\n");
+  println("Baking Model2Ds visibility mask (ShadeViewport() call #1 below)...");
   noShadeOnlyVisible2DTextures = true;
   ShadeViewport();
   noShadeOnlyVisible2DTextures = false;
@@ -429,7 +463,7 @@ void preBakeViewport () {
   WIN3D.dX = pre_faceEdges_dX * FACE_EDGE_RESOLUTION_MULTIPLIER;
   WIN3D.dY = pre_faceEdges_dY * FACE_EDGE_RESOLUTION_MULTIPLIER;
 
-  preBakeLog.append("Baking face-edges texture at " + FACE_EDGE_RESOLUTION_MULTIPLIER + "x resolution (ShadeViewport() call #2 below)...\n");
+  println("Baking face-edges texture at " + FACE_EDGE_RESOLUTION_MULTIPLIER + "x resolution (ShadeViewport() call #2 below)...");
   noShadeOnlyVisibleFaceEdges = true;
   ShadeViewport();
   noShadeOnlyVisibleFaceEdges = false;
@@ -446,10 +480,7 @@ void preBakeViewport () {
   WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
 
   // Includes the two ShadeViewport() calls above (2Ds mask, face-edges
-  // texture) - each also prints its own elapsed time on the way (live,
-  // not buffered into preBakeLog - see that variable's own comment), so
-  // this total and their two sub-totals are both visible, not just the sum.
-  preBakeLog.append("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s\n");
-
-  print(preBakeLog.toString()); // single flush - everything above printed here, not as it happened
+  // texture) - each also prints its own elapsed time on the way, so this
+  // total and their two sub-totals are both visible, not just the sum.
+  println("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
 }
