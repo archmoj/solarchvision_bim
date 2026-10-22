@@ -150,6 +150,18 @@ class FunctionsTest {
     assertFalse(funcs.isInside_Triangle(new float[]{2, 2, 0}, A, B, C));
   }
 
+  // The raw-coordinate overload testFaceHit() now calls directly (see
+  // isIntersected_Faces.pde's own comment on avoiding a float[3]
+  // allocation per candidate face) must agree with the float[]-array one
+  // above, which it now delegates to internally.
+  @Test
+  void isInside_Triangle_rawCoordinateOverload_agreesWithTheArrayOverload () {
+    assertTrue(funcs.isInside_Triangle(
+      0.25f, 0.25f, 0,  0, 0, 0,  1, 0, 0,  0, 1, 0));
+    assertFalse(funcs.isInside_Triangle(
+      2, 2, 0,  0, 0, 0,  1, 0, 0,  0, 1, 0));
+  }
+
   @Test
   void is_zero_usesEPSILON_POSITIONAsTheDefaultTolerance () {
     assertTrue(funcs.is_zero(0.00001f));

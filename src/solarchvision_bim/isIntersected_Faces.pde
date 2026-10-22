@@ -313,24 +313,25 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
   if (n <= 2) return FLOAT_huge;
 
   if (n == 3) {
-    float[] A = {
-      entirePointsX.get(faceNodes[0]),
-      entirePointsY.get(faceNodes[0]),
-      entirePointsZ.get(faceNodes[0])
-    };
-    float[] B = {
-      entirePointsX.get(faceNodes[1]),
-      entirePointsY.get(faceNodes[1]),
-      entirePointsZ.get(faceNodes[1])
-    };
-    float[] C = {
-      entirePointsX.get(faceNodes[2]),
-      entirePointsY.get(faceNodes[2]),
-      entirePointsZ.get(faceNodes[2])
-    };
+    // Plain scalars, not float[3] A/B/C, deliberately: this branch runs
+    // for every candidate face the grid walk touches, for every one of
+    // isIntersected_Faces()'s many calls per ray (see that function's own
+    // comment on the volume), so three fresh array allocations here were
+    // three fresh pieces of garbage per candidate face, not per ray.
+    // isInside_Triangle() below has a matching raw-coordinate overload
+    // for the same reason - see Functions.pde's own comment on it.
+    float Ax = entirePointsX.get(faceNodes[0]);
+    float Ay = entirePointsY.get(faceNodes[0]);
+    float Az = entirePointsZ.get(faceNodes[0]);
+    float Bx = entirePointsX.get(faceNodes[1]);
+    float By = entirePointsY.get(faceNodes[1]);
+    float Bz = entirePointsZ.get(faceNodes[1]);
+    float Cx = entirePointsX.get(faceNodes[2]);
+    float Cy = entirePointsY.get(faceNodes[2]);
+    float Cz = entirePointsZ.get(faceNodes[2]);
 
-    float ACx = A[0] - C[0], ACy = A[1] - C[1], ACz = A[2] - C[2];
-    float BAx = B[0] - A[0], BAy = B[1] - A[1], BAz = B[2] - A[2];
+    float ACx = Ax - Cx, ACy = Ay - Cy, ACz = Az - Cz;
+    float BAx = Bx - Ax, BAy = By - Ay, BAz = Bz - Az;
     float nx = ACy * BAz - ACz * BAy;
     float ny = ACz * BAx - ACx * BAz;
     float nz = ACx * BAy - ACy * BAx;
@@ -350,9 +351,9 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
     if (R < FLOAT_tiny && R > -FLOAT_tiny) return FLOAT_huge; // ray truly parallel to plane
 
     float face_offset = (
-      (A[0] + B[0] + C[0]) * nx +
-      (A[1] + B[1] + C[1]) * ny +
-      (A[2] + B[2] + C[2]) * nz
+      (Ax + Bx + Cx) * nx +
+      (Ay + By + Cy) * ny +
+      (Az + Bz + Cz) * nz
     ) / 3.0;
     float numer = (ray_pnt[0] * nx + ray_pnt[1] * ny + ray_pnt[2] * nz) - face_offset;
     float dist2intersect = numer / R;
@@ -362,7 +363,7 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
     P[1] = dist2intersect * ray_dir[1] + ray_pnt[1];
     P[2] = dist2intersect * ray_dir[2] + ray_pnt[2];
 
-    boolean InPoly = funcs.isInside_Triangle(P, A, B, C);
+    boolean InPoly = funcs.isInside_Triangle(P[0], P[1], P[2], Ax, Ay, Az, Bx, By, Bz, Cx, Cy, Cz);
 
     if (!InPoly) return FLOAT_huge;
     if (!passesAlphaTest(f, P)) return FLOAT_huge; // e.g. a Model2Ds tree quad hit outside its foliage silhouette
@@ -415,10 +416,10 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
       P[1] = dist2intersect * ray_dir[1] + ray_pnt[1];
       P[2] = dist2intersect * ray_dir[2] + ray_pnt[2];
 
-      float[] A = {Ax, Ay, Az};
-      float[] B = {Bx, By, Bz};
-      float[] G = {Gx, Gy, Gz};
-      if (funcs.isInside_Triangle(P, A, B, G)) {
+      // Same reasoning as the n==3 branch above: raw coordinates, no
+      // A/B/G float[3] wrappers - this runs per candidate edge, per
+      // candidate face, per ray.
+      if (funcs.isInside_Triangle(P[0], P[1], P[2], Ax, Ay, Az, Bx, By, Bz, Gx, Gy, Gz)) {
         if (!passesAlphaTest(f, P)) return FLOAT_huge; // same alpha gate as the triangle branch above
         if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
         return dist2intersect;

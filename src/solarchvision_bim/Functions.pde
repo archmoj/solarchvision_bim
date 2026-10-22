@@ -192,15 +192,33 @@ class Functions {
   }
 
   boolean isInside_Triangle (float[] P, float[] A, float[] B, float[] C) {
-    float pX = P[0] - C[0];
-    float pY = P[1] - C[1];
-    float pZ = P[2] - C[2];
-    float aX = A[0] - C[0];
-    float aY = A[1] - C[1];
-    float aZ = A[2] - C[2];
-    float bX = B[0] - C[0];
-    float bY = B[1] - C[1];
-    float bZ = B[2] - C[2];
+    return isInside_Triangle(P[0], P[1], P[2], A[0], A[1], A[2], B[0], B[1], B[2], C[0], C[1], C[2]);
+  }
+
+  // Same test, raw coordinates instead of float[3] args - lets a hot
+  // caller (testFaceHit() below, called for every candidate face every
+  // grid-walk step of every ray cast - see isIntersected_Faces.pde's own
+  // comment on that volume) skip wrapping each point in a throwaway
+  // array just to call this, when it already has the coordinates as
+  // plain floats. The float[]-array overload above is unchanged and
+  // still what every other caller (Faces.pde, Polylines.pde, Select3D.pde,
+  // Land3D.pde) uses, since none of them are in a per-candidate-face loop
+  // like this one.
+  boolean isInside_Triangle (
+    float Px, float Py, float Pz,
+    float Ax, float Ay, float Az,
+    float Bx, float By, float Bz,
+    float Cx, float Cy, float Cz
+  ) {
+    float pX = Px - Cx;
+    float pY = Py - Cy;
+    float pZ = Pz - Cz;
+    float aX = Ax - Cx;
+    float aY = Ay - Cy;
+    float aZ = Az - Cz;
+    float bX = Bx - Cx;
+    float bY = By - Cy;
+    float bZ = Bz - Cz;
     float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
     float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
     float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
