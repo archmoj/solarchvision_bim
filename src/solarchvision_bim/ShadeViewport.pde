@@ -133,6 +133,20 @@ void ShadeViewport () {
   Shade_RGBA = createImage(RES1, RES2, ARGB);
   Shade_RGBA.loadPixels();
 
+  // DIAGNOSTIC BUILD: every pixel write below goes into this plain int[]
+  // first, not into Shade_RGBA.pixels[] directly - a bisection of the
+  // user's own hypothesis, that PImage's own pixel storage (vs. a bare
+  // Java array) is where the still-remaining stray dots come from.
+  // Shade_RGBA.pixels[] is copied from this buffer in one single-
+  // threaded System.arraycopy() right before updatePixels(), after both
+  // parallel passes have finished - so during the whole parallel section,
+  // nothing touches Shade_RGBA itself at all. If the dots persist against
+  // this buffer, PImage is cleared as a suspect and the remaining race is
+  // in the computation itself; if they disappear, the hypothesis is
+  // confirmed and every write below should stay routed through a plain
+  // buffer like this one permanently, not just for this test.
+  int[] shadeBuffer = new int[RES1 * RES2];
+
   // Maps an offset in RES1/RES2 pixel space back to the click-space
   // calculate_Click3D() below expects. WIN3D.scale is only ever refreshed
   // inside WIN3D.renderFrame() - the normal per-frame draw() cycle - so
@@ -237,7 +251,7 @@ void ShadeViewport () {
   // numThreads (a tiny test image, say), so numChunks is floored at 1 to
   // avoid a division by zero in chunkSize below.
   int numThreads = max(1, Runtime.getRuntime().availableProcessors());
-  int totalPixels = RES1 * RES2;
+  int totalPixels = shadeBuffer.length;
   int numChunks = max(1, totalPixels / numThreads);
   int chunkSize = (totalPixels + numChunks - 1) / numChunks; // ceiling division
 
@@ -327,9 +341,9 @@ void ShadeViewport () {
             if (billboardTex != null) {
               float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
               int[] texel = faceTexturePixel(hitFace, hitPoint);
-              Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
+              shadeBuffer[np] = billboardTex.get(texel[0], texel[1]);
             } else {
-              Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+              shadeBuffer[np] = color(0, 0, 0, 0);
             }
             continue;
           }
@@ -348,7 +362,7 @@ void ShadeViewport () {
             // to.
             float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
             int[] texel = faceTexturePixel(hitFace, hitPoint);
-            Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
+            shadeBuffer[np] = billboardTex.get(texel[0], texel[1]);
           } else {
             // Every opaque surface (faces, terrain, model1ds), and a person
             // whenever peopleUseExactTexture is off: unlike a tree, a
@@ -404,20 +418,84 @@ void ShadeViewport () {
               float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
               int[] texel = faceTexturePixel(hitFace, hitPoint);
               int texAlpha = (billboardTex.get(texel[0], texel[1]) >> 24) & 0xFF;
-              Shade_RGBA.pixels[np] = color(v, v, v, texAlpha);
+              shadeBuffer[np] = color(v, v, v, texAlpha);
             } else {
-              Shade_RGBA.pixels[np] = color(v, v, v, 255);
+              shadeBuffer[np] = color(v, v, v, 255);
             }
           }
         } else if (noShadeOnlyVisibleFaceEdges) {
           faceEdgeHit[np] = FACE_EDGE_HIT_BACKGROUND;
         } else {
-          Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+          shadeBuffer[np] = color(0, 0, 0, 0);
         }
       }
     }));
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
+
+  // DIAGNOSTIC BUILD: redundantly recompute just the primary ray's hit/
+  // miss decision for every pixel, single-threaded, with its own fresh
+  // local stamp state (no sharing with anything the parallel pass above
+  // used), and compare it against what shadeBuffer actually got from the
+  // parallel run. This is a ground-truth check, not a performance path -
+  // a single thread casting rays one at a time cannot race with itself,
+  // so any mismatch here is proof the parallel run computed a genuinely
+  // different answer for that exact pixel, not just noise from comparing
+  // two separate program runs' PNGs. Only meaningful in non-mask,
+  // non-face-edges mode, where shadeBuffer's alpha channel (0 vs. >0)
+  // directly reflects RxP[0]'s hit/miss - the mode this is being run
+  // against right now. Prints the first 25 mismatches with enough detail
+  // (coordinates, which face each run thought it hit) to chase further;
+  // remove this block once the remaining race is found.
+  if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
+    int[] seqStamp = new int[faceTestStampSize];
+    int[] seqCounter = { 0 };
+    int mismatches = 0;
+
+    for (int np = 0; np < totalPixels; np++) {
+      int Image_X_i = np % RES1;
+      int Image_Y_i = np / RES1;
+      float Image_X = Image_X_i - halfRES1;
+      float Image_Y = Image_Y_i - halfRES2;
+
+      float[] ray_start = new float[3];
+      float[] ray_direction = new float[3];
+
+      float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
+      ray_end[0] *= invScale;
+      ray_end[1] *= invScale;
+      ray_end[2] *= invScale;
+
+      ray_start[0] = baseX;
+      ray_start[1] = baseY;
+      ray_start[2] = baseZ;
+
+      if (isOrtho) {
+        ray_start[0] += ray_end[0] - centerX;
+        ray_start[1] += ray_end[1] - centerY;
+        ray_start[2] += ray_end[2] - centerZ;
+      }
+
+      ray_direction[0] = ray_end[0] - ray_start[0];
+      ray_direction[1] = ray_end[1] - ray_start[1];
+      ray_direction[2] = ray_end[2] - ray_start[2];
+
+      float[] seqRxP = intersectAll(ray_start, ray_direction, 0, seqStamp, seqCounter);
+      boolean seqHit = seqRxP[0] >= 0;
+      boolean parallelHit = ((shadeBuffer[np] >> 24) & 0xFF) != 0;
+
+      if (seqHit != parallelHit) {
+        mismatches++;
+        if (mismatches <= 25) {
+          println("MISMATCH np=" + np + " (x=" + Image_X_i + ", y=" + Image_Y_i + "): " +
+            "sequential=" + (seqHit ? ("HIT face " + (int) seqRxP[0]) : "MISS") + ", " +
+            "parallel=" + (parallelHit ? "HIT" : "MISS") + ", " +
+            "parallel alpha=" + ((shadeBuffer[np] >> 24) & 0xFF));
+        }
+      }
+    }
+    println("Self-verification: " + mismatches + " / " + totalPixels + " pixels disagreed between the parallel run and a fresh single-threaded recompute.");
+  }
 
   // Second pass for the face-edges mode: now that every pixel's hit face
   // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
@@ -465,7 +543,7 @@ void ShadeViewport () {
             );
           }
 
-          Shade_RGBA.pixels[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
+          shadeBuffer[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
         }
       }));
     }
@@ -473,6 +551,13 @@ void ShadeViewport () {
   }
 
   executor.shutdown();
+
+  // Single-threaded, after every worker thread has finished (executor.
+  // shutdown() above only stops new tasks from being submitted - both
+  // awaitAll() calls above are what actually guarantee every chunk's
+  // writes into shadeBuffer are done and visible here). This is the only
+  // point in this whole function that touches Shade_RGBA.pixels[].
+  System.arraycopy(shadeBuffer, 0, Shade_RGBA.pixels, 0, shadeBuffer.length);
 
   Shade_RGBA.updatePixels();
 
