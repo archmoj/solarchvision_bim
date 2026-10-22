@@ -158,21 +158,26 @@ void ShadeViewport () {
   float baseZ = WIN3D.cameraZ * invScale;
 
   // For orthographic views, the ray-center offset only depends on the
-  // camera/view, not on the pixel -- compute it once per frame.
-  float centerX = 0, centerY = 0, centerZ = 0;
+  // camera/view, not on the pixel -- compute it once per frame. Assigned
+  // exactly once along either path (not a default value followed by a
+  // conditional overwrite) so these stay effectively final - the
+  // parallel pixel loop below captures them in a lambda, which requires
+  // it.
+  float centerX, centerY, centerZ;
   if (isOrtho) {
     float[] ray_center = WIN3D.calculate_Click3D(0, 0);
     centerX = ray_center[0] * invScale;
     centerY = ray_center[1] * invScale;
     centerZ = ray_center[2] * invScale;
+  } else {
+    centerX = 0;
+    centerY = 0;
+    centerZ = 0;
   }
 
   float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, 0);
   float[] SunV = { SunR[1], SunR[2], SunR[3] };
   float[] SunV_unit = funcs.vec3_unit(new float[]{ SunV[0], SunV[1], SunV[2] });
-
-  float[] ray_start = new float[3];
-  float[] ray_direction = new float[3];
 
   // First pass (below) just records which Face each pixel's ray actually
   // hit, -1 for "didn't hit a Face" (no hit at all, or hit something else
@@ -190,168 +195,209 @@ void ShadeViewport () {
   float[] faceEdgeNormalY = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
   float[] faceEdgeNormalZ = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
 
-  for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
-    float Image_Y = Image_Y_i - halfRES2;
+  // This pass is independent per pixel - it reads only data that's fixed
+  // for this whole call (camera, geometry, sun direction) and writes
+  // only its own np's slot of Shade_RGBA.pixels[]/faceEdgeHit[]/
+  // faceEdgeNormalX,Y,Z[] - so there's nothing for two pixels' work to
+  // race on, same reasoning as preBakeViewport.pde's own parallel
+  // ray-casting loop (see that loop's own comment). isIntersected_Faces()
+  // is already safe to call from multiple threads at once (see
+  // RayStampState's own comment in isIntersected_Faces.pde); unlike
+  // preBakeViewport.pde's diffuse/direct rays, the single shadow ray this
+  // function casts per pixel has always been called with firstGuess=0 (no
+  // coherence hint carried between pixels even before this), so there's
+  // no per-chunk local hint state needed here. ray_start/ray_direction
+  // used to be declared once above the loop and mutated in place every
+  // pixel - now each chunk below gets its own pair instead, since sharing
+  // one mutable pair across threads would let two pixels' in-flight rays
+  // stomp on each other.
+  //
+  // Unlike preBakeViewport.pde's own loop, there's no per-pixel shortcut
+  // here that skips most of the work (no below-the-horizon / backing-face
+  // early-out) - every pixel pays roughly the same cost (one primary ray,
+  // optionally one shadow ray) - so there's much less load imbalance to
+  // correct for, and one chunk per thread is enough; no need for
+  // preBakeViewport.pde's extra chunks-per-thread split.
+  int numThreads = max(1, Runtime.getRuntime().availableProcessors());
+  int totalPixels = RES1 * RES2;
+  int numChunks = max(1, min(totalPixels, numThreads));
+  int chunkSize = (totalPixels + numChunks - 1) / numChunks; // ceiling division
 
-    for (int Image_X_i = 0; Image_X_i < RES1; Image_X_i++) {
-      float Image_X = Image_X_i - halfRES1;
-      int np = Image_Y_i * RES1 + Image_X_i;
+  java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
 
-      float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
-      ray_end[0] *= invScale;
-      ray_end[1] *= invScale;
-      ray_end[2] *= invScale;
+  java.util.List<java.util.concurrent.Future<?>> pass1Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+  for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
+    final int npFrom = chunkStart;
+    final int npTo = min(totalPixels, chunkStart + chunkSize);
 
-      ray_start[0] = baseX;
-      ray_start[1] = baseY;
-      ray_start[2] = baseZ;
+    pass1Futures.add(executor.submit(() -> {
+      float[] ray_start = new float[3];
+      float[] ray_direction = new float[3];
 
-      if (isOrtho) {
-        ray_start[0] += ray_end[0] - centerX;
-        ray_start[1] += ray_end[1] - centerY;
-        ray_start[2] += ray_end[2] - centerZ;
-      }
+      for (int np = npFrom; np < npTo; np++) {
+        int Image_X_i = np % RES1;
+        int Image_Y_i = np / RES1;
+        float Image_X = Image_X_i - halfRES1;
+        float Image_Y = Image_Y_i - halfRES2;
 
-      ray_direction[0] = ray_end[0] - ray_start[0];
-      ray_direction[1] = ray_end[1] - ray_start[1];
-      ray_direction[2] = ray_end[2] - ray_start[2];
+        float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
+        ray_end[0] *= invScale;
+        ray_end[1] *= invScale;
+        ray_end[2] *= invScale;
 
-      float[] RxP = intersectAll(ray_start, ray_direction);
+        ray_start[0] = baseX;
+        ray_start[1] = baseY;
+        ray_start[2] = baseZ;
 
-      if (RxP[0] >= 0) {
-        int hitFace = (int) RxP[0];
-
-        if (noShadeOnlyVisibleFaceEdges) {
-          // entireFaces_facesEndIndex (isIntersected_Faces.pde) is the
-          // exclusive upper bound of the index range allFaces contributed
-          // to the shared grid - anything at or past it hit a Model1D or
-          // a Model2Ds billboard instead, not a Face.
-          if (hitFace < entireFaces_facesEndIndex) {
-            faceEdgeHit[np] = hitFace;
-            float[] n = funcs.vec3_unit(new float[]{ RxP[5], RxP[6], RxP[7] });
-            faceEdgeNormalX[np] = n[0];
-            faceEdgeNormalY[np] = n[1];
-            faceEdgeNormalZ[np] = n[2];
-          } else {
-            faceEdgeHit[np] = FACE_EDGE_HIT_OTHER_OBJECT;
-          }
-          continue;
+        if (isOrtho) {
+          ray_start[0] += ray_end[0] - centerX;
+          ray_start[1] += ray_end[1] - centerY;
+          ray_start[2] += ray_end[2] - centerZ;
         }
 
-        // Both trees and people are Model2Ds billboards and so both carry
-        // a texture here (entireFaceAlphaTexture[hitFace] != null). A tree
-        // is always pasted with its own real photo colors (below) -
-        // faceCastsShadow() is true for it, the same flag isIntersected_
-        // Faces()'s own ignoreNonShadowCasters uses below, since a tree
-        // does cast shadows. A person (faceCastsShadow() false - they
-        // don't) goes either the same way or through the flat grayscale
-        // radiance fill every opaque surface gets, according to
-        // Model2Ds.peopleUseExactTexture - see that field's own comment.
-        PImage billboardTex = (entireFaceAlphaTexture != null && hitFace < entireFaceAlphaTexture.size())
-          ? entireFaceAlphaTexture.get(hitFace) : null;
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
 
-        if (noShadeOnlyVisible2DTextures) {
-          // Pure 2D-object (tree/person) visibility mask: paint the real
-          // photographic texel at this hit the same way paintExactTexture
-          // does below, via the same faceTexturePixel() UV mapping, so
-          // this mask and the live shaded preview can never disagree on
-          // which pixel a hit corresponds to. Every other pixel - an
-          // opaque surface hit, or no hit at all (the RxP[0] < 0 branch
-          // below already writes fully transparent) - is left fully
-          // transparent, and none of the shadow/radiance work further
-          // down runs, since it's irrelevant to a pure mask.
-          if (billboardTex != null) {
+        float[] RxP = intersectAll(ray_start, ray_direction);
+
+        if (RxP[0] >= 0) {
+          int hitFace = (int) RxP[0];
+
+          if (noShadeOnlyVisibleFaceEdges) {
+            // entireFaces_facesEndIndex (isIntersected_Faces.pde) is the
+            // exclusive upper bound of the index range allFaces contributed
+            // to the shared grid - anything at or past it hit a Model1D or
+            // a Model2Ds billboard instead, not a Face.
+            if (hitFace < entireFaces_facesEndIndex) {
+              faceEdgeHit[np] = hitFace;
+              float[] n = funcs.vec3_unit(new float[]{ RxP[5], RxP[6], RxP[7] });
+              faceEdgeNormalX[np] = n[0];
+              faceEdgeNormalY[np] = n[1];
+              faceEdgeNormalZ[np] = n[2];
+            } else {
+              faceEdgeHit[np] = FACE_EDGE_HIT_OTHER_OBJECT;
+            }
+            continue;
+          }
+
+          // Both trees and people are Model2Ds billboards and so both carry
+          // a texture here (entireFaceAlphaTexture[hitFace] != null). A tree
+          // is always pasted with its own real photo colors (below) -
+          // faceCastsShadow() is true for it, the same flag isIntersected_
+          // Faces()'s own ignoreNonShadowCasters uses below, since a tree
+          // does cast shadows. A person (faceCastsShadow() false - they
+          // don't) goes either the same way or through the flat grayscale
+          // radiance fill every opaque surface gets, according to
+          // Model2Ds.peopleUseExactTexture - see that field's own comment.
+          PImage billboardTex = (entireFaceAlphaTexture != null && hitFace < entireFaceAlphaTexture.size())
+            ? entireFaceAlphaTexture.get(hitFace) : null;
+
+          if (noShadeOnlyVisible2DTextures) {
+            // Pure 2D-object (tree/person) visibility mask: paint the real
+            // photographic texel at this hit the same way paintExactTexture
+            // does below, via the same faceTexturePixel() UV mapping, so
+            // this mask and the live shaded preview can never disagree on
+            // which pixel a hit corresponds to. Every other pixel - an
+            // opaque surface hit, or no hit at all (the RxP[0] < 0 branch
+            // below already writes fully transparent) - is left fully
+            // transparent, and none of the shadow/radiance work further
+            // down runs, since it's irrelevant to a pure mask.
+            if (billboardTex != null) {
+              float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+              int[] texel = faceTexturePixel(hitFace, hitPoint);
+              Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
+            } else {
+              Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+            }
+            continue;
+          }
+
+          boolean paintExactTexture = (billboardTex != null) && (faceCastsShadow(hitFace) || allModel2Ds.peopleUseExactTexture);
+
+          if (paintExactTexture) {
+            // Paint the real photographic color at the exact pixel the ray
+            // hit, instead of computing a flat grayscale radiance value for
+            // it at all - a tree always takes this path; a person does too
+            // when peopleUseExactTexture is on (the default). Reuses the
+            // very same UV mapping passesAlphaTest() (isIntersected_Faces.
+            // pde) already used to confirm this hit landed on a
+            // non-transparent part of the silhouette in the first place, so
+            // the two can never disagree on which pixel a hit corresponds
+            // to.
             float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
             int[] texel = faceTexturePixel(hitFace, hitPoint);
             Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
           } else {
-            Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+            // Every opaque surface (faces, terrain, model1ds), and a person
+            // whenever peopleUseExactTexture is off: unlike a tree, a
+            // person should receive shadows - show up darker when something
+            // else blocks the sun from them - so this still runs the same
+            // diffuse/direct radiance computation every other surface gets.
+            // isIntersected_Faces()'s own ignoreNonShadowCasters=true means
+            // a person can never shadow anything else (or even themselves)
+            // in this same occlusion test, per billboardTex's own comment
+            // above - that part is unconditional, independent of
+            // peopleUseExactTexture (which only changes how they're
+            // painted, not whether they cast a shadow).
+            float[] face_norm = { RxP[5], RxP[6], RxP[7] };
+            face_norm = funcs.vec3_unit(face_norm);
+
+            if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces
+              face_norm[0] *= -1;
+              face_norm[1] *= -1;
+              face_norm[2] *= -1;
+            }
+
+            ray_start[0] = RxP[1];
+            ray_start[1] = RxP[2];
+            ray_start[2] = RxP[3];
+            ray_direction[0] = SunV[0];
+            ray_direction[1] = SunV[1];
+            ray_direction[2] = SunV[2];
+
+            float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+            float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
+
+            float valuesSUM_RAD = SkyMask; // diffuse radiation
+            if (isIntersected_Faces(ray_start, ray_direction, 0, true) == 0) {
+              float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+              if (SunMask <= 0) SunMask = 0; // removes backing faces
+
+              valuesSUM_RAD += SunMask; // direct radiation
+            }
+
+            float v = valuesSUM_RAD * 150;
+
+            if (billboardTex != null) {
+              // A person with peopleUseExactTexture off: the exact same
+              // flat grayscale radiance fill as any other opaque surface
+              // below (not their own photo colors tinted by it - they're
+              // just as much a plain gray radiance-mapped surface as a wall
+              // is in this mode, the texture's only job is giving that
+              // surface a person-shaped silhouette instead of a rectangle).
+              // So only alpha comes from the texture (the real,
+              // possibly-antialiased edge value at this pixel, for a soft
+              // silhouette boundary rather than a hard cutout) - color
+              // comes from v, same as the plain-gray branch.
+              float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+              int[] texel = faceTexturePixel(hitFace, hitPoint);
+              int texAlpha = (billboardTex.get(texel[0], texel[1]) >> 24) & 0xFF;
+              Shade_RGBA.pixels[np] = color(v, v, v, texAlpha);
+            } else {
+              Shade_RGBA.pixels[np] = color(v, v, v, 255);
+            }
           }
-          continue;
-        }
-
-        boolean paintExactTexture = (billboardTex != null) && (faceCastsShadow(hitFace) || allModel2Ds.peopleUseExactTexture);
-
-        if (paintExactTexture) {
-          // Paint the real photographic color at the exact pixel the ray
-          // hit, instead of computing a flat grayscale radiance value for
-          // it at all - a tree always takes this path; a person does too
-          // when peopleUseExactTexture is on (the default). Reuses the
-          // very same UV mapping passesAlphaTest() (isIntersected_Faces.
-          // pde) already used to confirm this hit landed on a
-          // non-transparent part of the silhouette in the first place, so
-          // the two can never disagree on which pixel a hit corresponds
-          // to.
-          float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
-          int[] texel = faceTexturePixel(hitFace, hitPoint);
-          Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
+        } else if (noShadeOnlyVisibleFaceEdges) {
+          faceEdgeHit[np] = FACE_EDGE_HIT_BACKGROUND;
         } else {
-          // Every opaque surface (faces, terrain, model1ds), and a person
-          // whenever peopleUseExactTexture is off: unlike a tree, a
-          // person should receive shadows - show up darker when something
-          // else blocks the sun from them - so this still runs the same
-          // diffuse/direct radiance computation every other surface gets.
-          // isIntersected_Faces()'s own ignoreNonShadowCasters=true means
-          // a person can never shadow anything else (or even themselves)
-          // in this same occlusion test, per billboardTex's own comment
-          // above - that part is unconditional, independent of
-          // peopleUseExactTexture (which only changes how they're
-          // painted, not whether they cast a shadow).
-          float[] face_norm = { RxP[5], RxP[6], RxP[7] };
-          face_norm = funcs.vec3_unit(face_norm);
-
-          if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces
-            face_norm[0] *= -1;
-            face_norm[1] *= -1;
-            face_norm[2] *= -1;
-          }
-
-          ray_start[0] = RxP[1];
-          ray_start[1] = RxP[2];
-          ray_start[2] = RxP[3];
-          ray_direction[0] = SunV[0];
-          ray_direction[1] = SunV[1];
-          ray_direction[2] = SunV[2];
-
-          float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-          float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
-
-          float valuesSUM_RAD = SkyMask; // diffuse radiation
-          if (isIntersected_Faces(ray_start, ray_direction, 0, true) == 0) {
-            float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-            valuesSUM_RAD += SunMask; // direct radiation
-          }
-
-          float v = valuesSUM_RAD * 150;
-
-          if (billboardTex != null) {
-            // A person with peopleUseExactTexture off: the exact same
-            // flat grayscale radiance fill as any other opaque surface
-            // below (not their own photo colors tinted by it - they're
-            // just as much a plain gray radiance-mapped surface as a wall
-            // is in this mode, the texture's only job is giving that
-            // surface a person-shaped silhouette instead of a rectangle).
-            // So only alpha comes from the texture (the real,
-            // possibly-antialiased edge value at this pixel, for a soft
-            // silhouette boundary rather than a hard cutout) - color
-            // comes from v, same as the plain-gray branch.
-            float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
-            int[] texel = faceTexturePixel(hitFace, hitPoint);
-            int texAlpha = (billboardTex.get(texel[0], texel[1]) >> 24) & 0xFF;
-            Shade_RGBA.pixels[np] = color(v, v, v, texAlpha);
-          } else {
-            Shade_RGBA.pixels[np] = color(v, v, v, 255);
-          }
+          Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
         }
-      } else if (noShadeOnlyVisibleFaceEdges) {
-        faceEdgeHit[np] = FACE_EDGE_HIT_BACKGROUND;
-      } else {
-        Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
       }
-    }
+    }));
   }
+  awaitAll(pass1Futures); // see parallel_utils.pde's own comment
+  executor.shutdown();
 
   // Second pass for the face-edges mode: now that every pixel's hit face
   // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
