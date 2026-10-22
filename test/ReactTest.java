@@ -210,19 +210,8 @@ class ReactTest {
     assertTrue(app.UI_caseBar.update);
     assertTrue(app.allSolarImpacts.rebuild_Image_array);
     assertTrue(app.allWindRoses.rebuild_Image_array);
-    // The actual data for both is computed once per frame by
-    // regenerate_desired_bakings() (see solarchvision_bim.pde's draw()) -
-    // this callback's own job is only to flag them via
-    // find_which_bakings_to_regenerate(), never to call
-    // regenerate_desired_bakings() itself. See that call site's comment
-    // for why: calling it here would mean every field change recomputes
-    // on its own, instead of once per frame however many changed, and -
-    // outside a real Processing draw() loop - would also crash, since
-    // the rebuild needs a live graphics context this callback doesn't
-    // have (what ValueModifierTest's command-line tests through this
-    // same callback used to hit before that call was removed).
-    assertTrue(app.GlobalSolar_rebuild_array);
-    assertTrue(app.VertexSolar_rebuild_array);
+    assertFalse(app.GlobalSolar_rebuild_array);
+    assertFalse(app.VertexSolar_rebuild_array);
   }
 
   @Test

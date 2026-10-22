@@ -674,6 +674,7 @@ void build_allActions() {
     WIN3D.shadingMode = SHADE.Vertex_Solar;
 
     VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true; // also update global to render the sky
 
     view_changed();
   });

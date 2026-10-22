@@ -58,8 +58,7 @@ void load_project (String myFile) {
     allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true;
 
-    VertexSolar_rebuild_array = true;
-    GlobalSolar_rebuild_array = true;
+    find_which_bakings_to_regenerate();
 
     VertexSolar_resize_array();
     GlobalSolar_resize_array();

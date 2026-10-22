@@ -482,10 +482,7 @@ class STUDY {
 
     developDataUpdate = true;
 
-    VertexSolar_rebuild_array = true;
-    GlobalSolar_rebuild_array = true;
-    allSolarImpacts.rebuild_Image_array = true;
-    allWindRoses.rebuild_Image_array = true;
+    find_which_bakings_to_regenerate();
     allSections.resize_solarImpact_array();
 
     UI_caseBar.revise();

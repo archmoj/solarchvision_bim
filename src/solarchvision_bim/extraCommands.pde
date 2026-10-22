@@ -2623,6 +2623,7 @@ String __SHADE_REAL__ (String[] parts) {
     String hint = "";
     WIN3D.shadingMode = SHADE.Vertex_Solar;
     VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true; // also update global to render the sky
     regenerate_desired_bakings();
     view_changed();
     return hint;

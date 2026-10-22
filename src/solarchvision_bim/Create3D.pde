@@ -2363,7 +2363,7 @@ class Create3D {
   // command exists for it, and creating one wasn't asked for here.
   void add_DefaultModel (int n) {
 
-    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    find_which_bakings_to_regenerate();
 
     /*
     if (Terrain.loadMesh) {

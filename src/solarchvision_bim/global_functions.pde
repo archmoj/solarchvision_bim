@@ -134,8 +134,15 @@ void HTMLprintVtexture (float u, float v) {
 
 void find_which_bakings_to_regenerate () {
 
-  GlobalSolar_rebuild_array = true;
-  VertexSolar_rebuild_array = true;
+  if (WIN3D.shadingMode == SHADE.Global_Solar) {
+    GlobalSolar_rebuild_array = true;
+  }
+
+  if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
+    VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true; // also update global to render the sky
+  }
+
   allSolarImpacts.rebuild_Image_array = true;
   allWindRoses.rebuild_Image_array = true;
 }
