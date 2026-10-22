@@ -331,7 +331,7 @@ class FaceIntersectionTest {
     app.gridCells[0] = new processing.data.IntList();
     app.gridCells[0].append(1); // our one real face, index 1
 
-    app.faceTestStamp = new int[2];
+    app.faceTestStampSize = 2; // getRayStampState() lazily sizes this thread's own array from this - see that method's own comment
 
     app.entireFaceCastsShadow = new java.util.ArrayList<Boolean>();
     app.entireFaceCastsShadow.add(true);  // index 0, unused here

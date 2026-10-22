@@ -20,8 +20,48 @@ float gridMinX, gridMinY, gridMinZ;
 float gridMaxX, gridMaxY, gridMaxZ;
 float cellSizeX, cellSizeY, cellSizeZ;
 
-int[] faceTestStamp;                 // per-face "tested in ray #N" marker
-int currentRayStamp = 0;             // bumped once per ray cast
+// Per-face "tested in ray #N" marker (faceTestStamp) and the counter that
+// stamps it (currentRayStamp), used by isIntersected_Faces()'s grid walk
+// below to avoid re-testing a candidate face twice within one ray's own
+// traversal. These must be PER-THREAD, not one shared pair: a ray cast
+// bumps currentRayStamp and stamps faces as it goes, and two rays
+// stamping the same faceTestStamp[] array concurrently (from different
+// threads - see preBakeViewport.pde's own parallel ray-casting loop)
+// would corrupt each other's "already tested" bookkeeping - a face could
+// get skipped because some OTHER thread's unrelated ray happened to stamp
+// it this instant, silently missing a real hit. A ThreadLocal gives every
+// thread (the single main/animation thread, same as before, for every
+// other caller - ShadeViewport.pde, calculate_VertexSolar_array.pde,
+// mouseClicked's own selection, etc. - and each of preBakeViewport.pde's
+// worker threads) its own independent array + counter, at the same cost
+// as the old single shared array in the common single-threaded case,
+// since there's then only ever one ThreadLocal entry to begin with.
+class RayStampState {
+  int[] faceTestStamp;
+  int currentRayStamp = 0;
+}
+ThreadLocal<RayStampState> rayStampState = ThreadLocal.withInitial(RayStampState::new);
+
+// faceTestStamp's required size, from the most recent buildFaceGrid() -
+// not an array itself, just the length every thread's own array needs to
+// be. getRayStampState() below (re)allocates a thread's array lazily,
+// the first time that thread actually casts a ray against this grid (or
+// again, if the grid was rebuilt at a different size since), rather than
+// eagerly sizing every thread's copy up front for threads that might
+// never even touch this grid.
+int faceTestStampSize = 0;
+
+// Returns the calling thread's own RayStampState, with faceTestStamp
+// (re)sized to match the current grid if needed. Called once per
+// isIntersected_Faces() invocation - see its own use below.
+RayStampState getRayStampState () {
+  RayStampState state = rayStampState.get();
+  if (state.faceTestStamp == null || state.faceTestStamp.length != faceTestStampSize) {
+    state.faceTestStamp = new int[faceTestStampSize];
+    state.currentRayStamp = 0; // a stale stamp value from the old-sized array means nothing against a fresh one
+  }
+  return state;
+}
 
 ArrayList<Float> entirePointsX;
 ArrayList<Float> entirePointsY;
@@ -170,7 +210,12 @@ void buildFaceGrid () {
   gridCells = new IntList[gridNx * gridNy * gridNz];
   for (int i = 0; i < gridCells.length; i++) gridCells[i] = new IntList();
 
-  faceTestStamp = new int[numFaces];
+  // See RayStampState's own comment above: no array allocated here any
+  // more, just the size every thread's own (lazily allocated) copy needs
+  // to be. A changed size here is exactly what tells getRayStampState()
+  // a thread's existing array is now stale, on that thread's next ray
+  // cast against this grid.
+  faceTestStampSize = numFaces;
 
   // 3) insert each face into every cell its bounding box overlaps
   for (int f = 0; f < numFaces; f++) {
@@ -555,8 +600,11 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boole
     tDeltaZ = cellSizeZ / abs(ray_dir[2]);
   }
 
-  currentRayStamp++;
-  if (firstGuess > 0) faceTestStamp[firstGuess] = currentRayStamp; // don't retest it
+  // See RayStampState's own comment above: this thread's own array +
+  // counter, not a shared one.
+  RayStampState rayStamp = getRayStampState();
+  rayStamp.currentRayStamp++;
+  if (firstGuess > 0) rayStamp.faceTestStamp[firstGuess] = rayStamp.currentRayStamp; // don't retest it
 
   int safetyCounter = gridNx + gridNy + gridNz + 4; // traversal can't exceed this many steps
 
@@ -569,8 +617,8 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boole
 
     for (int k = 0; k < cellFaces.size(); k++) {
       int f = cellFaces.get(k);
-      if (faceTestStamp[f] == currentRayStamp) continue; // already tested this ray
-      faceTestStamp[f] = currentRayStamp;
+      if (rayStamp.faceTestStamp[f] == rayStamp.currentRayStamp) continue; // already tested this ray
+      rayStamp.faceTestStamp[f] = rayStamp.currentRayStamp;
       if (ignoreNonShadowCasters && !faceCastsShadow(f)) continue;
 
       float dist = testFaceHit(f, ray_pnt, ray_dir, P);
