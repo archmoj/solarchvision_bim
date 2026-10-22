@@ -342,19 +342,7 @@ void preBakeViewport () {
     }));
   }
 
-  // Propagate any worker's exception rather than losing it - a silent
-  // partial bake (some pixels never written because their chunk's thread
-  // died) would be far worse than failing loudly here.
-  for (java.util.concurrent.Future<?> future : futures) {
-    try {
-      future.get();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException(e);
-    } catch (java.util.concurrent.ExecutionException e) {
-      throw new RuntimeException(e.getCause());
-    }
-  }
+  awaitAll(futures); // see parallel_utils.pde's own comment
   executor.shutdown();
 
   // Rounding each chunk's own target down to whole block characters can
