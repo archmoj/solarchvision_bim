@@ -418,7 +418,6 @@ void ShadeViewport () {
     }));
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
-  executor.shutdown();
 
   // Second pass for the face-edges mode: now that every pixel's hit face
   // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
@@ -429,26 +428,51 @@ void ShadeViewport () {
   // boundary against a Model1D/Model2Ds billboard in front of or behind
   // it never does (isFaceEdgeBetween()'s own comment) - transparent
   // everywhere else.
+  //
+  // Independent per pixel the same way pass 1 is - each np only reads
+  // faceEdgeHit[]/faceEdgeNormalX,Y,Z[] (fully written by every thread by
+  // the time awaitAll(pass1Futures) above returns - neighbors included,
+  // since that's a full barrier across the whole image, not just this
+  // chunk) and writes only its own np's Shade_RGBA.pixels[] - so again
+  // nothing for two pixels' work to race on. Unlike pass 1, this pass
+  // never calls isIntersected_Faces()/intersectAll() at all - isFace
+  // EdgeBetween() is a pure comparison over already-computed arrays - so
+  // there's no RayStampState/ThreadLocal exposure here to begin with, and
+  // no per-chunk stamp state to allocate. Reuses the same executor and
+  // chunk boundaries as pass 1: this pass is strictly sequential *after*
+  // pass 1 (every pixel's neighbors must already be computed), never
+  // concurrent with it, so there's no reason to size or pool it
+  // differently.
   if (noShadeOnlyVisibleFaceEdges) {
-    for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
-      for (int Image_X_i = 0; Image_X_i < RES1; Image_X_i++) {
-        int np = Image_Y_i * RES1 + Image_X_i;
+    java.util.List<java.util.concurrent.Future<?>> pass2Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+    for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
+      final int npFrom = chunkStart;
+      final int npTo = min(totalPixels, chunkStart + chunkSize);
 
-        boolean isEdge = (Image_X_i + 1 < RES1) && isFaceEdgeBetween(
-          faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
-          faceEdgeHit[np + 1], faceEdgeNormalX[np + 1], faceEdgeNormalY[np + 1], faceEdgeNormalZ[np + 1]
-        );
-        if (!isEdge && Image_Y_i + 1 < RES2) {
-          isEdge = isFaceEdgeBetween(
+      pass2Futures.add(executor.submit(() -> {
+        for (int np = npFrom; np < npTo; np++) {
+          int Image_X_i = np % RES1;
+          int Image_Y_i = np / RES1;
+
+          boolean isEdge = (Image_X_i + 1 < RES1) && isFaceEdgeBetween(
             faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
-            faceEdgeHit[np + RES1], faceEdgeNormalX[np + RES1], faceEdgeNormalY[np + RES1], faceEdgeNormalZ[np + RES1]
+            faceEdgeHit[np + 1], faceEdgeNormalX[np + 1], faceEdgeNormalY[np + 1], faceEdgeNormalZ[np + 1]
           );
-        }
+          if (!isEdge && Image_Y_i + 1 < RES2) {
+            isEdge = isFaceEdgeBetween(
+              faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
+              faceEdgeHit[np + RES1], faceEdgeNormalX[np + RES1], faceEdgeNormalY[np + RES1], faceEdgeNormalZ[np + RES1]
+            );
+          }
 
-        Shade_RGBA.pixels[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
-      }
+          Shade_RGBA.pixels[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
+        }
+      }));
     }
+    awaitAll(pass2Futures); // see parallel_utils.pde's own comment
   }
+
+  executor.shutdown();
 
   Shade_RGBA.updatePixels();
 
