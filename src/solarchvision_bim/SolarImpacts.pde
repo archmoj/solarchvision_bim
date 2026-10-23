@@ -382,6 +382,29 @@ class SolarImpacts {
 
     if (this.sectionType != 0) {
 
+      // STEP 0 (not yet parallelized): timing instrumentation only, no
+      // behavior change - a baseline to compare each later parallelized
+      // step against. Three categories, matched to the three per-pixel
+      // loops identified as parallelization targets: calcImpact_
+      // accumulationMillis (the hot loop, run once per qualifying day/
+      // hour/RAD_TYPE combination - see its own comment below),
+      // calcImpact_perDayPaletteMillis (once per day), calcImpact_
+      // summaryPaletteMillis (once, at the end). calcImpact_loadImageMillis
+      // is tracked separately since it's file I/O, not CPU-bound pixel
+      // work - parallelizing it would mean concurrent disk reads, a
+      // different kind of change than threading the per-pixel loops.
+      // calcImpact_setupMillis catches everything else (zero-init loops,
+      // scenario lookups, sun position, the per-day Matrix_ARGB reset) by
+      // being whatever's left over: calcImpact_startMillis's elapsed time
+      // minus the other four categories, computed at the end rather than
+      // tracked explicitly at each of its several small call sites.
+      long calcImpact_startMillis = millis();
+      long calcImpact_loadImageMillis = 0;
+      long calcImpact_accumulationMillis = 0;
+      int calcImpact_accumulationPasses = 0;
+      long calcImpact_perDayPaletteMillis = 0;
+      long calcImpact_summaryPaletteMillis = 0;
+
       showWaitCursor();
 
       int[] startK_endK = get_startK_endK();
@@ -557,9 +580,12 @@ class SolarImpacts {
                         File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
 
 
+                        long calcImpact_loadImageT0 = millis();
                         Shadings[SHD]  = loadImage(File_Name);
+                        calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                       }
 
+                      long calcImpact_accumulationT0 = millis();
                       for (int np = 0; np < (RES1 * RES2); np++) {
                         int Image_X = np % RES1;
                         int Image_Y = np / RES1;
@@ -596,6 +622,8 @@ class SolarImpacts {
                         }
 
                       }
+                      calcImpact_accumulationMillis += millis() - calcImpact_accumulationT0;
+                      calcImpact_accumulationPasses++;
                     }
 
                     valuesNUM += 1;
@@ -612,6 +640,8 @@ class SolarImpacts {
           }
 
           this.dayValuesMUL[j + 1] = valuesMUL;
+
+          long calcImpact_perDayPaletteT0 = millis();
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].loadPixels();
@@ -716,10 +746,13 @@ class SolarImpacts {
             }
             //}
           }
+          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT0;
         }
 
         {
           int j = -1; // << to put the summary graph before the daily graphs
+
+          long calcImpact_summaryPaletteT0 = millis();
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             total_Image_RGBA[q].loadPixels();
@@ -811,12 +844,27 @@ class SolarImpacts {
             }
             //}
           }
+          calcImpact_summaryPaletteMillis += millis() - calcImpact_summaryPaletteT0;
         }
       }
 
       this.win3DOverlay_recordAnalysisState();
 
       showArrowCursor();
+
+      // STEP 0 report: see this function's own top comment for what each
+      // category covers. calcImpact_setupMillis is everything else,
+      // computed as a remainder rather than tracked at each of its own
+      // several small call sites.
+      long calcImpact_totalMillis = millis() - calcImpact_startMillis;
+      long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
+      println("calculate_Impact_CurrentPreBaked() timing (baseline, before any parallelization):");
+      println("  total:            " + calcImpact_totalMillis + " ms");
+      println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
+      println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
+      println("  per-day palette:  " + calcImpact_perDayPaletteMillis + " ms (" + nf(100.0 * calcImpact_perDayPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
+      println("  summary palette:  " + calcImpact_summaryPaletteMillis + " ms (" + nf(100.0 * calcImpact_summaryPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
+      println("  setup/other:      " + calcImpact_setupMillis + " ms (" + nf(100.0 * calcImpact_setupMillis / calcImpact_totalMillis, 0, 1) + "%)");
     }
   }
 
