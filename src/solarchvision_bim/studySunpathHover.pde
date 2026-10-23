@@ -82,38 +82,8 @@ void drawSunpathHoverBox (SunpathHoverPoint p) {
 
   String[] lines = { formatAzimuthAndAltitude(p.Beta, p.Alpha), valueLine };
 
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * hoverSidePad + maxTextWidth;
-
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(hoverStrokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }

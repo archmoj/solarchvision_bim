@@ -177,8 +177,8 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
 // from globalPoseRawValuesAt() instead.
 void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] dataLines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
-  if (dataLines == null) return;
+  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
+  if (lines == null) return;
 
   // Beta still comes from hit.b the same way as before (only inclination
   // gets snapped, never orientation); hit.displayAlpha is used directly
@@ -187,42 +187,12 @@ void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   int bCount = hit.info.snapshotRAD[0].length;
   float Beta = hit.b * (360.0 / bCount);
 
-  String[] lines = new String[dataLines.length + 1];
-  lines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
-  System.arraycopy(dataLines, 0, lines, 1, dataLines.length);
-
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * hoverSidePad + maxTextWidth;
+  String[] rawLines = new String[lines.length + 1];
+  rawLines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
+  System.arraycopy(lines, 0, rawLines, 1, lines.length);
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(hoverStrokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }

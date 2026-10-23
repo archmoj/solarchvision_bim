@@ -71,11 +71,17 @@ void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
   float luminance = (0.299 * swatchR + 0.587 * swatchG + 0.114 * swatchB) / 255.0;
   boolean useWhiteText = luminance < 0.5;
 
-  noStroke();
+  stroke(0);
+  strokeWeight(1);
   fill(swatchR, swatchG, swatchB, 230);
-  rect(boxX, boxY, boxW, boxH);
+  rect(
+    boxX - hoverStrokeWeight / 2,
+    boxY - hoverStrokeWeight / 2,
+    boxW + hoverStrokeWeight,
+    boxH + hoverStrokeWeight
+  );
 
-  stroke(useWhiteText ? 255 : 0);
+  stroke(0);
   strokeWeight(hoverStrokeWeight);
   float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);

@@ -218,7 +218,7 @@ void build_allActions() {
   menuItems = UI_menuBar.populateLayerMenu();
   for (int i = 0; i < menuItems.length; i++) {
     String item = menuItems[i];
-    if (item.equals(UI_menuBar.___divider___)) continue;
+    if (item.equals(___divider___)) continue;
 
     if (i < allLayers.length) {
       putAction(item, () -> {

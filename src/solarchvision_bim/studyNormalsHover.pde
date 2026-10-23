@@ -103,7 +103,9 @@ int[] sortedDefinedIndicesByValueDescending (float[] values) {
 // actually defined varies column to column.
 void drawNormalsHoverBox (NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
-  lineList.add(col.layerName + ", " + col.dayText + " " + nf(col.hourIndex, 2) + ":00");
+  lineList.add(col.layerName);
+  lineList.add(col.dayText + " " + nf(col.hourIndex, 2) + ":00");
+  lineList.add(___divider___);
 
   int[] sortedIndices = sortedDefinedIndicesByValueDescending(col.normalsValues);
   for (int l : sortedIndices) {
@@ -115,38 +117,8 @@ void drawNormalsHoverBox (NormalsHoverColumn col) {
 
   String[] lines = lineList.toArray(new String[0]);
 
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * hoverSidePad + maxTextWidth;
-
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(hoverStrokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }

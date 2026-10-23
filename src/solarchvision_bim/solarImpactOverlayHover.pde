@@ -52,7 +52,7 @@ final int hoverMargin = 14; // gap between the cursor and the box
 final int hoverTopPad = 6;
 final int hoverBottomPad = 8;
 final int hoverSidePad = 8;
-final int hoverStrokeWeight = 2;
+final int hoverStrokeWeight = 4;
 // Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
 // exactly at the overlay's own boundary would still stick out 1px past it.
 // solarImpactHover_boxPosition() below keeps the box this far clear of
@@ -60,7 +60,7 @@ final int hoverStrokeWeight = 2;
 // boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
 // - ceil() rather than a plain /2, so an odd strokeWeight still gets a
 // whole extra pixel of clearance instead of rounding down short.
-final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight);
+final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight + 1);
 
 // Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
 // so it (and its stroke - see hoverStrokeInset above) stays
@@ -163,6 +163,11 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   String[] lines = solarImpactHover_lines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
+  drawHover(lines, destX, destY, destW, destH);
+}
+
+
+void drawHover (String[] lines, float destX, float destY, float destW, float destH) {
   // textWidth()/textAscent()/textDescent() below all read the current text
   // size, so this has to happen before measuring anything.
   textSize(MessageSize);
@@ -180,9 +185,15 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
-  noStroke();
+  stroke(0);
+  strokeWeight(1);
   fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
+  rect(
+    boxX - hoverStrokeWeight / 2,
+    boxY - hoverStrokeWeight / 2,
+    boxW + hoverStrokeWeight,
+    boxH + hoverStrokeWeight
+  );
 
   // Just the one horizontal and one vertical edge closest to the cursor,
   // rather than a full border: whichever ones that is tells you which
@@ -199,6 +210,18 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   fill(0);
   textAlign(LEFT, TOP);
   for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
+    float y = boxY + hoverTopPad + i * lineHeight;
+    if (lines[i].equals(___divider___)) {
+      stroke(0);
+      strokeWeight(1);
+      line(
+        boxX + hoverSidePad,        y + lineHeight / 2,
+        boxX + boxW - hoverSidePad, y + lineHeight / 2
+      );
+      noStroke();
+      strokeWeight(0);
+    } else {
+      text(lines[i], boxX + hoverSidePad, y);
+    }
   }
 }
