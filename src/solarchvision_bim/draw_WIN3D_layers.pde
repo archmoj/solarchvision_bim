@@ -109,10 +109,10 @@ void draw_WIN3D_layers () {
 
     img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     // {destX, destY, destW, destH, srcX, srcY, srcW, srcH} - see
-    // solarImpactOverlay_fitRect()'s own comment (solarImpactOverlayHover.
+    // hoverFitRect()'s own comment (solarImpactOverlayHover.
     // pde) for the r == 1 / r > 1 / r < 1 cases this covers. srcW/srcH
     // equal the full image size unless r < 1, the only case needing a crop.
-    fit = solarImpactOverlay_fitRect(img);
+    fit = hoverFitRect(img);
 
     if (fit[6] >= img.width && fit[7] >= img.height) {
       image(img, fit[0], fit[1], fit[2], fit[3]);

@@ -73,7 +73,7 @@ SunpathHoverPoint studySunpathHover_hitTest (float mouseXPos, float mouseYPos) {
 
 // Draws the hover box - same formatting/sizing/positioning/edge-drawing
 // reuse as the other two hover boxes, with a plain single-value line
-// instead of solarImpactHover_lines()'s Active/Passive formatting, since
+// instead of hoverLines()'s Active/Passive formatting, since
 // this graph only ever displays the one number (no P/N/Score split) for
 // either impact type.
 void drawSunpathHoverBox (SunpathHoverPoint p) {

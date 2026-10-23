@@ -62,7 +62,7 @@ void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 

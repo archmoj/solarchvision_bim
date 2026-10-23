@@ -1,6 +1,6 @@
 // Called every frame the solar-impact overlay is shown, right after
 // draw_WIN3D_layers.pde draws it - img/fit are that same image and the
-// fit rect solarImpactOverlay_fitRect() above just computed for it. img
+// fit rect hoverFitRect() above just computed for it. img
 // is only needed here for its width/height - the same RES1 x RES2 grid
 // allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
 // below locate the exact data point under the mouse, same as it used to
@@ -17,7 +17,7 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   int ix = (int) constrain(fit[4] + fx * fit[6], 0, img.width - 1);
   int iy = (int) constrain(fit[5] + fy * fit[7], 0, img.height - 1);
 
-  String[] lines = solarImpactHover_lines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
+  String[] lines = hoverLines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
   drawHover(lines, destX, destY, destW, destH);

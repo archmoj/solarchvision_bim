@@ -21,13 +21,13 @@ class GlobalPoseHoverInfo {
   float[][] snapshotEFF_N; // [a][b]
 }
 
-// Builds the same {A, R, G, B}-shaped array solarImpactHover_lines()
+// Builds the same {A, R, G, B}-shaped array hoverLines()
 // expects, from Pose Potential's own RAD/EFF_P/EFF_N concepts instead of
 // Skin Potential's Matrix_ARGB channels - Active's G slot carries the
 // received radiation (valuesSUM_RAD), Passive's R/B slots carry N/P
 // (valuesSUM_EFF_N/valuesSUM_EFF_P) as benefit/harm, the exact same
 // mapping SolarImpacts.pde's own Matrix_ARGB already uses. A (slot 0) is
-// never actually displayed by solarImpactHover_lines() unless
+// never actually displayed by hoverLines() unless
 // showARGB_inHover is on, so it's just set to match whatever's shown.
 // Mirrors plotImpact_global()'s own AVERAGE/PERCENTAGE/COMPARISON/
 // is_defined(valuesSUM) gate exactly (not just approximately) so a wedge
@@ -177,7 +177,7 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
 // from globalPoseRawValuesAt() instead.
 void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
+  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
   if (lines == null) return;
 
   // Beta still comes from hit.b the same way as before (only inclination

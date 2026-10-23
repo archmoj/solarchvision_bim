@@ -200,15 +200,15 @@ UrbanHoverHit studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) {
 }
 
 // Draws the hover box, reusing solarImpactOverlayHover.pde's own text
-// formatting (solarImpactHover_lines()) and box sizing/positioning/edge-
-// drawing logic (solarImpactHover_boxPosition(), the stroke-inset
+// formatting (hoverLines()) and box sizing/positioning/edge-
+// drawing logic (hoverBoxPosition(), the stroke-inset
 // constants) exactly as WIN3D's own hover uses them - same look, same
 // behavior, just clamped to STUDY's own dest rect instead of the
 // overlay's, and reading from the hit's own snapshot instead of
 // allSolarImpacts' live fields.
 void drawStudyUrbanHoverBox (UrbanHoverHit hit) {
   float[] raw = win3DOverlay_rawValuesAt_fromSnapshot(hit.info.impactTypeIndex, hit.info.daySnapshot, hit.info.mul, hit.ix, hit.iy);
-  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
+  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
   if (lines == null) return;
 
   float destX = STUDY.cX, destY = STUDY.cY;

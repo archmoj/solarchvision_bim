@@ -7,7 +7,7 @@
 // independently, so the hover tooltip can never end up sampling a
 // slightly different pixel than the one actually on screen under the
 // mouse.
-float[] solarImpactOverlay_fitRect (PImage img) {
+float[] hoverFitRect (PImage img) {
   float w = img.width;
   float h = img.height;
   float aspect1 = 1.0f * w / h;
@@ -28,7 +28,7 @@ float[] solarImpactOverlay_fitRect (PImage img) {
 // --- solar-impact overlay hover tooltip -----------------------------------
 // Shows SOLARCHVISION's actual findings under the mouse, in a small
 // floating box near the cursor, whenever there's real data there - see
-// solarImpactHover_lines()'s own comment for what. Set this true to see
+// hoverLines()'s own comment for what. Set this true to see
 // the raw A/R/G/B channel values instead (see win3DOverlay_rawValuesAt()'s
 // own comment, SolarImpacts.pde, for what those are).
 boolean showARGB_inHover = false;
@@ -55,7 +55,7 @@ final int hoverSidePad = 8;
 final int hoverStrokeWeight = 4;
 // Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
 // exactly at the overlay's own boundary would still stick out 1px past it.
-// solarImpactHover_boxPosition() below keeps the box this far clear of
+// hoverBoxPosition() below keeps the box this far clear of
 // destX..destX+destW/destY..destY+destH, not just boxX..boxX+boxW/
 // boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
 // - ceil() rather than a plain /2, so an odd strokeWeight still gets a
@@ -65,7 +65,7 @@ final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight + 1);
 // Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
 // so it (and its stroke - see hoverStrokeInset above) stays
 // entirely inside destX..destX+destW / destY..destY+destH (the overlay's
-// own dest rect, from solarImpactOverlay_fitRect() above) - on whichever
+// own dest rect, from hoverFitRect() above) - on whichever
 // side of (mouseX, mouseY) that rect has more room: left of the cursor
 // when it's in the right half, right when it's in the left half, and the
 // same above/below for the vertical half, rather than a fixed corner that
@@ -73,7 +73,7 @@ final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight + 1);
 // wider/taller than half the rect. Pure/no drawing, so it's independently
 // checkable without a live PGraphics context - see drawSolarImpactHover()'s
 // own comment for why nothing else here is.
-float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
+float[] hoverBoxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
   boolean rightHalf = (mouseX - destX) > (destW / 2);
   boolean bottomHalf = (mouseY - destY) > (destH / 2);
 
@@ -103,16 +103,16 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
 //   exactly how these get accumulated hour by hour. The comparison score
 //   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
 //   passive palette color itself is already chosen from.
-String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
+String[] hoverLines (int q, int dayIndex, int x, int y) {
   float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
-  return solarImpactHover_lines(q, raw);
+  return hoverLines(q, raw);
 }
 
 // Same formatting, for a raw A/R/G/B that's already been looked up some
 // other way - e.g. studyImpactHover.pde's own snapshot-based lookup,
 // which can't go through allSolarImpacts' live fields the way the
 // overload above does (see UrbanThumbnailHoverInfo's own comment on why).
-String[] solarImpactHover_lines (int q, float[] raw) {
+String[] hoverLines (int q, float[] raw) {
   if (raw == null) return null;
 
   if (showARGB_inHover) {
@@ -156,7 +156,7 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
   }
   float boxW = 2 * hoverSidePad + maxTextWidth;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
