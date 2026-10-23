@@ -334,7 +334,27 @@ void calculate_VertexSolar_array () {
   // Per-vertex solar shading colors just changed without going through
   // model_changed() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
-  if (allFaces != null) allFaces.winCacheGeneration++;
+  if (allFaces != null) {
+    // This bump is a "repaint stale face colors" signal, not a
+    // structural/material edit the way model_changed()'s own bump of
+    // this same counter is - allSolarImpacts.Image[][] (the WIN3D solar-
+    // impact overlay) is built from entirely separate baked PNG/Matrix_
+    // ARGB data this function never touches, so win3DOverlay_dataFresh()
+    // shouldn't read this bump as "the model changed, the overlay might
+    // be stale" the way it reasonably does for a real edit. If nothing
+    // else has touched winCacheGeneration since the overlay's own last
+    // snapshot (win3DOverlay_facesGeneration still matches it exactly -
+    // no genuine edit happened in between), carry that snapshot forward
+    // across this bump too, so it doesn't look stale for a reason that
+    // was never really about it. If something else already diverged
+    // them (a real edit did happen), leave the snapshot alone - the
+    // overlay should (correctly) still show as stale for that reason,
+    // and this bump shouldn't launder that away.
+    if (allSolarImpacts.win3DOverlay_facesGeneration == allFaces.winCacheGeneration) {
+      allSolarImpacts.win3DOverlay_facesGeneration++;
+    }
+    allFaces.winCacheGeneration++;
+  }
 
   showArrowCursor();
 }

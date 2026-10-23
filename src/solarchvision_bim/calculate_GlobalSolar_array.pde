@@ -254,7 +254,17 @@ void calculate_GlobalSolar_array () {
   // Global-solar shading colors just changed without going through
   // model_changed() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
-  if (allFaces != null) allFaces.winCacheGeneration++;
+  if (allFaces != null) {
+    // Same reasoning as calculate_VertexSolar_array.pde's own identical
+    // block - see that one's comment. This bump is a "repaint stale face
+    // colors" signal, not a structural/material edit, and allSolarImpacts.
+    // Image[][] (the WIN3D solar-impact overlay) never reads GlobalSolar
+    // data, so it shouldn't be marked stale by it either.
+    if (allSolarImpacts.win3DOverlay_facesGeneration == allFaces.winCacheGeneration) {
+      allSolarImpacts.win3DOverlay_facesGeneration++;
+    }
+    allFaces.winCacheGeneration++;
+  }
   if (Sky3D != null) Sky3D.winCacheGeneration++;
 
   showArrowCursor();
