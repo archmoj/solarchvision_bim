@@ -13,7 +13,7 @@ class SolarImpacts {
   // actually looked like.
   volatile boolean isCalculatingImpact = false;
 
-  final boolean isMultithreaded_calcImpact_perDay = true;
+  final boolean isMultithreaded_calcImpact_perDay = false;
 
   boolean rebuild_Image_array = true;
 
@@ -820,9 +820,19 @@ class SolarImpacts {
           // cross-day write race on it either, same as the accumulation
           // loop's own total_Matrix_ARGB-equivalent reasoning for Matrix_
           // ARGB across hours. One chunk per thread, not totalPixels/
-          // numThreads - same reasoning as the accumulation loop above.
+          // numThreads - same reasoning as the accumulation loop above -
+          // unless isMultithreaded_calcImpact_perDay (this class's own
+          // top) is false, in which case one chunk covers every pixel:
+          // still the exact same executor/submit/await structure below,
+          // just a single task that ends up running on whichever one
+          // thread picks it up, with nothing else to race against it.
+          // The repair pass right after awaitAll() already only runs
+          // when isMultithreaded_calcImpact_perDay is true, for exactly
+          // this reason - with it false, there's no race left for that
+          // pass to be repairing.
           java.util.List<java.util.concurrent.Future<?>> calcImpact_perDayFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
-          int calcImpact_perDayChunkSize = (calcImpact_totalPixels + calcImpact_numThreads - 1) / calcImpact_numThreads;
+          int calcImpact_perDayNumChunks = isMultithreaded_calcImpact_perDay ? calcImpact_numThreads : 1;
+          int calcImpact_perDayChunkSize = (calcImpact_totalPixels + calcImpact_perDayNumChunks - 1) / calcImpact_perDayNumChunks;
           for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_perDayChunkSize) {
             final int npFrom = chunkStart;
             final int npTo = min(calcImpact_totalPixels, chunkStart + calcImpact_perDayChunkSize);
