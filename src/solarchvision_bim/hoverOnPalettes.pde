@@ -51,7 +51,7 @@ PaletteSwatchHoverInfo studyPaletteHover_hitTest (float mouseXPos, float mouseYP
 // luminance threshold) rather than always black - "readable text size
 // and color" on a palette whose own colors range from very light to very
 // dark needs the text color to adapt, not just the size.
-void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
+void drawPaletteHoverBox (PaletteSwatchHoverInfo info) {
   String[] lines = { info.label };
 
   textSize(MessageSize);

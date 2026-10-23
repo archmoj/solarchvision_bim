@@ -142,7 +142,7 @@ void draw_STUDY_hover () {
     drawNormalsHoverBox(normalsHit);
     studyHover_wasShownLastFrame = true;
   } else if (paletteHit != null) {
-    drawPaletteSwatchHoverBox(paletteHit);
+    drawPaletteHoverBox(paletteHit);
     studyHover_wasShownLastFrame = true;
   }
 }
