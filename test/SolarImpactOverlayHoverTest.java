@@ -11,7 +11,7 @@ class SolarImpactOverlayHoverTest {
     app = new solarchvision_bim();
   }
 
-  // ================= solarImpactOverlay_fitRect ============================
+  // ================= hoverFitRect ============================
   // Where the overlay image actually lands on screen (and which part of it)
   // under the three aspect-fit cases draw_WIN3D_layers.pde's own drawing
   // code uses.
@@ -21,7 +21,7 @@ class SolarImpactOverlayHoverTest {
     app.WIN3D.cX = 10; app.WIN3D.cY = 20; app.WIN3D.dX = 200; app.WIN3D.dY = 200;
     processing.core.PImage img = new processing.core.PImage(100, 100, processing.core.PConstants.ARGB);
 
-    float[] fit = app.solarImpactOverlay_fitRect(img);
+    float[] fit = app.hoverFitRect(img);
 
     assertEquals(10f, fit[0], 0.0001f);
     assertEquals(20f, fit[1], 0.0001f);
@@ -38,7 +38,7 @@ class SolarImpactOverlayHoverTest {
     app.WIN3D.cX = 0; app.WIN3D.cY = 0; app.WIN3D.dX = 400; app.WIN3D.dY = 200; // aspect2 = 2
     processing.core.PImage img = new processing.core.PImage(100, 100, processing.core.PConstants.ARGB); // aspect1 = 1
 
-    float[] fit = app.solarImpactOverlay_fitRect(img);
+    float[] fit = app.hoverFitRect(img);
 
     assertEquals(100f, fit[0], 0.0001f); // (400-200)/2
     assertEquals(0f, fit[1], 0.0001f);
@@ -53,7 +53,7 @@ class SolarImpactOverlayHoverTest {
     app.WIN3D.cX = 0; app.WIN3D.cY = 0; app.WIN3D.dX = 200; app.WIN3D.dY = 200; // aspect2 = 1
     processing.core.PImage img = new processing.core.PImage(200, 100, processing.core.PConstants.ARGB); // aspect1 = 2
 
-    float[] fit = app.solarImpactOverlay_fitRect(img);
+    float[] fit = app.hoverFitRect(img);
 
     assertEquals(200f, fit[2], 0.0001f); // fills the full viewport
     assertEquals(200f, fit[3], 0.0001f);
@@ -62,13 +62,13 @@ class SolarImpactOverlayHoverTest {
     assertEquals(100f, fit[7], 0.0001f); // full height, uncropped
   }
 
-  // ================= solarImpactHover_boxPosition ===========================
+  // ================= hoverBoxPosition ===========================
   // Which side of the cursor the box sits on, and that it always stays
   // inside the given dest rect.
 
   @Test
   void boxPosition_goesRightAndBelow_whenTheCursorIsInTheTopLeftQuadrant () {
-    float[] p = app.solarImpactHover_boxPosition(50, 40, 0, 0, 400, 300, 70, 54);
+    float[] p = app.hoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54);
 
     assertEquals(50 + app.hoverMargin, p[0], 0.0001f);
     assertEquals(40 + app.hoverMargin, p[1], 0.0001f);
@@ -76,7 +76,7 @@ class SolarImpactOverlayHoverTest {
 
   @Test
   void boxPosition_goesLeftAndBelow_whenTheCursorIsInTheTopRightQuadrant () {
-    float[] p = app.solarImpactHover_boxPosition(350, 40, 0, 0, 400, 300, 70, 54);
+    float[] p = app.hoverBoxPosition(350, 40, 0, 0, 400, 300, 70, 54);
 
     assertEquals(350 - app.hoverMargin - 70, p[0], 0.0001f);
     assertEquals(40 + app.hoverMargin, p[1], 0.0001f);
@@ -84,7 +84,7 @@ class SolarImpactOverlayHoverTest {
 
   @Test
   void boxPosition_goesRightAndAbove_whenTheCursorIsInTheBottomLeftQuadrant () {
-    float[] p = app.solarImpactHover_boxPosition(50, 260, 0, 0, 400, 300, 70, 54);
+    float[] p = app.hoverBoxPosition(50, 260, 0, 0, 400, 300, 70, 54);
 
     assertEquals(50 + app.hoverMargin, p[0], 0.0001f);
     assertEquals(260 - app.hoverMargin - 54, p[1], 0.0001f);
@@ -92,7 +92,7 @@ class SolarImpactOverlayHoverTest {
 
   @Test
   void boxPosition_goesLeftAndAbove_whenTheCursorIsInTheBottomRightQuadrant () {
-    float[] p = app.solarImpactHover_boxPosition(350, 260, 0, 0, 400, 300, 70, 54);
+    float[] p = app.hoverBoxPosition(350, 260, 0, 0, 400, 300, 70, 54);
 
     assertEquals(350 - app.hoverMargin - 70, p[0], 0.0001f);
     assertEquals(260 - app.hoverMargin - 54, p[1], 0.0001f);
@@ -100,7 +100,7 @@ class SolarImpactOverlayHoverTest {
 
   @Test
   void boxPosition_treatsExactlyHalf_asTheLeftTopSide () {
-    float[] p = app.solarImpactHover_boxPosition(200, 150, 0, 0, 400, 300, 70, 54);
+    float[] p = app.hoverBoxPosition(200, 150, 0, 0, 400, 300, 70, 54);
 
     assertEquals(200 + app.hoverMargin, p[0], 0.0001f);
     assertEquals(150 + app.hoverMargin, p[1], 0.0001f);
@@ -112,13 +112,13 @@ class SolarImpactOverlayHoverTest {
     float boxW = 70, boxH = 54;
 
     for (float[] mouse : new float[][] { {120, 120}, {480, 120}, {120, 380}, {480, 380}, {250, 250} }) {
-      float[] p = app.solarImpactHover_boxPosition(mouse[0], mouse[1], destX, destY, destW, destH, boxW, boxH);
+      float[] p = app.hoverBoxPosition(mouse[0], mouse[1], destX, destY, destW, destH, boxW, boxH);
       assertTrue(p[0] >= destX && p[0] + boxW <= destX + destW, "boxX out of bounds for mouse " + java.util.Arrays.toString(mouse) + ": " + p[0]);
       assertTrue(p[1] >= destY && p[1] + boxH <= destY + destH, "boxY out of bounds for mouse " + java.util.Arrays.toString(mouse) + ": " + p[1]);
     }
   }
 
-  // ================= solarImpactHover_lines =================================
+  // ================= hoverLines =================================
   // What actually gets shown - meaningful quantities by default, raw A/R/G/B
   // behind the showARGB_inHover toggle.
 
@@ -144,7 +144,7 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = false;
     putDay(1, app.Impact_ACTIVE, 1, 1, /*A*/ 1f, /*R*/ 0f, /*G*/ 10f, /*B*/ 0f, /*valuesMUL*/ 1.5f);
 
-    String[] lines = app.solarImpactHover_lines(app.Impact_ACTIVE, 1, 1, 1);
+    String[] lines = app.hoverLines(app.Impact_ACTIVE, 1, 1, 1);
 
     assertNotNull(lines);
     assertEquals(1, lines.length);
@@ -158,7 +158,7 @@ class SolarImpactOverlayHoverTest {
     // own comment and the Matrix_ARGB build site for why.
     putDay(1, app.Impact_PASSIVE, 2, 2, /*A*/ 1f, /*R*/ 4f, /*G*/ 0f, /*B*/ 10f, /*valuesMUL*/ 1.5f);
 
-    String[] lines = app.solarImpactHover_lines(app.Impact_PASSIVE, 1, 2, 2);
+    String[] lines = app.hoverLines(app.Impact_PASSIVE, 1, 2, 2);
 
     assertNotNull(lines);
     assertEquals(3, lines.length);
@@ -173,7 +173,7 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = true;
     putDay(1, app.Impact_ACTIVE, 1, 1, 1f, 2f, 3f, 4f, 1f);
 
-    String[] lines = app.solarImpactHover_lines(app.Impact_ACTIVE, 1, 1, 1);
+    String[] lines = app.hoverLines(app.Impact_ACTIVE, 1, 1, 1);
 
     assertNotNull(lines);
     assertEquals(4, lines.length);
@@ -188,6 +188,6 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = false;
     putDay(1, app.Impact_ACTIVE, 1, 1, 1f, 0f, 10f, 0f, 1f); // only (1,1) has data
 
-    assertNull(app.solarImpactHover_lines(app.Impact_ACTIVE, 1, 0, 0));
+    assertNull(app.hoverLines(app.Impact_ACTIVE, 1, 0, 0));
   }
 }

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // SolarImpacts.pde's own live-data lookup), studyUrbanHover_hitTest()
 // (including the exact multi-row scenario that motivated this feature -
 // viewLayout==2's three stacked percentile rows), and the (q, raw)
-// overload of solarImpactHover_lines(). draw_STUDY_hover() and
+// overload of hoverLines(). draw_STUDY_hover() and
 // drawStudyUrbanHoverBox() themselves touch real graphics (get()/image()/
 // text()/fill()) and aren't independently testable here, consistent with
 // everything else this session that draws to a live PGraphics context.
@@ -105,18 +105,18 @@ class StudyImpactHoverTest {
     assertEquals(9f, raw[3], 0.0001f);
   }
 
-  // ================= solarImpactHover_lines(q, raw) overload ===============
+  // ================= hoverLines(q, raw) overload ===============
 
   @Test
   void linesOverload_isNull_whenRawIsNull () {
-    assertNull(app.solarImpactHover_lines(app.Impact_ACTIVE, (float[]) null));
+    assertNull(app.hoverLines(app.Impact_ACTIVE, (float[]) null));
   }
 
   @Test
   void linesOverload_formatsActiveTheSameWayAsTheLiveLookupDoes () {
     app.showARGB_inHover = false;
     float[] raw = { 1f, 0f, 15f, 0f }; // A, R, G(=received), B
-    String[] lines = app.solarImpactHover_lines(app.Impact_ACTIVE, raw);
+    String[] lines = app.hoverLines(app.Impact_ACTIVE, raw);
 
     assertNotNull(lines);
     assertEquals(1, lines.length);
@@ -127,7 +127,7 @@ class StudyImpactHoverTest {
   void linesOverload_formatsPassiveTheSameWayAsTheLiveLookupDoes () {
     app.showARGB_inHover = false;
     float[] raw = { 1f, 4f, 0f, 10f }; // A, R(=N), G, B(=P)
-    String[] lines = app.solarImpactHover_lines(app.Impact_PASSIVE, raw);
+    String[] lines = app.hoverLines(app.Impact_PASSIVE, raw);
 
     assertNotNull(lines);
     assertEquals(3, lines.length);
