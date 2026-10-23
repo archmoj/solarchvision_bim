@@ -26266,6 +26266,16 @@ public void ShadeViewport () {
   isShadingViewport = true;
   int ShadeViewport_startMillis = millis();
 
+  // Timing breakdown, same spirit as SolarImpacts.pde's own calcImpact_*
+  // timers - shadeSetupMillis is whatever's left over (buildFaceGrid(),
+  // everything before pass 1 dispatches, and the arraycopy/save/cursor
+  // work at the very end), computed as a remainder rather than tracked
+  // at each of its own scattered call sites.
+  long shadePass1Millis = 0;
+  long shadeListSuspectsMillis = 0;
+  long shadeFixSuspectsMillis = 0;
+  long shadePass2Millis = 0;
+
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
@@ -26417,6 +26427,7 @@ public void ShadeViewport () {
 
   java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
 
+  long shadePass1T0 = millis();
   java.util.List<java.util.concurrent.Future<?>> pass1Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
   for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
     final int npFrom = chunkStart;
@@ -26570,10 +26581,11 @@ public void ShadeViewport () {
     }));
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
+  shadePass1Millis += millis() - shadePass1T0;
 
   // Single-threaded, right after pass 1 finishes, before the arraycopy
   // into Shade_RGBA below reads this pass's output. See parallel_utils.
-  // pde's own listIsolatedPixels() for what "isolated" means and why it
+  // pde's own listSuspectPixels() for what "isolated" means and why it
   // can't be a real edge - this re-casts each flagged pixel's own ray
   // and redoes pass 1's own shading logic for it, the same way Solar
   // Impacts.pde's own per-day palette loop re-casts a ray and redoes its
@@ -26584,12 +26596,15 @@ public void ShadeViewport () {
   // faceEdgeNormalX,Y,Z[] are its real output here) - so this is skipped
   // entirely in both.
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
-    IntList isolatedPixels = listIsolatedPixels(shadeBuffer, RES1, RES2);
+    long shadeListSuspectsT0 = millis();
+    IntList suspectPixels = listSuspectPixels(shadeBuffer, RES1, RES2);
+    shadeListSuspectsMillis += millis() - shadeListSuspectsT0;
 
     int[] repairStamp = new int[faceTestStampSize];
     int[] repairCounter = { 0 };
 
-    for (int np : isolatedPixels) {
+    long shadeFixSuspectsT0 = millis();
+    for (int np : suspectPixels) {
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
       deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,
@@ -26651,6 +26666,7 @@ public void ShadeViewport () {
         shadeBuffer[np] = color(0, 0, 0, 0);
       }
     }
+    shadeFixSuspectsMillis += millis() - shadeFixSuspectsT0;
   }
 
   /*
@@ -26744,6 +26760,7 @@ public void ShadeViewport () {
   // concurrent with it, so there's no reason to size or pool it
   // differently.
   if (noShadeOnlyVisibleFaceEdges) {
+    long shadePass2T0 = millis();
     java.util.List<java.util.concurrent.Future<?>> pass2Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
     for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
       final int npFrom = chunkStart;
@@ -26770,6 +26787,7 @@ public void ShadeViewport () {
       }));
     }
     awaitAll(pass2Futures); // see parallel_utils.pde's own comment
+    shadePass2Millis += millis() - shadePass2T0;
   }
 
   executor.shutdown();
@@ -26804,6 +26822,16 @@ public void ShadeViewport () {
     // both pop up an overlay nobody asked for and stretch it wrong.
     WIN3D.showShading = true;
   }
+
+  long shadeTotalMillis = millis() - ShadeViewport_startMillis;
+  long shadeSetupMillis = shadeTotalMillis - shadePass1Millis - shadeListSuspectsMillis - shadeFixSuspectsMillis - shadePass2Millis;
+  println("\nShadeViewport() timing:");
+  println("  total:            " + shadeTotalMillis + " ms");
+  println("  pass 1:           " + shadePass1Millis + " ms (" + nf(100.0f * shadePass1Millis / shadeTotalMillis, 0, 1) + "%)");
+  println("  list suspects:    " + shadeListSuspectsMillis + " ms (" + nf(100.0f * shadeListSuspectsMillis / shadeTotalMillis, 0, 1) + "%)");
+  println("  fix suspects:     " + shadeFixSuspectsMillis + " ms (" + nf(100.0f * shadeFixSuspectsMillis / shadeTotalMillis, 0, 1) + "%)");
+  println("  pass 2:           " + shadePass2Millis + " ms (" + nf(100.0f * shadePass2Millis / shadeTotalMillis, 0, 1) + "%)");
+  println("  setup/other:      " + shadeSetupMillis + " ms (" + nf(100.0f * shadeSetupMillis / shadeTotalMillis, 0, 1) + "%)");
 
   println("ShadeViewport() finished in " + nf((millis() - ShadeViewport_startMillis) / 1000.0f, 0, 2) + "s");
 
@@ -28096,92 +28124,31 @@ class SolarImpacts {
             Image_RGBA[q].loadPixels();
           }
 
-          // Independent per pixel, same reasoning as the accumulation
-          // loop above: each np reads only this day's own Matrix_ARGB at
-          // its own (Image_X, Image_Y), this day's own valuesMUL (a
-          // local, captured by value), and the shared, read-only
-          // Model2DsTexture/allFaces-palette-settings/PAINT (stateless -
-          // no instance fields at all, same as Functions.pde's funcs was
-          // - see ShadeViewport.pde's own comment on that) - and writes
-          // only its own np's slot of Image_RGBA[0]/[1].pixels[] and its
-          // own (Image_X, Image_Y) slot of total_Matrix_ARGB across all
-          // q/c indices. total_Matrix_ARGB accumulates across days too,
-          // but only ever from one day's own parallel dispatch at a time
-          // - the day loop itself stays sequential (awaitAll() below
-          // finishes before the next day starts), so there's no
-          // cross-day write race on it either, same as the accumulation
-          // loop's own total_Matrix_ARGB-equivalent reasoning for Matrix_
-          // ARGB across hours. One chunk per thread, not totalPixels/
-          // numThreads - same reasoning as the accumulation loop above.
-          java.util.List<java.util.concurrent.Future<?>> calcImpact_perDayFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
-          int calcImpact_perDayChunkSize = (calcImpact_totalPixels + calcImpact_numThreads - 1) / calcImpact_numThreads;
-          for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_perDayChunkSize) {
-            final int npFrom = chunkStart;
-            final int npTo = min(calcImpact_totalPixels, chunkStart + calcImpact_perDayChunkSize);
+          // Single-threaded, deliberately not parallelized: this loop is
+          // the one that turned out to produce hard-to-detect, rare
+          // random missing points under real multi-core concurrency (see
+          // ShadeViewport.pde's own long investigation for what chasing
+          // that looked like). The detect-and-repair mitigation
+          // (parallel_utils.pde's listSuspectPixels(), used to run right
+          // after this) made the symptom go away, but its own cost
+          // (listing every day's suspects, even on the many days that
+          // turn out to have zero) ate most of the time the parallel
+          // version saved over just not parallelizing this in the first
+          // place - simpler and more reliable to do the latter.
+          for (int np = 0; np < calcImpact_totalPixels; np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
 
-            calcImpact_perDayFutures.add(calcImpact_executor.submit(() -> {
-              for (int np = npFrom; np < npTo; np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
+            // A pixel this camera's Model2Ds mask marks non-transparent -
+            // a tree/person was hit there - skips the radiation/impact
+            // computation below entirely and is simply painted with that
+            // billboard's own real color, so trees and people show up in
+            // the analysis the same way they do in the live shaded
+            // preview.
+            int Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+            boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
 
-                // A pixel this camera's Model2Ds mask marks non-transparent -
-                // a tree/person was hit there - skips the radiation/impact
-                // computation below entirely and is simply painted with that
-                // billboard's own real color, so trees and people show up in
-                // the analysis the same way they do in the live shaded
-                // preview.
-                int Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-                boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
-
-                for (int q = 0; q < numberOfImpactVariations; q++) {
-
-                  if (isModel2DsPixel) {
-                    Image_RGBA[q].pixels[np] = Model2DsPixel;
-                    continue;
-                  }
-
-                  float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
-
-                  total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
-                  total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
-                  total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
-                  total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
-
-                  Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
-                }
-              }
-            }));
-          }
-          awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
-
-          // Single-threaded, after this day's own parallel dispatch has
-          // fully finished. See parallel_utils.pde's own listIsolatedPixels()
-          // for what "isolated" means and why it can't be a real edge -
-          // same residual, never fully root-caused low-level race
-          // ShadeViewport.pde's own long investigation chased, appearing
-          // to affect any sufficiently-exercised parallel pass in this
-          // codebase, not something specific to this loop's own logic.
-          // Unlike ShadeViewport.pde's own repair, there's no ray to
-          // re-cast here - this loop's own per-pixel work is a pure,
-          // deterministic palette-mapping computation over already-
-          // computed Matrix_ARGB data, so the authoritative answer for a
-          // flagged pixel is just redoing that same computation for it,
-          // same formulas as the parallel loop above, line for line.
-          // Deliberately does NOT re-add to total_Matrix_ARGB - that
-          // already got this day's correct contribution from the
-          // parallel pass above; doing it again here would double-count.
-          for (int q = 0; q < numberOfImpactVariations; q++) {
-            IntList isolatedPixels = listIsolatedPixels(Image_RGBA[q].pixels, RES1, RES2);
-
-            for (int np : isolatedPixels) {
-              int Image_X = np % RES1;
-              int Image_Y = np / RES1;
-
-              int Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-              boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+            for (int q = 0; q < numberOfImpactVariations; q++) {
 
               if (isModel2DsPixel) {
                 Image_RGBA[q].pixels[np] = Model2DsPixel;
@@ -28192,6 +28159,11 @@ class SolarImpacts {
               float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
               float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
               float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
+
+              total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
+              total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
+              total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
+              total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
 
               Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
@@ -33410,6 +33382,9 @@ String asciiArt = ("\n   _______  _______  ___      _______  ______   _______  _
   .replace("i", "\u001B[2;35m$\u001B[0m") // i = Dim Purple
   .replace("o", "\u001B[2;35m$\u001B[0m") // o = Dim Purple
   .replace("n", "\u001B[90m$\u001B[0m");  // n = Gray
+static final char DIVIDER_MARK = '—';
+final String ___divider___ = String.valueOf(DIVIDER_MARK);
+
 class UI_menuBar {
 
   final static String CLASS_STAMP = "UI_menuBar";
@@ -33429,8 +33404,6 @@ class UI_menuBar {
 
   static final float PARENT_TEXT_SIZE_FACTOR = 1.15f;
   static final float CHILD_ROW_HEIGHT_FACTOR = 0.85f;
-  static final char DIVIDER_MARK = '—';
-  final String ___divider___ = String.valueOf(DIVIDER_MARK);
 
   static final int HOVER_COLOR_R = 255;
   static final int HOVER_COLOR_G = 127;
@@ -46787,7 +46760,7 @@ public void build_allActions() {
   menuItems = UI_menuBar.populateLayerMenu();
   for (int i = 0; i < menuItems.length; i++) {
     String item = menuItems[i];
-    if (item.equals(UI_menuBar.___divider___)) continue;
+    if (item.equals(___divider___)) continue;
 
     if (i < allLayers.length) {
       putAction(item, () -> {
@@ -50764,10 +50737,10 @@ public void draw_WIN3D_layers () {
 
     img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     // {destX, destY, destW, destH, srcX, srcY, srcW, srcH} - see
-    // solarImpactOverlay_fitRect()'s own comment (solarImpactOverlayHover.
+    // hoverFitRect()'s own comment (solarImpactOverlayHover.
     // pde) for the r == 1 / r > 1 / r < 1 cases this covers. srcW/srcH
     // equal the full image size unless r < 1, the only case needing a crop.
-    fit = solarImpactOverlay_fitRect(img);
+    fit = hoverFitRect(img);
 
     if (fit[6] >= img.width && fit[7] >= img.height) {
       image(img, fit[0], fit[1], fit[2], fit[3]);
@@ -55459,6 +55432,308 @@ float Shades_offsetX;
 float Shades_offsetY;
 
 float[] SunR_Rotated;
+// Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
+// actually lands on screen, and which part of it, under the same
+// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
+// (centered pillarbox for a wider image, center-cropped-and-stretched for
+// a taller one). Shared between that drawing code and
+// drawSolarImpactHover() below, rather than each recomputing this
+// independently, so the hover tooltip can never end up sampling a
+// slightly different pixel than the one actually on screen under the
+// mouse.
+public float[] hoverFitRect (PImage img) {
+  float w = img.width;
+  float h = img.height;
+  float aspect1 = 1.0f * w / h;
+  float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
+  float r = aspect2 / aspect1;
+
+  if (r == 1) {
+    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, 0, 0, w, h };
+  } else if (r > 1) {
+    float newWidth = aspect1 * WIN3D.dY;
+    return new float[] { WIN3D.cX + (WIN3D.dX - newWidth) / 2, WIN3D.cY, newWidth, WIN3D.dY, 0, 0, w, h };
+  } else { // r < 1
+    float croppedWidth = h * aspect2; // full height, at the viewport's own aspect ratio
+    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, (w - croppedWidth) / 2, 0, croppedWidth, h };
+  }
+}
+
+// --- solar-impact overlay hover tooltip -----------------------------------
+// Shows SOLARCHVISION's actual findings under the mouse, in a small
+// floating box near the cursor, whenever there's real data there - see
+// hoverLines()'s own comment for what. Set this true to see
+// the raw A/R/G/B channel values instead (see win3DOverlay_rawValuesAt()'s
+// own comment, SolarImpacts.pde, for what those are).
+boolean showARGB_inHover = false;
+
+// No snapshot/restore trick here (tried twice now - see git history on
+// this file for both attempts). UI_menuBar.pde's dropdown can use one
+// (its own pre_screen field) because nothing else repaints that region on
+// its own; this area doesn't have that guarantee in either direction - the
+// overlay's own per-frame redraw fights a restore when the mouse holds
+// still, and WIN3D's own 3D render fights it the other way whenever the
+// viewport itself updates in between a save and its restore, painting
+// back outdated pixels. So instead, the box is kept entirely inside the
+// overlay's own dest rect (fit[0..3]), which that redraw already repaints
+// fresh every single frame regardless of what this draws on top of it -
+// there's nothing to restore because there's nothing left outside this
+// function's own control. It's offset to whichever side of the mouse
+// keeps it inside that rect - left when the mouse is in the right half,
+// right when it's in the left half, and the same above/below for the
+// vertical half - rather than a fixed corner that could run past an edge.
+final int hoverMargin = 14; // gap between the cursor and the box
+final int hoverTopPad = 6;
+final int hoverBottomPad = 8;
+final int hoverSidePad = 8;
+final int hoverStrokeWeight = 4;
+// Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
+// exactly at the overlay's own boundary would still stick out 1px past it.
+// hoverBoxPosition() below keeps the box this far clear of
+// destX..destX+destW/destY..destY+destH, not just boxX..boxX+boxW/
+// boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
+// - ceil() rather than a plain /2, so an odd strokeWeight still gets a
+// whole extra pixel of clearance instead of rounding down short.
+final int hoverStrokeInset = (int) ceil(0.5f * hoverStrokeWeight + 1);
+
+// Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
+// so it (and its stroke - see hoverStrokeInset above) stays
+// entirely inside destX..destX+destW / destY..destY+destH (the overlay's
+// own dest rect, from hoverFitRect() above) - on whichever
+// side of (mouseX, mouseY) that rect has more room: left of the cursor
+// when it's in the right half, right when it's in the left half, and the
+// same above/below for the vertical half, rather than a fixed corner that
+// could run past an edge. The final constrain() is a safety net for a box
+// wider/taller than half the rect. Pure/no drawing, so it's independently
+// checkable without a live PGraphics context - see drawSolarImpactHover()'s
+// own comment for why nothing else here is.
+public float[] hoverBoxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
+  boolean rightHalf = (mouseX - destX) > (destW / 2);
+  boolean bottomHalf = (mouseY - destY) > (destH / 2);
+
+  float boxX = rightHalf ? (mouseX - hoverMargin - boxW) : (mouseX + hoverMargin);
+  float boxY = bottomHalf ? (mouseY - hoverMargin - boxH) : (mouseY + hoverMargin);
+
+  boxX = constrain(boxX, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+  boxY = constrain(boxY, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+
+  return new float[] { boxX, boxY };
+}
+
+// Returns the text lines to show for Image[q][dayIndex]'s pixel (x, y),
+// or null if there's no real data there (see win3DOverlay_rawValuesAt()'s
+// own comment, SolarImpacts.pde).
+//
+// Defaults (showARGB_inHover false) to what SOLARCHVISION's passive/
+// active solar-climatic impact method actually found there, rather than
+// the raw channel values themselves - see Mojtaba Samimi's "Degree of
+// Need to Shade/Shine" (TU Berlin, 2014): every hour's sun on a surface is
+// weighted by base minus outdoor temperature, so a map says not just
+// where the sun lands but whether it's wanted there.
+//   Active (G): the solar radiation actually received, kWh/m2.
+//   Passive (R, B): sun received in cold hours or blocked in warm hours
+//   counts as a benefit (P, kept in B); the reverse counts as harm (N,
+//   kept in R) - see Matrix_ARGB's own build site (SolarImpacts.pde) for
+//   exactly how these get accumulated hour by hour. The comparison score
+//   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
+//   passive palette color itself is already chosen from.
+public String[] hoverLines (int q, int dayIndex, int x, int y) {
+  float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
+  return hoverLines(q, raw);
+}
+
+// Same formatting, for a raw A/R/G/B that's already been looked up some
+// other way - e.g. studyImpactHover.pde's own snapshot-based lookup,
+// which can't go through allSolarImpacts' live fields the way the
+// overload above does (see UrbanThumbnailHoverInfo's own comment on why).
+public String[] hoverLines (int q, float[] raw) {
+  if (raw == null) return null;
+
+  if (showARGB_inHover) {
+    return new String[] {
+      "A: " + nf(raw[0], 1, 2),
+      "R: " + nf(raw[1], 1, 2),
+      "G: " + nf(raw[2], 1, 2),
+      "B: " + nf(raw[3], 1, 2)
+    };
+  }
+
+  if (q == Impact_ACTIVE) {
+    float received = raw[2]; // G
+    return new String[] { "Received: " + nf(received, 1, 2) + " kWh/m\u00B2" };
+  }
+
+  // Impact_PASSIVE
+  float P = raw[3]; // B
+  float N = raw[1]; // R
+  float S = ((P + N) > 0.00001f) ? (P - N) * abs(P - N) / (P + N) : 0;
+
+  return new String[] {
+    "Positive: +" + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "Negative: -" + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "Final Score: " + nf(S, 1, 2) + " %kWh\u00B0C/m\u00B2"
+  };
+}
+
+
+public void drawHover (String[] lines, float destX, float destY, float destW, float destH) {
+  // textWidth()/textAscent()/textDescent() below all read the current text
+  // size, so this has to happen before measuring anything.
+  textSize(MessageSize);
+
+  float lineHeight = textAscent() + textDescent();
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
+
+  float maxTextWidth = 0;
+  for (int i = 0; i < lines.length; i++) {
+    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
+  }
+  float boxW = 2 * hoverSidePad + maxTextWidth;
+
+  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float boxX = boxPos[0];
+  float boxY = boxPos[1];
+
+  stroke(0);
+  strokeWeight(1);
+  fill(255, 230);
+  rect(
+    boxX - hoverStrokeWeight / 2,
+    boxY - hoverStrokeWeight / 2,
+    boxW + hoverStrokeWeight,
+    boxH + hoverStrokeWeight
+  );
+
+  // Just the one horizontal and one vertical edge closest to the cursor,
+  // rather than a full border: whichever ones that is tells you which
+  // corner points back at the actual hovered pixel, instead of leaving
+  // that ambiguous with a box outlined on all four sides.
+  stroke(0);
+  strokeWeight(hoverStrokeWeight);
+  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
+  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  line(nearX, boxY, nearX, boxY + boxH);
+  line(boxX, nearY, boxX + boxW, nearY);
+
+  noStroke();
+  fill(0);
+  textAlign(LEFT, TOP);
+  for (int i = 0; i < lines.length; i++) {
+    float y = boxY + hoverTopPad + i * lineHeight;
+    if (lines[i].equals(___divider___)) {
+      stroke(0);
+      strokeWeight(1);
+      line(
+        boxX + hoverSidePad,        y + lineHeight / 2,
+        boxX + boxW - hoverSidePad, y + lineHeight / 2
+      );
+      noStroke();
+      strokeWeight(0);
+    } else {
+      text(lines[i], boxX + hoverSidePad, y);
+    }
+  }
+}
+
+
+public void drawPaletteHover (String[] lines, float destX, float destY, float destW, float destH, float[] col) {
+  textSize(MessageSize);
+  float lineHeight = textAscent() + textDescent();
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
+  float boxW = 2 * hoverSidePad + textWidth(lines[0]);
+
+  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float boxX = boxPos[0];
+  float boxY = boxPos[1];
+
+  // col is {alpha, r, g, b} (PAINT.getColorStyle()'s own order) - alpha isn't needed here.
+  float swatchR = col[1], swatchG = col[2], swatchB = col[3];
+  float luminance = (0.299f * swatchR + 0.587f * swatchG + 0.114f * swatchB) / 255.0f;
+  boolean useWhiteText = luminance < 0.5f;
+
+  stroke(0);
+  strokeWeight(1);
+  fill(swatchR, swatchG, swatchB, 230);
+  rect(
+    boxX - hoverStrokeWeight / 2,
+    boxY - hoverStrokeWeight / 2,
+    boxW + hoverStrokeWeight,
+    boxH + hoverStrokeWeight
+  );
+
+  stroke(0);
+  strokeWeight(hoverStrokeWeight);
+  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
+  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  line(nearX, boxY, nearX, boxY + boxH);
+  line(boxX, nearY, boxX + boxW, nearY);
+
+  noStroke();
+  fill(useWhiteText ? 255 : 0);
+  textAlign(LEFT, TOP);
+  text(lines[0], boxX + hoverSidePad, boxY + hoverTopPad);
+}
+// Hover for STUDY's own palette legends - the 11-swatch color bars drawn
+// by Skin Potential (plotImpact_urban), Pose Potential (plotImpact_
+// global), Hourly Sun (plotImpact_sunpath), and Sun Path (plotImpact_
+// cycles), all four of which share the exact same rectangular swatch
+// layout (pal_ox/pal_oy/pal_length, 11 equal-width rects). The legend
+// itself already prints a small number on each swatch, but at
+// this.view_S-scaled 15px text it can be hard to read - hovering shows
+// the same value in a larger, legible size, and in the swatch's own
+// color so it's unambiguous which section is being described.
+//
+// Not yet wired up for drawProbs()'s or plotImpact_wind()'s own 11-swatch
+// legends - both use the same rect layout and could be added the same
+// way, but weren't part of what was asked for here.
+//
+// Unlike the other three STUDY hover features, there's no per-call data
+// snapshot to worry about - each swatch's value is a direct function of
+// its own index and PAL_multiplier, recomputed fresh (and identically)
+// every time that legend redraws, not read back from any data that a
+// later call could overwrite.
+class PaletteSwatchHoverInfo {
+  float screenX1, screenY1, screenX2, screenY2; // this swatch's own rect, opposite corners, in screen space - order not assumed, min()/max() applied at hit-test time
+  String label; // the value, already formatted with its own unit
+  float[] col; // this swatch's own RGBA (PAINT.getColorStyle()'s own return shape: {alpha, r, g, b}), reused for the hover box's own background
+}
+
+// Returns the swatch under the mouse, or null if none - a plain rect
+// containment check, since (unlike Pose Potential's polar wedges) these
+// are ordinary axis-aligned rectangles.
+public PaletteSwatchHoverInfo studyPaletteHover_hitTest (float mouseXPos, float mouseYPos) {
+  if (STUDY.paletteSwatchHoverInfo == null) return null;
+
+  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+
+  for (PaletteSwatchHoverInfo info : STUDY.paletteSwatchHoverInfo) {
+    float xLo = min(info.screenX1, info.screenX2);
+    float xHi = max(info.screenX1, info.screenX2);
+    float yLo = min(info.screenY1, info.screenY2);
+    float yHi = max(info.screenY1, info.screenY2);
+
+    if (graphicsX < xLo || graphicsX > xHi || graphicsY < yLo || graphicsY > yHi) continue;
+
+    return info;
+  }
+
+  return null;
+}
+
+// Draws the hover box using the swatch's own color as its background,
+// with a text color chosen for contrast against it (standard relative-
+// luminance threshold) rather than always black - "readable text size
+// and color" on a palette whose own colors range from very light to very
+// dark needs the text color to adapt, not just the size.
+public void drawPaletteHoverBox (PaletteSwatchHoverInfo info) {
+  String[] lines = { info.label };
+
+  float destX = STUDY.cX, destY = STUDY.cY;
+  float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
+
+  drawPaletteHover(lines, destX, destY, destW, destH, info.col);
+}
 // Minimal, dependency-free parser/importer for a STEP (ISO-10303-21)
 // ".ifc" file - the plain-text exchange format BIM software (Revit,
 // ArchiCAD, Blender BIM, ...) writes when a user exports "IFC".
@@ -63039,8 +63314,8 @@ public void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // pde and SolarImpacts.pde each re-cast that one pixel's own ray and
 // redo their own per-pixel computation for it, right where they call
 // this (see either one's own comment at that call site).
-public IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
-  IntList isolated = new IntList();
+public IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
+  IntList list = new IntList();
 
   for (int np = 0; np < pixels.length; np++) {
     int centerAlpha = (pixels[np] >> 24) & 0xFF;
@@ -63069,10 +63344,10 @@ public IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
     }
 
     boolean suspect = centerOpaque ? (transparentCount > opaqueCount) : (opaqueCount > transparentCount);
-    if (suspect) isolated.append(np);
+    if (suspect) list.append(np);
   }
 
-  return isolated;
+  return list;
 }
 public void parseArgs(String[] passedArgs) {
   println(asciiArt);
@@ -65269,152 +65544,9 @@ public float[] snap_Faces (float[] RxP) {
 
   return RxP;
 }
-// Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
-// actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
-// (centered pillarbox for a wider image, center-cropped-and-stretched for
-// a taller one). Shared between that drawing code and
-// drawSolarImpactHover() below, rather than each recomputing this
-// independently, so the hover tooltip can never end up sampling a
-// slightly different pixel than the one actually on screen under the
-// mouse.
-public float[] solarImpactOverlay_fitRect (PImage img) {
-  float w = img.width;
-  float h = img.height;
-  float aspect1 = 1.0f * w / h;
-  float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
-  float r = aspect2 / aspect1;
-
-  if (r == 1) {
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, 0, 0, w, h };
-  } else if (r > 1) {
-    float newWidth = aspect1 * WIN3D.dY;
-    return new float[] { WIN3D.cX + (WIN3D.dX - newWidth) / 2, WIN3D.cY, newWidth, WIN3D.dY, 0, 0, w, h };
-  } else { // r < 1
-    float croppedWidth = h * aspect2; // full height, at the viewport's own aspect ratio
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, (w - croppedWidth) / 2, 0, croppedWidth, h };
-  }
-}
-
-// --- solar-impact overlay hover tooltip -----------------------------------
-// Shows SOLARCHVISION's actual findings under the mouse, in a small
-// floating box near the cursor, whenever there's real data there - see
-// solarImpactHover_lines()'s own comment for what. Set this true to see
-// the raw A/R/G/B channel values instead (see win3DOverlay_rawValuesAt()'s
-// own comment, SolarImpacts.pde, for what those are).
-boolean showARGB_inHover = false;
-
-// No snapshot/restore trick here (tried twice now - see git history on
-// this file for both attempts). UI_menuBar.pde's dropdown can use one
-// (its own pre_screen field) because nothing else repaints that region on
-// its own; this area doesn't have that guarantee in either direction - the
-// overlay's own per-frame redraw fights a restore when the mouse holds
-// still, and WIN3D's own 3D render fights it the other way whenever the
-// viewport itself updates in between a save and its restore, painting
-// back outdated pixels. So instead, the box is kept entirely inside the
-// overlay's own dest rect (fit[0..3]), which that redraw already repaints
-// fresh every single frame regardless of what this draws on top of it -
-// there's nothing to restore because there's nothing left outside this
-// function's own control. It's offset to whichever side of the mouse
-// keeps it inside that rect - left when the mouse is in the right half,
-// right when it's in the left half, and the same above/below for the
-// vertical half - rather than a fixed corner that could run past an edge.
-final int solarImpactHover_margin = 14; // gap between the cursor and the box
-final int solarImpactHover_topPad = 6;
-final int solarImpactHover_bottomPad = 8;
-final int solarImpactHover_sidePad = 8;
-final int solarImpactHover_strokeWeight = 2;
-// Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
-// exactly at the overlay's own boundary would still stick out 1px past it.
-// solarImpactHover_boxPosition() below keeps the box this far clear of
-// destX..destX+destW/destY..destY+destH, not just boxX..boxX+boxW/
-// boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
-// - ceil() rather than a plain /2, so an odd strokeWeight still gets a
-// whole extra pixel of clearance instead of rounding down short.
-final int solarImpactHover_strokeInset = (int) ceil(0.5f * solarImpactHover_strokeWeight);
-
-// Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
-// so it (and its stroke - see solarImpactHover_strokeInset above) stays
-// entirely inside destX..destX+destW / destY..destY+destH (the overlay's
-// own dest rect, from solarImpactOverlay_fitRect() above) - on whichever
-// side of (mouseX, mouseY) that rect has more room: left of the cursor
-// when it's in the right half, right when it's in the left half, and the
-// same above/below for the vertical half, rather than a fixed corner that
-// could run past an edge. The final constrain() is a safety net for a box
-// wider/taller than half the rect. Pure/no drawing, so it's independently
-// checkable without a live PGraphics context - see drawSolarImpactHover()'s
-// own comment for why nothing else here is.
-public float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
-  boolean rightHalf = (mouseX - destX) > (destW / 2);
-  boolean bottomHalf = (mouseY - destY) > (destH / 2);
-
-  float boxX = rightHalf ? (mouseX - solarImpactHover_margin - boxW) : (mouseX + solarImpactHover_margin);
-  float boxY = bottomHalf ? (mouseY - solarImpactHover_margin - boxH) : (mouseY + solarImpactHover_margin);
-
-  boxX = constrain(boxX, destX + solarImpactHover_strokeInset, destX + destW - boxW - solarImpactHover_strokeInset);
-  boxY = constrain(boxY, destY + solarImpactHover_strokeInset, destY + destH - boxH - solarImpactHover_strokeInset);
-
-  return new float[] { boxX, boxY };
-}
-
-// Returns the text lines to show for Image[q][dayIndex]'s pixel (x, y),
-// or null if there's no real data there (see win3DOverlay_rawValuesAt()'s
-// own comment, SolarImpacts.pde).
-//
-// Defaults (showARGB_inHover false) to what SOLARCHVISION's passive/
-// active solar-climatic impact method actually found there, rather than
-// the raw channel values themselves - see Mojtaba Samimi's "Degree of
-// Need to Shade/Shine" (TU Berlin, 2014): every hour's sun on a surface is
-// weighted by base minus outdoor temperature, so a map says not just
-// where the sun lands but whether it's wanted there.
-//   Active (G): the solar radiation actually received, kWh/m2.
-//   Passive (R, B): sun received in cold hours or blocked in warm hours
-//   counts as a benefit (P, kept in B); the reverse counts as harm (N,
-//   kept in R) - see Matrix_ARGB's own build site (SolarImpacts.pde) for
-//   exactly how these get accumulated hour by hour. The comparison score
-//   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
-//   passive palette color itself is already chosen from.
-public String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
-  float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
-  return solarImpactHover_lines(q, raw);
-}
-
-// Same formatting, for a raw A/R/G/B that's already been looked up some
-// other way - e.g. studyImpactHover.pde's own snapshot-based lookup,
-// which can't go through allSolarImpacts' live fields the way the
-// overload above does (see UrbanThumbnailHoverInfo's own comment on why).
-public String[] solarImpactHover_lines (int q, float[] raw) {
-  if (raw == null) return null;
-
-  if (showARGB_inHover) {
-    return new String[] {
-      "A: " + nf(raw[0], 1, 2),
-      "R: " + nf(raw[1], 1, 2),
-      "G: " + nf(raw[2], 1, 2),
-      "B: " + nf(raw[3], 1, 2)
-    };
-  }
-
-  if (q == Impact_ACTIVE) {
-    float received = raw[2]; // G
-    return new String[] { "Received: " + nf(received, 1, 2) + " kWh/m\u00B2" };
-  }
-
-  // Impact_PASSIVE
-  float P = raw[3]; // B
-  float N = raw[1]; // R
-  float S = ((P + N) > 0.00001f) ? (P - N) * abs(P - N) / (P + N) : 0;
-
-  return new String[] {
-    "Positive: +" + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
-    "Negative: -" + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
-    "Final Score: " + nf(S, 1, 2) + " %kWh\u00B0C/m\u00B2"
-  };
-}
-
 // Called every frame the solar-impact overlay is shown, right after
 // draw_WIN3D_layers.pde draws it - img/fit are that same image and the
-// fit rect solarImpactOverlay_fitRect() above just computed for it. img
+// fit rect hoverFitRect() above just computed for it. img
 // is only needed here for its width/height - the same RES1 x RES2 grid
 // allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
 // below locate the exact data point under the mouse, same as it used to
@@ -65431,47 +65563,10 @@ public void drawSolarImpactHover (PImage img, float[] fit) {
   int ix = (int) constrain(fit[4] + fx * fit[6], 0, img.width - 1);
   int iy = (int) constrain(fit[5] + fy * fit[7], 0, img.height - 1);
 
-  String[] lines = solarImpactHover_lines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
+  String[] lines = hoverLines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
-  // textWidth()/textAscent()/textDescent() below all read the current text
-  // size, so this has to happen before measuring anything.
-  textSize(MessageSize);
-
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
-
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  // Just the one horizontal and one vertical edge closest to the cursor,
-  // rather than a full border: whichever ones that is tells you which
-  // corner points back at the actual hovered pixel, instead of leaving
-  // that ambiguous with a box outlined on all four sides.
-  stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }
 // One thumbnail's worth of hover-relevant info, captured by plotImpact_
 // urban() (STUDY.pde) at the moment it draws that thumbnail. daySnapshot
@@ -65617,7 +65712,7 @@ public void draw_STUDY_hover () {
     drawNormalsHoverBox(normalsHit);
     studyHover_wasShownLastFrame = true;
   } else if (paletteHit != null) {
-    drawPaletteSwatchHoverBox(paletteHit);
+    drawPaletteHoverBox(paletteHit);
     studyHover_wasShownLastFrame = true;
   }
 }
@@ -65675,51 +65770,21 @@ public UrbanHoverHit studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) 
 }
 
 // Draws the hover box, reusing solarImpactOverlayHover.pde's own text
-// formatting (solarImpactHover_lines()) and box sizing/positioning/edge-
-// drawing logic (solarImpactHover_boxPosition(), the stroke-inset
+// formatting (hoverLines()) and box sizing/positioning/edge-
+// drawing logic (hoverBoxPosition(), the stroke-inset
 // constants) exactly as WIN3D's own hover uses them - same look, same
 // behavior, just clamped to STUDY's own dest rect instead of the
 // overlay's, and reading from the hit's own snapshot instead of
 // allSolarImpacts' live fields.
 public void drawStudyUrbanHoverBox (UrbanHoverHit hit) {
   float[] raw = win3DOverlay_rawValuesAt_fromSnapshot(hit.info.impactTypeIndex, hit.info.daySnapshot, hit.info.mul, hit.ix, hit.iy);
-  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
+  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
   if (lines == null) return;
-
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }
 // Hover for drawNormals() (STUDY.pde) - the 9-statistic-line overlay
 // (Min/Max/Average/25th/50th/75th percentile/Mid-Low/Middle/Mid-High)
@@ -65826,7 +65891,9 @@ public int[] sortedDefinedIndicesByValueDescending (float[] values) {
 // actually defined varies column to column.
 public void drawNormalsHoverBox (NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
-  lineList.add(col.layerName + ", " + col.dayText + " " + nf(col.hourIndex, 2) + ":00");
+  lineList.add(col.layerName);
+  lineList.add(col.dayText + " " + nf(col.hourIndex, 2) + ":00");
+  lineList.add(___divider___);
 
   int[] sortedIndices = sortedDefinedIndicesByValueDescending(col.normalsValues);
   for (int l : sortedIndices) {
@@ -65838,129 +65905,10 @@ public void drawNormalsHoverBox (NormalsHoverColumn col) {
 
   String[] lines = lineList.toArray(new String[0]);
 
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
-
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
-  }
-}
-// Hover for STUDY's own palette legends - the 11-swatch color bars drawn
-// by Skin Potential (plotImpact_urban), Pose Potential (plotImpact_
-// global), Hourly Sun (plotImpact_sunpath), and Sun Path (plotImpact_
-// cycles), all four of which share the exact same rectangular swatch
-// layout (pal_ox/pal_oy/pal_length, 11 equal-width rects). The legend
-// itself already prints a small number on each swatch, but at
-// this.view_S-scaled 15px text it can be hard to read - hovering shows
-// the same value in a larger, legible size, and in the swatch's own
-// color so it's unambiguous which section is being described.
-//
-// Not yet wired up for drawProbs()'s or plotImpact_wind()'s own 11-swatch
-// legends - both use the same rect layout and could be added the same
-// way, but weren't part of what was asked for here.
-//
-// Unlike the other three STUDY hover features, there's no per-call data
-// snapshot to worry about - each swatch's value is a direct function of
-// its own index and PAL_multiplier, recomputed fresh (and identically)
-// every time that legend redraws, not read back from any data that a
-// later call could overwrite.
-class PaletteSwatchHoverInfo {
-  float screenX1, screenY1, screenX2, screenY2; // this swatch's own rect, opposite corners, in screen space - order not assumed, min()/max() applied at hit-test time
-  String label; // the value, already formatted with its own unit
-  float[] col; // this swatch's own RGBA (PAINT.getColorStyle()'s own return shape: {alpha, r, g, b}), reused for the hover box's own background
-}
-
-// Returns the swatch under the mouse, or null if none - a plain rect
-// containment check, since (unlike Pose Potential's polar wedges) these
-// are ordinary axis-aligned rectangles.
-public PaletteSwatchHoverInfo studyPaletteHover_hitTest (float mouseXPos, float mouseYPos) {
-  if (STUDY.paletteSwatchHoverInfo == null) return null;
-
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
-
-  for (PaletteSwatchHoverInfo info : STUDY.paletteSwatchHoverInfo) {
-    float xLo = min(info.screenX1, info.screenX2);
-    float xHi = max(info.screenX1, info.screenX2);
-    float yLo = min(info.screenY1, info.screenY2);
-    float yHi = max(info.screenY1, info.screenY2);
-
-    if (graphicsX < xLo || graphicsX > xHi || graphicsY < yLo || graphicsY > yHi) continue;
-
-    return info;
-  }
-
-  return null;
-}
-
-// Draws the hover box using the swatch's own color as its background,
-// with a text color chosen for contrast against it (standard relative-
-// luminance threshold) rather than always black - "readable text size
-// and color" on a palette whose own colors range from very light to very
-// dark needs the text color to adapt, not just the size.
-public void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
-  String[] lines = { info.label };
-
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-  float boxW = 2 * solarImpactHover_sidePad + textWidth(lines[0]);
-
-  float destX = STUDY.cX, destY = STUDY.cY;
-  float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
-
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  // info.col is {alpha, r, g, b} (PAINT.getColorStyle()'s own order) - alpha isn't needed here.
-  float swatchR = info.col[1], swatchG = info.col[2], swatchB = info.col[3];
-  float luminance = (0.299f * swatchR + 0.587f * swatchG + 0.114f * swatchB) / 255.0f;
-  boolean useWhiteText = luminance < 0.5f;
-
-  noStroke();
-  fill(swatchR, swatchG, swatchB, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(useWhiteText ? 255 : 0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(useWhiteText ? 255 : 0);
-  textAlign(LEFT, TOP);
-  text(lines[0], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad);
+  drawHover(lines, destX, destY, destW, destH);
 }
 // One dome's worth of hover-relevant info, captured by plotImpact_global()
 // (STUDY.pde) at the moment it finishes drawing that dome (one per day,
@@ -65985,13 +65933,13 @@ class GlobalPoseHoverInfo {
   float[][] snapshotEFF_N; // [a][b]
 }
 
-// Builds the same {A, R, G, B}-shaped array solarImpactHover_lines()
+// Builds the same {A, R, G, B}-shaped array hoverLines()
 // expects, from Pose Potential's own RAD/EFF_P/EFF_N concepts instead of
 // Skin Potential's Matrix_ARGB channels - Active's G slot carries the
 // received radiation (valuesSUM_RAD), Passive's R/B slots carry N/P
 // (valuesSUM_EFF_N/valuesSUM_EFF_P) as benefit/harm, the exact same
 // mapping SolarImpacts.pde's own Matrix_ARGB already uses. A (slot 0) is
-// never actually displayed by solarImpactHover_lines() unless
+// never actually displayed by hoverLines() unless
 // showARGB_inHover is on, so it's just set to match whatever's shown.
 // Mirrors plotImpact_global()'s own AVERAGE/PERCENTAGE/COMPARISON/
 // is_defined(valuesSUM) gate exactly (not just approximately) so a wedge
@@ -66141,8 +66089,8 @@ public GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float m
 // from globalPoseRawValuesAt() instead.
 public void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] dataLines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
-  if (dataLines == null) return;
+  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
+  if (lines == null) return;
 
   // Beta still comes from hit.b the same way as before (only inclination
   // gets snapped, never orientation); hit.displayAlpha is used directly
@@ -66151,44 +66099,14 @@ public void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   int bCount = hit.info.snapshotRAD[0].length;
   float Beta = hit.b * (360.0f / bCount);
 
-  String[] lines = new String[dataLines.length + 1];
-  lines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
-  System.arraycopy(dataLines, 0, lines, 1, dataLines.length);
-
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
+  String[] rawLines = new String[lines.length + 1];
+  rawLines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
+  System.arraycopy(lines, 0, rawLines, 1, lines.length);
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }
 // Hover for "Hourly Sun" - note the UI label (actions.pde, UI_menuBar.pde)
 // and the internal name (plotImpact_sunpath(), impactGraphIndex_SUNPATH_*)
@@ -66265,7 +66183,7 @@ public SunpathHoverPoint studySunpathHover_hitTest (float mouseXPos, float mouse
 
 // Draws the hover box - same formatting/sizing/positioning/edge-drawing
 // reuse as the other two hover boxes, with a plain single-value line
-// instead of solarImpactHover_lines()'s Active/Passive formatting, since
+// instead of hoverLines()'s Active/Passive formatting, since
 // this graph only ever displays the one number (no P/N/Score split) for
 // either impact type.
 public void drawSunpathHoverBox (SunpathHoverPoint p) {
@@ -66274,40 +66192,10 @@ public void drawSunpathHoverBox (SunpathHoverPoint p) {
 
   String[] lines = { formatAzimuthAndAltitude(p.Beta, p.Alpha), valueLine };
 
-  textSize(MessageSize);
-  float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-
-  float maxTextWidth = 0;
-  for (int i = 0; i < lines.length; i++) {
-    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
-  }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
-
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  noStroke();
-  fill(255, 230);
-  rect(boxX, boxY, boxW, boxH);
-
-  stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
-  line(nearX, boxY, nearX, boxY + boxH);
-  line(boxX, nearY, boxX + boxW, nearY);
-
-  noStroke();
-  fill(0);
-  textAlign(LEFT, TOP);
-  for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
-  }
+  drawHover(lines, destX, destY, destW, destH);
 }
 public void updateClimateArchive () {
 
