@@ -13,6 +13,8 @@ class SolarImpacts {
   // actually looked like.
   volatile boolean isCalculatingImpact = false;
 
+  final boolean isMultithreaded_calcImpact_perDay = true;
+
   boolean rebuild_Image_array = true;
 
   PImage[][] Image;
@@ -863,43 +865,45 @@ class SolarImpacts {
           }
           awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
 
-          // Single-threaded, after this day's own parallel dispatch has
-          // fully finished. See parallel_utils.pde's own listSuspectPixels()
-          // for what "isolated" means and why it can't be a real edge -
-          // same residual, never fully root-caused low-level race
-          // ShadeViewport.pde's own long investigation chased, appearing
-          // to affect any sufficiently-exercised parallel pass in this
-          // codebase, not something specific to this loop's own logic.
-          // Unlike ShadeViewport.pde's own repair, there's no ray to
-          // re-cast here - this loop's own per-pixel work is a pure,
-          // deterministic palette-mapping computation over already-
-          // computed Matrix_ARGB data, so the authoritative answer for a
-          // flagged pixel is just redoing that same computation for it,
-          // same formulas as the parallel loop above, line for line.
-          // Deliberately does NOT re-add to total_Matrix_ARGB - that
-          // already got this day's correct contribution from the
-          // parallel pass above; doing it again here would double-count.
-          for (int q = 0; q < numberOfImpactVariations; q++) {
-            IntList suspectPixels = listSuspectPixels(Image_RGBA[q].pixels, RES1, RES2);
+          if (isMultithreaded_calcImpact_perDay) {
+            // Single-threaded, after this day's own parallel dispatch has
+            // fully finished. See parallel_utils.pde's own listSuspectPixels()
+            // for what "isolated" means and why it can't be a real edge -
+            // same residual, never fully root-caused low-level race
+            // ShadeViewport.pde's own long investigation chased, appearing
+            // to affect any sufficiently-exercised parallel pass in this
+            // codebase, not something specific to this loop's own logic.
+            // Unlike ShadeViewport.pde's own repair, there's no ray to
+            // re-cast here - this loop's own per-pixel work is a pure,
+            // deterministic palette-mapping computation over already-
+            // computed Matrix_ARGB data, so the authoritative answer for a
+            // flagged pixel is just redoing that same computation for it,
+            // same formulas as the parallel loop above, line for line.
+            // Deliberately does NOT re-add to total_Matrix_ARGB - that
+            // already got this day's correct contribution from the
+            // parallel pass above; doing it again here would double-count.
+            for (int q = 0; q < numberOfImpactVariations; q++) {
+              IntList suspectPixels = listSuspectPixels(Image_RGBA[q].pixels, RES1, RES2);
 
-            for (int np : suspectPixels) {
-              int Image_X = np % RES1;
-              int Image_Y = np / RES1;
+              for (int np : suspectPixels) {
+                int Image_X = np % RES1;
+                int Image_Y = np / RES1;
 
-              color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-              boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+                color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+                boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
 
-              if (isModel2DsPixel) {
-                Image_RGBA[q].pixels[np] = Model2DsPixel;
-                continue;
+                if (isModel2DsPixel) {
+                  Image_RGBA[q].pixels[np] = Model2DsPixel;
+                  continue;
+                }
+
+                float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
+                float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
+                float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
+                float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
+
+                Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
               }
-
-              float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
-              float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
-              float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
-              float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
-
-              Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
           }
 
