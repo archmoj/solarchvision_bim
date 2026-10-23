@@ -164,7 +164,9 @@ void find_which_bakings_to_regenerate () {
 void regenerate_desired_bakings () {
 
   if (VertexSolar_rebuild_array) {
-    calculate_VertexSolar_array();
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
+      calculate_VertexSolar_array();
+    }
   }
 
   if (GlobalSolar_rebuild_array) {
