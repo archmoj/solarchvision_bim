@@ -545,6 +545,13 @@ void ShadeViewport () {
 
   executor.shutdown();
 
+  // Single-threaded, after every worker thread has finished (both
+  // awaitAll() calls above are what actually guarantee every chunk's
+  // writes into shadeBuffer are done and visible here). See parallel_
+  // utils.pde's own comment on what this specifically targets and why
+  // it can't touch a real edge.
+  repairIsolatedPixels(shadeBuffer, RES1, RES2);
+
   // Single-threaded, after every worker thread has finished (executor.
   // shutdown() above only stops new tasks from being submitted - both
   // awaitAll() calls above are what actually guarantee every chunk's
