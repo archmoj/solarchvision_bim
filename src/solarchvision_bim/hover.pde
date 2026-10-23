@@ -200,3 +200,42 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
     }
   }
 }
+
+
+void drawPaletteHover (String[] lines, float destX, float destY, float destW, float destH, float[] col) {
+  textSize(MessageSize);
+  float lineHeight = textAscent() + textDescent();
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
+  float boxW = 2 * hoverSidePad + textWidth(lines[0]);
+
+  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float boxX = boxPos[0];
+  float boxY = boxPos[1];
+
+  // col is {alpha, r, g, b} (PAINT.getColorStyle()'s own order) - alpha isn't needed here.
+  float swatchR = col[1], swatchG = col[2], swatchB = col[3];
+  float luminance = (0.299 * swatchR + 0.587 * swatchG + 0.114 * swatchB) / 255.0;
+  boolean useWhiteText = luminance < 0.5;
+
+  stroke(0);
+  strokeWeight(1);
+  fill(swatchR, swatchG, swatchB, 230);
+  rect(
+    boxX - hoverStrokeWeight / 2,
+    boxY - hoverStrokeWeight / 2,
+    boxW + hoverStrokeWeight,
+    boxH + hoverStrokeWeight
+  );
+
+  stroke(0);
+  strokeWeight(hoverStrokeWeight);
+  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
+  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  line(nearX, boxY, nearX, boxY + boxH);
+  line(boxX, nearY, boxX + boxW, nearY);
+
+  noStroke();
+  fill(useWhiteText ? 255 : 0);
+  textAlign(LEFT, TOP);
+  text(lines[0], boxX + hoverSidePad, boxY + hoverTopPad);
+}
