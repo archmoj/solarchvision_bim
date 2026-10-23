@@ -13,8 +13,6 @@ class SolarImpacts {
   // actually looked like.
   volatile boolean isCalculatingImpact = false;
 
-  final boolean isMultithreaded_calcImpact_perDay = false;
-
   boolean rebuild_Image_array = true;
 
   PImage[][] Image;
@@ -482,8 +480,6 @@ class SolarImpacts {
       long calcImpact_accumulationMillis = 0;
       int calcImpact_accumulationPasses = 0;
       long calcImpact_perDayPaletteMillis = 0;
-      long calcImpact_listSuspectsMillis = 0;
-      long calcImpact_fixSuspectsMillis = 0;
       long calcImpact_summaryPaletteMillis = 0;
 
       // One executor, created once here and reused for every one of the
@@ -806,125 +802,51 @@ class SolarImpacts {
             Image_RGBA[q].loadPixels();
           }
 
-          // Independent per pixel, same reasoning as the accumulation
-          // loop above: each np reads only this day's own Matrix_ARGB at
-          // its own (Image_X, Image_Y), this day's own valuesMUL (a
-          // local, captured by value), and the shared, read-only
-          // Model2DsTexture/allFaces-palette-settings/PAINT (stateless -
-          // no instance fields at all, same as Functions.pde's funcs was
-          // - see ShadeViewport.pde's own comment on that) - and writes
-          // only its own np's slot of Image_RGBA[0]/[1].pixels[] and its
-          // own (Image_X, Image_Y) slot of total_Matrix_ARGB across all
-          // q/c indices. total_Matrix_ARGB accumulates across days too,
-          // but only ever from one day's own parallel dispatch at a time
-          // - the day loop itself stays sequential (awaitAll() below
-          // finishes before the next day starts), so there's no
-          // cross-day write race on it either, same as the accumulation
-          // loop's own total_Matrix_ARGB-equivalent reasoning for Matrix_
-          // ARGB across hours. One chunk per thread, not totalPixels/
-          // numThreads - same reasoning as the accumulation loop above -
-          // unless isMultithreaded_calcImpact_perDay (this class's own
-          // top) is false, in which case one chunk covers every pixel:
-          // still the exact same executor/submit/await structure below,
-          // just a single task that ends up running on whichever one
-          // thread picks it up, with nothing else to race against it.
-          // The repair pass right after awaitAll() already only runs
-          // when isMultithreaded_calcImpact_perDay is true, for exactly
-          // this reason - with it false, there's no race left for that
-          // pass to be repairing.
-          java.util.List<java.util.concurrent.Future<?>> calcImpact_perDayFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
-          int calcImpact_perDayNumChunks = isMultithreaded_calcImpact_perDay ? calcImpact_numThreads : 1;
-          int calcImpact_perDayChunkSize = (calcImpact_totalPixels + calcImpact_perDayNumChunks - 1) / calcImpact_perDayNumChunks;
-          for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_perDayChunkSize) {
-            final int npFrom = chunkStart;
-            final int npTo = min(calcImpact_totalPixels, chunkStart + calcImpact_perDayChunkSize);
+          // Single-threaded, deliberately not parallelized: this loop is
+          // the one that turned out to produce hard-to-detect, rare
+          // random missing points under real multi-core concurrency (see
+          // ShadeViewport.pde's own long investigation for what chasing
+          // that looked like). The detect-and-repair mitigation
+          // (parallel_utils.pde's listSuspectPixels(), used to run right
+          // after this) made the symptom go away, but its own cost
+          // (listing every day's suspects, even on the many days that
+          // turn out to have zero) ate most of the time the parallel
+          // version saved over just not parallelizing this in the first
+          // place - simpler and more reliable to do the latter.
+          for (int np = 0; np < calcImpact_totalPixels; np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
 
-            calcImpact_perDayFutures.add(calcImpact_executor.submit(() -> {
-              for (int np = npFrom; np < npTo; np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
+            // A pixel this camera's Model2Ds mask marks non-transparent -
+            // a tree/person was hit there - skips the radiation/impact
+            // computation below entirely and is simply painted with that
+            // billboard's own real color, so trees and people show up in
+            // the analysis the same way they do in the live shaded
+            // preview.
+            color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+            boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
 
-                // A pixel this camera's Model2Ds mask marks non-transparent -
-                // a tree/person was hit there - skips the radiation/impact
-                // computation below entirely and is simply painted with that
-                // billboard's own real color, so trees and people show up in
-                // the analysis the same way they do in the live shaded
-                // preview.
-                color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-                boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
-
-                for (int q = 0; q < numberOfImpactVariations; q++) {
-
-                  if (isModel2DsPixel) {
-                    Image_RGBA[q].pixels[np] = Model2DsPixel;
-                    continue;
-                  }
-
-                  float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
-                  float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
-
-                  total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
-                  total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
-                  total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
-                  total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
-
-                  Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
-                }
-              }
-            }));
-          }
-          awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
-          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT0;
-
-          if (isMultithreaded_calcImpact_perDay) {
-            // Single-threaded, after this day's own parallel dispatch has
-            // fully finished. See parallel_utils.pde's own listSuspectPixels()
-            // for what "isolated" means and why it can't be a real edge -
-            // same residual, never fully root-caused low-level race
-            // ShadeViewport.pde's own long investigation chased, appearing
-            // to affect any sufficiently-exercised parallel pass in this
-            // codebase, not something specific to this loop's own logic.
-            // Unlike ShadeViewport.pde's own repair, there's no ray to
-            // re-cast here - this loop's own per-pixel work is a pure,
-            // deterministic palette-mapping computation over already-
-            // computed Matrix_ARGB data, so the authoritative answer for a
-            // flagged pixel is just redoing that same computation for it,
-            // same formulas as the parallel loop above, line for line.
-            // Deliberately does NOT re-add to total_Matrix_ARGB - that
-            // already got this day's correct contribution from the
-            // parallel pass above; doing it again here would double-count.
             for (int q = 0; q < numberOfImpactVariations; q++) {
-              long calcImpact_listSuspectsT0 = millis();
-              IntList suspectPixels = listSuspectPixels(Image_RGBA[q].pixels, RES1, RES2);
-              calcImpact_listSuspectsMillis += millis() - calcImpact_listSuspectsT0;
 
-              long calcImpact_fixSuspectsT0 = millis();
-              for (int np : suspectPixels) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
-
-                color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-                boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
-
-                if (isModel2DsPixel) {
-                  Image_RGBA[q].pixels[np] = Model2DsPixel;
-                  continue;
-                }
-
-                float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
-                float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
-                float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
-                float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
-
-                Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
+              if (isModel2DsPixel) {
+                Image_RGBA[q].pixels[np] = Model2DsPixel;
+                continue;
               }
-              calcImpact_fixSuspectsMillis += millis() - calcImpact_fixSuspectsT0;
+
+              float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
+
+              total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
+              total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
+              total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
+              total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
+
+              Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
           }
 
-          long calcImpact_perDayPaletteT1 = millis();
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].updatePixels();
 
@@ -938,7 +860,7 @@ class SolarImpacts {
             }
             //}
           }
-          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT1;
+          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT0;
         }
 
         {
@@ -1001,14 +923,12 @@ class SolarImpacts {
       // computed as a remainder rather than tracked at each of its own
       // several small call sites.
       long calcImpact_totalMillis = millis() - calcImpact_startMillis;
-      long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_listSuspectsMillis - calcImpact_fixSuspectsMillis - calcImpact_summaryPaletteMillis;
-      println("\ncalculate_Impact_CurrentPreBaked() timing (step 2 parallelized + diffuse files loaded once):");
+      long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
+      println("calculate_Impact_CurrentPreBaked() timing (step 2 parallelized + diffuse files loaded once):");
       println("  total:            " + calcImpact_totalMillis + " ms");
       println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
       println("  per-day palette:  " + calcImpact_perDayPaletteMillis + " ms (" + nf(100.0 * calcImpact_perDayPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
-      println("  list suspects:    " + calcImpact_listSuspectsMillis + " ms (" + nf(100.0 * calcImpact_listSuspectsMillis / calcImpact_totalMillis, 0, 1) + "%)");
-      println("  fix suspects:     " + calcImpact_fixSuspectsMillis + " ms (" + nf(100.0 * calcImpact_fixSuspectsMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  summary palette:  " + calcImpact_summaryPaletteMillis + " ms (" + nf(100.0 * calcImpact_summaryPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  setup/other:      " + calcImpact_setupMillis + " ms (" + nf(100.0 * calcImpact_setupMillis / calcImpact_totalMillis, 0, 1) + "%)");
 
