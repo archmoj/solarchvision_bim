@@ -136,6 +136,16 @@ void ShadeViewport () {
   isShadingViewport = true;
   int ShadeViewport_startMillis = millis();
 
+  // Timing breakdown, same spirit as SolarImpacts.pde's own calcImpact_*
+  // timers - shadeSetupMillis is whatever's left over (buildFaceGrid(),
+  // everything before pass 1 dispatches, and the arraycopy/save/cursor
+  // work at the very end), computed as a remainder rather than tracked
+  // at each of its own scattered call sites.
+  long shadePass1Millis = 0;
+  long shadeListSuspectsMillis = 0;
+  long shadeFixSuspectsMillis = 0;
+  long shadePass2Millis = 0;
+
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
@@ -287,6 +297,7 @@ void ShadeViewport () {
 
   java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(numThreads);
 
+  long shadePass1T0 = millis();
   java.util.List<java.util.concurrent.Future<?>> pass1Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
   for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
     final int npFrom = chunkStart;
@@ -440,6 +451,7 @@ void ShadeViewport () {
     }));
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
+  shadePass1Millis += millis() - shadePass1T0;
 
   // Single-threaded, right after pass 1 finishes, before the arraycopy
   // into Shade_RGBA below reads this pass's output. See parallel_utils.
@@ -454,11 +466,14 @@ void ShadeViewport () {
   // faceEdgeNormalX,Y,Z[] are its real output here) - so this is skipped
   // entirely in both.
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
+    long shadeListSuspectsT0 = millis();
     IntList suspectPixels = listSuspectPixels(shadeBuffer, RES1, RES2);
+    shadeListSuspectsMillis += millis() - shadeListSuspectsT0;
 
     int[] repairStamp = new int[faceTestStampSize];
     int[] repairCounter = { 0 };
 
+    long shadeFixSuspectsT0 = millis();
     for (int np : suspectPixels) {
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
@@ -521,6 +536,7 @@ void ShadeViewport () {
         shadeBuffer[np] = color(0, 0, 0, 0);
       }
     }
+    shadeFixSuspectsMillis += millis() - shadeFixSuspectsT0;
   }
 
   /*
@@ -614,6 +630,7 @@ void ShadeViewport () {
   // concurrent with it, so there's no reason to size or pool it
   // differently.
   if (noShadeOnlyVisibleFaceEdges) {
+    long shadePass2T0 = millis();
     java.util.List<java.util.concurrent.Future<?>> pass2Futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
     for (int chunkStart = 0; chunkStart < totalPixels; chunkStart += chunkSize) {
       final int npFrom = chunkStart;
@@ -640,6 +657,7 @@ void ShadeViewport () {
       }));
     }
     awaitAll(pass2Futures); // see parallel_utils.pde's own comment
+    shadePass2Millis += millis() - shadePass2T0;
   }
 
   executor.shutdown();
@@ -674,6 +692,16 @@ void ShadeViewport () {
     // both pop up an overlay nobody asked for and stretch it wrong.
     WIN3D.showShading = true;
   }
+
+  long shadeTotalMillis = millis() - ShadeViewport_startMillis;
+  long shadeSetupMillis = shadeTotalMillis - shadePass1Millis - shadeListSuspectsMillis - shadeFixSuspectsMillis - shadePass2Millis;
+  println("\nShadeViewport() timing:");
+  println("  total:            " + shadeTotalMillis + " ms");
+  println("  pass 1:           " + shadePass1Millis + " ms (" + nf(100.0 * shadePass1Millis / shadeTotalMillis, 0, 1) + "%)");
+  println("  list suspects:    " + shadeListSuspectsMillis + " ms (" + nf(100.0 * shadeListSuspectsMillis / shadeTotalMillis, 0, 1) + "%)");
+  println("  fix suspects:     " + shadeFixSuspectsMillis + " ms (" + nf(100.0 * shadeFixSuspectsMillis / shadeTotalMillis, 0, 1) + "%)");
+  println("  pass 2:           " + shadePass2Millis + " ms (" + nf(100.0 * shadePass2Millis / shadeTotalMillis, 0, 1) + "%)");
+  println("  setup/other:      " + shadeSetupMillis + " ms (" + nf(100.0 * shadeSetupMillis / shadeTotalMillis, 0, 1) + "%)");
 
   println("ShadeViewport() finished in " + nf((millis() - ShadeViewport_startMillis) / 1000.0, 0, 2) + "s");
 

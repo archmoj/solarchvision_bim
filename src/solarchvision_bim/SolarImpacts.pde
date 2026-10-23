@@ -482,6 +482,8 @@ class SolarImpacts {
       long calcImpact_accumulationMillis = 0;
       int calcImpact_accumulationPasses = 0;
       long calcImpact_perDayPaletteMillis = 0;
+      long calcImpact_listSuspectsMillis = 0;
+      long calcImpact_fixSuspectsMillis = 0;
       long calcImpact_summaryPaletteMillis = 0;
 
       // One executor, created once here and reused for every one of the
@@ -874,6 +876,7 @@ class SolarImpacts {
             }));
           }
           awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
+          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT0;
 
           if (isMultithreaded_calcImpact_perDay) {
             // Single-threaded, after this day's own parallel dispatch has
@@ -893,8 +896,11 @@ class SolarImpacts {
             // already got this day's correct contribution from the
             // parallel pass above; doing it again here would double-count.
             for (int q = 0; q < numberOfImpactVariations; q++) {
+              long calcImpact_listSuspectsT0 = millis();
               IntList suspectPixels = listSuspectPixels(Image_RGBA[q].pixels, RES1, RES2);
+              calcImpact_listSuspectsMillis += millis() - calcImpact_listSuspectsT0;
 
+              long calcImpact_fixSuspectsT0 = millis();
               for (int np : suspectPixels) {
                 int Image_X = np % RES1;
                 int Image_Y = np / RES1;
@@ -914,9 +920,11 @@ class SolarImpacts {
 
                 Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
               }
+              calcImpact_fixSuspectsMillis += millis() - calcImpact_fixSuspectsT0;
             }
           }
 
+          long calcImpact_perDayPaletteT1 = millis();
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].updatePixels();
 
@@ -930,7 +938,7 @@ class SolarImpacts {
             }
             //}
           }
-          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT0;
+          calcImpact_perDayPaletteMillis += millis() - calcImpact_perDayPaletteT1;
         }
 
         {
@@ -993,12 +1001,14 @@ class SolarImpacts {
       // computed as a remainder rather than tracked at each of its own
       // several small call sites.
       long calcImpact_totalMillis = millis() - calcImpact_startMillis;
-      long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
-      println("calculate_Impact_CurrentPreBaked() timing (step 2 parallelized + diffuse files loaded once):");
+      long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_listSuspectsMillis - calcImpact_fixSuspectsMillis - calcImpact_summaryPaletteMillis;
+      println("\ncalculate_Impact_CurrentPreBaked() timing (step 2 parallelized + diffuse files loaded once):");
       println("  total:            " + calcImpact_totalMillis + " ms");
       println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
       println("  per-day palette:  " + calcImpact_perDayPaletteMillis + " ms (" + nf(100.0 * calcImpact_perDayPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
+      println("  list suspects:    " + calcImpact_listSuspectsMillis + " ms (" + nf(100.0 * calcImpact_listSuspectsMillis / calcImpact_totalMillis, 0, 1) + "%)");
+      println("  fix suspects:     " + calcImpact_fixSuspectsMillis + " ms (" + nf(100.0 * calcImpact_fixSuspectsMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  summary palette:  " + calcImpact_summaryPaletteMillis + " ms (" + nf(100.0 * calcImpact_summaryPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  setup/other:      " + calcImpact_setupMillis + " ms (" + nf(100.0 * calcImpact_setupMillis / calcImpact_totalMillis, 0, 1) + "%)");
 
