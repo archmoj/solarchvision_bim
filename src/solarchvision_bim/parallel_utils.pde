@@ -38,10 +38,11 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 //
 // pixels: a PImage.pixels[]-shaped array (ARGB ints, row-major), RES1
 // wide - read only, never written here. Returns the np index of every
-// pixel flagged this way; what to actually do about a flagged pixel -
-// repairIsolatedPixels() below's own neighbor-color average, or
-// something more precise like ShadeViewport.pde's own re-cast-the-ray
-// repair - is a separate decision this function has no opinion on.
+// pixel flagged this way; what to actually do about a flagged pixel is
+// a separate decision this function has no opinion on - ShadeViewport.
+// pde and SolarImpacts.pde each re-cast that one pixel's own ray and
+// redo their own per-pixel computation for it, right where they call
+// this (see either one's own comment at that call site).
 IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
   IntList isolated = new IntList();
 
@@ -79,59 +80,4 @@ IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
   }
 
   return isolated;
-}
-
-// Repairs every pixel listIsolatedPixels() above flags, by averaging the
-// color of its (all-agreeing) opaque neighbors - or erasing it, if its
-// neighbors all agree on transparent instead. See that function's own
-// comment for what "isolated" means and why it can't be a real edge.
-// Reads from a snapshot taken before any writes, so repairing one pixel
-// can never influence whether its own neighbor looks isolated (in
-// practice two flagged pixels are never neighbors of each other - each
-// would require the other to look uniform, which an isolated pixel by
-// definition doesn't - but the snapshot costs little and removes any
-// doubt).
-void repairIsolatedPixels (int[] pixels, int RES1, int RES2) {
-  IntList isolated = listIsolatedPixels(pixels, RES1, RES2);
-  int[] original = pixels.clone();
-
-  for (int i = 0; i < isolated.size(); i++) {
-    int np = isolated.get(i);
-    boolean centerOpaque = (((original[np] >> 24) & 0xFF) == 255);
-
-    int x = np % RES1;
-    int y = np / RES1;
-
-    int opaqueNeighborCount = 0;
-    long sumR = 0, sumG = 0, sumB = 0;
-
-    for (int dx = -1; dx <= 1; dx++) {
-      for (int dy = -1; dy <= 1; dy++) {
-        if (dx == 0 && dy == 0) continue;
-        int nx = x + dx;
-        int ny = y + dy;
-        if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
-
-        int neighborColor = original[ny * RES1 + nx];
-        if (((neighborColor >> 24) & 0xFF) == 255) {
-          opaqueNeighborCount++;
-          sumR += (neighborColor >> 16) & 0xFF;
-          sumG += (neighborColor >> 8) & 0xFF;
-          sumB += neighborColor & 0xFF;
-        }
-      }
-    }
-
-    if (!centerOpaque) {
-      // every available neighbor hit, this one (alone) missed - repaint
-      // with the average color of those (all-opaque) neighbors.
-      int avgR = (int) (sumR / opaqueNeighborCount);
-      int avgG = (int) (sumG / opaqueNeighborCount);
-      int avgB = (int) (sumB / opaqueNeighborCount);
-      pixels[np] = color(avgR, avgG, avgB, 255);
-    } else {
-      // every available neighbor missed, this one (alone) hit - erase it.
-      pixels[np] = color(0, 0, 0, 0);
-    }
-  }
 }

@@ -852,17 +852,87 @@ class SolarImpacts {
           awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
 
           // Single-threaded, after this day's own parallel dispatch has
-          // fully finished. See parallel_utils.pde's own comment on what
-          // this specifically targets and why it can't touch a real
-          // edge - same mitigation ShadeViewport.pde/preBakeViewport.pde
-          // already apply to their own parallel output, for the same
-          // reason: a residual, never fully root-caused low-level race
-          // (see ShadeViewport.pde's own long investigation) that
-          // appears to affect any sufficiently-exercised parallel pass
-          // in this codebase, not something specific to this loop's own
-          // logic.
+          // fully finished. See parallel_utils.pde's own listIsolatedPixels()
+          // for what "isolated" means and why it can't be a real edge -
+          // same residual, never fully root-caused low-level race
+          // ShadeViewport.pde's own long investigation chased, appearing
+          // to affect any sufficiently-exercised parallel pass in this
+          // codebase, not something specific to this loop's own logic.
+          // Unlike ShadeViewport.pde's own repair, there's no ray to
+          // re-cast here - this loop's own per-pixel work is a pure,
+          // deterministic palette-mapping computation over already-
+          // computed Matrix_ARGB data, so the authoritative answer for a
+          // flagged pixel is just redoing that same computation for it,
+          // same formulas as the parallel loop above, line for line.
+          // Deliberately does NOT re-add to total_Matrix_ARGB - that
+          // already got this day's correct contribution from the
+          // parallel pass above; doing it again here would double-count.
           for (int q = 0; q < numberOfImpactVariations; q++) {
-            repairIsolatedPixels(Image_RGBA[q].pixels, RES1, RES2);
+            IntList isolatedPixels = listIsolatedPixels(Image_RGBA[q].pixels, RES1, RES2);
+
+            for (int np : isolatedPixels) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
+
+              color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+              boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+
+              if (isModel2DsPixel) {
+                Image_RGBA[q].pixels[np] = Model2DsPixel;
+                continue;
+              }
+
+              float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
+              float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
+
+              float[] _c = {
+                0, 0, 0, 0
+              };
+
+              float _u = 0;
+
+              float valuesSUM = FLOAT_undefined;
+
+              int PAL_type = 0;
+              int PAL_direction = 1;
+              float PAL_multiplier = 1;
+
+              if (q == Impact_ACTIVE) {
+                valuesSUM = Image_G;
+
+                PAL_type = allFaces.activeColorscaleIndex;
+                PAL_direction = allFaces.activeColorscaleDirection;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
+
+                _u = (0.2 * PAL_multiplier * valuesSUM);
+              }
+
+              if (q == Impact_PASSIVE) {
+                float AVERAGE, PERCENTAGE, COMPARISON;
+
+                AVERAGE = (Image_B - Image_R);
+                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
+                else PERCENTAGE = 0.0;
+                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+                valuesSUM = COMPARISON;
+
+                PAL_type = allFaces.passiveColorscaleIndex;
+                PAL_direction = allFaces.passiveColorscaleDirection;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
+
+                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
+              }
+
+              _u = applyPalDirection(_u, PAL_direction);
+
+              _c = PAINT.getColorStyle(PAL_type, _u);
+
+              if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
+              else Image_RGBA[q].pixels[np] = color(223, 223, 223);
+            }
           }
 
           for (int q = 0; q < numberOfImpactVariations; q++) {

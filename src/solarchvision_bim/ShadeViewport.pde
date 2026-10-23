@@ -428,15 +428,14 @@ void ShadeViewport () {
   // into Shade_RGBA below reads this pass's output. See parallel_utils.
   // pde's own listIsolatedPixels() for what "isolated" means and why it
   // can't be a real edge - this re-casts each flagged pixel's own ray
-  // and redoes pass 1's own shading logic for it, rather than
-  // approximating from neighbor colors the way parallel_utils.pde's own
-  // repairIsolatedPixels() does (still used as-is by preBakeViewport.pde
-  // and SolarImpacts.pde, which have no equivalent single-pixel ray to
-  // re-cast). Only meaningful in plain shaded-preview mode: the 2D-
-  // object mask's alpha comes from a billboard texture, not a hit/miss
-  // bit, and face-edges mode doesn't write shadeBuffer at all in pass 1
-  // (faceEdgeHit[]/faceEdgeNormalX,Y,Z[] are its real output here) - so
-  // this is skipped entirely in both.
+  // and redoes pass 1's own shading logic for it, the same way Solar
+  // Impacts.pde's own per-day palette loop re-casts a ray and redoes its
+  // own per-pixel palette computation (see that loop's own comment).
+  // Only meaningful in plain shaded-preview mode: the 2D-object mask's
+  // alpha comes from a billboard texture, not a hit/miss bit, and face-
+  // edges mode doesn't write shadeBuffer at all in pass 1 (faceEdgeHit[]/
+  // faceEdgeNormalX,Y,Z[] are its real output here) - so this is skipped
+  // entirely in both.
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
     IntList isolatedPixels = listIsolatedPixels(shadeBuffer, RES1, RES2);
 
