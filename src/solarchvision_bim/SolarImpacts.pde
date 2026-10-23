@@ -864,7 +864,7 @@ class SolarImpacts {
           awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
 
           // Single-threaded, after this day's own parallel dispatch has
-          // fully finished. See parallel_utils.pde's own listIsolatedPixels()
+          // fully finished. See parallel_utils.pde's own listSuspectPixels()
           // for what "isolated" means and why it can't be a real edge -
           // same residual, never fully root-caused low-level race
           // ShadeViewport.pde's own long investigation chased, appearing
@@ -880,9 +880,9 @@ class SolarImpacts {
           // already got this day's correct contribution from the
           // parallel pass above; doing it again here would double-count.
           for (int q = 0; q < numberOfImpactVariations; q++) {
-            IntList isolatedPixels = listIsolatedPixels(Image_RGBA[q].pixels, RES1, RES2);
+            IntList suspectPixels = listSuspectPixels(Image_RGBA[q].pixels, RES1, RES2);
 
-            for (int np : isolatedPixels) {
+            for (int np : suspectPixels) {
               int Image_X = np % RES1;
               int Image_Y = np / RES1;
 

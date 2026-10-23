@@ -443,7 +443,7 @@ void ShadeViewport () {
 
   // Single-threaded, right after pass 1 finishes, before the arraycopy
   // into Shade_RGBA below reads this pass's output. See parallel_utils.
-  // pde's own listIsolatedPixels() for what "isolated" means and why it
+  // pde's own listSuspectPixels() for what "isolated" means and why it
   // can't be a real edge - this re-casts each flagged pixel's own ray
   // and redoes pass 1's own shading logic for it, the same way Solar
   // Impacts.pde's own per-day palette loop re-casts a ray and redoes its
@@ -454,12 +454,12 @@ void ShadeViewport () {
   // faceEdgeNormalX,Y,Z[] are its real output here) - so this is skipped
   // entirely in both.
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
-    IntList isolatedPixels = listIsolatedPixels(shadeBuffer, RES1, RES2);
+    IntList suspectPixels = listSuspectPixels(shadeBuffer, RES1, RES2);
 
     int[] repairStamp = new int[faceTestStampSize];
     int[] repairCounter = { 0 };
 
-    for (int np : isolatedPixels) {
+    for (int np : suspectPixels) {
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
       deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,

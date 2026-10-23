@@ -58,8 +58,8 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // pde and SolarImpacts.pde each re-cast that one pixel's own ray and
 // redo their own per-pixel computation for it, right where they call
 // this (see either one's own comment at that call site).
-IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
-  IntList isolated = new IntList();
+IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
+  IntList list = new IntList();
 
   for (int np = 0; np < pixels.length; np++) {
     int centerAlpha = (pixels[np] >> 24) & 0xFF;
@@ -88,8 +88,8 @@ IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
     }
 
     boolean suspect = centerOpaque ? (transparentCount > opaqueCount) : (opaqueCount > transparentCount);
-    if (suspect) isolated.append(np);
+    if (suspect) list.append(np);
   }
 
-  return isolated;
+  return list;
 }
