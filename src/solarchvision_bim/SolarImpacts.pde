@@ -460,6 +460,12 @@ class SolarImpacts {
       String camera2DTextureFile = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "2Ds_Camera" + nf(cameraIndex, 2) + ".png";
       PImage Model2DsTexture = new File(camera2DTextureFile).exists() ? loadImage(camera2DTextureFile) : null;
 
+      PImage[] diffuseShadings = new PImage[2];
+      for (int SHD = 0; SHD <= 1; SHD++) {
+        String diffuseFileName = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "DIF_" + STR_SHD[SHD] + "_Camera" + nf(cameraIndex, 2) + ".png";
+        diffuseShadings[SHD] = loadImage(diffuseFileName);
+      }
+
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
       float Pc = FLOAT_undefined;
@@ -598,23 +604,21 @@ class SolarImpacts {
                       float RAD_VALUE = (RAD_TYPE == 0) ? values_R_dir : values_R_dif;
                       float EFF_VALUE = (RAD_TYPE == 0) ? values_E_dir : values_E_dif;
 
-                      PImage[] Shadings = new PImage [2];
-                      for (int SHD = 0; SHD <= 1; SHD++) {
+                      PImage[] Shadings;
+                      if (RAD_TYPE == 1) {
+                        Shadings = diffuseShadings;
+                      } else {
+                        Shadings = new PImage [2];
+                        for (int SHD = 0; SHD <= 1; SHD++) {
 
-                        String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
-
-                        if (RAD_TYPE == 0) {
+                          String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
                           File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-                        } else {
-                          File_Name += "DIF_" + STR_SHD[SHD];
+                          File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
+
+                          long calcImpact_loadImageT0 = millis();
+                          Shadings[SHD] = loadImage(File_Name);
+                          calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                         }
-
-                        File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
-
-
-                        long calcImpact_loadImageT0 = millis();
-                        Shadings[SHD]  = loadImage(File_Name);
-                        calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                       }
 
                       // Independent per pixel - each np reads only this
@@ -972,7 +976,7 @@ class SolarImpacts {
       // several small call sites.
       long calcImpact_totalMillis = millis() - calcImpact_startMillis;
       long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
-      println("calculate_Impact_CurrentPreBaked() timing (step 2: accumulation + per-day palette loops parallelized):");
+      println("calculate_Impact_CurrentPreBaked() timing (step 2 parallelized + diffuse files loaded once):");
       println("  total:            " + calcImpact_totalMillis + " ms");
       println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
