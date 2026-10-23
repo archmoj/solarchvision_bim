@@ -851,6 +851,20 @@ class SolarImpacts {
           }
           awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
 
+          // Single-threaded, after this day's own parallel dispatch has
+          // fully finished. See parallel_utils.pde's own comment on what
+          // this specifically targets and why it can't touch a real
+          // edge - same mitigation ShadeViewport.pde/preBakeViewport.pde
+          // already apply to their own parallel output, for the same
+          // reason: a residual, never fully root-caused low-level race
+          // (see ShadeViewport.pde's own long investigation) that
+          // appears to affect any sufficiently-exercised parallel pass
+          // in this codebase, not something specific to this loop's own
+          // logic.
+          for (int q = 0; q < numberOfImpactVariations; q++) {
+            repairIsolatedPixels(Image_RGBA[q].pixels, RES1, RES2);
+          }
+
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].updatePixels();
 
