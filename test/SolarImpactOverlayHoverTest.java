@@ -70,40 +70,40 @@ class SolarImpactOverlayHoverTest {
   void boxPosition_goesRightAndBelow_whenTheCursorIsInTheTopLeftQuadrant () {
     float[] p = app.solarImpactHover_boxPosition(50, 40, 0, 0, 400, 300, 70, 54);
 
-    assertEquals(50 + app.solarImpactHover_margin, p[0], 0.0001f);
-    assertEquals(40 + app.solarImpactHover_margin, p[1], 0.0001f);
+    assertEquals(50 + app.hoverMargin, p[0], 0.0001f);
+    assertEquals(40 + app.hoverMargin, p[1], 0.0001f);
   }
 
   @Test
   void boxPosition_goesLeftAndBelow_whenTheCursorIsInTheTopRightQuadrant () {
     float[] p = app.solarImpactHover_boxPosition(350, 40, 0, 0, 400, 300, 70, 54);
 
-    assertEquals(350 - app.solarImpactHover_margin - 70, p[0], 0.0001f);
-    assertEquals(40 + app.solarImpactHover_margin, p[1], 0.0001f);
+    assertEquals(350 - app.hoverMargin - 70, p[0], 0.0001f);
+    assertEquals(40 + app.hoverMargin, p[1], 0.0001f);
   }
 
   @Test
   void boxPosition_goesRightAndAbove_whenTheCursorIsInTheBottomLeftQuadrant () {
     float[] p = app.solarImpactHover_boxPosition(50, 260, 0, 0, 400, 300, 70, 54);
 
-    assertEquals(50 + app.solarImpactHover_margin, p[0], 0.0001f);
-    assertEquals(260 - app.solarImpactHover_margin - 54, p[1], 0.0001f);
+    assertEquals(50 + app.hoverMargin, p[0], 0.0001f);
+    assertEquals(260 - app.hoverMargin - 54, p[1], 0.0001f);
   }
 
   @Test
   void boxPosition_goesLeftAndAbove_whenTheCursorIsInTheBottomRightQuadrant () {
     float[] p = app.solarImpactHover_boxPosition(350, 260, 0, 0, 400, 300, 70, 54);
 
-    assertEquals(350 - app.solarImpactHover_margin - 70, p[0], 0.0001f);
-    assertEquals(260 - app.solarImpactHover_margin - 54, p[1], 0.0001f);
+    assertEquals(350 - app.hoverMargin - 70, p[0], 0.0001f);
+    assertEquals(260 - app.hoverMargin - 54, p[1], 0.0001f);
   }
 
   @Test
   void boxPosition_treatsExactlyHalf_asTheLeftTopSide () {
     float[] p = app.solarImpactHover_boxPosition(200, 150, 0, 0, 400, 300, 70, 54);
 
-    assertEquals(200 + app.solarImpactHover_margin, p[0], 0.0001f);
-    assertEquals(150 + app.solarImpactHover_margin, p[1], 0.0001f);
+    assertEquals(200 + app.hoverMargin, p[0], 0.0001f);
+    assertEquals(150 + app.hoverMargin, p[1], 0.0001f);
   }
 
   @Test

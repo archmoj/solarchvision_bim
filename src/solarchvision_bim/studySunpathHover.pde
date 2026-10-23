@@ -84,13 +84,13 @@ void drawSunpathHoverBox (SunpathHoverPoint p) {
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
 
   float maxTextWidth = 0;
   for (int i = 0; i < lines.length; i++) {
     maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
   }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
+  float boxW = 2 * hoverSidePad + maxTextWidth;
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
@@ -104,7 +104,7 @@ void drawSunpathHoverBox (SunpathHoverPoint p) {
   rect(boxX, boxY, boxW, boxH);
 
   stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
+  strokeWeight(hoverStrokeWeight);
   float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
@@ -114,6 +114,6 @@ void drawSunpathHoverBox (SunpathHoverPoint p) {
   fill(0);
   textAlign(LEFT, TOP);
   for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
+    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
   }
 }

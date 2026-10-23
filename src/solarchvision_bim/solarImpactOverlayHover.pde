@@ -48,11 +48,11 @@ boolean showARGB_inHover = false;
 // keeps it inside that rect - left when the mouse is in the right half,
 // right when it's in the left half, and the same above/below for the
 // vertical half - rather than a fixed corner that could run past an edge.
-final int solarImpactHover_margin = 14; // gap between the cursor and the box
-final int solarImpactHover_topPad = 6;
-final int solarImpactHover_bottomPad = 8;
-final int solarImpactHover_sidePad = 8;
-final int solarImpactHover_strokeWeight = 2;
+final int hoverMargin = 14; // gap between the cursor and the box
+final int hoverTopPad = 6;
+final int hoverBottomPad = 8;
+final int hoverSidePad = 8;
+final int hoverStrokeWeight = 2;
 // Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
 // exactly at the overlay's own boundary would still stick out 1px past it.
 // solarImpactHover_boxPosition() below keeps the box this far clear of
@@ -60,10 +60,10 @@ final int solarImpactHover_strokeWeight = 2;
 // boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
 // - ceil() rather than a plain /2, so an odd strokeWeight still gets a
 // whole extra pixel of clearance instead of rounding down short.
-final int solarImpactHover_strokeInset = (int) ceil(0.5 * solarImpactHover_strokeWeight);
+final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight);
 
 // Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
-// so it (and its stroke - see solarImpactHover_strokeInset above) stays
+// so it (and its stroke - see hoverStrokeInset above) stays
 // entirely inside destX..destX+destW / destY..destY+destH (the overlay's
 // own dest rect, from solarImpactOverlay_fitRect() above) - on whichever
 // side of (mouseX, mouseY) that rect has more room: left of the cursor
@@ -77,11 +77,11 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
   boolean rightHalf = (mouseX - destX) > (destW / 2);
   boolean bottomHalf = (mouseY - destY) > (destH / 2);
 
-  float boxX = rightHalf ? (mouseX - solarImpactHover_margin - boxW) : (mouseX + solarImpactHover_margin);
-  float boxY = bottomHalf ? (mouseY - solarImpactHover_margin - boxH) : (mouseY + solarImpactHover_margin);
+  float boxX = rightHalf ? (mouseX - hoverMargin - boxW) : (mouseX + hoverMargin);
+  float boxY = bottomHalf ? (mouseY - hoverMargin - boxH) : (mouseY + hoverMargin);
 
-  boxX = constrain(boxX, destX + solarImpactHover_strokeInset, destX + destW - boxW - solarImpactHover_strokeInset);
-  boxY = constrain(boxY, destY + solarImpactHover_strokeInset, destY + destH - boxH - solarImpactHover_strokeInset);
+  boxX = constrain(boxX, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+  boxY = constrain(boxY, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
 
   return new float[] { boxX, boxY };
 }
@@ -168,13 +168,13 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   textSize(MessageSize);
 
   float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
 
   float maxTextWidth = 0;
   for (int i = 0; i < lines.length; i++) {
     maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
   }
-  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
+  float boxW = 2 * hoverSidePad + maxTextWidth;
 
   float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
@@ -189,7 +189,7 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   // corner points back at the actual hovered pixel, instead of leaving
   // that ambiguous with a box outlined on all four sides.
   stroke(0);
-  strokeWeight(solarImpactHover_strokeWeight);
+  strokeWeight(hoverStrokeWeight);
   float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
@@ -199,6 +199,6 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   fill(0);
   textAlign(LEFT, TOP);
   for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
+    text(lines[i], boxX + hoverSidePad, boxY + hoverTopPad + i * lineHeight);
   }
 }

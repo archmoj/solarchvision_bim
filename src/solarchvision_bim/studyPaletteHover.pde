@@ -56,8 +56,8 @@ void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
-  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
-  float boxW = 2 * solarImpactHover_sidePad + textWidth(lines[0]);
+  float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
+  float boxW = 2 * hoverSidePad + textWidth(lines[0]);
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
@@ -76,7 +76,7 @@ void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
   rect(boxX, boxY, boxW, boxH);
 
   stroke(useWhiteText ? 255 : 0);
-  strokeWeight(solarImpactHover_strokeWeight);
+  strokeWeight(hoverStrokeWeight);
   float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
@@ -85,5 +85,5 @@ void drawPaletteSwatchHoverBox (PaletteSwatchHoverInfo info) {
   noStroke();
   fill(useWhiteText ? 255 : 0);
   textAlign(LEFT, TOP);
-  text(lines[0], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad);
+  text(lines[0], boxX + hoverSidePad, boxY + hoverTopPad);
 }
