@@ -623,9 +623,27 @@ class SolarImpacts {
                       // to race on. Reuses calcImpact_executor (this
                       // function's own top) rather than creating a new
                       // pool for every pass.
+                      //
+                      // One chunk per thread here, not ShadeViewport.pde's
+                      // totalPixels/numThreads - that fine split mattered
+                      // there for reasons specific to its own raycasting
+                      // workload (nothing to do with chunk size itself,
+                      // in the end), not something to carry over by
+                      // default. This loop's own per-pixel cost is
+                      // uniform (two PImage.get() calls and some
+                      // arithmetic, no hit/miss branching that varies
+                      // much), so there's no load-imbalance reason to
+                      // prefer many small chunks - and this loop runs
+                      // ~hundreds of times per call, so fine chunking's
+                      // dispatch overhead (building and awaiting many
+                      // Futures) gets paid that many times over, which is
+                      // what was actually dominating here: a jump from
+                      // ~22,000 chunks/pass down to ~numThreads chunks/
+                      // pass is a many-thousand-fold drop in Future
+                      // submissions across the whole call.
                       long calcImpact_accumulationT0 = millis();
                       int calcImpact_totalPixels = RES1 * RES2;
-                      int calcImpact_numChunks = max(1, calcImpact_totalPixels / calcImpact_numThreads);
+                      int calcImpact_numChunks = calcImpact_numThreads;
                       int calcImpact_chunkSize = (calcImpact_totalPixels + calcImpact_numChunks - 1) / calcImpact_numChunks;
 
                       final float calcImpact_RAD_VALUE = RAD_VALUE;
