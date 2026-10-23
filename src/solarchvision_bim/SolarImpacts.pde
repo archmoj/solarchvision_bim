@@ -441,6 +441,13 @@ class SolarImpacts {
 
       int RES1 = this.RES1;
       int RES2 = this.RES2;
+      // Declared here, not inside whichever loop first needed it, so
+      // every parallelized loop below (the accumulation loop, deep
+      // inside the hour/RAD_TYPE loop; the per-day palette loop, at the
+      // day loop's own level; the summary palette loop, after the day
+      // loop) can all see the same one, since RES1/RES2 don't change
+      // again for the rest of this call.
+      int calcImpact_totalPixels = RES1 * RES2;
 
       // This camera's Model2Ds (tree/person) visibility mask, baked by
       // preBakeViewport() (via ShadeViewport()'s noShadeOnlyVisible2DTextures
@@ -642,7 +649,6 @@ class SolarImpacts {
                       // pass is a many-thousand-fold drop in Future
                       // submissions across the whole call.
                       long calcImpact_accumulationT0 = millis();
-                      int calcImpact_totalPixels = RES1 * RES2;
                       int calcImpact_numChunks = calcImpact_numThreads;
                       int calcImpact_chunkSize = (calcImpact_totalPixels + calcImpact_numChunks - 1) / calcImpact_numChunks;
 
@@ -716,97 +722,130 @@ class SolarImpacts {
 
           this.dayValuesMUL[j + 1] = valuesMUL;
 
+          // valuesMUL above is reassigned inside its own if-block, so it
+          // isn't effectively final and the lambda below can't capture it
+          // directly - this copy, taken only after that reassignment has
+          // already happened, is what gets captured instead.
+          final float calcImpact_valuesMUL = valuesMUL;
+
           long calcImpact_perDayPaletteT0 = millis();
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].loadPixels();
           }
 
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
+          // Independent per pixel, same reasoning as the accumulation
+          // loop above: each np reads only this day's own Matrix_ARGB at
+          // its own (Image_X, Image_Y), this day's own valuesMUL (a
+          // local, captured by value), and the shared, read-only
+          // Model2DsTexture/allFaces-palette-settings/PAINT (stateless -
+          // no instance fields at all, same as Functions.pde's funcs was
+          // - see ShadeViewport.pde's own comment on that) - and writes
+          // only its own np's slot of Image_RGBA[0]/[1].pixels[] and its
+          // own (Image_X, Image_Y) slot of total_Matrix_ARGB across all
+          // q/c indices. total_Matrix_ARGB accumulates across days too,
+          // but only ever from one day's own parallel dispatch at a time
+          // - the day loop itself stays sequential (awaitAll() below
+          // finishes before the next day starts), so there's no
+          // cross-day write race on it either, same as the accumulation
+          // loop's own total_Matrix_ARGB-equivalent reasoning for Matrix_
+          // ARGB across hours. One chunk per thread, not totalPixels/
+          // numThreads - same reasoning as the accumulation loop above.
+          java.util.List<java.util.concurrent.Future<?>> calcImpact_perDayFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+          int calcImpact_perDayChunkSize = (calcImpact_totalPixels + calcImpact_numThreads - 1) / calcImpact_numThreads;
+          for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_perDayChunkSize) {
+            final int npFrom = chunkStart;
+            final int npTo = min(calcImpact_totalPixels, chunkStart + calcImpact_perDayChunkSize);
 
-            // A pixel this camera's Model2Ds mask marks non-transparent -
-            // a tree/person was hit there - skips the radiation/impact
-            // computation below entirely and is simply painted with that
-            // billboard's own real color, so trees and people show up in
-            // the analysis the same way they do in the live shaded
-            // preview.
-            color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
-            boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+            calcImpact_perDayFutures.add(calcImpact_executor.submit(() -> {
+              for (int np = npFrom; np < npTo; np++) {
+                int Image_X = np % RES1;
+                int Image_Y = np / RES1;
 
-            for (int q = 0; q < numberOfImpactVariations; q++) {
+                // A pixel this camera's Model2Ds mask marks non-transparent -
+                // a tree/person was hit there - skips the radiation/impact
+                // computation below entirely and is simply painted with that
+                // billboard's own real color, so trees and people show up in
+                // the analysis the same way they do in the live shaded
+                // preview.
+                color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+                boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
 
-              if (isModel2DsPixel) {
-                Image_RGBA[q].pixels[np] = Model2DsPixel;
-                continue;
+                for (int q = 0; q < numberOfImpactVariations; q++) {
+
+                  if (isModel2DsPixel) {
+                    Image_RGBA[q].pixels[np] = Model2DsPixel;
+                    continue;
+                  }
+
+                  float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * calcImpact_valuesMUL;
+                  float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * calcImpact_valuesMUL;
+                  float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
+                  float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
+
+                  total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
+                  total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
+                  total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
+                  total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
+
+                  float[] _c = {
+                    0, 0, 0, 0
+                  };
+
+                  float _u = 0;
+
+                  float valuesSUM = FLOAT_undefined;
+
+                  int PAL_type = 0;
+                  int PAL_direction = 1;
+                  float PAL_multiplier = 1;
+
+                  if (q == Impact_ACTIVE) {
+                    valuesSUM = Image_G;
+
+                    PAL_type = allFaces.activeColorscaleIndex;
+                    PAL_direction = allFaces.activeColorscaleDirection;
+                    PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
+
+                    //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+                    //_u = (0.1 * PAL_multiplier * valuesSUM);
+                    _u = (0.2 * PAL_multiplier * valuesSUM);
+                  }
+
+                  if (q == Impact_PASSIVE) {
+                    float AVERAGE, PERCENTAGE, COMPARISON;
+
+                    AVERAGE = (Image_B - Image_R);
+                    if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
+                    else PERCENTAGE = 0.0;
+                    COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+                    valuesSUM = COMPARISON;
+
+                    PAL_type = allFaces.passiveColorscaleIndex;
+                    PAL_direction = allFaces.passiveColorscaleDirection;
+                    PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
+
+                    //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+                    _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
+                  }
+
+
+
+                  //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
+                  //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
+
+                  _u = applyPalDirection(_u, PAL_direction);
+
+                  _c = PAINT.getColorStyle(PAL_type, _u);
+
+                  if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
+                  else Image_RGBA[q].pixels[np] = color(223, 223, 223);
+                }
               }
-
-              float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * valuesMUL;
-              float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * valuesMUL;
-              float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * valuesMUL;
-              float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * valuesMUL;
-
-              total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
-              total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
-              total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
-              total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
-
-              float[] _c = {
-                0, 0, 0, 0
-              };
-
-              float _u = 0;
-
-              float valuesSUM = FLOAT_undefined;
-
-              int PAL_type = 0;
-              int PAL_direction = 1;
-              float PAL_multiplier = 1;
-
-              if (q == Impact_ACTIVE) {
-                valuesSUM = Image_G;
-
-                PAL_type = allFaces.activeColorscaleIndex;
-                PAL_direction = allFaces.activeColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
-
-                //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                //_u = (0.1 * PAL_multiplier * valuesSUM);
-                _u = (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-              if (q == Impact_PASSIVE) {
-                float AVERAGE, PERCENTAGE, COMPARISON;
-
-                AVERAGE = (Image_B - Image_R);
-                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-                else PERCENTAGE = 0.0;
-                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                valuesSUM = COMPARISON;
-
-                PAL_type = allFaces.passiveColorscaleIndex;
-                PAL_direction = allFaces.passiveColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
-
-                //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-
-
-              //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
-              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
-
-              _u = applyPalDirection(_u, PAL_direction);
-
-              _c = PAINT.getColorStyle(PAL_type, _u);
-
-              if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
-              else Image_RGBA[q].pixels[np] = color(223, 223, 223);
-            }
+            }));
           }
+          awaitAll(calcImpact_perDayFutures); // see parallel_utils.pde's own comment
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].updatePixels();
@@ -933,7 +972,7 @@ class SolarImpacts {
       // several small call sites.
       long calcImpact_totalMillis = millis() - calcImpact_startMillis;
       long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
-      println("calculate_Impact_CurrentPreBaked() timing (step 1: accumulation loop parallelized):");
+      println("calculate_Impact_CurrentPreBaked() timing (step 2: accumulation + per-day palette loops parallelized):");
       println("  total:            " + calcImpact_totalMillis + " ms");
       println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
