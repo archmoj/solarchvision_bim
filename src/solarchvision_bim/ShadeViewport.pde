@@ -424,6 +424,111 @@ void ShadeViewport () {
   }
   awaitAll(pass1Futures); // see parallel_utils.pde's own comment
 
+  // Single-threaded, right after pass 1 finishes, before the arraycopy
+  // into Shade_RGBA below reads this pass's output. See parallel_utils.
+  // pde's own listIsolatedPixels() for what "isolated" means and why it
+  // can't be a real edge - this re-casts each flagged pixel's own ray
+  // and redoes pass 1's own shading logic for it, rather than
+  // approximating from neighbor colors the way parallel_utils.pde's own
+  // repairIsolatedPixels() does (still used as-is by preBakeViewport.pde
+  // and SolarImpacts.pde, which have no equivalent single-pixel ray to
+  // re-cast). Only meaningful in plain shaded-preview mode: the 2D-
+  // object mask's alpha comes from a billboard texture, not a hit/miss
+  // bit, and face-edges mode doesn't write shadeBuffer at all in pass 1
+  // (faceEdgeHit[]/faceEdgeNormalX,Y,Z[] are its real output here) - so
+  // this is skipped entirely in both.
+  if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
+    IntList isolatedPixels = listIsolatedPixels(shadeBuffer, RES1, RES2);
+
+    int[] repairStamp = new int[faceTestStampSize];
+    int[] repairCounter = { 0 };
+
+    for (int np : isolatedPixels) {
+      int Image_X_i = np % RES1;
+      int Image_Y_i = np / RES1;
+      float Image_X = Image_X_i - halfRES1;
+      float Image_Y = Image_Y_i - halfRES2;
+
+      float[] ray_start = new float[3];
+      float[] ray_direction = new float[3];
+
+      float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
+      ray_end[0] *= invScale;
+      ray_end[1] *= invScale;
+      ray_end[2] *= invScale;
+
+      ray_start[0] = baseX;
+      ray_start[1] = baseY;
+      ray_start[2] = baseZ;
+
+      if (isOrtho) {
+        ray_start[0] += ray_end[0] - centerX;
+        ray_start[1] += ray_end[1] - centerY;
+        ray_start[2] += ray_end[2] - centerZ;
+      }
+
+      ray_direction[0] = ray_end[0] - ray_start[0];
+      ray_direction[1] = ray_end[1] - ray_start[1];
+      ray_direction[2] = ray_end[2] - ray_start[2];
+
+      float[] RxP = intersectAll(ray_start, ray_direction, 0, repairStamp, repairCounter);
+
+      if (RxP[0] >= 0) {
+        int hitFace = (int) RxP[0];
+
+        PImage billboardTex = (entireFaceAlphaTexture != null && hitFace < entireFaceAlphaTexture.size())
+          ? entireFaceAlphaTexture.get(hitFace) : null;
+
+        boolean paintExactTexture = (billboardTex != null) && (faceCastsShadow(hitFace) || allModel2Ds.peopleUseExactTexture);
+
+        if (paintExactTexture) {
+          float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+          int[] texel = faceTexturePixel(hitFace, hitPoint);
+          shadeBuffer[np] = billboardTex.get(texel[0], texel[1]);
+        } else {
+          float[] face_norm = { RxP[5], RxP[6], RxP[7] };
+          face_norm = funcs.vec3_unit(face_norm);
+
+          if (funcs.vec_dot(face_norm, ray_direction) > 0) {
+            face_norm[0] *= -1;
+            face_norm[1] *= -1;
+            face_norm[2] *= -1;
+          }
+
+          ray_start[0] = RxP[1];
+          ray_start[1] = RxP[2];
+          ray_start[2] = RxP[3];
+          ray_direction[0] = SunV[0];
+          ray_direction[1] = SunV[1];
+          ray_direction[2] = SunV[2];
+
+          float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+          float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
+
+          float valuesSUM_RAD = SkyMask;
+          if (isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
+            float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+            if (SunMask <= 0) SunMask = 0;
+            valuesSUM_RAD += SunMask;
+          }
+
+          float v = valuesSUM_RAD * 150;
+
+          if (billboardTex != null) {
+            float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+            int[] texel = faceTexturePixel(hitFace, hitPoint);
+            int texAlpha = (billboardTex.get(texel[0], texel[1]) >> 24) & 0xFF;
+            shadeBuffer[np] = color(v, v, v, texAlpha);
+          } else {
+            shadeBuffer[np] = color(v, v, v, 255);
+          }
+        }
+      } else {
+        shadeBuffer[np] = color(0, 0, 0, 0);
+      }
+    }
+  }
+
   /*
   // DIAGNOSTIC BUILD: redundantly recompute just the primary ray's hit/
   // miss decision for every pixel, single-threaded, with its own fresh
@@ -544,13 +649,6 @@ void ShadeViewport () {
   }
 
   executor.shutdown();
-
-  // Single-threaded, after every worker thread has finished (both
-  // awaitAll() calls above are what actually guarantee every chunk's
-  // writes into shadeBuffer are done and visible here). See parallel_
-  // utils.pde's own comment on what this specifically targets and why
-  // it can't touch a real edge.
-  repairIsolatedPixels(shadeBuffer, RES1, RES2);
 
   // Single-threaded, after every worker thread has finished (executor.
   // shutdown() above only stops new tasks from being submitted - both
