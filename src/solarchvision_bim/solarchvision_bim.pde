@@ -106,7 +106,7 @@ int InitializationStep = 0;
 int stepAfterInitialization = 0;
 
 void draw () {
-  if (isShadingViewport) return;
+  if (isBakingInProgress()) return;
 
   WIN3D.processHeldKey();
   UI_menuBar.processHeldKey();
@@ -159,7 +159,7 @@ void draw () {
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {
-        if (!isShadingViewport) {
+        if (!isBakingInProgress()) {
           draw_WIN3D_layers();
           draw_STUDY_hover();
           draw_UI_layers();
@@ -198,7 +198,7 @@ void draw () {
 }
 
 void keyPressed (KeyEvent e) {
-  if (isShadingViewport) return;
+  if (isBakingInProgress()) return;
 
   if (frameCount > Last_initializationStep) {
 
@@ -282,7 +282,7 @@ void keyPressed (KeyEvent e) {
 }
 
 void keyReleased () {
-  if (isShadingViewport) return;
+  if (isBakingInProgress()) return;
 
   WIN3D.keyReleased();
   UI_menuBar.keyReleased();

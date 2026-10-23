@@ -1,5 +1,5 @@
 void draw_WIN3D_layers () {
-  if (isShadingViewport) return;
+  if (isBakingInProgress()) return;
   if (!WIN3D.include) return;
   if (UI_menuBar.selected_parent != -1) return;
 

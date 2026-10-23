@@ -1,5 +1,5 @@
 void draw_UI_layers () {
-  if (isShadingViewport) return;
+  if (isBakingInProgress()) return;
 
   if(updateBars) {
     updateBars = false;

@@ -2,6 +2,17 @@ class SolarImpacts {
 
   final static String CLASS_STAMP = "SolarImpacts";
 
+  // volatile: same reasoning as ShadeViewport.pde's own isShadingViewport,
+  // which this mirrors - set true/false around calculate_Impact_
+  // CurrentPreBaked()'s own parallel work below, read from draw()/
+  // keyPressed()/keyReleased() (via isBakingInProgress(), global_
+  // functions.pde) on whatever thread runs those, not necessarily the one
+  // that called calculate_Impact_CurrentPreBaked(). Added proactively,
+  // not after the fact this time - see ShadeViewport.pde's own isShading
+  // Viewport for what tracking this down the hard way, after the fact,
+  // actually looked like.
+  volatile boolean isCalculatingImpact = false;
+
   boolean rebuild_Image_array = true;
 
   PImage[][] Image;
@@ -382,6 +393,8 @@ class SolarImpacts {
 
     if (this.sectionType != 0) {
 
+      this.isCalculatingImpact = true;
+
       // STEP 0 (not yet parallelized): timing instrumentation only, no
       // behavior change - a baseline to compare each later parallelized
       // step against. Three categories, matched to the three per-pixel
@@ -404,6 +417,18 @@ class SolarImpacts {
       int calcImpact_accumulationPasses = 0;
       long calcImpact_perDayPaletteMillis = 0;
       long calcImpact_summaryPaletteMillis = 0;
+
+      // One executor, created once here and reused for every one of the
+      // accumulation loop's ~hundreds of passes below (one per qualifying
+      // day/hour/RAD_TYPE combination) rather than a fresh thread pool per
+      // pass - creating and tearing down a pool that many times in one
+      // call would be real overhead, and ShadeViewport.pde's own
+      // isShadingViewport/volatile saga showed repeated pool churn is
+      // worth avoiding on general principle, not just for performance.
+      // Shut down once, after the whole function's work is done (see
+      // this function's own end).
+      int calcImpact_numThreads = max(1, Runtime.getRuntime().availableProcessors() - 1);
+      java.util.concurrent.ExecutorService calcImpact_executor = java.util.concurrent.Executors.newFixedThreadPool(calcImpact_numThreads);
 
       showWaitCursor();
 
@@ -585,43 +610,75 @@ class SolarImpacts {
                         calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                       }
 
+                      // Independent per pixel - each np reads only this
+                      // pass's own RAD_VALUE/EFF_VALUE (locals, captured
+                      // by value) and Shadings[0]/[1] (already loaded,
+                      // read-only PImages - loadImage() gives a plain CPU
+                      // raster, same as ShadeViewport.pde's own billboard
+                      // textures, safe for concurrent .get() reads - see
+                      // that file's own comment on why that one wasn't
+                      // the actual cause there), and writes only its own
+                      // (Image_X, Image_Y) slot of Matrix_ARGB across all
+                      // q/c indices - nothing here for two pixels' work
+                      // to race on. Reuses calcImpact_executor (this
+                      // function's own top) rather than creating a new
+                      // pool for every pass.
                       long calcImpact_accumulationT0 = millis();
-                      for (int np = 0; np < (RES1 * RES2); np++) {
-                        int Image_X = np % RES1;
-                        int Image_Y = np / RES1;
+                      int calcImpact_totalPixels = RES1 * RES2;
+                      int calcImpact_numChunks = max(1, calcImpact_totalPixels / calcImpact_numThreads);
+                      int calcImpact_chunkSize = (calcImpact_totalPixels + calcImpact_numChunks - 1) / calcImpact_numChunks;
 
-                        for (int q = 0; q < numberOfImpactVariations; q++) {
-                          if (is_undefined(Matrix_ARGB[q][0][Image_X][Image_Y])) {
+                      final float calcImpact_RAD_VALUE = RAD_VALUE;
+                      final float calcImpact_EFF_VALUE = EFF_VALUE;
+                      final PImage[] calcImpact_Shadings = Shadings;
+                      final float[][][][] calcImpact_Matrix_ARGB = Matrix_ARGB;
+                      final int calcImpact_RES1 = RES1;
 
-                            Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
-                            Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
+                      java.util.List<java.util.concurrent.Future<?>> calcImpact_accumulationFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+                      for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_chunkSize) {
+                        final int npFrom = chunkStart;
+                        final int npTo = min(calcImpact_totalPixels, chunkStart + calcImpact_chunkSize);
+
+                        calcImpact_accumulationFutures.add(calcImpact_executor.submit(() -> {
+                          for (int np = npFrom; np < npTo; np++) {
+                            int Image_X = np % calcImpact_RES1;
+                            int Image_Y = np / calcImpact_RES1;
+
+                            for (int q = 0; q < numberOfImpactVariations; q++) {
+                              if (is_undefined(calcImpact_Matrix_ARGB[q][0][Image_X][Image_Y])) {
+
+                                calcImpact_Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
+                                calcImpact_Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
+                                calcImpact_Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
+                                calcImpact_Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
+                              }
+                            }
+
+                            color COL0 = calcImpact_Shadings[0].get(Image_X, Image_Y);
+                            color COL1 = calcImpact_Shadings[1].get(Image_X, Image_Y);
+                            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                            float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;
+                            float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
+
+                            float COL_Alpha = (COL1 >> 24 & 0xFF);
+
+                            calcImpact_Matrix_ARGB[Impact_ACTIVE][0][Image_X][Image_Y] = COL_Alpha;
+                            calcImpact_Matrix_ARGB[Impact_PASSIVE][0][Image_X][Image_Y] = COL_Alpha;
+
+                            calcImpact_Matrix_ARGB[Impact_ACTIVE][2][Image_X][Image_Y] += calcImpact_RAD_VALUE * COL_V1;
+
+                            if (calcImpact_EFF_VALUE < 0) {
+                              calcImpact_Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] -= calcImpact_EFF_VALUE * COL_V1;
+                              if (COL_V0 != COL_V1) calcImpact_Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] -= calcImpact_EFF_VALUE * (COL_V0 - COL_V1);
+                            } else {
+                              calcImpact_Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] += calcImpact_EFF_VALUE * COL_V1;
+                              if (COL_V0 != COL_V1) calcImpact_Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += calcImpact_EFF_VALUE * (COL_V0 - COL_V1);
+                            }
                           }
-                        }
-
-                        color COL0 = Shadings[0].get(Image_X, Image_Y);
-                        color COL1 = Shadings[1].get(Image_X, Image_Y);
-                        //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                        float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;
-                        float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
-
-                        float COL_Alpha = (COL1 >> 24 & 0xFF);
-
-                        Matrix_ARGB[Impact_ACTIVE][0][Image_X][Image_Y] = COL_Alpha;
-                        Matrix_ARGB[Impact_PASSIVE][0][Image_X][Image_Y] = COL_Alpha;
-
-                        Matrix_ARGB[Impact_ACTIVE][2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
-
-                        if (EFF_VALUE < 0) {
-                          Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
-                          if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1);
-                        } else {
-                          Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
-                          if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
-                        }
-
+                        }));
                       }
+                      awaitAll(calcImpact_accumulationFutures); // see parallel_utils.pde's own comment
+
                       calcImpact_accumulationMillis += millis() - calcImpact_accumulationT0;
                       calcImpact_accumulationPasses++;
                     }
@@ -858,13 +915,16 @@ class SolarImpacts {
       // several small call sites.
       long calcImpact_totalMillis = millis() - calcImpact_startMillis;
       long calcImpact_setupMillis = calcImpact_totalMillis - calcImpact_loadImageMillis - calcImpact_accumulationMillis - calcImpact_perDayPaletteMillis - calcImpact_summaryPaletteMillis;
-      println("calculate_Impact_CurrentPreBaked() timing (baseline, before any parallelization):");
+      println("calculate_Impact_CurrentPreBaked() timing (step 1: accumulation loop parallelized):");
       println("  total:            " + calcImpact_totalMillis + " ms");
       println("  loadImage:        " + calcImpact_loadImageMillis + " ms (" + nf(100.0 * calcImpact_loadImageMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  accumulation:     " + calcImpact_accumulationMillis + " ms (" + nf(100.0 * calcImpact_accumulationMillis / calcImpact_totalMillis, 0, 1) + "%), " + calcImpact_accumulationPasses + " passes, " + (calcImpact_accumulationPasses > 0 ? nf((float) calcImpact_accumulationMillis / calcImpact_accumulationPasses, 0, 2) : "n/a") + " ms/pass");
       println("  per-day palette:  " + calcImpact_perDayPaletteMillis + " ms (" + nf(100.0 * calcImpact_perDayPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  summary palette:  " + calcImpact_summaryPaletteMillis + " ms (" + nf(100.0 * calcImpact_summaryPaletteMillis / calcImpact_totalMillis, 0, 1) + "%)");
       println("  setup/other:      " + calcImpact_setupMillis + " ms (" + nf(100.0 * calcImpact_setupMillis / calcImpact_totalMillis, 0, 1) + "%)");
+
+      calcImpact_executor.shutdown();
+      this.isCalculatingImpact = false;
     }
   }
 

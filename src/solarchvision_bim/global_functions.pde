@@ -50,6 +50,20 @@ void model_added () {
 
 volatile boolean should_rebuildFaceGrid = true;
 
+// Centralizes every "is some multi-threaded bake currently reading
+// shared state that draw()/keyPressed()/keyReleased() etc. must not
+// touch right now" check into one place, rather than each guard site
+// listing every bake's own flag by hand - ShadeViewport.pde's own
+// isShadingViewport was the first of these, found the hard way, one
+// missed call site at a time; calculate_Impact_CurrentPreBaked()'s own
+// allSolarImpacts.isCalculatingImpact (SolarImpacts.pde) was added
+// proactively alongside its own parallelization instead. Any future
+// bake that spawns its own worker threads over shared state should add
+// its own flag here too, rather than inventing a new guard pattern.
+boolean isBakingInProgress () {
+  return isShadingViewport || allSolarImpacts.isCalculatingImpact;
+}
+
 void model_changed () {
   should_rebuildFaceGrid = true;
 
