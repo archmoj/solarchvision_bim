@@ -19,22 +19,37 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
   }
 }
 
-// Finds isolated single-pixel hit/miss-flip artifacts without touching
-// anything: a residual, very low-probability race in the parallel ray-
-// casting these pixels come from (still not fully root-caused, despite a
-// long investigation - see ShadeViewport.pde's own comments on what was
-// ruled out) can occasionally flip one pixel's alpha the wrong way -
-// fully opaque where every neighbor missed, or fully transparent where
-// every neighbor hit. That "every available neighbor agrees with each
-// other, but not with the center" pattern is exactly what a genuine edge
-// or silhouette boundary never looks like - there, neighbors on opposite
-// sides of the edge disagree with EACH OTHER too, not just with the
-// center - so this only ever flags true isolated outliers, never a real
-// boundary. Any neighbor (or the center itself) with alpha outside
-// {0, 255} - a genuinely antialiased edge, e.g. a billboard's own
-// silhouette in ShadeViewport.pde's normal shading mode - is treated as
-// "this is near a real edge" and skipped entirely, rather than guessed
-// at.
+// Finds suspected hit/miss-flip artifacts without touching anything: a
+// residual, very low-probability race in the parallel ray-casting these
+// pixels come from (still not fully root-caused, despite a long
+// investigation - see ShadeViewport.pde's own comments on what was ruled
+// out) can occasionally flip one pixel's alpha the wrong way - opaque
+// where it should have missed, or transparent where it should have hit.
+//
+// Flags a pixel whenever the MAJORITY of its available neighbors
+// disagree with it (a simple count, not requiring them to unanimously
+// agree with each other first - see below for why that requirement was
+// dropped). Any neighbor with alpha outside {0, 255} - a genuinely
+// antialiased edge, e.g. a billboard's own silhouette in ShadeViewport.
+// pde's normal shading mode - simply isn't counted either way, rather
+// than guessed at; the center itself still has to be a clean 0 or 255 to
+// be considered at all.
+//
+// This used to require every available neighbor to unanimously agree
+// with each other before flagging anything, specifically so a genuine
+// edge or silhouette boundary - where neighbors on opposite sides
+// legitimately disagree with EACH OTHER, not just with the center -
+// could never be mistaken for noise. That mattered when a flagged pixel
+// got "repaired" by averaging neighbor colors: a false positive there
+// would visibly blur a real boundary. Now that every caller instead
+// re-casts that one pixel's own ray and redoes its own per-pixel
+// computation for the authoritative answer (ShadeViewport.pde and
+// SolarImpacts.pde, each at their own call site), a false positive just
+// re-confirms the same correct value at the cost of one extra
+// recompute - not a correctness risk anymore. Loosening this to a
+// majority vote catches genuinely corrupted pixels that happen to sit
+// near real geometry edges, which the old unanimous-agreement rule could
+// never flag even when the center itself was wrong.
 //
 // pixels: a PImage.pixels[]-shaped array (ARGB ints, row-major), RES1
 // wide - read only, never written here. Returns the np index of every
@@ -54,9 +69,8 @@ IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
     int x = np % RES1;
     int y = np / RES1;
 
-    boolean sawOpaque = false;
-    boolean sawTransparent = false;
-    boolean sawOther = false;
+    int opaqueCount = 0;
+    int transparentCount = 0;
 
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
@@ -66,17 +80,15 @@ IntList listIsolatedPixels (int[] pixels, int RES1, int RES2) {
         if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
 
         int neighborAlpha = (pixels[ny * RES1 + nx] >> 24) & 0xFF;
-        if (neighborAlpha == 255) sawOpaque = true;
-        else if (neighborAlpha == 0) sawTransparent = true;
-        else sawOther = true;
+        if (neighborAlpha == 255) opaqueCount++;
+        else if (neighborAlpha == 0) transparentCount++;
+        // alpha outside {0, 255} - near a genuine antialiased edge -
+        // simply isn't counted toward either side.
       }
     }
 
-    if (sawOther) continue; // near a genuine antialiased edge - leave alone
-
-    boolean isolated_outlier = (sawOpaque && !sawTransparent && !centerOpaque) ||
-                                (sawTransparent && !sawOpaque && centerOpaque);
-    if (isolated_outlier) isolated.append(np);
+    boolean suspect = centerOpaque ? (transparentCount > opaqueCount) : (opaqueCount > transparentCount);
+    if (suspect) isolated.append(np);
   }
 
   return isolated;
