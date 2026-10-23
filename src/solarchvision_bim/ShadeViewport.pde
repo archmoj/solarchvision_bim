@@ -93,6 +93,45 @@ int SHADE_DATE_ANGLE = 0;
 
 volatile boolean isShadingViewport = false;
 
+// Derives pixel np's own primary camera ray into the caller's own
+// ray_start/ray_direction arrays - the same math for pass 1's per-pixel
+// loop below (many threads, one call each) and the single-threaded
+// repair loop right after it (a handful of calls, one per flagged
+// pixel) - so the two can't quietly drift apart from each other. Takes
+// the output arrays as parameters rather than allocating and returning
+// a new pair each call, so each caller keeps deciding its own allocation
+// pattern (pass 1: a fresh pair per pixel; the repair loop: same).
+void deriveShadeRay (
+  int np, int RES1, float halfRES1, float halfRES2,
+  float invQuality, float invScale, float baseX, float baseY, float baseZ,
+  boolean isOrtho, float centerX, float centerY, float centerZ,
+  float[] ray_start, float[] ray_direction
+) {
+  int Image_X_i = np % RES1;
+  int Image_Y_i = np / RES1;
+  float Image_X = Image_X_i - halfRES1;
+  float Image_Y = Image_Y_i - halfRES2;
+
+  float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
+  ray_end[0] *= invScale;
+  ray_end[1] *= invScale;
+  ray_end[2] *= invScale;
+
+  ray_start[0] = baseX;
+  ray_start[1] = baseY;
+  ray_start[2] = baseZ;
+
+  if (isOrtho) {
+    ray_start[0] += ray_end[0] - centerX;
+    ray_start[1] += ray_end[1] - centerY;
+    ray_start[2] += ray_end[2] - centerZ;
+  }
+
+  ray_direction[0] = ray_end[0] - ray_start[0];
+  ray_direction[1] = ray_end[1] - ray_start[1];
+  ray_direction[2] = ray_end[2] - ray_start[2];
+}
+
 void ShadeViewport () {
   isShadingViewport = true;
   int ShadeViewport_startMillis = millis();
@@ -258,32 +297,10 @@ void ShadeViewport () {
       int[] currentRayStampLocal = { 0 };
 
       for (int np = npFrom; np < npTo; np++) {
-        int Image_X_i = np % RES1;
-        int Image_Y_i = np / RES1;
-        float Image_X = Image_X_i - halfRES1;
-        float Image_Y = Image_Y_i - halfRES2;
-
         float[] ray_start = new float[3];
         float[] ray_direction = new float[3];
-
-        float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
-        ray_end[0] *= invScale;
-        ray_end[1] *= invScale;
-        ray_end[2] *= invScale;
-
-        ray_start[0] = baseX;
-        ray_start[1] = baseY;
-        ray_start[2] = baseZ;
-
-        if (isOrtho) {
-          ray_start[0] += ray_end[0] - centerX;
-          ray_start[1] += ray_end[1] - centerY;
-          ray_start[2] += ray_end[2] - centerZ;
-        }
-
-        ray_direction[0] = ray_end[0] - ray_start[0];
-        ray_direction[1] = ray_end[1] - ray_start[1];
-        ray_direction[2] = ray_end[2] - ray_start[2];
+        deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,
+          isOrtho, centerX, centerY, centerZ, ray_start, ray_direction);
 
         float[] RxP = intersectAll(ray_start, ray_direction, 0, faceTestStampLocal, currentRayStampLocal);
 
@@ -443,32 +460,10 @@ void ShadeViewport () {
     int[] repairCounter = { 0 };
 
     for (int np : isolatedPixels) {
-      int Image_X_i = np % RES1;
-      int Image_Y_i = np / RES1;
-      float Image_X = Image_X_i - halfRES1;
-      float Image_Y = Image_Y_i - halfRES2;
-
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
-
-      float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
-      ray_end[0] *= invScale;
-      ray_end[1] *= invScale;
-      ray_end[2] *= invScale;
-
-      ray_start[0] = baseX;
-      ray_start[1] = baseY;
-      ray_start[2] = baseZ;
-
-      if (isOrtho) {
-        ray_start[0] += ray_end[0] - centerX;
-        ray_start[1] += ray_end[1] - centerY;
-        ray_start[2] += ray_end[2] - centerZ;
-      }
-
-      ray_direction[0] = ray_end[0] - ray_start[0];
-      ray_direction[1] = ray_end[1] - ray_start[1];
-      ray_direction[2] = ray_end[2] - ray_start[2];
+      deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,
+        isOrtho, centerX, centerY, centerZ, ray_start, ray_direction);
 
       float[] RxP = intersectAll(ray_start, ray_direction, 0, repairStamp, repairCounter);
 

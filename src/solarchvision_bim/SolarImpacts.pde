@@ -384,6 +384,70 @@ class SolarImpacts {
     allSolarImpacts.rebuild_Image_array = false;
   }
 
+  // Palette-maps already-computed Image_A/R/G/B values for variation q
+  // (Impact_ACTIVE or Impact_PASSIVE) into a color - the same formula
+  // for calculate_Impact_CurrentPreBaked()'s own per-day parallel loop,
+  // its repair loop right after that (re-deriving these same values for
+  // one flagged pixel - see that loop's own comment), and its summary
+  // loop at the very end. Pure - reads only its own parameters plus the
+  // shared, read-only allFaces/STUDY/PAINT (all stateless, see
+  // ShadeViewport.pde's own comment on that) - safe to call from many
+  // threads at once or a single thread afterward, no special handling
+  // either way. Deliberately takes Image_A/R/G/B as parameters rather
+  // than Matrix_ARGB/Image_X/Image_Y directly: the parallel loop needs
+  // those same values for its own total_Matrix_ARGB accumulation first,
+  // and the summary loop derives them from total_Matrix_ARGB instead of
+  // Matrix_ARGB - this way every caller computes its own values its own
+  // way, and only the palette math itself is shared.
+  color paletteMapImpactValue (int q, float Image_A, float Image_R, float Image_G, float Image_B) {
+    float[] _c = {
+      0, 0, 0, 0
+    };
+
+    float _u = 0;
+
+    float valuesSUM = FLOAT_undefined;
+
+    int PAL_type = 0;
+    int PAL_direction = 1;
+    float PAL_multiplier = 1;
+
+    if (q == Impact_ACTIVE) {
+      valuesSUM = Image_G;
+
+      PAL_type = allFaces.activeColorscaleIndex;
+      PAL_direction = allFaces.activeColorscaleDirection;
+      PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
+
+      //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+      //_u = (0.1 * PAL_multiplier * valuesSUM);
+      _u = (0.2 * PAL_multiplier * valuesSUM);
+    }
+
+    if (q == Impact_PASSIVE) {
+      float AVERAGE, PERCENTAGE, COMPARISON;
+
+      AVERAGE = (Image_B - Image_R);
+      if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
+      else PERCENTAGE = 0.0;
+      COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+      valuesSUM = COMPARISON;
+
+      PAL_type = allFaces.passiveColorscaleIndex;
+      PAL_direction = allFaces.passiveColorscaleDirection;
+      PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
+
+      //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+      _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
+    }
+
+    _u = applyPalDirection(_u, PAL_direction);
+
+    _c = PAINT.getColorStyle(PAL_type, _u);
+
+    return (Image_A != 0) ? color(_c[1], _c[2], _c[3]) : color(223, 223, 223);
+  }
 
   void calculate_Impact_CurrentPreBaked () {
 
@@ -792,59 +856,7 @@ class SolarImpacts {
                   total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
                   total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
 
-                  float[] _c = {
-                    0, 0, 0, 0
-                  };
-
-                  float _u = 0;
-
-                  float valuesSUM = FLOAT_undefined;
-
-                  int PAL_type = 0;
-                  int PAL_direction = 1;
-                  float PAL_multiplier = 1;
-
-                  if (q == Impact_ACTIVE) {
-                    valuesSUM = Image_G;
-
-                    PAL_type = allFaces.activeColorscaleIndex;
-                    PAL_direction = allFaces.activeColorscaleDirection;
-                    PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
-
-                    //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                    //_u = (0.1 * PAL_multiplier * valuesSUM);
-                    _u = (0.2 * PAL_multiplier * valuesSUM);
-                  }
-
-                  if (q == Impact_PASSIVE) {
-                    float AVERAGE, PERCENTAGE, COMPARISON;
-
-                    AVERAGE = (Image_B - Image_R);
-                    if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-                    else PERCENTAGE = 0.0;
-                    COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                    valuesSUM = COMPARISON;
-
-                    PAL_type = allFaces.passiveColorscaleIndex;
-                    PAL_direction = allFaces.passiveColorscaleDirection;
-                    PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
-
-                    //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                    _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
-                  }
-
-
-
-                  //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
-                  //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
-
-                  _u = applyPalDirection(_u, PAL_direction);
-
-                  _c = PAINT.getColorStyle(PAL_type, _u);
-
-                  if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
-                  else Image_RGBA[q].pixels[np] = color(223, 223, 223);
+                  Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
                 }
               }
             }));
@@ -887,51 +899,7 @@ class SolarImpacts {
               float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * calcImpact_valuesMUL;
               float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * calcImpact_valuesMUL;
 
-              float[] _c = {
-                0, 0, 0, 0
-              };
-
-              float _u = 0;
-
-              float valuesSUM = FLOAT_undefined;
-
-              int PAL_type = 0;
-              int PAL_direction = 1;
-              float PAL_multiplier = 1;
-
-              if (q == Impact_ACTIVE) {
-                valuesSUM = Image_G;
-
-                PAL_type = allFaces.activeColorscaleIndex;
-                PAL_direction = allFaces.activeColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
-
-                _u = (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-              if (q == Impact_PASSIVE) {
-                float AVERAGE, PERCENTAGE, COMPARISON;
-
-                AVERAGE = (Image_B - Image_R);
-                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-                else PERCENTAGE = 0.0;
-                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                valuesSUM = COMPARISON;
-
-                PAL_type = allFaces.passiveColorscaleIndex;
-                PAL_direction = allFaces.passiveColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
-
-                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-              _u = applyPalDirection(_u, PAL_direction);
-
-              _c = PAINT.getColorStyle(PAL_type, _u);
-
-              if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
-              else Image_RGBA[q].pixels[np] = color(223, 223, 223);
+              Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
           }
 
@@ -981,55 +949,7 @@ class SolarImpacts {
               float Image_G = total_Matrix_ARGB[q][2][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
               float Image_B = total_Matrix_ARGB[q][3][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
 
-              float[] _c = {
-                0, 0, 0, 0
-              };
-
-              float _u = 0;
-
-              float valuesSUM = FLOAT_undefined;
-
-              int PAL_type = 0;
-              int PAL_direction = 1;
-              float PAL_multiplier = 1;
-
-              if (q == Impact_ACTIVE) {
-                valuesSUM = Image_G;
-
-                PAL_type = allFaces.activeColorscaleIndex;
-                PAL_direction = allFaces.activeColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
-
-                //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                //_u = (0.1 * PAL_multiplier * valuesSUM);
-                _u = (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-              if (q == Impact_PASSIVE) {
-                float AVERAGE, PERCENTAGE, COMPARISON;
-
-                AVERAGE = (Image_B - Image_R);
-                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-                else PERCENTAGE = 0.0;
-                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                valuesSUM = COMPARISON;
-
-                PAL_type = allFaces.passiveColorscaleIndex;
-                PAL_direction = allFaces.passiveColorscaleDirection;
-                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
-
-                //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
-              }
-
-
-              _u = applyPalDirection(_u, PAL_direction);
-
-              _c = PAINT.getColorStyle(PAL_type, _u);
-
-              if (Image_A != 0) total_Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
-              else total_Image_RGBA[q].pixels[np] = color(223, 223, 223);
+              total_Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
           }
 
