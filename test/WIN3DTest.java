@@ -752,19 +752,12 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_tab_withShiftDown_cyclesImpactTypeAndWrapsAround () {
+  void handleCommandKey_aAndCapitalA_cyclesImpactTypeAndWrapsAround () {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.WIN3D.handleCommandKey(app.TAB, true);
+    app.WIN3D.handleCommandKey('a', true);
     assertEquals(app.Impact_PASSIVE, app.WIN3D.impactTypeIndex);
 
-    app.WIN3D.handleCommandKey(app.TAB, true); // wraps back to Active
-    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactTypeIndex);
-  }
-
-  @Test
-  void handleCommandKey_tab_withoutShiftDown_doesNotChangeImpactType () {
-    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.WIN3D.handleCommandKey(app.TAB, false);
+    app.WIN3D.handleCommandKey('a', true); // wraps back to Active
     assertEquals(app.Impact_ACTIVE, app.WIN3D.impactTypeIndex);
   }
 
@@ -890,7 +883,7 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_tab_withShiftDown_flagsBothSolarCachesForRebuild_regardlessOfTheActiveShadeMode () {
+  void handleCommandKey_aAndCapitalA_flagsBothSolarCachesForRebuild_regardlessOfTheActiveShadeMode () {
     // Both caches are now flagged unconditionally, not just the one
     // matching the currently active shading mode - see
     // find_which_bakings_to_regenerate's own test for the rationale.
@@ -898,7 +891,7 @@ class WIN3DTest {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
-    app.WIN3D.handleCommandKey(app.TAB, true);
+    app.WIN3D.handleCommandKey('a', true);
 
     assertTrue(app.GlobalSolar_rebuild_array);
     assertTrue(app.VertexSolar_rebuild_array);

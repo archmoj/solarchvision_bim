@@ -69,7 +69,7 @@ class WIN3DActionsTest {
     assertEquals(0, app.WIN3D.currentCameraIndex, "must clamp to 0, never go negative");
   }
 
-  // ================= WIN3D Shift+Tab (impact type cycling) ===============
+  // ================= WIN3D A/a (impact type cycling) ===============
 
   @Test
   void keyShiftTab_cyclesImpactTypeAndWrapsAround () {

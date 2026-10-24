@@ -636,10 +636,9 @@ class WIN3D {
   void handleCommandKey (char cmdKey, boolean shiftDown) {
     switch (cmdKey) {
 
-      case TAB:
-        if (shiftDown) {
-          callAction("Toggle Impact Type");
-        }
+      case 'a':
+      case 'A':
+        callAction("Toggle Impact Type");
         break;
 
       case DELETE:

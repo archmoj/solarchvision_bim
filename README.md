@@ -211,7 +211,9 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | Shortcut | Action |
 | --- | --- |
 | `TAB` | Show or hide the command bar |
-| `Shift+TAB` | Switch between active and passive impact views in the 3D view |
+| `a` / `A` | Switch between active and passive impact views in the 3D view |
+| `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
+| `d` / `D` | Change the impact-display day in the 3D view |
 
 ### Camera and view navigation
 
@@ -244,7 +246,6 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Alt+LEFT` | Rewind time |
 | `Alt+UP` | Advance month |
 | `Alt+DOWN` | Rewind month |
-| `d` / `D` | Change the impact-display day in the 3D view |
 | `t` / `T` | Change the forecast hour used for atmospheric visualization |
 
 ### Time graphs and layouts
@@ -260,7 +261,6 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `(` / `)` | Change the number of displayed days |
 | `[` / `]` | Change the horizontal interval of the probability graph |
 | `{` / `}` | Change the vertical interval of the probability graph |
-| `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
 | `v` / `V` | Show or hide raw values on the hourly graph |
 | `b` / `B` | Show or hide probabilities on the hourly graph |
 | `n` / `N` | Show or hide statistics on the hourly graph |
