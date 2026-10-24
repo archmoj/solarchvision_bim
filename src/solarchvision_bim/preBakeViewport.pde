@@ -389,7 +389,12 @@ void preBakeViewport () {
 
       Direct_RGBA[m][SHD].save(File_Name + ".png");
 
-      println(File_Name + ".png");
+      // only print first and last files
+      if (m == 0 || m == n_Map - 1) {
+        println(File_Name + ".png");
+      } else if (m == 1 && SHD == 0) {
+        println("...");
+      }
     }
   }
 
