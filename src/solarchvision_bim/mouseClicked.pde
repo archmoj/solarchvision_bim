@@ -2055,7 +2055,7 @@ void mouseClicked () {
 
       if ((UI_menuBar.selected_parent != -1)) {
 
-        if (mouseButton == LEFT) {
+        if (mouseButton == LEFT && !isInside(mouseX, mouseY, 0, 0, width, pixel_A)) {
           UI_menuBar.runSelectedItem();
         }
 
