@@ -154,6 +154,17 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
   line(nearX, boxY, nearX, boxY + boxH);
   line(boxX, nearY, boxX + boxW, nearY);
 
+  float farX = (boxX < mouseX) ? boxX : (boxX + boxW);
+  float farY = (boxY < mouseY) ? boxY : (boxY + boxH);
+  strokeWeight(1);
+  line(mouseX, mouseY, nearX, nearY);
+  if (mouseX < boxX || mouseX > boxX + boxW) {
+    line(mouseX, mouseY, nearX + (boxX > mouseX ? -1 : 1) * hoverStrokeWeight / 2, farY);
+  }
+  if (mouseY < boxY || mouseY > boxY + boxH) {
+    line(mouseX, mouseY, farX, nearY + (boxY > mouseY ? -1 : 1) * hoverStrokeWeight / 2);
+  }
+
   noStroke();
   fill(0);
   textAlign(LEFT, TOP);
