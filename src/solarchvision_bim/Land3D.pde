@@ -301,6 +301,13 @@ class Terrain {
       if (this.loadMesh) {
         if(loadMeshFromFiles()) {
           normalizeMeshElevation();
+        } else {
+          // loadMeshFromFiles() can legitimately return false (e.g. no
+          // terrain subfolder within MAX_TERRAIN_REUSE_DISTANCE_METERS of
+          // the current station) without throwing - that case needs the
+          // flat mesh fallback too, or this.Mesh is left full of
+          // FLOAT_undefined placeholder coordinates.
+          using_default_mesh = true;
         }
       }
     }
