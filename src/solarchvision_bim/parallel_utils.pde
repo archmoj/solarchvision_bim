@@ -27,51 +27,25 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // where it should have missed, or transparent where it should have hit.
 //
 // Flags a pixel whenever the MAJORITY of its available neighbors
-// disagree with it (a simple count, not requiring them to unanimously
-// agree with each other first - see below for why that requirement was
-// dropped). Any neighbor with alpha outside {0, 255} - a genuinely
-// antialiased edge, e.g. a billboard's own silhouette in ShadeViewport.
-// pde's normal shading mode - simply isn't counted either way, rather
-// than guessed at; the center itself still has to be a clean 0 or 255 to
-// be considered at all.
-//
-// This used to require every available neighbor to unanimously agree
-// with each other before flagging anything, specifically so a genuine
-// edge or silhouette boundary - where neighbors on opposite sides
-// legitimately disagree with EACH OTHER, not just with the center -
-// could never be mistaken for noise. That mattered when a flagged pixel
-// got "repaired" by averaging neighbor colors: a false positive there
-// would visibly blur a real boundary. Now that every caller instead
-// re-casts that one pixel's own ray and redoes its own per-pixel
-// computation for the authoritative answer (ShadeViewport.pde and
-// SolarImpacts.pde, each at their own call site), a false positive just
-// re-confirms the same correct value at the cost of one extra
-// recompute - not a correctness risk anymore. Loosening this to a
-// majority vote catches genuinely corrupted pixels that happen to sit
-// near real geometry edges, which the old unanimous-agreement rule could
-// never flag even when the center itself was wrong.
-//
-// pixels: a PImage.pixels[]-shaped array (ARGB ints, row-major), RES1
-// wide - read only, never written here. Returns the np index of every
-// pixel flagged this way; what to actually do about a flagged pixel is
-// a separate decision this function has no opinion on - ShadeViewport.
-// pde and SolarImpacts.pde each re-cast that one pixel's own ray and
-// redo their own per-pixel computation for it, right where they call
-// this (see either one's own comment at that call site).
+// disagree with it.
 IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
   IntList list = new IntList();
 
   for (int np = 0; np < pixels.length; np++) {
-    int centerAlpha = (pixels[np] >> 24) & 0xFF;
-    if (centerAlpha != 0 && centerAlpha != 255) continue;
-    boolean centerOpaque = (centerAlpha == 255);
+    int COL = pixels[np];
+    int centerAlpha = (COL >> 24) & 0xFF;
+    int centerRed   = (COL >> 16) & 0xFF;
+    int centerGreen = (COL >> 8) & 0xFF;
+    int centerBlue  = (COL) & 0xFF;
 
     int x = np % RES1;
     int y = np / RES1;
 
-    int opaqueCount = 0;
-    int transparentCount = 0;
-
+    int neighborAlpha = 0;
+    int neighborRed = 0;
+    int neighborGreen = 0;
+    int neighborBlue = 0;
+    int neighborCount = 0;
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
         if (dx == 0 && dy == 0) continue;
@@ -79,16 +53,45 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
         int ny = y + dy;
         if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
 
-        int neighborAlpha = (pixels[ny * RES1 + nx] >> 24) & 0xFF;
-        if (neighborAlpha == 255) opaqueCount++;
-        else if (neighborAlpha == 0) transparentCount++;
-        // alpha outside {0, 255} - near a genuine antialiased edge -
-        // simply isn't counted toward either side.
+        COL = pixels[ny * RES1 + nx];
+        neighborAlpha += (COL >> 24) & 0xFF;
+        neighborRed   += (COL >> 16) & 0xFF;
+        neighborGreen += (COL >> 8) & 0xFF;
+        neighborBlue  += (COL) & 0xFF;
+        neighborCount++;
       }
     }
+    if (neighborCount > 0) {
+      neighborAlpha /= neighborCount;
+      neighborRed   /= neighborCount;
+      neighborGreen /= neighborCount;
+      neighborBlue  /= neighborCount;
+    }
 
-    boolean suspect = centerOpaque ? (transparentCount > opaqueCount) : (opaqueCount > transparentCount);
-    if (suspect) list.append(np);
+    float neighborColor = neighborAlpha / 255.0 * (neighborRed + neighborGreen + neighborBlue) / 3.0;
+    float centerColor = centerAlpha / 255.0 * (centerRed + centerGreen + centerBlue) / 3.0;
+
+    boolean suspectAlpha = abs(neighborAlpha - centerAlpha) > 191;
+    boolean suspectColor = abs(neighborColor - centerColor) > 63;
+
+    if (suspectAlpha || suspectColor) list.append(np);
+  }
+
+  // show suspect pixel
+  for (int np : list) {
+    int x = np % RES1;
+    int y = np / RES1;
+
+    int m = 3;
+    for (int dx = -m; dx <= m; dx++) {
+      for (int dy = -m; dy <= m; dy++) {
+        if (abs(dx) < m && abs(dy) < m) continue;
+        int nx = x + dx;
+        int ny = y + dy;
+        if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
+        pixels[ny * RES1 + nx] = color(255, 255, 0, 255);
+      }
+    }
   }
 
   return list;

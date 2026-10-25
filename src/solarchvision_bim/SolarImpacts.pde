@@ -802,17 +802,7 @@ class SolarImpacts {
             Image_RGBA[q].loadPixels();
           }
 
-          // Single-threaded, deliberately not parallelized: this loop is
-          // the one that turned out to produce hard-to-detect, rare
-          // random missing points under real multi-core concurrency (see
-          // ShadeViewport.pde's own long investigation for what chasing
-          // that looked like). The detect-and-repair mitigation
-          // (parallel_utils.pde's listSuspectPixels(), used to run right
-          // after this) made the symptom go away, but its own cost
-          // (listing every day's suspects, even on the many days that
-          // turn out to have zero) ate most of the time the parallel
-          // version saved over just not parallelizing this in the first
-          // place - simpler and more reliable to do the latter.
+          // Single-threaded, deliberately not parallelized
           for (int np = 0; np < calcImpact_totalPixels; np++) {
             int Image_X = np % RES1;
             int Image_Y = np / RES1;
