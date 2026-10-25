@@ -62,7 +62,20 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
     }
   }
 
-  return _FIND_SCENARIO_CLOSE_TO_STAT(valuesSUM, l);
+  int lSelected = l;
+  if (impactTypeIndex == Impact_PASSIVE) {
+    // flip these to make them user friendly i.e.
+    // high temperature scenario >> high,
+    // low temperature scenario >> low
+         if(l == STAT_N_MidLow) lSelected = STAT_N_MidHigh;
+    else if(l == STAT_N_MidHigh) lSelected = STAT_N_MidLow;
+    else if(l == STAT_N_M25) lSelected = STAT_N_M75;
+    else if(l == STAT_N_M75) lSelected = STAT_N_M25;
+    else if(l == STAT_N_Min) lSelected = STAT_N_Max;
+    else if(l == STAT_N_Max) lSelected = STAT_N_Min;
+  }
+
+  return _FIND_SCENARIO_CLOSE_TO_STAT(valuesSUM, lSelected);
 }
 
 int _FIND_SCENARIO_CLOSE_TO_STAT (float[] values, int l) {
