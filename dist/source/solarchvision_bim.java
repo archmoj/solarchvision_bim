@@ -6036,11 +6036,11 @@ class Faces {
 
   int activeColorscaleIndex = 19; //15; //14;
   int activeColorscaleDirection = 1;
-  float activeColorscaleFactor = 0.625f; // 0.5*10/0.625 = 8 kWh/m2 at the palette's max swatch (was 1, giving 5 kWh/m2)
+  float activeColorscaleFactor = 0.5f; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
 
   int passiveColorscaleIndex = 1;
   int passiveColorscaleDirection = 1;
-  float passiveColorscaleFactor = 0.16f; // 2.0*(10-5)/0.16 = 62.5 %kW°C/m2 at the palette's max swatch (was 0.2, giving 50)
+  float passiveColorscaleFactor = 0.125f; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
 
   // --- WIN3D retained-mode cache -------------------------------------------
   // Orbiting/panning/zooming the WIN3D camera does not change face geometry,
@@ -19371,11 +19371,11 @@ class STUDY {
 
   int activeColorscaleIndex = 19; //15; //14;
   int activeColorscaleDirection = 1;
-  float activeColorscaleFactor = 0.625f; //2; // 0.5*10/0.625 = 8 kWh/m2 at the palette's max swatch (was 1, giving 5 kWh/m2)
+  float activeColorscaleFactor = 0.5f; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
 
   int passiveColorscaleIndex = 1;
   int passiveColorscaleDirection = 1;
-  float passiveColorscaleFactor = 0.16f; // 2.0*(10-5)/0.16 = 62.5 %kW°C/m2 at the palette's max swatch (was 0.2, giving 50)
+  float passiveColorscaleFactor = 0.125f; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
 
 
   int cX = 0;
@@ -50772,6 +50772,33 @@ public void draw_WIN3D_layers () {
     drawSolarImpactHover(img, fit);
   }
 }
+
+// Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
+// actually lands on screen, and which part of it, under the same
+// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
+// (centered pillarbox for a wider image, center-cropped-and-stretched for
+// a taller one). Shared between that drawing code and
+// drawSolarImpactHover() below, rather than each recomputing this
+// independently, so the hover tooltip can never end up sampling a
+// slightly different pixel than the one actually on screen under the
+// mouse.
+public float[] hoverFitRect (PImage img) {
+  float w = img.width;
+  float h = img.height;
+  float aspect1 = 1.0f * w / h;
+  float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
+  float r = aspect2 / aspect1;
+
+  if (r == 1) {
+    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, 0, 0, w, h };
+  } else if (r > 1) {
+    float newWidth = aspect1 * WIN3D.dY;
+    return new float[] { WIN3D.cX + (WIN3D.dX - newWidth) / 2, WIN3D.cY, newWidth, WIN3D.dY, 0, 0, w, h };
+  } else { // r < 1
+    float croppedWidth = h * aspect2; // full height, at the viewport's own aspect ratio
+    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, (w - croppedWidth) / 2, 0, croppedWidth, h };
+  }
+}
 public void draw_frame_icon () {
   int frame_icon_size = 64;
 
@@ -55428,33 +55455,6 @@ float Shades_offsetX;
 float Shades_offsetY;
 
 float[] SunR_Rotated;
-// Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
-// actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
-// (centered pillarbox for a wider image, center-cropped-and-stretched for
-// a taller one). Shared between that drawing code and
-// drawSolarImpactHover() below, rather than each recomputing this
-// independently, so the hover tooltip can never end up sampling a
-// slightly different pixel than the one actually on screen under the
-// mouse.
-public float[] hoverFitRect (PImage img) {
-  float w = img.width;
-  float h = img.height;
-  float aspect1 = 1.0f * w / h;
-  float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
-  float r = aspect2 / aspect1;
-
-  if (r == 1) {
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, 0, 0, w, h };
-  } else if (r > 1) {
-    float newWidth = aspect1 * WIN3D.dY;
-    return new float[] { WIN3D.cX + (WIN3D.dX - newWidth) / 2, WIN3D.cY, newWidth, WIN3D.dY, 0, 0, w, h };
-  } else { // r < 1
-    float croppedWidth = h * aspect2; // full height, at the viewport's own aspect ratio
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, (w - croppedWidth) / 2, 0, croppedWidth, h };
-  }
-}
-
 // --- solar-impact overlay hover tooltip -----------------------------------
 // Shows SOLARCHVISION's actual findings under the mouse, in a small
 // floating box near the cursor, whenever there's real data there - see
@@ -55610,6 +55610,17 @@ public void drawHover (String[] lines, float destX, float destY, float destW, fl
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
   line(boxX, nearY, boxX + boxW, nearY);
+
+  float farX = (boxX < mouseX) ? boxX : (boxX + boxW);
+  float farY = (boxY < mouseY) ? boxY : (boxY + boxH);
+  strokeWeight(1);
+  line(mouseX, mouseY, nearX, nearY);
+  if (mouseX < boxX || mouseX > boxX + boxW) {
+    line(mouseX, mouseY, nearX + (boxX > mouseX ? -1 : 1) * hoverStrokeWeight / 2, farY);
+  }
+  if (mouseY < boxY || mouseY > boxY + boxH) {
+    line(mouseX, mouseY, farX, nearY + (boxY > mouseY ? -1 : 1) * hoverStrokeWeight / 2);
+  }
 
   noStroke();
   fill(0);
@@ -62500,7 +62511,7 @@ public void mouseClicked () {
 
       if ((UI_menuBar.selected_parent != -1)) {
 
-        if (mouseButton == LEFT) {
+        if (mouseButton == LEFT && !isInside(mouseX, mouseY, 0, 0, width, pixel_A)) {
           UI_menuBar.runSelectedItem();
         }
 
