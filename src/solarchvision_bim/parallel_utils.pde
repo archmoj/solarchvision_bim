@@ -37,15 +37,14 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
     int centerRed   = (COL >> 16) & 0xFF;
     int centerGreen = (COL >> 8) & 0xFF;
     int centerBlue  = (COL) & 0xFF;
+    float centerColor = centerAlpha / 255.0 * (centerRed + centerGreen + centerBlue) / 3.0;
 
     int x = np % RES1;
     int y = np / RES1;
 
-    int neighborAlpha = 0;
-    int neighborRed = 0;
-    int neighborGreen = 0;
-    int neighborBlue = 0;
     int neighborCount = 0;
+    int differentCount = 0;
+
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
         if (dx == 0 && dy == 0) continue;
@@ -53,28 +52,26 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
         int ny = y + dy;
         if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
 
-        COL = pixels[ny * RES1 + nx];
-        neighborAlpha += (COL >> 24) & 0xFF;
-        neighborRed   += (COL >> 16) & 0xFF;
-        neighborGreen += (COL >> 8) & 0xFF;
-        neighborBlue  += (COL) & 0xFF;
+        int nCOL   = pixels[ny * RES1 + nx];
+        int nAlpha = (nCOL >> 24) & 0xFF;
+        int nRed   = (nCOL >> 16) & 0xFF;
+        int nGreen = (nCOL >> 8) & 0xFF;
+        int nBlue  = (nCOL) & 0xFF;
+        float nColor = nAlpha / 255.0 * (nRed + nGreen + nBlue) / 3.0;
+
+        boolean diffAlpha = abs(nAlpha - centerAlpha) > 191;
+        boolean diffColor = abs(nColor - centerColor) > 63;
+
+        if (diffAlpha || diffColor) differentCount++;
         neighborCount++;
       }
     }
-    if (neighborCount > 0) {
-      neighborAlpha /= neighborCount;
-      neighborRed   /= neighborCount;
-      neighborGreen /= neighborCount;
-      neighborBlue  /= neighborCount;
+
+    // Isolated point: differs from (almost) ALL neighbors.
+    // Edge pixel: differs from only some neighbors (one side) -> not flagged.
+    if (neighborCount > 0 && differentCount >= neighborCount - 1) {
+      list.append(np);
     }
-
-    float neighborColor = neighborAlpha / 255.0 * (neighborRed + neighborGreen + neighborBlue) / 3.0;
-    float centerColor = centerAlpha / 255.0 * (centerRed + centerGreen + centerBlue) / 3.0;
-
-    boolean suspectAlpha = abs(neighborAlpha - centerAlpha) > 191;
-    boolean suspectColor = abs(neighborColor - centerColor) > 63;
-
-    if (suspectAlpha || suspectColor) list.append(np);
   }
 /*
   // show suspect pixel
