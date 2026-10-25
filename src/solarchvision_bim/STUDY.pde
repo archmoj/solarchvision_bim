@@ -16,7 +16,7 @@ class STUDY {
 
   int passiveColorscaleIndex = 1;
   int passiveColorscaleDirection = 1;
-  float passiveColorscaleFactor = 0.16; // 2.0*(10-5)/0.16 = 62.5 %kW°C/m2 at the palette's max swatch (was 0.2, giving 50)
+  float passiveColorscaleFactor = 0.125; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
 
 
   int cX = 0;
