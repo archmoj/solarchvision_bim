@@ -1,30 +1,3 @@
-// Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
-// actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
-// (centered pillarbox for a wider image, center-cropped-and-stretched for
-// a taller one). Shared between that drawing code and
-// drawSolarImpactHover() below, rather than each recomputing this
-// independently, so the hover tooltip can never end up sampling a
-// slightly different pixel than the one actually on screen under the
-// mouse.
-float[] hoverFitRect (PImage img) {
-  float w = img.width;
-  float h = img.height;
-  float aspect1 = 1.0f * w / h;
-  float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
-  float r = aspect2 / aspect1;
-
-  if (r == 1) {
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, 0, 0, w, h };
-  } else if (r > 1) {
-    float newWidth = aspect1 * WIN3D.dY;
-    return new float[] { WIN3D.cX + (WIN3D.dX - newWidth) / 2, WIN3D.cY, newWidth, WIN3D.dY, 0, 0, w, h };
-  } else { // r < 1
-    float croppedWidth = h * aspect2; // full height, at the viewport's own aspect ratio
-    return new float[] { WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY, (w - croppedWidth) / 2, 0, croppedWidth, h };
-  }
-}
-
 // --- solar-impact overlay hover tooltip -----------------------------------
 // Shows SOLARCHVISION's actual findings under the mouse, in a small
 // floating box near the cursor, whenever there's real data there - see
