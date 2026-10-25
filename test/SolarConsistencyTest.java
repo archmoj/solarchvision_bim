@@ -439,17 +439,17 @@ class SolarConsistencyTest {
   // shows as its maximum.
 
   @Test
-  void facesDefaultActiveColorscaleFactor_putsEightKWhPerM2AtTheMaxSwatch () {
+  void facesDefaultActiveColorscaleFactor_putsTenKWhPerM2AtTheMaxSwatch () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(0.625f, fresh.allFaces.activeColorscaleFactor, 0.0001f);
-    assertEquals(8f, 0.5f * 10 / fresh.allFaces.activeColorscaleFactor, 0.0001f);
+    assertEquals(0.5f, fresh.allFaces.activeColorscaleFactor, 0.0001f);
+    assertEquals(10f, 0.5f * 10 / fresh.allFaces.activeColorscaleFactor, 0.0001f);
   }
 
   @Test
-  void facesDefaultPassiveColorscaleFactor_putsSixtyTwoPointFivePercentAtTheMaxSwatch () {
+  void facesDefaultPassiveColorscaleFactor_putsEightyPercentKWhCPerM2AtTheMaxSwatch () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(0.16f, fresh.allFaces.passiveColorscaleFactor, 0.0001f);
-    assertEquals(62.5f, 2.0f * (10 - 5) / fresh.allFaces.passiveColorscaleFactor, 0.0001f);
+    assertEquals(0.125f, fresh.allFaces.passiveColorscaleFactor, 0.0001f);
+    assertEquals(80f, 2.0f * (10 - 5) / fresh.allFaces.passiveColorscaleFactor, 0.0001f);
   }
 
   @Test
