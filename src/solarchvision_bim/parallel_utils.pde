@@ -76,7 +76,7 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
 
     if (suspectAlpha || suspectColor) list.append(np);
   }
-
+/*
   // show suspect pixel
   for (int np : list) {
     int x = np % RES1;
@@ -93,6 +93,6 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
       }
     }
   }
-
+*/
   return list;
 }
