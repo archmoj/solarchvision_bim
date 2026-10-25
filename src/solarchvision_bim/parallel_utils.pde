@@ -31,6 +31,14 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
   IntList list = new IntList();
 
+  // opposite-direction pairs: N-S, E-W, NE-SW, NW-SE
+  int[][] pairs = {
+    {0, -1,  0,  1},
+    {-1, 0,  1,  0},
+    {-1,-1,  1,  1},
+    {-1, 1,  1, -1}
+  };
+
   for (int np = 0; np < pixels.length; np++) {
     int COL = pixels[np];
     int centerAlpha = (COL >> 24) & 0xFF;
@@ -42,34 +50,27 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
     int x = np % RES1;
     int y = np / RES1;
 
-    int neighborCount = 0;
-    int differentCount = 0;
+    int validPairs = 0;
+    int bothDifferentPairs = 0;
 
-    for (int dx = -1; dx <= 1; dx++) {
-      for (int dy = -1; dy <= 1; dy++) {
-        if (dx == 0 && dy == 0) continue;
-        int nx = x + dx;
-        int ny = y + dy;
-        if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
+    for (int[] pair : pairs) {
+      int ax = x + pair[0], ay = y + pair[1];
+      int bx = x + pair[2], by = y + pair[3];
 
-        int nCOL   = pixels[ny * RES1 + nx];
-        int nAlpha = (nCOL >> 24) & 0xFF;
-        int nRed   = (nCOL >> 16) & 0xFF;
-        int nGreen = (nCOL >> 8) & 0xFF;
-        int nBlue  = (nCOL) & 0xFF;
-        float nColor = nAlpha / 255.0 * (nRed + nGreen + nBlue) / 3.0;
+      boolean aIn = ax >= 0 && ax < RES1 && ay >= 0 && ay < RES2;
+      boolean bIn = bx >= 0 && bx < RES1 && by >= 0 && by < RES2;
+      if (!aIn || !bIn) continue; // only count pairs fully inside the image
 
-        boolean diffAlpha = abs(nAlpha - centerAlpha) > 191;
-        boolean diffColor = abs(nColor - centerColor) > 63;
+      boolean aDiff = isDifferent(pixels[ay * RES1 + ax], centerAlpha, centerColor);
+      boolean bDiff = isDifferent(pixels[by * RES1 + bx], centerAlpha, centerColor);
 
-        if (diffAlpha || diffColor) differentCount++;
-        neighborCount++;
-      }
+      validPairs++;
+      if (aDiff && bDiff) bothDifferentPairs++;
     }
 
-    // Isolated point: differs from (almost) ALL neighbors.
-    // Edge pixel: differs from only some neighbors (one side) -> not flagged.
-    if (neighborCount > 0 && differentCount >= neighborCount - 1) {
+    // Isolated point: ALL valid opposite pairs differ on both sides.
+    // Edge/corner: at least one pair stays "attached" to the center's region.
+    if (validPairs > 0 && bothDifferentPairs == validPairs) {
       list.append(np);
     }
   }
@@ -92,4 +93,16 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
   }
 */
   return list;
+}
+
+boolean isDifferent(int COL, int centerAlpha, float centerColor) {
+  int nAlpha = (COL >> 24) & 0xFF;
+  int nRed   = (COL >> 16) & 0xFF;
+  int nGreen = (COL >> 8) & 0xFF;
+  int nBlue  = (COL) & 0xFF;
+  float nColor = nAlpha / 255.0 * (nRed + nGreen + nBlue) / 3.0;
+
+  boolean diffAlpha = abs(nAlpha - centerAlpha) > 191;
+  boolean diffColor = abs(nColor - centerColor) > 31;
+  return diffAlpha || diffColor;
 }
