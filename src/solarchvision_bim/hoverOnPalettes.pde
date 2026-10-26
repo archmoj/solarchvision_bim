@@ -26,11 +26,11 @@ class PaletteSwatchHoverInfo {
 // Returns the swatch under the mouse, or null if none - a plain rect
 // containment check, since (unlike Pose Potential's polar wedges) these
 // are ordinary axis-aligned rectangles.
-PaletteSwatchHoverInfo studyPaletteHover_hitTest (float mouseXPos, float mouseYPos) {
+PaletteSwatchHoverInfo studyPaletteHover_hitTest (int xMouse, int yMouse) {
   if (STUDY.paletteSwatchHoverInfo == null) return null;
 
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMouse - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMouse - STUDY.cY) * STUDY.ImageScale;
 
   for (PaletteSwatchHoverInfo info : STUDY.paletteSwatchHoverInfo) {
     float xLo = min(info.screenX1, info.screenX2);

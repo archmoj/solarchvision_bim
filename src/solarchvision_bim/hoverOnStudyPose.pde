@@ -122,11 +122,11 @@ String formatOrientationAndInclination (float Beta, float Alpha) {
 // nearest (a,b) wedge - a direct computation rather than looping every
 // wedge checking which one contains the point, since polar wedges aren't
 // simple rects the way Skin Potential's thumbnails are.
-GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPos) {
+GlobalPoseHoverHit studyGlobalPoseHover_hitTest (int xMouse, int yMouse) {
   if (STUDY.globalPoseHoverInfo == null) return null;
 
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMouse - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMouse - STUDY.cY) * STUDY.ImageScale;
 
   for (GlobalPoseHoverInfo info : STUDY.globalPoseHoverInfo) {
     if (info.pixelsPerDegree <= 0) continue;

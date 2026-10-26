@@ -35,11 +35,11 @@ class NormalsHoverColumn {
 // checks (X within half an hour, Y within that column's own envelope)
 // rather than a single circular radius, since a time-series column's
 // "extent" is fundamentally a vertical band of lines, not a point.
-NormalsHoverColumn studyNormalsHover_hitTest (float mouseXPos, float mouseYPos) {
+NormalsHoverColumn studyNormalsHover_hitTest (int xMouse, int yMouse) {
   if (STUDY.normalsHoverColumns == null) return null;
 
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMouse - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMouse - STUDY.cY) * STUDY.ImageScale;
 
   NormalsHoverColumn nearest = null;
   float nearestXDist = Float.MAX_VALUE;

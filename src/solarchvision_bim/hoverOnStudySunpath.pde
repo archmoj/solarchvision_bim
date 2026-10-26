@@ -46,11 +46,11 @@ String formatAzimuthAndAltitude (float Beta, float Alpha) {
 // direct polar-to-bucket computation (there's no grid here to compute
 // into) or Skin Potential's per-thumbnail rect containment check (points
 // here are circular, not rectangular regions).
-SunpathHoverPoint studySunpathHover_hitTest (float mouseXPos, float mouseYPos) {
+SunpathHoverPoint studySunpathHover_hitTest (int xMouse, int yMouse) {
   if (STUDY.sunpathHoverPoints == null) return null;
 
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMouse - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMouse - STUDY.cY) * STUDY.ImageScale;
 
   SunpathHoverPoint nearest = null;
   float nearestDistSq = Float.MAX_VALUE;

@@ -158,15 +158,15 @@ class UrbanHoverHit {
 // with up to three rows sharing the same dayIndex (viewLayout==2's three
 // percentile rows), each one needs its own chance to match, since they
 // sit at different screen positions and carry different data.
-UrbanHoverHit studyUrbanHover_hitTest (float xMousePos, float yMousePos) {
+UrbanHoverHit studyUrbanHover_hitTest (int xMouse, int yMouse) {
   if (STUDY.urbanThumbnailHoverInfo == null) return null;
 
   // Inverse of endFrame()'s own cX/cY/ImageScale compositing transform
   // (image(this.graphics, cX, cY, dX/ImageScale, dY/ImageScale)) - maps
   // actual screen coordinates back into this.graphics' own device-pixel
   // space, the same space each entry's centerX/centerY were recorded in.
-  float graphicsX = (xMousePos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (yMousePos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMouse - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMouse - STUDY.cY) * STUDY.ImageScale;
 
   float halfW = STUDY.urbanThumbnail_sizeX / 2;
   float halfH = STUDY.urbanThumbnail_sizeY / 2;
