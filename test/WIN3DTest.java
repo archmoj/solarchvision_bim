@@ -175,7 +175,7 @@ class WIN3DTest {
 
   @Test
   void isSolarPaletteMode_isTrue_whenTheSolarImpactOverlayIsShown_evenWithAnUnrelatedShadeMode () {
-    // Set by draw_WIN3D_layers.pde each frame so the palette (now drawn
+    // Set by draw_WIN3D_layersAndHover.pde each frame so the palette (now drawn
     // separately from WIN3D's own 3D render - see drawPalette()'s own
     // comment) still shows up over the overlay.
     app.WIN3D.shadingMode = -999; // matches nothing on its own

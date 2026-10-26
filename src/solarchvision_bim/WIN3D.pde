@@ -111,9 +111,9 @@ class WIN3D {
     if (!this.update) return;
 
     // Whatever renders below would just be painted over by
-    // draw_WIN3D_layers.pde's white clearing rect this same frame - skip
+    // draw_WIN3D_layersAndHover.pde's white clearing rect this same frame - skip
     // it, and consume this.update as if a normal draw had happened.
-    // WIN3D.showSolarImpactOverride is a one-shot flag draw_WIN3D_layers.
+    // WIN3D.showSolarImpactOverride is a one-shot flag draw_WIN3D_layersAndHover.
     // pde consumes within this same call, so deferring to "the next
     // frame" (by leaving this.update true) doesn't work: that next frame
     // would find the override already gone, the camera still mismatched,
@@ -213,7 +213,7 @@ class WIN3D {
     // NOTE: the palette is no longer part of this.graphics (see
     // drawPalette()'s own comment), so a recorded/saved frame here no
     // longer includes it - it's only composited onto the main canvas
-    // afterward, by draw_WIN3D_layers.pde, which saveRecordedFrame() below
+    // afterward, by draw_WIN3D_layersAndHover.pde, which saveRecordedFrame() below
     // doesn't capture.
     if (this.record_IMG || this.record_AUTO) {
       saveRecordedFrame();
@@ -281,7 +281,7 @@ class WIN3D {
   // off the camera's field of view/zoom). That made it tricky to reason
   // about and tied its size to the 3D projection for no real benefit, since
   // it's conceptually just a HUD. drawPalette() is called directly from
-  // draw_WIN3D_layers.pde, after both WIN3D's own render and the
+  // draw_WIN3D_layersAndHover.pde, after both WIN3D's own render and the
   // solar-impact overlay, so it always ends up on top of both - including
   // on frames where WIN3D.draw() itself was skipped entirely (see
   // win3DOverlay_needsClearRect()'s own comment), which is exactly when the
@@ -1168,7 +1168,7 @@ class WIN3D {
   // regardless of whether it ends up actually showing anything.
   boolean showSolarImpactOverride = false;
 
-  // Set each frame by draw_WIN3D_layers.pde to record whether it actually
+  // Set each frame by draw_WIN3D_layersAndHover.pde to record whether it actually
   // drew the WIN3D solar-impact overlay that frame (the one-shot override
   // above has usually already been consumed to false by the time anything
   // else would want to ask, so this is the only reliable way to know) -

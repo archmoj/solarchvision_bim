@@ -1,4 +1,4 @@
-void draw_WIN3D_layers () {
+void draw_WIN3D_layersAndHover () {
   if (isBakingInProgress()) return;
   if (!WIN3D.include) return;
   if (UI_menuBar.selected_parent != -1) return;
@@ -151,7 +151,7 @@ void draw_WIN3D_layers () {
 
 // Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
 // actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
+// aspect-fit rules draw_WIN3D_layersAndHover.pde's own drawing code always has
 // (centered pillarbox for a wider image, center-cropped-and-stretched for
 // a taller one). Shared between that drawing code and
 // drawSolarImpactHover() below, rather than each recomputing this

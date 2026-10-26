@@ -17,7 +17,7 @@ String camera2DTexture = "";
 // PNG containing just the visible edges of Faces, painted black, to
 // cameraFaceEdgesTexture - instead of computing the normal shaded/
 // shadowed preview, or the 2D-object mask above. Meant to be overlaid on
-// top of the solar-impact overlay (draw_WIN3D_layers.pde) to make
+// top of the solar-impact overlay (draw_WIN3D_layersAndHover.pde) to make
 // building outlines and creases easier to pick out against the heatmap -
 // see preBakeViewport.pde, the only place meant to flip this (and
 // cameraFaceEdgesTexture) around a ShadeViewport() call.
@@ -32,7 +32,7 @@ String cameraFaceEdgesTexture = "";
 // this, rather than at allSolarImpacts.RES1/RES2 like the rest of its
 // bakes - crisper, closer-to-antialiased-looking lines once Processing's
 // own image() scales this (larger) source down to the (same as always)
-// on-screen size draw_WIN3D_layers.pde displays it at, without changing
+// on-screen size draw_WIN3D_layersAndHover.pde displays it at, without changing
 // anything about how or where it's drawn there.
 final int FACE_EDGE_RESOLUTION_MULTIPLIER = 2;
 
@@ -684,7 +684,7 @@ void ShadeViewport () {
   showArrowCursor();
 
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
-    // draw_WIN3D_layers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
+    // draw_WIN3D_layersAndHover.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
     // with no aspect correction, which only matches the live preview
     // (sized off WIN3D.dX/dY itself). The mask is a background bake, sized
     // at the unrelated allSolarImpacts.RES1/RES2, and was never meant to

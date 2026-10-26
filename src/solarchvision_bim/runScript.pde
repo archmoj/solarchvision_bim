@@ -50,7 +50,7 @@ String runScriptLines (String[] FileALL) {
 
     // A line starting with "=" is a section divider: defer every line
     // after it to a later draw() frame, instead of running it in this
-    // same call. Needed for real, not just pacing - draw_WIN3D_layers()
+    // same call. Needed for real, not just pacing - draw_WIN3D_layersAndHover()
     // and the FRAME_record_IMG/RecordFrame() check in draw() each run
     // once per frame, so running several "switch view, then REC.png"
     // sections back to back in one call would only ever render and save

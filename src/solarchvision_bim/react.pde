@@ -82,7 +82,7 @@ class react {
 
   // One-off follow-up callbacks (each used by exactly one spinner).
   // Flags only - does not call regenerate_desired_bakings() itself. The
-  // actual recalculation happens once per frame in draw_WIN3D_layers(),
+  // actual recalculation happens once per frame in draw_WIN3D_layersAndHover(),
   // driven by WIN3D.update/the rebuild flags this sets, so that several
   // of these OnChange callbacks firing in the same frame (e.g. loading a
   // project, or a rollout diff touching multiple fields) still only pay

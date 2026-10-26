@@ -63,7 +63,7 @@ float[] win3DOverlay_rawValuesAt_fromSnapshot (int q, float[][][][] daySnapshot,
 // reimplemented), but over STUDY's Skin Potential thumbnails instead of
 // the live 3D viewport's overlay.
 //
-// Unlike WIN3D's own overlay, which draw_WIN3D_layers.pde repaints fresh
+// Unlike WIN3D's own overlay, which draw_WIN3D_layersAndHover.pde repaints fresh
 // every single frame (so a hover box drawn on top of it is naturally
 // gone the moment the next frame's overlay is painted over it), STUDY's
 // own graph only redraws when STUDY.update is true - solarchvision_bim.
@@ -83,7 +83,7 @@ PImage studyHover_pre_screen;
 int studyHover_capturedGeneration = -1;
 boolean studyHover_wasShownLastFrame = false;
 
-// Called every frame, unconditionally - same shape as draw_WIN3D_layers()
+// Called every frame, unconditionally - same shape as draw_WIN3D_layersAndHover()
 // relative to WIN3D.draw(), for the same reason: this has to run whether
 // or not STUDY itself redrew this particular frame.
 void draw_STUDY_hover () {

@@ -5,12 +5,12 @@
 // meant to be drawn on top of the solar-impact overlay in draw_WIN3D_
 // layers.pde, to make building edges easier to pick out against the
 // heatmap. Because it's the same resolution as the overlay image, it needs
-// no fit rect of its own - draw_WIN3D_layers.pde reuses the exact one
+// no fit rect of its own - draw_WIN3D_layersAndHover.pde reuses the exact one
 // already computed for the overlay image.
 //
 // Loaded lazily and cached here, rather than reloaded from disk every
 // single frame the way allSolarImpacts.Image[][] itself gets freshly
-// painted (see draw_WIN3D_layers.pde's own comment on that) - re-loaded
+// painted (see draw_WIN3D_layersAndHover.pde's own comment on that) - re-loaded
 // only when the file actually needs it: the expected path changed (a
 // different camera, location, or project), or the file at that same path
 // was modified since it was last loaded (re-running preBakeViewport() -

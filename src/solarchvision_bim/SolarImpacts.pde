@@ -73,7 +73,7 @@ class SolarImpacts {
   // impact-type-toggle actions (actions.pde) re-show the WIN3D overlay by
   // just picking a different already-computed slice of this.Image[][],
   // without recomputing anything - win3DOverlay_isFresh() is what lets
-  // draw_WIN3D_layers.pde tell whether that slice is still trustworthy
+  // draw_WIN3D_layersAndHover.pde tell whether that slice is still trustworthy
   // before actually painting it, the same win3DCache-style snapshot/
   // compare pattern Earth3D.pde/Faces.pde/Sun3D.pde use for their own
   // caches.
@@ -99,11 +99,11 @@ class SolarImpacts {
   boolean win3DOverlay_analysisSnapshotValid = false;
 
   // One-shot: set by win3DOverlay_recordAnalysisState() whenever a fresh
-  // computation completes, so draw_WIN3D_layers.pde can tell that
+  // computation completes, so draw_WIN3D_layersAndHover.pde can tell that
   // happened - and that it's worth re-checking whether the overlay should
   // now show - even on a frame where nothing set WIN3D.update (recomputing
   // via a Skin Potential graph page, say, only calls STUDY.revise()).
-  // Consumed (read-and-reset) by draw_WIN3D_layers.pde, same one-shot
+  // Consumed (read-and-reset) by draw_WIN3D_layersAndHover.pde, same one-shot
   // idiom as WIN3D.showShading/showSolarImpactOverride.
   boolean win3DOverlay_recomputed = false;
 
@@ -158,7 +158,7 @@ class SolarImpacts {
 
   // Just the camera half of win3DOverlay_isFresh() below - position, zoom
   // and projection, i.e. exactly what decides whether this.Image[][] still
-  // lines up with what's actually on screen right now. draw_WIN3D_layers.pde
+  // lines up with what's actually on screen right now. draw_WIN3D_layersAndHover.pde
   // checks this on its own, separately from win3DOverlay_dataFresh() below:
   // when the camera matches, the overlay is drawn straight over the live
   // (matching) WIN3D content with no white backdrop at all - any gap left
@@ -184,7 +184,7 @@ class SolarImpacts {
 
   // The model/analysis-time half of freshness, independent of the camera -
   // whether this.Image[][] itself is still correct, regardless of where
-  // the camera currently is. draw_WIN3D_layers.pde checks this on its own
+  // the camera currently is. draw_WIN3D_layersAndHover.pde checks this on its own
   // (alongside win3DOverlay_cameraMatches() above) so an explicit
   // day-navigation/impact-type-toggle request can show the overlay even
   // with the camera mismatched, while still refusing to show data that's
@@ -227,7 +227,7 @@ class SolarImpacts {
     return this.win3DOverlay_dataFresh() && this.win3DOverlay_cameraMatches();
   }
 
-  // Whether draw_WIN3D_layers.pde is about to paint the white clearing
+  // Whether draw_WIN3D_layersAndHover.pde is about to paint the white clearing
   // rect over the entire WIN3D area this frame - true exactly in the
   // "explicit cycling request, but the camera doesn't match" case (see
   // that file's own comment): the data is fresh, the camera doesn't

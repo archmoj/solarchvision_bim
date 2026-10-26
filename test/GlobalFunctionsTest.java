@@ -214,7 +214,7 @@ class GlobalFunctionsTest {
     // This is the exact mechanism behind a real regression: STUDY.pde's
     // plotImpact_global() calls this (only to keep the array's
     // dimensions right for plotting) whenever GlobalSolar_rebuild_array
-    // is set - and since STUDY.draw() runs before draw_WIN3D_layers()
+    // is set - and since STUDY.draw() runs before draw_WIN3D_layersAndHover()
     // every frame (see solarchvision_bim.pde's draw()), it used to be
     // able to consume (and blank) the flag before
     // regenerate_desired_bakings() got a chance to actually recompute

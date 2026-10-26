@@ -1,11 +1,11 @@
 // Called every frame the solar-impact overlay is shown, right after
-// draw_WIN3D_layers.pde draws it - img/fit are that same image and the
+// draw_WIN3D_layersAndHover.pde draws it - img/fit are that same image and the
 // fit rect hoverFitRect() above just computed for it. img
 // is only needed here for its width/height - the same RES1 x RES2 grid
 // allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
 // below locate the exact data point under the mouse, same as it used to
 // locate the exact rendered pixel - not for sampling a color from it
-// anymore. draw_WIN3D_layers.pde already returns before ever reaching
+// anymore. draw_WIN3D_layersAndHover.pde already returns before ever reaching
 // this call while UI_menuBar.selected_parent != -1, so this doesn't need
 // to check that itself.
 void drawSolarImpactHover (PImage img, float[] fit) {

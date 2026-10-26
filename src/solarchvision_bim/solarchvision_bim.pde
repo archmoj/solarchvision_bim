@@ -131,7 +131,7 @@ void draw () {
     // to false as a side effect - exactly the same flag
     // regenerate_desired_bakings() below checks. If STUDY.draw() ran
     // first, it would consume the flag with a blank array, and
-    // draw_WIN3D_layers() further down would then find the flag already
+    // draw_WIN3D_layersAndHover() further down would then find the flag already
     // false and skip the real recalculation, leaving the 3D view's Global
     // Solar shading empty until something (e.g. "Recalculate Solar
     // Impact") re-flagged it. Vertex Solar has no equivalent earlier
@@ -160,9 +160,9 @@ void draw () {
         WORLD.record_PDF = false;
       } else {
         if (!isBakingInProgress()) {
-          draw_WIN3D_layers();
-          draw_STUDY_hover();
           draw_UI_layers();
+          draw_STUDY_hover();
+          draw_WIN3D_layersAndHover();
 
           if(stepAfterInitialization == 1) {
             UI_consoleBar.drawEmptyDirective();

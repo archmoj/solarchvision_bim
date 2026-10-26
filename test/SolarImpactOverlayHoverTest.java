@@ -13,7 +13,7 @@ class SolarImpactOverlayHoverTest {
 
   // ================= hoverFitRect ============================
   // Where the overlay image actually lands on screen (and which part of it)
-  // under the three aspect-fit cases draw_WIN3D_layers.pde's own drawing
+  // under the three aspect-fit cases draw_WIN3D_layersAndHover.pde's own drawing
   // code uses.
 
   @Test
