@@ -113,6 +113,47 @@ class StudyNormalsHoverTest {
   }
 
   @Test
+  void sort_keepsMiddleM50AndAverageCentered_evenWhenAllNineAreTied () {
+    // A full tie across every statistic - the scenario that originally
+    // let Average drift to the very bottom of the neutral group (right
+    // next to Min) purely because STAT_N_Ave's own array index (7)
+    // happens to be the highest among the non-Max/Min statistics.
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, 50f);
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{
+      app.STAT_N_Max,
+      app.STAT_N_MidHigh,
+      app.STAT_N_M75,
+      app.STAT_N_Middle,
+      app.STAT_N_M50,
+      app.STAT_N_Ave,
+      app.STAT_N_M25,
+      app.STAT_N_MidLow,
+      app.STAT_N_Min
+    }, sorted);
+  }
+
+  @Test
+  void sort_keepsAverageOutOfTheBottomTier_evenTiedOnlyWithMinAndMidLow () {
+    // Average's own STAT_N_* index (7) is numerically higher than
+    // MidLow's (0) and M25's (3), which is exactly what used to let it
+    // get stably sorted as if it belonged with the low tier. It must
+    // still rank above MidLow here, not merely above Min.
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, app.FLOAT_undefined);
+    values[app.STAT_N_Ave] = 50f;
+    values[app.STAT_N_MidLow] = 50f;
+    values[app.STAT_N_Min] = 50f;
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{ app.STAT_N_Ave, app.STAT_N_MidLow, app.STAT_N_Min }, sorted);
+  }
+
+  @Test
   void sort_tieBreakDoesNotOverrideAGenuineValueDifference () {
     // Min's own value here is strictly higher than Max's, which can't
     // happen with real NORMAL() output but confirms the tie-break only

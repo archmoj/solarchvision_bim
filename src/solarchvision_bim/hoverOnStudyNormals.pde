@@ -62,19 +62,20 @@ NormalsHoverColumn studyNormalsHover_hitTest (int xMouse, int yMouse) {
   return nearest;
 }
 
-// Tie-break used only when two statistics share the exact same value:
-// STAT_N_Max still wins the "find the largest remaining" comparison
-// below (so it's picked first, landing at the top) and STAT_N_Min still
-// loses it (so it's only ever picked once nothing else remains, landing
-// at the bottom) - the same top/bottom positions either would already
-// land in on its value alone, had that value been even slightly more
-// extreme than the stat(s) it's actually tied with. Everything else
-// ranks equally (0), so ties among non-Max/Min statistics keep whatever
-// relative order the scan below already finds them in.
+// Tie-break used only when two statistics share the exact same value -
+// otherwise value alone already decides it.
 int statTieBreakRank (int statIndex) {
-  if (statIndex == STAT_N_Max) return -1;
-  if (statIndex == STAT_N_Min) return 1;
-  return 0;
+  return (
+    (statIndex == STAT_N_Max)     ? 0 :
+    (statIndex == STAT_N_MidHigh) ? 1 :
+    (statIndex == STAT_N_M75)     ? 2 :
+    (statIndex == STAT_N_Middle)  ? 3 :
+    (statIndex == STAT_N_M50)     ? 4 :
+    (statIndex == STAT_N_Ave)     ? 5 :
+    (statIndex == STAT_N_M25)     ? 6 :
+    (statIndex == STAT_N_MidLow)  ? 7 :
+               /* STAT_N_Min */     8
+  );
 }
 
 // Returns the indices of values[] that are defined, sorted so the
@@ -82,10 +83,10 @@ int statTieBreakRank (int statIndex) {
 // maximum at top, minimum at bottom, matching how the graph itself
 // visually stacks higher-valued lines above lower ones, rather than the
 // fixed STAT_N_* index order the underlying array uses. On a tie,
-// statTieBreakRank() above keeps Max at the top and Min at the bottom
-// regardless, rather than leaving the tie broken arbitrarily. A plain
-// selection sort, since there are at most 9 entries here - not worth
-// reaching for a Comparator. Pure/no drawing, so it's independently
+// statTieBreakRank() above keeps Max at the top, Min at the bottom, and
+// Middle/M50/Average centered, rather than leaving the tie broken
+// arbitrarily. A plain selection sort, since there are at most 9 entries
+// here - not worth reaching for a Comparator. Pure/no drawing, so it's independently
 // checkable without a live PGraphics context, unlike the rest of this
 // file's box-drawing.
 int[] sortedDefinedIndicesByValueDescending (float[] values) {
