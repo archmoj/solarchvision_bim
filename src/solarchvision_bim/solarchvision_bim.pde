@@ -163,7 +163,7 @@ void draw () {
           draw_WIN3D_layersAndHover();
 
           if (control != USER_AUTO) {
-            draw_STUDY_hover();
+            draw_STUDY_hover(mouseX, mouseY);
           }
 
           draw_UI_layers();

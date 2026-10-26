@@ -86,7 +86,7 @@ boolean studyHover_wasShownLastFrame = false;
 // Called every frame, unconditionally - same shape as draw_WIN3D_layersAndHover()
 // relative to WIN3D.draw(), for the same reason: this has to run whether
 // or not STUDY itself redrew this particular frame.
-void draw_STUDY_hover () {
+void draw_STUDY_hover (int xMouse, int yMouse) {
   if (isBakingInProgress()) return;
 
   if (!STUDY.include) return;
@@ -116,12 +116,12 @@ void draw_STUDY_hover () {
   PaletteSwatchHoverInfo paletteHit = null;
 
   if ((showingAPalette || showingNormalLines) && UI_menuBar.selected_parent == -1 &&
-      isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
-    if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(mouseX, mouseY);
-    if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(mouseX, mouseY);
-    if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(mouseX, mouseY);
-    if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(mouseX, mouseY);
-    if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(mouseX, mouseY);
+      isInside(xMouse, yMouse, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
+    if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(xMouse, yMouse);
+    if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(xMouse, yMouse);
+    if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(xMouse, yMouse);
+    if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(xMouse, yMouse);
+    if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(xMouse, yMouse);
   }
 
   if (studyHover_wasShownLastFrame) {
@@ -158,15 +158,15 @@ class UrbanHoverHit {
 // with up to three rows sharing the same dayIndex (viewLayout==2's three
 // percentile rows), each one needs its own chance to match, since they
 // sit at different screen positions and carry different data.
-UrbanHoverHit studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) {
+UrbanHoverHit studyUrbanHover_hitTest (float xMousePos, float yMousePos) {
   if (STUDY.urbanThumbnailHoverInfo == null) return null;
 
   // Inverse of endFrame()'s own cX/cY/ImageScale compositing transform
   // (image(this.graphics, cX, cY, dX/ImageScale, dY/ImageScale)) - maps
   // actual screen coordinates back into this.graphics' own device-pixel
   // space, the same space each entry's centerX/centerY were recorded in.
-  float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
-  float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
+  float graphicsX = (xMousePos - STUDY.cX) * STUDY.ImageScale;
+  float graphicsY = (yMousePos - STUDY.cY) * STUDY.ImageScale;
 
   float halfW = STUDY.urbanThumbnail_sizeX / 2;
   float halfH = STUDY.urbanThumbnail_sizeY / 2;
