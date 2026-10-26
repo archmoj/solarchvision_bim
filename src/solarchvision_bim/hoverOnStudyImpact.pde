@@ -83,10 +83,24 @@ PImage studyHover_pre_screen;
 int studyHover_capturedGeneration = -1;
 boolean studyHover_wasShownLastFrame = false;
 
-// Called every frame, unconditionally - same shape as draw_WIN3D_layers()
-// relative to WIN3D.draw(), for the same reason: this has to run whether
-// or not STUDY itself redrew this particular frame.
-void draw_STUDY_hover (int xMouse, int yMouse, int zIndex) {
+// Makes sure studyHover_pre_screen is a clean, hover-box-free snapshot of
+// the STUDY panel (capturing a fresh one whenever STUDY has genuinely
+// redrawn since the last capture), then - if the *previous* pass left a
+// hover box drawn on top of it - restores that snapshot to erase it.
+// Called exactly once per pass, by drawAllHovers() (hover.pde), before
+// any of this pass's hover points are drawn.
+//
+// This used to be folded into draw_STUDY_hover() itself, gated behind
+// "only clear when zIndex == 0" - which relied on drawAllHovers() always
+// presenting its very first point at zIndex 0, happened to be true, but
+// tied the STUDY panel's own clearing to an unrelated detail: how many
+// other points are being hovered this pass and in what order. A point
+// that lands on WIN3D rather than over STUDY has nothing to do with
+// whether STUDY's own last hover box needs erasing, so a point like that
+// landing first shouldn't be able to affect it either way; pulling the
+// clear out into its own function, called once up front regardless of
+// where any point lands, removes that coupling entirely.
+void clearStudyHover () {
   if (isBakingInProgress()) return;
 
   if (!STUDY.include) return;
@@ -94,8 +108,28 @@ void draw_STUDY_hover (int xMouse, int yMouse, int zIndex) {
   if (STUDY.renderGeneration != studyHover_capturedGeneration) {
     studyHover_pre_screen = get(STUDY.cX, STUDY.cY, int(STUDY.dX / STUDY.ImageScale), int(STUDY.dY / STUDY.ImageScale));
     studyHover_capturedGeneration = STUDY.renderGeneration;
-    studyHover_wasShownLastFrame = false; // the fresh redraw already has no hover box on it - nothing to erase yet
+    studyHover_wasShownLastFrame = false; // the fresh redraw already has no hover box on it - nothing to erase
+    return; // the capture above IS this pass's clean state; nothing further to restore
   }
+
+  if (!studyHover_wasShownLastFrame) return; // nothing drawn last pass - nothing to erase
+  if (studyHover_pre_screen == null) return; // nothing captured yet (STUDY hasn't drawn a single frame)
+
+  image(studyHover_pre_screen, STUDY.cX, STUDY.cY);
+  studyHover_wasShownLastFrame = false;
+}
+
+// Called once per hover point in the current pass (possibly several
+// times per frame - see drawAllHovers(), hover.pde) - same shape as
+// draw_WIN3D_layers() relative to WIN3D.draw(), for the same reason:
+// this has to run whether or not STUDY itself redrew this particular
+// frame. Clearing any box left over from the previous pass is
+// clearStudyHover()'s job, not this function's - called once, up front,
+// by drawAllHovers(), before the first of this pass's calls here.
+void draw_STUDY_hover (int xMouse, int yMouse) {
+  if (isBakingInProgress()) return;
+
+  if (!STUDY.include) return;
 
   if (studyHover_pre_screen == null) return; // nothing captured yet (STUDY hasn't drawn a single frame)
 
@@ -137,13 +171,6 @@ void draw_STUDY_hover (int xMouse, int yMouse, int zIndex) {
     if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(xMouse, yMouse);
     if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(xMouse, yMouse);
     if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(xMouse, yMouse);
-  }
-
-  if (studyHover_wasShownLastFrame) {
-    if(zIndex == 0) { // only clear for the first item
-      image(studyHover_pre_screen, STUDY.cX, STUDY.cY);
-    }
-    studyHover_wasShownLastFrame = false;
   }
 
   if (urbanHit != null) {

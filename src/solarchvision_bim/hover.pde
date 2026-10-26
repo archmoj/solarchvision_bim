@@ -1,23 +1,31 @@
 int[][] allHoverPoints = null;
 
+// Erases whatever STUDY hover box the previous pass left on screen (see
+// clearStudyHover(), hoverOnStudyImpact.pde) exactly once, up front -
+// before any of this pass's points are drawn, and regardless of how many
+// there are, where they land, or which one happens to be first. Each
+// individual point then only ever adds a box, never erases one, so
+// multiple simultaneous hover points (allHoverPoints, below) can each
+// show their own box at once without one point's draw wiping out
+// another's.
 void drawAllHovers () {
-  int zIndex = 0; // only z == 0 clears the background
+  clearStudyHover();
+
   if (allHoverPoints != null) {
     for (int i = 0; i < allHoverPoints.length; i++) {
       int x = allHoverPoints[i][0];
       int y = allHoverPoints[i][1];
 
-      drawHoversAt(x, y, zIndex);
-      zIndex++;
+      drawHoversAt(x, y);
     }
   }
 
-  drawHoversAt(mouseX, mouseY, zIndex);
+  drawHoversAt(mouseX, mouseY);
 }
 
-void drawHoversAt (int xMouse, int yMouse, int zIndex) {
+void drawHoversAt (int xMouse, int yMouse) {
   draw_WIN3D_hover(xMouse, yMouse);
-  draw_STUDY_hover(xMouse, yMouse, zIndex);
+  draw_STUDY_hover(xMouse, yMouse);
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------
