@@ -177,8 +177,8 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (int xMouse, int yMouse) {
 // from globalPoseRawValuesAt() instead.
 void drawGlobalPoseHoverBox (int xMouse, int yMouse, GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] lines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
-  if (lines == null) return;
+  String[] valueLines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
+  if (valueLines == null) return;
 
   // Beta still comes from hit.b the same way as before (only inclination
   // gets snapped, never orientation); hit.displayAlpha is used directly
@@ -187,12 +187,12 @@ void drawGlobalPoseHoverBox (int xMouse, int yMouse, GlobalPoseHoverHit hit) {
   int bCount = hit.info.snapshotRAD[0].length;
   float Beta = hit.b * (360.0 / bCount);
 
-  String[] rawLines = new String[lines.length + 1];
-  rawLines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
-  System.arraycopy(lines, 0, rawLines, 1, lines.length);
+  String[] lines = new String[valueLines.length + 1];
+  lines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
+  System.arraycopy(valueLines, 0, lines, 1, valueLines.length);
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(xMouse, yMouse, rawLines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }
