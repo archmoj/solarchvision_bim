@@ -167,6 +167,19 @@ class STUDY {
   int probabilityWidthInterval = 4;
   float probabilityHeightInterval = 8;
 
+  // Debug logging for the drawProbs()/accumulation pipeline. Prints the raw
+  // window accumulation each time a window closes, and the bin math inside
+  // drawProbs() itself, flagging any bin that's 0 while sandwiched between
+  // two nonzero bins. Set to false to silence.
+  boolean DEBUG_drawProbs = true;
+
+  // Debug logging for the raw per-hour samples that feed the "data lines"
+  // (drawData()). Tagged with the same day/hour as the [drawProbs] /
+  // [drawProbs window] lines above, so a window's accumulated min/max can
+  // be checked directly against the individual raw hourly values that fed
+  // it. Set to false to silence.
+  boolean DEBUG_drawData = true;
+
   color color_data_raws = color(0, 0, 0);
 
   int plotLayoutIndex = 0;
@@ -794,7 +807,7 @@ class STUDY {
 
 
 
-  void drawData (float[] Ax_LINES, float[] Ay_LINES, float[] Bx_LINES, float[] By_LINES) {
+  void drawData (float[] Ax_LINES, float[] Ay_LINES, float[] Bx_LINES, float[] By_LINES, float sy_Plot) {
     //this.graphics.stroke(this.color_data_raws);
     //this.graphics.fill(this.color_data_raws);
     //this.graphics.strokeWeight(this.strokeScale * 1);
@@ -802,6 +815,20 @@ class STUDY {
     this.graphics.stroke(0, PAINT.getOpacity(this.opacityPercentage));
     this.graphics.fill(0, PAINT.getOpacity(this.opacityPercentage));
     this.graphics.strokeWeight(this.strokeScale * 0.5);
+
+    if (this.DEBUG_drawData) {
+      float DEBUG_minLine = FLOAT_undefined;
+      float DEBUG_maxLine = -FLOAT_undefined;
+      for (int i = 0; i < Ay_LINES.length; i++) {
+        float av = Ay_LINES[i] / sy_Plot - this.verticalUnitOffset;
+        float bv = By_LINES[i] / sy_Plot - this.verticalUnitOffset;
+        if (DEBUG_minLine > av) DEBUG_minLine = av;
+        if (DEBUG_minLine > bv) DEBUG_minLine = bv;
+        if (DEBUG_maxLine < av) DEBUG_maxLine = av;
+        if (DEBUG_maxLine < bv) DEBUG_maxLine = bv;
+      }
+      println("[drawData] segments=" + Ax_LINES.length + " overallMin=" + DEBUG_minLine + " overallMax=" + DEBUG_maxLine);
+    }
 
     for (int i = 0; i < Ax_LINES.length; i++) {
       this.graphics.line(Ax_LINES[i], Ay_LINES[i], Bx_LINES[i], By_LINES[i]);
@@ -848,6 +875,13 @@ class STUDY {
       }
     }
 
+    if (this.DEBUG_drawProbs) {
+      println("[drawProbs] day=" + j + " hour=" + i + " layer=" + currentLayerId
+        + " _pix=" + _pix + " sy_Plot=" + sy_Plot
+        + " min_V=" + (is_defined(min_V) ? str(min_V) : "n/a")
+        + " max_V=" + (is_defined(-max_V) ? str(max_V) : "n/a"));
+    }
+
     if ((is_defined(min_V)) && (is_defined(-max_V))) {
       int min_b = round(funcs.roundTo((min_V * abs(sy_Plot)), _pix) / _pix);
       int max_b = round(funcs.roundTo((max_V * abs(sy_Plot)), _pix) / _pix);
@@ -859,6 +893,10 @@ class STUDY {
 
       probs = new int [floor(max_b - min_b) + 1];
 
+      if (this.DEBUG_drawProbs) {
+        println("[drawProbs] day=" + j + " hour=" + i + " min_b=" + min_b + " max_b=" + max_b + " probs.length=" + probs.length);
+      }
+
       for (int k = 0; k < valuesSUM.length; k++) {
         if (is_defined(valuesSUM[k])) {
           float the_value = valuesSUM[k];
@@ -869,10 +907,30 @@ class STUDY {
 
           int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_b, 1));
 
+          if (this.DEBUG_drawProbs && ((h < 0) || (h > probs.length - 1))) {
+            println("[drawProbs] day=" + j + " hour=" + i + " CLAMPED k=" + k + " the_value=" + the_value + " raw_h=" + h + " probs.length=" + probs.length);
+          }
+
           if (h < 0) h = 0;
           else if (h > probs.length - 1) h = probs.length - 1;
           probs[h] += 1;
           totalProbs += 1;
+        }
+      }
+
+      if (this.DEBUG_drawProbs) {
+        String DEBUG_probsStr = "";
+        for (int n = 0; n < probs.length; n++) {
+          DEBUG_probsStr += probs[n] + (n < probs.length - 1 ? "," : "");
+        }
+        println("[drawProbs] day=" + j + " hour=" + i + " totalProbs=" + totalProbs + " probs=[" + DEBUG_probsStr + "]");
+
+        for (int n = 1; n < probs.length - 1; n++) {
+          if ((probs[n] == 0) && (probs[n - 1] > 0) && (probs[n + 1] > 0)) {
+            println("[drawProbs] day=" + j + " hour=" + i + " SANDWICHED EMPTY BIN at index=" + n
+              + " (value≈" + ((min_b + n) * _pix / abs(sy_Plot) - this.verticalUnitOffset) + ")"
+              + " neighbors=[" + probs[n - 1] + "," + probs[n + 1] + "]");
+          }
         }
       }
 
@@ -1500,6 +1558,12 @@ class STUDY {
 
                           Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
                           By_LINES = append(By_LINES, valuesB[idx] * sy_Plot);
+
+                          if (this.DEBUG_drawData) {
+                            println("[drawData raw] day=" + j + " hour=" + i + " k=" + k + " j_ADD=" + j_ADD + " idx=" + idx
+                              + " A=" + (valuesA[idx] - this.verticalUnitOffset)
+                              + " B=" + (valuesB[idx] - this.verticalUnitOffset));
+                          }
                         }
                       }
                     }
@@ -1517,6 +1581,11 @@ class STUDY {
           if (this.showProbabilities) {
             _interval += 1;
             if ((_interval % this.probabilityWidthInterval) == 0) {
+              int DEBUG_definedCount = 0;
+              int DEBUG_undefinedCount = 0;
+              float DEBUG_minSUM = FLOAT_undefined;
+              float DEBUG_maxSUM = -FLOAT_undefined;
+
               for (int k = 0; k < count_k; k++) {
                 for (int j_ADD = 0; j_ADD < this.daysMergedCount; j_ADD++) {
                   int idx = k * this.daysMergedCount + j_ADD;
@@ -1527,7 +1596,27 @@ class STUDY {
                   else {
                     valuesSUM[idx] = FLOAT_undefined;
                   }
+
+                  if (this.DEBUG_drawProbs) {
+                    if (is_defined(valuesSUM[idx])) {
+                      DEBUG_definedCount += 1;
+                      if (DEBUG_minSUM > valuesSUM[idx]) DEBUG_minSUM = valuesSUM[idx];
+                      if (DEBUG_maxSUM < valuesSUM[idx]) DEBUG_maxSUM = valuesSUM[idx];
+                    }
+                    else {
+                      DEBUG_undefinedCount += 1;
+                    }
+                  }
                 }
+              }
+
+              if (this.DEBUG_drawProbs) {
+                println("[drawProbs window] day=" + j + " hour=" + i + " interval=" + _interval
+                  + " layer=" + currentLayerId
+                  + " idxCount=" + valuesSUM.length
+                  + " defined=" + DEBUG_definedCount + " undefined=" + DEBUG_undefinedCount
+                  + " minSUM=" + (DEBUG_definedCount > 0 ? str(DEBUG_minSUM) : "n/a")
+                  + " maxSUM=" + (DEBUG_definedCount > 0 ? str(DEBUG_maxSUM) : "n/a"));
               }
 
               this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, sx_Plot, sy_Plot);
@@ -1555,7 +1644,7 @@ class STUDY {
     }
 
     if (this.showRawLines) {
-      this.drawData(Ax_LINES, Ay_LINES, Bx_LINES, By_LINES);
+      this.drawData(Ax_LINES, Ay_LINES, Bx_LINES, By_LINES, sy_Plot);
     }
 
     this.graphics.popMatrix();
