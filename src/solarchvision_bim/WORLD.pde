@@ -510,6 +510,10 @@ class WORLD {
 
 
   void draw () {
+    // Same guard as STUDY.draw() / draw_WIN3D_layers() - see STUDY.pde's
+    // own comment on this. this.update is left untouched so the redraw
+    // just waits for a later frame once the menu's closed.
+    if (UI_menuBar.selected_parent != -1) return;
 
     if (this.update) {
 

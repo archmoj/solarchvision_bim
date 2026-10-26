@@ -1869,6 +1869,15 @@ class STUDY {
   float prev_ImageScale = 1;
 
   void draw () {
+    // Same guard draw_WIN3D_layers() already applies to WIN3D.draw() -
+    // and for the same reason: a full STUDY redraw paints this whole
+    // panel fresh, with no idea an open UI_menuBar dropdown might be
+    // sitting on top of part of it, and would happily overwrite it.
+    // this.update is deliberately left untouched (not consumed) here, so
+    // the pending redraw just waits - it fires on whichever later frame
+    // finally finds the menu closed, the same way a baking-in-progress
+    // frame defers it today.
+    if (UI_menuBar.selected_parent != -1) return;
 
     showWaitCursor();
 

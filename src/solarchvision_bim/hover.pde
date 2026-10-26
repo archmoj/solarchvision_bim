@@ -8,7 +8,20 @@ int[][] allHoverPoints = null;
 // multiple simultaneous hover points (allHoverPoints, below) can each
 // show their own box at once without one point's draw wiping out
 // another's.
+//
+// Skipped entirely while a UI_menuBar dropdown is open, same reasoning
+// as STUDY.draw()'s own guard (STUDY.pde): clearStudyHover()'s own
+// restore, and every drawHoversAt() call below it, paint directly onto
+// the live screen with no idea the dropdown might be sitting over part
+// of whichever region they touch - STUDY's, WIN3D's, or both - so any of
+// them could overwrite it. Whatever was on screen (hover boxes included)
+// is simply left alone until the menu closes; draw_STUDY_hover() already
+// stops offering new hits while selected_parent != -1 (hoverOnStudy
+// Impact.pde), so nothing here is actually waiting to happen, it's just
+// no longer trying.
 void drawAllHovers () {
+  if (UI_menuBar.selected_parent != -1) return;
+
   clearStudyHover();
 
   if (allHoverPoints != null) {
