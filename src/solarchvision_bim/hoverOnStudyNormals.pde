@@ -101,7 +101,7 @@ int[] sortedDefinedIndicesByValueDescending (float[] values) {
 // drawing as every other STUDY hover box, built from a dynamically-sized
 // line list instead of a fixed count, since how many statistics are
 // actually defined varies column to column.
-void drawNormalsHoverBox (NormalsHoverColumn col) {
+void drawNormalsHoverBox (int xMouse, int yMouse, NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(col.layerName);
   lineList.add(col.dayText + " " + nf(col.hourIndex, 2) + ":00");
@@ -120,5 +120,5 @@ void drawNormalsHoverBox (NormalsHoverColumn col) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }

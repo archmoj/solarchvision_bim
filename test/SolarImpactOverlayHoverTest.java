@@ -111,7 +111,7 @@ class SolarImpactOverlayHoverTest {
     float destX = 100, destY = 100, destW = 400, destH = 300;
     float boxW = 70, boxH = 54;
 
-    for (float[] mouse : new float[][] { {120, 120}, {480, 120}, {120, 380}, {480, 380}, {250, 250} }) {
+    for (int[] mouse : new int[][] { {120, 120}, {480, 120}, {120, 380}, {480, 380}, {250, 250} }) {
       float[] p = app.hoverBoxPosition(mouse[0], mouse[1], destX, destY, destW, destH, boxW, boxH);
       assertTrue(p[0] >= destX && p[0] + boxW <= destX + destW, "boxX out of bounds for mouse " + java.util.Arrays.toString(mouse) + ": " + p[0]);
       assertTrue(p[1] >= destY && p[1] + boxH <= destY + destH, "boxY out of bounds for mouse " + java.util.Arrays.toString(mouse) + ": " + p[1]);
@@ -144,7 +144,9 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = false;
     putDay(1, app.Impact_ACTIVE, 1, 1, /*A*/ 1f, /*R*/ 0f, /*G*/ 10f, /*B*/ 0f, /*valuesMUL*/ 1.5f);
 
-    String[] lines = app.hoverLines(app.Impact_ACTIVE, 1, 1, 1);
+    int xMouse = 100;
+    int yMouse = 200;
+    String[] lines = app.hoverLines(xMouse, yMouse, app.Impact_ACTIVE, 1, 1, 1);
 
     assertNotNull(lines);
     assertEquals(1, lines.length);
@@ -158,7 +160,9 @@ class SolarImpactOverlayHoverTest {
     // own comment and the Matrix_ARGB build site for why.
     putDay(1, app.Impact_PASSIVE, 2, 2, /*A*/ 1f, /*R*/ 4f, /*G*/ 0f, /*B*/ 10f, /*valuesMUL*/ 1.5f);
 
-    String[] lines = app.hoverLines(app.Impact_PASSIVE, 1, 2, 2);
+    int xMouse = 100;
+    int yMouse = 200;
+    String[] lines = app.hoverLines(xMouse, yMouse, app.Impact_PASSIVE, 1, 2, 2);
 
     assertNotNull(lines);
     assertEquals(3, lines.length);
@@ -173,7 +177,9 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = true;
     putDay(1, app.Impact_ACTIVE, 1, 1, 1f, 2f, 3f, 4f, 1f);
 
-    String[] lines = app.hoverLines(app.Impact_ACTIVE, 1, 1, 1);
+    int xMouse = 100;
+    int yMouse = 200;
+    String[] lines = app.hoverLines(xMouse, yMouse, app.Impact_ACTIVE, 1, 1, 1);
 
     assertNotNull(lines);
     assertEquals(4, lines.length);
@@ -188,6 +194,8 @@ class SolarImpactOverlayHoverTest {
     app.showARGB_inHover = false;
     putDay(1, app.Impact_ACTIVE, 1, 1, 1f, 0f, 10f, 0f, 1f); // only (1,1) has data
 
-    assertNull(app.hoverLines(app.Impact_ACTIVE, 1, 0, 0));
+    int xMouse = 100;
+    int yMouse = 200;
+    assertNull(app.hoverLines(xMouse, yMouse, app.Impact_ACTIVE, 1, 0, 0));
   }
 }

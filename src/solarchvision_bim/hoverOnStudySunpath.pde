@@ -76,7 +76,7 @@ SunpathHoverPoint studySunpathHover_hitTest (int xMouse, int yMouse) {
 // instead of hoverLines()'s Active/Passive formatting, since
 // this graph only ever displays the one number (no P/N/Score split) for
 // either impact type.
-void drawSunpathHoverBox (SunpathHoverPoint p) {
+void drawSunpathHoverBox (int xMouse, int yMouse, SunpathHoverPoint p) {
   String unit = (p.impactTypeIndex == Impact_ACTIVE) ? " kWh/m\u00B2" : " kWh\u00B0C/m\u00B2";
   String valueLine = nf(p.valuesSUM, 1, 2) + unit;
 
@@ -85,5 +85,5 @@ void drawSunpathHoverBox (SunpathHoverPoint p) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }

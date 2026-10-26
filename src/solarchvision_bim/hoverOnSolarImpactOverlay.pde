@@ -8,17 +8,17 @@
 // anymore. draw_WIN3D_layersAndHover.pde already returns before ever reaching
 // this call while UI_menuBar.selected_parent != -1, so this doesn't need
 // to check that itself.
-void drawSolarImpactHover (PImage img, float[] fit) {
+void drawSolarImpactHover (int xMouse, int yMouse, PImage img, float[] fit) {
   float destX = fit[0], destY = fit[1], destW = fit[2], destH = fit[3];
-  if (!isInside(mouseX, mouseY, destX, destY, destX + destW, destY + destH)) return;
+  if (!isInside(xMouse, yMouse, destX, destY, destX + destW, destY + destH)) return;
 
-  float fx = (mouseX - destX) / destW;
-  float fy = (mouseY - destY) / destH;
+  float fx = (xMouse - destX) / destW;
+  float fy = (yMouse - destY) / destH;
   int ix = (int) constrain(fit[4] + fx * fit[6], 0, img.width - 1);
   int iy = (int) constrain(fit[5] + fy * fit[7], 0, img.height - 1);
 
-  String[] lines = hoverLines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
+  String[] lines = hoverLines(xMouse, yMouse, WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
-  drawHover(lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }

@@ -130,19 +130,19 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
   }
 
   if (urbanHit != null) {
-    drawStudyUrbanHoverBox(urbanHit);
+    drawStudyUrbanHoverBox(xMouse, yMouse, urbanHit);
     studyHover_wasShownLastFrame = true;
   } else if (poseHit != null) {
-    drawGlobalPoseHoverBox(poseHit);
+    drawGlobalPoseHoverBox(xMouse, yMouse, poseHit);
     studyHover_wasShownLastFrame = true;
   } else if (sunpathHit != null) {
-    drawSunpathHoverBox(sunpathHit);
+    drawSunpathHoverBox(xMouse, yMouse, sunpathHit);
     studyHover_wasShownLastFrame = true;
   } else if (normalsHit != null) {
-    drawNormalsHoverBox(normalsHit);
+    drawNormalsHoverBox(xMouse, yMouse, normalsHit);
     studyHover_wasShownLastFrame = true;
   } else if (paletteHit != null) {
-    drawPaletteHoverBox(paletteHit);
+    drawPaletteHoverBox(xMouse, yMouse, paletteHit);
     studyHover_wasShownLastFrame = true;
   }
 }
@@ -206,13 +206,13 @@ UrbanHoverHit studyUrbanHover_hitTest (int xMouse, int yMouse) {
 // behavior, just clamped to STUDY's own dest rect instead of the
 // overlay's, and reading from the hit's own snapshot instead of
 // allSolarImpacts' live fields.
-void drawStudyUrbanHoverBox (UrbanHoverHit hit) {
+void drawStudyUrbanHoverBox (int xMouse, int yMouse, UrbanHoverHit hit) {
   float[] raw = win3DOverlay_rawValuesAt_fromSnapshot(hit.info.impactTypeIndex, hit.info.daySnapshot, hit.info.mul, hit.ix, hit.iy);
-  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
+  String[] lines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
   if (lines == null) return;
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }

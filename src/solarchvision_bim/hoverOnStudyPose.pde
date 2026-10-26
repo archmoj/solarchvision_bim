@@ -175,9 +175,9 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (int xMouse, int yMouse) {
 // Draws the hover box - same formatting/sizing/positioning/edge-drawing
 // reuse as drawStudyUrbanHoverBox() (studyImpactHover.pde), just reading
 // from globalPoseRawValuesAt() instead.
-void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
+void drawGlobalPoseHoverBox (int xMouse, int yMouse, GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] lines = hoverLines(hit.info.impactTypeIndex, raw);
+  String[] lines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
   if (lines == null) return;
 
   // Beta still comes from hit.b the same way as before (only inclination
@@ -194,5 +194,5 @@ void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
 }

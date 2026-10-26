@@ -109,14 +109,18 @@ class StudyImpactHoverTest {
 
   @Test
   void linesOverload_isNull_whenRawIsNull () {
-    assertNull(app.hoverLines(app.Impact_ACTIVE, (float[]) null));
+    int xMouse = 100;
+    int yMouse = 200;
+    assertNull(app.hoverLines(xMouse, yMouse, app.Impact_ACTIVE, (float[]) null));
   }
 
   @Test
   void linesOverload_formatsActiveTheSameWayAsTheLiveLookupDoes () {
+    int xMouse = 100;
+    int yMouse = 200;
     app.showARGB_inHover = false;
     float[] raw = { 1f, 0f, 15f, 0f }; // A, R, G(=received), B
-    String[] lines = app.hoverLines(app.Impact_ACTIVE, raw);
+    String[] lines = app.hoverLines(xMouse, yMouse, app.Impact_ACTIVE, raw);
 
     assertNotNull(lines);
     assertEquals(1, lines.length);
@@ -127,7 +131,9 @@ class StudyImpactHoverTest {
   void linesOverload_formatsPassiveTheSameWayAsTheLiveLookupDoes () {
     app.showARGB_inHover = false;
     float[] raw = { 1f, 4f, 0f, 10f }; // A, R(=N), G, B(=P)
-    String[] lines = app.hoverLines(app.Impact_PASSIVE, raw);
+    int xMouse = 100;
+    int yMouse = 200;
+    String[] lines = app.hoverLines(xMouse, yMouse, app.Impact_PASSIVE, raw);
 
     assertNotNull(lines);
     assertEquals(3, lines.length);

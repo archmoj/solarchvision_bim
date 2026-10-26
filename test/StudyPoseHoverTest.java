@@ -193,10 +193,10 @@ class StudyPoseHoverTest {
     float angleRad = (float) Math.toRadians(120 - 90);
     float xLocal = radius * (float) Math.cos(angleRad);
     float yLocal = -radius * (float) Math.sin(angleRad);
-    float mouseX = dome.centerX + xLocal * dome.pixelsPerDegree;
-    float mouseY = dome.centerY + yLocal * dome.pixelsPerDegree;
+    int xMouse = Math.round(dome.centerX + xLocal * dome.pixelsPerDegree);
+    int yMouse = Math.round(dome.centerY + yLocal * dome.pixelsPerDegree);
 
-    solarchvision_bim.GlobalPoseHoverHit hit = app.studyGlobalPoseHover_hitTest(mouseX, mouseY);
+    solarchvision_bim.GlobalPoseHoverHit hit = app.studyGlobalPoseHover_hitTest(xMouse, yMouse);
 
     assertNotNull(hit);
     assertEquals(3, hit.a);  // Alpha=30 -> a=3 (step=10)

@@ -39,19 +39,19 @@ final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight + 1);
 // so it (and its stroke - see hoverStrokeInset above) stays
 // entirely inside destX..destX+destW / destY..destY+destH (the overlay's
 // own dest rect, from hoverFitRect() above) - on whichever
-// side of (mouseX, mouseY) that rect has more room: left of the cursor
+// side of (xMouse, yMouse) that rect has more room: left of the cursor
 // when it's in the right half, right when it's in the left half, and the
 // same above/below for the vertical half, rather than a fixed corner that
 // could run past an edge. The final constrain() is a safety net for a box
 // wider/taller than half the rect. Pure/no drawing, so it's independently
 // checkable without a live PGraphics context - see drawSolarImpactHover()'s
 // own comment for why nothing else here is.
-float[] hoverBoxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
-  boolean rightHalf = (mouseX - destX) > (destW / 2);
-  boolean bottomHalf = (mouseY - destY) > (destH / 2);
+float[] hoverBoxPosition (int xMouse, int yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH) {
+  boolean rightHalf = (xMouse - destX) > (destW / 2);
+  boolean bottomHalf = (yMouse - destY) > (destH / 2);
 
-  float boxX = rightHalf ? (mouseX - hoverMargin - boxW) : (mouseX + hoverMargin);
-  float boxY = bottomHalf ? (mouseY - hoverMargin - boxH) : (mouseY + hoverMargin);
+  float boxX = rightHalf ? (xMouse - hoverMargin - boxW) : (xMouse + hoverMargin);
+  float boxY = bottomHalf ? (yMouse - hoverMargin - boxH) : (yMouse + hoverMargin);
 
   boxX = constrain(boxX, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
   boxY = constrain(boxY, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
@@ -76,16 +76,16 @@ float[] hoverBoxPosition (float mouseX, float mouseY, float destX, float destY, 
 //   exactly how these get accumulated hour by hour. The comparison score
 //   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
 //   passive palette color itself is already chosen from.
-String[] hoverLines (int q, int dayIndex, int x, int y) {
+String[] hoverLines (int xMouse, int yMouse, int q, int dayIndex, int x, int y) {
   float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
-  return hoverLines(q, raw);
+  return hoverLines(xMouse, yMouse, q, raw);
 }
 
 // Same formatting, for a raw A/R/G/B that's already been looked up some
 // other way - e.g. studyImpactHover.pde's own snapshot-based lookup,
 // which can't go through allSolarImpacts' live fields the way the
 // overload above does (see UrbanThumbnailHoverInfo's own comment on why).
-String[] hoverLines (int q, float[] raw) {
+String[] hoverLines (int xMouse, int yMouse, int q, float[] raw) {
   if (raw == null) return null;
 
   if (showARGB_inHover) {
@@ -115,7 +115,7 @@ String[] hoverLines (int q, float[] raw) {
 }
 
 
-void drawHover (String[] lines, float destX, float destY, float destW, float destH) {
+void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH) {
   // textWidth()/textAscent()/textDescent() below all read the current text
   // size, so this has to happen before measuring anything.
   textSize(MessageSize);
@@ -129,7 +129,7 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
   }
   float boxW = 2 * hoverSidePad + maxTextWidth;
 
-  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = hoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
@@ -149,20 +149,20 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
   // that ambiguous with a box outlined on all four sides.
   stroke(0);
   strokeWeight(hoverStrokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  float nearX = (boxX > xMouse) ? boxX : (boxX + boxW);
+  float nearY = (boxY > yMouse) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
   line(boxX, nearY, boxX + boxW, nearY);
 
-  float farX = (boxX < mouseX) ? boxX : (boxX + boxW);
-  float farY = (boxY < mouseY) ? boxY : (boxY + boxH);
+  float farX = (boxX < xMouse) ? boxX : (boxX + boxW);
+  float farY = (boxY < yMouse) ? boxY : (boxY + boxH);
   strokeWeight(1);
-  line(mouseX, mouseY, nearX, nearY);
-  if (mouseX < boxX || mouseX > boxX + boxW) {
-    line(mouseX, mouseY, nearX + (boxX > mouseX ? -1 : 1) * hoverStrokeWeight / 2, farY);
+  line(xMouse, yMouse, nearX, nearY);
+  if (xMouse < boxX || xMouse > boxX + boxW) {
+    line(xMouse, yMouse, nearX + (boxX > xMouse ? -1 : 1) * hoverStrokeWeight / 2, farY);
   }
-  if (mouseY < boxY || mouseY > boxY + boxH) {
-    line(mouseX, mouseY, farX, nearY + (boxY > mouseY ? -1 : 1) * hoverStrokeWeight / 2);
+  if (yMouse < boxY || yMouse > boxY + boxH) {
+    line(xMouse, yMouse, farX, nearY + (boxY > yMouse ? -1 : 1) * hoverStrokeWeight / 2);
   }
 
   noStroke();
@@ -186,13 +186,13 @@ void drawHover (String[] lines, float destX, float destY, float destW, float des
 }
 
 
-void drawPaletteHover (String[] lines, float destX, float destY, float destW, float destH, float[] col) {
+void drawPaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col) {
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
   float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
   float boxW = 2 * hoverSidePad + textWidth(lines[0]);
 
-  float[] boxPos = hoverBoxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = hoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
@@ -213,8 +213,8 @@ void drawPaletteHover (String[] lines, float destX, float destY, float destW, fl
 
   stroke(0);
   strokeWeight(hoverStrokeWeight);
-  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
-  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  float nearX = (boxX > xMouse) ? boxX : (boxX + boxW);
+  float nearY = (boxY > yMouse) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
   line(boxX, nearY, boxX + boxW, nearY);
 
