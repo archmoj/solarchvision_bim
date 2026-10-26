@@ -75,6 +75,59 @@ class StudyNormalsHoverTest {
     assertArrayEquals(new int[]{ 4 }, sorted);
   }
 
+  @Test
+  void sort_putsMaxFirst_evenWhenTiedWithAnotherStatistic () {
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, app.FLOAT_undefined);
+    values[app.STAT_N_Max] = 50f;
+    values[app.STAT_N_Ave] = 50f; // tied with Max, but not Max itself
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{ app.STAT_N_Max, app.STAT_N_Ave }, sorted);
+  }
+
+  @Test
+  void sort_putsMinLast_evenWhenTiedWithAnotherStatistic () {
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, app.FLOAT_undefined);
+    values[app.STAT_N_Min] = 50f;
+    values[app.STAT_N_Ave] = 50f; // tied with Min, but not Min itself
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{ app.STAT_N_Ave, app.STAT_N_Min }, sorted);
+  }
+
+  @Test
+  void sort_putsMaxFirstAndMinLast_whenAllThreeAreTied () {
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, app.FLOAT_undefined);
+    values[app.STAT_N_Max] = 50f;
+    values[app.STAT_N_Min] = 50f;
+    values[app.STAT_N_Ave] = 50f;
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{ app.STAT_N_Max, app.STAT_N_Ave, app.STAT_N_Min }, sorted);
+  }
+
+  @Test
+  void sort_tieBreakDoesNotOverrideAGenuineValueDifference () {
+    // Min's own value here is strictly higher than Max's, which can't
+    // happen with real NORMAL() output but confirms the tie-break only
+    // ever kicks in on an exact value match - Max/Min's special
+    // positions are earned by rank alone when values actually differ.
+    float[] values = new float[9];
+    java.util.Arrays.fill(values, app.FLOAT_undefined);
+    values[app.STAT_N_Max] = 10f;
+    values[app.STAT_N_Min] = 90f;
+
+    int[] sorted = app.sortedDefinedIndicesByValueDescending(values);
+
+    assertArrayEquals(new int[]{ app.STAT_N_Min, app.STAT_N_Max }, sorted);
+  }
+
   // ================= studyNormalsHover_hitTest ===============================
 
   private solarchvision_bim.NormalsHoverColumn makeColumn (float screenX, float hitRadiusX, float y1, float y2, int hour, String layerName) {

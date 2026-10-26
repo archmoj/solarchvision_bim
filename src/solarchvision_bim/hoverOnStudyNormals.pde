@@ -62,14 +62,32 @@ NormalsHoverColumn studyNormalsHover_hitTest (int xMouse, int yMouse) {
   return nearest;
 }
 
+// Tie-break used only when two statistics share the exact same value:
+// STAT_N_Max still wins the "find the largest remaining" comparison
+// below (so it's picked first, landing at the top) and STAT_N_Min still
+// loses it (so it's only ever picked once nothing else remains, landing
+// at the bottom) - the same top/bottom positions either would already
+// land in on its value alone, had that value been even slightly more
+// extreme than the stat(s) it's actually tied with. Everything else
+// ranks equally (0), so ties among non-Max/Min statistics keep whatever
+// relative order the scan below already finds them in.
+int statTieBreakRank (int statIndex) {
+  if (statIndex == STAT_N_Max) return -1;
+  if (statIndex == STAT_N_Min) return 1;
+  return 0;
+}
+
 // Returns the indices of values[] that are defined, sorted so the
 // largest value's own index comes first and the smallest comes last -
 // maximum at top, minimum at bottom, matching how the graph itself
 // visually stacks higher-valued lines above lower ones, rather than the
-// fixed STAT_N_* index order the underlying array uses. A plain selection
-// sort, since there are at most 9 entries here - not worth reaching for a
-// Comparator. Pure/no drawing, so it's independently checkable without a
-// live PGraphics context, unlike the rest of this file's box-drawing.
+// fixed STAT_N_* index order the underlying array uses. On a tie,
+// statTieBreakRank() above keeps Max at the top and Min at the bottom
+// regardless, rather than leaving the tie broken arbitrarily. A plain
+// selection sort, since there are at most 9 entries here - not worth
+// reaching for a Comparator. Pure/no drawing, so it's independently
+// checkable without a live PGraphics context, unlike the rest of this
+// file's box-drawing.
 int[] sortedDefinedIndicesByValueDescending (float[] values) {
   int definedCount = 0;
   int[] definedIndex = new int[values.length];
@@ -85,7 +103,9 @@ int[] sortedDefinedIndicesByValueDescending (float[] values) {
   for (int a = 0; a < definedCount - 1; a++) {
     int maxPos = a;
     for (int b = a + 1; b < definedCount; b++) {
-      if (definedValue[b] > definedValue[maxPos]) maxPos = b;
+      boolean bWins = (definedValue[b] > definedValue[maxPos]) ||
+        (definedValue[b] == definedValue[maxPos] && statTieBreakRank(definedIndex[b]) < statTieBreakRank(definedIndex[maxPos]));
+      if (bWins) maxPos = b;
     }
     if (maxPos != a) {
       float tmpVal = definedValue[a]; definedValue[a] = definedValue[maxPos]; definedValue[maxPos] = tmpVal;
