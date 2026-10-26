@@ -1,0 +1,78 @@
+# set test time
+Month 1
+Day 15
+
+3d-model 3
+=======
+preBake viewport
+
+enlarge time viewport
+=======
+
+REC.png study-pose-potential-passive-median
+=======
+
+impact layer index 1
+previous sky scenario
+REC.png study-pose-potential-passive-middle-sunny
+=======
+
+impact layer index 7
+previous sky scenario
+REC.png study-pose-potential-passive-average-partly-cloudy
+=======
+
+previous sky scenario
+REC.png study-pose-potential-passive-average-cloudy
+=======
+
+impact layer index 4
+previous sky scenario
+direct normal radiation
+REC.png study-pose-potential-active-median
+=======
+
+layout 4
+REC.png study-layout4-median
+=======
+
+layout 5
+REC.png study-layout5-median
+=======
+
+layout 6
+REC.png study-layout5-median
+=======
+
+layout 7
+REC.png study-layout5-median
+=======
+
+layout 8
+REC.png study-layout5-median
+=======
+
+layout -2
+REC.png study-layout-2-median
+=======
+
+layout -1
+REC.png study-layout-1-median
+=======
+
+layout 1
+REC.png study-layout1-median
+=======
+
+layout 2
+REC.png study-layout2-median
+=======
+
+start hour 12
+end hour 12
+REC.png study-layout2-median-at12
+=======
+
+layout 1
+REC.png study-layout1-median-at12
+=======
