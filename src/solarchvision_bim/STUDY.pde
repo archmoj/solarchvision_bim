@@ -172,7 +172,7 @@ class STUDY {
   boolean showNormalLines = true;
   boolean showProbabilities = false;
 
-  int probabilityWidthInterval = 4;
+  int probabilityWidthInterval = 2;
   float probabilityHeightInterval = 8;
 
   color color_data_raws = color(0, 0, 0);
