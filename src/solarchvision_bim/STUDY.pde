@@ -809,7 +809,11 @@ class STUDY {
   }
 
 
-  void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+  // valuesRaw holds one entry per individual valid hourly reading collected
+  // across the whole probabilityWidthInterval-hour window (every ensemble
+  // member/day, every hour in the window) - each entry is counted into its
+  // own bin directly, rather than averaging per ensemble member/day first.
+  void drawProbs (int i, int j, float[] valuesRaw, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     float _pix = 90.0 * this.view_S / this.probabilityHeightInterval;
 
@@ -841,9 +845,9 @@ class STUDY {
     float min_V = FLOAT_undefined;
     float max_V = -FLOAT_undefined;
 
-    for (int k = 0; k < valuesSUM.length; k++) {
-      if (is_defined(valuesSUM[k])) {
-        float the_value = valuesSUM[k];
+    for (int k = 0; k < valuesRaw.length; k++) {
+      if (is_defined(valuesRaw[k])) {
+        float the_value = valuesRaw[k];
 
         if (currentLayerId == LAYER_winddir.id) {
           if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
@@ -871,9 +875,9 @@ class STUDY {
 
       probs = new int [floor(max_b - min_b) + 1];
 
-      for (int k = 0; k < valuesSUM.length; k++) {
-        if (is_defined(valuesSUM[k])) {
-          float the_value = valuesSUM[k];
+      for (int k = 0; k < valuesRaw.length; k++) {
+        if (is_defined(valuesRaw[k])) {
+          float the_value = valuesRaw[k];
 
           if (currentLayerId == LAYER_winddir.id) {
             if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
@@ -1403,16 +1407,16 @@ class STUDY {
     valuesA = new float [count_k * this.daysMergedCount];
     valuesB = new float [count_k * this.daysMergedCount];
 
-    float[] valuesSUM;
-    float[] valuesNUM;
+    // Every valid hourly reading within the current probability window gets
+    // appended here as its own data point (not averaged per ensemble
+    // member/day first), so drawProbs() bins and counts actual individual
+    // samples. Grows across the window's hours and is cleared once the
+    // window closes and has been drawn (see the trigger block below).
+    float[] valuesWindow = new float [0];
     int _interval = 0;
-    valuesSUM = new float [count_k * this.daysMergedCount];
-    valuesNUM = new float [count_k * this.daysMergedCount];
 
     java.util.Arrays.fill(valuesA, FLOAT_undefined);
     java.util.Arrays.fill(valuesB, FLOAT_undefined);
-    java.util.Arrays.fill(valuesSUM, 0);   // Note: must be initialized to zero; not undefined.
-    java.util.Arrays.fill(valuesNUM, 0);
 
     float[] Ax_LINES = new float [0];
     float[] Ay_LINES = new float [0];
@@ -1442,11 +1446,12 @@ class STUDY {
 
               valuesA[idx] = FLOAT_undefined;
               valuesB[idx] = FLOAT_undefined;
-              // Note: valuesSUM[idx]/valuesNUM[idx] are NOT reset here. They
-              // accumulate across every hour of the current probability
-              // window (reset only once the window closes, below), so the
-              // average handed to drawProbs() reflects the whole window
-              // instead of only its last hour.
+              // Note: valuesWindow is NOT reset here. It accumulates one
+              // entry per valid hourly reading across every hour of the
+              // current probability window (reset only once the window
+              // closes, below), so drawProbs() sees and bins every
+              // individual sample from the whole window instead of only
+              // its last hour.
 
               float[] COL = PAINT.getColorStyle(currentColorStyle, (1.0 * k / (1 + DATA_end - DATA_start)));
               this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -1482,8 +1487,9 @@ class STUDY {
                   valuesA[idx] = Pa;
                   valuesA[idx] += this.verticalUnitOffset;
 
-                  valuesSUM[idx] += valuesA[idx];
-                  valuesNUM[idx] += 1;
+                  if ((this.showProbabilities) && (is_defined(valuesA[idx]))) {
+                    valuesWindow = append(valuesWindow, valuesA[idx]);
+                  }
 
                   if ((this.rawLinesExporter) && (this.showRawLines)) {
                     if (is_defined(valuesA[idx])) {
@@ -1529,35 +1535,17 @@ class STUDY {
           if (this.showProbabilities) {
             _interval += 1;
             if ((_interval % this.probabilityWidthInterval) == 0) {
-              // Average each index's accumulated sum over however many valid
-              // hours actually contributed to it this window (valuesNUM),
-              // rather than over a hardcoded hour count - some indices may
-              // have had fewer than probabilityWidthInterval valid samples
-              // (undefined readings, or samples excluded by filter()). An
-              // index with zero valid samples this window is marked
-              // undefined rather than left at its accumulator's starting 0,
-              // so drawProbs() correctly excludes it instead of treating
-              // "no data" as "a reading of zero".
-              for (int k = 0; k < count_k; k++) {
-                for (int j_ADD = 0; j_ADD < this.daysMergedCount; j_ADD++) {
-                  int idx = k * this.daysMergedCount + j_ADD;
+              // valuesWindow already holds one entry per valid hourly
+              // reading collected across every hour of this window (see
+              // where it's appended to, above) - drawProbs() bins and
+              // counts each of those individual samples directly, so no
+              // per-index averaging happens here.
+              this.drawProbs(i, j, valuesWindow, x_Plot, y_Plot, sx_Plot, sy_Plot);
 
-                  if (valuesNUM[idx] > 0) {
-                    valuesSUM[idx] /= valuesNUM[idx];
-                  }
-                  else {
-                    valuesSUM[idx] = FLOAT_undefined;
-                  }
-                }
-              }
-
-              this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, sx_Plot, sy_Plot);
-
-              // The window that just closed is now drawn; clear the
-              // accumulators so the next probabilityWidthInterval-hour
-              // window starts counting from zero instead of carrying over.
-              java.util.Arrays.fill(valuesSUM, 0);
-              java.util.Arrays.fill(valuesNUM, 0);
+              // The window that just closed is now drawn; start the next
+              // probabilityWidthInterval-hour window's collection empty
+              // instead of carrying these samples over.
+              valuesWindow = new float [0];
             }
           }
 
