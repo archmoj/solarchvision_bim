@@ -1430,8 +1430,11 @@ class STUDY {
 
               valuesA[idx] = FLOAT_undefined;
               valuesB[idx] = FLOAT_undefined;
-              valuesSUM[idx] = 0;
-              valuesNUM[idx] = 1;
+              // Note: valuesSUM[idx]/valuesNUM[idx] are NOT reset here. They
+              // accumulate across every hour of the current probability
+              // window (reset only once the window closes, below), so the
+              // average handed to drawProbs() reflects the whole window
+              // instead of only its last hour.
 
               float[] COL = PAINT.getColorStyle(currentColorStyle, (1.0 * k / (1 + DATA_end - DATA_start)));
               this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -1518,9 +1521,7 @@ class STUDY {
                 for (int j_ADD = 0; j_ADD < this.daysMergedCount; j_ADD++) {
                   int idx = k * this.daysMergedCount + j_ADD;
 
-                  if (is_defined(valuesA[idx])) {
-                    valuesSUM[idx] += valuesA[idx];
-                    valuesNUM[idx] += 1;
+                  if (valuesNUM[idx] > 0) {
                     valuesSUM[idx] /= valuesNUM[idx];
                   }
                   else {
@@ -1530,6 +1531,12 @@ class STUDY {
               }
 
               this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, sx_Plot, sy_Plot);
+
+              // The window that just closed is now drawn; clear the
+              // accumulators so the next probabilityWidthInterval-hour
+              // window starts counting from zero instead of carrying over.
+              java.util.Arrays.fill(valuesSUM, 0);
+              java.util.Arrays.fill(valuesNUM, 0);
             }
           }
 
