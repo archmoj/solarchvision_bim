@@ -27,7 +27,6 @@ Toggle Impact Type
 
 Skin Potential (Passive)
 REC.png skin-passive
-
 =======
 S.W.
 Direct Normal Radiation
@@ -36,15 +35,17 @@ Toggle Impact Type
 Skin Potential (Active)
 REC.png skin-active
 =======
-
 Start Hour 12
 End Hour 18
 Day Increment 15
 REC.png skin-active-afternoon
-
+=======
+Start Hour 12
+End Hour 18
+Day Increment 15
+REC.png skin-active-afternoon
 =======
 
-Start Hour 12
-End Hour 18
-Day Increment 15
-REC.png skin-active-afternoon
+hover 500,625 1100,800 1100,300 1100,400
+REC.png skin-multiple-hover-points
+=======
