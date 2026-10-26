@@ -1,5 +1,5 @@
-void draw_WIN3D_hover (int mouseX, int mouseY) {
-  drawSolarImpactHover(mouseX, mouseY);
+void draw_WIN3D_hover (int xMouse, int yMouse) {
+  drawSolarImpactHover(xMouse, yMouse);
 }
 
 // Called every frame the solar-impact overlay is shown, right after

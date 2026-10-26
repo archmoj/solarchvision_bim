@@ -33,7 +33,9 @@ void drawAllHovers () {
     }
   }
 
-  drawHoversAt(mouseX, mouseY);
+  if (control == USER_GUI) {
+    drawHoversAt(mouseX, mouseY);
+  }
 }
 
 void drawHoversAt (int xMouse, int yMouse) {
