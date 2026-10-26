@@ -48,6 +48,10 @@ void _useArg(String arg) {
       else if (input_str.equals("AUTO")) {
         control = USER_AUTO;
         if (logLevel == LOGLEVEL_IS_NOT_SET) logLevel = LOGLEVEL_PRINT_ONLY;
+
+        // disable hover
+        mouseX = -1;
+        mouseY = -1;
       }
     }
   }

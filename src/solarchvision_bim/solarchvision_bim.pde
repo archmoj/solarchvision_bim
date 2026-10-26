@@ -162,9 +162,7 @@ void draw () {
         if (!isBakingInProgress()) {
           draw_WIN3D_layersAndHover();
 
-          if (control != USER_AUTO) {
-            draw_STUDY_hover(mouseX, mouseY);
-          }
+          draw_STUDY_hover(mouseX, mouseY);
 
           draw_UI_layers();
 
