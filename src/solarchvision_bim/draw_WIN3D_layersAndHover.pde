@@ -145,7 +145,9 @@ void draw_WIN3D_layersAndHover () {
   }
 
   if (showSolarImpactOverlay) {
-    drawSolarImpactHover(img, fit);
+    if (control != USER_AUTO) {
+      drawSolarImpactHover(img, fit);
+    }
   }
 }
 

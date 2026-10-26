@@ -161,7 +161,11 @@ void draw () {
       } else {
         if (!isBakingInProgress()) {
           draw_UI_layers();
-          draw_STUDY_hover();
+
+          if (control != USER_AUTO) {
+            draw_STUDY_hover();
+          }
+
           draw_WIN3D_layersAndHover();
 
           if(stepAfterInitialization == 1) {
