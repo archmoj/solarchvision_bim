@@ -843,8 +843,8 @@ class STUDY {
     }
 
     if ((is_defined(min_V)) && (is_defined(-max_V))) {
-      int min_b = int(funcs.roundTo((min_V * abs(sy_Plot)), _pix) / _pix);
-      int max_b = int(funcs.roundTo((max_V * abs(sy_Plot)), _pix) / _pix);
+      int min_b = round(funcs.roundTo((min_V * abs(sy_Plot)), _pix) / _pix);
+      int max_b = round(funcs.roundTo((max_V * abs(sy_Plot)), _pix) / _pix);
 
       if (currentLayerId == LAYER_winddir.id) min_b = 0;
 
