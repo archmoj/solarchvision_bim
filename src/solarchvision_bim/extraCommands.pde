@@ -1136,6 +1136,22 @@ String __MAPRIGHTCLICK__ (String[] parts) {
     return hint;
 }
 
+String __HOVER__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    HashMap<String,String> p = parseParams(parts);
+    int x = getI(p, "x", 0);
+    int y = getI(p, "y", 0);
+    mouseX = x;
+    mouseY = y;
+    draw_STUDY_hover(mouseX, mouseY);
+    }
+    else {
+    hint = "Hover x=? y=?";
+    }
+    return hint;
+}
+
 String __PERSON__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {

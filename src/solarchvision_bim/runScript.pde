@@ -176,6 +176,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "DISTZ": return  __DISTZ__(parts);
     case "FETCH": return  __FETCH__(parts);
     case "FRONT": return  __FRONT__(parts);
+    case "HOVER": return  __HOVER__(parts);
     case "MESH2": return  __MESH2__(parts);
     case "MESH3": return  __MESH3__(parts);
     case "MESH4": return  __MESH4__(parts);
