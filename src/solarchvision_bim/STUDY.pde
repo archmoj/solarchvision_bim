@@ -1517,10 +1517,10 @@ class STUDY {
               for (int k = 0; k < count_k; k++) {
                 for (int j_ADD = 0; j_ADD < this.daysMergedCount; j_ADD++) {
                   int idx = k * this.daysMergedCount + j_ADD;
-                  valuesSUM[idx] += valuesA[idx];
-                  valuesNUM[idx] += 1;
 
-                  if (valuesNUM[idx] != 0) {
+                  if (is_defined(valuesA[idx])) {
+                    valuesSUM[idx] += valuesA[idx];
+                    valuesNUM[idx] += 1;
                     valuesSUM[idx] /= valuesNUM[idx];
                   }
                   else {
