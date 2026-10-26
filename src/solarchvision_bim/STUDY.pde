@@ -837,8 +837,14 @@ class STUDY {
 
     for (int k = 0; k < valuesSUM.length; k++) {
       if (is_defined(valuesSUM[k])) {
-        if (min_V > valuesSUM[k]) min_V = valuesSUM[k];
-        if (max_V < valuesSUM[k]) max_V = valuesSUM[k];
+        float the_value = valuesSUM[k];
+
+        if (currentLayerId == LAYER_winddir.id) {
+          if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
+        }
+
+        if (min_V > the_value) min_V = the_value;
+        if (max_V < the_value) max_V = the_value;
       }
     }
 
