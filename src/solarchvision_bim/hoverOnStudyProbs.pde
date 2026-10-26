@@ -56,6 +56,27 @@ ProbsHoverBox studyProbsHover_hitTest (int xMouse, int yMouse) {
   return null;
 }
 
+// Formats the window's hour range as display text, e.g. "Time: 04:00 -
+// 08:00" for a 4-hour window ending at hour 7 (hourEnd=7, hourWidth=4),
+// or "Time: 07:00 - 08:00" for a single hour (hourEnd=7, hourWidth=1).
+// hourEnd is drawProbs()'s own "i" - the window's LAST hour, which is
+// itself the START of that hour's own one-hour span - so the window's
+// true end time is hourEnd + 1, not hourEnd: a 4-hour window covering
+// hours 4, 5, 6, 7 spans from 04:00 up through the end of the 7:00 hour,
+// i.e. 08:00, not 07:00 (which would under-represent it by a full hour,
+// and would make a 1-hour window display as a single instant rather than
+// the hour-long span it actually covers). No day-boundary wraparound
+// (hourEnd=23 displays as "... - 24:00") - the window's own date doesn't
+// change just because its end time reads as the next day's midnight, and
+// adding that would mean deciding which day to show set alongside which
+// hour text, not just reformatting a number. Pulled out as its own pure
+// function (no live graphics touched) so it's testable on its own,
+// unlike the rest of drawProbsHoverBox() below.
+String probsHoverTimeRangeText (int hourEnd, int hourWidth) {
+  int hourStart = hourEnd - hourWidth + 1;
+  return "Time: " + nf(hourStart, 2) + ":00 \u2013 " + nf(hourEnd + 1, 2) + ":00";
+}
+
 // Draws the hover box - layer name, the window's own date/hour range, the
 // bin's value range, and its probability (both the percentage and the
 // raw sample count it's based on). Same box sizing/positioning/edge-
@@ -63,13 +84,7 @@ ProbsHoverBox studyProbsHover_hitTest (int xMouse, int yMouse) {
 void drawProbsHoverBox (int xMouse, int yMouse, ProbsHoverBox box) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(box.layerName);
-
-  int hourStart = box.hourEnd - box.hourWidth + 1;
-  if (box.hourWidth > 1) {
-    lineList.add("Time: " + nf(hourStart, 2) + ":00 \u2013 " + nf(box.hourEnd, 2) + ":00");
-  } else {
-    lineList.add("Time: " + nf(box.hourEnd, 2) + ":00");
-  }
+  lineList.add(probsHoverTimeRangeText(box.hourEnd, box.hourWidth));
 
   // Same Window/Target split as drawNormalsHoverBox() - see that
   // function's own comment for why daysMergedHalf gets its own line
