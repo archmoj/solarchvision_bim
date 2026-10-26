@@ -945,7 +945,14 @@ class STUDY {
             float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
             float w = (this.probabilityWidthInterval * this.view_S * 100 / 24.0) * this.horizontalUnitScale;
-            float h = _pix * 1.5;
+            // h must equal _pix, not a multiple of it: _pix is the pixel
+            // height of one counting bin (and the scale the probabilities
+            // text export below already uses via "(min_b + n) * _pix"), and
+            // the vertical axis grid (drawTimeGrid()) places a value v at
+            // -v * verticalUnitScale * view_S with no extra factor either.
+            // A box here needs to line up with both, so it must be drawn
+            // and spaced at that same one-bin-per-_pix scale.
+            float h = _pix;
 
             float x1 = (j + ((i + 1) / 24.0)) * sx_Plot;
             float y1 = -(min_b + n + 0.5) * h;
