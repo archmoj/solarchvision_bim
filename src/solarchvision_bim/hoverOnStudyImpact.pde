@@ -86,7 +86,7 @@ boolean studyHover_wasShownLastFrame = false;
 // Called every frame, unconditionally - same shape as draw_WIN3D_layers()
 // relative to WIN3D.draw(), for the same reason: this has to run whether
 // or not STUDY itself redrew this particular frame.
-void draw_STUDY_hover (int xMouse, int yMouse) {
+void draw_STUDY_hover (int xMouse, int yMouse, int zIndex) {
   if (isBakingInProgress()) return;
 
   if (!STUDY.include) return;
@@ -125,7 +125,9 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
   }
 
   if (studyHover_wasShownLastFrame) {
-    image(studyHover_pre_screen, STUDY.cX, STUDY.cY);
+    if(zIndex == 0) { // only clear for the first item
+      image(studyHover_pre_screen, STUDY.cX, STUDY.cY);
+    }
     studyHover_wasShownLastFrame = false;
   }
 

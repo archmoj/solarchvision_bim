@@ -1,6 +1,23 @@
+int[][] allHoverPoints = null;
+
 void drawAllHovers () {
-  draw_WIN3D_hover(mouseX, mouseY);
-  draw_STUDY_hover(mouseX, mouseY);
+  int zIndex = 0; // only z == 0 clears the background
+  if (allHoverPoints != null) {
+    for (int i = 0; i < allHoverPoints.length; i++) {
+      int x = allHoverPoints[i][0];
+      int y = allHoverPoints[i][1];
+
+      drawHoversAt(x, y, zIndex);
+      zIndex++;
+    }
+  }
+
+  drawHoversAt(mouseX, mouseY, zIndex);
+}
+
+void drawHoversAt (int xMouse, int yMouse, int zIndex) {
+  draw_WIN3D_hover(xMouse, yMouse);
+  draw_STUDY_hover(xMouse, yMouse, zIndex);
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------

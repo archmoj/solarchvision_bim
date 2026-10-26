@@ -357,6 +357,22 @@ Mesh m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.
 
 ------------------------------------------------------------------------
 
+### Hover creation
+
+-   `HOVER`: Creates a hover point or multiple hover points.
+
+```
+Hover m=? tes=? lyr=? x1,y1 x2,y2 etc.
+```
+
+-   `CLEARHOVER`: Clear all hover points
+
+```
+ClearHover
+```
+
+------------------------------------------------------------------------
+
 ### Viewports
 
 -   `ALLVIEWPORTS`: Displays all viewports

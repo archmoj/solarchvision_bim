@@ -252,6 +252,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "+TURNVIEWX": return  __$TURNVIEWX__(parts);
     case "+TURNVIEWZ": return  __$TURNVIEWZ__(parts);
     case "CAMERAROLL": return  __CAMERAROLL__(parts);
+    case "CLEARHOVER": return  __CLEARHOVER__(parts);
     case "EXPORT.OBJ": return  __EXPORT_OBJ__(parts);
     case "EXPORT.RAD": return  __EXPORT_RAD__(parts);
     case "EXPORT.SCR": return  __EXPORT_SCR__(parts);

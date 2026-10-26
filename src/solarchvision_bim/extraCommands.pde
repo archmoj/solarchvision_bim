@@ -1139,16 +1139,31 @@ String __MAPRIGHTCLICK__ (String[] parts) {
 String __HOVER__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
-    HashMap<String,String> p = parseParams(parts);
-    int x = getI(p, "x", 0);
-    int y = getI(p, "y", 0);
-    mouseX = x;
-    mouseY = y;
-    drawAllHovers();
+        int[][] points = new int [0][2];
+        for (int q = 1; q < parts.length; q++) {
+            String[] parameters = split(parts[q], ':');
+            if (parameters.length > 0) {
+                String[] xy = split(parts[q], ",");
+                if (xy.length > 1) {
+                    int[][] newPoint = {{int(xy[0]), int(xy[1])}};
+                    points = (int[][]) concat(points, newPoint);
+                }
+            }
+        }
+
+        allHoverPoints = (points.length > 0) ? points : null;
+        drawAllHovers();
     }
     else {
-    hint = "Hover x=? y=?";
+        hint = "Hover x1,y1 x2,y2 etc.";
     }
+    return hint;
+}
+
+String __CLEARHOVER__ (String[] parts) {
+    String hint = "";
+    allHoverPoints = null;
+    drawAllHovers();
     return hint;
 }
 
