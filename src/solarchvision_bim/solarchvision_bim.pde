@@ -160,13 +160,13 @@ void draw () {
         WORLD.record_PDF = false;
       } else {
         if (!isBakingInProgress()) {
-          draw_UI_layers();
+          draw_WIN3D_layersAndHover();
 
           if (control != USER_AUTO) {
             draw_STUDY_hover();
           }
 
-          draw_WIN3D_layersAndHover();
+          draw_UI_layers();
 
           if(stepAfterInitialization == 1) {
             UI_consoleBar.drawEmptyDirective();
