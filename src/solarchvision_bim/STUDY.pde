@@ -78,6 +78,14 @@ class STUDY {
   // caution every other hover feature this session needed.
   ArrayList<NormalsHoverColumn> normalsHoverColumns;
 
+  // Same idea again, for drawProbs() - the probability histogram overlay.
+  // Unlike NormalsHoverColumn (a crosshair-style hover over thin lines,
+  // needing a hit radius since a line has no area), each probability box
+  // is itself a drawn rectangle with real screen-space area, so hover here
+  // is a plain point-in-rect test against that same rectangle - see
+  // hoverOnStudyProbs.pde.
+  ArrayList<ProbsHoverBox> probsHoverBoxes;
+
   // Palette legend hover - see studyPaletteHover.pde's own comment on
   // which graphs' legends this covers and why. Unlike the other hover
   // features, there's no per-call data snapshot needed here: each
@@ -921,6 +929,30 @@ class STUDY {
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.noStroke();
             this.graphics.rect(x1 - w, y1, w, h);
+
+            // Record this box for hover - its own screen-space rectangle
+            // (both corners, order not assumed - see ProbsHoverBox), the
+            // real-world value range it covers, and the window/sample
+            // info drawNormals()'s own NormalsHoverColumn already records
+            // the day/merged-days half of (targetDate/daysMergedHalf) -
+            // see hoverOnStudyProbs.pde.
+            ProbsHoverBox hoverBox = new ProbsHoverBox();
+            hoverBox.screenX1 = this.graphics.screenX(x1 - w, y1);
+            hoverBox.screenY1 = this.graphics.screenY(x1 - w, y1);
+            hoverBox.screenX2 = this.graphics.screenX(x1, y1 + h);
+            hoverBox.screenY2 = this.graphics.screenY(x1, y1 + h);
+            hoverBox.binLow = (min_b + n) * _pix / abs(sy_Plot) - this.verticalUnitOffset;
+            hoverBox.binHigh = (min_b + n + 1) * _pix / abs(sy_Plot) - this.verticalUnitOffset;
+            hoverBox.probPercent = 100 * prob_V;
+            hoverBox.sampleCount = probs[n];
+            hoverBox.totalCount = totalProbs;
+            hoverBox.targetDate = j * this.dayIncrement + 286 + TIME.beginDay;
+            hoverBox.daysMergedHalf = (this.daysMergedCount > 1) ? int(this.daysMergedCount / 2) : 0;
+            hoverBox.hourEnd = i;
+            hoverBox.hourWidth = this.probabilityWidthInterval;
+            hoverBox.layerName = CurrentLayer_descriptions[activeLanguage];
+            hoverBox.layerUnit = CurrentLayer_unit;
+            this.probsHoverBoxes.add(hoverBox);
 
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
               this.graphics.fill(127);
@@ -1981,6 +2013,7 @@ class STUDY {
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
     this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
     this.normalsHoverColumns = new ArrayList<NormalsHoverColumn>();
+    this.probsHoverBoxes = new ArrayList<ProbsHoverBox>();
     this.paletteSwatchHoverInfo = new ArrayList<PaletteSwatchHoverInfo>();
 
     if (developDataUpdate) {

@@ -162,6 +162,7 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
   GlobalPoseHoverHit poseHit = null;
   SunpathHoverPoint sunpathHit = null;
   NormalsHoverColumn normalsHit = null;
+  ProbsHoverBox probsHit = null;
   PaletteSwatchHoverInfo paletteHit = null;
 
   if ((showingAPalette || showingNormalLines) && UI_menuBar.selected_parent == -1 &&
@@ -169,7 +170,14 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
     if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(xMouse, yMouse);
     if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(xMouse, yMouse);
     if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(xMouse, yMouse);
-    if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(xMouse, yMouse);
+    // Probabilities checked before normals: each probability box is an
+    // actual filled rectangle (an unambiguous point-in-rect hit), while
+    // normals is a generous-radius crosshair match over thin lines - the
+    // two are rarely shown at the same screen position at once (see
+    // hoverOnStudyProbs.pde's own comment), so this ordering is a
+    // starting point, not a carefully resolved priority.
+    if (showingProbabilities) probsHit = studyProbsHover_hitTest(xMouse, yMouse);
+    if (showingNormalLines && probsHit == null) normalsHit = studyNormalsHover_hitTest(xMouse, yMouse);
     if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(xMouse, yMouse);
   }
 
@@ -181,6 +189,9 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
     studyHover_wasShownLastFrame = true;
   } else if (sunpathHit != null) {
     drawSunpathHoverBox(xMouse, yMouse, sunpathHit);
+    studyHover_wasShownLastFrame = true;
+  } else if (probsHit != null) {
+    drawProbsHoverBox(xMouse, yMouse, probsHit);
     studyHover_wasShownLastFrame = true;
   } else if (normalsHit != null) {
     drawNormalsHoverBox(xMouse, yMouse, normalsHit);
