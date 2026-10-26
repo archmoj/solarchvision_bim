@@ -167,13 +167,6 @@ class STUDY {
   int probabilityWidthInterval = 4;
   float probabilityHeightInterval = 8;
 
-  // Debug logging for the drawProbs()/accumulation pipeline. Prints what
-  // gets collected into valuesWindow each time a window closes, the bin
-  // math inside drawProbs() itself, and the raw per-hour samples that feed
-  // the "data lines" (drawData()) - all tagged with day/hour so they can
-  // be cross-referenced. Set to false to silence.
-  boolean DEBUG_drawProbs = true;
-
   color color_data_raws = color(0, 0, 0);
 
   int plotLayoutIndex = 0;
@@ -865,13 +858,6 @@ class STUDY {
       }
     }
 
-    if (this.DEBUG_drawProbs) {
-      println("[drawProbs] day=" + j + " hour=" + i + " layer=" + currentLayerId
-        + " _pix=" + _pix + " sy_Plot=" + sy_Plot
-        + " min_V=" + (is_defined(min_V) ? str(min_V) : "n/a")
-        + " max_V=" + (is_defined(-max_V) ? str(max_V) : "n/a"));
-    }
-
     if ((is_defined(min_V)) && (is_defined(-max_V))) {
       // round(), not int(): funcs.roundTo(...) / _pix is only conceptually
       // a whole bin index - floating-point noise in that division can land
@@ -889,10 +875,6 @@ class STUDY {
 
       probs = new int [floor(max_b - min_b) + 1];
 
-      if (this.DEBUG_drawProbs) {
-        println("[drawProbs] day=" + j + " hour=" + i + " min_b=" + min_b + " max_b=" + max_b + " probs.length=" + probs.length);
-      }
-
       for (int k = 0; k < valuesRaw.length; k++) {
         if (is_defined(valuesRaw[k])) {
           float the_value = valuesRaw[k];
@@ -903,31 +885,10 @@ class STUDY {
 
           int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_b, 1));
 
-          if (this.DEBUG_drawProbs && ((h < 0) || (h > probs.length - 1))) {
-            println("[drawProbs] day=" + j + " hour=" + i + " CLAMPED k=" + k + " the_value=" + the_value + " raw_h=" + h + " probs.length=" + probs.length);
-          }
-
           if (h < 0) h = 0;
           else if (h > probs.length - 1) h = probs.length - 1;
           probs[h] += 1;
           totalProbs += 1;
-        }
-      }
-
-      if (this.DEBUG_drawProbs) {
-        String DEBUG_probsStr = "";
-        for (int n = 0; n < probs.length; n++) {
-          DEBUG_probsStr += probs[n] + (n < probs.length - 1 ? "," : "");
-        }
-        println("[drawProbs] day=" + j + " hour=" + i + " totalProbs=" + totalProbs + " probs=[" + DEBUG_probsStr + "]"
-          + " bottomValue≈" + (min_b * _pix / abs(sy_Plot) - this.verticalUnitOffset));
-
-        for (int n = 1; n < probs.length - 1; n++) {
-          if ((probs[n] == 0) && (probs[n - 1] > 0) && (probs[n + 1] > 0)) {
-            println("[drawProbs] day=" + j + " hour=" + i + " SANDWICHED EMPTY BIN at index=" + n
-              + " (value≈" + ((min_b + n) * _pix / abs(sy_Plot) - this.verticalUnitOffset) + ")"
-              + " neighbors=[" + probs[n - 1] + "," + probs[n + 1] + "]");
-          }
         }
       }
 
@@ -1564,12 +1525,6 @@ class STUDY {
 
                           Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
                           By_LINES = append(By_LINES, valuesB[idx] * sy_Plot);
-
-                          if (this.DEBUG_drawProbs) {
-                            println("[drawData raw] day=" + j + " hour=" + i + " k=" + k + " j_ADD=" + j_ADD + " idx=" + idx
-                              + " A=" + (valuesA[idx] - this.verticalUnitOffset)
-                              + " B=" + (valuesB[idx] - this.verticalUnitOffset));
-                          }
                         }
                       }
                     }
@@ -1587,21 +1542,6 @@ class STUDY {
           if (this.showProbabilities) {
             _interval += 1;
             if ((_interval % this.probabilityWidthInterval) == 0) {
-              if (this.DEBUG_drawProbs) {
-                float DEBUG_minW = FLOAT_undefined;
-                float DEBUG_maxW = -FLOAT_undefined;
-                for (int w = 0; w < valuesWindow.length; w++) {
-                  float wv = valuesWindow[w] - this.verticalUnitOffset;
-                  if (DEBUG_minW > wv) DEBUG_minW = wv;
-                  if (DEBUG_maxW < wv) DEBUG_maxW = wv;
-                }
-                println("[drawProbs window] day=" + j + " hour=" + i + " interval=" + _interval
-                  + " layer=" + currentLayerId
-                  + " n=" + valuesWindow.length
-                  + " min=" + (valuesWindow.length > 0 ? str(DEBUG_minW) : "n/a")
-                  + " max=" + (valuesWindow.length > 0 ? str(DEBUG_maxW) : "n/a"));
-              }
-
               // valuesWindow already holds one entry per valid hourly
               // reading collected across every hour of this window (see
               // where it's appended to, above) - drawProbs() bins and
