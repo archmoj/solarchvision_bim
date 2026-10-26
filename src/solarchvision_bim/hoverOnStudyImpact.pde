@@ -99,8 +99,23 @@ void draw_STUDY_hover (int xMouse, int yMouse, int zIndex) {
 
   if (studyHover_pre_screen == null) return; // nothing captured yet (STUDY hasn't drawn a single frame)
 
-  boolean showingSkinPotential = (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE);
-  boolean showingPosePotential = (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE);
+  // Skin Potential and Pose Potential are gated by whether this frame's
+  // own urbanThumbnailHoverInfo/globalPoseHoverInfo actually got anything
+  // appended to them - not by STUDY.impactGraphIndex. That single scalar
+  // field only ever holds one value at a time, but setupPlot_1() and
+  // setupPlot_2() (viewLayout==2) each draw a Skin Potential thumbnail
+  // AND a Pose Potential dome in the very same render pass, temporarily
+  // flipping this.impactGraphIndex to URBAN_* for one plotImpact() call
+  // and to GLOBAL_* for the other, then restoring it to whatever it was
+  // before setupPlot_1()/setupPlot_2() ran - so by the time draw_STUDY_
+  // hover() reads it here, it reflects only one of the two graphs (or
+  // neither), even though both were just drawn and both have hover data
+  // waiting in their own lists. Checking those lists directly keys
+  // "showing" to what was actually drawn this frame, which is exactly
+  // right for both the single-graph layouts (only one list ends up
+  // non-empty) and setupPlot_1()/setupPlot_2() (both do).
+  boolean showingSkinPotential = (STUDY.urbanThumbnailHoverInfo != null) && !STUDY.urbanThumbnailHoverInfo.isEmpty();
+  boolean showingPosePotential = (STUDY.globalPoseHoverInfo != null) && !STUDY.globalPoseHoverInfo.isEmpty();
   boolean showingHourlySun = (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE);
   boolean showingSunPath = (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE);
   boolean showingWind = (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE);
