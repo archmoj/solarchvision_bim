@@ -22,7 +22,8 @@ class NormalsHoverColumn {
   float screenX;
   float hitRadiusX; // half an hour's width, measured in screen space
   float screenY1, screenY2; // this column's own line envelope (min/max Y of its defined statistics) - order not assumed, min()/max() applied at hit-test time
-  String dayText;
+  float targetDate; // raw date value (TIME.getDayText()'s own float argument), the centre of the merged window - kept raw rather than pre-formatted, so drawNormalsHoverBox() can derive the window's own start/end dates from it (targetDate +/- daysMergedHalf) as well as the target date itself
+  int daysMergedHalf; // int(daysMergedCount / 2) at the moment this column was recorded; 0 when daysMergedCount <= 1 (a single day, no merging - nothing to window)
   int hourIndex;
   float[] normalsValues; // the 9 statistics (NORMAL()'s own return shape) at this column - STAT_N_* constants index into it
   String layerName;
@@ -104,7 +105,25 @@ int[] sortedDefinedIndicesByValueDescending (float[] values) {
 void drawNormalsHoverBox (int xMouse, int yMouse, NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(col.layerName);
-  lineList.add(col.dayText + " " + nf(col.hourIndex, 2) + ":00");
+  lineList.add("Time: " + nf(col.hourIndex, 2) + ":00");
+
+  // daysMergedHalf > 0 means every statistic below is itself an average
+  // over a window of days, not a single day's own reading - worth saying
+  // so explicitly (Window: start - end) rather than folding it into one
+  // terse "date +/-N days" line the way this used to. Target is still
+  // shown on its own even then, since it's the date the window is
+  // centred on and the one TIME.beginDay/dayIncrement navigation
+  // actually steps - the parenthetical just clarifies it isn't the only
+  // date these statistics draw from.
+  if (col.daysMergedHalf > 0) {
+    String startText = TIME.getDayText(col.targetDate - col.daysMergedHalf);
+    String endText = TIME.getDayText(col.targetDate + col.daysMergedHalf);
+    lineList.add("Window: " + startText + " \u2013 " + endText);
+    lineList.add("Target: " + TIME.getDayText(col.targetDate) + " (\u00B1" + col.daysMergedHalf + " " + TIME.WORDS[2][activeLanguage] + "s)");
+  } else {
+    lineList.add("Target: " + TIME.getDayText(col.targetDate));
+  }
+
   lineList.add(___divider___);
 
   int[] sortedIndices = sortedDefinedIndicesByValueDescending(col.normalsValues);

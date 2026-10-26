@@ -77,13 +77,14 @@ class StudyNormalsHoverTest {
 
   // ================= studyNormalsHover_hitTest ===============================
 
-  private solarchvision_bim.NormalsHoverColumn makeColumn (float screenX, float hitRadiusX, float y1, float y2, String dayText, int hour, String layerName) {
+  private solarchvision_bim.NormalsHoverColumn makeColumn (float screenX, float hitRadiusX, float y1, float y2, int hour, String layerName) {
     solarchvision_bim.NormalsHoverColumn col = app.new NormalsHoverColumn();
     col.screenX = screenX;
     col.hitRadiusX = hitRadiusX;
     col.screenY1 = y1;
     col.screenY2 = y2;
-    col.dayText = dayText;
+    col.targetDate = 100; // arbitrary - studyNormalsHover_hitTest() itself never reads targetDate/daysMergedHalf, only drawNormalsHoverBox() (untestable here, see file header) does
+    col.daysMergedHalf = 0;
     col.hourIndex = hour;
     col.layerName = layerName;
     col.layerUnit = " unit";
@@ -100,7 +101,7 @@ class StudyNormalsHoverTest {
     app.STUDY.cY = 0;
     app.STUDY.ImageScale = 1;
     app.STUDY.normalsHoverColumns = new java.util.ArrayList<>();
-    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, "Day1", 14, "Temperature"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, 14, "Temperature"));
 
     solarchvision_bim.NormalsHoverColumn hit = app.studyNormalsHover_hitTest(105, 100);
 
@@ -114,7 +115,7 @@ class StudyNormalsHoverTest {
     app.STUDY.cY = 0;
     app.STUDY.ImageScale = 1;
     app.STUDY.normalsHoverColumns = new java.util.ArrayList<>();
-    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, "Day1", 14, "Temperature"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, 14, "Temperature"));
 
     assertNull(app.studyNormalsHover_hitTest(200, 100));
   }
@@ -129,7 +130,7 @@ class StudyNormalsHoverTest {
     app.STUDY.cY = 0;
     app.STUDY.ImageScale = 1;
     app.STUDY.normalsHoverColumns = new java.util.ArrayList<>();
-    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, "Day1", 14, "Temperature"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 50, 150, 14, "Temperature"));
 
     assertNull(app.studyNormalsHover_hitTest(100, 1000));
   }
@@ -140,8 +141,8 @@ class StudyNormalsHoverTest {
     app.STUDY.cY = 0;
     app.STUDY.ImageScale = 1;
     app.STUDY.normalsHoverColumns = new java.util.ArrayList<>();
-    app.STUDY.normalsHoverColumns.add(makeColumn(100, 30, 50, 150, "Day1", 14, "FarColumn"));
-    app.STUDY.normalsHoverColumns.add(makeColumn(110, 30, 50, 150, "Day1", 15, "NearColumn"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(100, 30, 50, 150, 14, "FarColumn"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(110, 30, 50, 150, 15, "NearColumn"));
 
     solarchvision_bim.NormalsHoverColumn hit = app.studyNormalsHover_hitTest(108, 100);
 
@@ -164,7 +165,7 @@ class StudyNormalsHoverTest {
     app.STUDY.cY = 0;
     app.STUDY.ImageScale = 1;
     app.STUDY.normalsHoverColumns = new java.util.ArrayList<>();
-    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 150, 50, "Day1", 14, "ReversedEnvelope"));
+    app.STUDY.normalsHoverColumns.add(makeColumn(100, 10, 150, 50, 14, "ReversedEnvelope"));
 
     assertNotNull(app.studyNormalsHover_hitTest(100, 100));
   }
