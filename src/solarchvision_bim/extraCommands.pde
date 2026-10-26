@@ -1144,7 +1144,7 @@ String __HOVER__ (String[] parts) {
     int y = getI(p, "y", 0);
     mouseX = x;
     mouseY = y;
-    draw_STUDY_hover(mouseX, mouseY);
+    drawAllHovers();
     }
     else {
     hint = "Hover x=? y=?";

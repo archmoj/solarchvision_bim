@@ -1,3 +1,8 @@
+void drawAllHovers () {
+  drawSolarImpactHover(mouseX, mouseY);
+  draw_STUDY_hover(mouseX, mouseY);
+}
+
 // --- solar-impact overlay hover tooltip -----------------------------------
 // Shows SOLARCHVISION's actual findings under the mouse, in a small
 // floating box near the cursor, whenever there's real data there - see

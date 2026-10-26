@@ -1,4 +1,8 @@
-void draw_WIN3D_layersAndHover () {
+PImage WIN3D_layers_img = null;
+float[] WIN3D_layers_fit = null;
+boolean showSolarImpactOverlay = false;
+
+void draw_WIN3D_layers () {
   if (isBakingInProgress()) return;
   if (!WIN3D.include) return;
   if (UI_menuBar.selected_parent != -1) return;
@@ -76,15 +80,15 @@ void draw_WIN3D_layersAndHover () {
   // pick which already-computed slice to show and are read live here too,
   // so the day-navigation/impact-type-toggle actions need only change
   // those (and request the override) - nothing else to re-arm.
-  boolean showSolarImpactOverlay = allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
+  showSolarImpactOverlay = allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
       && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length;
 
   // Recorded for WIN3D.isSolarPaletteMode() to read - see that method's
   // own comment.
   WIN3D.solarImpactOverlayShown = showSolarImpactOverlay;
 
-  PImage img = null;
-  float[] fit = null;
+  PImage img = WIN3D_layers_img;
+  float[] fit = WIN3D_layers_fit;
 
   if (showSolarImpactOverlay) {
     mayDrawPalette = true;
@@ -107,12 +111,12 @@ void draw_WIN3D_layersAndHover () {
       rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
     }
 
-    img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
+    WIN3D_layers_img = img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     // {destX, destY, destW, destH, srcX, srcY, srcW, srcH} - see
     // hoverFitRect()'s own comment (solarImpactOverlayHover.
     // pde) for the r == 1 / r > 1 / r < 1 cases this covers. srcW/srcH
     // equal the full image size unless r < 1, the only case needing a crop.
-    fit = hoverFitRect(img);
+    WIN3D_layers_fit = fit = hoverFitRect(img);
 
     if (fit[6] >= img.width && fit[7] >= img.height) {
       image(img, fit[0], fit[1], fit[2], fit[3]);
@@ -143,15 +147,12 @@ void draw_WIN3D_layersAndHover () {
     // own comment.
     WIN3D.drawPalette();
   }
-
-  if (showSolarImpactOverlay) {
-    drawSolarImpactHover(mouseX, mouseY, img, fit);
-  }
 }
+
 
 // Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
 // actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layersAndHover.pde's own drawing code always has
+// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
 // (centered pillarbox for a wider image, center-cropped-and-stretched for
 // a taller one). Shared between that drawing code and
 // drawSolarImpactHover() below, rather than each recomputing this
