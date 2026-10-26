@@ -1,5 +1,5 @@
 void drawAllHovers () {
-  drawSolarImpactHover(mouseX, mouseY);
+  draw_WIN3D_hover(mouseX, mouseY);
   draw_STUDY_hover(mouseX, mouseY);
 }
 

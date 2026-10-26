@@ -1,3 +1,7 @@
+void draw_WIN3D_hover (int mouseX, int mouseY) {
+  drawSolarImpactHover(mouseX, mouseY);
+}
+
 // Called every frame the solar-impact overlay is shown, right after
 // draw_WIN3D_layers.pde draws it - img/fit are that same image and the
 // fit rect hoverFitRect() above just computed for it. img
