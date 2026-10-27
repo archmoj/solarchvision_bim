@@ -57,5 +57,5 @@ void drawPaletteHoverBox (int xMouse, int yMouse, PaletteSwatchHoverInfo info) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawPaletteHover(xMouse, yMouse, lines, destX, destY, destW, destH, info.col);
+  drawPaletteHover(xMouse, yMouse, lines, destX, destY, destW, destH, info.col, studyPlacedHoverBoxes);
 }

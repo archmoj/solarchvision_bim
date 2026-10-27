@@ -271,7 +271,7 @@ void keyPressed (KeyEvent e) {
               UI_consoleBar.revise();
             } else if (cancelActivePickList()) {
               WORLD.revise();
-            } else if (removeLastHoverPoint()) {
+            } else if (removeOldestHoverPoint()) {
               redraw();
             }
           }

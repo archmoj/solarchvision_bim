@@ -85,5 +85,5 @@ void drawSunpathHoverBox (int xMouse, int yMouse, SunpathHoverPoint p) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH);
+  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH, studyPlacedHoverBoxes);
 }

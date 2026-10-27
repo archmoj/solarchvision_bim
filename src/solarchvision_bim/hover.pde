@@ -14,20 +14,23 @@ void addHoverPoint (int x, int y) {
   allHoverPoints = (allHoverPoints == null) ? newPoint : (int[][]) concat(allHoverPoints, newPoint);
 }
 
-// Drops the most recently pinned hover point - the interactive one that
-// follows the live mouse (drawn separately, by drawAllHovers()'s own
-// final "if (control == USER_GUI) drawHoversAt(mouseX, mouseY);" below)
-// is untouched, since it was never part of allHoverPoints to begin with.
-// Used by Esc (solarchvision_bim.pde's own keyPressed()). Returns true
-// if a point was actually removed, false if there was nothing to remove
-// - the same "did this consume the Esc" convention
-// cancelActivePickList() (mouseClicked.pde) already uses, so Esc's own
-// existing if/else-if chain there can add this as one more link without
-// changing how any of the others behave.
-boolean removeLastHoverPoint () {
+// Drops the OLDEST pinned hover point (allHoverPoints[0], the first one
+// clicked that's still pinned) - not the most recently added. This
+// matches drawAllHovers()'s own newest-to-oldest draw order (hover.pde):
+// the newest pin already gets priority placement and is the one least
+// likely to need nudging, so Esc trims away the stalest pin first rather
+// than undoing whatever was just clicked. The interactive point that
+// follows the live mouse is untouched either way, since it was never
+// part of allHoverPoints to begin with. Used by Esc (solarchvision_bim.
+// pde's own keyPressed()). Returns true if a point was actually removed,
+// false if there was nothing to remove - the same "did this consume the
+// Esc" convention cancelActivePickList() (mouseClicked.pde) already
+// uses, so Esc's own existing if/else-if chain there can add this as one
+// more link without changing how any of the others behave.
+boolean removeOldestHoverPoint () {
   if ((allHoverPoints == null) || (allHoverPoints.length == 0)) return false;
 
-  allHoverPoints = (int[][]) shorten(allHoverPoints);
+  allHoverPoints = (int[][]) subset(allHoverPoints, 1);
   if (allHoverPoints.length == 0) allHoverPoints = null;
 
   return true;
@@ -57,17 +60,34 @@ void drawAllHovers () {
 
   clearStudyHover();
 
+  // Fresh per pass - see studyPlacedHoverBoxes/win3DPlacedHoverBoxes
+  // (just below hoverBoxPosition()) for what these track and why.
+  studyPlacedHoverBoxes = new ArrayList<float[]>();
+  win3DPlacedHoverBoxes = new ArrayList<float[]>();
+
+  // Live, mouse-following point first: it's expected to track the
+  // cursor precisely while exploring the graph, so it's drawn (and
+  // claims its spot in studyPlacedHoverBoxes/win3DPlacedHoverBoxes)
+  // before any pinned point gets a chance to - it's never the one nudged
+  // out of the way. Pinned points then follow newest-to-oldest (not
+  // allHoverPoints' own click order), so whichever was JUST clicked gets
+  // first pick of position among the pinned ones too, matching whatever
+  // the user is actively looking at right now. Esc drops the OLDEST pin
+  // instead of the newest (removeOldestHoverPoint() below) precisely
+  // because of this draw order: the newest pin already has priority
+  // placement and stays put as older ones are trimmed away, rather than
+  // Esc repeatedly taking away the one just added.
+  if (control == USER_GUI) {
+    drawHoversAt(mouseX, mouseY);
+  }
+
   if (allHoverPoints != null) {
-    for (int i = 0; i < allHoverPoints.length; i++) {
+    for (int i = allHoverPoints.length - 1; i >= 0; i--) {
       int x = allHoverPoints[i][0];
       int y = allHoverPoints[i][1];
 
       drawHoversAt(x, y);
     }
-  }
-
-  if (control == USER_GUI) {
-    drawHoversAt(mouseX, mouseY);
   }
 }
 
@@ -128,13 +148,187 @@ float[] hoverBoxPosition (int xMouse, int yMouse, float destX, float destY, floa
   boolean rightHalf = (xMouse - destX) > (destW / 2);
   boolean bottomHalf = (yMouse - destY) > (destH / 2);
 
-  float boxX = rightHalf ? (xMouse - hoverMargin - boxW) : (xMouse + hoverMargin);
-  float boxY = bottomHalf ? (yMouse - hoverMargin - boxH) : (yMouse + hoverMargin);
+  return hoverQuadrantPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, rightHalf, bottomHalf);
+}
+
+// --- Multi-box collision avoidance (single-pass greedy) --------------------
+//
+// hoverBoxPosition() above picks ONE natural spot for a single box, with
+// no awareness of any other box on screen. When several hover boxes are
+// up at once (several pinned allHoverPoints, plus the live one), later
+// boxes need to dodge whichever ones are already placed this pass -
+// resolveHoverBoxPosition() further below is that.
+//
+// Scoped per panel: a STUDY box has no business dodging a WIN3D one or
+// vice versa, so each panel gets its own list. Reset once per pass by
+// drawAllHovers() above, then appended to by drawHover()/
+// drawPaletteHover() themselves, right after they resolve a position -
+// so by the time the NEXT box in the same pass is resolved, every
+// earlier box's own FINAL rect (not just its natural, pre-collision-
+// avoidance one) is already in here. That's what makes this single-pass
+// rather than measure-everything-then-resolve: nothing placed is ever
+// revisited once drawn, which keeps this fast and simple for the
+// handful of simultaneous points this is meant for - see the
+// conversation that led here for why a two-pass or force-directed
+// approach would be solving a problem this doesn't have at that scale.
+// Each entry is {x, y, w, h}, this box's own full rect in the SAME
+// screen space as destX/destY/xMouse/yMouse.
+ArrayList<float[]> studyPlacedHoverBoxes = new ArrayList<float[]>();
+ArrayList<float[]> win3DPlacedHoverBoxes = new ArrayList<float[]>();
+
+// True if rectangle A (x,y,w,h) and rectangle B overlap at all.
+boolean hoverBoxesOverlap (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh) {
+  return (ax < bx + bw) && (ax + aw > bx) && (ay < by + bh) && (ay + ah > by);
+}
+
+// How much of rectangle A's own area overlaps rectangle B - 0 if they
+// don't overlap at all.
+float hoverBoxOverlapArea (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh) {
+  float ox = max(0, min(ax + aw, bx + bw) - max(ax, bx));
+  float oy = max(0, min(ay + ah, by + bh) - max(ay, by));
+  return ox * oy;
+}
+
+// Whether a candidate box at (x, y, w, h) overlaps ANY box already
+// placed this pass.
+boolean hoverBoxCollides (float x, float y, float w, float h, ArrayList<float[]> placedBoxes) {
+  for (float[] b : placedBoxes) {
+    if (hoverBoxesOverlap(x, y, w, h, b[0], b[1], b[2], b[3])) return true;
+  }
+  return false;
+}
+
+// Total overlap area a candidate box at (x, y, w, h) would have, summed
+// across every box already placed this pass - used only once every
+// other candidate has failed to fully clear (see
+// resolveHoverBoxPosition() below), to pick whichever one overlaps
+// least rather than giving up at an arbitrary one.
+float hoverBoxTotalOverlap (float x, float y, float w, float h, ArrayList<float[]> placedBoxes) {
+  float total = 0;
+  for (float[] b : placedBoxes) {
+    total += hoverBoxOverlapArea(x, y, w, h, b[0], b[1], b[2], b[3]);
+  }
+  return total;
+}
+
+// hoverBoxPosition()'s own placement math, parameterized by which
+// quadrant to use (right of the anchor or left of it, above or below)
+// instead of deriving that from which half of the dest rect the anchor
+// itself falls in - hoverBoxPosition() is now just this, called with
+// whichever quadrant it always used; resolveHoverBoxPosition() below
+// calls it again with the other three when the first one collides.
+float[] hoverQuadrantPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, boolean right, boolean bottom) {
+  float boxX = right ? (xMouse - hoverMargin - boxW) : (xMouse + hoverMargin);
+  float boxY = bottom ? (yMouse - hoverMargin - boxH) : (yMouse + hoverMargin);
 
   boxX = constrain(boxX, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
   boxY = constrain(boxY, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
 
   return new float[] { boxX, boxY };
+}
+
+// One axis-shift fallback candidate: the SAME quadrant position `from`
+// (one of hoverQuadrantPosition()'s own results), nudged `steps` box-
+// widths (alongX true) or box-heights (alongX false) in direction +1/-1,
+// clamped back into the dest rect same as every other candidate. Moves
+// one axis at a time rather than diagonally, so each candidate still
+// reads as a box directly above/below or directly left/right of its
+// quadrant's own anchor corner, not an arbitrary point in space.
+float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float destW, float destH, float boxW, float boxH, boolean alongX, int direction, int steps) {
+  float boxX = from[0];
+  float boxY = from[1];
+
+  if (alongX) {
+    boxX = constrain(boxX + direction * steps * boxW, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+  } else {
+    boxY = constrain(boxY + direction * steps * boxH, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+  }
+
+  return new float[] { boxX, boxY };
+}
+
+// Single-pass greedy collision resolution for one box: tries
+// hoverBoxPosition()'s own natural spot first, then (only if that
+// collides with something already in placedBoxes) the other three
+// quadrants, then - if all four still collide - nudging the natural
+// position along a single axis at a time (see hoverAxisShiftPosition()
+// above), stepping outward until clear or the dest rect's own edge is
+// reached. If nothing tried fully clears every placed box, returns
+// whichever candidate had the smallest total overlap rather than
+// picking an arbitrary one. Pure/no drawing (same as hoverBoxPosition()
+// itself), so independently testable without a live PGraphics context -
+// drawHover()/drawPaletteHover() (both below) are the only callers, and
+// both append this result to placedBoxes themselves right after, so the
+// next box resolved in the same pass sees it too.
+float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, ArrayList<float[]> placedBoxes) {
+  float[] natural = hoverBoxPosition((int) xMouse, (int) yMouse, destX, destY, destW, destH, boxW, boxH);
+
+  if ((placedBoxes == null) || placedBoxes.isEmpty() || !hoverBoxCollides(natural[0], natural[1], boxW, boxH, placedBoxes)) {
+    return natural;
+  }
+
+  ArrayList<float[]> candidates = new ArrayList<float[]>();
+  candidates.add(natural);
+
+  boolean naturalRight = (xMouse - destX) > (destW / 2);
+  boolean naturalBottom = (yMouse - destY) > (destH / 2);
+
+  // The other three quadrants - same anchor, opposite side(s).
+  float[][] otherQuadrants = {
+    hoverQuadrantPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, !naturalRight, naturalBottom),
+    hoverQuadrantPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, naturalRight, !naturalBottom),
+    hoverQuadrantPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, !naturalRight, !naturalBottom)
+  };
+  for (float[] c : otherQuadrants) {
+    candidates.add(c);
+    if (!hoverBoxCollides(c[0], c[1], boxW, boxH, placedBoxes)) return c;
+  }
+
+  // None of the four quadrants cleared it - fall back to nudging the
+  // natural position along a single axis, one box-width/box-height at a
+  // time, in whichever direction, until the dest rect's own edge is
+  // reached on that axis.
+  int maxStepsX = max(1, (int) floor(destW / boxW));
+  int maxStepsY = max(1, (int) floor(destH / boxH));
+
+  for (int steps = 1; steps <= max(maxStepsX, maxStepsY); steps++) {
+    if (steps <= maxStepsX) {
+      float[] right = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, true, 1, steps);
+      candidates.add(right);
+      if (!hoverBoxCollides(right[0], right[1], boxW, boxH, placedBoxes)) return right;
+
+      float[] left = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, true, -1, steps);
+      candidates.add(left);
+      if (!hoverBoxCollides(left[0], left[1], boxW, boxH, placedBoxes)) return left;
+    }
+
+    if (steps <= maxStepsY) {
+      float[] down = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, false, 1, steps);
+      candidates.add(down);
+      if (!hoverBoxCollides(down[0], down[1], boxW, boxH, placedBoxes)) return down;
+
+      float[] up = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, false, -1, steps);
+      candidates.add(up);
+      if (!hoverBoxCollides(up[0], up[1], boxW, boxH, placedBoxes)) return up;
+    }
+  }
+
+  // Nothing tried fully clears every placed box - use whichever
+  // candidate overlaps the least rather than giving up at an arbitrary
+  // one (the natural position, say, which is already candidates.get(0)
+  // and is as reasonable a last resort as any, but not necessarily the
+  // least-overlapping one tried).
+  float[] best = candidates.get(0);
+  float bestOverlap = hoverBoxTotalOverlap(best[0], best[1], boxW, boxH, placedBoxes);
+  for (int k = 1; k < candidates.size(); k++) {
+    float[] c = candidates.get(k);
+    float overlap = hoverBoxTotalOverlap(c[0], c[1], boxW, boxH, placedBoxes);
+    if (overlap < bestOverlap) {
+      bestOverlap = overlap;
+      best = c;
+    }
+  }
+  return best;
 }
 
 // Returns the text lines to show for Image[q][dayIndex]'s pixel (x, y),
@@ -193,7 +387,7 @@ String[] hoverLines (int xMouse, int yMouse, int q, float[] raw) {
 }
 
 
-void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH) {
+void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, ArrayList<float[]> placedBoxes) {
   // textWidth()/textAscent()/textDescent() below all read the current text
   // size, so this has to happen before measuring anything.
   textSize(MessageSize);
@@ -207,9 +401,11 @@ void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY
   }
   float boxW = 2 * hoverSidePad + maxTextWidth;
 
-  float[] boxPos = hoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
+
+  if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
 
   stroke(0);
   strokeWeight(1);
@@ -264,15 +460,17 @@ void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY
 }
 
 
-void drawPaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col) {
+void drawPaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes) {
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
   float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
   float boxW = 2 * hoverSidePad + textWidth(lines[0]);
 
-  float[] boxPos = hoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH);
+  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
+
+  if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
 
   // col is {alpha, r, g, b} (PAINT.getColorStyle()'s own order) - alpha isn't needed here.
   float swatchR = col[1], swatchG = col[2], swatchB = col[3];
