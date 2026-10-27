@@ -932,6 +932,17 @@ class Sun3D {
       for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
         float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)][3];
 
+        // One calendar day per ROW (merged-day-group), not per (hour, row)
+        // cell: now_j2 below (the "found match" date actually used to
+        // fetch this row's data) depends only on more_J/j/j_ADD/
+        // daysMergedCount/TIME.beginDay - never on the hour - so it's the
+        // same for all 24 hours in a given row. Only read for STUDY (see
+        // the quad-emission loop below, hoverOnStudyCycles.pde's own
+        // CyclesHoverPoint) - left at its default (0) for any row that
+        // never finds a match (nk == -1 below), which is fine since those
+        // rows never contribute a defined, hoverable vertex anyway.
+        int[] rowCalendarDay = new int[1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)];
+
         for (int more_J = 0; more_J < STUDY_dayIncrement; more_J += STUDY.daysMergedCount) {
           int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
@@ -976,6 +987,7 @@ class Sun3D {
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
               int now_j2 = wrapDayIndex(more_J + j * STUDY_dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
+              rowCalendarDay[row_J] = now_j2; // same value every iteration of this "for i" loop (see this array's own declaration above) - set here anyway rather than hoisting now_j2 itself out, to keep this change minimal
 
               float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
               float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
@@ -1098,6 +1110,48 @@ class Sun3D {
                 float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * (STUDY.centralGraphScale / 200) * s_Plot + y_Plot * (STUDY.centralGraphScale / 200);
                 float ox = (j + (STUDY.centralGraphOffsetX + 0.5)) * s_Plot;
                 STUDY.graphics.vertex(ox + x, -y);
+
+                // One hover point per vertex actually drawn - up to 4
+                // quads share a given (hour, merged-day) corner, so this
+                // can add the same screen position (with the same
+                // Alpha/Beta/valuesSUM) more than once; harmless for a
+                // nearest-neighbor hit-test (studyCyclesHover_hitTest(),
+                // hoverOnStudyCycles.pde) and far simpler than
+                // deduplicating a mesh vertex that's genuinely shared
+                // between cells. WIN3D/OBJ3D/WORLD never reach this
+                // branch, so this list is STUDY-only by construction -
+                // no separate guard needed.
+                CyclesHoverPoint hoverPoint = new CyclesHoverPoint();
+                hoverPoint.screenX = STUDY.graphics.screenX(ox + x, -y);
+                hoverPoint.screenY = STUDY.graphics.screenY(ox + x, -y);
+                // Same "offset by a small local distance, measure the
+                // resulting screen-space gap" trick plotImpact_sunpath()
+                // uses for its own ellipse radius (STUDY.pde) - and, like
+                // that one, NOT additionally scaled by centralGraphScale/200:
+                // that factor already compresses x/y above relative to
+                // s_Plot (it's what keeps the whole dome's radius within
+                // a reasonable fraction of s_Plot in the first place), so
+                // re-applying it here as well shrank this offset by
+                // another ~200x on top of that - the previous version of
+                // this comment had the direction of that reasoning
+                // backwards. plotImpact_sunpath()'s own radius is a
+                // fraction of sx_Plot directly, for the same reason this
+                // one needs to be a fraction of s_Plot directly too -
+                // confirmed via actual logged hitRadius values
+                // (~0.15px, should be closer to ~30px) before landing on
+                // this fix.
+                float edgeOffset = 0.075 * s_Plot;
+                float edgeScreenX = STUDY.graphics.screenX(ox + x + edgeOffset, -y);
+                float edgeScreenY = STUDY.graphics.screenY(ox + x + edgeOffset, -y);
+                hoverPoint.hitRadius = dist(hoverPoint.screenX, hoverPoint.screenY, edgeScreenX, edgeScreenY);
+                hoverPoint.Alpha = Alpha;
+                hoverPoint.Beta = Beta;
+                hoverPoint.valuesSUM = valuesSUM;
+                hoverPoint.impactTypeIndex = WIN3D.impactTypeIndex; // set to STUDY.impactGraphIndex's own Active/Passive at the top of this function when target_window == STUDY
+                hoverPoint.hour = a % 24; // a (this vertex's own hour-grid index) is already 0-23 when TES_hour==1 (true today - see this function's own "int TES_hour = 1;"), the %24 only guards against that ever changing
+                hoverPoint.calendarDay = rowCalendarDay[b];
+                hoverPoint.daysMergedHalf = (STUDY.daysMergedCount > 1) ? int(STUDY.daysMergedCount / 2) : 0;
+                STUDY.cyclesHoverPoints.add(hoverPoint);
               }
             }
 

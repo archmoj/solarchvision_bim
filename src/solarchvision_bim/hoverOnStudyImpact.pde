@@ -150,8 +150,25 @@ void place_STUDY_hover (int xMouse, int yMouse) {
   // non-empty) and setupPlot_1()/setupPlot_2() (both do).
   boolean showingSkinPotential = (STUDY.urbanThumbnailHoverInfo != null) && !STUDY.urbanThumbnailHoverInfo.isEmpty();
   boolean showingPosePotential = (STUDY.globalPoseHoverInfo != null) && !STUDY.globalPoseHoverInfo.isEmpty();
-  boolean showingHourlySun = (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE);
-  boolean showingSunPath = (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE);
+  // Same reasoning as showingSkinPotential/showingPosePotential just
+  // above, and the same fix: Hourly Sun and Sun Path have exactly the
+  // same exposure those two do, via setupPlot_cycles() (plotLayoutIndex
+  // -2/-1, the "Layout -2"/"Layout -1" menu actions) and the WIND_PASSIVE/
+  // SUNPATH_PASSIVE combined-layout branches elsewhere in STUDY.pde - all
+  // of which temporarily flip this.impactGraphIndex to draw a second
+  // graph within the same pass, then restore it before returning. By the
+  // time draw_STUDY_hover() runs, impactGraphIndex no longer reflects
+  // what was actually drawn, so checking it directly misses hover data
+  // that's sitting right there in sunpathHoverPoints/cyclesHoverPoints.
+  boolean showingHourlySun = (STUDY.sunpathHoverPoints != null) && !STUDY.sunpathHoverPoints.isEmpty();
+  boolean showingSunPath = (STUDY.cyclesHoverPoints != null) && !STUDY.cyclesHoverPoints.isEmpty();
+  // Wind has the same exposure (impactGraphIndex_WIND_PASSIVE gets set
+  // temporarily too), but no per-point hover list of its own to switch
+  // this check to - plotImpact_wind() isn't hovered yet, so this flag is
+  // currently only ever read as part of showingAPalette below (whether
+  // to offer the palette legend's own hover), not gated behind any
+  // dedicated hit-test the way the others above are. Left as-is; revisit
+  // if/when wind gets its own hover and this becomes the same kind of gap.
   boolean showingWind = (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE);
   boolean showingNormalLines = STUDY.showNormalLines;
   boolean showingProbabilities = STUDY.showProbabilities;
@@ -161,6 +178,7 @@ void place_STUDY_hover (int xMouse, int yMouse) {
   UrbanHoverHit urbanHit = null;
   GlobalPoseHoverHit poseHit = null;
   SunpathHoverPoint sunpathHit = null;
+  CyclesHoverPoint cyclesHit = null;
   NormalsHoverColumn normalsHit = null;
   ProbsHoverBox probsHit = null;
   PaletteSwatchHoverInfo paletteHit = null;
@@ -170,6 +188,7 @@ void place_STUDY_hover (int xMouse, int yMouse) {
     if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(xMouse, yMouse);
     if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(xMouse, yMouse);
     if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(xMouse, yMouse);
+    if (showingSunPath) cyclesHit = studyCyclesHover_hitTest(xMouse, yMouse);
     // Probabilities checked before normals: each probability box is an
     // actual filled rectangle (an unambiguous point-in-rect hit), while
     // normals is a generous-radius crosshair match over thin lines - the
@@ -178,7 +197,7 @@ void place_STUDY_hover (int xMouse, int yMouse) {
     // starting point, not a carefully resolved priority.
     if (showingProbabilities) probsHit = studyProbsHover_hitTest(xMouse, yMouse);
     if (showingNormalLines && probsHit == null) normalsHit = studyNormalsHover_hitTest(xMouse, yMouse);
-    if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(xMouse, yMouse);
+    if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null && cyclesHit == null) paletteHit = studyPaletteHover_hitTest(xMouse, yMouse);
   }
 
   if (urbanHit != null) {
@@ -189,6 +208,9 @@ void place_STUDY_hover (int xMouse, int yMouse) {
     studyHover_wasShownLastFrame = true;
   } else if (sunpathHit != null) {
     placeSunpathHoverBox(xMouse, yMouse, sunpathHit);
+    studyHover_wasShownLastFrame = true;
+  } else if (cyclesHit != null) {
+    placeCyclesHoverBox(xMouse, yMouse, cyclesHit);
     studyHover_wasShownLastFrame = true;
   } else if (probsHit != null) {
     placeProbsHoverBox(xMouse, yMouse, probsHit);

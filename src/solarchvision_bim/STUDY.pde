@@ -68,6 +68,16 @@ class STUDY {
   // regular grid of buckets the way Pose Potential's dome is.
   ArrayList<SunpathHoverPoint> sunpathHoverPoints;
 
+  // Same idea again, for "Sun Path" (plotImpact_cycles() internally - see
+  // hoverOnStudySunpath.pde's own comment on the UI-label/internal-name
+  // mismatch, and hoverOnStudyCycles.pde's own comment for why this one's
+  // different again: a continuous, vertex-interpolated mesh rather than
+  // either Hourly Sun's independent points or Pose Potential's discrete
+  // grid buckets). Populated by Sun3D.pde's drawCycles() itself, not by a
+  // STUDY method - that's where the mesh's vertices actually get drawn,
+  // for STUDY only (WIN3D/OBJ3D/WORLD don't touch this list, by design).
+  ArrayList<CyclesHoverPoint> cyclesHoverPoints;
+
   // Same idea again, for drawNormals() - the 9-statistic-line overlay
   // shared by every plotHourly() graph (temperature, humidity, wind
   // speed, radiation, etc. - whichever currentLayerId is active). Several
@@ -2012,6 +2022,7 @@ class STUDY {
     this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
     this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
+    this.cyclesHoverPoints = new ArrayList<CyclesHoverPoint>();
     this.normalsHoverColumns = new ArrayList<NormalsHoverColumn>();
     this.probsHoverBoxes = new ArrayList<ProbsHoverBox>();
     this.paletteSwatchHoverInfo = new ArrayList<PaletteSwatchHoverInfo>();
