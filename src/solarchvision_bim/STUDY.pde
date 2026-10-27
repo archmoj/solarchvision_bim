@@ -3336,6 +3336,9 @@ class STUDY {
                 hoverPoint.Beta = Beta;
                 hoverPoint.valuesSUM = valuesSUM;
                 hoverPoint.impactTypeIndex = this.impactTypeIndex;
+                hoverPoint.hour = i;
+                hoverPoint.calendarDay = j;
+                hoverPoint.daysMergedHalf = (this.daysMergedCount > 1) ? int(this.daysMergedCount / 2) : 0;
                 this.sunpathHoverPoints.add(hoverPoint);
               }
 

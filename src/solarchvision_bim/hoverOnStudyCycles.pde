@@ -72,7 +72,7 @@ CyclesHoverPoint studyCyclesHover_hitTest (int xMouse, int yMouse) {
 // graphs show the exact same sun-position formatting. The value line
 // gets its own descriptive label (matching plotImpact_cycles()'s own
 // on-graph legend text exactly - STUDY.pde - "Direct solar radiation"/
-// "Direct solar effects") rather than showing a bare number, since
+// "Direct solar effect") rather than showing a bare number, since
 // unlike Hourly Sun this graph doesn't already show that label next to
 // every point it draws. Time/date formatted the same "Window:"/
 // "Target:" way drawProbsHoverBox() (hoverOnStudyProbs.pde) and
@@ -81,7 +81,7 @@ CyclesHoverPoint studyCyclesHover_hitTest (int xMouse, int yMouse) {
 // match" date on its own, with no indication it's the center of a
 // several-day search window, would read as more precise than it is.
 void placeCyclesHoverBox (int xMouse, int yMouse, CyclesHoverPoint p) {
-  String variableLabel = (p.impactTypeIndex == Impact_ACTIVE) ? "Direct solar radiation" : "Direct solar effects";
+  String variableLabel = (p.impactTypeIndex == Impact_ACTIVE) ? "Direct radiation" : "Direct solar effect";
   String unit = (p.impactTypeIndex == Impact_ACTIVE) ? " kWh/m\u00B2" : " kWh\u00B0C/m\u00B2";
   String valueLine = variableLabel + ": " + nf(p.valuesSUM, 1, 2) + unit;
 

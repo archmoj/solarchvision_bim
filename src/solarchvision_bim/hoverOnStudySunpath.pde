@@ -25,6 +25,9 @@ class SunpathHoverPoint {
   float Alpha, Beta; // sun's own altitude/azimuth at this sample
   float valuesSUM; // the single value this graph itself already displays as text on the point - received radiation (Active) or direct effect (Passive), no P/N/Score breakdown the way Skin/Pose Potential have
   int impactTypeIndex;
+  int hour; // 0-23 - this vertex's own hour-grid index (drawCycles()'s own "a"), a single point in time, not a window - unlike calendarDay/daysMergedHalf below, hours are never merged in this graph
+  int calendarDay; // drawCycles()'s own "now_j2" for this vertex's ROW (merged-day-group) - the SAME actual date used to fetch the data this vertex's own valuesSUM was computed from, same wrapped 0-364 day index TIME.getDayText() (TIME.pde) expects
+  int daysMergedHalf; // STUDY.daysMergedCount's own half-width at the moment this point was recorded, 0 when daysMergedCount <= 1 (no day-merging) - same field/meaning as NormalsHoverColumn's and ProbsHoverBox's own daysMergedHalf
 }
 
 // Azimuth: the sun's own compass bearing, read directly off the same Beta
@@ -77,10 +80,27 @@ SunpathHoverPoint studySunpathHover_hitTest (int xMouse, int yMouse) {
 // this graph only ever displays the one number (no P/N/Score split) for
 // either impact type.
 void placeSunpathHoverBox (int xMouse, int yMouse, SunpathHoverPoint p) {
+  String variableLabel = (p.impactTypeIndex == Impact_ACTIVE) ? "Direct solar radiation" : "Direct solar effect";
   String unit = (p.impactTypeIndex == Impact_ACTIVE) ? " kWh/m\u00B2" : " kWh\u00B0C/m\u00B2";
-  String valueLine = nf(p.valuesSUM, 1, 2) + unit;
+  String valueLine = variableLabel + ": " + nf(p.valuesSUM, 1, 2) + unit;
 
-  String[] lines = { formatAzimuthAndAltitude(p.Beta, p.Alpha), valueLine };
+  ArrayList<String> lineList = new ArrayList<String>();
+  lineList.add(formatAzimuthAndAltitude(p.Beta, p.Alpha));
+  lineList.add("Time: " + nf(p.hour, 2) + ":00");
+
+  if (p.daysMergedHalf > 0) {
+    String startText = TIME.getDayText(p.calendarDay - p.daysMergedHalf);
+    String endText = TIME.getDayText(p.calendarDay + p.daysMergedHalf);
+    lineList.add("Window: " + startText + " \u2013 " + endText);
+    lineList.add("Target: " + TIME.getDayText(p.calendarDay) + " (\u00B1" + p.daysMergedHalf + " " + TIME.WORDS[2][activeLanguage] + "s)");
+  } else {
+    lineList.add("Date: " + TIME.getDayText(p.calendarDay));
+  }
+
+  lineList.add(___divider___);
+  lineList.add(valueLine);
+
+  String[] lines = lineList.toArray(new String[0]);
 
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
