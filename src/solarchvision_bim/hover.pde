@@ -259,6 +259,16 @@ final int hoverStrokeWeight = 4;
 // whole extra pixel of clearance instead of rounding down short.
 final int hoverStrokeInset = (int) ceil(0.5 * hoverStrokeWeight + 1);
 
+// How far each axis-shift fallback step (resolveHoverBoxPosition()
+// further below) moves, as a fraction of the box's own width/height -
+// deliberately small rather than a full box-width/box-height per step:
+// a box only needs to clear whatever's actually nearby, which is often
+// much less than one whole box-width/height away, and jumping a full
+// box-width/height at a time can leap straight past perfectly good
+// nearby space and land the box far closer to the dest rect's own edge
+// than it needed to.
+final float hoverAxisShiftStepFraction = 0.25;
+
 // Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
 // so it (and its stroke - see hoverStrokeInset above) stays
 // entirely inside destX..destX+destW / destY..destY+destH (the overlay's
@@ -374,20 +384,26 @@ float[] hoverQuadrantPosition (float xMouse, float yMouse, float destX, float de
 }
 
 // One axis-shift fallback candidate: the SAME quadrant position `from`
-// (one of hoverQuadrantPosition()'s own results), nudged `steps` box-
-// widths (alongX true) or box-heights (alongX false) in direction +1/-1,
-// clamped back into the dest rect same as every other candidate. Moves
-// one axis at a time rather than diagonally, so each candidate still
-// reads as a box directly above/below or directly left/right of its
-// quadrant's own anchor corner, not an arbitrary point in space.
-float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float destW, float destH, float boxW, float boxH, boolean alongX, int direction, int steps) {
+// (one of hoverQuadrantPosition()'s own results), nudged `steps` lots of
+// `stepSize` pixels (alongX true shifts X, false shifts Y) in direction
+// +1/-1, clamped back into the dest rect same as every other candidate.
+// stepSize is a parameter rather than always boxW/boxH so the caller can
+// use a finer increment than the box's own full width/height (see
+// hoverAxisShiftStepFraction above, and resolveHoverBoxPosition()
+// below, which is the only real caller) - the box's actual boxW/boxH
+// still governs the clamp bounds (and, via the caller, the actual
+// collision test), only the step size itself is decoupled from it.
+// Moves one axis at a time rather than diagonally, so each candidate
+// still reads as a box directly above/below or directly left/right of
+// its quadrant's own anchor corner, not an arbitrary point in space.
+float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float destW, float destH, float boxW, float boxH, float stepSize, boolean alongX, int direction, int steps) {
   float boxX = from[0];
   float boxY = from[1];
 
   if (alongX) {
-    boxX = constrain(boxX + direction * steps * boxW, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+    boxX = constrain(boxX + direction * steps * stepSize, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
   } else {
-    boxY = constrain(boxY + direction * steps * boxH, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+    boxY = constrain(boxY + direction * steps * stepSize, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
   }
 
   return new float[] { boxX, boxY };
@@ -431,29 +447,34 @@ float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float 
   }
 
   // None of the four quadrants cleared it - fall back to nudging the
-  // natural position along a single axis, one box-width/box-height at a
-  // time, in whichever direction, until the dest rect's own edge is
-  // reached on that axis.
-  int maxStepsX = max(1, (int) floor(destW / boxW));
-  int maxStepsY = max(1, (int) floor(destH / boxH));
+  // natural position along a single axis, in small
+  // (hoverAxisShiftStepFraction, above) steps rather than a full box-
+  // width/box-height at a time, so the box moves only as far as it
+  // actually needs to clear whatever's nearby - stepping outward until
+  // clear or the dest rect's own edge is reached on that axis.
+  float stepSizeX = boxW * hoverAxisShiftStepFraction;
+  float stepSizeY = boxH * hoverAxisShiftStepFraction;
+
+  int maxStepsX = max(1, (int) ceil(destW / stepSizeX));
+  int maxStepsY = max(1, (int) ceil(destH / stepSizeY));
 
   for (int steps = 1; steps <= max(maxStepsX, maxStepsY); steps++) {
     if (steps <= maxStepsX) {
-      float[] right = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, true, 1, steps);
+      float[] right = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, stepSizeX, true, 1, steps);
       candidates.add(right);
       if (!hoverBoxCollides(right[0], right[1], boxW, boxH, placedBoxes)) return right;
 
-      float[] left = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, true, -1, steps);
+      float[] left = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, stepSizeX, true, -1, steps);
       candidates.add(left);
       if (!hoverBoxCollides(left[0], left[1], boxW, boxH, placedBoxes)) return left;
     }
 
     if (steps <= maxStepsY) {
-      float[] down = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, false, 1, steps);
+      float[] down = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, stepSizeY, false, 1, steps);
       candidates.add(down);
       if (!hoverBoxCollides(down[0], down[1], boxW, boxH, placedBoxes)) return down;
 
-      float[] up = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, false, -1, steps);
+      float[] up = hoverAxisShiftPosition(natural, destX, destY, destW, destH, boxW, boxH, stepSizeY, false, -1, steps);
       candidates.add(up);
       if (!hoverBoxCollides(up[0], up[1], boxW, boxH, placedBoxes)) return up;
     }

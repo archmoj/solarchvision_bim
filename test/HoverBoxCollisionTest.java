@@ -125,38 +125,41 @@ class HoverBoxCollisionTest {
 
   @Test
   void axisShift_movesOnlyX_whenAlongXIsTrue () {
+    // stepSize (10) deliberately different from boxW (70) - confirms the
+    // shift amount comes from stepSize, not from the box's own width.
     float[] from = { 100, 100 };
-    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, true, 1, 2);
-    assertEquals(100 + 2 * 70, p[0], 0.0001f);
+    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, 10, true, 1, 2);
+    assertEquals(100 + 2 * 10, p[0], 0.0001f);
     assertEquals(100, p[1], 0.0001f); // unchanged
   }
 
   @Test
   void axisShift_movesOnlyY_whenAlongXIsFalse () {
     // Starting Y (500) chosen with enough room above it that shifting up
-    // 3 box-heights (162px) doesn't run into the dest rect's own clamp -
-    // the clamp itself is covered separately below.
+    // 3 steps doesn't run into the dest rect's own clamp - the clamp
+    // itself is covered separately below. stepSize (8) again deliberately
+    // different from boxH (54).
     float[] from = { 100, 500 };
-    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, false, -1, 3);
+    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, 8, false, -1, 3);
     assertEquals(100, p[0], 0.0001f); // unchanged
-    assertEquals(500 - 3 * 54, p[1], 0.0001f);
+    assertEquals(500 - 3 * 8, p[1], 0.0001f);
   }
 
   @Test
   void axisShift_clampsToTheDestRect () {
     float[] from = { 100, 100 };
-    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 200, 200, 70, 54, true, 1, 50); // way past the right edge
+    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 200, 200, 70, 54, 10, true, 1, 50); // way past the right edge
     assertTrue(p[0] + 70 <= 200);
   }
 
   @Test
   void axisShift_clampsOnTheYAxisToo_ratherThanGoingNegative () {
-    // from Y=100, shifting up 3 box-heights (162px) would land at -62 -
+    // from Y=100, shifting up 3 steps of 54 (162px) would land at -62 -
     // past the dest rect's own top edge - so it must clamp to
     // destY + hoverStrokeInset (3) instead, same as the X-axis case
     // above.
     float[] from = { 100, 100 };
-    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, false, -1, 3);
+    float[] p = app.hoverAxisShiftPosition(from, 0, 0, 1000, 1000, 70, 54, 54, false, -1, 3);
     assertEquals(app.hoverStrokeInset, p[1], 0.0001f);
   }
 
@@ -198,8 +201,12 @@ class HoverBoxCollisionTest {
     // Same center-of-a-large-rect setup, but this time all four
     // quadrant candidates (514,514), (416,514), (514,432), (416,432) are
     // individually blocked - forcing the single-axis-shift fallback.
-    // Stepping right from the natural position by one box-width (514+70
-    // = 584) clears every one of the four blocks.
+    // Each right-shift step moves hoverAxisShiftStepFraction (0.25) *
+    // boxW = 17.5px; it takes 4 of them (514 + 4*17.5 = 584, exactly one
+    // full box-width in this particular case, since the blocks here are
+    // exactly box-sized and adjacent) to fully clear all four blocks -
+    // hand-verified against every intermediate step, none of which
+    // clears any earlier.
     java.util.ArrayList<float[]> placed = new java.util.ArrayList<>();
     placed.add(new float[]{ 514, 514, 70, 54 });
     placed.add(new float[]{ 416, 514, 70, 54 });
@@ -219,17 +226,20 @@ class HoverBoxCollisionTest {
     // top 210px (0,0,300,210) - wide enough that no quadrant or
     // horizontal shift can ever escape it (only a downward shift can).
     // Mouse near the top-left puts every quadrant candidate, and every
-    // horizontal shift, still fully inside the block; stepping down one
-    // box-height at a time only starts to clear it at step 3 (partial)
-    // and fully clears at step 4, where it also hits the dest rect's own
-    // clamp (hand-verified: natural=(64,34), clamped step-4 boxY=243).
+    // horizontal shift, still fully inside the block; stepping down in
+    // hoverAxisShiftStepFraction (0.25) * boxH = 13.5px increments from
+    // natural=(64,34), the box stays (partially, then barely) inside the
+    // block through step 13 (y=209.5) and only fully clears at step 14
+    // (y=223) - hand-verified. Notably this is well short of the dest
+    // rect's own clamp (243) - confirming the box stops as soon as it's
+    // actually clear, rather than being pushed all the way to the edge.
     java.util.ArrayList<float[]> placed = new java.util.ArrayList<>();
     placed.add(new float[]{ 0, 0, 300, 210 });
 
     float[] resolved = app.resolveHoverBoxPosition(50, 20, 0, 0, 300, 300, 70, 54, placed);
 
     assertEquals(64, resolved[0], 0.0001f);
-    assertEquals(243, resolved[1], 0.0001f);
+    assertEquals(223, resolved[1], 0.0001f);
     assertEquals(0f, app.hoverBoxTotalOverlap(resolved[0], resolved[1], 70, 54, placed), 0.0001f);
   }
 
