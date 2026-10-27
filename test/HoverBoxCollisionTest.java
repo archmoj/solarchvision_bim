@@ -332,4 +332,89 @@ class HoverBoxCollisionTest {
     assertEquals(app.hoverStrokeInset, resolved[0], 0.0001f);
     assertEquals(app.hoverStrokeInset, resolved[1], 0.0001f);
   }
+
+  // ================= why the peek must re-resolve every pin, every frame ======
+  // peekAllPinnedHoverBoxes() (hover.pde) re-reads allHoverPoints and
+  // re-resolves every pin from scratch on every call, rather than
+  // reusing a cached result from the previous frame - even though pin
+  // positions are themselves persisted/stable now
+  // (hoverPointPreferredPosition) and re-resolving them looks wasteful.
+  // These two tests model the exact click-transition scenario that
+  // decision is based on, using the same pure functions
+  // peekAllPinnedHoverBoxes()/drawAllHovers() are built from, rather
+  // than just asserting the claim in a comment - see
+  // peekAllPinnedHoverBoxes()'s own comment in hover.pde for the prose
+  // version of this reasoning.
+  //
+  // Both share the same setup: an older, already-settled pin forces the
+  // live preview to flip away from its natural quadrant to avoid it. The
+  // user clicks, and the new pin inherits that flipped position as its
+  // own preferredPosition (addHoverPoint()'s own overload,
+  // HoverPointsTest.java). What differs is what the live point's NEXT
+  // resolution is seeded with.
+
+  @Test
+  void regressionGuard_freshPeek_theBrandNewPinMatchesItsOwnPreview () {
+    float dx = 0, dy = 0, dw = 1000, dh = 1000, bw = 70, bh = 54;
+    float liveX = 235, liveY = 251;
+
+    float[] olderPinBox = app.hoverBoxPosition(300, 300, dx, dy, dw, dh, bw, bh); // (314, 314)
+
+    java.util.ArrayList<float[]> olderPinOnly = new java.util.ArrayList<>();
+    olderPinOnly.add(new float[]{ olderPinBox[0], olderPinBox[1], bw, bh });
+    float[] liveBeforeClick = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, olderPinOnly, null);
+
+    // Click: the new pin's preferredPosition is exactly what live was
+    // just showing.
+    float[] newPinPreferred = liveBeforeClick;
+
+    // Next frame's peek is FRESH: it resolves EVERY pin, including the
+    // brand new one, before live resolves - so live is seeded with both
+    // the older pin AND the new pin's own preferred position.
+    java.util.ArrayList<float[]> bothPins = new java.util.ArrayList<>();
+    bothPins.add(new float[]{ olderPinBox[0], olderPinBox[1], bw, bh });
+    bothPins.add(new float[]{ newPinPreferred[0], newPinPreferred[1], bw, bh });
+    float[] liveAfterClick = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, bothPins, null);
+
+    // The new pin's own REAL resolution (the main loop) sees only live's
+    // real box as an obstacle, and tries its own preferredPosition first.
+    java.util.ArrayList<float[]> liveOnly = new java.util.ArrayList<>();
+    liveOnly.add(new float[]{ liveAfterClick[0], liveAfterClick[1], bw, bh });
+    float[] newPinReal = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, liveOnly, newPinPreferred);
+
+    assertArrayEquals(newPinPreferred, newPinReal, 0.0001f);
+  }
+
+  @Test
+  void regressionGuard_staleCacheMissingTheNewPin_wouldCollideWithLiveAndLoseItsOwnPreview () {
+    // Same setup as above, but modeling the caching simplification that
+    // was considered and rejected: live's next resolution is seeded only
+    // from a cache built before the click (the older pin alone) - a
+    // cache can't know about a pin created after it was captured.
+    float dx = 0, dy = 0, dw = 1000, dh = 1000, bw = 70, bh = 54;
+    float liveX = 235, liveY = 251;
+
+    float[] olderPinBox = app.hoverBoxPosition(300, 300, dx, dy, dw, dh, bw, bh);
+
+    java.util.ArrayList<float[]> olderPinOnly = new java.util.ArrayList<>();
+    olderPinOnly.add(new float[]{ olderPinBox[0], olderPinBox[1], bw, bh });
+    float[] liveBeforeClick = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, olderPinOnly, null);
+
+    float[] newPinPreferred = liveBeforeClick;
+
+    // STALE cache: only the older pin - missing the brand new one.
+    // Nothing else about the scenario changed (same mouse position, same
+    // older pin), so this reproduces the exact same spot live had before
+    // the click - deterministic, same inputs, same output.
+    float[] liveAfterClick_stale = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, olderPinOnly, null);
+    assertArrayEquals(liveBeforeClick, liveAfterClick_stale, 0.0001f);
+
+    // The new pin's real resolution now collides with live (they're at
+    // the identical spot) and gets forced off its own just-shown preview.
+    java.util.ArrayList<float[]> liveOnly = new java.util.ArrayList<>();
+    liveOnly.add(new float[]{ liveAfterClick_stale[0], liveAfterClick_stale[1], bw, bh });
+    float[] newPinReal = app.resolveHoverBoxPosition(liveX, liveY, dx, dy, dw, dh, bw, bh, liveOnly, newPinPreferred);
+
+    assertFalse(java.util.Arrays.equals(newPinPreferred, newPinReal));
+  }
 }

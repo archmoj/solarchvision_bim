@@ -263,6 +263,28 @@ class HoverPeekResult {
 // each of which still gets a normal, independent resolution later in
 // drawAllHovers()'s own main loop (by then seeing the live point's real
 // box too, same as any other pin would).
+//
+// This re-reads allHoverPoints and re-resolves every pin from scratch on
+// EVERY call, deliberately not reusing a cached result from the previous
+// frame, even though pin positions are themselves persisted/stable now
+// (hoverPointPreferredPosition) and re-resolving them here looks
+// wasteful. It isn't optional: a pin created THIS frame (right after a
+// click - mouseClicked.pde) has to already be among these obstacles the
+// very first time live resolves after it exists, or the two collide.
+// Concretely - this is the scenario HoverBoxCollisionTest.java's own
+// "why the peek must re-resolve every pin, every frame" section works
+// through with real numbers: an older pin forces live to flip away from
+// its natural spot; the user clicks, and the new pin inherits that
+// flipped position as its own preferredPosition (addHoverPoint()'s own
+// overload). If live's NEXT resolution were seeded from a cache that
+// doesn't yet include this brand new pin, live - fed the exact same
+// obstacles as last frame, with nothing else changed - reproduces the
+// exact same position it had before the click. Since that position IS
+// the new pin's own preferredPosition, the pin collides with live on its
+// very first real resolution and gets shoved off the very spot it was
+// just shown at - reintroducing the mismatch the whole preferredPosition
+// mechanism exists to prevent. Re-peeking fresh every frame is what
+// keeps live aware of a pin that didn't exist a moment ago.
 HoverPeekResult peekAllPinnedHoverBoxes () {
   ArrayList<float[]> realStudyPlaced = studyPlacedHoverBoxes;
   ArrayList<float[]> realWin3DPlaced = win3DPlacedHoverBoxes;
