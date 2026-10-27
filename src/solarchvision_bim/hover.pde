@@ -1,7 +1,7 @@
 int[][] allHoverPoints = null;
 
 // Pins a new hover point at (x, y) - screen coordinates, the same space
-// drawHoversAt() below (and the live, mouse-following call at the bottom
+// placeHoversAt() below (and the live, mouse-following call at the bottom
 // of drawAllHovers()) already works in - onto the end of allHoverPoints,
 // growing it by one. Same int[][]-of-{x,y}-pairs shape (and the same
 // null-means-"no points" convention) the scripted HOVER/CLEARHOVER
@@ -47,11 +47,11 @@ boolean removeOldestHoverPoint () {
 //
 // Skipped entirely while a UI_menuBar dropdown is open, same reasoning
 // as STUDY.draw()'s own guard (STUDY.pde): clearStudyHover()'s own
-// restore, and every drawHoversAt() call below it, paint directly onto
+// restore, and every placeHoversAt() call below it, paint directly onto
 // the live screen with no idea the dropdown might be sitting over part
 // of whichever region they touch - STUDY's, WIN3D's, or both - so any of
 // them could overwrite it. Whatever was on screen (hover boxes included)
-// is simply left alone until the menu closes; draw_STUDY_hover() already
+// is simply left alone until the menu closes; place_STUDY_hover() already
 // stops offering new hits while selected_parent != -1 (hoverOnStudy
 // Impact.pde), so nothing here is actually waiting to happen, it's just
 // no longer trying.
@@ -75,7 +75,7 @@ boolean removeOldestHoverPoint () {
 //     to be drawn last by coincidence. So pass 2 drains each panel's
 //     queue in the OPPOSITE order it was built in.
 //
-// Pass 2 deliberately does NOT re-run drawHoversAt()/the hit-testing
+// Pass 2 deliberately does NOT re-run placeHoversAt()/the hit-testing
 // chain a second time: every box's position was already fully decided
 // in pass 1, with every OTHER box's final rect as context - re-resolving
 // in pass 2 would find that box's own rect still sitting in
@@ -97,7 +97,7 @@ void drawAllHovers () {
 
   // --- Pass 1: resolve positions, front-to-back priority order ---------
   //
-  // drawHoversAt(mouseX, mouseY) genuinely IS resolved (and so, per pass
+  // placeHoversAt(mouseX, mouseY) genuinely IS resolved (and so, per pass
   // 2 below, painted) first - the live point keeps priority over every
   // pinned point, old or new, same as before. The one adjustment: right
   // before resolving it, peekLastPinnedHoverBoxes() below previews where
@@ -128,7 +128,7 @@ void drawAllHovers () {
   }
 
   if (control == USER_GUI) {
-    drawHoversAt(mouseX, mouseY);
+    placeHoversAt(mouseX, mouseY);
   }
 
   if (lastPinnedPeekStudy != null) studyPlacedHoverBoxes.removeAll(lastPinnedPeekStudy);
@@ -147,7 +147,7 @@ void drawAllHovers () {
       int x = allHoverPoints[i][0];
       int y = allHoverPoints[i][1];
 
-      drawHoversAt(x, y);
+      placeHoversAt(x, y);
     }
   }
 
@@ -167,7 +167,7 @@ class HoverPeekResult {
 }
 
 // Resolves allHoverPoints' own last entry through the EXACT SAME
-// pipeline a real point goes through (drawHoversAt()) - same hit-tests,
+// pipeline a real point goes through (placeHoversAt()) - same hit-tests,
 // same resolveHoverBoxPosition() call, same box size from the same
 // text - but into throwaway placedBoxes/pendingBoxes, swapped in for
 // just this one call and swapped back out again right after, so none of
@@ -191,7 +191,7 @@ HoverPeekResult peekLastPinnedHoverBoxes () {
   win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
   int lastIndex = allHoverPoints.length - 1;
-  drawHoversAt(allHoverPoints[lastIndex][0], allHoverPoints[lastIndex][1]);
+  placeHoversAt(allHoverPoints[lastIndex][0], allHoverPoints[lastIndex][1]);
 
   HoverPeekResult result = new HoverPeekResult();
   result.study = studyPlacedHoverBoxes;
@@ -217,9 +217,9 @@ void paintHoverQueue (ArrayList<PendingHoverBox> queue) {
   }
 }
 
-void drawHoversAt (int xMouse, int yMouse) {
-  draw_WIN3D_hover(xMouse, yMouse);
-  draw_STUDY_hover(xMouse, yMouse);
+void placeHoversAt (int xMouse, int yMouse) {
+  place_WIN3D_hover(xMouse, yMouse);
+  place_STUDY_hover(xMouse, yMouse);
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------

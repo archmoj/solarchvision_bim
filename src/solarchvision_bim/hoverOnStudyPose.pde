@@ -173,9 +173,9 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (int xMouse, int yMouse) {
 }
 
 // Draws the hover box - same formatting/sizing/positioning/edge-drawing
-// reuse as drawStudyUrbanHoverBox() (studyImpactHover.pde), just reading
+// reuse as placeStudyUrbanHoverBox() (studyImpactHover.pde), just reading
 // from globalPoseRawValuesAt() instead.
-void drawGlobalPoseHoverBox (int xMouse, int yMouse, GlobalPoseHoverHit hit) {
+void placeGlobalPoseHoverBox (int xMouse, int yMouse, GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
   String[] valueLines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
   if (valueLines == null) return;

@@ -1,4 +1,4 @@
-void draw_WIN3D_hover (int xMouse, int yMouse) {
+void place_WIN3D_hover (int xMouse, int yMouse) {
   drawSolarImpactHover(xMouse, yMouse);
 }
 

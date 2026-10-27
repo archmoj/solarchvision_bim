@@ -2111,7 +2111,7 @@ void mouseClicked () {
         // STUDY graph happens to be showing, same screen coordinates
         // drawHoversAt() already uses for the live, mouse-following one.
         // Pinning even where nothing's actually hoverable is harmless:
-        // draw_STUDY_hover() already shows nothing there today for the
+        // place_STUDY_hover() already shows nothing there today for the
         // interactive point, same as it will for this one.
         if (STUDY.include) {
           if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {

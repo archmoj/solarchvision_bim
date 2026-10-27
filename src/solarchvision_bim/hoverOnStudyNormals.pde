@@ -22,7 +22,7 @@ class NormalsHoverColumn {
   float screenX;
   float hitRadiusX; // half an hour's width, measured in screen space
   float screenY1, screenY2; // this column's own line envelope (min/max Y of its defined statistics) - order not assumed, min()/max() applied at hit-test time
-  float targetDate; // raw date value (TIME.getDayText()'s own float argument), the centre of the merged window - kept raw rather than pre-formatted, so drawNormalsHoverBox() can derive the window's own start/end dates from it (targetDate +/- daysMergedHalf) as well as the target date itself
+  float targetDate; // raw date value (TIME.getDayText()'s own float argument), the centre of the merged window - kept raw rather than pre-formatted, so placeNormalsHoverBox() can derive the window's own start/end dates from it (targetDate +/- daysMergedHalf) as well as the target date itself
   int daysMergedHalf; // int(daysMergedCount / 2) at the moment this column was recorded; 0 when daysMergedCount <= 1 (a single day, no merging - nothing to window)
   int hourIndex;
   float[] normalsValues; // the 9 statistics (NORMAL()'s own return shape) at this column - STAT_N_* constants index into it
@@ -123,7 +123,7 @@ int[] sortedDefinedIndicesByValueDescending (float[] values) {
 // drawing as every other STUDY hover box, built from a dynamically-sized
 // line list instead of a fixed count, since how many statistics are
 // actually defined varies column to column.
-void drawNormalsHoverBox (int xMouse, int yMouse, NormalsHoverColumn col) {
+void placeNormalsHoverBox (int xMouse, int yMouse, NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(col.layerName);
   lineList.add("Time: " + nf(col.hourIndex, 2) + ":00");

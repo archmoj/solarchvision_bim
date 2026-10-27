@@ -13,7 +13,7 @@
 // STUDY.showNormalLines are on at once, which isn't the common case (one
 // or the other is typically shown, not both) - so to start, this doesn't
 // attempt to resolve overlap between the two the way urban/pose/sunpath's
-// priority order does; draw_STUDY_hover() just checks probs before (or
+// priority order does; place_STUDY_hover() just checks probs before (or
 // after) normals. Worth revisiting if showing both at once turns out to
 // be more common than expected.
 class ProbsHoverBox {
@@ -71,7 +71,7 @@ ProbsHoverBox studyProbsHover_hitTest (int xMouse, int yMouse) {
 // adding that would mean deciding which day to show set alongside which
 // hour text, not just reformatting a number. Pulled out as its own pure
 // function (no live graphics touched) so it's testable on its own,
-// unlike the rest of drawProbsHoverBox() below.
+// unlike the rest of placeProbsHoverBox() below.
 String probsHoverTimeRangeText (int hourEnd, int hourWidth) {
   int hourStart = hourEnd - hourWidth + 1;
   return "Time: " + nf(hourStart, 2) + ":00 \u2013 " + nf(hourEnd + 1, 2) + ":00";
@@ -81,12 +81,12 @@ String probsHoverTimeRangeText (int hourEnd, int hourWidth) {
 // bin's value range, and its probability (both the percentage and the
 // raw sample count it's based on). Same box sizing/positioning/edge-
 // drawing as every other STUDY hover feature (queueHover(), hover.pde).
-void drawProbsHoverBox (int xMouse, int yMouse, ProbsHoverBox box) {
+void placeProbsHoverBox (int xMouse, int yMouse, ProbsHoverBox box) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(box.layerName);
   lineList.add(probsHoverTimeRangeText(box.hourEnd, box.hourWidth));
 
-  // Same Window/Target split as drawNormalsHoverBox() - see that
+  // Same Window/Target split as placeNormalsHoverBox() - see that
   // function's own comment for why daysMergedHalf gets its own line
   // rather than being folded into one line with the target date.
   if (box.daysMergedHalf > 0) {

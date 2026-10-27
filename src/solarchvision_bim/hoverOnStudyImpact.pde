@@ -90,7 +90,7 @@ boolean studyHover_wasShownLastFrame = false;
 // Called exactly once per pass, by drawAllHovers() (hover.pde), before
 // any of this pass's hover points are drawn.
 //
-// This used to be folded into draw_STUDY_hover() itself, gated behind
+// This used to be folded into place_STUDY_hover() itself, gated behind
 // "only clear when zIndex == 0" - which relied on drawAllHovers() always
 // presenting its very first point at zIndex 0, happened to be true, but
 // tied the STUDY panel's own clearing to an unrelated detail: how many
@@ -126,7 +126,7 @@ void clearStudyHover () {
 // frame. Clearing any box left over from the previous pass is
 // clearStudyHover()'s job, not this function's - called once, up front,
 // by drawAllHovers(), before the first of this pass's calls here.
-void draw_STUDY_hover (int xMouse, int yMouse) {
+void place_STUDY_hover (int xMouse, int yMouse) {
   if (isBakingInProgress()) return;
 
   if (!STUDY.include) return;
@@ -182,22 +182,22 @@ void draw_STUDY_hover (int xMouse, int yMouse) {
   }
 
   if (urbanHit != null) {
-    drawStudyUrbanHoverBox(xMouse, yMouse, urbanHit);
+    placeStudyUrbanHoverBox(xMouse, yMouse, urbanHit);
     studyHover_wasShownLastFrame = true;
   } else if (poseHit != null) {
-    drawGlobalPoseHoverBox(xMouse, yMouse, poseHit);
+    placeGlobalPoseHoverBox(xMouse, yMouse, poseHit);
     studyHover_wasShownLastFrame = true;
   } else if (sunpathHit != null) {
-    drawSunpathHoverBox(xMouse, yMouse, sunpathHit);
+    placeSunpathHoverBox(xMouse, yMouse, sunpathHit);
     studyHover_wasShownLastFrame = true;
   } else if (probsHit != null) {
-    drawProbsHoverBox(xMouse, yMouse, probsHit);
+    placeProbsHoverBox(xMouse, yMouse, probsHit);
     studyHover_wasShownLastFrame = true;
   } else if (normalsHit != null) {
-    drawNormalsHoverBox(xMouse, yMouse, normalsHit);
+    placeNormalsHoverBox(xMouse, yMouse, normalsHit);
     studyHover_wasShownLastFrame = true;
   } else if (paletteHit != null) {
-    drawPaletteHoverBox(xMouse, yMouse, paletteHit);
+    placePaletteHoverBox(xMouse, yMouse, paletteHit);
     studyHover_wasShownLastFrame = true;
   }
 }
@@ -261,7 +261,7 @@ UrbanHoverHit studyUrbanHover_hitTest (int xMouse, int yMouse) {
 // behavior, just clamped to STUDY's own dest rect instead of the
 // overlay's, and reading from the hit's own snapshot instead of
 // allSolarImpacts' live fields.
-void drawStudyUrbanHoverBox (int xMouse, int yMouse, UrbanHoverHit hit) {
+void placeStudyUrbanHoverBox (int xMouse, int yMouse, UrbanHoverHit hit) {
   float[] raw = win3DOverlay_rawValuesAt_fromSnapshot(hit.info.impactTypeIndex, hit.info.daySnapshot, hit.info.mul, hit.ix, hit.iy);
   String[] lines = hoverLines(xMouse, yMouse, hit.info.impactTypeIndex, raw);
   if (lines == null) return;
