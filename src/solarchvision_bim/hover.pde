@@ -1,5 +1,38 @@
 int[][] allHoverPoints = null;
 
+// Each pinned point's own remembered resolved position, if it has one -
+// keyed by the EXACT int[]{x,y} row object addHoverPoint() below created
+// for it (object identity, not value: two different pins could coincide
+// on the same x,y and must stay distinguishable, and this lets the
+// lookup work without threading that row reference down through the
+// whole resolve pipeline - see currentHoverPreferredPosition below for
+// how it's actually used). A row with no entry here - including every
+// row __HOVER__ (extraCommands.pde) creates directly, bypassing
+// addHoverPoint() entirely - just resolves normally, with no preference
+// at all.
+java.util.IdentityHashMap<int[], float[]> hoverPointPreferredPosition = new java.util.IdentityHashMap<int[], float[]>();
+
+// If non-null when queueHover()/queuePaletteHover() (both further below)
+// resolve a box, used as that box's PREFERRED starting position instead
+// of computing a fresh natural quadrant from the anchor - still runs
+// through the exact same collision-avoidance chain as any other
+// candidate (so it still moves if something NEW collides with it), but
+// otherwise keeps the box exactly where it's already known to belong,
+// rather than being re-derived from scratch every single frame. Set by
+// drawHoverPinAt() (below) right before each individual pin's own
+// placeHoversAt() call (both in drawAllHovers()'s own main loop and in
+// peekAllPinnedHoverBoxes()'s throwaway one), looked up from
+// hoverPointPreferredPosition above for that exact point's own row, and
+// cleared again right after - always null for the live, mouse-following
+// point, which never has one of its own.
+//
+// A GLOBAL here, rather than a parameter threaded through
+// placeHoversAt()/place_STUDY_hover()/place_WIN3D_hover()/each of the
+// seven drawXHoverBox() functions, all of which would otherwise need
+// touching just to carry this one optional value down to where it's
+// actually used.
+float[] currentHoverPreferredPosition = null;
+
 // Pins a new hover point at (x, y) - screen coordinates, the same space
 // placeHoversAt() below (and the live, mouse-following call at the bottom
 // of drawAllHovers()) already works in - onto the end of allHoverPoints,
@@ -10,8 +43,31 @@ int[][] allHoverPoints = null;
 // versa - there's only ever the one allHoverPoints, however it got
 // added to.
 void addHoverPoint (int x, int y) {
-  int[][] newPoint = { { x, y } };
+  addHoverPoint(x, y, null);
+}
+
+// Same as addHoverPoint(x, y) above, but also remembers a PREFERRED
+// starting position for this new pin's own resolution - see
+// currentHoverPreferredPosition's own comment for how that's used later.
+// mouseClicked.pde's own STUDY/WIN3D click handling uses this overload,
+// passing in whatever box the live, mouse-following point was ACTUALLY
+// showing right before the click (found via findLiveHoverBox() below),
+// if any - specifically so a newly pinned point starts out exactly where
+// its own preview was, rather than being re-derived from scratch and
+// potentially landing somewhere else. That mismatch is real: the live
+// point's resolution gets to dodge existing pins (see
+// peekAllPinnedHoverBoxes()), but a brand new pin, resolved on its own,
+// has nothing telling it to reproduce that same dodge - its fresh
+// natural-quadrant computation has no memory of why the live preview
+// ended up where it did.
+void addHoverPoint (int x, int y, float[] preferredPosition) {
+  int[] newRow = { x, y };
+  int[][] newPoint = { newRow };
   allHoverPoints = (allHoverPoints == null) ? newPoint : (int[][]) concat(allHoverPoints, newPoint);
+
+  if (preferredPosition != null) {
+    hoverPointPreferredPosition.put(newRow, preferredPosition);
+  }
 }
 
 // Drops the OLDEST pinned hover point (allHoverPoints[0], the first one
@@ -30,6 +86,7 @@ void addHoverPoint (int x, int y) {
 boolean removeOldestHoverPoint () {
   if ((allHoverPoints == null) || (allHoverPoints.length == 0)) return false;
 
+  hoverPointPreferredPosition.remove(allHoverPoints[0]);
   allHoverPoints = (int[][]) subset(allHoverPoints, 1);
   if (allHoverPoints.length == 0) allHoverPoints = null;
 
@@ -100,39 +157,43 @@ void drawAllHovers () {
   // placeHoversAt(mouseX, mouseY) genuinely IS resolved (and so, per pass
   // 2 below, painted) first - the live point keeps priority over every
   // pinned point, old or new, same as before. The one adjustment: right
-  // before resolving it, peekLastPinnedHoverBoxes() below previews where
-  // the MOST RECENTLY pinned point (allHoverPoints' own last entry)
-  // would land on its own, and that preview is seeded into
-  // studyPlacedHoverBoxes/win3DPlacedHoverBoxes as an extra obstacle for
-  // just this one call. So if the live point's own natural spot would
-  // land right on the newest pin, resolveHoverBoxPosition() (hover.pde)
-  // does its normal job and tries the other quadrants/an axis shift
-  // first, same as it would for any other already-placed box - rather
-  // than the live point blindly taking its natural spot and leaving the
-  // brand new pin to be the one that has to dodge it. The preview is
+  // before resolving it, peekAllPinnedHoverBoxes() below previews where
+  // EVERY pinned point (not just the newest - every pin needs to be
+  // accounted for, or the live preview can end up overlapping an older
+  // one the peek never checked) would land on its own, and that preview
+  // is seeded into studyPlacedHoverBoxes/win3DPlacedHoverBoxes as extra
+  // obstacles for just this one call. So if the live point's own natural
+  // spot would land right on any existing pin, resolveHoverBoxPosition()
+  // (hover.pde) does its normal job and tries the other quadrants/an
+  // axis shift first, same as it would for any other already-placed
+  // box - rather than the live point blindly taking its natural spot and
+  // leaving a pin to be the one that has to dodge it. The preview is
   // discarded right after (removed from studyPlacedHoverBoxes/
-  // win3DPlacedHoverBoxes again): the newest pin's REAL position/content
-  // is still decided in its own turn, in the loop below, by then seeing
-  // the live point's real (now-resolved) box like any other pin does -
-  // this never short-circuits that.
-  ArrayList<float[]> lastPinnedPeekStudy = null;
-  ArrayList<float[]> lastPinnedPeekWin3D = null;
+  // win3DPlacedHoverBoxes again): each pin's REAL position/content is
+  // still decided in its own turn, in the loop below, by then seeing the
+  // live point's real (now-resolved) box too - this never short-circuits
+  // that.
+  ArrayList<float[]> pinnedPeekStudy = null;
+  ArrayList<float[]> pinnedPeekWin3D = null;
 
   if ((allHoverPoints != null) && (allHoverPoints.length > 0)) {
-    HoverPeekResult peek = peekLastPinnedHoverBoxes();
-    lastPinnedPeekStudy = peek.study;
-    lastPinnedPeekWin3D = peek.win3D;
+    HoverPeekResult peek = peekAllPinnedHoverBoxes();
+    pinnedPeekStudy = peek.study;
+    pinnedPeekWin3D = peek.win3D;
 
-    studyPlacedHoverBoxes.addAll(lastPinnedPeekStudy);
-    win3DPlacedHoverBoxes.addAll(lastPinnedPeekWin3D);
+    studyPlacedHoverBoxes.addAll(pinnedPeekStudy);
+    win3DPlacedHoverBoxes.addAll(pinnedPeekWin3D);
   }
 
   if (control == USER_GUI) {
+    resolvingLiveHoverPoint = true;
+    currentHoverPreferredPosition = null; // the live point never has a remembered position of its own
     placeHoversAt(mouseX, mouseY);
+    resolvingLiveHoverPoint = false;
   }
 
-  if (lastPinnedPeekStudy != null) studyPlacedHoverBoxes.removeAll(lastPinnedPeekStudy);
-  if (lastPinnedPeekWin3D != null) win3DPlacedHoverBoxes.removeAll(lastPinnedPeekWin3D);
+  if (pinnedPeekStudy != null) studyPlacedHoverBoxes.removeAll(pinnedPeekStudy);
+  if (pinnedPeekWin3D != null) win3DPlacedHoverBoxes.removeAll(pinnedPeekWin3D);
 
   // Pinned points, newest-to-oldest (not allHoverPoints' own click
   // order), following the live point above - so whichever was JUST
@@ -144,10 +205,7 @@ void drawAllHovers () {
   // the one just added.
   if (allHoverPoints != null) {
     for (int i = allHoverPoints.length - 1; i >= 0; i--) {
-      int x = allHoverPoints[i][0];
-      int y = allHoverPoints[i][1];
-
-      placeHoversAt(x, y);
+      drawHoverPinAt(allHoverPoints[i]);
     }
   }
 
@@ -156,9 +214,25 @@ void drawAllHovers () {
   drawHoverQueue(win3DPendingHoverBoxes);
 }
 
-// One panel's own throwaway box list from peekLastPinnedHoverBoxes()
+// Resolves one pinned point's box - looks up its own remembered
+// preferred position (hoverPointPreferredPosition, above) if it has one,
+// makes that available to queueHover()/queuePaletteHover() via
+// currentHoverPreferredPosition for the duration of this one call, then
+// clears it again right after. Used by both drawAllHovers()'s own main
+// loop and peekAllPinnedHoverBoxes()'s throwaway one, so both treat a
+// pin's remembered position the exact same way - which matters: if the
+// peek used a DIFFERENT starting position than the real resolution
+// later does, the live point could end up avoiding a spot the pin was
+// never actually going to use.
+void drawHoverPinAt (int[] row) {
+  currentHoverPreferredPosition = hoverPointPreferredPosition.get(row);
+  placeHoversAt(row[0], row[1]);
+  currentHoverPreferredPosition = null;
+}
+
+// One panel's own throwaway box list from peekAllPinnedHoverBoxes()
 // below - each is empty (not null) rather than absent when that panel
-// had nothing to show for the peeked point, so drawAllHovers() above
+// had nothing to show for the peeked points, so drawAllHovers() above
 // can addAll()/removeAll() them unconditionally once it's past the
 // null-point check.
 class HoverPeekResult {
@@ -166,20 +240,23 @@ class HoverPeekResult {
   ArrayList<float[]> win3D;
 }
 
-// Resolves allHoverPoints' own last entry through the EXACT SAME
-// pipeline a real point goes through (placeHoversAt()) - same hit-tests,
-// same resolveHoverBoxPosition() call, same box size from the same
-// text - but into throwaway placedBoxes/pendingBoxes, swapped in for
-// just this one call and swapped back out again right after, so none of
-// it is kept: studyPlacedHoverBoxes/win3DPlacedHoverBoxes (the REAL
-// ones) and studyPendingHoverBoxes/win3DPendingHoverBoxes are left
-// exactly as drawAllHovers() found them. Only called from there, and
-// only to seed the live point's OWN resolution with one extra obstacle
-// to try to dodge - it doesn't decide anything about the pinned point
-// itself, which still gets a normal, independent resolution later in
+// Resolves EVERY pinned point (not just the newest) through the EXACT
+// SAME pipeline a real point goes through (placeHoversAt(), by way of
+// drawHoverPinAt() above, so each pin's own remembered preferred
+// position is respected exactly as it would be for real) - same
+// hit-tests, same resolveHoverBoxPosition() call, same box size from the
+// same text, same newest-to-oldest order as the real main loop below -
+// but into throwaway placedBoxes/pendingBoxes, swapped in for this call
+// and swapped back out again right after, so none of it is kept:
+// studyPlacedHoverBoxes/win3DPlacedHoverBoxes (the REAL ones) and
+// studyPendingHoverBoxes/win3DPendingHoverBoxes are left exactly as
+// drawAllHovers() found them. Only called from there, and only to seed
+// the live point's OWN resolution with these as extra obstacles to try
+// to dodge - it doesn't decide anything about any pinned point itself,
+// each of which still gets a normal, independent resolution later in
 // drawAllHovers()'s own main loop (by then seeing the live point's real
 // box too, same as any other pin would).
-HoverPeekResult peekLastPinnedHoverBoxes () {
+HoverPeekResult peekAllPinnedHoverBoxes () {
   ArrayList<float[]> realStudyPlaced = studyPlacedHoverBoxes;
   ArrayList<float[]> realWin3DPlaced = win3DPlacedHoverBoxes;
   ArrayList<PendingHoverBox> realStudyPending = studyPendingHoverBoxes;
@@ -190,8 +267,9 @@ HoverPeekResult peekLastPinnedHoverBoxes () {
   studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
   win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
-  int lastIndex = allHoverPoints.length - 1;
-  placeHoversAt(allHoverPoints[lastIndex][0], allHoverPoints[lastIndex][1]);
+  for (int i = allHoverPoints.length - 1; i >= 0; i--) {
+    drawHoverPinAt(allHoverPoints[i]);
+  }
 
   HoverPeekResult result = new HoverPeekResult();
   result.study = studyPlacedHoverBoxes;
@@ -327,10 +405,36 @@ class PendingHoverBox {
   int xMouse, yMouse;
   String[] lines;
   float[] col;
+  boolean isLivePoint; // true only for the box queued while resolving the live, mouse-following point (resolvingLiveHoverPoint below) - lets findLiveHoverBox() find it reliably regardless of where it ends up in the queue, rather than assuming it's always a particular index (which only holds if the live point actually hit something hoverable that same frame - otherwise index 0 could just as easily be a pin's box).
 }
 
 ArrayList<PendingHoverBox> studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 ArrayList<PendingHoverBox> win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+
+// True only while placeHoversAt() is resolving the live, mouse-following
+// point specifically (set/cleared around that one call in
+// drawAllHovers() below) - read by queueHover()/queuePaletteHover() to
+// tag the PendingHoverBox they queue as box.isLivePoint, so
+// findLiveHoverBox() (below) can find it later regardless of its
+// position in the queue.
+boolean resolvingLiveHoverPoint = false;
+
+// Finds the box tagged isLivePoint in a panel's own pending queue (null
+// if the live point didn't hit anything hoverable there this pass, or if
+// nothing's been queued at all). Used by mouseClicked.pde's own STUDY/
+// WIN3D click handling to find whatever box the live point was ACTUALLY
+// showing right before the click, so a newly pinned point can inherit
+// it as its own preferred starting position (addHoverPoint()'s own
+// 3-argument overload, above) - see that overload's comment for why.
+PendingHoverBox findLiveHoverBox (ArrayList<PendingHoverBox> queue) {
+  if (queue == null) return null;
+
+  for (PendingHoverBox box : queue) {
+    if (box.isLivePoint) return box;
+  }
+
+  return null;
+}
 
 // True if rectangle A (x,y,w,h) and rectangle B overlap at all.
 boolean hoverBoxesOverlap (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh) {
@@ -409,21 +513,40 @@ float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float de
   return new float[] { boxX, boxY };
 }
 
-// Single-pass greedy collision resolution for one box: tries
-// hoverBoxPosition()'s own natural spot first, then (only if that
-// collides with something already in placedBoxes) the other three
-// quadrants, then - if all four still collide - nudging the natural
-// position along a single axis at a time (see hoverAxisShiftPosition()
-// above), stepping outward until clear or the dest rect's own edge is
-// reached. If nothing tried fully clears every placed box, returns
-// whichever candidate had the smallest total overlap rather than
-// picking an arbitrary one. Pure/no drawing (same as hoverBoxPosition()
-// itself), so independently testable without a live PGraphics context -
-// queueHover()/queuePaletteHover() (both below) are the only callers,
-// and both append this result to placedBoxes themselves right after, so
-// the next box resolved in the same pass sees it too.
-float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, ArrayList<float[]> placedBoxes) {
-  float[] natural = hoverBoxPosition((int) xMouse, (int) yMouse, destX, destY, destW, destH, boxW, boxH);
+// Single-pass greedy collision resolution for one box: tries a natural
+// spot first, then (only if that collides with something already in
+// placedBoxes) the other three quadrants, then - if all four still
+// collide - nudging the natural position along a single axis at a time
+// (see hoverAxisShiftPosition() above), stepping outward until clear or
+// the dest rect's own edge is reached. If nothing tried fully clears
+// every placed box, returns whichever candidate had the smallest total
+// overlap rather than picking an arbitrary one.
+//
+// The "natural spot" tried first is preferredPosition when non-null
+// (clamped into the dest rect same as every other candidate - it may
+// have been computed for a differently-sized panel, an older session,
+// or just not have been clamped at all by whoever passed it in), or
+// hoverBoxPosition()'s own fresh quadrant computation otherwise. This is
+// how a pin remembers where it already was (currentHoverPreferredPosition,
+// above) instead of being re-derived from scratch every frame - it still
+// goes through every one of the same fallback candidates below if that
+// remembered spot now collides with something new, same as any other
+// natural position would.
+//
+// Pure/no drawing (same as hoverBoxPosition() itself), so independently
+// testable without a live PGraphics context - queueHover()/
+// queuePaletteHover() (both below) are the only callers, and both
+// append this result to placedBoxes themselves right after, so the next
+// box resolved in the same pass sees it too.
+float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, ArrayList<float[]> placedBoxes, float[] preferredPosition) {
+  float[] natural;
+  if (preferredPosition != null) {
+    float px = constrain(preferredPosition[0], destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+    float py = constrain(preferredPosition[1], destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+    natural = new float[] { px, py };
+  } else {
+    natural = hoverBoxPosition((int) xMouse, (int) yMouse, destX, destY, destW, destH, boxW, boxH);
+  }
 
   if ((placedBoxes == null) || placedBoxes.isEmpty() || !hoverBoxCollides(natural[0], natural[1], boxW, boxH, placedBoxes)) {
     return natural;
@@ -573,7 +696,7 @@ void queueHover (int xMouse, int yMouse, String[] lines, float destX, float dest
   }
   float boxW = 2 * hoverSidePad + maxTextWidth;
 
-  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes);
+  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes, currentHoverPreferredPosition);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
@@ -589,6 +712,7 @@ void queueHover (int xMouse, int yMouse, String[] lines, float destX, float dest
     box.yMouse = yMouse;
     box.lines = lines;
     box.col = null;
+    box.isLivePoint = resolvingLiveHoverPoint;
     pendingBoxes.add(box);
   }
 }
@@ -666,7 +790,7 @@ void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, flo
   float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
   float boxW = 2 * hoverSidePad + textWidth(lines[0]);
 
-  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes);
+  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes, currentHoverPreferredPosition);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
@@ -682,6 +806,7 @@ void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, flo
     box.yMouse = yMouse;
     box.lines = lines;
     box.col = col;
+    box.isLivePoint = resolvingLiveHoverPoint;
     pendingBoxes.add(box);
   }
 }

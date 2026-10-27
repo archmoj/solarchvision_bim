@@ -168,14 +168,14 @@ class HoverBoxCollisionTest {
   @Test
   void resolve_matchesTheNaturalPosition_whenNothingIsPlacedYet () {
     float[] natural = app.hoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54);
-    float[] resolved = app.resolveHoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54, new java.util.ArrayList<float[]>());
+    float[] resolved = app.resolveHoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54, new java.util.ArrayList<float[]>(), null);
     assertArrayEquals(natural, resolved, 0.0001f);
   }
 
   @Test
   void resolve_matchesTheNaturalPosition_whenPlacedBoxesIsNull () {
     float[] natural = app.hoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54);
-    float[] resolved = app.resolveHoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54, null);
+    float[] resolved = app.resolveHoverBoxPosition(50, 40, 0, 0, 400, 300, 70, 54, null, null);
     assertArrayEquals(natural, resolved, 0.0001f);
   }
 
@@ -189,7 +189,7 @@ class HoverBoxCollisionTest {
     java.util.ArrayList<float[]> placed = new java.util.ArrayList<>();
     placed.add(new float[]{ 514, 514, 70, 54 });
 
-    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed);
+    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed, null);
 
     assertEquals(416, resolved[0], 0.0001f);
     assertEquals(514, resolved[1], 0.0001f);
@@ -213,7 +213,7 @@ class HoverBoxCollisionTest {
     placed.add(new float[]{ 514, 432, 70, 54 });
     placed.add(new float[]{ 416, 432, 70, 54 });
 
-    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed);
+    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed, null);
 
     assertEquals(584, resolved[0], 0.0001f);
     assertEquals(514, resolved[1], 0.0001f);
@@ -236,7 +236,7 @@ class HoverBoxCollisionTest {
     java.util.ArrayList<float[]> placed = new java.util.ArrayList<>();
     placed.add(new float[]{ 0, 0, 300, 210 });
 
-    float[] resolved = app.resolveHoverBoxPosition(50, 20, 0, 0, 300, 300, 70, 54, placed);
+    float[] resolved = app.resolveHoverBoxPosition(50, 20, 0, 0, 300, 300, 70, 54, placed, null);
 
     assertEquals(64, resolved[0], 0.0001f);
     assertEquals(223, resolved[1], 0.0001f);
@@ -254,7 +254,7 @@ class HoverBoxCollisionTest {
     placed.add(new float[]{ 514, 514, 70, 54 });
     int sizeBefore = placed.size();
 
-    app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed);
+    app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed, null);
 
     assertEquals(sizeBefore, placed.size());
   }
@@ -274,9 +274,62 @@ class HoverBoxCollisionTest {
     placed.add(new float[]{ 0, 0, 100, 100 });
 
     float[] resolved = assertDoesNotThrow(() ->
-      app.resolveHoverBoxPosition(50, 50, 0, 0, 100, 100, 70, 54, placed));
+      app.resolveHoverBoxPosition(50, 50, 0, 0, 100, 100, 70, 54, placed, null));
 
     assertTrue(resolved[0] >= 0 && resolved[0] + 70 <= 100);
     assertTrue(resolved[1] >= 0 && resolved[1] + 54 <= 100);
+  }
+
+  // ================= resolveHoverBoxPosition with a preferredPosition =========
+  // This is how a pin remembers where it already was (hover.pde's own
+  // currentHoverPreferredPosition/hoverPointPreferredPosition) instead of
+  // being re-derived from scratch every frame - see the conversation
+  // that led here for why that matters.
+
+  @Test
+  void resolve_usesThePreferredPosition_insteadOfTheNaturalQuadrant_whenItsClear () {
+    // Mouse at (500,500) in this 1000x1000 rect would naturally resolve
+    // to (514,514) (same as the no-preference tests above) - passing an
+    // unrelated, clear preferredPosition should be used instead, proving
+    // it really does override the natural computation rather than just
+    // being ignored.
+    float[] preferred = { 100, 100 };
+
+    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, new java.util.ArrayList<float[]>(), preferred);
+
+    assertEquals(100, resolved[0], 0.0001f);
+    assertEquals(100, resolved[1], 0.0001f);
+  }
+
+  @Test
+  void resolve_fallsBackThroughTheNormalChain_whenThePreferredPositionCollides () {
+    // Same setup as resolve_fallsBackToAnotherQuadrant_whenTheNaturalSpotCollides
+    // above, but this time the FIRST candidate that collides is an
+    // explicit preferredPosition (514,514) rather than the natural
+    // quadrant computation landing there on its own - the fallback chain
+    // (the other three quadrants, keyed off the actual mouse position)
+    // must still kick in exactly the same way, landing on the same
+    // (416,514) second-quadrant candidate.
+    float[] preferred = { 514, 514 };
+    java.util.ArrayList<float[]> placed = new java.util.ArrayList<>();
+    placed.add(new float[]{ 514, 514, 70, 54 });
+
+    float[] resolved = app.resolveHoverBoxPosition(500, 500, 0, 0, 1000, 1000, 70, 54, placed, preferred);
+
+    assertEquals(416, resolved[0], 0.0001f);
+    assertEquals(514, resolved[1], 0.0001f);
+  }
+
+  @Test
+  void resolve_clampsThePreferredPositionIntoTheDestRect () {
+    // A remembered position could predate a panel resize, or just never
+    // have been clamped by whoever passed it in - it must be clamped the
+    // same as every other candidate, not used verbatim.
+    float[] preferred = { -50, -50 };
+
+    float[] resolved = app.resolveHoverBoxPosition(50, 50, 0, 0, 200, 200, 70, 54, new java.util.ArrayList<float[]>(), preferred);
+
+    assertEquals(app.hoverStrokeInset, resolved[0], 0.0001f);
+    assertEquals(app.hoverStrokeInset, resolved[1], 0.0001f);
   }
 }

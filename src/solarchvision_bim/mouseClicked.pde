@@ -2109,13 +2109,23 @@ void mouseClicked () {
         // click anywhere inside it is free to mean "pin a hover point
         // here" - added to allHoverPoints (hover.pde) alongside whatever
         // STUDY graph happens to be showing, same screen coordinates
-        // drawHoversAt() already uses for the live, mouse-following one.
+        // placeHoversAt() already uses for the live, mouse-following one.
         // Pinning even where nothing's actually hoverable is harmless:
         // place_STUDY_hover() already shows nothing there today for the
         // interactive point, same as it will for this one.
+        //
+        // findLiveHoverBox() looks up whatever box the live point was
+        // ACTUALLY showing (if any) right before this click, so the new
+        // pin can start out exactly there (addHoverPoint()'s own
+        // 3-argument overload) rather than being re-derived from scratch
+        // and potentially landing somewhere the live preview never was -
+        // see that overload's own comment for why a fresh re-derivation
+        // can't always reproduce it on its own.
         if (STUDY.include) {
           if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
-            addHoverPoint(X_clicked, Y_clicked);
+            PendingHoverBox liveBox = findLiveHoverBox(studyPendingHoverBoxes);
+            float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
+            addHoverPoint(X_clicked, Y_clicked, preferredPosition);
           }
         }
 
@@ -2136,7 +2146,13 @@ void mouseClicked () {
             if (showSolarImpactOverlay) {
               if ((WIN3D_layers_fit != null) &&
                   isInside(X_clicked, Y_clicked, WIN3D_layers_fit[0], WIN3D_layers_fit[1], WIN3D_layers_fit[0] + WIN3D_layers_fit[2], WIN3D_layers_fit[1] + WIN3D_layers_fit[3])) {
-                addHoverPoint(X_clicked, Y_clicked);
+                // Same reasoning as the STUDY click handling above:
+                // inherit whatever box the live point was actually
+                // showing right before this click, if any, so the new
+                // pin starts out exactly there.
+                PendingHoverBox liveBox = findLiveHoverBox(win3DPendingHoverBoxes);
+                float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
+                addHoverPoint(X_clicked, Y_clicked, preferredPosition);
               }
             } else {
               float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);

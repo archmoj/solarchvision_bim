@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 // Covers hover.pde's addHoverPoint()/removeOldestHoverPoint() - the pure
 // state management behind "click to pin a hover point, Esc to drop the
 // oldest one still pinned" (mouseClicked.pde's STUDY/WIN3D click
-// handling, solarchvision_bim.pde's keyPressed()). Neither function
-// touches live graphics - they only read/write the allHoverPoints field
-// itself - so both are fully testable here, unlike drawAllHovers()/
-// drawHoversAt() which actually draw.
+// handling, solarchvision_bim.pde's keyPressed()) - and, further below,
+// addHoverPoint()'s 3-argument overload and the hoverPointPreferredPosition
+// map it writes to, which is how a newly pinned point can remember where
+// its own live preview was. None of this touches live graphics - it only
+// reads/writes the allHoverPoints field and the preferred-position map
+// itself - so all of it is testable here, unlike drawAllHovers()/
+// placeHoversAt() which actually draw.
 class HoverPointsTest {
 
   private solarchvision_bim app;
@@ -129,5 +132,88 @@ class HoverPointsTest {
     assertArrayEquals(new int[]{ 2, 2 }, app.allHoverPoints[0]);
     assertArrayEquals(new int[]{ 3, 3 }, app.allHoverPoints[1]);
     assertArrayEquals(new int[]{ 9, 9 }, app.allHoverPoints[2]);
+  }
+
+  // ================= addHoverPoint with a preferredPosition ===================
+  // The 3-argument overload - how a newly pinned point remembers where
+  // its own live preview was (hover.pde's own currentHoverPreferredPosition,
+  // read by resolveHoverBoxPosition() - see HoverBoxCollisionTest.java's
+  // own "resolveHoverBoxPosition with a preferredPosition" section for
+  // how that's actually used during resolution).
+
+  @Test
+  void add_withAPreferredPosition_stillAddsTheRowTheSameWay () {
+    app.addHoverPoint(10, 20, new float[]{ 5, 5 });
+
+    assertEquals(1, app.allHoverPoints.length);
+    assertArrayEquals(new int[]{ 10, 20 }, app.allHoverPoints[0]);
+  }
+
+  @Test
+  void add_withAPreferredPosition_remembersItForThatExactRow () {
+    app.addHoverPoint(10, 20, new float[]{ 5, 5 });
+
+    float[] remembered = app.hoverPointPreferredPosition.get(app.allHoverPoints[0]);
+
+    assertNotNull(remembered);
+    assertEquals(5f, remembered[0], 0.0001f);
+    assertEquals(5f, remembered[1], 0.0001f);
+  }
+
+  @Test
+  void add_withANullPreferredPosition_remembersNothing () {
+    // The 2-argument overload delegates to this one with null - a click
+    // with no live box to inherit from (findLiveHoverBox() found
+    // nothing) ends up here too, and must behave exactly like a plain
+    // addHoverPoint(x, y) call, not accidentally remember an empty/zero
+    // position.
+    app.addHoverPoint(10, 20, null);
+
+    assertTrue(app.hoverPointPreferredPosition.isEmpty());
+  }
+
+  @Test
+  void add_withoutAPreferredPosition_neverTouchesTheMapAtAll () {
+    app.addHoverPoint(10, 20);
+
+    assertTrue(app.hoverPointPreferredPosition.isEmpty());
+  }
+
+  @Test
+  void add_distinguishesTwoPinsAtTheSameCoordinates_byRowIdentityNotValue () {
+    // Two separate clicks that happen to land on the exact same pixel
+    // must still be tracked as two distinct rows, each with its own
+    // (possibly different) remembered position - not merged into one
+    // entry just because their x,y values match.
+    app.addHoverPoint(10, 20, new float[]{ 1, 1 });
+    app.addHoverPoint(10, 20, new float[]{ 2, 2 });
+
+    assertEquals(2, app.allHoverPoints.length);
+    assertEquals(2, app.hoverPointPreferredPosition.size());
+
+    float[] first = app.hoverPointPreferredPosition.get(app.allHoverPoints[0]);
+    float[] second = app.hoverPointPreferredPosition.get(app.allHoverPoints[1]);
+    assertEquals(1f, first[0], 0.0001f);
+    assertEquals(2f, second[0], 0.0001f);
+  }
+
+  @Test
+  void remove_cleansUpThePreferredPositionOfTheRowItRemoves () {
+    app.addHoverPoint(10, 20, new float[]{ 5, 5 });
+    app.addHoverPoint(30, 40, new float[]{ 6, 6 });
+    int[] oldestRow = app.allHoverPoints[0];
+
+    app.removeOldestHoverPoint();
+
+    assertFalse(app.hoverPointPreferredPosition.containsKey(oldestRow));
+    assertEquals(1, app.hoverPointPreferredPosition.size()); // the remaining pin's own entry is untouched
+  }
+
+  @Test
+  void remove_leavesTheMapEmpty_whenTheRemovedPointHadNoPreference () {
+    app.addHoverPoint(10, 20); // no preference
+
+    assertTrue(app.removeOldestHoverPoint());
+    assertTrue(app.hoverPointPreferredPosition.isEmpty());
   }
 }
