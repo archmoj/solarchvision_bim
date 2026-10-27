@@ -3490,9 +3490,20 @@ class STUDY {
     float pal_ox = 700;
     float pal_oy = 110;
 
+    // Signs flipped relative to how they read below: this whole section
+    // used to negate pal_oy at every one of its four uses (the swatch
+    // rect, its value text, recordPaletteSwatchHover(), and the "Direct
+    // solar..." caption) while every sibling plotImpact_*() function
+    // (plotImpact_sunpath() etc., just above) uses pal_oy un-negated -
+    // same default value (110) either way, so that stray negation alone
+    // put this graph's default-layout palette well above where every
+    // other graph puts theirs. Removed the negation at all four sites
+    // below to match; these endDay==2 (Layout -1/-2) override values are
+    // negated here instead, to keep producing the exact same on-screen
+    // position as before for that already-correct case.
     if (this.endDay == 2) {
       pal_ox = (viewLayout == 2) ? 700 : 380;
-      pal_oy = (viewLayout == 2) ? -375 : 275;
+      pal_oy = (viewLayout == 2) ? 375 : -275;
     }
 
     for (int q = 0; q < 11; q++) {
@@ -3508,7 +3519,7 @@ class STUDY {
       this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
       this.graphics.strokeWeight(0);
-      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
       applyLegendTextStyle(COL);
 
@@ -3519,10 +3530,10 @@ class STUDY {
       String swatchUnit = "";
       if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) { swatchValue = 0.1 * q / PAL_multiplier; swatchUnit = " kWh/m\u00B2"; }
       if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) { swatchValue = funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1); swatchUnit = " kWh\u00B0C/m\u00B2"; }
-      this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+      this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
 
       this.recordPaletteSwatchHover(
-        (pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S,
+        (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
         (pal_length / 11.0) * this.view_S, 20 * this.view_S,
         nf(swatchValue, 1, 1) + swatchUnit, COL
       );
@@ -3545,11 +3556,11 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.horizontalUnitScale);
       this.graphics.textAlign(CENTER, TOP);
       if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
-        this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+        this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
         //?? French
       }
       if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
-        this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+        this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
         //?? French
       }
     }
