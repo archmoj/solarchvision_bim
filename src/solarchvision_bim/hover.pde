@@ -70,24 +70,32 @@ void addHoverPoint (int x, int y, float[] preferredPosition) {
   }
 }
 
-// Drops the OLDEST pinned hover point (allHoverPoints[0], the first one
-// clicked that's still pinned) - not the most recently added. This
-// matches drawAllHovers()'s own newest-to-oldest draw order (hover.pde):
-// the newest pin already gets priority placement and is the one least
-// likely to need nudging, so Esc trims away the stalest pin first rather
-// than undoing whatever was just clicked. The interactive point that
-// follows the live mouse is untouched either way, since it was never
-// part of allHoverPoints to begin with. Used by Esc (solarchvision_bim.
-// pde's own keyPressed()). Returns true if a point was actually removed,
-// false if there was nothing to remove - the same "did this consume the
-// Esc" convention cancelActivePickList() (mouseClicked.pde) already
-// uses, so Esc's own existing if/else-if chain there can add this as one
-// more link without changing how any of the others behave.
-boolean removeOldestHoverPoint () {
+// Drops the MOST RECENTLY pinned hover point (allHoverPoints' own last
+// entry) - the one just clicked, not the stalest one. This used to go
+// the other way (oldest first), back when a newly pinned point had no
+// memory of its own and was always re-derived from a fresh, unconstrained
+// natural-quadrant computation - the newest pin effectively couldn't be
+// "undone" by position alone, so trimming the oldest instead made more
+// sense. Now that a pin remembers where it actually landed
+// (addHoverPoint()'s own preferredPosition overload, and
+// hoverPointPreferredPosition above), Esc undoing the just-added pin is
+// the more natural behavior again: it's simply the last action taken,
+// same as Esc already means everywhere else in this if/else-if chain
+// (closing a menu, canceling typed input, canceling a pick list) - all
+// "undo the most recent thing," not "clean up the oldest thing lying
+// around." The interactive point that follows the live mouse is
+// untouched either way, since it was never part of allHoverPoints to
+// begin with. Used by Esc (solarchvision_bim.pde's own keyPressed()).
+// Returns true if a point was actually removed, false if there was
+// nothing to remove - the same "did this consume the Esc" convention
+// cancelActivePickList() (mouseClicked.pde) already uses, so Esc's own
+// existing if/else-if chain there can add this as one more link without
+// changing how any of the others behave.
+boolean removeLastHoverPoint () {
   if ((allHoverPoints == null) || (allHoverPoints.length == 0)) return false;
 
-  hoverPointPreferredPosition.remove(allHoverPoints[0]);
-  allHoverPoints = (int[][]) subset(allHoverPoints, 1);
+  hoverPointPreferredPosition.remove(allHoverPoints[allHoverPoints.length - 1]);
+  allHoverPoints = (int[][]) shorten(allHoverPoints);
   if (allHoverPoints.length == 0) allHoverPoints = null;
 
   return true;
@@ -197,12 +205,11 @@ void drawAllHovers () {
 
   // Pinned points, newest-to-oldest (not allHoverPoints' own click
   // order), following the live point above - so whichever was JUST
-  // clicked still gets first pick of position among the pinned ones.
-  // Esc drops the OLDEST pin instead of the newest
-  // (removeOldestHoverPoint() below) precisely because of this order:
-  // the newest pin already has priority placement and stays put as
-  // older ones are trimmed away, rather than Esc repeatedly taking away
-  // the one just added.
+  // clicked still gets first pick of position among the pinned ones. Esc
+  // (removeLastHoverPoint() below) drops that same most-recent pin -
+  // "undo the last thing I did," same as Esc means everywhere else - not
+  // the draw-priority ordering here, which is a separate concern (where
+  // a box goes, not which one Esc removes).
   if (allHoverPoints != null) {
     for (int i = allHoverPoints.length - 1; i >= 0; i--) {
       drawHoverPinAt(allHoverPoints[i]);
