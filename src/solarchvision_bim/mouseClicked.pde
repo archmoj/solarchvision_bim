@@ -2104,6 +2104,21 @@ void mouseClicked () {
           }
         }
 
+        // STUDY has no click behavior of its own (unlike WORLD/WIN3D
+        // below, both already fully committed to click-to-act), so a
+        // click anywhere inside it is free to mean "pin a hover point
+        // here" - added to allHoverPoints (hover.pde) alongside whatever
+        // STUDY graph happens to be showing, same screen coordinates
+        // drawHoversAt() already uses for the live, mouse-following one.
+        // Pinning even where nothing's actually hoverable is harmless:
+        // draw_STUDY_hover() already shows nothing there today for the
+        // interactive point, same as it will for this one.
+        if (STUDY.include) {
+          if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
+            addHoverPoint(X_clicked, Y_clicked);
+          }
+        }
+
         if (WIN3D.include) {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
@@ -2112,6 +2127,22 @@ void mouseClicked () {
 
             //handleWin3DClickAt(Image_X, Image_Y);
             runScriptLine((mouseButton == RIGHT ? "RightClick" : "LeftClick") + " x=" + Image_X + " y=" + Image_Y);
+
+            // Unlike STUDY above, WIN3D's click already does a lot (pick,
+            // create, move, ...) - adding a pinned hover point on top of
+            // that, unconditionally, would mean a point gets dropped on
+            // every single object-creation click too. So this only fires
+            // while the solar-impact overlay is actually showing (the
+            // same showSolarImpactOverlay flag drawSolarImpactHover()
+            // itself is gated on - hoverOnSolarImpactOverlay.pde) and the
+            // click lands inside that overlay's own fit rect
+            // (WIN3D_layers_fit, same as that function's own bounds
+            // check) - i.e. only where there's overlay data to pin in the
+            // first place.
+            if (showSolarImpactOverlay && (WIN3D_layers_fit != null) &&
+                isInside(X_clicked, Y_clicked, WIN3D_layers_fit[0], WIN3D_layers_fit[1], WIN3D_layers_fit[0] + WIN3D_layers_fit[2], WIN3D_layers_fit[1] + WIN3D_layers_fit[3])) {
+              addHoverPoint(X_clicked, Y_clicked);
+            }
           }
         }
 

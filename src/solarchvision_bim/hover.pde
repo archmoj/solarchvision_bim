@@ -1,5 +1,38 @@
 int[][] allHoverPoints = null;
 
+// Pins a new hover point at (x, y) - screen coordinates, the same space
+// drawHoversAt() below (and the live, mouse-following call at the bottom
+// of drawAllHovers()) already works in - onto the end of allHoverPoints,
+// growing it by one. Same int[][]-of-{x,y}-pairs shape (and the same
+// null-means-"no points" convention) the scripted HOVER/CLEARHOVER
+// commands (extraCommands.pde's __HOVER__/__CLEARHOVER__) already read
+// and write, so a point added here shows up to those too, and vice
+// versa - there's only ever the one allHoverPoints, however it got
+// added to.
+void addHoverPoint (int x, int y) {
+  int[][] newPoint = { { x, y } };
+  allHoverPoints = (allHoverPoints == null) ? newPoint : (int[][]) concat(allHoverPoints, newPoint);
+}
+
+// Drops the most recently pinned hover point - the interactive one that
+// follows the live mouse (drawn separately, by drawAllHovers()'s own
+// final "if (control == USER_GUI) drawHoversAt(mouseX, mouseY);" below)
+// is untouched, since it was never part of allHoverPoints to begin with.
+// Used by Esc (solarchvision_bim.pde's own keyPressed()). Returns true
+// if a point was actually removed, false if there was nothing to remove
+// - the same "did this consume the Esc" convention
+// cancelActivePickList() (mouseClicked.pde) already uses, so Esc's own
+// existing if/else-if chain there can add this as one more link without
+// changing how any of the others behave.
+boolean removeLastHoverPoint () {
+  if ((allHoverPoints == null) || (allHoverPoints.length == 0)) return false;
+
+  allHoverPoints = (int[][]) shorten(allHoverPoints);
+  if (allHoverPoints.length == 0) allHoverPoints = null;
+
+  return true;
+}
+
 // Erases whatever STUDY hover box the previous pass left on screen (see
 // clearStudyHover(), hoverOnStudyImpact.pde) exactly once, up front -
 // before any of this pass's points are drawn, and regardless of how many
