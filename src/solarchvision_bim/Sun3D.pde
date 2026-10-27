@@ -1124,26 +1124,7 @@ class Sun3D {
                 CyclesHoverPoint hoverPoint = new CyclesHoverPoint();
                 hoverPoint.screenX = STUDY.graphics.screenX(ox + x, -y);
                 hoverPoint.screenY = STUDY.graphics.screenY(ox + x, -y);
-                // Same "offset by a small local distance, measure the
-                // resulting screen-space gap" trick plotImpact_sunpath()
-                // uses for its own ellipse radius (STUDY.pde) - and, like
-                // that one, NOT additionally scaled by centralGraphScale/200:
-                // that factor already compresses x/y above relative to
-                // s_Plot (it's what keeps the whole dome's radius within
-                // a reasonable fraction of s_Plot in the first place), so
-                // re-applying it here as well shrank this offset by
-                // another ~200x on top of that - the previous version of
-                // this comment had the direction of that reasoning
-                // backwards. plotImpact_sunpath()'s own radius is a
-                // fraction of sx_Plot directly, for the same reason this
-                // one needs to be a fraction of s_Plot directly too -
-                // confirmed via actual logged hitRadius values
-                // (~0.15px, should be closer to ~30px) before landing on
-                // this fix.
-                float edgeOffset = 0.075 * s_Plot;
-                float edgeScreenX = STUDY.graphics.screenX(ox + x + edgeOffset, -y);
-                float edgeScreenY = STUDY.graphics.screenY(ox + x + edgeOffset, -y);
-                hoverPoint.hitRadius = dist(hoverPoint.screenX, hoverPoint.screenY, edgeScreenX, edgeScreenY);
+                hoverPoint.hitRadius = 5;
                 hoverPoint.Alpha = Alpha;
                 hoverPoint.Beta = Beta;
                 hoverPoint.valuesSUM = valuesSUM;
