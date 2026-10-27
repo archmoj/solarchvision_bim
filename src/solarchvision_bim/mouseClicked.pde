@@ -2122,26 +2122,28 @@ void mouseClicked () {
         if (WIN3D.include) {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-            float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
-            float Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
+            // While the solar-impact overlay is showing, a click is for
+            // pinning a hover point onto it, full stop - the normal
+            // pick/create/move click handling below is skipped entirely
+            // rather than also firing underneath, so a click meant to
+            // read the overlay doesn't also edit the 3D scene it's
+            // sitting on top of. Only pins where there's actually overlay
+            // data to pin: inside WIN3D_layers_fit, the same bounds
+            // drawSolarImpactHover() (hoverOnSolarImpactOverlay.pde)
+            // itself checks - a click elsewhere in the viewport while the
+            // overlay is up is simply consumed and does nothing, rather
+            // than falling through to object editing.
+            if (showSolarImpactOverlay) {
+              if ((WIN3D_layers_fit != null) &&
+                  isInside(X_clicked, Y_clicked, WIN3D_layers_fit[0], WIN3D_layers_fit[1], WIN3D_layers_fit[0] + WIN3D_layers_fit[2], WIN3D_layers_fit[1] + WIN3D_layers_fit[3])) {
+                addHoverPoint(X_clicked, Y_clicked);
+              }
+            } else {
+              float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
+              float Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
 
-            //handleWin3DClickAt(Image_X, Image_Y);
-            runScriptLine((mouseButton == RIGHT ? "RightClick" : "LeftClick") + " x=" + Image_X + " y=" + Image_Y);
-
-            // Unlike STUDY above, WIN3D's click already does a lot (pick,
-            // create, move, ...) - adding a pinned hover point on top of
-            // that, unconditionally, would mean a point gets dropped on
-            // every single object-creation click too. So this only fires
-            // while the solar-impact overlay is actually showing (the
-            // same showSolarImpactOverlay flag drawSolarImpactHover()
-            // itself is gated on - hoverOnSolarImpactOverlay.pde) and the
-            // click lands inside that overlay's own fit rect
-            // (WIN3D_layers_fit, same as that function's own bounds
-            // check) - i.e. only where there's overlay data to pin in the
-            // first place.
-            if (showSolarImpactOverlay && (WIN3D_layers_fit != null) &&
-                isInside(X_clicked, Y_clicked, WIN3D_layers_fit[0], WIN3D_layers_fit[1], WIN3D_layers_fit[0] + WIN3D_layers_fit[2], WIN3D_layers_fit[1] + WIN3D_layers_fit[3])) {
-              addHoverPoint(X_clicked, Y_clicked);
+              //handleWin3DClickAt(Image_X, Image_Y);
+              runScriptLine((mouseButton == RIGHT ? "RightClick" : "LeftClick") + " x=" + Image_X + " y=" + Image_Y);
             }
           }
         }
