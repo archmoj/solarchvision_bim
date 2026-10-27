@@ -152,8 +152,8 @@ void drawAllHovers () {
   }
 
   // --- Pass 2: paint from the queue, back-to-front ----------------------
-  paintHoverQueue(studyPendingHoverBoxes);
-  paintHoverQueue(win3DPendingHoverBoxes);
+  drawHoverQueue(studyPendingHoverBoxes);
+  drawHoverQueue(win3DPendingHoverBoxes);
 }
 
 // One panel's own throwaway box list from peekLastPinnedHoverBoxes()
@@ -207,13 +207,13 @@ HoverPeekResult peekLastPinnedHoverBoxes () {
 
 // Paints every box a panel's queue collected during pass 1, in reverse -
 // see drawAllHovers()'s own comment above for why reverse.
-void paintHoverQueue (ArrayList<PendingHoverBox> queue) {
+void drawHoverQueue (ArrayList<PendingHoverBox> queue) {
   if (queue == null) return;
 
   for (int i = queue.size() - 1; i >= 0; i--) {
     PendingHoverBox box = queue.get(i);
-    if (box.col == null) paintHover(box);
-    else paintPaletteHover(box);
+    if (box.col == null) drawHover(box);
+    else drawPaletteHover(box);
   }
 }
 
@@ -316,12 +316,12 @@ ArrayList<float[]> studyPlacedHoverBoxes = new ArrayList<float[]>();
 ArrayList<float[]> win3DPlacedHoverBoxes = new ArrayList<float[]>();
 
 // One box queued by queueHover()/queuePaletteHover() during pass 1
-// (drawAllHovers() above), carrying everything paintHover()/
-// paintPaletteHover() need to actually draw it later, in pass 2 - its
+// (drawAllHovers() above), carrying everything drawHover()/
+// drawPaletteHover() need to actually draw it later, in pass 2 - its
 // resolved rect, the anchor point it points back to (for the near/far
 // pointer-line geometry), its text, and - only for a palette swatch
 // box - the swatch's own color (null for every other hover type, which
-// is how paintHoverQueue() above tells the two apart).
+// is how drawHoverQueue() above tells the two apart).
 class PendingHoverBox {
   float x, y, w, h;
   int xMouse, yMouse;
@@ -596,7 +596,7 @@ void queueHover (int xMouse, int yMouse, String[] lines, float destX, float dest
 // Paints a box queueHover() already resolved and queued - see this
 // section's own header comment (drawAllHovers()) for when this runs
 // relative to queueHover() itself.
-void paintHover (PendingHoverBox box) {
+void drawHover (PendingHoverBox box) {
   float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
   int xMouse = box.xMouse, yMouse = box.yMouse;
   String[] lines = box.lines;
@@ -657,9 +657,9 @@ void paintHover (PendingHoverBox box) {
 }
 
 
-// Same split as queueHover()/paintHover() above, for the palette-swatch
+// Same split as queueHover()/drawHover() above, for the palette-swatch
 // variant - resolves and queues here, actually paints in
-// paintPaletteHover() below.
+// drawPaletteHover() below.
 void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
@@ -686,7 +686,7 @@ void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, flo
   }
 }
 
-void paintPaletteHover (PendingHoverBox box) {
+void drawPaletteHover (PendingHoverBox box) {
   float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
   int xMouse = box.xMouse, yMouse = box.yMouse;
   String[] lines = box.lines;
