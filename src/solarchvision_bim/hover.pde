@@ -97,21 +97,51 @@ void drawAllHovers () {
 
   // --- Pass 1: resolve positions, front-to-back priority order ---------
   //
-  // Live, mouse-following point first: it's expected to track the
-  // cursor precisely while exploring the graph, so it claims its spot
-  // before any pinned point gets a chance to - it's never the one nudged
-  // out of the way. Pinned points then follow newest-to-oldest (not
-  // allHoverPoints' own click order), so whichever was JUST clicked gets
-  // first pick of position among the pinned ones too, matching whatever
-  // the user is actively looking at right now. Esc drops the OLDEST pin
-  // instead of the newest (removeOldestHoverPoint() below) precisely
-  // because of this order: the newest pin already has priority
-  // placement and stays put as older ones are trimmed away, rather than
-  // Esc repeatedly taking away the one just added.
+  // drawHoversAt(mouseX, mouseY) genuinely IS resolved (and so, per pass
+  // 2 below, painted) first - the live point keeps priority over every
+  // pinned point, old or new, same as before. The one adjustment: right
+  // before resolving it, peekLastPinnedHoverBoxes() below previews where
+  // the MOST RECENTLY pinned point (allHoverPoints' own last entry)
+  // would land on its own, and that preview is seeded into
+  // studyPlacedHoverBoxes/win3DPlacedHoverBoxes as an extra obstacle for
+  // just this one call. So if the live point's own natural spot would
+  // land right on the newest pin, resolveHoverBoxPosition() (hover.pde)
+  // does its normal job and tries the other quadrants/an axis shift
+  // first, same as it would for any other already-placed box - rather
+  // than the live point blindly taking its natural spot and leaving the
+  // brand new pin to be the one that has to dodge it. The preview is
+  // discarded right after (removed from studyPlacedHoverBoxes/
+  // win3DPlacedHoverBoxes again): the newest pin's REAL position/content
+  // is still decided in its own turn, in the loop below, by then seeing
+  // the live point's real (now-resolved) box like any other pin does -
+  // this never short-circuits that.
+  ArrayList<float[]> lastPinnedPeekStudy = null;
+  ArrayList<float[]> lastPinnedPeekWin3D = null;
+
+  if ((allHoverPoints != null) && (allHoverPoints.length > 0)) {
+    HoverPeekResult peek = peekLastPinnedHoverBoxes();
+    lastPinnedPeekStudy = peek.study;
+    lastPinnedPeekWin3D = peek.win3D;
+
+    studyPlacedHoverBoxes.addAll(lastPinnedPeekStudy);
+    win3DPlacedHoverBoxes.addAll(lastPinnedPeekWin3D);
+  }
+
   if (control == USER_GUI) {
     drawHoversAt(mouseX, mouseY);
   }
 
+  if (lastPinnedPeekStudy != null) studyPlacedHoverBoxes.removeAll(lastPinnedPeekStudy);
+  if (lastPinnedPeekWin3D != null) win3DPlacedHoverBoxes.removeAll(lastPinnedPeekWin3D);
+
+  // Pinned points, newest-to-oldest (not allHoverPoints' own click
+  // order), following the live point above - so whichever was JUST
+  // clicked still gets first pick of position among the pinned ones.
+  // Esc drops the OLDEST pin instead of the newest
+  // (removeOldestHoverPoint() below) precisely because of this order:
+  // the newest pin already has priority placement and stays put as
+  // older ones are trimmed away, rather than Esc repeatedly taking away
+  // the one just added.
   if (allHoverPoints != null) {
     for (int i = allHoverPoints.length - 1; i >= 0; i--) {
       int x = allHoverPoints[i][0];
@@ -124,6 +154,55 @@ void drawAllHovers () {
   // --- Pass 2: paint from the queue, back-to-front ----------------------
   paintHoverQueue(studyPendingHoverBoxes);
   paintHoverQueue(win3DPendingHoverBoxes);
+}
+
+// One panel's own throwaway box list from peekLastPinnedHoverBoxes()
+// below - each is empty (not null) rather than absent when that panel
+// had nothing to show for the peeked point, so drawAllHovers() above
+// can addAll()/removeAll() them unconditionally once it's past the
+// null-point check.
+class HoverPeekResult {
+  ArrayList<float[]> study;
+  ArrayList<float[]> win3D;
+}
+
+// Resolves allHoverPoints' own last entry through the EXACT SAME
+// pipeline a real point goes through (drawHoversAt()) - same hit-tests,
+// same resolveHoverBoxPosition() call, same box size from the same
+// text - but into throwaway placedBoxes/pendingBoxes, swapped in for
+// just this one call and swapped back out again right after, so none of
+// it is kept: studyPlacedHoverBoxes/win3DPlacedHoverBoxes (the REAL
+// ones) and studyPendingHoverBoxes/win3DPendingHoverBoxes are left
+// exactly as drawAllHovers() found them. Only called from there, and
+// only to seed the live point's OWN resolution with one extra obstacle
+// to try to dodge - it doesn't decide anything about the pinned point
+// itself, which still gets a normal, independent resolution later in
+// drawAllHovers()'s own main loop (by then seeing the live point's real
+// box too, same as any other pin would).
+HoverPeekResult peekLastPinnedHoverBoxes () {
+  ArrayList<float[]> realStudyPlaced = studyPlacedHoverBoxes;
+  ArrayList<float[]> realWin3DPlaced = win3DPlacedHoverBoxes;
+  ArrayList<PendingHoverBox> realStudyPending = studyPendingHoverBoxes;
+  ArrayList<PendingHoverBox> realWin3DPending = win3DPendingHoverBoxes;
+
+  studyPlacedHoverBoxes = new ArrayList<float[]>();
+  win3DPlacedHoverBoxes = new ArrayList<float[]>();
+  studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+  win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+
+  int lastIndex = allHoverPoints.length - 1;
+  drawHoversAt(allHoverPoints[lastIndex][0], allHoverPoints[lastIndex][1]);
+
+  HoverPeekResult result = new HoverPeekResult();
+  result.study = studyPlacedHoverBoxes;
+  result.win3D = win3DPlacedHoverBoxes;
+
+  studyPlacedHoverBoxes = realStudyPlaced;
+  win3DPlacedHoverBoxes = realWin3DPlaced;
+  studyPendingHoverBoxes = realStudyPending;
+  win3DPendingHoverBoxes = realWin3DPending;
+
+  return result;
 }
 
 // Paints every box a panel's queue collected during pass 1, in reverse -
