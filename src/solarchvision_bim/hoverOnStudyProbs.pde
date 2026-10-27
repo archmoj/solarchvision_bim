@@ -80,7 +80,7 @@ String probsHoverTimeRangeText (int hourEnd, int hourWidth) {
 // Draws the hover box - layer name, the window's own date/hour range, the
 // bin's value range, and its probability (both the percentage and the
 // raw sample count it's based on). Same box sizing/positioning/edge-
-// drawing as every other STUDY hover feature (drawHover(), hover.pde).
+// drawing as every other STUDY hover feature (queueHover(), hover.pde).
 void drawProbsHoverBox (int xMouse, int yMouse, ProbsHoverBox box) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(box.layerName);
@@ -109,5 +109,5 @@ void drawProbsHoverBox (int xMouse, int yMouse, ProbsHoverBox box) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH, studyPlacedHoverBoxes);
+  queueHover(xMouse, yMouse, lines, destX, destY, destW, destH, studyPlacedHoverBoxes, studyPendingHoverBoxes);
 }

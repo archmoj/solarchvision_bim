@@ -31,5 +31,5 @@ void drawSolarImpactHover (int xMouse, int yMouse) {
   String[] lines = hoverLines(xMouse, yMouse, WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
-  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH, win3DPlacedHoverBoxes);
+  queueHover(xMouse, yMouse, lines, destX, destY, destW, destH, win3DPlacedHoverBoxes, win3DPendingHoverBoxes);
 }

@@ -5,8 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 // Covers hoverOnStudyProbs.pde's pure logic: probsHoverTimeRangeText()
 // (the window's hour-range display text) and studyProbsHover_hitTest()
 // (the point-in-rect hit test against each drawn probability box).
-// drawProbsHoverBox() itself touches real graphics (drawHover() measures
-// text against a live context) and isn't independently testable here,
+// drawProbsHoverBox() itself touches real graphics (queueHover() measures
+// text against a live context, and paintHover() actually draws) and
+// isn't independently testable here,
 // same as drawNormalsHoverBox() in StudyNormalsHoverTest.java - that's
 // exactly why probsHoverTimeRangeText() was pulled out as its own pure
 // function in the first place, rather than inlined where it's used.

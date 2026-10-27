@@ -55,6 +55,34 @@ boolean removeOldestHoverPoint () {
 // stops offering new hits while selected_parent != -1 (hoverOnStudy
 // Impact.pde), so nothing here is actually waiting to happen, it's just
 // no longer trying.
+//
+// Two passes, for two different reasons that each need the OPPOSITE
+// order from the other:
+//
+//  1. Resolving WHERE each box goes has to happen front-to-back
+//     (highest-priority point first) - see studyPlacedHoverBoxes/
+//     win3DPlacedHoverBoxes's own comment just below hoverBoxPosition()
+//     for the full reasoning. This pass only resolves positions and
+//     queues everything needed to paint each box later (queueHover()/
+//     queuePaletteHover(), both further below) - nothing is actually
+//     drawn to the screen yet.
+//  2. PAINTING has to happen back-to-front instead: when two boxes
+//     can't fully avoid overlapping (resolveHoverBoxPosition()'s own
+//     last-resort "least overlap" fallback), whichever one is painted
+//     LAST ends up on top - and the box that should stay fully visible
+//     is the higher-priority one from pass 1 (the live point, or
+//     whichever pin was clicked most recently), not whichever happens
+//     to be drawn last by coincidence. So pass 2 drains each panel's
+//     queue in the OPPOSITE order it was built in.
+//
+// Pass 2 deliberately does NOT re-run drawHoversAt()/the hit-testing
+// chain a second time: every box's position was already fully decided
+// in pass 1, with every OTHER box's final rect as context - re-resolving
+// in pass 2 would find that box's own rect still sitting in
+// studyPlacedHoverBoxes/win3DPlacedHoverBoxes and could shift it
+// somewhere else entirely, undoing pass 1's own priority ordering.
+// Queuing once and painting from the queue avoids that outright, rather
+// than trying to special-case away a box colliding with itself.
 void drawAllHovers () {
   if (UI_menuBar.selected_parent != -1) return;
 
@@ -64,17 +92,20 @@ void drawAllHovers () {
   // (just below hoverBoxPosition()) for what these track and why.
   studyPlacedHoverBoxes = new ArrayList<float[]>();
   win3DPlacedHoverBoxes = new ArrayList<float[]>();
+  studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+  win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
+  // --- Pass 1: resolve positions, front-to-back priority order ---------
+  //
   // Live, mouse-following point first: it's expected to track the
-  // cursor precisely while exploring the graph, so it's drawn (and
-  // claims its spot in studyPlacedHoverBoxes/win3DPlacedHoverBoxes)
+  // cursor precisely while exploring the graph, so it claims its spot
   // before any pinned point gets a chance to - it's never the one nudged
   // out of the way. Pinned points then follow newest-to-oldest (not
   // allHoverPoints' own click order), so whichever was JUST clicked gets
   // first pick of position among the pinned ones too, matching whatever
   // the user is actively looking at right now. Esc drops the OLDEST pin
   // instead of the newest (removeOldestHoverPoint() below) precisely
-  // because of this draw order: the newest pin already has priority
+  // because of this order: the newest pin already has priority
   // placement and stays put as older ones are trimmed away, rather than
   // Esc repeatedly taking away the one just added.
   if (control == USER_GUI) {
@@ -88,6 +119,22 @@ void drawAllHovers () {
 
       drawHoversAt(x, y);
     }
+  }
+
+  // --- Pass 2: paint from the queue, back-to-front ----------------------
+  paintHoverQueue(studyPendingHoverBoxes);
+  paintHoverQueue(win3DPendingHoverBoxes);
+}
+
+// Paints every box a panel's queue collected during pass 1, in reverse -
+// see drawAllHovers()'s own comment above for why reverse.
+void paintHoverQueue (ArrayList<PendingHoverBox> queue) {
+  if (queue == null) return;
+
+  for (int i = queue.size() - 1; i >= 0; i--) {
+    PendingHoverBox box = queue.get(i);
+    if (box.col == null) paintHover(box);
+    else paintPaletteHover(box);
   }
 }
 
@@ -161,20 +208,40 @@ float[] hoverBoxPosition (int xMouse, int yMouse, float destX, float destY, floa
 //
 // Scoped per panel: a STUDY box has no business dodging a WIN3D one or
 // vice versa, so each panel gets its own list. Reset once per pass by
-// drawAllHovers() above, then appended to by drawHover()/
-// drawPaletteHover() themselves, right after they resolve a position -
+// drawAllHovers() above, then appended to by queueHover()/
+// queuePaletteHover() themselves, right after they resolve a position -
 // so by the time the NEXT box in the same pass is resolved, every
 // earlier box's own FINAL rect (not just its natural, pre-collision-
-// avoidance one) is already in here. That's what makes this single-pass
-// rather than measure-everything-then-resolve: nothing placed is ever
-// revisited once drawn, which keeps this fast and simple for the
-// handful of simultaneous points this is meant for - see the
-// conversation that led here for why a two-pass or force-directed
+// avoidance one) is already in here. That's what makes placement itself
+// single-pass rather than measure-everything-then-resolve: nothing
+// placed is ever revisited once resolved, which keeps this fast and
+// simple for the handful of simultaneous points this is meant for - see
+// the conversation that led here for why a two-pass or force-directed
 // approach would be solving a problem this doesn't have at that scale.
+// (Painting is a separate, later pass - see drawAllHovers() - but that's
+// about paint ORDER for overlap stacking, not about revisiting a
+// position once resolved.)
 // Each entry is {x, y, w, h}, this box's own full rect in the SAME
 // screen space as destX/destY/xMouse/yMouse.
 ArrayList<float[]> studyPlacedHoverBoxes = new ArrayList<float[]>();
 ArrayList<float[]> win3DPlacedHoverBoxes = new ArrayList<float[]>();
+
+// One box queued by queueHover()/queuePaletteHover() during pass 1
+// (drawAllHovers() above), carrying everything paintHover()/
+// paintPaletteHover() need to actually draw it later, in pass 2 - its
+// resolved rect, the anchor point it points back to (for the near/far
+// pointer-line geometry), its text, and - only for a palette swatch
+// box - the swatch's own color (null for every other hover type, which
+// is how paintHoverQueue() above tells the two apart).
+class PendingHoverBox {
+  float x, y, w, h;
+  int xMouse, yMouse;
+  String[] lines;
+  float[] col;
+}
+
+ArrayList<PendingHoverBox> studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+ArrayList<PendingHoverBox> win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
 // True if rectangle A (x,y,w,h) and rectangle B overlap at all.
 boolean hoverBoxesOverlap (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh) {
@@ -257,9 +324,9 @@ float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float de
 // whichever candidate had the smallest total overlap rather than
 // picking an arbitrary one. Pure/no drawing (same as hoverBoxPosition()
 // itself), so independently testable without a live PGraphics context -
-// drawHover()/drawPaletteHover() (both below) are the only callers, and
-// both append this result to placedBoxes themselves right after, so the
-// next box resolved in the same pass sees it too.
+// queueHover()/queuePaletteHover() (both below) are the only callers,
+// and both append this result to placedBoxes themselves right after, so
+// the next box resolved in the same pass sees it too.
 float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, ArrayList<float[]> placedBoxes) {
   float[] natural = hoverBoxPosition((int) xMouse, (int) yMouse, destX, destY, destW, destH, boxW, boxH);
 
@@ -387,7 +454,12 @@ String[] hoverLines (int xMouse, int yMouse, int q, float[] raw) {
 }
 
 
-void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, ArrayList<float[]> placedBoxes) {
+// Resolves where this box belongs (claiming that spot in placedBoxes
+// for whatever's resolved next) and queues it to be painted later in
+// pass 2 (pendingBoxes - see drawAllHovers()'s own comment on why
+// painting is deferred and reversed). Nothing is drawn to the screen by
+// this call.
+void queueHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
   // textWidth()/textAscent()/textDescent() below all read the current text
   // size, so this has to happen before measuring anything.
   textSize(MessageSize);
@@ -406,6 +478,31 @@ void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY
   float boxY = boxPos[1];
 
   if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
+
+  if (pendingBoxes != null) {
+    PendingHoverBox box = new PendingHoverBox();
+    box.x = boxX;
+    box.y = boxY;
+    box.w = boxW;
+    box.h = boxH;
+    box.xMouse = xMouse;
+    box.yMouse = yMouse;
+    box.lines = lines;
+    box.col = null;
+    pendingBoxes.add(box);
+  }
+}
+
+// Paints a box queueHover() already resolved and queued - see this
+// section's own header comment (drawAllHovers()) for when this runs
+// relative to queueHover() itself.
+void paintHover (PendingHoverBox box) {
+  float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
+  int xMouse = box.xMouse, yMouse = box.yMouse;
+  String[] lines = box.lines;
+
+  textSize(MessageSize);
+  float lineHeight = textAscent() + textDescent();
 
   stroke(0);
   strokeWeight(1);
@@ -460,7 +557,10 @@ void drawHover (int xMouse, int yMouse, String[] lines, float destX, float destY
 }
 
 
-void drawPaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes) {
+// Same split as queueHover()/paintHover() above, for the palette-swatch
+// variant - resolves and queues here, actually paints in
+// paintPaletteHover() below.
+void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
   float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
@@ -471,6 +571,28 @@ void drawPaletteHover (int xMouse, int yMouse, String[] lines, float destX, floa
   float boxY = boxPos[1];
 
   if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
+
+  if (pendingBoxes != null) {
+    PendingHoverBox box = new PendingHoverBox();
+    box.x = boxX;
+    box.y = boxY;
+    box.w = boxW;
+    box.h = boxH;
+    box.xMouse = xMouse;
+    box.yMouse = yMouse;
+    box.lines = lines;
+    box.col = col;
+    pendingBoxes.add(box);
+  }
+}
+
+void paintPaletteHover (PendingHoverBox box) {
+  float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
+  int xMouse = box.xMouse, yMouse = box.yMouse;
+  String[] lines = box.lines;
+  float[] col = box.col;
+
+  textSize(MessageSize);
 
   // col is {alpha, r, g, b} (PAINT.getColorStyle()'s own order) - alpha isn't needed here.
   float swatchR = col[1], swatchG = col[2], swatchB = col[3];

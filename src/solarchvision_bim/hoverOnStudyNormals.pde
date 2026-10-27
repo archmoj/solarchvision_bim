@@ -160,5 +160,5 @@ void drawNormalsHoverBox (int xMouse, int yMouse, NormalsHoverColumn col) {
   float destX = STUDY.cX, destY = STUDY.cY;
   float destW = STUDY.dX / STUDY.ImageScale, destH = STUDY.dY / STUDY.ImageScale;
 
-  drawHover(xMouse, yMouse, lines, destX, destY, destW, destH, studyPlacedHoverBoxes);
+  queueHover(xMouse, yMouse, lines, destX, destY, destW, destH, studyPlacedHoverBoxes, studyPendingHoverBoxes);
 }

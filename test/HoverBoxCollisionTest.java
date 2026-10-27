@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 // greedy resolver that ties them together (resolveHoverBoxPosition).
 // All of it is pure - no live graphics touched, same as hoverBoxPosition
 // itself (SolarImpactOverlayHoverTest.java already covers that one
-// directly) - drawHover()/drawPaletteHover() are the only things that
-// actually draw, and aren't independently testable here for the same
-// reason every other STUDY/WIN3D box-drawing function this session
-// isn't.
+// directly) - queueHover()/queuePaletteHover() only resolve a position
+// and queue it, but paintHover()/paintPaletteHover() (the functions that
+// actually draw, in a later pass - see drawAllHovers()'s own comment)
+// aren't independently testable here, for the same reason every other
+// STUDY/WIN3D box-drawing function this session isn't.
 class HoverBoxCollisionTest {
 
   private solarchvision_bim app;
@@ -235,7 +236,7 @@ class HoverBoxCollisionTest {
   @Test
   void resolve_doesNotMutateThePlacedBoxesListItWasGiven () {
     // Appending the resolved result to placedBoxes is the CALLER's job
-    // (drawHover()/drawPaletteHover(), right after they call this) -
+    // (queueHover()/queuePaletteHover(), right after they call this) -
     // resolveHoverBoxPosition() itself must leave the list exactly as
     // given, or a box could end up colliding with its own, not-yet-final
     // candidate positions.
