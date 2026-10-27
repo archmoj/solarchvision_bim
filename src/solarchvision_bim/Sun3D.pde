@@ -987,7 +987,7 @@ class Sun3D {
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
               int now_j2 = wrapDayIndex(more_J + j * STUDY_dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
-              rowCalendarDay[row_J] = now_j2; // same value every iteration of this "for i" loop (see this array's own declaration above) - set here anyway rather than hoisting now_j2 itself out, to keep this change minimal
+              rowCalendarDay[row_J] = wrapDayIndex(now_j2 - STUDY_dayIncrement / 2); // same value every iteration of this "for i" loop (see this array's own declaration above) - set here anyway rather than hoisting now_j2 itself out, to keep this change minimal
 
               float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
               float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
