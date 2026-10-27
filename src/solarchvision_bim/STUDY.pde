@@ -753,17 +753,25 @@ class STUDY {
     this.graphics.fill(0);
     this.graphics.textAlign(CENTER, CENTER);
 
+    float h = sx_Plot * 0.2 / this.horizontalUnitScale;
+    float y = -1.2 * sx_Plot / this.horizontalUnitScale;
+
     for (int j = this.startDay; j < this.endDay; j++) {
       if ((this.horizontalUnitScale >= 0.75) || (((j - this.startDay) % int(1.5 / this.horizontalUnitScale)) == 0)) {
 
         float x = (j - ((0 - 12) / 24.0)) * sx_Plot;
-        float y = -1.2 * sx_Plot / this.horizontalUnitScale;
-        float h = sx_Plot * 0.2 / this.horizontalUnitScale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay), x, y + h);
-        if (this.daysMergedCount > 1) {
-          this.graphics.text(("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
+
+        if ((this.plotLayoutIndex == -2) || (this.plotLayoutIndex == -1)) {
+          this.graphics.text(
+            TIME.getDayText(j == 0 ? 92 : 275) + " \u2013 " +
+            TIME.getDayText(j == 1 ? 92 : 275), x, 4 * y + h);
+        } else {
+          this.graphics.text(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay), x, y + h);
+          if (this.daysMergedCount > 1) {
+            this.graphics.text(("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
+          }
         }
       }
     }
@@ -3456,12 +3464,6 @@ class STUDY {
 
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
-    String scenario_text = "";
-    //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
-    //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
-    //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
-    this.graphics.text(scenario_text, ((this.startDay - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.horizontalUnitScale);
-
     this.graphics.textSize(sx_Plot * 0.250 / this.horizontalUnitScale);
     this.graphics.textAlign(RIGHT, CENTER);
     this.graphics.stroke(0);
@@ -3490,17 +3492,6 @@ class STUDY {
     float pal_ox = 700;
     float pal_oy = 110;
 
-    // Signs flipped relative to how they read below: this whole section
-    // used to negate pal_oy at every one of its four uses (the swatch
-    // rect, its value text, recordPaletteSwatchHover(), and the "Direct
-    // solar..." caption) while every sibling plotImpact_*() function
-    // (plotImpact_sunpath() etc., just above) uses pal_oy un-negated -
-    // same default value (110) either way, so that stray negation alone
-    // put this graph's default-layout palette well above where every
-    // other graph puts theirs. Removed the negation at all four sites
-    // below to match; these endDay==2 (Layout -1/-2) override values are
-    // negated here instead, to keep producing the exact same on-screen
-    // position as before for that already-correct case.
     if (this.endDay == 2) {
       pal_ox = (viewLayout == 2) ? 700 : 380;
       pal_oy = (viewLayout == 2) ? 375 : -275;
@@ -3553,16 +3544,31 @@ class STUDY {
       if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.horizontalUnitScale);
       if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.horizontalUnitScale);
 
-      this.graphics.textSize(sx_Plot * 0.250 / this.horizontalUnitScale);
-      this.graphics.textAlign(CENTER, TOP);
-      if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
-        this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
-        //?? French
+      if (this.endDay == 2) {
+        this.graphics.textSize(sx_Plot * 0.250 / this.horizontalUnitScale);
+        this.graphics.textAlign(CENTER, TOP);
+        if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
+          //?? French
+        }
+        if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
+          //?? French
+        }
+      } else {
+        this.graphics.textSize(sx_Plot * 0.250 / this.horizontalUnitScale);
+        this.graphics.textAlign(LEFT, TOP);
+        if (this.impactTypeIndex == Impact_ACTIVE) {
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.1 * sx_Plot / this.horizontalUnitScale);
+          //?? French
+        }
+        if (this.impactTypeIndex == Impact_PASSIVE) {
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.1 * sx_Plot / this.horizontalUnitScale);
+          //?? French
+        }
       }
-      if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
-        this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, pal_oy * this.view_S + 25 * this.view_S);
-        //?? French
-      }
+
+
     }
 
   }
@@ -3619,12 +3625,8 @@ class STUDY {
 
 
 
+    this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
 
-
-    if ((this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) || (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE)) {
-    } else {
-      this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
-    }
 
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
