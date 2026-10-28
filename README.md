@@ -24,6 +24,7 @@ The SOLARCHVISION approach treats solar exposure and shade as context-dependent 
 - [Keyboard shortcuts](#keyboard-shortcuts)
 - [Command bar and automation](#command-bar-and-automation)
 - [The SOLARCHVISION approach](#the-solarchvision-approach)
+- [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)
 - [Method and publications](#method-and-publications)
 - [Technical overview](#technical-overview)
 - [Contribute and follow the project](#contribute-and-follow-the-project)
@@ -196,7 +197,7 @@ The **Case Bar** sits above the command bar. Its range controls let you select:
 - **Days** to include in the study.
 - **Scenarios** for ensemble forecasts, or **Years** for multi-year climate input.
 
-Use a left-click to set the start of a range and a right-click to set its end. Available statistical choices include minimum, average, maximum, the 25th, 50th (median), and 75th percentiles, plus built-in `Middle`, `Mid-High`, and `Mid-Low` selections. These options are not interchangeable: choose the statistic or scenario selection that matches the question being investigated.
+Use a left-click to set the start of a range and a right-click to set its end. Available statistical choices include minimum, average, maximum, the 25th, 50th (median), and 75th percentiles, plus `Leaning Low`, `Well-tempered`, and `Leaning High`—three scenarios unique to SOLARCHVISION (see [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)). These options are not interchangeable: choose the statistic or scenario selection that matches the question being investigated.
 
 ### Save and export
 
@@ -310,6 +311,38 @@ The amount of solar radiation is not the same as its effect in a particular clim
 7. **Communicate and refine.** Share views, graphs, and supported exports with the design team; repeat the analysis after design changes. Use specialist daylight, thermal, energy, wind, safety, or other simulation tools where required.
 
 The method can inform early design, refinement of building or landscape elements, and review of existing places. It supports the identification of design questions and alternatives; it does not guarantee a universally optimal design or replace formal risk assessment or specialist calculations.
+
+## Statistical scenarios, built from real data
+
+A single weather or climate file can only show one version of the future—or the past. SOLARCHVISION-BIM studies instead draw on a whole *ensemble*: years of climate records, forecast members, or scenario sets, often amounting to dozens of candidate days for the same date. The Case Bar's statistical choices—Minimum, Maximum, Average, the 25th/50th/75th percentiles, and three scenarios unique to SOLARCHVISION described below—are how that whole collection becomes the one representative day a 3D study actually simulates.
+
+### Why not just pick "the coldest day on record"?
+
+The simplest approach would be to hand the simulation whichever single real day happens to sit at the requested spot in the ranking—literally the most extreme, or literally the day closest to a given percentile. The trouble is that any one day also carries its own noise: an unusual local gust, a sensor quirk, a one-off weather pattern. Treat that single day as "the" representative scenario and a design risks responding to an anomaly rather than a genuinely representative condition.
+
+The opposite mistake is averaging too broadly. Blend enough days together indiscriminately and distinct statistics start to blur into one another—the 25th percentile starts looking suspiciously like the median.
+
+### SOLARCHVISION's answer: blend just enough real days, and only when it helps
+
+Rather than treating every statistic the same way, SOLARCHVISION-BIM decides how many real scenarios to combine—and how heavily to weigh each one—based on what kind of statistic was actually requested:
+
+- **Minimum and Maximum** use exactly one real day: the single most extreme one on record. Blending an extreme with its neighbors would simply erase the extreme, so none happens here.
+- **25th percentile, Median, and 75th percentile** blend the two real days closest to that percentile, weighting the nearer one twice as heavily. That is enough to damp one day's own noise without pulling three distinct, closely spaced percentile categories into looking the same.
+- **Average**, together with three scenarios unique to SOLARCHVISION (below), blends three real days with equal weight. These four statistics are already shaped by the *whole* dataset rather than one sharp point in it, so drawing on a few more real days brings real noise reduction at comparatively little cost.
+
+In every case, the hourly values that drive the simulation trace back to real, physically consistent weather or climate records—never invented from a parametric model or generated independently of actual observations. At most a small handful of real candidate days are blended together, chosen and weighted by a method that matches the statistic being asked for.
+
+### Leaning Low, Well-tempered, and Leaning High: scenarios unique to SOLARCHVISION
+
+Alongside the standard percentiles, SOLARCHVISION-BIM offers three scenarios found nowhere else: **Leaning Low**, **Well-tempered**, and **Leaning High**.
+
+Picture every recorded or forecast day for a given date, ranked from lowest to highest for whichever variable is being studied—temperature, wind speed, solar radiation, or another supported layer. A percentile picks a single rank off that list and reads it. SOLARCHVISION's three scenarios do something different: every day in the record gets a say, weighted by how close its rank sits to the target.
+
+- **Leaning Low** gives the lowest-ranked days the strongest voice, tapering off toward the high end—a day genuinely on the lower, milder side of the record, without being the single most extreme outlier.
+- **Leaning High** is the mirror image, favoring the higher end of the record.
+- **Well-tempered** favors the center of the ranking, but—true to its name—still lets even the far ends have a small voice rather than ignoring them outright. It takes its name from J.S. Bach's *Well-Tempered Clavier*: deliberately "well-tempered," not "even-tempered," because the weighting behind it is not flat. Like Bach's tuning system, it is balanced to work well across the whole range rather than being perfect at exactly one point.
+
+These three scenarios give a project team a way to explore "distinctly on the high side, without being the single most extreme day on record" or "a calm, representative middle ground" while never losing contact with real, physically consistent data—a nuance that standard percentiles and simple averages do not offer on their own.
 
 ## Method and publications
 
