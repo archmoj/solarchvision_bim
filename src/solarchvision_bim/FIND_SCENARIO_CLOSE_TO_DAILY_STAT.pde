@@ -19,7 +19,16 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
 // is defined to pick from - callers loop over the result instead of
 // checking for a single sentinel value.
 int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
-  if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1; // don't oversample/average extremes - use raw data
+
+  // Min/Max are themselves the extreme - averaging them with their
+  // next-nearest neighbors would pull the result back toward the middle
+  // of the distribution, defeating the point of picking "the min" or "the
+  // max" in the first place. Every other stat (Ave, Middle, a percentile,
+  // ...) targets a point THE DISTRIBUTION doesn't single out as uniquely
+  // extreme, so averaging a few scenarios close to it is still a sample
+  // of "about that typical", not a blunted extreme - only Min/Max don't
+  // get that treatment.
+  if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1;
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
