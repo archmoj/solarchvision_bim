@@ -19,6 +19,7 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
 // is defined to pick from - callers loop over the result instead of
 // checking for a single sentinel value.
 int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
+  if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1; // don't oversample/average extremes - use raw data
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
