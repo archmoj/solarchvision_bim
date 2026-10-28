@@ -171,7 +171,7 @@ class STUDY {
 
   boolean showImpactSummary = true;
 
-  int impactLayerIndex = 4; // 4 = Median
+  int impactLayerIndex = 1; // 1 = Well-tempered
 
   int impactGraphIndex = impactGraphIndex_GLOBAL_PASSIVE;
 
