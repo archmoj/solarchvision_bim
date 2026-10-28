@@ -3190,6 +3190,9 @@ class STUDY {
 
 
   void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
+    this.activeColorscaleFactor = 1;
+
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
 
@@ -3432,10 +3435,13 @@ class STUDY {
       }
     }
 
+    this.activeColorscaleFactor = savedActiveColorscaleFactor;
   }
 
 
   void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
+    this.activeColorscaleFactor = 1;
 
     int l = this.impactLayerIndex;
 
@@ -3558,10 +3564,9 @@ class STUDY {
           //?? French
         }
       }
-
-
     }
 
+    this.activeColorscaleFactor = savedActiveColorscaleFactor;
   }
 
 
