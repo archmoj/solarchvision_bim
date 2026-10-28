@@ -20019,6 +20019,7 @@ class STUDY {
     this.revise();
     WIN3D.revise();
     UI_rollout.revise();
+    UI_caseBar.revise();
   }
 
   // '[' : shrink the hourly summing interval, following the step sequence
@@ -22693,6 +22694,9 @@ class STUDY {
 
 
   public void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
+    this.activeColorscaleFactor = 1;
+
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
 
@@ -22935,10 +22939,13 @@ class STUDY {
       }
     }
 
+    this.activeColorscaleFactor = savedActiveColorscaleFactor;
   }
 
 
   public void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
+    this.activeColorscaleFactor = 1;
 
     int l = this.impactLayerIndex;
 
@@ -23061,10 +23068,9 @@ class STUDY {
           //?? French
         }
       }
-
-
     }
 
+    this.activeColorscaleFactor = savedActiveColorscaleFactor;
   }
 
 
@@ -32833,6 +32839,8 @@ class UI_caseBar {
     this.tab = pixel_C / PApplet.parseFloat(this.Items.length);
 
     drawTrackBackground();
+    drawSkyScenarioSelector();
+    drawImpactControlsSelector();
     drawTabs();
     drawImpactLayerIndexSelector();
 
@@ -32894,8 +32902,8 @@ class UI_caseBar {
     Y_control = pixel_A + pixel_B + 2 * pixel_H + 0.5f * this.tab;
 
     for (int i = 0; i < this.Items.length; i++) {
-      float x1 = X_control - 0.3666f * displayBarWidth;
-      float x2 = X_control + 0.4875f * displayBarWidth;
+      float x1 = X_control - 0.25f * displayBarWidth;
+      float x2 = X_control + 0.5f * displayBarWidth;
       float y1 = Y_control - 0.45f * displayBarHeight;
       float y2 = Y_control + 0.45f * displayBarHeight;
 
@@ -32906,7 +32914,7 @@ class UI_caseBar {
       textAlign(RIGHT, CENTER);
       stroke(0);
       fill(0);
-      textSize(1.15f * MessageSize);
+      textSize(1.0f * MessageSize);
       text(this.Items[i][0] + ": ", x1, Y_control - 0.125f * MessageSize);
 
       String item = this.Items[i][0];
@@ -33210,6 +33218,237 @@ class UI_caseBar {
       }
       textSize(1.0f * MessageSize);
       text(STAT_N_Title[n], 0.5f * (x1 + x2), 0.5f * (y1 + y2));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Sky scenario selector (1x4 grid, STUDY.skyScenarioSetting)
+  // ---------------------------------------------------------------------
+
+  // Plain-text labels for the 1x4 grid (cell n -> 0..3), left to right,
+  // kept separate from skyScenarioSetting_Title (globals.pde), which is
+  // used elsewhere for the fuller multi-line captions. Cell n corresponds
+  // to STUDY.skyScenarioSetting value n + 1 (that field is 1-based: see
+  // STUDY.pde and skyScenarioSetting_Title).
+  String[] skyScenarioButton_Title = {
+    "All", "Cloudy", "Partly", "Sunny"
+  };
+
+  public void drawSkyScenarioSelector () {
+    float displayBarWidth = 7.5f * MessageSize;
+    float displayBarHeight = 4.5f * MessageSize;
+    float offsetX = 0.5f * displayBarWidth;
+    float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5f * displayBarHeight;
+
+    handleSkyScenarioClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderSkyScenarioGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+  }
+
+  public float[] skyScenarioCellBounds (int n, float offsetX, float offsetY, float w, float h) {
+    int col = n; //n % 2;
+    int row = 1; //n / 2;
+    float rx = (col + 0.5f) / 2.0f - 0.5f;
+    float ry = (row + 0.5f) / 2.0f - 0.5f;
+    float x1 = offsetX + (rx - 0.225f) * w;
+    float x2 = offsetX + (rx + 0.225f) * w;
+    float y1 = offsetY + (ry - 0.2f) * h;
+    float y2 = offsetY + (ry + 0.2f) * h;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  public void handleSkyScenarioClicks (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = skyScenarioCellBounds(n, offsetX, offsetY, w, h);
+      if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
+        runScriptLine("Sky Scenario Setting " + (n + 1));
+      }
+    }
+  }
+
+  public void renderSkyScenarioGrid (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = skyScenarioCellBounds(n, offsetX, offsetY, w, h);
+      float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
+
+      if (n + 1 == STUDY.skyScenarioSetting) {
+        fill(255, 127, 0);
+      } else {
+        fill(127);
+      }
+      noStroke();
+      rect(x1, y1, x2 - x1, y2 - y1);
+
+      textAlign(CENTER, CENTER);
+      if (n + 1 == STUDY.skyScenarioSetting) {
+        stroke(0);
+        fill(0);
+      } else {
+        stroke(255);
+        fill(255);
+      }
+      textSize(1.0f * MessageSize);
+      text(skyScenarioButton_Title[n], 0.5f * (x1 + x2), 0.5f * (y1 + y2));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Impact controls (1x4 grid: Impact Type [Active, Passive] + Impact
+  // Day [Next, Previous]) - same keys as WIN3D's 'a'/'A' ("Toggle Impact
+  // Type") and 'd'/'D' ("Next"/"Previous Impact Day"), but Active/Passive
+  // are buttons that set a specific side rather than toggle, using the
+  // "Active Shade"/"Passive Shade" actions (actions.pde) that
+  // "Toggle Impact Type" itself just alternates between.
+  // ---------------------------------------------------------------------
+
+  // Deliberately NOT sharing offsetX/offsetY/w/h or cell-bounds code
+  // with drawSkyScenarioSelector() - kept numerically aligned with it
+  // (same width/height/offsetX/offsetY, only ry below differs: top row
+  // here vs. bottom row there) only so the two currently read as one
+  // 2-row block; moving this block later shouldn't require touching
+  // drawSkyScenarioSelector() at all, or vice versa.
+  String[] impactControlsButton_Title = {
+    "Active",
+    "Passive",
+    "|<<", // rewind
+    ">>|" // forward
+  };
+
+  public void drawImpactControlsSelector () {
+    float displayBarWidth = 7.5f * MessageSize;
+    float displayBarHeight = 4.5f * MessageSize;
+    float offsetX = 0.5f * displayBarWidth;
+    float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5f * displayBarHeight;
+
+    handleImpactControlsClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderImpactControlsGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+  }
+
+  public float[] impactControlsCellBounds (int n, float offsetX, float offsetY, float w, float h) {
+    int col = n; //n % 2;
+    int row = 0; //n / 2;
+    float rx = (col + 0.5f) / 2.0f - 0.5f;
+    float ry = (row + 0.5f) / 2.0f - 0.5f;
+    float x1 = offsetX + (rx - 0.225f) * w;
+    float x2 = offsetX + (rx + 0.225f) * w;
+    float y1 = offsetY + (ry - 0.2f) * h;
+    float y2 = offsetY + (ry + 0.2f) * h;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  public void handleImpactControlsClicks (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
+      if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) continue;
+
+final int impactGraphIndex_CYCLES_ACTIVE = 0;
+final int impactGraphIndex_CYCLES_PASSIVE = 1;
+final int impactGraphIndex_SUNPATH_ACTIVE = 2;
+final int impactGraphIndex_SUNPATH_PASSIVE = 3;
+final int impactGraphIndex_GLOBAL_ACTIVE = 4;
+final int impactGraphIndex_GLOBAL_PASSIVE = 5;
+final int impactGraphIndex_WIND_ACTIVE = 6;
+final int impactGraphIndex_WIND_PASSIVE = 7;
+final int impactGraphIndex_URBAN_ACTIVE = 8;
+final int impactGraphIndex_URBAN_PASSIVE = 9;
+
+      if (n == 0) {
+        if (STUDY.plotLayoutIndex == 0) {
+          if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_WIND_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
+            STUDY.revise();
+          }
+        } else if (STUDY.plotLayoutIndex == -1) {
+          STUDY.plotLayoutIndex = -2;
+          STUDY.revise();
+        } else if (STUDY.plotLayoutIndex == 2) {
+          STUDY.plotLayoutIndex = 1;
+          STUDY.revise();
+        }
+
+        runScriptLine("Active Shade");
+      }
+      else if (n == 1) {
+        if (STUDY.plotLayoutIndex == 0) {
+          if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_WIND_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
+            STUDY.revise();
+          }
+        } else if (STUDY.plotLayoutIndex == -2) {
+          STUDY.plotLayoutIndex = -1;
+          STUDY.revise();
+        } else if (STUDY.plotLayoutIndex == 1) {
+          STUDY.plotLayoutIndex = 2;
+          STUDY.revise();
+        }
+
+        runScriptLine("Passive Shade");
+      }
+      else if (n == 2) runScriptLine("Previous Impact Day");
+      else if (n == 3) runScriptLine("Next Impact Day");
+    }
+  }
+
+  public void renderImpactControlsGrid (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
+      float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
+
+      // Active/Passive reflect WIN3D.impactTypeIndex (the same field
+      // "Toggle Impact Type" alternates); Next/Previous are one-shot
+      // steps with no persistent "current" state to highlight.
+      boolean highlighted = (
+        (n == 0 && WIN3D.impactTypeIndex == Impact_ACTIVE && STUDY.impactTypeIndex == Impact_ACTIVE) ||
+        (n == 1 && WIN3D.impactTypeIndex == Impact_PASSIVE && STUDY.impactTypeIndex == Impact_PASSIVE)
+      );
+
+      if (highlighted) {
+        fill(255, 127, 0);
+      } else {
+        fill(127);
+      }
+      noStroke();
+      rect(x1, y1, x2 - x1, y2 - y1);
+
+      textAlign(CENTER, CENTER);
+      if (highlighted) {
+        stroke(0);
+        fill(0);
+      } else {
+        stroke(255);
+        fill(255);
+      }
+      textSize(1.0f * MessageSize);
+      text(impactControlsButton_Title[n], 0.5f * (x1 + x2), 0.5f * (y1 + y2));
     }
   }
 }
@@ -45016,6 +45255,7 @@ class WIN3D {
       case 'a':
       case 'A':
         callAction("Toggle Impact Type");
+        UI_caseBar.revise();
         break;
 
       case DELETE:
@@ -45102,9 +45342,11 @@ class WIN3D {
 
       case 'd':
         callAction("Next Impact Day");
+        UI_caseBar.revise();
         break;
       case 'D':
         callAction("Previous Impact Day");
+        UI_caseBar.revise();
         break;
 
       case ENTER:
