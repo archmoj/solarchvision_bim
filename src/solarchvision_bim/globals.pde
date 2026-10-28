@@ -358,14 +358,6 @@ String[] STAT_N_Title = {
   "Maximum"
 };
 
-// How many ensemble-member scenarios FIND_SCENARIOS_CLOSE_TO_DAILY_STAT()
-// picks per day, instead of just the single closest one: picking several
-// and averaging their hourly values (see each call site's own comment)
-// smooths over a single scenario's own noise/extreme conditions, rather
-// than letting one unlucky pick's outlier day drive the whole simulation.
-// range: 1 - 3. 1 reproduces the old single-scenario behavior exactly.
-int SCENARIO_SAMPLE_COUNT = 2;
-
 PrintWriter mtlOutput;
 PrintWriter objOutput;
 

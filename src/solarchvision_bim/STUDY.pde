@@ -2799,7 +2799,7 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
       if (allNk.length == 0) continue;
 
       // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
@@ -3234,7 +3234,7 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
       if (allNk.length == 0) continue;
 
       // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()

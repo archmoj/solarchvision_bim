@@ -50,7 +50,7 @@ void calculate_VertexSolar_array () {
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
+    int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
     if (allNk.length == 0) continue;
 
     TS_dayHasData[jIdx] = true;

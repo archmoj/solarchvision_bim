@@ -1,51 +1,60 @@
-// Single-scenario convenience wrapper around FIND_SCENARIOS_CLOSE_TO_DAILY_STAT()
-// below (sampleCount == 1) - kept for any caller that genuinely only wants
-// the one closest scenario, and to keep FindScenarioCloseToStatTest.java's
-// existing coverage of _FIND_SCENARIO_CLOSE_TO_STAT() (below) meaningful
-// without having to unwrap an array there.
-int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
-  int[] top = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(1, l, start_k, end_k, j, DATE_ANGLE, impactTypeIndex);
-  return (top.length > 0) ? top[0] : -1;
-}
-
-// Returns up to sampleCount scenario indices (nk - still the same
-// k*daysMergedCount + j_ADD packing every call site already unpacks),
-// nearest-first by distance to the requested stat - instead of just the
-// single closest one. Picking several and averaging their hourly values
-// (see each call site's own comment on how it does that averaging)
-// smooths over a single scenario's own noise/extreme conditions, rather
-// than letting one unlucky pick's outlier day drive the whole simulation.
-// Returns an empty array (never null, never containing -1) when nothing
-// is defined to pick from - callers loop over the result instead of
-// checking for a single sentinel value.
-int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
+// Decides how many scenarios FIND_SCENARIOS_CLOSE_TO_DAILY_STAT() samples
+// for a given stat - replacing what used to be a single global
+// SCENARIO_SAMPLE_COUNT every caller passed in regardless of which stat
+// it asked for: each stat family gets however many samples actually
+// suits the shape of thing it's estimating, instead of one setting
+// trying to fit all nine at once.
+//
+// Must stay in agreement with scenarioSampleWeight()'s own classification
+// of these same stats (averagedScenarioValues.pde): that function decides
+// how heavily each of these samples counts once picked, and the two only
+// make sense together - a stat sampled 3x here but still triangular-
+// weighted there would silently get LESS noise damping than intended
+// (triangular weighting concentrates most of the influence back onto the
+// closest sample again), not more.
+int scenarioSampleCount (int l) {
 
   // Min/Max are themselves the extreme - averaging them with their
   // next-nearest neighbors would pull the result back toward the middle
   // of the distribution, defeating the point of picking "the min" or "the
-  // max" in the first place. Every other stat (Ave, Middle, a percentile,
-  // ...) targets a point THE DISTRIBUTION doesn't single out as uniquely
-  // extreme, so averaging a few scenarios close to it is still a sample
-  // of "about that typical", not a blunted extreme - only Min/Max don't
-  // get that treatment.
-  if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1;
+  // max" in the first place.
+  if (l == STAT_N_Min || l == STAT_N_Max) return 1;
 
   // STAT_N_Ave, and - by the same reasoning - STAT_N_MidLow/Middle/
-  // MidHigh ("Leaning Low"/"Well-tempered"/"Leaning High") are the
-  // opposite case from Min/Max: scenarioSampleWeight()
-  // (averagedScenarioValues.pde) already gives all four a plain
-  // equal-weight average instead of every other stat's triangular one.
-  // Unlike a percentile or an extreme, none of these four target a
-  // single sharp point in the distribution - NORMAL.pde's own top
-  // comment on MidLow/Middle/MidHigh spells out why they're already
-  // whole-distribution-shaped rank-weighted means, not order statistics -
-  // so there's much less of a single point for an extra sample to drift
-  // away from, and pulling in more samples buys more noise reduction at
-  // comparatively little bias cost (variance keeps shrinking as
-  // 1/sampleCount). So, unlike every other stat, these four always use
-  // the full 3-sample range rather than whatever SCENARIO_SAMPLE_COUNT
-  // happens to be set to.
-  if (l == STAT_N_Ave || l == STAT_N_MidLow || l == STAT_N_Middle || l == STAT_N_MidHigh) sampleCount = 3;
+  // MidHigh ("Leaning Low"/"Well-tempered"/"Leaning High") don't target a
+  // single sharp point in the distribution the way a percentile or an
+  // extreme does - Ave by definition, the other three by being
+  // rank-weighted means over the WHOLE distribution (see NORMAL.pde's
+  // own top comment on them) rather than order statistics - so there's
+  // much less of a single point for an extra sample to drift away from,
+  // and pulling in more samples buys more noise reduction at
+  // comparatively little bias cost. These four always use the full
+  // 3-sample range.
+  if (l == STAT_N_Ave || l == STAT_N_MidLow || l == STAT_N_Middle || l == STAT_N_MidHigh) return 3;
+
+  // Every other stat (M25/M50/M75, the true percentiles/median): the
+  // default - enough samples to damp a single scenario's own noise,
+  // without so many that distinct, closely-spaced percentile categories
+  // start blending into each other. See scenarioSampleWeight()'s own
+  // 2:1 weighting (averagedScenarioValues.pde) for how these two
+  // samples are then combined.
+  return 2;
+}
+
+// Returns up to as many scenario indices (nk - still the same
+// k*daysMergedCount + j_ADD packing every call site already unpacks) as
+// scenarioSampleCount(l) (below) decides for this stat, nearest-first by
+// distance to it - instead of just the single closest one. Picking
+// several and averaging their hourly values (see each call site's own
+// comment on how it does that averaging) smooths over a single
+// scenario's own noise/extreme conditions, rather than letting one
+// unlucky pick's outlier day drive the whole simulation. Returns an
+// empty array (never null, never containing -1) when nothing is defined
+// to pick from - callers loop over the result instead of checking for a
+// single sentinel value.
+int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
+
+  int sampleCount = scenarioSampleCount(l);
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;

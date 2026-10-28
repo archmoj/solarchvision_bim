@@ -96,4 +96,31 @@ class FindScenarioCloseToStatTest {
     float[] values = {10, 20, 30};
     assertEquals(0, app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 0).length);
   }
+
+  // ================= scenarioSampleCount ====================================
+  // Replaces what used to be a single global SCENARIO_SAMPLE_COUNT every
+  // FIND_SCENARIOS_CLOSE_TO_DAILY_STAT() caller passed in - now decided per
+  // stat instead. Must stay in agreement with scenarioSampleWeight()'s own
+  // classification of the same stats (AveragedScenarioValuesTest.java).
+
+  @Test
+  void sampleCount_isOne_forMinAndMax () {
+    assertEquals(1, app.scenarioSampleCount(app.STAT_N_Min));
+    assertEquals(1, app.scenarioSampleCount(app.STAT_N_Max));
+  }
+
+  @Test
+  void sampleCount_isThree_forAveAndTheThreeWholeDistributionStats () {
+    assertEquals(3, app.scenarioSampleCount(app.STAT_N_Ave));
+    assertEquals(3, app.scenarioSampleCount(app.STAT_N_MidLow));
+    assertEquals(3, app.scenarioSampleCount(app.STAT_N_Middle));
+    assertEquals(3, app.scenarioSampleCount(app.STAT_N_MidHigh));
+  }
+
+  @Test
+  void sampleCount_isTwo_forThePercentilesAndMedian () {
+    assertEquals(2, app.scenarioSampleCount(app.STAT_N_M25));
+    assertEquals(2, app.scenarioSampleCount(app.STAT_N_M50));
+    assertEquals(2, app.scenarioSampleCount(app.STAT_N_M75));
+  }
 }

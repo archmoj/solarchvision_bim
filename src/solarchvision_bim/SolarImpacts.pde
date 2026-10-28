@@ -607,7 +607,7 @@ class SolarImpacts {
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
 
-          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
+          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
 
           if (allNk.length == 0) continue;
 

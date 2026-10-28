@@ -22,10 +22,11 @@
 // start blending into each other. 2:1 weighting costs a modest amount of
 // extra variance (~11% more than equal weights' theoretical minimum) to
 // stay closer to the actually-requested stat - and, just as importantly,
-// it keeps SCENARIO_SAMPLE_COUNT behaving consistently as it's raised:
-// 1 (unweighted) -> 2 (2:1) -> 3 (3:2:1) is the same rule at every step,
-// rather than a plain average at one sample count and a different kind
-// of estimator at another.
+// it keeps this rule consistent across however many samples
+// scenarioSampleCount() (FIND_SCENARIO_CLOSE_TO_DAILY_STAT.pde) picks for
+// a given stat: 1 (unweighted) -> 2 (2:1) -> 3 (3:2:1) is the same
+// triangular rule at every step, rather than a plain average at one
+// sample count and a different kind of estimator at another.
 //
 // STAT_N_Ave, and - by the same reasoning - STAT_N_MidLow/Middle/MidHigh
 // ("Leaning Low"/"Well-tempered"/"Leaning High") are the exception, and

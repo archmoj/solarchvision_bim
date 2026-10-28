@@ -722,7 +722,7 @@ class Sun3D {
       int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l,
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
         target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
 
@@ -961,7 +961,7 @@ class Sun3D {
 
           int keep_filter_type = STUDY.temporalFilterSetting;
           STUDY.temporalFilterSetting = filter_HOURLY;
-          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l,
+          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
           STUDY.temporalFilterSetting = keep_filter_type;
