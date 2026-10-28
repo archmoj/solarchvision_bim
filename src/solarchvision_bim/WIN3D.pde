@@ -639,6 +639,7 @@ class WIN3D {
       case 'a':
       case 'A':
         callAction("Toggle Impact Type");
+        UI_caseBar.revise();
         break;
 
       case DELETE:
@@ -725,9 +726,11 @@ class WIN3D {
 
       case 'd':
         callAction("Next Impact Day");
+        UI_caseBar.revise();
         break;
       case 'D':
         callAction("Previous Impact Day");
+        UI_caseBar.revise();
         break;
 
       case ENTER:

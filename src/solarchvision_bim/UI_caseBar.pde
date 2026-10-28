@@ -23,6 +23,7 @@ class UI_caseBar {
 
     drawTrackBackground();
     drawSkyScenarioSelector();
+    drawImpactControlsSelector();
     drawTabs();
     drawImpactLayerIndexSelector();
 
@@ -417,7 +418,7 @@ class UI_caseBar {
   };
 
   void drawSkyScenarioSelector () {
-    float displayBarWidth = 7.25 * MessageSize;
+    float displayBarWidth = 7.5 * MessageSize;
     float displayBarHeight = 4.5 * MessageSize;
     float offsetX = 0.5 * displayBarWidth;
     float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
@@ -470,6 +471,94 @@ class UI_caseBar {
       }
       textSize(1.0 * MessageSize);
       text(skyScenarioButton_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Impact controls (1x4 grid: Impact Type [Active, Passive] + Impact
+  // Day [Next, Previous]) - same keys as WIN3D's 'a'/'A' ("Toggle Impact
+  // Type") and 'd'/'D' ("Next"/"Previous Impact Day"), but Active/Passive
+  // are buttons that set a specific side rather than toggle, using the
+  // "Active Shade"/"Passive Shade" actions (actions.pde) that
+  // "Toggle Impact Type" itself just alternates between.
+  // ---------------------------------------------------------------------
+
+  // Deliberately NOT sharing offsetX/offsetY/w/h or cell-bounds code
+  // with drawSkyScenarioSelector() - kept numerically aligned with it
+  // (same width/height/offsetX/offsetY, only ry below differs: top row
+  // here vs. bottom row there) only so the two currently read as one
+  // 2-row block; moving this block later shouldn't require touching
+  // drawSkyScenarioSelector() at all, or vice versa.
+  String[] impactControlsButton_Title = {
+    "Active",
+    "Passive",
+    "|<<", // rewind
+    ">>|" // forward
+  };
+
+  void drawImpactControlsSelector () {
+    float displayBarWidth = 7.5 * MessageSize;
+    float displayBarHeight = 4.5 * MessageSize;
+    float offsetX = 0.5 * displayBarWidth;
+    float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
+
+    handleImpactControlsClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderImpactControlsGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+  }
+
+  float[] impactControlsCellBounds (int n, float offsetX, float offsetY, float w, float h) {
+    int col = n; //n % 2;
+    int row = 0; //n / 2;
+    float rx = (col + 0.5) / 2.0 - 0.5;
+    float ry = (row + 0.5) / 2.0 - 0.5;
+    float x1 = offsetX + (rx - 0.225) * w;
+    float x2 = offsetX + (rx + 0.225) * w;
+    float y1 = offsetY + (ry - 0.2) * h;
+    float y2 = offsetY + (ry + 0.2) * h;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  void handleImpactControlsClicks (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
+      if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) continue;
+
+      if (n == 0) runScriptLine("Active Shade");
+      else if (n == 1) runScriptLine("Passive Shade");
+      else if (n == 2) runScriptLine("Previous Impact Day");
+      else if (n == 3) runScriptLine("Next Impact Day");
+    }
+  }
+
+  void renderImpactControlsGrid (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
+      float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
+
+      // Active/Passive reflect WIN3D.impactTypeIndex (the same field
+      // "Toggle Impact Type" alternates); Next/Previous are one-shot
+      // steps with no persistent "current" state to highlight.
+      boolean highlighted = (n == 0 && WIN3D.impactTypeIndex == Impact_ACTIVE) ||
+                             (n == 1 && WIN3D.impactTypeIndex == Impact_PASSIVE);
+
+      if (highlighted) {
+        fill(255, 127, 0);
+      } else {
+        fill(127);
+      }
+      noStroke();
+      rect(x1, y1, x2 - x1, y2 - y1);
+
+      textAlign(CENTER, CENTER);
+      if (highlighted) {
+        stroke(0);
+        fill(0);
+      } else {
+        stroke(255);
+        fill(255);
+      }
+      textSize(1.0 * MessageSize);
+      text(impactControlsButton_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
     }
   }
 }

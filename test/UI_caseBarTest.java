@@ -4,19 +4,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // draw()/drawTabs()/drawTrackBackground()/drawDaysBands()/
 // drawDaysMonthLabels()/renderImpactLayerIndexGrid()/
-// renderSkyScenarioGrid()/drawWrappedRect() all touch live drawing
-// primitives (fill(), rect(), text(), ...) and aren't unit-testable
-// as-is (see test/README.md). What's covered instead: the pure math
-// (scaledIndexFromClick, dayOfYearFromClick, impactCellBounds,
-// skyScenarioCellBounds, scenarioRange, scenarioCurrentValues,
-// scenarioTickLabel) and the five click handlers (handleHoursClick,
-// handleDaysClick, handleScenarioClick, handleImpactLayerIndexClicks,
-// handleSkyScenarioClicks) - none of which touch drawing, only
+// renderSkyScenarioGrid()/renderImpactControlsGrid()/drawWrappedRect()
+// all touch live drawing primitives (fill(), rect(), text(), ...) and
+// aren't unit-testable as-is (see test/README.md). What's covered
+// instead: the pure math (scaledIndexFromClick, dayOfYearFromClick,
+// impactCellBounds, skyScenarioCellBounds, impactControlsCellBounds,
+// scenarioRange, scenarioCurrentValues, scenarioTickLabel) and the six
+// click handlers (handleHoursClick, handleDaysClick, handleScenarioClick,
+// handleImpactLayerIndexClicks, handleSkyScenarioClicks,
+// handleImpactControlsClicks) - none of which touch drawing, only
 // isInside()/runScriptLine() dispatch. handleHoursClick and
 // handleScenarioClick were pulled out of drawHoursTab/drawScenarioTab
 // specifically to make this possible, matching handleDaysClick/
-// handleImpactLayerIndexClicks/handleSkyScenarioClicks, which already
-// had their own dedicated functions.
+// handleImpactLayerIndexClicks/handleSkyScenarioClicks/
+// handleImpactControlsClicks, which already had their own dedicated
+// functions.
 class UI_caseBarTest {
 
   private solarchvision_bim app;
@@ -498,5 +500,104 @@ class UI_caseBarTest {
     app.UI_caseBar.handleSkyScenarioClicks(0, 0, 300, 300);
 
     assertEquals(before, app.STUDY.skyScenarioSetting);
+  }
+
+  // ================= impactControlsCellBounds =================================
+  // Same column math as skyScenarioCellBounds (same x1/x2 per cell), but
+  // ry = -0.25 instead of 0.25: a mirror-image row directly above it.
+
+  @Test
+  void impactControlsCellBounds_cellZero_isTheLeftmostColumn () {
+    float[] b = app.UI_caseBar.impactControlsCellBounds(0, 0, 0, 300, 300);
+    assertEquals(-145.5f, b[0], 0.01f);
+    assertEquals(-79.5f, b[1], 0.01f);
+    assertEquals(-135f, b[2], 0.01f);
+    assertEquals(-15f, b[3], 0.01f);
+  }
+
+  @Test
+  void impactControlsCellBounds_cellThree_isTheRightmostColumn () {
+    float[] b = app.UI_caseBar.impactControlsCellBounds(3, 0, 0, 300, 300);
+    assertEquals(79.5f, b[0], 0.01f);
+    assertEquals(145.5f, b[1], 0.01f);
+    assertEquals(-135f, b[2], 0.01f);
+    assertEquals(-15f, b[3], 0.01f);
+  }
+
+  // ================= handleImpactControlsClicks ================================
+  // build_allActions() (rather than registering one vm field) since
+  // these four are plain putAction entries in actions.pde, not
+  // ValueModifier-backed spinner fields - matching WIN3DActionsTest's
+  // own setup for exercising real action names through runScriptLine.
+
+  @Test
+  void handleImpactControlsClicks_clickingActive_setsImpactTypeIndexToActive () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
+    // Dead center of cell 0 (see impactControlsCellBounds_cellZero_... above).
+    app.X_clicked = -112;
+    app.Y_clicked = -75;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactTypeIndex);
+  }
+
+  @Test
+  void handleImpactControlsClicks_clickingPassive_setsImpactTypeIndexToPassive () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+    // Dead center of cell 1 (x: -70.5..-4.5, same y band as cell 0).
+    app.X_clicked = -37;
+    app.Y_clicked = -75;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(app.Impact_PASSIVE, app.WIN3D.impactTypeIndex);
+  }
+
+  @Test
+  void handleImpactControlsClicks_clickingNext_advancesImpactDisplayDay () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    app.STUDY.endDay = 5;
+    app.impactDisplayDay = 2;
+    // Dead center of cell 2 (x: 4.5..70.5, same y band as cell 0).
+    app.X_clicked = 37;
+    app.Y_clicked = -75;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(3, app.impactDisplayDay);
+  }
+
+  @Test
+  void handleImpactControlsClicks_clickingPrevious_rewindsImpactDisplayDay () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    app.STUDY.endDay = 5;
+    app.impactDisplayDay = 2;
+    // Dead center of cell 3 (see impactControlsCellBounds_cellThree_... above).
+    app.X_clicked = 112;
+    app.Y_clicked = -75;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(1, app.impactDisplayDay);
+  }
+
+  @Test
+  void handleImpactControlsClicks_outsideEveryCell_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    int before = app.impactDisplayDay;
+    app.X_clicked = 10000;
+    app.Y_clicked = 10000;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(before, app.impactDisplayDay);
   }
 }
