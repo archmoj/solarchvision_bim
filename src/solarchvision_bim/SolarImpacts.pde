@@ -299,8 +299,26 @@ class SolarImpacts {
   // overrides WIN3D.dX/dY to fit the impact resolution - so this is
   // whichever camera actually drove the Direct/Diffuse/mask PNGs it's
   // about to bake, not wherever the camera happens to sit afterward.
+  //
+  // Also invalidates win3DOverlay_analysisSnapshotValid: this.Image[][]
+  // (if any) was built by calculate_Impact_CurrentPreBaked() from the
+  // PREVIOUS bake's Direct/Diffuse/mask PNGs, tied to whichever camera
+  // was live at that previous preBakeViewport() call - not this one.
+  // Without clearing this here, a second preBakeViewport() from a new
+  // camera position would overwrite the camera snapshot to match the
+  // (now live) new camera while win3DOverlay_dataFresh() stays true
+  // (nothing about STUDY/TIME/colorscale changed), so
+  // win3DOverlay_cameraMatches() trivially passes again and
+  // draw_WIN3D_layers.pde would paint the stale, old-camera-derived
+  // this.Image[][] directly over the new camera's live view as if it
+  // were fresh. Clearing it here instead forces win3DOverlay_dataFresh()
+  // to fail - hiding the overlay - until calculate_Impact_
+  // CurrentPreBaked() (a Skin Potential re-run, or any other
+  // impact-graph trigger) actually recomputes this.Image[][] against
+  // this new bake and calls win3DOverlay_recordAnalysisState() again.
   void win3DOverlay_recordCameraState () {
     this.win3DOverlay_cameraSnapshotValid = true;
+    this.win3DOverlay_analysisSnapshotValid = false;
 
     this.win3DOverlay_cameraX                  = WIN3D.cameraX;
     this.win3DOverlay_cameraY                  = WIN3D.cameraY;

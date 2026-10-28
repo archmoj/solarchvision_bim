@@ -187,16 +187,49 @@ class SolarImpactsTest {
   }
 
   // ================= win3DOverlay_isFresh =================================================
+  // Real usage always records the camera first (preBakeViewport.pde, at its
+  // own top) and the analysis second (calculate_Impact_CurrentPreBaked(),
+  // once it has actually read that bake's PNGs) - these tests follow that
+  // same order rather than the reverse, since win3DOverlay_recordCameraState()
+  // invalidates any already-recorded analysis (see its own comment: a stale
+  // analysis snapshot must not go on "matching" a camera from a later bake).
 
   @Test
   void isFresh_requiresBothTheDataAndTheCameraToMatch () {
     assertFalse(app.allSolarImpacts.win3DOverlay_isFresh()); // neither recorded yet
 
-    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
-    assertFalse(app.allSolarImpacts.win3DOverlay_isFresh(), "data fresh, but camera never recorded");
-
     app.allSolarImpacts.win3DOverlay_recordCameraState();
+    assertFalse(app.allSolarImpacts.win3DOverlay_isFresh(), "camera recorded, but analysis never recorded");
+
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
     assertTrue(app.allSolarImpacts.win3DOverlay_isFresh(), "now both match");
+  }
+
+  // Regression coverage for the "rebake without re-running Skin Potential"
+  // bug: a second win3DOverlay_recordCameraState() call (a second
+  // preBakeViewport() from a new camera position) must invalidate the
+  // analysis snapshot recorded against the FIRST bake, so the overlay
+  // can't go on being treated as fresh for a camera its own Image[][] was
+  // never actually computed from.
+  @Test
+  void recordCameraState_invalidatesAPreviouslyRecordedAnalysis_onARebake () {
+    app.allSolarImpacts.win3DOverlay_recordCameraState();
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    assertTrue(app.allSolarImpacts.win3DOverlay_isFresh(), "sanity: fresh right after the first bake + analysis");
+
+    // Simulate rotating the camera, then preBakeViewport() running again -
+    // which calls win3DOverlay_recordCameraState() again - WITHOUT Skin
+    // Potential (calculate_Impact_CurrentPreBaked()) having re-run yet.
+    app.WIN3D.cameraX += 5f;
+    app.allSolarImpacts.win3DOverlay_recordCameraState();
+
+    assertTrue(app.allSolarImpacts.win3DOverlay_cameraMatches(), "camera snapshot was just re-recorded to match the live camera");
+    assertFalse(app.allSolarImpacts.win3DOverlay_dataFresh(), "but the analysis is now stale - it was never recomputed for this bake");
+    assertFalse(app.allSolarImpacts.win3DOverlay_isFresh(), "so the overlay as a whole must not be shown as fresh");
+
+    // Re-running Skin Potential against the new bake restores freshness.
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    assertTrue(app.allSolarImpacts.win3DOverlay_isFresh(), "fresh again once the analysis is redone for this bake");
   }
 
   // ================= win3DOverlay_needsClearRect ===========================================
@@ -225,8 +258,8 @@ class SolarImpactsTest {
 
   @Test
   void needsClearRect_isFalse_whenTheCameraActuallyMatches_evenWithAnOverrideRequested () {
-    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
     app.allSolarImpacts.win3DOverlay_recordCameraState();
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
     app.allSolarImpacts.Image = new PImage[2][5];
     app.WIN3D.showSolarImpactOverride = true;
 
