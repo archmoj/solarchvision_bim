@@ -14,24 +14,42 @@ class AveragedScenarioValuesTest {
 
   // ================= scenarioSampleWeight =================================
   // Rank-based (nearest-first) triangular weight: sampleCount, sampleCount-1,
-  // ..., 1. sampleCount == 2 is exactly the requested 2:1 weighting.
+  // ..., 1. sampleCount == 2 is exactly the requested 2:1 weighting. Every
+  // stat except STAT_N_Ave gets this treatment - STAT_N_M75 stands in below
+  // for "any non-Ave stat".
 
   @Test
   void weight_isOneForTheOnlySample_whenSampleCountIsOne () {
-    assertEquals(1f, app.scenarioSampleWeight(0, 1), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(0, 1, app.STAT_N_M75), EPS);
   }
 
   @Test
   void weight_isTwoToOne_whenSampleCountIsTwo () {
-    assertEquals(2f, app.scenarioSampleWeight(0, 2), EPS); // closest
-    assertEquals(1f, app.scenarioSampleWeight(1, 2), EPS); // 2nd-closest
+    assertEquals(2f, app.scenarioSampleWeight(0, 2, app.STAT_N_M75), EPS); // closest
+    assertEquals(1f, app.scenarioSampleWeight(1, 2, app.STAT_N_M75), EPS); // 2nd-closest
   }
 
   @Test
   void weight_isThreeTwoOne_whenSampleCountIsThree () {
-    assertEquals(3f, app.scenarioSampleWeight(0, 3), EPS);
-    assertEquals(2f, app.scenarioSampleWeight(1, 3), EPS);
-    assertEquals(1f, app.scenarioSampleWeight(2, 3), EPS);
+    assertEquals(3f, app.scenarioSampleWeight(0, 3, app.STAT_N_M75), EPS);
+    assertEquals(2f, app.scenarioSampleWeight(1, 3, app.STAT_N_M75), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(2, 3, app.STAT_N_M75), EPS);
+  }
+
+  // ================= scenarioSampleWeight: STAT_N_Ave exception ===========
+  // "Average" has no single point in the distribution a sample can be
+  // closer to or farther from in a way that makes it a "better" or
+  // "worse" estimate - every defined value already contributes to it
+  // equally by definition - so, unlike every other stat, it gets a plain
+  // equal-weight average instead of the triangular rank weighting.
+
+  @Test
+  void weight_isEqualForEverySample_whenStatIsAverage () {
+    assertEquals(1f, app.scenarioSampleWeight(0, 2, app.STAT_N_Ave), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(1, 2, app.STAT_N_Ave), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(0, 3, app.STAT_N_Ave), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(1, 3, app.STAT_N_Ave), EPS);
+    assertEquals(1f, app.scenarioSampleWeight(2, 3, app.STAT_N_Ave), EPS);
   }
 
   // ================= averagedScenarioHourlyValues ==========================
@@ -85,11 +103,28 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0, 0 };
     int[] sampleNowJ = { 0, 1 };
 
-    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ);
+    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_M75);
 
     assertNotNull(avg);
     // (2*1.0 + 1*4.0) / 3 = 2.0 - a plain average would have given 2.5.
     assertEquals(2.0f, avg[0], EPS);
+  }
+
+  @Test
+  void hourlyValues_usesAPlainAverage_whenStatIsAverage () {
+    setUpTypicalYearSource(2, 2);
+    setDay(0, 0, 1000, 0, 0, 0); // closest sample: R_dir raw 1000 -> 1.0 scaled
+    setDay(1, 0, 4000, 0, 0, 0); // 2nd-closest: R_dir raw 4000 -> 4.0 scaled
+
+    int[] sampleNowK = { 0, 0 };
+    int[] sampleNowJ = { 0, 1 };
+
+    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_Ave);
+
+    assertNotNull(avg);
+    // (1.0 + 4.0) / 2 = 2.5, not the 2.0 the triangular weighting gives
+    // the identical samples above.
+    assertEquals(2.5f, avg[0], EPS);
   }
 
   @Test
@@ -102,7 +137,7 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0, 0 };
     int[] sampleNowJ = { 0, 1 };
 
-    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ);
+    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_M75);
 
     assertNotNull(avg);
     // Only the 2nd sample qualifies - its own weight is normalized to
@@ -118,7 +153,7 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0, 0 };
     int[] sampleNowJ = { 0, 1 };
 
-    assertNull(app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ));
+    assertNull(app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_M75));
   }
 
   @Test
@@ -129,7 +164,7 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0 };
     int[] sampleNowJ = { 0 };
 
-    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ);
+    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_M75);
 
     assertNotNull(avg);
     assertEquals(5.0f, avg[0], EPS);
@@ -151,10 +186,24 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0, 0 };
     int[] sampleNowJ = { 0, 1 };
 
-    float avg = app.averagedScenarioLayerValue(0, sampleNowK, sampleNowJ, app.LAYER_dirnorrad.id);
+    float avg = app.averagedScenarioLayerValue(0, sampleNowK, sampleNowJ, app.LAYER_dirnorrad.id, app.STAT_N_M75);
 
     // (2*1000 + 1*4000) / 3 = 2000 - a plain average would have given 2500.
     assertEquals(2000f, avg, EPS);
+  }
+
+  @Test
+  void layerValue_usesAPlainAverage_whenStatIsAverage () {
+    setUpTypicalYearSource(2, 2);
+    app.climateTypicalYearValues[0][0][app.LAYER_dirnorrad.id][0] = 1000;
+    app.climateTypicalYearValues[0][1][app.LAYER_dirnorrad.id][0] = 4000;
+
+    int[] sampleNowK = { 0, 0 };
+    int[] sampleNowJ = { 0, 1 };
+
+    float avg = app.averagedScenarioLayerValue(0, sampleNowK, sampleNowJ, app.LAYER_dirnorrad.id, app.STAT_N_Ave);
+
+    assertEquals(2500f, avg, EPS);
   }
 
   @Test
@@ -165,6 +214,6 @@ class AveragedScenarioValuesTest {
     int[] sampleNowK = { 0 };
     int[] sampleNowJ = { 0 };
 
-    assertEquals(app.FLOAT_undefined, app.averagedScenarioLayerValue(0, sampleNowK, sampleNowJ, app.LAYER_dirnorrad.id));
+    assertEquals(app.FLOAT_undefined, app.averagedScenarioLayerValue(0, sampleNowK, sampleNowJ, app.LAYER_dirnorrad.id, app.STAT_N_M75));
   }
 }

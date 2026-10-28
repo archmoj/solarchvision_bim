@@ -753,8 +753,8 @@ class Sun3D {
         int layerId = (WIN3D.impactTypeIndex == Impact_ACTIVE) ? LAYER_dirnorrad.id
                     : (WIN3D.impactTypeIndex == Impact_PASSIVE) ? LAYER_direffect.id : -1;
         if (layerId != -1) {
-          Pa1 = averagedScenarioLayerValue(now_i1, sampleNowK, sampleNowJ, layerId);
-          Pa2 = averagedScenarioLayerValue(now_i2, sampleNowK, sampleNowJ, layerId);
+          Pa1 = averagedScenarioLayerValue(now_i1, sampleNowK, sampleNowJ, layerId, l);
+          Pa2 = averagedScenarioLayerValue(now_i2, sampleNowK, sampleNowJ, layerId, l);
         }
 
         if (is_undefined(Pa1) && is_undefined(Pa2)) continue; // no data for this hour
@@ -1042,7 +1042,7 @@ class Sun3D {
                 boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i1, now_j2, now_k);
                 if (!isMemberCounted) continue;
 
-                float weight = scenarioSampleWeight(s, sunPathSampleCount);
+                float weight = scenarioSampleWeight(s, sunPathSampleCount, l);
                 sumRAD += weight * 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                 sumEFF += weight * 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
                 weightSum += weight;

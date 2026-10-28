@@ -26,7 +26,25 @@
 // 1 (unweighted) -> 2 (2:1) -> 3 (3:2:1) is the same rule at every step,
 // rather than a plain average at one sample count and a different kind
 // of estimator at another.
-float scenarioSampleWeight (int rank, int sampleCount) {
+//
+// STAT_N_Ave is the one exception, and uses a plain (equal-weight)
+// average instead. The bias argument above only holds when "the stat"
+// is a specific point the distribution singles out - a particular
+// percentile, the middle, an extreme - where a sample picked for being
+// slightly farther from that point really is a slightly worse estimate
+// of it. The average has no such single point to drift away from: every
+// defined value in the whole pool is already an equally legitimate
+// contributor to it by definition, so the 2nd/3rd-closest-to-the-mean
+// samples aren't "worse" estimates of the mean than the closest one, and
+// weighting them down would just reintroduce the single-sample noise
+// this whole feature exists to damp, for no bias benefit in return. l
+// (not lSelected - FIND_SCENARIOS_CLOSE_TO_DAILY_STAT()'s own
+// active/passive flip never touches STAT_N_Ave, so the two always agree
+// here) is the caller's own STUDY.impactLayerIndex, passed through
+// unchanged from whichever FIND_SCENARIOS_CLOSE_TO_DAILY_STAT() call
+// produced the samples being weighted.
+float scenarioSampleWeight (int rank, int sampleCount, int l) {
+  if (l == STAT_N_Ave) return 1;
   return sampleCount - rank;
 }
 
@@ -60,7 +78,7 @@ float scenarioSampleWeight (int rank, int sampleCount) {
 // hour" outcome a single-scenario pick already produces when its own
 // values are undefined or filtered out, just not giving up until every
 // sample has been tried.
-float[] averagedScenarioHourlyValues (int i, int[] sampleNowK, int[] sampleNowJ) {
+float[] averagedScenarioHourlyValues (int i, int[] sampleNowK, int[] sampleNowJ, int l) {
   int sampleCount = sampleNowK.length;
 
   float sumRdir = 0;
@@ -83,7 +101,7 @@ float[] averagedScenarioHourlyValues (int i, int[] sampleNowK, int[] sampleNowJ)
     boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, i, now_j, now_k);
     if (!isMemberCounted) continue;
 
-    float weight = scenarioSampleWeight(s, sampleCount);
+    float weight = scenarioSampleWeight(s, sampleCount, l);
     sumRdir += weight * 0.001 * Pa;
     sumRdif += weight * 0.001 * Pb;
     sumEdir += weight * 0.001 * Pc;
@@ -103,7 +121,7 @@ float[] averagedScenarioHourlyValues (int i, int[] sampleNowK, int[] sampleNowJ)
 // checked that filter either (it only ever gated on is_undefined()).
 // Returns FLOAT_undefined, not 0, when none of the samples have a defined
 // value - never silently averaging in "missing" as zero.
-float averagedScenarioLayerValue (int i, int[] sampleNowK, int[] sampleNowJ, int layerId) {
+float averagedScenarioLayerValue (int i, int[] sampleNowK, int[] sampleNowJ, int layerId, int l) {
   int sampleCount = sampleNowK.length;
 
   float sum = 0;
@@ -113,7 +131,7 @@ float averagedScenarioLayerValue (int i, int[] sampleNowK, int[] sampleNowJ, int
     float P = getValue_currentDataSource(i, sampleNowJ[s], sampleNowK[s], layerId);
     if (is_undefined(P)) continue;
 
-    float weight = scenarioSampleWeight(s, sampleCount);
+    float weight = scenarioSampleWeight(s, sampleCount, l);
     sum += weight * P;
     weightSum += weight;
   }

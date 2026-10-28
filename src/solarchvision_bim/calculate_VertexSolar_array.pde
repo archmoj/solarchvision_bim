@@ -79,7 +79,7 @@ void calculate_VertexSolar_array () {
       float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
       if (SunR[3] <= 0) continue;
 
-      float[] avg = averagedScenarioHourlyValues(i, sampleNowK, sampleNowJ);
+      float[] avg = averagedScenarioHourlyValues(i, sampleNowK, sampleNowJ, l);
       if (avg == null) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };

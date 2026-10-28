@@ -661,7 +661,7 @@ class SolarImpacts {
 
                 now_i = i;
 
-                float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ);
+                float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ, l);
 
                 if (avg == null) {
                   values_R_dir = FLOAT_undefined;
