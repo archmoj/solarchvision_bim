@@ -345,9 +345,9 @@ int STAT_N_Ave = 7;
 int STAT_N_Max = 8;
 
 String[] STAT_N_Title = {
-  "Mid-Low",
-  "Middle",
-  "Mid-High",
+  "Leaning Low",
+  "Well-tempered",
+  "Leaning High",
 
   "25th Percentile",
   "50th P.(Median)",
