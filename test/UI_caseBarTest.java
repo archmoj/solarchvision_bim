@@ -442,15 +442,18 @@ class UI_caseBarTest {
   }
 
   // ================= skyScenarioCellBounds ====================================
-  // Single row of 4 columns now (was 2x2): y1/y2 stay fixed across every
-  // cell (15/135 of a 300-tall box, same as the old 2x2's bottom row),
-  // only x1/x2 vary by column.
+  // col is n directly (0..3) but rx still divides by 2.0 (the old 2-column
+  // pitch, from before this became a 4-wide row) rather than 4.0, so the
+  // columns are NOT evenly spread across [0, w]: cell 0/1 sit within
+  // roughly the left half of the box and cell 2/3 land increasingly past
+  // its right edge (cell 3 well outside [0, 300] below). y1/y2 (15/135 of
+  // a 300-tall box) stay fixed across every cell either way.
 
   @Test
   void skyScenarioCellBounds_cellZero_isTheLeftmostColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(0, 0, 0, 300, 300);
-    assertEquals(-145.5f, b[0], 0.01f);
-    assertEquals(-79.5f, b[1], 0.01f);
+    assertEquals(-142.5f, b[0], 0.01f);
+    assertEquals(-7.5f, b[1], 0.01f);
     assertEquals(15f, b[2], 0.01f);
     assertEquals(135f, b[3], 0.01f);
   }
@@ -458,8 +461,8 @@ class UI_caseBarTest {
   @Test
   void skyScenarioCellBounds_cellOne_isTheSecondColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(1, 0, 0, 300, 300);
-    assertEquals(-45.5f, b[0], 0.01f);
-    assertEquals(20.5f, b[1], 0.01f);
+    assertEquals(7.5f, b[0], 0.01f);
+    assertEquals(142.5f, b[1], 0.01f);
     assertEquals(15f, b[2], 0.01f);
     assertEquals(135f, b[3], 0.01f);
   }
@@ -467,8 +470,8 @@ class UI_caseBarTest {
   @Test
   void skyScenarioCellBounds_cellThree_isTheRightmostColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(3, 0, 0, 300, 300);
-    assertEquals(79.5f, b[0], 0.01f);
-    assertEquals(145.5f, b[1], 0.01f);
+    assertEquals(307.5f, b[0], 0.01f);
+    assertEquals(442.5f, b[1], 0.01f);
     assertEquals(15f, b[2], 0.01f);
     assertEquals(135f, b[3], 0.01f);
   }
@@ -481,7 +484,7 @@ class UI_caseBarTest {
     app.vm.skyScenarioSetting(0);
     // Dead center of cell 3 (see skyScenarioCellBounds_cellThree_... above):
     // cell n maps to skyScenarioSetting value n + 1, so this sets it to 4.
-    app.X_clicked = 112;
+    app.X_clicked = 375;
     app.Y_clicked = 75;
 
     app.UI_caseBar.handleSkyScenarioClicks(0, 0, 300, 300);
@@ -503,14 +506,15 @@ class UI_caseBarTest {
   }
 
   // ================= impactControlsCellBounds =================================
-  // Same column math as skyScenarioCellBounds (same x1/x2 per cell), but
+  // Same column math (and the same /2.0-not-/4.0 column spread - see
+  // skyScenarioCellBounds's own note above) as skyScenarioCellBounds, but
   // ry = -0.25 instead of 0.25: a mirror-image row directly above it.
 
   @Test
   void impactControlsCellBounds_cellZero_isTheLeftmostColumn () {
     float[] b = app.UI_caseBar.impactControlsCellBounds(0, 0, 0, 300, 300);
-    assertEquals(-145.5f, b[0], 0.01f);
-    assertEquals(-79.5f, b[1], 0.01f);
+    assertEquals(-142.5f, b[0], 0.01f);
+    assertEquals(-7.5f, b[1], 0.01f);
     assertEquals(-135f, b[2], 0.01f);
     assertEquals(-15f, b[3], 0.01f);
   }
@@ -518,8 +522,8 @@ class UI_caseBarTest {
   @Test
   void impactControlsCellBounds_cellThree_isTheRightmostColumn () {
     float[] b = app.UI_caseBar.impactControlsCellBounds(3, 0, 0, 300, 300);
-    assertEquals(79.5f, b[0], 0.01f);
-    assertEquals(145.5f, b[1], 0.01f);
+    assertEquals(307.5f, b[0], 0.01f);
+    assertEquals(442.5f, b[1], 0.01f);
     assertEquals(-135f, b[2], 0.01f);
     assertEquals(-15f, b[3], 0.01f);
   }
@@ -529,6 +533,7 @@ class UI_caseBarTest {
   // these four are plain putAction entries in actions.pde, not
   // ValueModifier-backed spinner fields - matching WIN3DActionsTest's
   // own setup for exercising real action names through runScriptLine.
+  // Cell order is Active(0), Passive(1), Previous(2, "|<<"), Next(3, ">>|").
 
   @Test
   void handleImpactControlsClicks_clickingActive_setsImpactTypeIndexToActive () {
@@ -536,7 +541,7 @@ class UI_caseBarTest {
     app.build_allActions();
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
     // Dead center of cell 0 (see impactControlsCellBounds_cellZero_... above).
-    app.X_clicked = -112;
+    app.X_clicked = -75;
     app.Y_clicked = -75;
 
     app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
@@ -549,8 +554,8 @@ class UI_caseBarTest {
     app.allActions = new java.util.HashMap<>();
     app.build_allActions();
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    // Dead center of cell 1 (x: -70.5..-4.5, same y band as cell 0).
-    app.X_clicked = -37;
+    // Dead center of cell 1 (x: 7.5..142.5, same y band as cell 0).
+    app.X_clicked = 75;
     app.Y_clicked = -75;
 
     app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
@@ -559,33 +564,35 @@ class UI_caseBarTest {
   }
 
   @Test
-  void handleImpactControlsClicks_clickingNext_advancesImpactDisplayDay () {
-    app.allActions = new java.util.HashMap<>();
-    app.build_allActions();
-    app.STUDY.endDay = 5;
-    app.impactDisplayDay = 2;
-    // Dead center of cell 2 (x: 4.5..70.5, same y band as cell 0).
-    app.X_clicked = 37;
-    app.Y_clicked = -75;
-
-    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
-
-    assertEquals(3, app.impactDisplayDay);
-  }
-
-  @Test
   void handleImpactControlsClicks_clickingPrevious_rewindsImpactDisplayDay () {
     app.allActions = new java.util.HashMap<>();
     app.build_allActions();
     app.STUDY.endDay = 5;
     app.impactDisplayDay = 2;
-    // Dead center of cell 3 (see impactControlsCellBounds_cellThree_... above).
-    app.X_clicked = 112;
+    // Dead center of cell 2 (x: 157.5..292.5, same y band as cell 0) -
+    // "Previous Impact Day" ("|<<").
+    app.X_clicked = 225;
     app.Y_clicked = -75;
 
     app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
 
     assertEquals(1, app.impactDisplayDay);
+  }
+
+  @Test
+  void handleImpactControlsClicks_clickingNext_advancesImpactDisplayDay () {
+    app.allActions = new java.util.HashMap<>();
+    app.build_allActions();
+    app.STUDY.endDay = 5;
+    app.impactDisplayDay = 2;
+    // Dead center of cell 3 (see impactControlsCellBounds_cellThree_...
+    // above) - "Next Impact Day" (">>|").
+    app.X_clicked = 375;
+    app.Y_clicked = -75;
+
+    app.UI_caseBar.handleImpactControlsClicks(0, 0, 300, 300);
+
+    assertEquals(3, app.impactDisplayDay);
   }
 
   @Test
