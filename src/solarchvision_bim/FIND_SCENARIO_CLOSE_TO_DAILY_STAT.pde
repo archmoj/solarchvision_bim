@@ -30,6 +30,19 @@ int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, i
   // get that treatment.
   if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1;
 
+  // STAT_N_Ave is the opposite case: scenarioSampleWeight()
+  // (averagedScenarioValues.pde) already gives it a plain equal-weight
+  // average instead of every other stat's triangular one, precisely
+  // because every sample is an equally legitimate contributor to "the
+  // average" - there's no single point to drift away from, so pulling in
+  // more samples costs no bias, only buys more noise reduction (variance
+  // keeps shrinking as 1/sampleCount with no offsetting downside the way
+  // it would for a percentile or the middle). So, unlike every other
+  // stat, Ave always uses the full 3-sample range rather than whatever
+  // SCENARIO_SAMPLE_COUNT happens to be set to - more samples is pure
+  // upside here.
+  if (l == STAT_N_Ave) sampleCount = 3;
+
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
