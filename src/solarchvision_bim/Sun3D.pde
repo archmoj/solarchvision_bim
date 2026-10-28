@@ -1009,17 +1009,20 @@ class Sun3D {
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
 
-              // Averages (RAD, EFF) across however many of this hour's
-              // samples have BOTH sub-hour positions' four layers defined
-              // AND pass the isMemberCounted filter (evaluated once per
-              // sample, at now_i1 only - same as a single scenario's own
-              // filter check used to be) - instead of a single scenario's
-              // own value.
+              // Weight-averages (RAD, EFF) across however many of this
+              // hour's samples have BOTH sub-hour positions' four layers
+              // defined AND pass the isMemberCounted filter (evaluated
+              // once per sample, at now_i1 only - same as a single
+              // scenario's own filter check used to be) - via
+              // scenarioSampleWeight() (averagedScenarioValues.pde), the
+              // same nearest-weighted-most scheme every other call site
+              // uses - instead of a single scenario's own value.
+              int sunPathSampleCount = sampleNowK.length;
               float sumRAD = 0;
               float sumEFF = 0;
-              int sampleCount = 0;
+              float weightSum = 0;
 
-              for (int s = 0; s < sampleNowK.length; s++) {
+              for (int s = 0; s < sunPathSampleCount; s++) {
                 int now_k = sampleNowK[s];
                 int now_j2 = sampleNowJ2[s];
 
@@ -1039,14 +1042,15 @@ class Sun3D {
                 boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i1, now_j2, now_k);
                 if (!isMemberCounted) continue;
 
-                sumRAD += 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
-                sumEFF += 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
-                sampleCount += 1;
+                float weight = scenarioSampleWeight(s, sunPathSampleCount);
+                sumRAD += weight * 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
+                sumEFF += weight * 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
+                weightSum += weight;
               }
 
-              if (sampleCount > 0) {
-                valuesSUM_RAD = sumRAD / sampleCount;
-                valuesSUM_EFF = sumEFF / sampleCount;
+              if (weightSum > 0) {
+                valuesSUM_RAD = sumRAD / weightSum;
+                valuesSUM_EFF = sumEFF / weightSum;
               }
               // else: leave valuesSUM_RAD/EFF at whatever they were from
               // the previous hour - same as a single scenario's own
