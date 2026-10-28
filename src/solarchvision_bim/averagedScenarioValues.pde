@@ -9,6 +9,23 @@
 // the result toward the average of the group. For sampleCount == 2 this
 // is exactly a 2:1 weighting; for 3 it's 3:2:1; for 1 it's trivially a
 // weight of 1 (unweighted - identical to the old single-scenario pick).
+//
+// Weighted, not a plain average, is a deliberate bias-vs-variance choice:
+// a plain average of 2 samples has the lowest possible variance for a
+// 2-sample estimator (equal weights minimize noise), but it also treats
+// the 2nd-closest sample as just as trustworthy an estimate of "the
+// stat" as the closest one, which it isn't by construction - it only got
+// picked for being the NEXT closest. A plain average quietly pulls the
+// result toward whichever scenario happens to be 2nd-closest, which
+// matters most exactly where it's least wanted: distinct stat categories
+// that sit close together in a small ensemble (e.g. M25/M50/M75) can
+// start blending into each other. 2:1 weighting costs a modest amount of
+// extra variance (~11% more than equal weights' theoretical minimum) to
+// stay closer to the actually-requested stat - and, just as importantly,
+// it keeps SCENARIO_SAMPLE_COUNT behaving consistently as it's raised:
+// 1 (unweighted) -> 2 (2:1) -> 3 (3:2:1) is the same rule at every step,
+// rather than a plain average at one sample count and a different kind
+// of estimator at another.
 float scenarioSampleWeight (int rank, int sampleCount) {
   return sampleCount - rank;
 }
