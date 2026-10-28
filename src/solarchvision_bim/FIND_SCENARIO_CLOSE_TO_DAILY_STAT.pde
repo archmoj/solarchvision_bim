@@ -30,18 +30,22 @@ int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, i
   // get that treatment.
   if (l == STAT_N_Min || l == STAT_N_Max) sampleCount = 1;
 
-  // STAT_N_Ave is the opposite case: scenarioSampleWeight()
-  // (averagedScenarioValues.pde) already gives it a plain equal-weight
-  // average instead of every other stat's triangular one, precisely
-  // because every sample is an equally legitimate contributor to "the
-  // average" - there's no single point to drift away from, so pulling in
-  // more samples costs no bias, only buys more noise reduction (variance
-  // keeps shrinking as 1/sampleCount with no offsetting downside the way
-  // it would for a percentile or the middle). So, unlike every other
-  // stat, Ave always uses the full 3-sample range rather than whatever
-  // SCENARIO_SAMPLE_COUNT happens to be set to - more samples is pure
-  // upside here.
-  if (l == STAT_N_Ave) sampleCount = 3;
+  // STAT_N_Ave, and - by the same reasoning - STAT_N_MidLow/Middle/
+  // MidHigh ("Leaning Low"/"Well-tempered"/"Leaning High") are the
+  // opposite case from Min/Max: scenarioSampleWeight()
+  // (averagedScenarioValues.pde) already gives all four a plain
+  // equal-weight average instead of every other stat's triangular one.
+  // Unlike a percentile or an extreme, none of these four target a
+  // single sharp point in the distribution - NORMAL.pde's own top
+  // comment on MidLow/Middle/MidHigh spells out why they're already
+  // whole-distribution-shaped rank-weighted means, not order statistics -
+  // so there's much less of a single point for an extra sample to drift
+  // away from, and pulling in more samples buys more noise reduction at
+  // comparatively little bias cost (variance keeps shrinking as
+  // 1/sampleCount). So, unlike every other stat, these four always use
+  // the full 3-sample range rather than whatever SCENARIO_SAMPLE_COUNT
+  // happens to be set to.
+  if (l == STAT_N_Ave || l == STAT_N_MidLow || l == STAT_N_Middle || l == STAT_N_MidHigh) sampleCount = 3;
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;

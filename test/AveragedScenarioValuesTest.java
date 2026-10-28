@@ -15,8 +15,10 @@ class AveragedScenarioValuesTest {
   // ================= scenarioSampleWeight =================================
   // Rank-based (nearest-first) triangular weight: sampleCount, sampleCount-1,
   // ..., 1. sampleCount == 2 is exactly the requested 2:1 weighting. Every
-  // stat except STAT_N_Ave gets this treatment - STAT_N_M75 stands in below
-  // for "any non-Ave stat".
+  // percentile/extreme stat gets this treatment - STAT_N_M75 stands in
+  // below for "any percentile-like stat" - while STAT_N_Ave and
+  // STAT_N_MidLow/Middle/MidHigh get a plain equal-weight average instead
+  // (see the next section).
 
   @Test
   void weight_isOneForTheOnlySample_whenSampleCountIsOne () {
@@ -36,12 +38,15 @@ class AveragedScenarioValuesTest {
     assertEquals(1f, app.scenarioSampleWeight(2, 3, app.STAT_N_M75), EPS);
   }
 
-  // ================= scenarioSampleWeight: STAT_N_Ave exception ===========
-  // "Average" has no single point in the distribution a sample can be
-  // closer to or farther from in a way that makes it a "better" or
-  // "worse" estimate - every defined value already contributes to it
-  // equally by definition - so, unlike every other stat, it gets a plain
-  // equal-weight average instead of the triangular rank weighting.
+  // ================= scenarioSampleWeight: whole-distribution exceptions ==
+  // STAT_N_Ave, STAT_N_MidLow, STAT_N_Middle and STAT_N_MidHigh ("Leaning
+  // Low"/"Well-tempered"/"Leaning High") don't target a single point in
+  // the distribution a sample can be closer to or farther from in a way
+  // that makes it a "better" or "worse" estimate - Ave by definition, the
+  // other three by being rank-weighted means over the whole distribution
+  // (NORMAL.pde) rather than order statistics - so, unlike every other
+  // stat, all four get a plain equal-weight average instead of the
+  // triangular rank weighting.
 
   @Test
   void weight_isEqualForEverySample_whenStatIsAverage () {
@@ -50,6 +55,16 @@ class AveragedScenarioValuesTest {
     assertEquals(1f, app.scenarioSampleWeight(0, 3, app.STAT_N_Ave), EPS);
     assertEquals(1f, app.scenarioSampleWeight(1, 3, app.STAT_N_Ave), EPS);
     assertEquals(1f, app.scenarioSampleWeight(2, 3, app.STAT_N_Ave), EPS);
+  }
+
+  @Test
+  void weight_isEqualForEverySample_whenStatIsMidLowMiddleOrMidHigh () {
+    int[] softStats = { app.STAT_N_MidLow, app.STAT_N_Middle, app.STAT_N_MidHigh };
+    for (int stat : softStats) {
+      assertEquals(1f, app.scenarioSampleWeight(0, 3, stat), EPS);
+      assertEquals(1f, app.scenarioSampleWeight(1, 3, stat), EPS);
+      assertEquals(1f, app.scenarioSampleWeight(2, 3, stat), EPS);
+    }
   }
 
   // ================= averagedScenarioHourlyValues ==========================
@@ -124,6 +139,22 @@ class AveragedScenarioValuesTest {
     assertNotNull(avg);
     // (1.0 + 4.0) / 2 = 2.5, not the 2.0 the triangular weighting gives
     // the identical samples above.
+    assertEquals(2.5f, avg[0], EPS);
+  }
+
+  @Test
+  void hourlyValues_usesAPlainAverage_whenStatIsWellTempered () {
+    setUpTypicalYearSource(2, 2);
+    setDay(0, 0, 1000, 0, 0, 0); // closest sample: R_dir raw 1000 -> 1.0 scaled
+    setDay(1, 0, 4000, 0, 0, 0); // 2nd-closest: R_dir raw 4000 -> 4.0 scaled
+
+    int[] sampleNowK = { 0, 0 };
+    int[] sampleNowJ = { 0, 1 };
+
+    float[] avg = app.averagedScenarioHourlyValues(0, sampleNowK, sampleNowJ, app.STAT_N_Middle);
+
+    // Same plain-average treatment as STAT_N_Ave: (1.0 + 4.0) / 2 = 2.5.
+    assertNotNull(avg);
     assertEquals(2.5f, avg[0], EPS);
   }
 

@@ -27,24 +27,27 @@
 // rather than a plain average at one sample count and a different kind
 // of estimator at another.
 //
-// STAT_N_Ave is the one exception, and uses a plain (equal-weight)
-// average instead. The bias argument above only holds when "the stat"
-// is a specific point the distribution singles out - a particular
-// percentile, the middle, an extreme - where a sample picked for being
-// slightly farther from that point really is a slightly worse estimate
-// of it. The average has no such single point to drift away from: every
-// defined value in the whole pool is already an equally legitimate
-// contributor to it by definition, so the 2nd/3rd-closest-to-the-mean
-// samples aren't "worse" estimates of the mean than the closest one, and
+// STAT_N_Ave, and - by the same reasoning - STAT_N_MidLow/Middle/MidHigh
+// ("Leaning Low"/"Well-tempered"/"Leaning High") are the exception, and
+// use a plain (equal-weight) average instead. The bias argument above
+// only holds when "the stat" is a specific point the distribution
+// singles out - a particular percentile, an extreme - where a sample
+// picked for being slightly farther from that point really is a
+// slightly worse estimate of it. None of these four target a single
+// such point: the average has no point to drift away from at all, and
+// MidLow/Middle/MidHigh (see NORMAL.pde's own top comment on them) are
+// themselves rank-weighted means built from the WHOLE distribution, not
+// order statistics - so the 2nd/3rd-closest-to-the-target samples aren't
+// "worse" estimates of it the way they'd be for a true percentile, and
 // weighting them down would just reintroduce the single-sample noise
-// this whole feature exists to damp, for no bias benefit in return. l
-// (not lSelected - FIND_SCENARIOS_CLOSE_TO_DAILY_STAT()'s own
-// active/passive flip never touches STAT_N_Ave, so the two always agree
-// here) is the caller's own STUDY.impactLayerIndex, passed through
-// unchanged from whichever FIND_SCENARIOS_CLOSE_TO_DAILY_STAT() call
-// produced the samples being weighted.
+// this whole feature exists to damp, for comparatively little bias
+// benefit in return. l (not lSelected - FIND_SCENARIOS_CLOSE_TO_DAILY_
+// STAT()'s own active/passive flip never touches any of these four, so
+// the two always agree here) is the caller's own STUDY.impactLayerIndex,
+// passed through unchanged from whichever FIND_SCENARIOS_CLOSE_TO_DAILY_
+// STAT() call produced the samples being weighted.
 float scenarioSampleWeight (int rank, int sampleCount, int l) {
-  if (l == STAT_N_Ave) return 1;
+  if (l == STAT_N_Ave || l == STAT_N_MidLow || l == STAT_N_Middle || l == STAT_N_MidHigh) return 1;
   return sampleCount - rank;
 }
 
