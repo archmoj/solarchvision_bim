@@ -523,8 +523,79 @@ class UI_caseBar {
       float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
       if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) continue;
 
-      if (n == 0) runScriptLine("Active Shade");
-      else if (n == 1) runScriptLine("Passive Shade");
+final int impactGraphIndex_CYCLES_ACTIVE = 0;
+final int impactGraphIndex_CYCLES_PASSIVE = 1;
+final int impactGraphIndex_SUNPATH_ACTIVE = 2;
+final int impactGraphIndex_SUNPATH_PASSIVE = 3;
+final int impactGraphIndex_GLOBAL_ACTIVE = 4;
+final int impactGraphIndex_GLOBAL_PASSIVE = 5;
+final int impactGraphIndex_WIND_ACTIVE = 6;
+final int impactGraphIndex_WIND_PASSIVE = 7;
+final int impactGraphIndex_URBAN_ACTIVE = 8;
+final int impactGraphIndex_URBAN_PASSIVE = 9;
+
+      if (n == 0) {
+        if (STUDY.plotLayoutIndex == 0) {
+          if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_WIND_ACTIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
+            STUDY.revise();
+          }
+        } else if (STUDY.plotLayoutIndex == -1) {
+          STUDY.plotLayoutIndex = -2;
+          STUDY.revise();
+        } else if (STUDY.plotLayoutIndex == 2) {
+          STUDY.plotLayoutIndex = 1;
+          STUDY.revise();
+        }
+
+        runScriptLine("Active Shade");
+      }
+      else if (n == 1) {
+        if (STUDY.plotLayoutIndex == 0) {
+          if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_WIND_PASSIVE;
+            STUDY.revise();
+          } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) {
+            STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
+            STUDY.revise();
+          }
+        } else if (STUDY.plotLayoutIndex == -2) {
+          STUDY.plotLayoutIndex = -1;
+          STUDY.revise();
+        } else if (STUDY.plotLayoutIndex == 1) {
+          STUDY.plotLayoutIndex = 2;
+          STUDY.revise();
+        }
+
+        runScriptLine("Passive Shade");
+      }
       else if (n == 2) runScriptLine("Previous Impact Day");
       else if (n == 3) runScriptLine("Next Impact Day");
     }
@@ -538,8 +609,10 @@ class UI_caseBar {
       // Active/Passive reflect WIN3D.impactTypeIndex (the same field
       // "Toggle Impact Type" alternates); Next/Previous are one-shot
       // steps with no persistent "current" state to highlight.
-      boolean highlighted = (n == 0 && WIN3D.impactTypeIndex == Impact_ACTIVE) ||
-                             (n == 1 && WIN3D.impactTypeIndex == Impact_PASSIVE);
+      boolean highlighted = (
+        (n == 0 && WIN3D.impactTypeIndex == Impact_ACTIVE && STUDY.impactTypeIndex == Impact_ACTIVE) ||
+        (n == 1 && WIN3D.impactTypeIndex == Impact_PASSIVE && STUDY.impactTypeIndex == Impact_PASSIVE)
+      );
 
       if (highlighted) {
         fill(255, 127, 0);
