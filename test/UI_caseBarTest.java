@@ -440,30 +440,33 @@ class UI_caseBarTest {
   }
 
   // ================= skyScenarioCellBounds ====================================
+  // Single row of 4 columns now (was 2x2): y1/y2 stay fixed across every
+  // cell (15/135 of a 300-tall box, same as the old 2x2's bottom row),
+  // only x1/x2 vary by column.
 
   @Test
-  void skyScenarioCellBounds_cellZero_isTheTopLeftCorner () {
+  void skyScenarioCellBounds_cellZero_isTheLeftmostColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(0, 0, 0, 300, 300);
-    assertEquals(-141f, b[0], 0.01f);
-    assertEquals(-9f, b[1], 0.01f);
-    assertEquals(-135f, b[2], 0.01f);
-    assertEquals(-15f, b[3], 0.01f);
+    assertEquals(-145.5f, b[0], 0.01f);
+    assertEquals(-79.5f, b[1], 0.01f);
+    assertEquals(15f, b[2], 0.01f);
+    assertEquals(135f, b[3], 0.01f);
   }
 
   @Test
-  void skyScenarioCellBounds_cellOne_isTheTopRightCorner () {
+  void skyScenarioCellBounds_cellOne_isTheSecondColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(1, 0, 0, 300, 300);
-    assertEquals(9f, b[0], 0.01f);
-    assertEquals(141f, b[1], 0.01f);
-    assertEquals(-135f, b[2], 0.01f);
-    assertEquals(-15f, b[3], 0.01f);
+    assertEquals(-45.5f, b[0], 0.01f);
+    assertEquals(20.5f, b[1], 0.01f);
+    assertEquals(15f, b[2], 0.01f);
+    assertEquals(135f, b[3], 0.01f);
   }
 
   @Test
-  void skyScenarioCellBounds_cellThree_isTheBottomRightCorner () {
+  void skyScenarioCellBounds_cellThree_isTheRightmostColumn () {
     float[] b = app.UI_caseBar.skyScenarioCellBounds(3, 0, 0, 300, 300);
-    assertEquals(9f, b[0], 0.01f);
-    assertEquals(141f, b[1], 0.01f);
+    assertEquals(79.5f, b[0], 0.01f);
+    assertEquals(145.5f, b[1], 0.01f);
     assertEquals(15f, b[2], 0.01f);
     assertEquals(135f, b[3], 0.01f);
   }
@@ -476,7 +479,7 @@ class UI_caseBarTest {
     app.vm.skyScenarioSetting(0);
     // Dead center of cell 3 (see skyScenarioCellBounds_cellThree_... above):
     // cell n maps to skyScenarioSetting value n + 1, so this sets it to 4.
-    app.X_clicked = 75;
+    app.X_clicked = 112;
     app.Y_clicked = 75;
 
     app.UI_caseBar.handleSkyScenarioClicks(0, 0, 300, 300);

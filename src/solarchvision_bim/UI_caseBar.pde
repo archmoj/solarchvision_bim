@@ -404,20 +404,20 @@ class UI_caseBar {
   }
 
   // ---------------------------------------------------------------------
-  // Sky scenario selector (2x2 grid, STUDY.skyScenarioSetting)
+  // Sky scenario selector (1x4 grid, STUDY.skyScenarioSetting)
   // ---------------------------------------------------------------------
 
-  // Plain-text labels for the 2x2 grid (cell n -> 0..3), kept separate
-  // from skyScenarioSetting_Title (globals.pde), which is used elsewhere
-  // for the fuller multi-line captions. Cell n corresponds to
-  // STUDY.skyScenarioSetting value n + 1 (that field is 1-based: see
+  // Plain-text labels for the 1x4 grid (cell n -> 0..3), left to right,
+  // kept separate from skyScenarioSetting_Title (globals.pde), which is
+  // used elsewhere for the fuller multi-line captions. Cell n corresponds
+  // to STUDY.skyScenarioSetting value n + 1 (that field is 1-based: see
   // STUDY.pde and skyScenarioSetting_Title).
   String[] skyScenarioButton_Title = {
     "All", "Cloudy", "Partly", "Sunny"
   };
 
   void drawSkyScenarioSelector () {
-    float displayBarWidth = pixel_W - 0.4 * (2 * pixel_W);
+    float displayBarWidth = 7.25 * MessageSize;
     float displayBarHeight = 4.5 * MessageSize;
     float offsetX = 0.5 * displayBarWidth;
     float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
@@ -426,15 +426,13 @@ class UI_caseBar {
     renderSkyScenarioGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
   }
 
-  // Bounds of grid cell n (0..3) as {x1, x2, y1, y2}: n=0 top-left,
-  // n=1 top-right, n=2 bottom-left, n=3 bottom-right.
   float[] skyScenarioCellBounds (int n, float offsetX, float offsetY, float w, float h) {
-    int col = n % 2;
-    int row = n / 2;
+    int col = n; //n % 2;
+    int row = 1; //n / 2;
     float rx = (col + 0.5) / 2.0 - 0.5;
     float ry = (row + 0.5) / 2.0 - 0.5;
-    float x1 = offsetX + (rx - 0.22) * w;
-    float x2 = offsetX + (rx + 0.22) * w;
+    float x1 = offsetX + (rx - 0.225) * w;
+    float x2 = offsetX + (rx + 0.225) * w;
     float y1 = offsetY + (ry - 0.2) * h;
     float y2 = offsetY + (ry + 0.2) * h;
     return new float[]{x1, x2, y1, y2};
