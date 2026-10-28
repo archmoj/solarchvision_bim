@@ -22,6 +22,7 @@ class UI_caseBar {
     this.tab = pixel_C / float(this.Items.length);
 
     drawTrackBackground();
+    drawSkyScenarioSelector();
     drawTabs();
     drawImpactLayerIndexSelector();
 
@@ -83,8 +84,8 @@ class UI_caseBar {
     Y_control = pixel_A + pixel_B + 2 * pixel_H + 0.5 * this.tab;
 
     for (int i = 0; i < this.Items.length; i++) {
-      float x1 = X_control - 0.3666 * displayBarWidth;
-      float x2 = X_control + 0.4875 * displayBarWidth;
+      float x1 = X_control - 0.25 * displayBarWidth;
+      float x2 = X_control + 0.5 * displayBarWidth;
       float y1 = Y_control - 0.45 * displayBarHeight;
       float y2 = Y_control + 0.45 * displayBarHeight;
 
@@ -95,7 +96,7 @@ class UI_caseBar {
       textAlign(RIGHT, CENTER);
       stroke(0);
       fill(0);
-      textSize(1.15 * MessageSize);
+      textSize(1.0 * MessageSize);
       text(this.Items[i][0] + ": ", x1, Y_control - 0.125 * MessageSize);
 
       String item = this.Items[i][0];
@@ -399,6 +400,78 @@ class UI_caseBar {
       }
       textSize(1.0 * MessageSize);
       text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Sky scenario selector (2x2 grid, STUDY.skyScenarioSetting)
+  // ---------------------------------------------------------------------
+
+  // Plain-text labels for the 2x2 grid (cell n -> 0..3), kept separate
+  // from skyScenarioSetting_Title (globals.pde), which is used elsewhere
+  // for the fuller multi-line captions. Cell n corresponds to
+  // STUDY.skyScenarioSetting value n + 1 (that field is 1-based: see
+  // STUDY.pde and skyScenarioSetting_Title).
+  String[] skyScenarioButton_Title = {
+    "All", "Cloudy", "Partly", "Sunny"
+  };
+
+  void drawSkyScenarioSelector () {
+    float displayBarWidth = pixel_W - 0.4 * (2 * pixel_W);
+    float displayBarHeight = 4.5 * MessageSize;
+    float offsetX = 0.5 * displayBarWidth;
+    float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
+
+    handleSkyScenarioClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderSkyScenarioGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+  }
+
+  // Bounds of grid cell n (0..3) as {x1, x2, y1, y2}: n=0 top-left,
+  // n=1 top-right, n=2 bottom-left, n=3 bottom-right.
+  float[] skyScenarioCellBounds (int n, float offsetX, float offsetY, float w, float h) {
+    int col = n % 2;
+    int row = n / 2;
+    float rx = (col + 0.5) / 2.0 - 0.5;
+    float ry = (row + 0.5) / 2.0 - 0.5;
+    float x1 = offsetX + (rx - 0.22) * w;
+    float x2 = offsetX + (rx + 0.22) * w;
+    float y1 = offsetY + (ry - 0.2) * h;
+    float y2 = offsetY + (ry + 0.2) * h;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  void handleSkyScenarioClicks (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = skyScenarioCellBounds(n, offsetX, offsetY, w, h);
+      if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
+        runScriptLine("Sky Scenario Setting " + (n + 1));
+      }
+    }
+  }
+
+  void renderSkyScenarioGrid (float offsetX, float offsetY, float w, float h) {
+    for (int n = 0; n < 4; n++) {
+      float[] b = skyScenarioCellBounds(n, offsetX, offsetY, w, h);
+      float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
+
+      if (n + 1 == STUDY.skyScenarioSetting) {
+        fill(255, 127, 0);
+      } else {
+        fill(127);
+      }
+      noStroke();
+      rect(x1, y1, x2 - x1, y2 - y1);
+
+      textAlign(CENTER, CENTER);
+      if (n + 1 == STUDY.skyScenarioSetting) {
+        stroke(0);
+        fill(0);
+      } else {
+        stroke(255);
+        fill(255);
+      }
+      textSize(1.0 * MessageSize);
+      text(skyScenarioButton_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
     }
   }
 }

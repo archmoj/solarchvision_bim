@@ -3,17 +3,19 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // draw()/drawTabs()/drawTrackBackground()/drawDaysBands()/
-// drawDaysMonthLabels()/renderImpactLayerIndexGrid()/drawWrappedRect()
-// all touch live drawing primitives (fill(), rect(), text(), ...) and
-// aren't unit-testable as-is (see test/README.md). What's covered
-// instead: the pure math (scaledIndexFromClick, dayOfYearFromClick,
-// impactCellBounds, scenarioRange, scenarioCurrentValues,
-// scenarioTickLabel) and the four click handlers (handleHoursClick,
-// handleDaysClick, handleScenarioClick, handleImpactLayerIndexClicks) -
-// none of which touch drawing, only isInside()/runScriptLine()
-// dispatch. handleHoursClick and handleScenarioClick were pulled out of
-// drawHoursTab/drawScenarioTab specifically to make this possible,
-// matching handleDaysClick/handleImpactLayerIndexClicks, which already
+// drawDaysMonthLabels()/renderImpactLayerIndexGrid()/
+// renderSkyScenarioGrid()/drawWrappedRect() all touch live drawing
+// primitives (fill(), rect(), text(), ...) and aren't unit-testable
+// as-is (see test/README.md). What's covered instead: the pure math
+// (scaledIndexFromClick, dayOfYearFromClick, impactCellBounds,
+// skyScenarioCellBounds, scenarioRange, scenarioCurrentValues,
+// scenarioTickLabel) and the five click handlers (handleHoursClick,
+// handleDaysClick, handleScenarioClick, handleImpactLayerIndexClicks,
+// handleSkyScenarioClicks) - none of which touch drawing, only
+// isInside()/runScriptLine() dispatch. handleHoursClick and
+// handleScenarioClick were pulled out of drawHoursTab/drawScenarioTab
+// specifically to make this possible, matching handleDaysClick/
+// handleImpactLayerIndexClicks/handleSkyScenarioClicks, which already
 // had their own dedicated functions.
 class UI_caseBarTest {
 
@@ -435,5 +437,63 @@ class UI_caseBarTest {
     app.UI_caseBar.handleImpactLayerIndexClicks(0, 0, 300, 300);
 
     assertEquals(before, app.STUDY.impactLayerIndex);
+  }
+
+  // ================= skyScenarioCellBounds ====================================
+
+  @Test
+  void skyScenarioCellBounds_cellZero_isTheTopLeftCorner () {
+    float[] b = app.UI_caseBar.skyScenarioCellBounds(0, 0, 0, 300, 300);
+    assertEquals(-141f, b[0], 0.01f);
+    assertEquals(-9f, b[1], 0.01f);
+    assertEquals(-135f, b[2], 0.01f);
+    assertEquals(-15f, b[3], 0.01f);
+  }
+
+  @Test
+  void skyScenarioCellBounds_cellOne_isTheTopRightCorner () {
+    float[] b = app.UI_caseBar.skyScenarioCellBounds(1, 0, 0, 300, 300);
+    assertEquals(9f, b[0], 0.01f);
+    assertEquals(141f, b[1], 0.01f);
+    assertEquals(-135f, b[2], 0.01f);
+    assertEquals(-15f, b[3], 0.01f);
+  }
+
+  @Test
+  void skyScenarioCellBounds_cellThree_isTheBottomRightCorner () {
+    float[] b = app.UI_caseBar.skyScenarioCellBounds(3, 0, 0, 300, 300);
+    assertEquals(9f, b[0], 0.01f);
+    assertEquals(141f, b[1], 0.01f);
+    assertEquals(15f, b[2], 0.01f);
+    assertEquals(135f, b[3], 0.01f);
+  }
+
+  // ================= handleSkyScenarioClicks ==================================
+
+  @Test
+  void handleSkyScenarioClicks_clickingACell_setsSkyScenarioSetting () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.skyScenarioSetting(0);
+    // Dead center of cell 3 (see skyScenarioCellBounds_cellThree_... above):
+    // cell n maps to skyScenarioSetting value n + 1, so this sets it to 4.
+    app.X_clicked = 75;
+    app.Y_clicked = 75;
+
+    app.UI_caseBar.handleSkyScenarioClicks(0, 0, 300, 300);
+
+    assertEquals(4, app.STUDY.skyScenarioSetting);
+  }
+
+  @Test
+  void handleSkyScenarioClicks_outsideEveryCell_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.skyScenarioSetting(0);
+    int before = app.STUDY.skyScenarioSetting;
+    app.X_clicked = 10000;
+    app.Y_clicked = 10000;
+
+    app.UI_caseBar.handleSkyScenarioClicks(0, 0, 300, 300);
+
+    assertEquals(before, app.STUDY.skyScenarioSetting);
   }
 }

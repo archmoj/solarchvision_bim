@@ -516,6 +516,7 @@ class STUDY {
     this.revise();
     WIN3D.revise();
     UI_rollout.revise();
+    UI_caseBar.revise();
   }
 
   // '[' : shrink the hourly summing interval, following the step sequence
