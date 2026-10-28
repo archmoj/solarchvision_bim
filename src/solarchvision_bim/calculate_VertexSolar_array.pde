@@ -50,17 +50,26 @@ void calculate_VertexSolar_array () {
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
-    if (nk == -1) continue;
+    int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
+    if (allNk.length == 0) continue;
 
     TS_dayHasData[jIdx] = true;
-    int k = int(nk / STUDY.daysMergedCount);
-    int j_ADD = nk % STUDY.daysMergedCount;
-    int now_k = k + start_k;
 
-    int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-    if (now_j >= 365) now_j = now_j % 365;
-    if (now_j < 0) now_j = (now_j + 365) % 365;
+    // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
+    // below reads and averages across these instead of a single scenario's
+    // own (possibly noisy/extreme) hourly values.
+    int[] sampleNowK = new int[allNk.length];
+    int[] sampleNowJ = new int[allNk.length];
+    for (int s = 0; s < allNk.length; s++) {
+      int sample_k = int(allNk[s] / STUDY.daysMergedCount);
+      int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
+      sampleNowK[s] = sample_k + start_k;
+
+      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+      if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
+      if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+      sampleNowJ[s] = sample_now_j;
+    }
 
     for (int i = 0; i < 24; i++) {
 
@@ -70,24 +79,17 @@ void calculate_VertexSolar_array () {
       float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
       if (SunR[3] <= 0) continue;
 
-      float Pa = getValue_currentDataSource(i, now_j, now_k, LAYER_dirnorrad.id);
-      float Pb = getValue_currentDataSource(i, now_j, now_k, LAYER_difhorrad.id);
-      float Pc = getValue_currentDataSource(i, now_j, now_k, LAYER_direffect.id);
-      float Pd = getValue_currentDataSource(i, now_j, now_k, LAYER_difeffect.id);
-
-      if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
-
-      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, i, now_j, now_k);
-      if (!isMemberCounted) continue;
+      float[] avg = averagedScenarioHourlyValues(i, sampleNowK, sampleNowJ);
+      if (avg == null) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };
       TS_SunDir[jIdx][i] = SunDir;
       TS_SunDirUnit[jIdx][i] = funcs.vec3_unit(SunDir);
 
-      TS_R_dir[jIdx][i] = 0.001 * Pa;
-      TS_R_dif[jIdx][i] = 0.001 * Pb;
-      TS_E_dir[jIdx][i] = 0.001 * Pc;
-      TS_E_dif[jIdx][i] = 0.001 * Pd;
+      TS_R_dir[jIdx][i] = avg[0];
+      TS_R_dif[jIdx][i] = avg[1];
+      TS_E_dir[jIdx][i] = avg[2];
+      TS_E_dif[jIdx][i] = avg[3];
 
       TS_valid[jIdx][i] = true;
     }

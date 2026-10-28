@@ -44,4 +44,56 @@ class FindScenarioCloseToStatTest {
     int out = app._FIND_SCENARIO_CLOSE_TO_STAT(values, app.STAT_N_Ave);
     assertEquals(-1, out);
   }
+
+  // ================= _FIND_SCENARIOS_CLOSE_TO_STAT (multi-sample) ========
+
+  @Test
+  void multiSample_withSampleCountOne_matchesTheSingleSampleFunctionExactly () {
+    float[] unsorted = {50, 10, 30, 20, 40};
+    int[] out = app._FIND_SCENARIOS_CLOSE_TO_STAT(unsorted, app.STAT_N_Min, 1);
+    assertEquals(1, out.length);
+    assertEquals(app._FIND_SCENARIO_CLOSE_TO_STAT(unsorted, app.STAT_N_Min), out[0]);
+  }
+
+  @Test
+  void multiSample_returnsTheNNearestInNearestFirstOrder () {
+    float[] values = {10, 22, 24, 35};
+    // Average is 22.75: nearest is values[1]=22 (diff 0.75), then
+    // values[2]=24 (diff 1.25), then values[3]=35, then values[0]=10.
+    int[] out = app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 2);
+    assertArrayEquals(new int[]{1, 2}, out);
+  }
+
+  @Test
+  void multiSample_capsAtHowManyDefinedValuesExist () {
+    float[] values = {10, 20, 30};
+    // Only 3 defined values exist - asking for 5 samples still returns
+    // just those 3, nearest-first, rather than padding or erroring.
+    int[] out = app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 5);
+    assertEquals(3, out.length);
+  }
+
+  @Test
+  void multiSample_skipsUndefinedValues () {
+    float[] values = {app.FLOAT_undefined, 10, app.FLOAT_undefined, 30};
+    int[] out = app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 3);
+    // Average of the two defined values is 20 - both are equally close
+    // (diff 10 each), so both come back, in their original index order,
+    // and the undefined slots are never included.
+    assertArrayEquals(new int[]{1, 3}, out);
+  }
+
+  @Test
+  void multiSample_returnsEmptyArray_neverNull_whenNothingIsDefined () {
+    float[] values = {app.FLOAT_undefined, app.FLOAT_undefined};
+    int[] out = app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 3);
+    assertNotNull(out);
+    assertEquals(0, out.length);
+  }
+
+  @Test
+  void multiSample_returnsEmptyArray_whenSampleCountIsZeroOrLess () {
+    float[] values = {10, 20, 30};
+    assertEquals(0, app._FIND_SCENARIOS_CLOSE_TO_STAT(values, app.STAT_N_Ave, 0).length);
+  }
 }

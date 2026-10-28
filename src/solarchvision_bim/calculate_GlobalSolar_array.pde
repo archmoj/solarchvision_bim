@@ -20,17 +20,11 @@ void calculate_GlobalSolar_array () {
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  float Pa = FLOAT_undefined;
-  float Pb = FLOAT_undefined;
-  float Pc = FLOAT_undefined;
-  float Pd = FLOAT_undefined;
-
   float values_R_dir;
   float values_R_dif;
   float values_E_dir;
   float values_E_dif;
 
-  int now_k = 0;
   int now_i = 0;
   int now_j = 0;
 
@@ -73,22 +67,24 @@ void calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
-    if (nk == -1) continue;
+    int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
+    if (allNk.length == 0) continue;
 
-    int k = int(nk / STUDY.daysMergedCount);
-    int j_ADD = nk % STUDY.daysMergedCount;
+    // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
+    // below reads and averages across these instead of a single scenario's
+    // own (possibly noisy/extreme) hourly values.
+    int[] sampleNowK = new int[allNk.length];
+    int[] sampleNowJ = new int[allNk.length];
+    for (int s = 0; s < allNk.length; s++) {
+      int sample_k = int(allNk[s] / STUDY.daysMergedCount);
+      int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
+      sampleNowK[s] = sample_k + start_k;
 
-    now_k = k + start_k;
-
-    int now_j_base = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-    if (now_j_base >= 365) {
-      now_j_base = now_j_base % 365;
+      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+      if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
+      if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+      sampleNowJ[s] = sample_now_j;
     }
-    if (now_j_base < 0) {
-      now_j_base = (now_j_base + 365) % 365;
-    }
-    now_j = now_j_base;
 
     for (int i = 0; i < 24; i++) {
       hourValid[i] = false;
@@ -102,35 +98,28 @@ void calculate_GlobalSolar_array () {
 
           now_i = i;
 
-          Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-          Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-          Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-          Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+          float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ);
 
-          if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+          if (avg == null) {
             values_R_dir = FLOAT_undefined;
             values_R_dif = FLOAT_undefined;
             values_E_dir = FLOAT_undefined;
             values_E_dif = FLOAT_undefined;
           } else {
 
-            boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i, now_j, now_k);
+            values_R_dir = avg[0];
+            values_R_dif = avg[1];
+            values_E_dir = avg[2];
+            values_E_dif = avg[3];
 
-            if (isMemberCounted) {
-              values_R_dir = 0.001 * Pa;
-              values_R_dif = 0.001 * Pb;
-              values_E_dir = 0.001 * Pc;
-              values_E_dif = 0.001 * Pd;
-
-              hourValid[i] = true;
-              cache_SunR1[i] = SunR[1];
-              cache_SunR2[i] = SunR[2];
-              cache_SunR3[i] = SunR[3];
-              cache_R_dir[i] = values_R_dir;
-              cache_R_dif[i] = values_R_dif;
-              cache_E_dir[i] = values_E_dir;
-              cache_E_dif[i] = values_E_dif;
-            }
+            hourValid[i] = true;
+            cache_SunR1[i] = SunR[1];
+            cache_SunR2[i] = SunR[2];
+            cache_SunR3[i] = SunR[3];
+            cache_R_dir[i] = values_R_dir;
+            cache_R_dif[i] = values_R_dif;
+            cache_E_dir[i] = values_E_dir;
+            cache_E_dif[i] = values_E_dif;
           }
         }
       }

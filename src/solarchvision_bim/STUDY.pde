@@ -2746,17 +2746,11 @@ class STUDY {
     if (this.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
 
-    float Pa = FLOAT_undefined;
-    float Pb = FLOAT_undefined;
-    float Pc = FLOAT_undefined;
-    float Pd = FLOAT_undefined;
-
     float values_R_dir;
     float values_R_dif;
     float values_E_dir;
     float values_E_dif;
 
-    int now_k = 0;
     int now_i = 0;
     int now_j = 0;
 
@@ -2805,11 +2799,20 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
-      if (nk == -1) continue;
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
+      if (allNk.length == 0) continue;
 
-      int k = int(nk / this.daysMergedCount);
-      int j_ADD = nk % this.daysMergedCount;
+      // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
+      // below reads and averages across these instead of a single scenario's
+      // own (possibly noisy/extreme) hourly values.
+      int[] sampleNowK = new int[allNk.length];
+      int[] sampleNowJ = new int[allNk.length];
+      for (int s = 0; s < allNk.length; s++) {
+        int sample_k = int(allNk[s] / this.daysMergedCount);
+        int sample_j_ADD = allNk[s] % this.daysMergedCount;
+        sampleNowK[s] = sample_k + start_k;
+        sampleNowJ[s] = computeWrappedDayIndex(j, sample_j_ADD);
+      }
 
       // Filled in alongside the quad drawing below, one day's worth at a
       // time - unlike TOTALvaluesSUM_RAD/EFF_P/EFF_N above (which persist
@@ -2845,47 +2848,38 @@ class STUDY {
 
               if (SunR[3] > 0) {
 
-                now_k = k + start_k;
                 now_i = i;
-                now_j = computeWrappedDayIndex(j, j_ADD);
 
-                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ);
 
-                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                if (avg == null) {
                   values_R_dir = FLOAT_undefined;
                   values_R_dif = FLOAT_undefined;
                   values_E_dir = FLOAT_undefined;
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
+                  values_R_dir = avg[0];
+                  values_R_dif = avg[1];
+                  values_E_dir = avg[2];
+                  values_E_dif = avg[3];
 
-                  if (isMemberCounted) {
-                    values_R_dir = 0.001 * Pa;
-                    values_R_dif = 0.001 * Pb;
-                    values_E_dir = 0.001 * Pc;
-                    values_E_dif = 0.001 * Pd;
+                  if (is_undefined(valuesSUM_RAD)) {
+                    valuesSUM_RAD = 0;
+                    valuesSUM_EFF_P = 0;
+                    valuesSUM_EFF_N = 0;
+                    valuesNUM = 0;
+                  } else {
 
-                    if (is_undefined(valuesSUM_RAD)) {
-                      valuesSUM_RAD = 0;
-                      valuesSUM_EFF_P = 0;
-                      valuesSUM_EFF_N = 0;
-                      valuesNUM = 0;
+                    if (values_E_dir < 0) {
+                      valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
                     } else {
-
-                      if (values_E_dir < 0) {
-                        valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
-                      } else {
-                        valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
-                      }
-
-                      valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, globalAlbedo);
-
-                      valuesNUM += 1;
+                      valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
                     }
+
+                    valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, globalAlbedo);
+
+                    valuesNUM += 1;
                   }
                 }
               }
@@ -3199,17 +3193,11 @@ class STUDY {
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
 
-    float Pa = FLOAT_undefined;
-    float Pb = FLOAT_undefined;
-    float Pc = FLOAT_undefined;
-    float Pd = FLOAT_undefined;
-
     float values_R_dir;
     float values_R_dif;
     float values_E_dir;
     float values_E_dif;
 
-    int now_k = 0;
     int now_i = 0;
     int now_j = 0;
 
@@ -3246,11 +3234,20 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
-      if (nk == -1) continue;
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
+      if (allNk.length == 0) continue;
 
-      int k = int(nk / this.daysMergedCount);
-      int j_ADD = nk % this.daysMergedCount;
+      // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
+      // below reads and averages across these instead of a single scenario's
+      // own (possibly noisy/extreme) hourly values.
+      int[] sampleNowK = new int[allNk.length];
+      int[] sampleNowJ = new int[allNk.length];
+      for (int s = 0; s < allNk.length; s++) {
+        int sample_k = int(allNk[s] / this.daysMergedCount);
+        int sample_j_ADD = allNk[s] % this.daysMergedCount;
+        sampleNowK[s] = sample_k + start_k;
+        sampleNowJ[s] = computeWrappedDayIndex(j, sample_j_ADD);
+      }
 
       float valuesSUM_RAD = 0;
       float valuesSUM_EFF = 0;
@@ -3265,39 +3262,30 @@ class STUDY {
             float Alpha = 90 - funcs.acos_ang(SunR[3]);
             float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
 
-            now_k = k + start_k;
             now_i = i;
-            now_j = computeWrappedDayIndex(j, j_ADD);
 
-            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-            Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-            Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-            Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+            float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ);
 
-            if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+            if (avg == null) {
               values_R_dir = FLOAT_undefined;
               values_R_dif = FLOAT_undefined;
               values_E_dir = FLOAT_undefined;
               values_E_dif = FLOAT_undefined;
             } else {
 
-              boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
+              values_R_dir = avg[0];
+              values_R_dif = avg[1];
+              values_E_dir = avg[2];
+              values_E_dif = avg[3];
 
-              if (isMemberCounted) {
-                values_R_dir = 0.001 * Pa;
-                values_R_dif = 0.001 * Pb;
-                values_E_dir = 0.001 * Pc;
-                values_E_dif = 0.001 * Pd;
-
-                if (is_undefined(valuesSUM_RAD)) {
-                  valuesSUM_RAD = 0;
-                  valuesSUM_EFF = 0;
-                  valuesNUM = 0;
-                } else {
-                  valuesSUM_RAD = (values_R_dir); // direct beam radiation
-                  valuesSUM_EFF = (values_E_dir); // direct beam effect
-                  valuesNUM = 1;
-                }
+              if (is_undefined(valuesSUM_RAD)) {
+                valuesSUM_RAD = 0;
+                valuesSUM_EFF = 0;
+                valuesNUM = 0;
+              } else {
+                valuesSUM_RAD = (values_R_dir); // direct beam radiation
+                valuesSUM_EFF = (values_E_dir); // direct beam effect
+                valuesNUM = 1;
               }
             }
 

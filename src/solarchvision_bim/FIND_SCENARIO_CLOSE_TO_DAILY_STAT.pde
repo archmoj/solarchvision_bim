@@ -1,4 +1,24 @@
+// Single-scenario convenience wrapper around FIND_SCENARIOS_CLOSE_TO_DAILY_STAT()
+// below (sampleCount == 1) - kept for any caller that genuinely only wants
+// the one closest scenario, and to keep FindScenarioCloseToStatTest.java's
+// existing coverage of _FIND_SCENARIO_CLOSE_TO_STAT() (below) meaningful
+// without having to unwrap an array there.
 int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
+  int[] top = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(1, l, start_k, end_k, j, DATE_ANGLE, impactTypeIndex);
+  return (top.length > 0) ? top[0] : -1;
+}
+
+// Returns up to sampleCount scenario indices (nk - still the same
+// k*daysMergedCount + j_ADD packing every call site already unpacks),
+// nearest-first by distance to the requested stat - instead of just the
+// single closest one. Picking several and averaging their hourly values
+// (see each call site's own comment on how it does that averaging)
+// smooths over a single scenario's own noise/extreme conditions, rather
+// than letting one unlucky pick's outlier day drive the whole simulation.
+// Returns an empty array (never null, never containing -1) when nothing
+// is defined to pick from - callers loop over the result instead of
+// checking for a single sentinel value.
+int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int sampleCount, int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
@@ -75,27 +95,45 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
     else if(l == STAT_N_Max) lSelected = STAT_N_Min;
   }
 
-  return _FIND_SCENARIO_CLOSE_TO_STAT(valuesSUM, lSelected);
+  return _FIND_SCENARIOS_CLOSE_TO_STAT(valuesSUM, lSelected, sampleCount);
 }
 
+// Single-scenario convenience wrapper around _FIND_SCENARIOS_CLOSE_TO_STAT()
+// below (sampleCount == 1) - see FindScenarioCloseToStatTest.java for its
+// existing, directly-tested behavior (exact-match short-circuit, stable
+// first-index-wins tie-break, -1 when nothing is defined), all of which
+// _FIND_SCENARIOS_CLOSE_TO_STAT() reproduces exactly for sampleCount == 1.
 int _FIND_SCENARIO_CLOSE_TO_STAT (float[] values, int l) {
+  int[] top = _FIND_SCENARIOS_CLOSE_TO_STAT(values, l, 1);
+  return (top.length > 0) ? top[0] : -1;
+}
+
+// Returns up to sampleCount indices of `values`, nearest-first by distance
+// to NORMAL(values)[l] - the same search _FIND_SCENARIO_CLOSE_TO_STAT()
+// above does for just the single closest index, generalized to however
+// many of the sampleCount nearest a caller wants to average across
+// instead. Only indices with a defined value are eligible. A stable sort
+// by distance keeps ties in their original index order - the same
+// "equal distance never replaces the current pick" tie-break the old
+// strict `diff < dist` loop used - so sampleCount == 1 always returns the
+// identical single index _FIND_SCENARIO_CLOSE_TO_STAT() would.
+int[] _FIND_SCENARIOS_CLOSE_TO_STAT (float[] values, int l, int sampleCount) {
   float normal = NORMAL(values)[l];
   int n = values.length;
 
-  int out = -1;
+  if (!is_defined(normal) || sampleCount <= 0) return new int[0];
 
-  if (is_defined(normal)) {
-    float dist = FLOAT_undefined;
-
-    for (int i = 0; i < n; i++) {
-      float diff = abs(normal - values[i]);
-      if (diff < dist) {
-        dist = diff;
-        out = i;
-        if (diff == 0) break; // can't do better than an exact match
-      }
-    }
+  java.util.ArrayList<Integer> definedIdx = new java.util.ArrayList<Integer>();
+  for (int i = 0; i < n; i++) {
+    if (is_defined(values[i])) definedIdx.add(i);
   }
 
+  final float[] finalValues = values;
+  final float finalNormal = normal;
+  definedIdx.sort((a, b) -> Float.compare(abs(finalNormal - finalValues[a]), abs(finalNormal - finalValues[b])));
+
+  int outCount = min(sampleCount, definedIdx.size());
+  int[] out = new int[outCount];
+  for (int s = 0; s < outCount; s++) out[s] = definedIdx.get(s);
   return out;
 }

@@ -548,18 +548,12 @@ class SolarImpacts {
         diffuseShadings[SHD] = loadImage(diffuseFileName);
       }
 
-      float Pa = FLOAT_undefined;
-      float Pb = FLOAT_undefined;
-      float Pc = FLOAT_undefined;
-      float Pd = FLOAT_undefined;
-
       float values_R_dir;
       float values_R_dif;
 
       float values_E_dir;
       float values_E_dif;
 
-      int now_k = 0;
       int now_i = 0;
       int now_j = 0;
 
@@ -613,11 +607,25 @@ class SolarImpacts {
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
 
-          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
+          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
 
-          if (nk == -1) continue;
-          int k = int(nk / STUDY.daysMergedCount);
-          int j_ADD = nk % STUDY.daysMergedCount;
+          if (allNk.length == 0) continue;
+
+          // One (now_k, now_j) pair per sampled scenario - averagedScenarioHourlyValues()
+          // below reads and averages across these instead of a single scenario's
+          // own (possibly noisy/extreme) hourly values.
+          int[] sampleNowK = new int[allNk.length];
+          int[] sampleNowJ = new int[allNk.length];
+          for (int s = 0; s < allNk.length; s++) {
+            int sample_k = int(allNk[s] / STUDY.daysMergedCount);
+            int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
+            sampleNowK[s] = sample_k + start_k;
+
+            int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+            if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
+            if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+            sampleNowJ[s] = sample_now_j;
+          }
 
           float[][][][] Matrix_ARGB;
 
@@ -651,37 +659,23 @@ class SolarImpacts {
 
               if (SunR[3] > 0) {
 
-                now_k = k + start_k;
                 now_i = i;
-                now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
-                if (now_j >= 365) {
-                  now_j = now_j % 365;
-                }
-                if (now_j < 0) {
-                  now_j = (now_j + 365) % 365;
-                }
+                float[] avg = averagedScenarioHourlyValues(now_i, sampleNowK, sampleNowJ);
 
-                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
-
-                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                if (avg == null) {
                   values_R_dir = FLOAT_undefined;
                   values_R_dif = FLOAT_undefined;
                   values_E_dir = FLOAT_undefined;
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i, now_j, now_k);
+                  values_R_dir = avg[0];
+                  values_R_dif = avg[1];
+                  values_E_dir = avg[2];
+                  values_E_dif = avg[3];
 
-                  if (isMemberCounted) {
-                    values_R_dir = 0.001 * Pa;
-                    values_R_dif = 0.001 * Pb;
-                    values_E_dir = 0.001 * Pc;
-                    values_E_dif = 0.001 * Pd;
-
+                  {
                     for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE++) {
                       float RAD_VALUE = (RAD_TYPE == 0) ? values_R_dir : values_R_dif;
                       float EFF_VALUE = (RAD_TYPE == 0) ? values_E_dir : values_E_dif;

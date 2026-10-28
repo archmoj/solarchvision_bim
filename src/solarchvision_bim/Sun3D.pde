@@ -511,7 +511,7 @@ class Sun3D {
   // Unlike every other WIN3D.pde-drawn class so far, these two don't shade
   // from the precomputed GlobalSolar/VertexSolar_amounts arrays - they read
   // live climate/weather data via getValue_currentDataSource()/
-  // FIND_SCENARIO_CLOSE_TO_DAILY_STAT(), gated by a much wider set of
+  // FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(), gated by a much wider set of
   // STUDY/case-bar/data-source inputs. Tracked directly below: STUDY's
   // day/hour range and filter settings, currentDataSource, TIME.beginDay,
   // station latitude, WIN3D.impactTypeIndex, and the resolved palette.
@@ -722,32 +722,39 @@ class Sun3D {
       int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
+      int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l,
         start_k, end_k, j, DATE_ANGLE,
         target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
 
-      if (nk == -1) continue;
+      if (allNk.length == 0) continue;
 
-      int k = int(nk / STUDY.daysMergedCount);
-      int j_ADD = nk % STUDY.daysMergedCount;
+      // One (now_k, now_j) pair per sampled scenario - averagedScenarioLayerValue()
+      // below reads and averages across these instead of a single scenario's
+      // own (possibly noisy/extreme) hourly value.
+      int[] sampleNowK = new int[allNk.length];
+      int[] sampleNowJ = new int[allNk.length];
+      for (int s = 0; s < allNk.length; s++) {
+        int sample_k = int(allNk[s] / STUDY.daysMergedCount);
+        int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
+        sampleNowK[s] = sample_k + start_k;
+        sampleNowJ[s] = wrapDayIndex(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
+      }
 
       for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
         if (!STUDY.isInHourlyRange(i)) continue;
 
         float HOUR_ANGLE = i;
-        int now_k = k + start_k;
         int now_i1 = floor(i);
         int now_i2 = (1 + now_i1) % 24;
         float i_ratio = i - now_i1;
-        now_j = wrapDayIndex(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
 
         float Pa1 = FLOAT_undefined;
         float Pa2 = FLOAT_undefined;
         int layerId = (WIN3D.impactTypeIndex == Impact_ACTIVE) ? LAYER_dirnorrad.id
                     : (WIN3D.impactTypeIndex == Impact_PASSIVE) ? LAYER_direffect.id : -1;
         if (layerId != -1) {
-          Pa1 = getValue_currentDataSource(now_i1, now_j, now_k, layerId);
-          Pa2 = getValue_currentDataSource(now_i2, now_j, now_k, layerId);
+          Pa1 = averagedScenarioLayerValue(now_i1, sampleNowK, sampleNowJ, layerId);
+          Pa2 = averagedScenarioLayerValue(now_i2, sampleNowK, sampleNowJ, layerId);
         }
 
         if (is_undefined(Pa1) && is_undefined(Pa2)) continue; // no data for this hour
@@ -933,14 +940,15 @@ class Sun3D {
         float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)][3];
 
         // One calendar day per ROW (merged-day-group), not per (hour, row)
-        // cell: now_j2 below (the "found match" date actually used to
-        // fetch this row's data) depends only on more_J/j/j_ADD/
+        // cell: sampleNowJ2[0] below (the closest sample's "found match"
+        // date, standing in for the row) depends only on more_J/j/j_ADD/
         // daysMergedCount/TIME.beginDay - never on the hour - so it's the
         // same for all 24 hours in a given row. Only read for STUDY (see
         // the quad-emission loop below, hoverOnStudyCycles.pde's own
         // CyclesHoverPoint) - left at its default (0) for any row that
-        // never finds a match (nk == -1 below), which is fine since those
-        // rows never contribute a defined, hoverable vertex anyway.
+        // never finds a match (allNk.length == 0 below), which is fine
+        // since those rows never contribute a defined, hoverable vertex
+        // anyway.
         int[] rowCalendarDay = new int[1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)];
 
         for (int more_J = 0; more_J < STUDY_dayIncrement; more_J += STUDY.daysMergedCount) {
@@ -953,16 +961,31 @@ class Sun3D {
 
           int keep_filter_type = STUDY.temporalFilterSetting;
           STUDY.temporalFilterSetting = filter_HOURLY;
-          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
+          int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(SCENARIO_SAMPLE_COUNT, l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
           STUDY.temporalFilterSetting = keep_filter_type;
 
           int row_J = more_J / STUDY.daysMergedCount;
 
-          if (nk != -1) {
-            int k = int(nk / STUDY.daysMergedCount);
-            int j_ADD = nk % STUDY.daysMergedCount;
+          if (allNk.length > 0) {
+
+            // One (now_k, now_j) pair per sampled scenario - the per-sample
+            // loop below reads and averages Pa/Pc across these instead of a
+            // single scenario's own (possibly noisy/extreme) hourly values.
+            int[] sampleNowK = new int[allNk.length];
+            int[] sampleNowJ2 = new int[allNk.length];
+            for (int s = 0; s < allNk.length; s++) {
+              int sample_k = int(allNk[s] / STUDY.daysMergedCount);
+              int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
+              sampleNowK[s] = sample_k + start_k;
+              sampleNowJ2[s] = wrapDayIndex(more_J + j * STUDY_dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
+            }
+            // Same value for every sample and every iteration of the "for i"
+            // loop below (see rowCalendarDay's own declaration above) - the
+            // closest sample's (allNk[0]'s) own day stands in for the row,
+            // same as a single scenario's day used to.
+            rowCalendarDay[row_J] = wrapDayIndex(sampleNowJ2[0] - STUDY_dayIncrement / 2);
 
             float valuesSUM_RAD = 0;
             float valuesSUM_EFF = 0;
@@ -982,31 +1005,52 @@ class Sun3D {
                 Beta = 180 - funcs.atan2_ang(SunR_temp[1], SunR_temp[2]);
               }
 
-              int now_k = k + start_k;
               int now_i1 = floor(i);
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
-              int now_j2 = wrapDayIndex(more_J + j * STUDY_dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
-              rowCalendarDay[row_J] = wrapDayIndex(now_j2 - STUDY_dayIncrement / 2); // same value every iteration of this "for i" loop (see this array's own declaration above) - set here anyway rather than hoisting now_j2 itself out, to keep this change minimal
 
-              float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
-              float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
-              float Pc1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_direffect.id);
-              float Pd1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difeffect.id);
-              float Pa2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_dirnorrad.id);
-              float Pb2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difhorrad.id);
-              float Pc2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_direffect.id);
-              float Pd2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difeffect.id);
+              // Averages (RAD, EFF) across however many of this hour's
+              // samples have BOTH sub-hour positions' four layers defined
+              // AND pass the isMemberCounted filter (evaluated once per
+              // sample, at now_i1 only - same as a single scenario's own
+              // filter check used to be) - instead of a single scenario's
+              // own value.
+              float sumRAD = 0;
+              float sumEFF = 0;
+              int sampleCount = 0;
 
-              boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
-                                   || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
-              if (!anyUndefined) {
+              for (int s = 0; s < sampleNowK.length; s++) {
+                int now_k = sampleNowK[s];
+                int now_j2 = sampleNowJ2[s];
+
+                float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
+                float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
+                float Pc1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_direffect.id);
+                float Pd1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difeffect.id);
+                float Pa2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_dirnorrad.id);
+                float Pb2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difhorrad.id);
+                float Pc2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_direffect.id);
+                float Pd2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difeffect.id);
+
+                boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
+                                     || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
+                if (anyUndefined) continue;
+
                 boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i1, now_j2, now_k);
-                if (isMemberCounted) {
-                  valuesSUM_RAD = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
-                  valuesSUM_EFF = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
-                }
+                if (!isMemberCounted) continue;
+
+                sumRAD += 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
+                sumEFF += 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
+                sampleCount += 1;
               }
+
+              if (sampleCount > 0) {
+                valuesSUM_RAD = sumRAD / sampleCount;
+                valuesSUM_EFF = sumEFF / sampleCount;
+              }
+              // else: leave valuesSUM_RAD/EFF at whatever they were from
+              // the previous hour - same as a single scenario's own
+              // anyUndefined/!isMemberCounted "skip, don't reset" outcome.
 
               float valuesSUM = FLOAT_undefined;
               if (WIN3D.impactTypeIndex == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
