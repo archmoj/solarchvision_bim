@@ -1171,6 +1171,18 @@ class WIN3D {
   // solarchvision_bim.pde) explicitly turns it back off.
   boolean showShading = false;
 
+  // Set by view_changed() (global_functions.pde - model_changed() always
+  // funnels into it too, so a model edit sets this the same way a camera
+  // move does) whenever showShading is already true, meaning the Shade_
+  // RGBA this overlay is still showing was baked from a camera/model
+  // state that's now stale. draw_WIN3D_layers.pde checks this once per
+  // frame and, when set, re-runs ShadeViewport() right there before
+  // drawing - which both refreshes Shade_RGBA and clears this flag again
+  // (see its own comment) - so the sticky overlay tracks the live camera/
+  // model instead of staying frozen at whatever it looked like when Esc
+  // will eventually dismiss it.
+  boolean shadingNeedsRebuild = false;
+
   // One-shot: set by the day-navigation/impact-type-toggle actions
   // (D/d/Shift+Tab) to show the solar-impact overlay this one time even
   // if allSolarImpacts.win3DOverlay_cameraMatches() is false - draw_WIN3D_

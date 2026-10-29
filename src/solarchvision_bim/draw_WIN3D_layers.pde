@@ -59,15 +59,28 @@ void draw_WIN3D_layers () {
   // the camera's being dragged, since WIN3D.update alone already keeps
   // this whole function (and WIN3D.draw() under it) running every frame
   // of that drag - until something explicitly turns WIN3D.showShading
-  // back off. The live model (WIN3D.draw() above, when WIN3D.update)
-  // keeps redrawing underneath every frame regardless; this frozen
-  // overlay - still carrying the alpha from ShadeViewport()'s own hit/
-  // miss pixels (see that function's own comment) - only covers the
-  // model-shaped pixels it had at bake time, so the rotating model shows
-  // through everywhere else rather than being hidden behind a stale
-  // rectangle. dismissShading() (ShadeViewport.pde) is the only place
-  // that clears this, from Esc.
+  // back off. dismissShading() (ShadeViewport.pde) is the only place that
+  // does that, from Esc.
   if (WIN3D.showShading) {
+    // view_changed()/model_changed() (global_functions.pde) set this
+    // whenever the camera moved or the model was edited while this
+    // overlay was already showing - re-bake right here, once per such
+    // frame, before drawing, so the overlay tracks the live camera/model
+    // instead of staying frozen at whatever it looked like when the Esc
+    // that will eventually dismiss it is pressed. ShadeViewport() clears
+    // this flag itself (see its own comment) once the fresh Shade_RGBA is
+    // ready, and leaves WIN3D.showShading - checked just above - true.
+    if (WIN3D.shadingNeedsRebuild) {
+      ShadeViewport();
+    }
+
+    // Either the just-rebaked image above, or - when nothing changed
+    // since the last bake - the same one still on screen from a previous
+    // frame. Still carries the alpha from ShadeViewport()'s own hit/miss
+    // pixels (see that function's own comment), so it only covers the
+    // model-shaped pixels it had at bake time; the live WIN3D.draw()
+    // render above shows through everywhere else rather than being
+    // hidden behind a stale rectangle.
     image(Shade_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
   }
 

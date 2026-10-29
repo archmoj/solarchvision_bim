@@ -84,6 +84,15 @@ void model_changed () {
 
 void view_changed () {
   WIN3D.revise();
+
+  // model_changed() (above) always calls this at its own end, so this one
+  // check covers both triggers the sticky shaded-viewport overlay needs
+  // to refresh for - a camera move (view_changed() called directly, e.g.
+  // from a drag/rotate) and a model edit (model_changed() -> here) alike.
+  // Only worth flagging while that overlay is actually showing -
+  // WIN3D.shadingNeedsRebuild's own comment (WIN3D.pde) covers where this
+  // gets consumed and cleared again.
+  if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
 }
 
 void selection_changed () {

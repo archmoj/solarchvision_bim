@@ -716,6 +716,15 @@ void ShadeViewport () {
     // whatever Shade_RGBA this call just produced), anything short of an
     // explicit dismissShading() call below, from Esc.
     WIN3D.showShading = true;
+
+    // This bake, whatever triggered it (an explicit "Shade Viewport"/
+    // Space/Backspace request, or draw_WIN3D_layers.pde's own auto-
+    // rebuild below), reflects the current camera/model state as of right
+    // now, so whatever earlier view_changed()/model_changed() call(s) set
+    // this mid-bake are moot - clear it here rather than leaving draw_
+    // WIN3D_layers.pde to immediately see it still set and redo the same
+    // work again next frame for no reason.
+    WIN3D.shadingNeedsRebuild = false;
   }
 
   long shadeTotalMillis = millis() - ShadeViewport_startMillis;
@@ -792,5 +801,6 @@ boolean dismissShading () {
   if (!WIN3D.showShading) return false;
 
   WIN3D.showShading = false;
+  WIN3D.shadingNeedsRebuild = false; // nothing left to rebuild towards
   return true;
 }

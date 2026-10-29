@@ -117,6 +117,28 @@ class GlobalFunctionsTest {
   }
 
   @Test
+  void viewChanged_flagsTheStickyShadingOverlayForRebuildWhileItIsShowing () {
+    app.WIN3D.showShading = true;
+    app.WIN3D.shadingNeedsRebuild = false;
+
+    app.view_changed();
+
+    assertTrue(app.WIN3D.shadingNeedsRebuild);
+  }
+
+  @Test
+  void viewChanged_leavesShadingNeedsRebuildAloneWhenShadingIsNotShowing () {
+    // Not worth flagging a rebuild for an overlay nobody's looking at -
+    // see WIN3D.shadingNeedsRebuild's own comment (WIN3D.pde).
+    app.WIN3D.showShading = false;
+    app.WIN3D.shadingNeedsRebuild = false;
+
+    app.view_changed();
+
+    assertFalse(app.WIN3D.shadingNeedsRebuild);
+  }
+
+  @Test
   void modelChanged_setsShouldRebuildFaceGridAndTriggersAViewChange () {
     app.should_rebuildFaceGrid = false;
     app.WIN3D.update = false;
@@ -125,6 +147,20 @@ class GlobalFunctionsTest {
 
     assertTrue(app.should_rebuildFaceGrid);
     assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void modelChanged_alsoFlagsTheStickyShadingOverlayForRebuildWhileItIsShowing () {
+    // model_changed() always calls view_changed() at its own end (see
+    // that test above) - this just confirms the shading-rebuild flag
+    // rides along through that same funnel, not just a direct
+    // view_changed() call.
+    app.WIN3D.showShading = true;
+    app.WIN3D.shadingNeedsRebuild = false;
+
+    app.model_changed();
+
+    assertTrue(app.WIN3D.shadingNeedsRebuild);
   }
 
   @Test
