@@ -488,15 +488,16 @@ class WIN3D {
     // early-return guard above already discards every other Alt+key
     // combination before this point, so there's no "Alt+some-other-
     // coded-key" case this could be accidentally over-including).
-    // Among the plain command keys, only the incremental view rotate/
-    // pan/zoom ones, plus Space/Backspace (day-cycle shading, same
-    // reasoning as Alt+arrows - see handleCommandKey()'s own ' '/
-    // BACKSPACE cases) repeat (this also covers Ctrl+,/Ctrl+., since ','
-    // and '.' are already repeatable below regardless of Ctrl).
-    // Everything else (camera cycling, shading toggle, Delete, rebuild-
-    // trigger, snap-to-look, Shift+Tab) is a discrete/one-shot/
-    // destructive action and must stay single-press only, regardless of
-    // how long the key is held.
+    // Among the plain command keys, only the incremental ones repeat -
+    // see isRepeatableCommandKey()'s own full list and per-group
+    // comments (view rotate/pan/zoom, day-cycle shading preview via
+    // Space/Backspace, Impact Day/Troposphere Time stepping via
+    // d/D/t/T, ...) - this also covers Ctrl+,/Ctrl+., since ',' and '.'
+    // are already repeatable below regardless of Ctrl. Everything else
+    // (camera cycling, shading toggle, Delete, rebuild-trigger, snap-to-
+    // look, Shift+Tab) is a discrete/one-shot/destructive action and
+    // must stay single-press only, regardless of how long the key is
+    // held.
     this.navKeyRepeatable = this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar);
 
     // Deliberately NOT reduceShadingQualityForNavHold() here - see that
@@ -575,6 +576,14 @@ class WIN3D {
       // keys just above, so it gets the same repeat-while-held treatment.
       case ' ':
       case BACKSPACE:
+      // Impact day / Troposphere time stepping (handleCommandKey()'s own
+      // 'd'/'D'/'t'/'T' cases - "Next/Previous Impact Day",
+      // "Advance/Rewind Troposphere Time") - the same incremental-nudge
+      // shape as everything else in this list.
+      case 'd':
+      case 'D':
+      case 't':
+      case 'T':
         return true;
       default:
         return false;

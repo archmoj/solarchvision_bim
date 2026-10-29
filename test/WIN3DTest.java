@@ -252,7 +252,7 @@ class WIN3DTest {
   // ================= isRepeatableCommandKey ==============================
 
   @Test
-  void isRepeatableCommandKey_recognizesTheNumpadCommaPeriodAndShadeStepKeys () {
+  void isRepeatableCommandKey_recognizesEveryIncrementalNudgeKey () {
     assertTrue(app.WIN3D.isRepeatableCommandKey(','));
     assertTrue(app.WIN3D.isRepeatableCommandKey('+'));
     assertTrue(app.WIN3D.isRepeatableCommandKey('4')); // a numpad rotate/pan digit is repeatable...
@@ -261,13 +261,23 @@ class WIN3DTest {
     // one-shot "snap to selection" action rather than a continuous
     // nudge, so it's excluded from the case list on purpose.
     assertFalse(app.WIN3D.isRepeatableCommandKey('5'));
-    assertFalse(app.WIN3D.isRepeatableCommandKey('c')); // ...and letter commands are not either
-    assertFalse(app.WIN3D.isRepeatableCommandKey('a'));
+    // 'c'/'C' (camera cycling) stay discrete too, unlike d/D/t/T below -
+    // cycling to a specific other camera isn't an incremental nudge the
+    // way stepping a day or a troposphere frame is.
+    assertFalse(app.WIN3D.isRepeatableCommandKey('c'));
+    assertFalse(app.WIN3D.isRepeatableCommandKey('C'));
+    assertFalse(app.WIN3D.isRepeatableCommandKey('a')); // letter commands generally are not either
     // Space/Backspace: day-cycle shading step + preview
     // (handleCommandKey()'s own ' '/BACKSPACE cases) - the same
     // incremental-nudge shape as the rotate/pan/zoom keys above.
     assertTrue(app.WIN3D.isRepeatableCommandKey(' '));
     assertTrue(app.WIN3D.isRepeatableCommandKey(app.BACKSPACE));
+    // d/D/t/T: Impact Day / Troposphere Time stepping
+    // (handleCommandKey()'s own 'd'/'D'/'t'/'T' cases) - same shape again.
+    assertTrue(app.WIN3D.isRepeatableCommandKey('d'));
+    assertTrue(app.WIN3D.isRepeatableCommandKey('D'));
+    assertTrue(app.WIN3D.isRepeatableCommandKey('t'));
+    assertTrue(app.WIN3D.isRepeatableCommandKey('T'));
   }
 
   // ================= dispatchNavKey routing ==============================
@@ -559,6 +569,28 @@ class WIN3DTest {
 
     app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
     assertEquals(2, app.SHADE_HOUR_ANGLE);
+  }
+
+  // Impact Day / Troposphere Time stepping (d/D/t/T) are also repeatable
+  // now (isRepeatableCommandKey()'s own comment) - 'd' -> "Next Impact
+  // Day" chosen as the representative case, the same way the Alt+arrow
+  // test above stands in for all four handleAltArrowKeys() directions.
+  @Test
+  void processHeldKey_repeatsImpactDayStepKeysTooOnceConfirmedAsAHold () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = false;
+    app.WIN3D.navKeyChar = 'd'; // handleCommandKey('d', ...) -> "Next Impact Day"
+    app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.WIN3D.navKeyRepeating = false;
+    app.impactDisplayDay = 0;
+
+    app.WIN3D.processHeldKey(); // crosses the initial delay - fires, enters repeat phase
+    assertEquals(1, app.impactDisplayDay);
+    assertTrue(app.WIN3D.navKeyRepeating);
+
+    app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
+    assertEquals(2, app.impactDisplayDay);
   }
 
   @Test
