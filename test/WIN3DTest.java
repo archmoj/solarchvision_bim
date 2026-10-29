@@ -357,6 +357,114 @@ class WIN3DTest {
     assertFalse(app.WIN3D.navKeyHeld);
   }
 
+  // ================= reduceShadingQualityForNavHold / its keyReleased() ===
+  // ================= restore (see WIN3D.shadingQualityBeforeNavHold's =====
+  // ================= own comment) ==========================================
+
+  @Test
+  void reduceShadingQualityForNavHold_savesAndScalesDownWhileRepeatable () {
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+
+    app.WIN3D.reduceShadingQualityForNavHold();
+
+    assertEquals(0.75f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    assertEquals(0.75f * app.WIN3D.NAV_HOLD_SHADING_QUALITY_FACTOR, app.WIN3D.shadingQuality, 0.0001f);
+  }
+
+  @Test
+  void reduceShadingQualityForNavHold_isANoOpForADiscreteOneShotKey () {
+    // Not repeatable (camera cycling, shading toggle, etc.) - never
+    // re-fires from processHeldKey() regardless of how long it's held,
+    // so there's nothing to protect against here.
+    app.WIN3D.navKeyRepeatable = false;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+
+    app.WIN3D.reduceShadingQualityForNavHold();
+
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+  }
+
+  @Test
+  void reduceShadingQualityForNavHold_neverStompsAnAlreadySavedOriginal () {
+    // A second repeatable key pressed before the first one's release -
+    // the already-reduced shadingQuality must not get saved over the
+    // real original.
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.shadingQuality = 0.225f; // already reduced from 0.75
+    app.WIN3D.shadingQualityBeforeNavHold = 0.75f;
+
+    app.WIN3D.reduceShadingQualityForNavHold();
+
+    assertEquals(0.75f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    assertEquals(0.225f, app.WIN3D.shadingQuality, 0.0001f); // unchanged - not re-reduced again
+  }
+
+  @Test
+  void keyReleased_restoresShadingQualityAndForcesARebuildWhenItWasReduced () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyCode = app.UP;
+    app.WIN3D.shadingQuality = 0.225f; // as if reduced from 0.75
+    app.WIN3D.shadingQualityBeforeNavHold = 0.75f;
+    app.WIN3D.showShading = true;
+    app.WIN3D.shadingNeedsRebuild = false;
+    app.WIN3D.update = false;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.UP;
+    app.WIN3D.keyReleased();
+
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    // view_changed() (triggered because quality was reduced) both
+    // revises WIN3D...
+    assertTrue(app.WIN3D.update);
+    // ...and, since showShading is still true, flags one final
+    // full-quality rebuild rather than leaving the coarse hold-quality
+    // bake on screen.
+    assertTrue(app.WIN3D.shadingNeedsRebuild);
+  }
+
+  @Test
+  void keyReleased_leavesShadingQualityAloneWhenItWasNeverReduced () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyCode = app.UP;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+    app.WIN3D.update = false;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.UP;
+    app.WIN3D.keyReleased();
+
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    assertFalse(app.WIN3D.update); // no view_changed() call - nothing to restore
+  }
+
+  @Test
+  void keyReleased_leavesAReducedShadingQualityAloneWhenTheWrongKeyReleases () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyCode = app.UP;
+    app.WIN3D.shadingQuality = 0.225f;
+    app.WIN3D.shadingQualityBeforeNavHold = 0.75f;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.DOWN; // a DIFFERENT key releasing - not the tracked one
+
+    app.WIN3D.keyReleased();
+
+    assertTrue(app.WIN3D.navKeyHeld); // still held, per the test above
+    assertEquals(0.225f, app.WIN3D.shadingQuality, 0.0001f); // still reduced
+    assertEquals(0.75f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+  }
+
   @Test
   void processHeldKey_doesNotFireBeforeTheInitialDelayElapses () {
     app.WIN3D.navKeyHeld = true;

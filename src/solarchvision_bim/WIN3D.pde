@@ -492,12 +492,45 @@ class WIN3D {
     this.navKeyRepeatable = !altDown &&
       (this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar));
 
+    this.reduceShadingQualityForNavHold();
 
     this.navKeyHeld = true;
     this.navKeyFrameCounter = 0;
     this.navKeyRepeating = false;
 
     this.dispatchNavKey();
+  }
+
+  // A repeatable key held down re-fires its action (dispatchNavKey(), via
+  // processHeldKey()) every frame for as long as it stays held - and,
+  // while the sticky shaded-viewport overlay is on, each of those
+  // re-fires is itself a view_changed() call that flags a full
+  // ShadeViewport() re-bake (WIN3D.shadingNeedsRebuild - see its own
+  // comment). Dropping shadingQuality for the hold's own duration keeps
+  // that per-frame re-bake cheap enough to actually track continuous
+  // navigation instead of stalling it one full-resolution bake behind
+  // every frame - keyReleased() below restores the real value (and
+  // triggers one final full-quality re-bake) the moment the key comes
+  // back up.
+  //
+  // Pulled out of keyPressed() (which needs a real KeyEvent - this test
+  // suite deliberately never constructs one, see solarchvision_bimTest.
+  // java's own comment) into its own no-argument method purely so the
+  // actual quality math is directly unit-testable against navKeyRepeatable
+  // alone, the same reasoning ShadeViewport.pde's own dismissShading()
+  // was split out for.
+  void reduceShadingQualityForNavHold () {
+    // Not repeatable (a discrete/one-shot key - camera cycling, shading
+    // toggle, etc.) - never re-fires from processHeldKey() regardless of
+    // how long it's held, so there's no per-frame re-bake cost to guard
+    // against here. Already reduced (shadingQualityBeforeNavHold is its
+    // "not currently reduced" -1 sentinel otherwise) - a second
+    // repeatable key pressed before the first one's release must not
+    // stomp the saved original with the already-reduced value.
+    if (!this.navKeyRepeatable || this.shadingQualityBeforeNavHold >= 0) return;
+
+    this.shadingQualityBeforeNavHold = this.shadingQuality;
+    this.shadingQuality *= NAV_HOLD_SHADING_QUALITY_FACTOR;
   }
 
   boolean isRepeatableCommandKey (char cmdKey) {
@@ -546,10 +579,24 @@ class WIN3D {
     boolean releasedCoded = (key == CODED);
     if (releasedCoded != this.navKeyCoded) return;
 
-    if (releasedCoded) {
-      if (keyCode == this.navKeyCode) this.navKeyHeld = false;
-    } else {
-      if (key == this.navKeyChar) this.navKeyHeld = false;
+    boolean isTrackedKey = releasedCoded ? (keyCode == this.navKeyCode) : (key == this.navKeyChar);
+    if (!isTrackedKey) return;
+
+    this.navKeyHeld = false;
+
+    if (this.shadingQualityBeforeNavHold >= 0) {
+      this.shadingQuality = this.shadingQualityBeforeNavHold;
+      this.shadingQualityBeforeNavHold = -1;
+
+      // One final re-bake at full quality right away, rather than
+      // leaving whatever coarse hold-quality bake was last on screen
+      // sitting there until some unrelated later camera/model change
+      // happens to trigger a refresh - "key up brings shading quality
+      // back" should follow all the way through to what's actually
+      // shown, not just the stored setting. Harmless (a plain redraw,
+      // the overlay draw branch is skipped entirely) when shading isn't
+      // currently on.
+      view_changed();
     }
   }
 
@@ -1162,6 +1209,18 @@ class WIN3D {
   }
 
   float shadingQuality = 0.75f;
+
+  // Factor shadingQuality is temporarily scaled by for as long as a
+  // repeatable nav key (keyPressed()/keyReleased() below) stays held -
+  // see shadingQualityBeforeNavHold's own comment for why.
+  static final float NAV_HOLD_SHADING_QUALITY_FACTOR = 0.3f;
+
+  // The real shadingQuality, saved by keyPressed() the moment a
+  // repeatable nav key starts being held and restored by keyReleased()
+  // when it's let go. -1 ("not currently reduced") rather than a
+  // separate boolean, since shadingQuality is itself always a valid
+  // positive value and can never legitimately be negative.
+  float shadingQualityBeforeNavHold = -1;
 
   // Sticky, not one-shot: set true by ShadeViewport() once it's finished
   // baking Shade_RGBA, and left true - draw_WIN3D_layers.pde redraws that
