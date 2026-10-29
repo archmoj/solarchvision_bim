@@ -152,13 +152,16 @@ void drawAllHovers () {
   if (UI_menuBar.selected_parent != -1) return;
 
   clearStudyHover();
+  clearWorldHover();
 
   // Fresh per pass - see studyPlacedHoverBoxes/win3DPlacedHoverBoxes
   // (just below hoverBoxPosition()) for what these track and why.
   studyPlacedHoverBoxes = new ArrayList<float[]>();
   win3DPlacedHoverBoxes = new ArrayList<float[]>();
+  worldPlacedHoverBoxes = new ArrayList<float[]>();
   studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
   win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+  worldPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
   // --- Pass 1: resolve positions, front-to-back priority order ---------
   //
@@ -183,14 +186,17 @@ void drawAllHovers () {
   // that.
   ArrayList<float[]> pinnedPeekStudy = null;
   ArrayList<float[]> pinnedPeekWin3D = null;
+  ArrayList<float[]> pinnedPeekWorld = null;
 
   if ((allHoverPoints != null) && (allHoverPoints.length > 0)) {
     HoverPeekResult peek = peekAllPinnedHoverBoxes();
     pinnedPeekStudy = peek.study;
     pinnedPeekWin3D = peek.win3D;
+    pinnedPeekWorld = peek.world;
 
     studyPlacedHoverBoxes.addAll(pinnedPeekStudy);
     win3DPlacedHoverBoxes.addAll(pinnedPeekWin3D);
+    worldPlacedHoverBoxes.addAll(pinnedPeekWorld);
   }
 
   if (control == USER_GUI) {
@@ -202,6 +208,7 @@ void drawAllHovers () {
 
   if (pinnedPeekStudy != null) studyPlacedHoverBoxes.removeAll(pinnedPeekStudy);
   if (pinnedPeekWin3D != null) win3DPlacedHoverBoxes.removeAll(pinnedPeekWin3D);
+  if (pinnedPeekWorld != null) worldPlacedHoverBoxes.removeAll(pinnedPeekWorld);
 
   // Pinned points, newest-to-oldest (not allHoverPoints' own click
   // order), following the live point above - so whichever was JUST
@@ -219,6 +226,7 @@ void drawAllHovers () {
   // --- Pass 2: paint from the queue, back-to-front ----------------------
   drawHoverQueue(studyPendingHoverBoxes);
   drawHoverQueue(win3DPendingHoverBoxes);
+  drawHoverQueue(worldPendingHoverBoxes);
 }
 
 // Resolves one pinned point's box - looks up its own remembered
@@ -245,6 +253,7 @@ void drawHoverPinAt (int[] row) {
 class HoverPeekResult {
   ArrayList<float[]> study;
   ArrayList<float[]> win3D;
+  ArrayList<float[]> world;
 }
 
 // Resolves EVERY pinned point (not just the newest) through the EXACT
@@ -288,13 +297,17 @@ class HoverPeekResult {
 HoverPeekResult peekAllPinnedHoverBoxes () {
   ArrayList<float[]> realStudyPlaced = studyPlacedHoverBoxes;
   ArrayList<float[]> realWin3DPlaced = win3DPlacedHoverBoxes;
+  ArrayList<float[]> realWorldPlaced = worldPlacedHoverBoxes;
   ArrayList<PendingHoverBox> realStudyPending = studyPendingHoverBoxes;
   ArrayList<PendingHoverBox> realWin3DPending = win3DPendingHoverBoxes;
+  ArrayList<PendingHoverBox> realWorldPending = worldPendingHoverBoxes;
 
   studyPlacedHoverBoxes = new ArrayList<float[]>();
   win3DPlacedHoverBoxes = new ArrayList<float[]>();
+  worldPlacedHoverBoxes = new ArrayList<float[]>();
   studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
   win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+  worldPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
   for (int i = allHoverPoints.length - 1; i >= 0; i--) {
     drawHoverPinAt(allHoverPoints[i]);
@@ -303,11 +316,14 @@ HoverPeekResult peekAllPinnedHoverBoxes () {
   HoverPeekResult result = new HoverPeekResult();
   result.study = studyPlacedHoverBoxes;
   result.win3D = win3DPlacedHoverBoxes;
+  result.world = worldPlacedHoverBoxes;
 
   studyPlacedHoverBoxes = realStudyPlaced;
   win3DPlacedHoverBoxes = realWin3DPlaced;
+  worldPlacedHoverBoxes = realWorldPlaced;
   studyPendingHoverBoxes = realStudyPending;
   win3DPendingHoverBoxes = realWin3DPending;
+  worldPendingHoverBoxes = realWorldPending;
 
   return result;
 }
@@ -327,6 +343,7 @@ void drawHoverQueue (ArrayList<PendingHoverBox> queue) {
 void placeHoversAt (int xMouse, int yMouse) {
   place_WIN3D_hover(xMouse, yMouse);
   place_STUDY_hover(xMouse, yMouse);
+  place_WORLD_hover(xMouse, yMouse);
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------
@@ -421,6 +438,7 @@ float[] hoverBoxPosition (int xMouse, int yMouse, float destX, float destY, floa
 // screen space as destX/destY/xMouse/yMouse.
 ArrayList<float[]> studyPlacedHoverBoxes = new ArrayList<float[]>();
 ArrayList<float[]> win3DPlacedHoverBoxes = new ArrayList<float[]>();
+ArrayList<float[]> worldPlacedHoverBoxes = new ArrayList<float[]>();
 
 // One box queued by queueHover()/queuePaletteHover() during pass 1
 // (drawAllHovers() above), carrying everything drawHover()/
@@ -439,6 +457,7 @@ class PendingHoverBox {
 
 ArrayList<PendingHoverBox> studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 ArrayList<PendingHoverBox> win3DPendingHoverBoxes = new ArrayList<PendingHoverBox>();
+ArrayList<PendingHoverBox> worldPendingHoverBoxes = new ArrayList<PendingHoverBox>();
 
 // True only while placeHoversAt() is resolving the live, mouse-following
 // point specifically (set/cleared around that one call in
@@ -500,6 +519,35 @@ float hoverBoxTotalOverlap (float x, float y, float w, float h, ArrayList<float[
   return total;
 }
 
+// Clamps a box's position along ONE axis into destStart..destStart+destLen
+// (minus `inset` on each side) as a plain constrain(value, low, high) would
+// - except plain constrain() isn't safe for this: Processing's own
+// constrain(value, low, high) assumes low <= high, and simply returns
+// `high` once value > high even when low > high (i.e. once low > high,
+// EVERY value - however far below `low` it started - resolves to the
+// SAME `high`, which is BELOW low, so the box's own far edge, destStart+
+// destLen-inset, ends up well past destStart+destLen rather than the near
+// edge landing just inside destStart). Since low = destStart+inset and
+// high = destStart+destLen-boxLen-inset, low > high exactly when
+// boxLen > destLen - 2*inset - a box too big to fully fit the dest rect
+// on this axis at all (e.g. WORLD's own station-list hover growing taller
+// than the WORLD panel itself, before worldStationHoverMaxNames
+// (hoverOnWorldStations.pde) capped how many lines it can ever have) -
+// caught explicitly below and always resolved to the near edge
+// (destStart+inset) instead, which is the one corner that's still
+// genuinely inside the dest rect on this axis, rather than letting the
+// box's position drift past the far edge the way plain constrain() would.
+// Every call site below that decides a box's x/y goes through this,
+// rather than a bare constrain(), so a hover box can never be positioned
+// starting outside its own dest rect, on either axis, regardless of how
+// large its content made it.
+float hoverClampAxis (float value, float destStart, float destLen, float boxLen, float inset) {
+  float low = destStart + inset;
+  float high = destStart + destLen - boxLen - inset;
+  if (high < low) return low;
+  return constrain(value, low, high);
+}
+
 // hoverBoxPosition()'s own placement math, parameterized by which
 // quadrant to use (right of the anchor or left of it, above or below)
 // instead of deriving that from which half of the dest rect the anchor
@@ -510,8 +558,8 @@ float[] hoverQuadrantPosition (float xMouse, float yMouse, float destX, float de
   float boxX = right ? (xMouse - hoverMargin - boxW) : (xMouse + hoverMargin);
   float boxY = bottom ? (yMouse - hoverMargin - boxH) : (yMouse + hoverMargin);
 
-  boxX = constrain(boxX, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
-  boxY = constrain(boxY, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+  boxX = hoverClampAxis(boxX, destX, destW, boxW, hoverStrokeInset);
+  boxY = hoverClampAxis(boxY, destY, destH, boxH, hoverStrokeInset);
 
   return new float[] { boxX, boxY };
 }
@@ -534,9 +582,9 @@ float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float de
   float boxY = from[1];
 
   if (alongX) {
-    boxX = constrain(boxX + direction * steps * stepSize, destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
+    boxX = hoverClampAxis(boxX + direction * steps * stepSize, destX, destW, boxW, hoverStrokeInset);
   } else {
-    boxY = constrain(boxY + direction * steps * stepSize, destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+    boxY = hoverClampAxis(boxY + direction * steps * stepSize, destY, destH, boxH, hoverStrokeInset);
   }
 
   return new float[] { boxX, boxY };
@@ -570,8 +618,8 @@ float[] hoverAxisShiftPosition (float[] from, float destX, float destY, float de
 float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float destY, float destW, float destH, float boxW, float boxH, ArrayList<float[]> placedBoxes, float[] preferredPosition) {
   float[] natural;
   if (preferredPosition != null) {
-    float px = constrain(preferredPosition[0], destX + hoverStrokeInset, destX + destW - boxW - hoverStrokeInset);
-    float py = constrain(preferredPosition[1], destY + hoverStrokeInset, destY + destH - boxH - hoverStrokeInset);
+    float px = hoverClampAxis(preferredPosition[0], destX, destW, boxW, hoverStrokeInset);
+    float py = hoverClampAxis(preferredPosition[1], destY, destH, boxH, hoverStrokeInset);
     natural = new float[] { px, py };
   } else {
     natural = hoverBoxPosition((int) xMouse, (int) yMouse, destX, destY, destW, destH, boxW, boxH);

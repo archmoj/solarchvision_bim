@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // Covers hover.pde's multi-box collision-avoidance logic: the rectangle
 // math (hoverBoxesOverlap/hoverBoxOverlapArea/hoverBoxCollides/
-// hoverBoxTotalOverlap), the placement candidates it chooses from
+// hoverBoxTotalOverlap), the shared dest-rect clamp every positioning call
+// goes through (hoverClampAxis), the placement candidates it chooses from
 // (hoverQuadrantPosition/hoverAxisShiftPosition), and the single-pass
 // greedy resolver that ties them together (resolveHoverBoxPosition).
 // All of it is pure - no live graphics touched, same as hoverBoxPosition
@@ -95,6 +96,45 @@ class HoverBoxCollisionTest {
     assertEquals(100f, total, 0.0001f); // 50 + 50 + 0
   }
 
+  // ================= hoverClampAxis ============================================
+  // The shared clamp every box-positioning call site (hoverQuadrantPosition,
+  // hoverAxisShiftPosition, resolveHoverBoxPosition's own preferredPosition
+  // handling) goes through instead of a bare constrain(), specifically so a
+  // box bigger than the dest rect on this axis (low > high, in constrain()'s
+  // own terms) still resolves to a position fully inside the rect's near
+  // edge rather than drifting past the far one - see this function's own
+  // comment (hover.pde) for exactly why plain constrain() can't be trusted
+  // for that case.
+
+  @Test
+  void clampAxis_behavesLikePlainConstrain_whenTheBoxFits () {
+    // boxLen (50) well under destLen (400) - low < high, so this should
+    // match a plain constrain(value, low, high) exactly.
+    assertEquals(40, app.hoverClampAxis(40, 0, 400, 50, 3), 0.0001f); // inside the legal range - unchanged
+    assertEquals(3, app.hoverClampAxis(-20, 0, 400, 50, 3), 0.0001f); // below low - clamped up to it
+    assertEquals(347, app.hoverClampAxis(1000, 0, 400, 50, 3), 0.0001f); // above high (400-50-3) - clamped down to it
+  }
+
+  @Test
+  void clampAxis_anchorsAtTheNearEdge_whenTheBoxIsBiggerThanTheDestRect () {
+    // boxLen (500) bigger than destLen (400) itself - low (3) > high
+    // (400-500-3 = -103) - a plain constrain() would return -103 here
+    // (since any value > -103 resolves to high), landing the box's near
+    // edge 103px before the dest rect even starts, when destStart+inset
+    // (3) is the one position that's still actually inside the rect on
+    // this axis.
+    assertEquals(3, app.hoverClampAxis(40, 0, 400, 500, 3), 0.0001f);
+    assertEquals(3, app.hoverClampAxis(-9999, 0, 400, 500, 3), 0.0001f); // same result regardless of the starting value
+    assertEquals(3, app.hoverClampAxis(9999, 0, 400, 500, 3), 0.0001f);
+  }
+
+  @Test
+  void clampAxis_appliesTheSameWayAtANonZeroDestStart () {
+    // destStart=100 this time, rather than 0 - the near-edge fallback
+    // should track it, not silently assume the rect starts at the origin.
+    assertEquals(103, app.hoverClampAxis(40, 100, 400, 500, 3), 0.0001f);
+  }
+
   // ================= hoverQuadrantPosition =====================================
   // Same placement math as hoverBoxPosition() (SolarImpactOverlayHoverTest.java
   // already covers that one via the mouse-position-derived right/bottom),
@@ -119,6 +159,22 @@ class HoverBoxCollisionTest {
     float[] p = app.hoverQuadrantPosition(5, 5, 0, 0, 400, 300, 70, 54, true, true);
     assertTrue(p[0] >= 0 && p[0] + 70 <= 400);
     assertTrue(p[1] >= 0 && p[1] + 54 <= 300);
+  }
+
+  @Test
+  void quadrant_anchorsAtTheNearCorner_whenTheBoxIsTallerThanTheDestRect () {
+    // The actual scenario hoverClampAxis above exists for: a box (e.g.
+    // WORLD's own station-name list, before worldStationHoverMaxNames
+    // capped how long it can get - hoverOnWorldStations.pde) taller than
+    // the panel it has to fit inside. The box's near edge (its left/top)
+    // must still land inside the dest rect - the far edge running past
+    // the opposite side is the unavoidable part (there is, by definition,
+    // nowhere a box this size could sit without that), but the near edge
+    // drifting past the rect's OWN starting edge too (the bug
+    // hoverClampAxis's own test above covers directly) would mean the box
+    // isn't anchored inside the rect at all anymore.
+    float[] p = app.hoverQuadrantPosition(200, 150, 0, 0, 400, 300, 70, 1000, false, false);
+    assertEquals(app.hoverStrokeInset, p[1], 0.0001f);
   }
 
   // ================= hoverAxisShiftPosition ====================================

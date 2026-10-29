@@ -46,6 +46,17 @@ class WORLD {
   boolean update = true;
   boolean include = true;
 
+  // Bumped once per actual redraw (see draw()'s own end-of-update-block
+  // increment below) - same purpose as STUDY's own renderGeneration
+  // (STUDY.pde): lets hoverOnWorldStations.pde's own clearWorldHover()
+  // tell "WORLD genuinely redrew since I last looked" apart from "WORLD's
+  // update flag just happens to still be false", the same distinction
+  // clearStudyHover() (hoverOnStudyImpact.pde) already needs STUDY's own
+  // canvas for: draw() only repaints this panel while this.update is
+  // true, so a hover box drawn on top of it would otherwise stick around
+  // on screen until something else happens to repaint that same region.
+  int renderGeneration = 0;
+
 
   int numMaps;
   int zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
@@ -758,11 +769,11 @@ class WORLD {
 
       if ((this.ImageScale != 1) || (this.record_PDF)) {
         this.graphics = createGraphics(this.dX, this.dY, P2D);
-        this.updated();
-      } else {
-        this.updated();
       }
 
+      this.renderGeneration += 1;
+
+      this.updated();
 
       if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
     }
