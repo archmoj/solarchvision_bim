@@ -127,7 +127,10 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.beginDay,
-        (v) -> { TIME.beginDay = int(v); },
+        (v) -> { 
+          TIME.beginDay = int(v);
+          sync_SHADE_DATE_ANGLE();
+        },
         s1, s2, s3,
         u1, u2, u3,
         react.applyBeginDayChange);
@@ -150,7 +153,10 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.day,
-        (v) -> { TIME.day = int(v); },
+        (v) -> { 
+          TIME.day = int(v);
+          sync_SHADE_DATE_ANGLE();
+        },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
@@ -173,7 +179,10 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.month,
-        (v) -> { TIME.month = int(v); },
+        (v) -> { 
+          TIME.month = int(v);
+          sync_SHADE_DATE_ANGLE();
+        },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
@@ -196,7 +205,10 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.year,
-        (v) -> { TIME.year = int(v); },
+        (v) -> { 
+          TIME.year = int(v);
+          sync_SHADE_DATE_ANGLE();
+        },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);

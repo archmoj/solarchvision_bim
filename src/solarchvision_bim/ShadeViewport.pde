@@ -82,14 +82,14 @@ boolean isFaceEdgeBetween (int hitA, float nxA, float nyA, float nzA, int hitB, 
   return dot < FACE_EDGE_NORMAL_DOT_THRESHOLD;
 }
 
-final int SHADE_HOURS_PER_DAY = 5 * 2;
-final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2; // 7 a.m.
-final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2; // 17 p.m.
+final int SHADE_HOURS_PER_DAY = 24;
+final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2;
+final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2;
 final int SHADE_STEP_DAYS = 30; //90;
 
 // initial values of choice
 int SHADE_HOUR_ANGLE = 8;
-int SHADE_DATE_ANGLE = 0;
+int SHADE_DATE_ANGLE = 0; // This would be set to TIME.beginDay later in the process.
 
 volatile boolean isShadingViewport = false;
 
@@ -146,8 +146,6 @@ void ShadeViewport () {
   long shadeFixSuspectsMillis = 0;
   long shadePass2Millis = 0;
 
-  int DATE_ANGLE = SHADE_DATE_ANGLE;
-  int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
   showWaitCursor();
 
@@ -229,7 +227,9 @@ void ShadeViewport () {
     centerZ = 0;
   }
 
-  float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, 0);
+  sync_SHADE_DATE_ANGLE();
+
+  float[] SunR = funcs.SunPositionRadiation(SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE, 0);
   float[] SunV = { SunR[1], SunR[2], SunR[3] };
   float[] SunV_unit = funcs.vec3_unit(new float[]{ SunV[0], SunV[1], SunV[2] });
 
@@ -708,30 +708,48 @@ void ShadeViewport () {
   isShadingViewport = false;
 }
 
-void adjustShadeTime (int steps) {
-  if(steps > 0) {
-    // step forward
-    for(int i = 0; i < steps; i++) {
-      SHADE_HOUR_ANGLE++;
-      if (SHADE_HOUR_ANGLE > SHADE_LAST_HOUR) {
-        SHADE_HOUR_ANGLE = SHADE_FIRST_HOUR;
-        SHADE_DATE_ANGLE += SHADE_STEP_DAYS;
-      }
-      if (SHADE_DATE_ANGLE >= 360) {
-        SHADE_DATE_ANGLE = 0;
-      }
+void nextShadeHour () {
+  for (int i = 0; i < 24; i++) {
+    SHADE_HOUR_ANGLE++;
+    if (SHADE_HOUR_ANGLE > SHADE_LAST_HOUR) {
+      SHADE_HOUR_ANGLE = SHADE_FIRST_HOUR;
     }
-  } else if(steps < 0) {
-    // step backward
-    for(int i = 0; i > steps; i--) {
-      SHADE_HOUR_ANGLE--;
-      if (SHADE_HOUR_ANGLE < SHADE_FIRST_HOUR) {
-        SHADE_HOUR_ANGLE = SHADE_LAST_HOUR;
-        SHADE_DATE_ANGLE -= SHADE_STEP_DAYS;
-      }
-      if (SHADE_DATE_ANGLE <= -SHADE_STEP_DAYS) {
-        SHADE_DATE_ANGLE = 360 - SHADE_STEP_DAYS;
-      }
-    }
+
+    if (STUDY.isInHourlyRange(SHADE_HOUR_ANGLE)) return;
   }
+}
+
+void previousShadeHour () {
+  for (int i = 0; i < 24; i++) {
+    SHADE_HOUR_ANGLE--;
+    if (SHADE_HOUR_ANGLE < SHADE_FIRST_HOUR) {
+      SHADE_HOUR_ANGLE = SHADE_LAST_HOUR;
+    }
+
+    if (STUDY.isInHourlyRange(SHADE_HOUR_ANGLE)) return;
+  }
+}
+
+void nextShadeDay () {
+  callAction("Next Impact Day");
+}
+
+void previousShadeDay () {
+  callAction("Previous Impact Day");
+}
+
+void sync_SHADE_DATE_ANGLE () {
+  int j = impactDisplayDay - 1;
+  if (j == -1) j = 0; // use beginDay for the case of total
+
+  int now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+
+  if (now_j >= 365) {
+    now_j = now_j % 365;
+  }
+  if (now_j < 0) {
+    now_j = (now_j + 365) % 365;
+  }
+
+  SHADE_DATE_ANGLE = (int) (360 * ((286 + now_j) % 365) / 365.0);
 }

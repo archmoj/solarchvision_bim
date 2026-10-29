@@ -1461,6 +1461,7 @@ void build_allActions() {
     impactDisplayDay += 1;
     if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
     WIN3D.showSolarImpactOverride = true;
+    sync_SHADE_DATE_ANGLE();
     view_changed();
   });
 
@@ -1468,6 +1469,7 @@ void build_allActions() {
     impactDisplayDay -= 1;
     if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
     WIN3D.showSolarImpactOverride = true;
+    sync_SHADE_DATE_ANGLE();
     view_changed();
   });
 
@@ -1478,22 +1480,22 @@ void build_allActions() {
   });
 
   putAction("Shade Next Hour", () -> {
-    adjustShadeTime(1);
+    nextShadeHour();
     view_changed();
   });
 
   putAction("Shade Previous Hour", () -> {
-    adjustShadeTime(-1);
+    previousShadeHour();
     view_changed();
   });
 
   putAction("Shade Next Day", () -> {
-    adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
+    nextShadeDay();
     view_changed();
   });
 
   putAction("Shade Previous Day", () -> {
-    adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
+    previousShadeDay();
     view_changed();
   });
 

@@ -18,6 +18,7 @@ class react {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
     TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
+    sync_SHADE_DATE_ANGLE();
     println("\nDATE:", TIME.date, "\tHOUR:", TIME.hour);
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
@@ -92,6 +93,7 @@ class react {
     allSections.resize_solarImpact_array();
 
     find_which_bakings_to_regenerate();
+    sync_SHADE_DATE_ANGLE();
     UI_caseBar.revise();
   };
   // TIME.updateDate() derives month/day/hour from date (the inverse of
@@ -109,6 +111,7 @@ class react {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     find_which_bakings_to_regenerate();
+    sync_SHADE_DATE_ANGLE();
     UI_caseBar.revise();
   };
 
@@ -123,6 +126,7 @@ class react {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     find_which_bakings_to_regenerate();
+    sync_SHADE_DATE_ANGLE();
     UI_caseBar.revise();
   };
 

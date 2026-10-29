@@ -801,7 +801,7 @@ class WIN3DTest {
   void adjustShadeTime_stepsForwardWithinTheDay () {
     app.SHADE_HOUR_ANGLE = 12;
     app.SHADE_DATE_ANGLE = 0;
-    app.adjustShadeTime(1);
+    app.nextShadeHour();
     assertEquals(13, app.SHADE_HOUR_ANGLE);
     assertEquals(0, app.SHADE_DATE_ANGLE);
   }
@@ -810,7 +810,7 @@ class WIN3DTest {
   void adjustShadeTime_stepsBackwardWithinTheDay () {
     app.SHADE_HOUR_ANGLE = 12;
     app.SHADE_DATE_ANGLE = 0;
-    app.adjustShadeTime(-1);
+    app.previousShadeHour();
     assertEquals(11, app.SHADE_HOUR_ANGLE);
     assertEquals(0, app.SHADE_DATE_ANGLE);
   }
@@ -820,7 +820,7 @@ class WIN3DTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    app.adjustShadeTime(1); // one step past the last hour of the day
+    app.nextShadeHour(); // one step past the last hour of the day
 
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
     assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
@@ -831,7 +831,7 @@ class WIN3DTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    app.adjustShadeTime(-1); // one step before the first hour of the day
+    app.previousShadeHour(); // one step before the first hour of the day
 
     assertEquals(app.SHADE_LAST_HOUR, app.SHADE_HOUR_ANGLE);
     // SHADE_DATE_ANGLE -= SHADE_STEP_DAYS lands exactly on the
@@ -850,7 +850,7 @@ class WIN3DTest {
     app.SHADE_DATE_ANGLE = 0;
     int startHour = app.SHADE_HOUR_ANGLE;
 
-    app.adjustShadeTime(app.SHADE_HOURS_PER_DAY + 1);
+    app.nextShadeDay();
 
     assertEquals(startHour, app.SHADE_HOUR_ANGLE);
     assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);

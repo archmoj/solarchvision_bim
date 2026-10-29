@@ -208,6 +208,8 @@ class TIME {
     this.hour = XML_getInt(parent, "hour");
     this.beginDay = XML_getInt(parent, "beginDay");
     this.date = XML_getFloat(parent, "date");
+
+    sync_SHADE_DATE_ANGLE();
   }
 
 }
