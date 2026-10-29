@@ -2161,15 +2161,16 @@ void mouseClicked () {
         // which stays fully committed to click-to-act whenever its own
         // solar-impact overlay isn't showing, and unlike WORLD's own
         // right click above, which still places STATION at the clicked
-        // location - so a click anywhere inside STUDY is free to mean
-        // "pin a hover point here" (same thing WORLD's own left click
-        // above now does too), added to allHoverPoints (hover.pde)
+        // location - so a LEFT click anywhere inside STUDY is free to
+        // mean "pin a hover point here" (same thing WORLD's own left
+        // click above now does too), added to allHoverPoints (hover.pde)
         // alongside whatever STUDY graph happens to be showing, same
         // screen coordinates placeHoversAt() already uses for the live,
         // mouse-following one. Pinning even where nothing's actually
         // hoverable is harmless: place_STUDY_hover() already shows
         // nothing there today for the interactive point, same as it will
-        // for this one.
+        // for this one. A right click inside STUDY simply does nothing -
+        // STUDY has no other click behavior of its own to fall back to.
         //
         // findLiveHoverBox() looks up whatever box the live point was
         // ACTUALLY showing (if any) right before this click, so the new
@@ -2178,7 +2179,7 @@ void mouseClicked () {
         // and potentially landing somewhere the live preview never was -
         // see that overload's own comment for why a fresh re-derivation
         // can't always reproduce it on its own.
-        if (STUDY.include) {
+        if (STUDY.include && (mouseButton == LEFT)) {
           if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
             PendingHoverBox liveBox = findLiveHoverBox(studyPendingHoverBoxes);
             float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
@@ -2189,19 +2190,21 @@ void mouseClicked () {
         if (WIN3D.include) {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-            // While the solar-impact overlay is showing, a click is for
-            // pinning a hover point onto it, full stop - the normal
+            // While the solar-impact overlay is showing, a LEFT click is
+            // for pinning a hover point onto it, full stop - the normal
             // pick/create/move click handling below is skipped entirely
             // rather than also firing underneath, so a click meant to
             // read the overlay doesn't also edit the 3D scene it's
             // sitting on top of. Only pins where there's actually overlay
             // data to pin: inside WIN3D_layers_fit, the same bounds
             // drawSolarImpactHover() (hoverOnSolarImpactOverlay.pde)
-            // itself checks - a click elsewhere in the viewport while the
-            // overlay is up is simply consumed and does nothing, rather
-            // than falling through to object editing.
+            // itself checks - a left click elsewhere in the viewport
+            // while the overlay is up, or any right click at all while
+            // it's up, is simply consumed and does nothing, rather than
+            // falling through to object editing.
             if (showSolarImpactOverlay) {
-              if ((WIN3D_layers_fit != null) &&
+              if ((mouseButton == LEFT) &&
+                  (WIN3D_layers_fit != null) &&
                   isInside(X_clicked, Y_clicked, WIN3D_layers_fit[0], WIN3D_layers_fit[1], WIN3D_layers_fit[0] + WIN3D_layers_fit[2], WIN3D_layers_fit[1] + WIN3D_layers_fit[3])) {
                 // Same reasoning as the STUDY click handling above:
                 // inherit whatever box the live point was actually

@@ -1102,23 +1102,12 @@ String __RIGHTCLICK__ (String[] parts) {
     return hint;
 }
 
-String __MAPLEFTCLICK__ (String[] parts) {
-    String hint = "";
-    if (parts.length > 1) {
-    HashMap<String,String> p = parseParams(parts);
-    float x = getF(p, "x", 0);
-    float y = getF(p, "y", 0);
-    int savedButton = mouseButton;
-    mouseButton = LEFT;
-    handleWorldClickAt(x, y);
-    mouseButton = savedButton;
-    }
-    else {
-    hint = "MapLeftClick x=? y=?";
-    }
-    return hint;
-}
-
+// MAPLEFTCLICK (the left-click counterpart that used to sit here) is gone -
+// a real left click on the map pins a hover point now (mouseClicked.pde's
+// own WORLD click handling), not this map-click-to-act behavior, so there
+// was nothing left for it to simulate. MAPRIGHTCLICK remains: a real
+// right click still reaches handleWorldClickAt() (placing STATION and
+// zooming in to confirm), so this still simulates that.
 String __MAPRIGHTCLICK__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {

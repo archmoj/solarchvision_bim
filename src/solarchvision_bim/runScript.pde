@@ -139,7 +139,6 @@ String ___executeScriptLine___ (String lineSTR) {
     case "RECTSELECT": return  __RECTSELECT__(parts);
     case "LEFTCLICK": return  __LEFTCLICK__(parts);
     case "RIGHTCLICK": return  __RIGHTCLICK__(parts);
-    case "MAPLEFTCLICK": return  __MAPLEFTCLICK__(parts);
     case "MAPRIGHTCLICK": return  __MAPRIGHTCLICK__(parts);
 
   // list others below from shortest in character length to higher then by alphabet

@@ -154,7 +154,7 @@ The World view's map responds to the mouse directly, without going through a men
 
 - **Hover** over the map to see the short name of whichever weather or climate station(s) are nearby, without clicking - a quick way to see what's around before committing to a location. When zoomed out over a dataset with many stations, the list is automatically kept short, with a note of how many additional nearby stations were left out rather than listing them all.
 - **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
-- **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map. Press `ESC` to remove the most recently pinned point - on the map, in the 3D view, or on a study graph.
+- **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map. A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point.
 
 ### Check data before interpreting results
 
