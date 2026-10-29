@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import processing.core.PShape;
 
 class Sky3DTest {
 
@@ -146,5 +147,65 @@ class Sky3DTest {
     assertEquals(4, fresh.inclinationCount);
     assertEquals(8, fresh.orientationCount);
     assertEquals(5f, fresh.calculatedResolution, 0.0001f);
+  }
+
+  // ================= sunIsBelowHorizon / win3DCache sun-awareness ======
+  // Drives cacheWriteDomeFlat()'s choice between flatColor and
+  // nightFlatColor (black) - not directly tested here, since it's a
+  // one-line fill-color pick inside PShape-building code in the same
+  // untestable-headless category as the rest of this class's own
+  // draw()-adjacent methods (see test/README.md). What's covered
+  // instead: sunIsBelowHorizon() itself (a pure function of STATION/
+  // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE), and that it's actually part of
+  // the PShape cache's own key - without that, switching from day to
+  // night wouldn't invalidate the cached dome at all, leaving it stuck
+  // showing whatever color it was last built with.
+
+  @Test
+  void sunIsBelowHorizon_isFalseAtSolarNoon () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12;
+
+    assertFalse(app.Sky3D.sunIsBelowHorizon());
+  }
+
+  @Test
+  void sunIsBelowHorizon_isTrueAtSolarMidnight () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 0;
+
+    assertTrue(app.Sky3D.sunIsBelowHorizon());
+  }
+
+  @Test
+  void win3DCache_isValid_invalidatesWhenTheSunCrossesTheHorizon () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12; // sun up
+
+    // win3DCache_isValid() only null-checks this field - a bare PShape
+    // (not app.createShape(), which may depend on a live renderer/
+    // surface this headless test doesn't have) is enough to stand in for
+    // "a cache already exists" without needing a real, drawable shape.
+    app.Sky3D.win3DCache = new PShape();
+    app.Sky3D.win3DCache_recordState(0, 1, 1);
+    assertTrue(app.Sky3D.win3DCache_isValid(0, 1, 1));
+
+    app.SHADE_HOUR_ANGLE = 0; // sun down now - nothing else changed
+
+    assertFalse(app.Sky3D.win3DCache_isValid(0, 1, 1));
+  }
+
+  @Test
+  void win3DCache_recordState_capturesTheCurrentSunIsBelowHorizonValue () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12; // sun up
+
+    app.Sky3D.win3DCache_recordState(0, 1, 1);
+
+    assertFalse(app.Sky3D.win3DCache_sunIsBelowHorizon);
   }
 }

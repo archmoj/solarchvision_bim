@@ -45,6 +45,17 @@ class Sky3D {
   float win3DCache_PAL_multiplier = -1;
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
+  // Only matters for cacheWriteDomeFlat() (below) - the shaded branch
+  // (SHADE.vertexRender_Global_Solar) already derives its per-vertex
+  // colors from the actual sun position via calculate_GlobalSolar_array.
+  // pde's own recompute, which bumps winCacheGeneration above. The flat
+  // branch has no such trigger of its own, so sunIsBelowHorizon() (below)
+  // has to be part of this cache's own key too, or switching from day to
+  // night (or back) via Alt+arrow/the command line would leave the dome
+  // showing the wrong flat color until something else happened to
+  // invalidate the cache for an unrelated reason.
+  boolean win3DCache_sunIsBelowHorizon = false;
+
   boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
     return this.win3DCache != null &&
       this.win3DCache_builtGeneration     == this.winCacheGeneration &&
@@ -54,7 +65,8 @@ class Sky3D {
       this.win3DCache_PAL_type            == PAL_type &&
       this.win3DCache_PAL_direction       == PAL_direction &&
       this.win3DCache_PAL_multiplier      == PAL_multiplier &&
-      this.win3DCache_impactDisplayDay    == impactDisplayDay;
+      this.win3DCache_impactDisplayDay    == impactDisplayDay &&
+      this.win3DCache_sunIsBelowHorizon   == this.sunIsBelowHorizon();
   }
 
   void win3DCache_recordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
@@ -66,6 +78,21 @@ class Sky3D {
     this.win3DCache_PAL_direction       = PAL_direction;
     this.win3DCache_PAL_multiplier      = PAL_multiplier;
     this.win3DCache_impactDisplayDay    = impactDisplayDay;
+    this.win3DCache_sunIsBelowHorizon   = this.sunIsBelowHorizon();
+  }
+
+  // Whether the Sun is at or below the horizon right now - same
+  // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE this class's own sibling Sun3D.pde
+  // already uses for the live view's actual sun position (its own SunR),
+  // and the same <= 0 threshold ShadeViewport.pde's own sunIsBelowHorizon
+  // uses for the shaded-viewport preview. A small, cheap call (funcs.
+  // SunPosition, not the heavier SunPositionRadiation) - fine to call
+  // from all three of its own call sites below rather than caching the
+  // result in a local, since none of them share a parameter chain simple
+  // enough to just pass it through.
+  boolean sunIsBelowHorizon () {
+    float[] SunR = funcs.SunPosition(STATION.getLatitude(), SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+    return SunR[3] <= 0;
   }
 
   float inclinationStep;
@@ -288,9 +315,16 @@ class Sky3D {
 
   color flatColor = color(127, 191, 255);
 
+  // Used instead of flatColor above whenever sunIsBelowHorizon() is true -
+  // plain black, rather than some other shade of blue, since there's no
+  // real "flat daytime sky color" left to approximate once direct
+  // sunlight is gone.
+  final color nightFlatColor = color(0);
+
   void cacheWriteDomeFlat (PShape shape) {
+    color fillColor = this.sunIsBelowHorizon() ? this.nightFlatColor : this.flatColor;
     for (int f = 0; f < skyFaces.length; f++) {
-      shape.fill(this.flatColor); // same flat color regardless of shade mode here
+      shape.fill(fillColor); // same flat color regardless of shade mode here
       for (int j = 0; j < skyFaces[f].length; j++) {
         int vNo = skyFaces[f][j];
         shape.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
