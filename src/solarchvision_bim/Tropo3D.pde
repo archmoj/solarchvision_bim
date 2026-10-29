@@ -381,10 +381,46 @@ class Tropo3D {
 
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
 
+    // Tiles this tile's own boundary edges (BoundariesY/X[n_Map]) with
+    // whole lat_step x lon_step cells, rather than the old fixed global
+    // (90, 180) origin stepping across the WHOLE globe: a cell only gets
+    // drawn when it (and its 3 neighbors, via the s==1/2/3 corner
+    // adjustments in buildSubFace()) falls ENTIRELY inside the tile's own
+    // boundary (allUVsInRange() below), and the old fixed grid's own
+    // integer-degree lines had no relationship to where STATION's
+    // (generally fractional) lat/lon actually puts the boundary - so the
+    // amount clipped off was effectively arbitrary and different on each
+    // edge. That was always true, but stayed small relative to a wide
+    // boundary (TROPO_BOUNDARY_HALF_SPAN used to be 5, a 10 degree span) -
+    // shrink the span and the same absolute clipping becomes a large,
+    // visibly off-center fraction of what's left.
+    //
+    // vSpan/hSpan won't generally be an exact multiple of lat_step/
+    // lon_step (vSpan especially, narrowed by cos(latitude) - see
+    // computeDownloadBoundaries()'s own comment - so it depends on the
+    // station's own latitude, not just fixed constants), so some leftover
+    // (vSlack/hSlack) is often unavoidable. The key fix versus an earlier
+    // version of this loop (anchor flush against one edge, absorb all the
+    // leftover on the far edge alone) is splitting that leftover evenly
+    // between BOTH edges instead, so whatever sliver is lost is lost
+    // equally on each side rather than mostly on just one - see the
+    // vStart/hStart algebra below.
+    float vSpan = this.BoundariesY[n_Map][1] - this.BoundariesY[n_Map][0];
+    int vSteps = max(1, (int) (vSpan / this.lat_step));
+    float vSlack = (vSpan - vSteps * this.lat_step) / 2.0;
+    float vStart = this.BoundariesY[n_Map][1] - vSlack; // top edge of the first (northmost) cell
+
+    float hSpan = this.BoundariesX[n_Map][1] - this.BoundariesX[n_Map][0];
+    int hSteps = max(1, (int) (hSpan / this.lon_step));
+    float hSlack = (hSpan - hSteps * this.lon_step) / 2.0;
+    float hStart = this.BoundariesX[n_Map][1] - hSlack; // east edge of the first (easternmost) cell
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
-      for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
-        for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
+      for (int vi = 0; vi < vSteps; vi++) {
+        float Alpha = vStart - vi * this.lat_step;
+        for (int hi = 0; hi < hSteps; hi++) {
+          float Beta = hStart - hi * this.lon_step;
           f += 1;
           FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
           if (!allUVsInRange(subFace)) continue; // outside this tile's texture, nothing to draw

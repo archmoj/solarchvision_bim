@@ -282,8 +282,8 @@ class Tropo3DTest {
 
     app.Tropo3D.computeDownloadBoundaries(0);
 
-    assertEquals(-84.4f, app.Tropo3D.BoundariesX[0][0], 0.001f);
-    assertEquals(-74.4f, app.Tropo3D.BoundariesX[0][1], 0.001f);
+    assertEquals(-80.9f, app.Tropo3D.BoundariesX[0][0], 0.001f);
+    assertEquals(-77.9f, app.Tropo3D.BoundariesX[0][1], 0.001f);
     // TROPO_BOUNDARY_HALF_SPAN * cos(43.7deg) - narrower in latitude than
     // in longitude, same reasoning as a degree of longitude covering less
     // real distance than a degree of latitude away from the equator.
@@ -307,7 +307,7 @@ class Tropo3DTest {
 
     assertTrue(url.startsWith("https://geo.weather.gc.ca/geomet?"), url);
     assertTrue(url.contains("LAYERS=HRDPS.CONTINENTAL_NT&STYLES=CLOUD"), url);
-    assertTrue(url.contains("BBOX=40.085,-84.400,47.315,-74.400"), url);
+    assertTrue(url.contains("BBOX=42.616,-80.900,44.784,-77.900"), url);
     assertTrue(url.contains("&TIME=2026-10-06T14:00:00Z"), url);
   }
 
@@ -342,7 +342,7 @@ class Tropo3DTest {
     solarchvision_bim.Tropo3D.DateTimeUTC dt = dateTime(2026, 10, 6, 14);
     String fn = app.Tropo3D.buildLocalFilename(0, 0, dt);
 
-    assertEquals("14_084400_040085_074400_047315_.png", fn);
+    assertEquals("14_080900_042616_077900_044784_.png", fn);
   }
 
   // ================= resize_images / resetSlot ====================================
