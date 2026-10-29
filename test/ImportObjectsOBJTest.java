@@ -204,8 +204,16 @@ class ImportObjectsOBJTest {
   // This test makes that guarantee explicit instead of just incidental.
 
   @Test
-  void canShowProgressWindow_isFalseInThisHeadlessTestEnvironment () {
-    assertFalse(app.canShowProgressWindow());
+  void canShowProgressWindow_matchesGraphicsEnvironmentsOwnHeadlessState () {
+    // Not a hardcoded assertFalse(...): whether this particular machine
+    // running the suite actually has a display available (so whether
+    // java.awt.GraphicsEnvironment.isHeadless() comes back true or
+    // false) isn't something this test should assume either way - a
+    // real desktop/Xvfb-backed CI runner reports false here same as a
+    // genuinely headless one reports true, and canShowProgressWindow()
+    // should track whichever one this environment actually is, not a
+    // fixed expectation baked into the test itself.
+    assertEquals(!java.awt.GraphicsEnvironment.isHeadless(), app.canShowProgressWindow());
   }
 
   @Test

@@ -3508,7 +3508,9 @@ class ImportObjectsIFCTest {
   // makes that guarantee explicit instead of just incidental (see
   // ImportObjectsOBJTest.java's own matching pair of tests).
   @Test
-  void canShowProgressWindow_isFalseInThisHeadlessTestEnvironment () {
-    assertFalse(app.canShowProgressWindow());
+  void canShowProgressWindow_matchesGraphicsEnvironmentsOwnHeadlessState () {
+    // See ImportObjectsOBJTest.java's own matching test for why this
+    // isn't a hardcoded assertFalse(...).
+    assertEquals(!java.awt.GraphicsEnvironment.isHeadless(), app.canShowProgressWindow());
   }
 }
