@@ -4,16 +4,20 @@
 // over the WORLD map - a lightweight discovery tool ("which stations are
 // around here?"), not a data readout like the other hover boxes in this
 // file's neighbors (hoverOnSolarImpactOverlay.pde, hoverOnStudyImpact.pde,
-// etc). Deliberately simpler than those in a few ways:
+// etc). Deliberately different from those in a few ways:
 //
-//  - Live, mouse-following only - never pinned by a click the way STUDY's/
-//    WIN3D's own hovers can be (addHoverPoint(), hover.pde). placeHoversAt()
-//    (hover.pde) still calls place_WORLD_hover() below for every pinned
-//    point too, same as it calls place_STUDY_hover()/place_WIN3D_hover(),
-//    but since nothing ever pins a point inside WORLD's own screen rect,
-//    place_WORLD_hover()'s own isInside() guard just quietly finds nothing
-//    there every time - there's no separate "pins are disabled for WORLD"
-//    flag to maintain, that's just what naturally happens.
+//  - Can be pinned by a left click (mouseClicked.pde's own WORLD click
+//    handling, addHoverPoint(), hover.pde), same as STUDY's/WIN3D's own
+//    hovers can be - but, uniquely among them, a WORLD-sourced pin tracks
+//    the real-world spot it was pinned at rather than a fixed screen
+//    position: worldHoverPointGeo and syncWorldHoverPointPositions() below
+//    keep it (and any box already placed for it) riding along as WORLD
+//    pans/zooms, dropping it outright once that spot pans/zooms outside
+//    WORLD's own current view - see syncWorldHoverPointPositions()'s own
+//    comment for the full reasoning. The live, mouse-following point has
+//    no such tracking of its own to do - it's simply re-resolved fresh
+//    against the current mouse position every frame regardless, the same
+//    as it always has been.
 //  - No per-pixel data to format - just a short list of names, so there's
 //    no equivalent of hoverLines()/win3DOverlay_rawValuesAt() here.
 //  - Several stations can legitimately be this close to the mouse at once
@@ -33,6 +37,96 @@
 PImage worldHover_pre_screen;
 int worldHover_capturedGeneration = -1;
 boolean worldHover_wasShownLastFrame = false;
+
+// Maps a WORLD-sourced pinned point's own {x,y} row (hover.pde's own
+// allHoverPoints - object identity, not value, the same keying convention
+// hoverPointPreferredPosition (hover.pde) already uses for a pin's own
+// remembered box position) to the (lon, lat) it was actually pinned at.
+// A row with no entry here is a plain STUDY/WIN3D-style pin, fixed in
+// screen space for good, same as before this existed; a row WITH one is
+// instead kept in sync with it, every frame, by
+// syncWorldHoverPointPositions() below - so a WORLD pin tracks a place ON
+// THE MAP, not a spot on screen, surviving a pan or a zoom the way a
+// label on the map itself would, rather than drifting away from whatever
+// station(s) it was actually pinned to point out. Populated by
+// mouseClicked.pde's own WORLD left-click handling, right after the
+// addHoverPoint() call that creates the row; read (and pruned, for a pin
+// that's since been dropped) only here.
+java.util.IdentityHashMap<int[], float[]> worldHoverPointGeo = new java.util.IdentityHashMap<int[], float[]>();
+
+// Keeps every WORLD-sourced pin (worldHoverPointGeo above) tracking the
+// same real-world spot as WORLD itself pans and zooms, instead of staying
+// nailed to wherever it first landed on screen - called once per pass, by
+// drawAllHovers() (hover.pde), before anything in that pass gets
+// resolved, so both pass 1's own pin-position resolution and its
+// collision-avoidance "peek" (peekAllPinnedHoverBoxes(), hover.pde) see
+// this pass's already-up-to-date positions, not last frame's.
+//
+// For each WORLD-tracked row: re-derives its own screen position fresh
+// from WORLD's CURRENT projX()/projY() (which already reflect this
+// frame's own pan/zoom - WORLD.draw() runs before drawAllHovers() in the
+// same frame, see solarchvision_bim.pde's own draw()) - if its geography
+// has since panned/zoomed outside WORLD's own current view (isWithinView()/
+// isInside(), the exact same bounds check a station marker itself would
+// have to pass to even be drawn - see addNearbyWorldStationCandidates()'s
+// own comment on why), the pin no longer points at anything actually on
+// screen, so it's dropped (removeHoverPointAt(), hover.pde) rather than
+// left dangling off the edge of the map. Otherwise, if the recomputed
+// position has moved since last frame, the row's own x/y (mutated in
+// place - int[] elements are mutable, so this doesn't disturb either
+// identity map's own keying) is updated to the new position, AND, if this
+// pin already has its own remembered box position
+// (hoverPointPreferredPosition, hover.pde), that's shifted by the exact
+// same delta - so an already-placed box rides along WITH its anchor
+// (staying, say, "down-right of the pin") rather than either staying
+// nailed to the old absolute screen position (visibly detaching it from
+// its own anchor) or snapping back to a freshly-computed natural quadrant
+// every single frame while actively panning (which would look jumpy).
+void syncWorldHoverPointPositions () {
+  if (allHoverPoints == null) return;
+  if (worldHoverPointGeo.isEmpty()) return;
+
+  // Iterate backwards: removeHoverPointAt() can shrink allHoverPoints out
+  // from under a forward loop, but a backwards one is unaffected by any
+  // shrinking that's already happened at higher indices.
+  for (int i = allHoverPoints.length - 1; i >= 0; i--) {
+    int[] row = allHoverPoints[i];
+    float[] geo = worldHoverPointGeo.get(row);
+    if (geo == null) continue; // not a WORLD-tracked pin - leave it alone entirely
+
+    float lon = geo[0];
+    float lat = geo[1];
+
+    if (!WORLD.isWithinView(lon, lat)) {
+      removeHoverPointAt(i);
+      continue;
+    }
+
+    float localX = WORLD.projX(lon);
+    float localY = WORLD.projY(lat);
+
+    if (!isInside(localX, localY, 0, 0, WORLD.dX, WORLD.dY)) {
+      removeHoverPointAt(i);
+      continue;
+    }
+
+    int newX = round(WORLD.cX + localX);
+    int newY = round(WORLD.cY + localY);
+
+    int dx = newX - row[0];
+    int dy = newY - row[1];
+    if ((dx == 0) && (dy == 0)) continue; // nothing actually moved since last frame
+
+    float[] preferred = hoverPointPreferredPosition.get(row);
+    if (preferred != null) {
+      preferred[0] += dx;
+      preferred[1] += dy;
+    }
+
+    row[0] = newX;
+    row[1] = newY;
+  }
+}
 
 // How close (in screen pixels) a station marker has to be to the mouse to
 // show up in the hover - NOT keyed to WORLD.zoom directly. What actually

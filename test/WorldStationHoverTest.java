@@ -30,6 +30,8 @@ class WorldStationHoverTest {
     app.WORLD.dX = 360;
     app.WORLD.dY = 180;
     app.WORLD.ImageScale = 1;
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
 
     // Whole-world view window by default - individual tests narrow this
     // when they specifically want to test isWithinView()'s own gating.
@@ -264,5 +266,171 @@ class WorldStationHoverTest {
 
     assertNotNull(names);
     assertArrayEquals(new String[]{ "Near City" }, names);
+  }
+
+  // ================= WORLD.unprojLon / unprojLat ===============================
+  // The inverse of WORLD.projX()/projY() - used by both
+  // mouseClicked.pde's own handleWorldClickAt() and, below, a WORLD pin's
+  // own geo-tracking.
+
+  @Test
+  void unproj_invertsProjExactly_acrossARangeOfPoints () {
+    float[] lons = { -170, -90, -1, 0, 1, 90, 179 };
+    float[] lats = { -89, -45, -1, 0, 1, 45, 89 };
+
+    for (float lon : lons) {
+      float x = app.WORLD.projX(lon);
+      assertEquals(lon, app.WORLD.unprojLon(x), 0.0001f);
+    }
+    for (float lat : lats) {
+      float y = app.WORLD.projY(lat);
+      assertEquals(lat, app.WORLD.unprojLat(y), 0.0001f);
+    }
+  }
+
+  @Test
+  void unproj_matchesProjAtAnOffCenterProjection () {
+    // A narrower, panned/zoomed-in window this time (oX/oY off zero,
+    // sX/sY well under 1) - unprojLon()/unprojLat() must still invert
+    // projX()/projY() exactly, not just for the simple setUp() case.
+    app.WORLD.oX = 40;
+    app.WORLD.oY = -10;
+    app.WORLD.sX = 0.25f;
+    app.WORLD.sY = 0.25f;
+
+    float x = app.WORLD.projX(35);
+    float y = app.WORLD.projY(-5);
+
+    assertEquals(35f, app.WORLD.unprojLon(x), 0.0001f);
+    assertEquals(-5f, app.WORLD.unprojLat(y), 0.0001f);
+  }
+
+  // ================= syncWorldHoverPointPositions ==============================
+  // Keeps a WORLD-sourced pin (worldHoverPointGeo) tracking the same (lon,
+  // lat) as WORLD itself pans/zooms, dropping it once that location is no
+  // longer part of WORLD's own current view. A plain STUDY/WIN3D-style pin
+  // (no worldHoverPointGeo entry) is left completely alone.
+
+  @Test
+  void sync_doesNothing_whenThereAreNoHoverPointsAtAll () {
+    assertNull(app.allHoverPoints);
+
+    app.syncWorldHoverPointPositions(); // must not throw
+
+    assertNull(app.allHoverPoints);
+  }
+
+  @Test
+  void sync_leavesAPlainScreenPin_completelyUntouched () {
+    // A STUDY/WIN3D-style pin - never registered in worldHoverPointGeo -
+    // even though its raw (x, y) happens to be inside WORLD's own current
+    // bounds.
+    int[] row = app.addHoverPoint(200, 90);
+
+    app.syncWorldHoverPointPositions();
+
+    assertArrayEquals(new int[]{ 200, 90 }, app.allHoverPoints[0]);
+    assertSame(row, app.allHoverPoints[0]); // not replaced, not touched
+  }
+
+  @Test
+  void sync_updatesAWorldPinsScreenPosition_whenTheMapHasPanned () {
+    // Pinned at lon=10 while oX=0 - projX(10) = 190 (setUp()'s own simple
+    // projection: x = lon + 180).
+    int[] row = app.addHoverPoint(190, 90);
+    app.worldHoverPointGeo.put(row, new float[]{ 10, 0 });
+
+    // Simulate a pan: oX shifts by -20, as WORLD.draw() itself would have
+    // already applied before drawAllHovers() runs this same frame (see
+    // syncWorldHoverPointPositions()'s own comment on that ordering).
+    app.WORLD.oX = -20;
+
+    app.syncWorldHoverPointPositions();
+
+    // projX(10) with the new oX=-20: dX*((10-(-20))/360+0.5)/sX = 210.
+    assertEquals(210, app.allHoverPoints[0][0]);
+    assertEquals(90, app.allHoverPoints[0][1]); // lat/oY/sY untouched - y unaffected
+  }
+
+  @Test
+  void sync_shiftsAnAlreadyPlacedBoxByTheSameDeltaAsItsPin () {
+    int[] row = app.addHoverPoint(190, 90, new float[]{ 250, 60 }); // box placed down-right of the pin
+    app.worldHoverPointGeo.put(row, new float[]{ 10, 0 });
+
+    app.WORLD.oX = -20; // same 20px rightward shift as the test above
+
+    app.syncWorldHoverPointPositions();
+
+    float[] preferred = app.hoverPointPreferredPosition.get(row);
+    assertEquals(270, preferred[0], 0.0001f); // 250 + 20 - rode along with the pin
+    assertEquals(60, preferred[1], 0.0001f); // y delta was 0 - untouched
+  }
+
+  @Test
+  void sync_dropsAWorldPin_onceItsLocationPansOutsideTheViewWindow () {
+    int[] row = app.addHoverPoint(190, 90);
+    app.worldHoverPointGeo.put(row, new float[]{ 10, 0 });
+
+    // Narrow the view window so lon=10 is no longer inside it - as if a
+    // zoom/pan since the pin was placed moved it off the edge of the map.
+    app.WORLD.viewWindowLon1 = -180;
+    app.WORLD.viewWindowLon2 = 5;
+
+    app.syncWorldHoverPointPositions();
+
+    assertNull(app.allHoverPoints);
+    assertTrue(app.worldHoverPointGeo.isEmpty());
+    assertTrue(app.hoverPointPreferredPosition.isEmpty());
+  }
+
+  @Test
+  void sync_dropsAWorldPin_whenItsProjectedPositionFallsOutsideWorldsOwnCanvas () {
+    // Still inside the (wide-open) view window, but a tighter zoom (sX
+    // shrunk well below 1, same as a real WORLD.draw() pass would set for
+    // a more zoomed-in tile) now projects lon=170 well past dX's own
+    // right edge - the same isInside(..., 0, 0, WORLD.dX, WORLD.dY) bound
+    // addNearbyWorldStationCandidates() itself already checks before ever
+    // treating a station as visible.
+    int[] row = app.addHoverPoint(0, 0);
+    app.worldHoverPointGeo.put(row, new float[]{ 170, 0 });
+
+    app.WORLD.sX = 0.1f;
+
+    app.syncWorldHoverPointPositions();
+
+    assertNull(app.allHoverPoints);
+  }
+
+  @Test
+  void sync_onlyDropsTheOneWorldPinThatWentOutOfView_leavingOthersInPlace () {
+    int[] staysInView = app.addHoverPoint(190, 90); // lon=10
+    app.worldHoverPointGeo.put(staysInView, new float[]{ 10, 0 });
+
+    int[] goesOutOfView = app.addHoverPoint(0, 90); // lon=-180
+    app.worldHoverPointGeo.put(goesOutOfView, new float[]{ -180, 0 });
+
+    int[] plainScreenPin = app.addHoverPoint(300, 50); // never registered as WORLD-tracked
+
+    app.WORLD.viewWindowLon1 = -5; // excludes lon=-180, keeps lon=10
+
+    app.syncWorldHoverPointPositions();
+
+    assertEquals(2, app.allHoverPoints.length);
+    assertArrayEquals(new int[]{ 190, 90 }, app.allHoverPoints[0]);
+    assertArrayEquals(new int[]{ 300, 50 }, app.allHoverPoints[1]); // the plain pin, untouched and still present
+    assertFalse(app.worldHoverPointGeo.containsKey(goesOutOfView));
+  }
+
+  @Test
+  void sync_doesNothingAtAll_whenTheProjectionHasNotActuallyChanged () {
+    int[] row = app.addHoverPoint(190, 90, new float[]{ 250, 60 });
+    app.worldHoverPointGeo.put(row, new float[]{ 10, 0 });
+
+    app.syncWorldHoverPointPositions(); // nothing panned/zoomed since the pin was placed
+
+    assertArrayEquals(new int[]{ 190, 90 }, app.allHoverPoints[0]);
+    float[] preferred = app.hoverPointPreferredPosition.get(row);
+    assertEquals(250, preferred[0], 0.0001f);
+    assertEquals(60, preferred[1], 0.0001f);
   }
 }

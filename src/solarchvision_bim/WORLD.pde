@@ -242,6 +242,25 @@ class WORLD {
     return this.dY * ((-1 * (lat - this.oY) / 180.0) + 0.5) / this.sY;
   }
 
+  // Inverse of projX()/projY() above - given a pixel position in this
+  // panel's own LOCAL graphics space (0,0 at this panel's own top-left
+  // corner, same space projX()/projY() themselves place markers in, NOT
+  // absolute screen coordinates - callers with a screen position subtract
+  // cX/cY first, the same way place_WORLD_hover() (hoverOnWorldStations.pde)
+  // already does for its own mouse position), returns the longitude/
+  // latitude currently displayed there. Used wherever a click or a pin
+  // needs to know WHERE on the map it landed, in geographic terms, rather
+  // than just where on screen - mouseClicked.pde's own handleWorldClickAt()
+  // and hoverOnWorldStations.pde's own WORLD-pin tracking both go through
+  // these now, rather than each re-deriving the same formula inline.
+  float unprojLon (float localX) {
+    return 360.0 * ((localX * this.sX / this.dX) - 0.5) + this.oX;
+  }
+
+  float unprojLat (float localY) {
+    return -180.0 * ((localY * this.sY / this.dY) - 0.5) + this.oY;
+  }
+
   boolean isWithinView (float lon, float lat) {
     if (lon < this.viewWindowLon1) return false;
     if (lon > this.viewWindowLon2) return false;

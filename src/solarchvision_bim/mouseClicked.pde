@@ -1516,8 +1516,13 @@ void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) 
 }
 
 void handleWorldClickAt(float Image_X, float Image_Y) {
-  float X = Image_X + 0.5 * WORLD.dX;
-  float Y = Image_Y + 0.5 * WORLD.dY;
+  // Image_X/Image_Y are centered on WORLD's own middle (mouseClicked.pde's
+  // own WORLD click dispatch computes them as X_clicked - (WORLD.cX + 0.5
+  // * WORLD.dX)) - this undoes that centering to get back to WORLD.unprojLon()/
+  // unprojLat()'s own expected local-graphics-space coordinate (0,0 at
+  // WORLD's own top-left corner).
+  float localX = Image_X + 0.5 * WORLD.dX;
+  float localY = Image_Y + 0.5 * WORLD.dY;
 
   // Clicks meant for the picker list (picking a row, or
   // clicking away to cancel it) or its scrollbar track aren't
@@ -1527,8 +1532,8 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
   if (handlePickListTrackClick() || handlePickListClick()) {
     // handled - fall through to the shared revise() calls below
   } else {
-    float mouse_lon = 360.0 * (X * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
-    float mouse_lat = -180.0 * (Y * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
+    float mouse_lon = WORLD.unprojLon(localX);
+    float mouse_lat = WORLD.unprojLat(localY);
 
     pre_locationLatitude = locationLatitude;
     pre_locationLongitude = locationLongitude;
@@ -2122,7 +2127,22 @@ void mouseClicked () {
               // re-derivation can't always reproduce it on its own.
               PendingHoverBox liveBox = findLiveHoverBox(worldPendingHoverBoxes);
               float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
-              addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+              int[] newRow = addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+
+              // Registers this exact row in worldHoverPointGeo
+              // (hoverOnWorldStations.pde) against the geographic spot it
+              // was actually clicked on, so syncWorldHoverPointPositions()
+              // (called once per frame from drawAllHovers()) keeps this
+              // pin tracking that same real-world location - riding along
+              // as WORLD pans/zooms, and dropped outright once that
+              // location pans/zooms outside WORLD's own current view -
+              // rather than leaving it nailed to today's screen pixel the
+              // way a STUDY/WIN3D pin stays nailed to theirs.
+              float localX = X_clicked - WORLD.cX;
+              float localY = Y_clicked - WORLD.cY;
+              float pinLon = WORLD.unprojLon(localX);
+              float pinLat = WORLD.unprojLat(localY);
+              worldHoverPointGeo.put(newRow, new float[]{ pinLon, pinLat });
             } else {
               // Right click keeps the map's own click-to-act behavior
               // (handleWorldClickAt(), via the MapRightClick command)

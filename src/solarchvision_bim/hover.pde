@@ -42,8 +42,8 @@ float[] currentHoverPreferredPosition = null;
 // and write, so a point added here shows up to those too, and vice
 // versa - there's only ever the one allHoverPoints, however it got
 // added to.
-void addHoverPoint (int x, int y) {
-  addHoverPoint(x, y, null);
+int[] addHoverPoint (int x, int y) {
+  return addHoverPoint(x, y, null);
 }
 
 // Same as addHoverPoint(x, y) above, but also remembers a PREFERRED
@@ -60,7 +60,7 @@ void addHoverPoint (int x, int y) {
 // has nothing telling it to reproduce that same dodge - its fresh
 // natural-quadrant computation has no memory of why the live preview
 // ended up where it did.
-void addHoverPoint (int x, int y, float[] preferredPosition) {
+int[] addHoverPoint (int x, int y, float[] preferredPosition) {
   int[] newRow = { x, y };
   int[][] newPoint = { newRow };
   allHoverPoints = (allHoverPoints == null) ? newPoint : (int[][]) concat(allHoverPoints, newPoint);
@@ -68,6 +68,17 @@ void addHoverPoint (int x, int y, float[] preferredPosition) {
   if (preferredPosition != null) {
     hoverPointPreferredPosition.put(newRow, preferredPosition);
   }
+
+  // Returned so a caller can register further per-point bookkeeping
+  // against this EXACT row's own object identity, the same way
+  // hoverPointPreferredPosition above already is - e.g. worldHoverPointGeo
+  // (hoverOnWorldStations.pde), which remembers a WORLD-sourced pin's own
+  // (lon, lat) so it can be kept in sync with the map's own panning/
+  // zooming instead of staying nailed to a fixed screen position. Existing
+  // call sites that only cared about the pin existing, not this reference,
+  // are unaffected - a Java statement is free to ignore a method's return
+  // value.
+  return newRow;
 }
 
 // Drops the MOST RECENTLY pinned hover point (allHoverPoints' own last
@@ -94,11 +105,36 @@ void addHoverPoint (int x, int y, float[] preferredPosition) {
 boolean removeLastHoverPoint () {
   if ((allHoverPoints == null) || (allHoverPoints.length == 0)) return false;
 
-  hoverPointPreferredPosition.remove(allHoverPoints[allHoverPoints.length - 1]);
-  allHoverPoints = (int[][]) shorten(allHoverPoints);
-  if (allHoverPoints.length == 0) allHoverPoints = null;
-
+  removeHoverPointAt(allHoverPoints.length - 1);
   return true;
+}
+
+// Removes the pinned point at allHoverPoints[index] specifically - unlike
+// removeLastHoverPoint() above, not necessarily the newest one. Used when
+// a point needs to go away for a reason other than Esc: currently just
+// syncWorldHoverPointPositions() (hoverOnWorldStations.pde), dropping a
+// WORLD-sourced pin whose own geography has panned/zoomed outside the
+// map's current view. Cleans up every identity-keyed side table for that
+// EXACT row - hoverPointPreferredPosition here, and worldHoverPointGeo
+// (hoverOnWorldStations.pde) for a WORLD-sourced one - the same cleanup
+// removeLastHoverPoint() above already did for its own single row, now
+// shared so neither path can drop a row while leaving the other table
+// holding a stale entry keyed to an orphaned row object.
+void removeHoverPointAt (int index) {
+  if (allHoverPoints == null) return;
+  if ((index < 0) || (index >= allHoverPoints.length)) return;
+
+  int[] row = allHoverPoints[index];
+  hoverPointPreferredPosition.remove(row);
+  worldHoverPointGeo.remove(row);
+
+  int[][] trimmed = new int[allHoverPoints.length - 1][];
+  int j = 0;
+  for (int i = 0; i < allHoverPoints.length; i++) {
+    if (i == index) continue;
+    trimmed[j++] = allHoverPoints[i];
+  }
+  allHoverPoints = (trimmed.length == 0) ? null : trimmed;
 }
 
 // Erases whatever STUDY hover box the previous pass left on screen (see
@@ -150,6 +186,13 @@ boolean removeLastHoverPoint () {
 // than trying to special-case away a box colliding with itself.
 void drawAllHovers () {
   if (UI_menuBar.selected_parent != -1) return;
+
+  // Must run before anything below resolves a single position - both the
+  // main pinned-point loop further down and peekAllPinnedHoverBoxes()'s
+  // own throwaway preview need to already see THIS frame's recomputed
+  // positions (and any pin syncWorldHoverPointPositions() itself drops),
+  // not last frame's.
+  syncWorldHoverPointPositions();
 
   clearStudyHover();
   clearWorldHover();

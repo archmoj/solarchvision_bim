@@ -2,16 +2,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Covers hover.pde's addHoverPoint()/removeLastHoverPoint() - the pure
-// state management behind "click to pin a hover point, Esc to drop the
-// most recently pinned one" (mouseClicked.pde's STUDY/WIN3D click
-// handling, solarchvision_bim.pde's keyPressed()) - and, further below,
-// addHoverPoint()'s 3-argument overload and the hoverPointPreferredPosition
-// map it writes to, which is how a newly pinned point can remember where
-// its own live preview was. None of this touches live graphics - it only
-// reads/writes the allHoverPoints field and the preferred-position map
-// itself - so all of it is testable here, unlike drawAllHovers()/
-// placeHoversAt() which actually draw.
+// Covers hover.pde's addHoverPoint()/removeLastHoverPoint()/removeHoverPointAt() -
+// the pure state management behind "click to pin a hover point, Esc to
+// drop the most recently pinned one" (mouseClicked.pde's STUDY/WIN3D/WORLD
+// click handling, solarchvision_bim.pde's keyPressed()) - and, further
+// below, addHoverPoint()'s 3-argument overload and the
+// hoverPointPreferredPosition map it writes to, which is how a newly
+// pinned point can remember where its own live preview was. None of this
+// touches live graphics - it only reads/writes the allHoverPoints field
+// and the preferred-position map itself - so all of it is testable here,
+// unlike drawAllHovers()/placeHoversAt() which actually draw.
+// syncWorldHoverPointPositions() (hoverOnWorldStations.pde), which calls
+// removeHoverPointAt() to drop a WORLD-sourced pin whose own geography has
+// panned/zoomed out of view, is covered separately in WorldStationHoverTest.java
+// alongside the rest of that file's own WORLD-specific logic.
 class HoverPointsTest {
 
   private solarchvision_bim app;
@@ -52,6 +56,24 @@ class HoverPointsTest {
 
     assertEquals(3, app.allHoverPoints.length);
     assertArrayEquals(new int[]{ 3, 3 }, app.allHoverPoints[2]);
+  }
+
+  @Test
+  void add_returnsTheExactRowItJustAppended () {
+    // mouseClicked.pde's own WORLD left-click handling needs this row
+    // back to register it in worldHoverPointGeo (hoverOnWorldStations.pde)
+    // against the SAME object identity addHoverPoint() itself used, not
+    // just an equal-valued copy.
+    int[] row = app.addHoverPoint(7, 8);
+
+    assertSame(app.allHoverPoints[0], row);
+  }
+
+  @Test
+  void add_withAPreferredPosition_alsoReturnsTheExactRow () {
+    int[] row = app.addHoverPoint(7, 8, new float[]{ 1, 1 });
+
+    assertSame(app.allHoverPoints[0], row);
   }
 
   // ================= removeLastHoverPoint ======================================
@@ -216,5 +238,76 @@ class HoverPointsTest {
 
     assertTrue(app.removeLastHoverPoint());
     assertTrue(app.hoverPointPreferredPosition.isEmpty());
+  }
+
+  // ================= removeHoverPointAt ========================================
+  // removeLastHoverPoint() above is just removeHoverPointAt(length-1) now
+  // (confirmed indirectly by every test above still passing unchanged),
+  // but this is the only way to drop a pin that ISN'T the most recent one -
+  // what syncWorldHoverPointPositions() (hoverOnWorldStations.pde) needs
+  // when a WORLD-sourced pin's own geography pans/zooms out of view,
+  // regardless of where in allHoverPoints it happens to sit.
+
+  @Test
+  void removeAt_dropsTheRowAtThatIndex_leavingTheOthersInOrder () {
+    app.addHoverPoint(1, 1);
+    app.addHoverPoint(2, 2); // removed below - the MIDDLE one, not the last
+    app.addHoverPoint(3, 3);
+
+    app.removeHoverPointAt(1);
+
+    assertEquals(2, app.allHoverPoints.length);
+    assertArrayEquals(new int[]{ 1, 1 }, app.allHoverPoints[0]);
+    assertArrayEquals(new int[]{ 3, 3 }, app.allHoverPoints[1]);
+  }
+
+  @Test
+  void removeAt_setsTheListBackToNull_onceTheOnlyPointIsRemoved () {
+    app.addHoverPoint(5, 5);
+
+    app.removeHoverPointAt(0);
+
+    assertNull(app.allHoverPoints);
+  }
+
+  @Test
+  void removeAt_cleansUpThePreferredPositionOfTheRowItRemoves () {
+    app.addHoverPoint(10, 20, new float[]{ 5, 5 });
+    app.addHoverPoint(30, 40, new float[]{ 6, 6 });
+    int[] firstRow = app.allHoverPoints[0];
+
+    app.removeHoverPointAt(0);
+
+    assertFalse(app.hoverPointPreferredPosition.containsKey(firstRow));
+    assertEquals(1, app.hoverPointPreferredPosition.size()); // the remaining pin's own entry is untouched
+  }
+
+  @Test
+  void removeAt_cleansUpTheWorldGeoEntryOfTheRowItRemoves () {
+    int[] row = app.addHoverPoint(10, 20);
+    app.worldHoverPointGeo.put(row, new float[]{ -79, 43 });
+
+    app.removeHoverPointAt(0);
+
+    assertFalse(app.worldHoverPointGeo.containsKey(row));
+  }
+
+  @Test
+  void removeAt_isANoOp_forAnOutOfRangeIndex () {
+    app.addHoverPoint(1, 1);
+
+    app.removeHoverPointAt(5); // past the end
+    app.removeHoverPointAt(-1); // before the start
+
+    assertEquals(1, app.allHoverPoints.length); // untouched either way
+  }
+
+  @Test
+  void removeAt_isANoOp_whenThereAreNoPointsAtAll () {
+    assertNull(app.allHoverPoints);
+
+    app.removeHoverPointAt(0); // must not throw
+
+    assertNull(app.allHoverPoints);
   }
 }
