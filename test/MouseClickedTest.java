@@ -1609,14 +1609,22 @@ class MouseClickedTest {
     assertEquals(app.LEFT, app.mouseButton, "mouseButton must be restored after the simulated click");
   }
 
-  // ================= handleWorldClickAt - left/right click combined ========
+  // ================= handleWorldClickAt - mouseButton-agnostic zoom ========
   // Left- and right-click on the WORLD map used to differ in exactly one
   // way: left-click forced WORLD.zoom up to confirm where the click
   // landed, right-click deliberately left the zoom level alone. That
-  // distinction has since been folded away - a click on the map always
-  // zooms in now, regardless of which button made it - so both tests
-  // below assert the SAME outcome for opposite buttons, which is the
-  // point: there's no longer a button-dependent branch to tell apart.
+  // distinction was folded away inside handleWorldClickAt() itself - it
+  // zooms in regardless of mouseButton now - so both tests below assert
+  // the SAME outcome for opposite buttons, which is the point: there's no
+  // longer a button-dependent branch in here to tell apart.
+  //
+  // handleWorldClickAt() is tested directly, independent of mouseClicked()'s
+  // own live dispatch (mouseClicked.pde) - which, since this same session,
+  // only reaches this function for a right click at all; a left click now
+  // pins a hover point instead (addHoverPoint(), untestable here for the
+  // same reason mouseClicked() itself is, below). This function staying
+  // mouseButton-agnostic is what makes that split safe: whichever button
+  // the live dispatch still routes to it, the zoom behavior is the same.
   //
   // currentDataSource is set to a value that matches none of the five
   // dataID_* constants, so every StationPicker.handleMapClick() call

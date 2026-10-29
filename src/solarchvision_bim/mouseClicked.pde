@@ -2098,23 +2098,58 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            float Image_X = X_clicked - (WORLD.cX + 0.5 * WORLD.dX);
-            float Image_Y = Y_clicked - (WORLD.cY + 0.5 * WORLD.dY);
+            if (mouseButton == LEFT) {
+              // Left click now pins a hover point here instead of acting
+              // on the map - the same "click anywhere to pin whatever's
+              // hoverable right there" pattern STUDY's own click handling
+              // below already uses (see its own comment just below for why
+              // pinning somewhere with nothing hoverable is harmless).
+              // Nothing WORLD-specific needed on the hover.pde side for
+              // this to work: placeHoversAt() (called for every pinned
+              // point, via drawHoverPinAt()) already reaches
+              // place_WORLD_hover() exactly the same way it already
+              // reaches place_STUDY_hover()/place_WIN3D_hover(), so a pin
+              // added here surfaces the same station-name lookup
+              // (collectNearbyWorldStationNames(), hoverOnWorldStations.pde)
+              // the live, mouse-following preview already uses - this is
+              // just the first time anything actually calls
+              // addHoverPoint() with WORLD's own screen coordinates.
+              //
+              // findLiveHoverBox() again lets the new pin start out
+              // exactly where the live preview was actually showing, if
+              // anywhere, rather than being re-derived from scratch - see
+              // addHoverPoint()'s own 3-argument overload for why a fresh
+              // re-derivation can't always reproduce it on its own.
+              PendingHoverBox liveBox = findLiveHoverBox(worldPendingHoverBoxes);
+              float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
+              addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+            } else {
+              // Right click keeps the map's own click-to-act behavior
+              // (handleWorldClickAt(), via the MapRightClick command)
+              // entirely to itself now: placing STATION at the clicked
+              // location and zooming in to confirm it.
+              float Image_X = X_clicked - (WORLD.cX + 0.5 * WORLD.dX);
+              float Image_Y = Y_clicked - (WORLD.cY + 0.5 * WORLD.dY);
 
-            //handleWorldClickAt(Image_X, Image_Y);
-            runScriptLine((mouseButton == RIGHT ? "MapRightClick" : "MapLeftClick") + " x=" + Image_X + " y=" + Image_Y);
+              //handleWorldClickAt(Image_X, Image_Y);
+              runScriptLine("MapRightClick x=" + Image_X + " y=" + Image_Y);
+            }
           }
         }
 
-        // STUDY has no click behavior of its own (unlike WORLD/WIN3D
-        // below, both already fully committed to click-to-act), so a
-        // click anywhere inside it is free to mean "pin a hover point
-        // here" - added to allHoverPoints (hover.pde) alongside whatever
-        // STUDY graph happens to be showing, same screen coordinates
-        // placeHoversAt() already uses for the live, mouse-following one.
-        // Pinning even where nothing's actually hoverable is harmless:
-        // place_STUDY_hover() already shows nothing there today for the
-        // interactive point, same as it will for this one.
+        // STUDY has no click behavior of its own - unlike WIN3D below,
+        // which stays fully committed to click-to-act whenever its own
+        // solar-impact overlay isn't showing, and unlike WORLD's own
+        // right click above, which still places STATION at the clicked
+        // location - so a click anywhere inside STUDY is free to mean
+        // "pin a hover point here" (same thing WORLD's own left click
+        // above now does too), added to allHoverPoints (hover.pde)
+        // alongside whatever STUDY graph happens to be showing, same
+        // screen coordinates placeHoversAt() already uses for the live,
+        // mouse-following one. Pinning even where nothing's actually
+        // hoverable is harmless: place_STUDY_hover() already shows
+        // nothing there today for the interactive point, same as it will
+        // for this one.
         //
         // findLiveHoverBox() looks up whatever box the live point was
         // ACTUALLY showing (if any) right before this click, so the new
