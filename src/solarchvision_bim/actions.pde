@@ -695,6 +695,13 @@ void build_allActions() {
     ShadeViewport();
   });
 
+  putAction("Unshade Viewport", () -> {
+    // dismissShading() (ShadeViewport.pde) - the same call the Esc
+    // cascade in solarchvision_bim.pde makes - already forces its own
+    // repaint (view_changed()), so there's nothing else to do here.
+    dismissShading();
+  });
+
   putAction("Prebake Viewport", () -> {
     preBakeViewport();
   });

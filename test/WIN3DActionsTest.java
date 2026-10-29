@@ -455,6 +455,26 @@ class WIN3DActionsTest {
     assertEquals(282, app.SHADE_DATE_ANGLE);
   }
 
+  @Test
+  void unshadeViewport_turnsOffTheStickyShadingOverlay () {
+    app.WIN3D.showShading = true;
+
+    String hint = app.runScriptLine("Unshade Viewport");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertFalse(app.WIN3D.showShading);
+  }
+
+  @Test
+  void unshadeViewport_isHarmlessWhenShadingIsAlreadyOff () {
+    app.WIN3D.showShading = false;
+
+    String hint = app.runScriptLine("Unshade Viewport");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertFalse(app.WIN3D.showShading);
+  }
+
   // ================= WIN3D Ctrl+, / WIN3D Ctrl+. ==========================
 
   // moveWin3DTowardsSelection(wheelValue) calls

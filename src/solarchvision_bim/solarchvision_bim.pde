@@ -309,8 +309,8 @@ void keyPressed (KeyEvent e) {
               // so an Esc that was actually meant to end the sticky
               // shaded-viewport preview (see WIN3D.showShading's own
               // comment) can never also silently remove a pinned hover
-              // point underneath it.
-              redraw();
+              // point underneath it. dismissShading() already forces its
+              // own repaint (view_changed()) - nothing else to do here.
             } else if (removeLastHoverPoint()) {
               redraw();
             }

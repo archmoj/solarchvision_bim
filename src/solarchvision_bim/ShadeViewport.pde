@@ -802,5 +802,19 @@ boolean dismissShading () {
 
   WIN3D.showShading = false;
   WIN3D.shadingNeedsRebuild = false; // nothing left to rebuild towards
+
+  // Turning showShading off alone wouldn't actually repaint anything:
+  // draw_WIN3D_layers.pde's own early-return gate (its own comment)
+  // skips WIN3D.draw() entirely on a frame where nothing else needs it,
+  // which - with no camera/model change, just this flag flipping - would
+  // leave the last-drawn shaded pixels sitting on screen forever instead
+  // of clearing back to the live, un-shaded view. view_changed() forces
+  // that one real repaint. Safe to call here, after showShading is
+  // already false: view_changed()'s own shadingNeedsRebuild check
+  // (global_functions.pde) only fires while showShading is still true,
+  // so this can't turn around and immediately re-flag a rebuild for an
+  // overlay that's no longer shown.
+  view_changed();
+
   return true;
 }

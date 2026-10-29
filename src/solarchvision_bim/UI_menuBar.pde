@@ -221,6 +221,7 @@ class UI_menuBar {
       "Skin Potential (Passive)",
       ___divider___,
       "Shade Viewport",
+      "Unshade Viewport",
       ___divider___,
       "Prebake Viewport",
       "Prebake Selected Sections",
