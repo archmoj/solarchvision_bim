@@ -85,7 +85,7 @@ class UI_caseBar {
     Y_control = pixel_A + pixel_B + 2 * pixel_H + 0.5 * this.tab;
 
     for (int i = 0; i < this.Items.length; i++) {
-      float x1 = X_control - 0.25 * displayBarWidth;
+      float x1 = X_control - 0.2 * displayBarWidth;
       float x2 = X_control + 0.5 * displayBarWidth;
       float y1 = Y_control - 0.45 * displayBarHeight;
       float y2 = Y_control + 0.45 * displayBarHeight;
@@ -408,11 +408,6 @@ class UI_caseBar {
   // Sky scenario selector (1x4 grid, STUDY.skyScenarioSetting)
   // ---------------------------------------------------------------------
 
-  // Plain-text labels for the 1x4 grid (cell n -> 0..3), left to right,
-  // kept separate from skyScenarioSetting_Title (globals.pde), which is
-  // used elsewhere for the fuller multi-line captions. Cell n corresponds
-  // to STUDY.skyScenarioSetting value n + 1 (that field is 1-based: see
-  // STUDY.pde and skyScenarioSetting_Title).
   String[] skyScenarioButton_Title = {
     "All", "Cloudy", "Partly", "Sunny"
   };
@@ -428,8 +423,10 @@ class UI_caseBar {
   }
 
   float[] skyScenarioCellBounds (int n, float offsetX, float offsetY, float w, float h) {
-    int col = n; //n % 2;
-    int row = 1; //n / 2;
+    // position in the 2x5 grid
+    n += 6;
+    int col = n % 5;
+    int row = n / 5;
     float rx = (col + 0.5) / 2.0 - 0.5;
     float ry = (row + 0.5) / 2.0 - 0.5;
     float x1 = offsetX + (rx - 0.225) * w;
@@ -491,9 +488,11 @@ class UI_caseBar {
   // drawSkyScenarioSelector() at all, or vice versa.
   String[] impactControlsButton_Title = {
     "Active",
-    "Passive",
-    "|<<", // rewind
-    ">>|" // forward
+    "|<<", // rewind day
+    "<",   // previous hour
+    ">",   // next hour
+    ">>|", // forward day
+    "Passive"
   };
 
   void drawImpactControlsSelector () {
@@ -507,8 +506,9 @@ class UI_caseBar {
   }
 
   float[] impactControlsCellBounds (int n, float offsetX, float offsetY, float w, float h) {
-    int col = n; //n % 2;
-    int row = 0; //n / 2;
+    // position in the 2x5 grid
+    int col = n % 5;
+    int row = n / 5;
     float rx = (col + 0.5) / 2.0 - 0.5;
     float ry = (row + 0.5) / 2.0 - 0.5;
     float x1 = offsetX + (rx - 0.225) * w;
@@ -519,90 +519,97 @@ class UI_caseBar {
   }
 
   void handleImpactControlsClicks (float offsetX, float offsetY, float w, float h) {
-    for (int n = 0; n < 4; n++) {
+    for (int n = 0; n < 6; n++) {
       float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
       if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) continue;
-
-final int impactGraphIndex_CYCLES_ACTIVE = 0;
-final int impactGraphIndex_CYCLES_PASSIVE = 1;
-final int impactGraphIndex_SUNPATH_ACTIVE = 2;
-final int impactGraphIndex_SUNPATH_PASSIVE = 3;
-final int impactGraphIndex_GLOBAL_ACTIVE = 4;
-final int impactGraphIndex_GLOBAL_PASSIVE = 5;
-final int impactGraphIndex_WIND_ACTIVE = 6;
-final int impactGraphIndex_WIND_PASSIVE = 7;
-final int impactGraphIndex_URBAN_ACTIVE = 8;
-final int impactGraphIndex_URBAN_PASSIVE = 9;
 
       if (n == 0) {
         if (STUDY.plotLayoutIndex == 0) {
           if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_CYCLES_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_WIND_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           }
         } else if (STUDY.plotLayoutIndex == -1) {
           STUDY.plotLayoutIndex = -2;
           STUDY.revise();
+          UI_caseBar.revise();
         } else if (STUDY.plotLayoutIndex == 2) {
           STUDY.plotLayoutIndex = 1;
           STUDY.revise();
+          UI_caseBar.revise();
         }
 
-        runScriptLine("Active Shade");
+        callAction("Active Shade");
       }
-      else if (n == 1) {
+      else if (n == 5) {
         if (STUDY.plotLayoutIndex == 0) {
           if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_SUNPATH_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_GLOBAL_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_CYCLES_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_WIND_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           } else if (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) {
             STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
             STUDY.revise();
+            UI_caseBar.revise();
           }
         } else if (STUDY.plotLayoutIndex == -2) {
           STUDY.plotLayoutIndex = -1;
           STUDY.revise();
+          UI_caseBar.revise();
         } else if (STUDY.plotLayoutIndex == 1) {
           STUDY.plotLayoutIndex = 2;
           STUDY.revise();
+          UI_caseBar.revise();
         }
 
-        runScriptLine("Passive Shade");
+        callAction("Passive Shade");
       }
-      else if (n == 2) runScriptLine("Previous Impact Day");
-      else if (n == 3) runScriptLine("Next Impact Day");
+      else if (n == 1) callAction("Previous Impact Day");
+      else if (n == 2) callAction("Shade Previous Hour");
+      else if (n == 3) callAction("Shade Next Hour");
+      else if (n == 4) callAction("Next Impact Day");
     }
   }
 
   void renderImpactControlsGrid (float offsetX, float offsetY, float w, float h) {
-    for (int n = 0; n < 4; n++) {
+    for (int n = 0; n < 6; n++) {
       float[] b = impactControlsCellBounds(n, offsetX, offsetY, w, h);
       float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
 
@@ -611,7 +618,7 @@ final int impactGraphIndex_URBAN_PASSIVE = 9;
       // steps with no persistent "current" state to highlight.
       boolean highlighted = (
         (n == 0 && WIN3D.impactTypeIndex == Impact_ACTIVE && STUDY.impactTypeIndex == Impact_ACTIVE) ||
-        (n == 1 && WIN3D.impactTypeIndex == Impact_PASSIVE && STUDY.impactTypeIndex == Impact_PASSIVE)
+        (n == 5 && WIN3D.impactTypeIndex == Impact_PASSIVE && STUDY.impactTypeIndex == Impact_PASSIVE)
       );
 
       if (highlighted) {
