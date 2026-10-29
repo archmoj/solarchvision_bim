@@ -5,11 +5,12 @@ class Tropo3D {
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;
   final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
-  final static float TROPOSPHERE_ALTITUDE_M = 10000;
 
-  final static int   TROPO_DOWNLOAD_WIDTH  = 1200; // 1800
-  final static int   TROPO_DOWNLOAD_HEIGHT = 600;  // 900
-  final static float TROPO_BOUNDARY_HALF_SPAN = 5;
+  float parameterAltitude = 2000; // put clouds at 2Km
+
+  final static int   TROPO_DOWNLOAD_WIDTH  = 1800;
+  final static int   TROPO_DOWNLOAD_HEIGHT = 900;
+  final static float TROPO_BOUNDARY_HALF_SPAN = 1.5;
 
   float lat_step = 1; //in degrees
   float lon_step  = 1; //in degrees
@@ -237,10 +238,12 @@ class Tropo3D {
   }
 
   void computeDownloadBoundaries (int i) {
-    this.BoundariesX[i][0] = STATION.getLongitude() - TROPO_BOUNDARY_HALF_SPAN;
-    this.BoundariesX[i][1] = STATION.getLongitude() + TROPO_BOUNDARY_HALF_SPAN;
-    this.BoundariesY[i][0] = STATION.getLatitude() - TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(STATION.getLatitude());
-    this.BoundariesY[i][1] = STATION.getLatitude() + TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(STATION.getLatitude());
+    float lat = STATION.getLatitude();
+    float lon = STATION.getLongitude();
+    this.BoundariesX[i][0] = lon - TROPO_BOUNDARY_HALF_SPAN;
+    this.BoundariesX[i][1] = lon + TROPO_BOUNDARY_HALF_SPAN;
+    this.BoundariesY[i][0] = lat - TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(lat);
+    this.BoundariesY[i][1] = lat + TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(lat);
   }
 
   String buildRequestUrl (String domainStamp, String parameterStamp, DateTimeUTC dt, int i) {
@@ -372,7 +375,7 @@ class Tropo3D {
     float CEN_lon = 0.5 * (this.BoundariesX[n_Map][0] + this.BoundariesX[n_Map][1]);
     float CEN_lat = 0.5 * (this.BoundariesY[n_Map][0] + this.BoundariesY[n_Map][1]);
 
-    float r = FLOAT_r_Earth + TROPOSPHERE_ALTITUDE_M;
+    float r = FLOAT_r_Earth + parameterAltitude;
 
     num_vertices_added = 0;
 

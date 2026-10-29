@@ -25,7 +25,7 @@ class Tropo3DTest {
   }
 
   private float tropoRadius () {
-    return app.FLOAT_r_Earth + app.Tropo3D.TROPOSPHERE_ALTITUDE_M;
+    return app.FLOAT_r_Earth + app.Tropo3D.parameterAltitude;
   }
 
   // ================= corner winding =============================================
@@ -104,7 +104,7 @@ class Tropo3DTest {
       String label = "lat=" + station[0] + " lon=" + station[1];
       assertEquals(0f, subFace[0].x, 2f, label);
       assertEquals(0f, subFace[0].y, 2f, label);
-      assertEquals(app.Tropo3D.TROPOSPHERE_ALTITUDE_M, subFace[0].z, 2f, label);
+      assertEquals(app.Tropo3D.parameterAltitude, subFace[0].z, 2f, label);
     }
   }
 
