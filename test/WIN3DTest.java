@@ -822,8 +822,11 @@ class WIN3DTest {
 
     app.nextShadeHour(); // one step past the last hour of the day
 
+    // nextShadeHour() now only wraps the hour back to SHADE_FIRST_HOUR
+    // within STUDY's own hourly range (via isInHourlyRange) - advancing
+    // the date is no longer its job, that's nextShadeDay()'s now.
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
-    assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+    assertEquals(0, app.SHADE_DATE_ANGLE);
   }
 
   @Test
@@ -833,19 +836,22 @@ class WIN3DTest {
 
     app.previousShadeHour(); // one step before the first hour of the day
 
-    assertEquals(app.SHADE_LAST_HOUR, app.SHADE_HOUR_ANGLE);
-    // SHADE_DATE_ANGLE -= SHADE_STEP_DAYS lands exactly on the
-    // "<= -SHADE_STEP_DAYS" threshold, so the same step also triggers the
-    // 360-wrap-around guard, landing on (360 - SHADE_STEP_DAYS), not on
-    // -SHADE_STEP_DAYS itself.
-    assertEquals(360 - app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+    // previousShadeHour() wraps to SHADE_LAST_HOUR (24), but with the
+    // default STUDY.startHour=0/endHour=23 that hour isn't in range
+    // (isInHourlyRange(24) is false, since 24 % 24 == 0 only makes 0
+    // valid, not 24 itself), so the loop keeps decrementing and lands on
+    // 23 - the last hour actually in range - instead of 24.
+    assertEquals(23, app.SHADE_HOUR_ANGLE);
+    // The date is no longer touched by hour navigation.
+    assertEquals(0, app.SHADE_DATE_ANGLE);
   }
 
   @Test
   void adjustShadeTime_matchesWhatAltArrowKeysWouldRequestForACompleteDayCycle () {
-    // handleAltArrowKeys(UP) calls adjustShadeTime(SHADE_HOURS_PER_DAY + 1) -
-    // exactly one full day's worth of hours plus one, i.e. it always lands
-    // on the same hour it started from, one day (SHADE_STEP_DAYS) later.
+    // nextShadeDay() now calls the "Next Impact Day" action (advancing
+    // impactDisplayDay) and re-derives SHADE_DATE_ANGLE from
+    // sync_SHADE_DATE_ANGLE(), instead of adding SHADE_HOURS_PER_DAY + 1
+    // hourly steps - so it no longer touches SHADE_HOUR_ANGLE at all.
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR + 2;
     app.SHADE_DATE_ANGLE = 0;
     int startHour = app.SHADE_HOUR_ANGLE;
@@ -853,7 +859,13 @@ class WIN3DTest {
     app.nextShadeDay();
 
     assertEquals(startHour, app.SHADE_HOUR_ANGLE);
-    assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+    // With a fresh app (impactDisplayDay starts at 0, TIME.beginDay=0,
+    // STUDY.dayIncrement=30.5), "Next Impact Day" advances
+    // impactDisplayDay to 1 and sync_SHADE_DATE_ANGLE() computes:
+    //   j = impactDisplayDay - 1 = 0
+    //   now_j = (0 * 30 + 0 + 365) % 365 = 0
+    //   angle = (int) (360 * ((286 + 0) % 365) / 365.0) = 282
+    assertEquals(282, app.SHADE_DATE_ANGLE);
   }
 
   // ================= handleCommandKey (remaining safe branches) ============

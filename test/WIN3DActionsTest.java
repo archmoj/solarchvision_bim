@@ -442,10 +442,17 @@ class WIN3DActionsTest {
     String hint = app.runScriptLine("Shade Next Day");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    // A full day's worth of hourly steps (SHADE_HOURS_PER_DAY + 1) wraps
-    // the hour back to FIRST_HOUR and advances the date by one step.
+    // "Shade Next Day" now drives impactDisplayDay (via the real "Next
+    // Impact Day" action) instead of adding SHADE_HOURS_PER_DAY + 1
+    // hourly steps, so SHADE_HOUR_ANGLE is left untouched...
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
-    assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+    // ...and SHADE_DATE_ANGLE is derived from sync_SHADE_DATE_ANGLE()
+    // (impactDisplayDay=1, TIME.beginDay=0, STUDY.dayIncrement=30.5)
+    // rather than incremented by SHADE_STEP_DAYS:
+    //   j = impactDisplayDay - 1 = 0
+    //   now_j = (0 * 30 + 0 + 365) % 365 = 0
+    //   angle = (int) (360 * ((286 + 0) % 365) / 365.0) = 282
+    assertEquals(282, app.SHADE_DATE_ANGLE);
   }
 
   // ================= WIN3D Ctrl+, / WIN3D Ctrl+. ==========================
