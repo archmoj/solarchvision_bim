@@ -1115,12 +1115,14 @@ class WIN3DTest {
   void dismissShading_alsoClearsAnyPendingRebuildAndForcesARepaint () {
     app.WIN3D.showShading = true;
     app.WIN3D.shadingNeedsRebuild = true;
+    app.WIN3D.shadingNeedsRepaint = true;
     app.WIN3D.update = false;
 
     assertTrue(app.dismissShading());
 
-    // Nothing left to rebuild towards...
+    // Nothing left to rebuild or paint towards...
     assertFalse(app.WIN3D.shadingNeedsRebuild);
+    assertFalse(app.WIN3D.shadingNeedsRepaint);
     // ...and WIN3D.update must come back true, or draw_WIN3D_layers.pde's
     // own early-return gate would skip WIN3D.draw() entirely next frame
     // (nothing else changed) and leave the last-drawn shaded pixels

@@ -780,6 +780,11 @@ void ShadeViewport () {
     // WIN3D_layers.pde to immediately see it still set and redo the same
     // work again next frame for no reason.
     WIN3D.shadingNeedsRebuild = false;
+
+    // Unconditional, regardless of how this bake was triggered - see
+    // this field's own comment (WIN3D.pde) for why it has to be, unlike
+    // shadingNeedsRebuild just above.
+    WIN3D.shadingNeedsRepaint = true;
   }
 
   long shadeTotalMillis = millis() - ShadeViewport_startMillis;
@@ -857,6 +862,7 @@ boolean dismissShading () {
 
   WIN3D.showShading = false;
   WIN3D.shadingNeedsRebuild = false; // nothing left to rebuild towards
+  WIN3D.shadingNeedsRepaint = false; // nothing left to paint towards, either
 
   // Turning showShading off alone wouldn't actually repaint anything:
   // draw_WIN3D_layers.pde's own early-return gate (its own comment)

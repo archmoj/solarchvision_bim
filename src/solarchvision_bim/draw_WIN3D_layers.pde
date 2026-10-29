@@ -70,36 +70,38 @@ void draw_WIN3D_layers () {
     // that will eventually dismiss it is pressed. ShadeViewport() clears
     // this flag itself (see its own comment) once the fresh Shade_RGBA is
     // ready, and leaves WIN3D.showShading - checked just above - true.
-    // Captured before that clear, into its own local, rather than read
-    // again afterward: shadingWasJustRebuilt below needs to know whether
-    // THIS frame rebuilt, which re-reading the (by-then-cleared)
-    // instance field could never tell.
-    boolean shadingWasJustRebuilt = WIN3D.shadingNeedsRebuild;
-    if (shadingWasJustRebuilt) {
+    if (WIN3D.shadingNeedsRebuild) {
       ShadeViewport();
     }
 
-    // Only repaint when this exact frame actually changed something -
-    // mayDrawPalette (already true here exactly when WIN3D.update was set
-    // at the top of this function, before WIN3D.draw() consumed it:
-    // WIN3D.draw() just redrew the base scene plus its own one-time
-    // Overlay3D.draw() call, which this block's own image(Shade_RGBA,
-    // ...) below would otherwise leave buried) or shadingWasJustRebuilt
-    // (a fresh bake just replaced Shade_RGBA's own pixels). showShading
-    // keeps this whole function running every single frame regardless of
-    // either (its own comment above), so without this check a frame
-    // where NEITHER is true - nothing moved, nothing rebuilt, genuinely
-    // stale - would still repaint the exact same pixels for no reason:
-    // wasted work for the plain image() call, and visibly wrong for
-    // Overlay3D's own alpha-blended fills (SOLID_STYLE, GROUP_BOX_STYLE,
-    // etc., Overlay3D.pde), which would darken/thicken a little more
-    // with every such frame they're drawn on top of themselves, never
-    // actually settling at their real, once-blended intensity. Reads
-    // mayDrawPalette, never sets it here - this is its own, separate
-    // concern from whether WIN3D.drawPalette() (the solar-impact
-    // color-scale legend, unrelated to this grayscale preview) redraws.
-    if (mayDrawPalette || shadingWasJustRebuilt) {
-      // Either the just-rebaked image above, or - on a frame WIN3D.draw()
+    // Only repaint when this exact frame actually has something worth
+    // painting - mayDrawPalette (already true here exactly when WIN3D.
+    // update was set at the top of this function, before WIN3D.draw()
+    // consumed it: WIN3D.draw() just redrew the base scene plus its own
+    // one-time Overlay3D.draw() call, which this block's own
+    // image(Shade_RGBA, ...) below would otherwise leave buried) or
+    // WIN3D.shadingNeedsRepaint (ShadeViewport() just finished a fresh
+    // bake, whether from the rebuild above or from any other caller
+    // entirely - the "Shade Viewport" action, Space/Backspace, the
+    // SHADE.VIEWPORT command, ... all eventually call ShadeViewport()
+    // directly, bypassing shadingNeedsRebuild/view_changed() altogether -
+    // see that field's own comment, WIN3D.pde, for why checking
+    // shadingNeedsRebuild here instead would miss every one of those and
+    // silently never paint the result). showShading keeps this whole
+    // function running every single frame regardless of either (its own
+    // comment above), so without this check a frame where NEITHER is
+    // true - nothing moved, nothing baked, genuinely stale - would still
+    // repaint the exact same pixels for no reason: wasted work for the
+    // plain image() call, and visibly wrong for Overlay3D's own alpha-
+    // blended fills (SOLID_STYLE, GROUP_BOX_STYLE, etc., Overlay3D.pde),
+    // which would darken/thicken a little more with every such frame
+    // they're drawn on top of themselves, never actually settling at
+    // their real, once-blended intensity. Reads mayDrawPalette, never
+    // sets it here - this is its own, separate concern from whether
+    // WIN3D.drawPalette() (the solar-impact color-scale legend, unrelated
+    // to this grayscale preview) redraws.
+    if (mayDrawPalette || WIN3D.shadingNeedsRepaint) {
+      // Either the just-baked image above, or - on a frame WIN3D.draw()
       // redrew the base scene for some unrelated reason - the same one
       // still current from an earlier bake. Still carries the alpha from
       // ShadeViewport()'s own hit/miss pixels (see that function's own
@@ -116,6 +118,9 @@ void draw_WIN3D_layers () {
       // content right back under the shaded overlay - redraw it on top
       // again here so it stays visible.
       Overlay3D.draw();
+
+      // Consumed: this exact repaint is what it was requesting.
+      WIN3D.shadingNeedsRepaint = false;
     }
   }
 

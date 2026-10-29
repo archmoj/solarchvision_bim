@@ -1259,6 +1259,20 @@ class WIN3D {
   // will eventually dismiss it.
   boolean shadingNeedsRebuild = false;
 
+  // Set unconditionally by ShadeViewport() itself (the one place every
+  // trigger - the sticky auto-rebuild above, the "Shade Viewport" action,
+  // Space/Backspace, the SHADE.VIEWPORT command, ... - all eventually
+  // call through) whenever it finishes a bake, so draw_WIN3D_layers.pde
+  // knows to actually paint the fresh Shade_RGBA at least once - distinct
+  // from shadingNeedsRebuild (which only fires from the auto-rebuild
+  // path, via view_changed()): a bake triggered directly, outside that
+  // path, would otherwise leave both shadingNeedsRebuild and
+  // WIN3D.update false on the very next frame, and draw_WIN3D_layers.
+  // pde's own "skip a stale frame" check (its own comment) would then
+  // never paint the new image at all. Consumed (cleared) by draw_WIN3D_
+  // layers.pde right after it actually paints.
+  boolean shadingNeedsRepaint = false;
+
   // One-shot: set by the day-navigation/impact-type-toggle actions
   // (D/d/Shift+Tab) to show the solar-impact overlay this one time even
   // if allSolarImpacts.win3DOverlay_cameraMatches() is false - draw_WIN3D_
