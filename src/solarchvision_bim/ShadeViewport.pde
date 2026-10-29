@@ -233,6 +233,16 @@ void ShadeViewport () {
   float[] SunV = { SunR[1], SunR[2], SunR[3] };
   float[] SunV_unit = funcs.vec3_unit(new float[]{ SunV[0], SunV[1], SunV[2] });
 
+  // SunR[3] (the sun direction's own z-component) is at/below 0 whenever
+  // the sun itself is at/below the horizon - the earth should be
+  // blocking every direct-sun ray at that point, but this model has no
+  // actual ground geometry for the shadow ray below to intersect, so
+  // without this guard isIntersected_Faces() would come back
+  // unoccluded and let faces still pick up a spurious direct-radiation
+  // contribution at night. Computed once here (SunR is the same for
+  // every pixel this call), rather than re-checked per pixel below.
+  boolean sunIsBelowHorizon = (SunR[3] <= 0);
+
   // First pass (below) just records which Face each pixel's ray actually
   // hit, -1 for "didn't hit a Face" (no hit at all, or hit something else
   // sharing the same grid - a Model1D or a Model2Ds billboard), and that
@@ -414,7 +424,13 @@ void ShadeViewport () {
             float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
             float valuesSUM_RAD = SkyMask; // diffuse radiation
-            if (isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
+            // Below the horizon, there's no direct sun to contribute at
+            // all - skip both the shadow ray and the SunMask dot product
+            // outright, rather than relying on isIntersected_Faces() to
+            // (incorrectly) report an occlusion that doesn't exist
+            // without real ground geometry. The face still gets its
+            // (fully opaque, see the alpha below) diffuse-only shading.
+            if (!sunIsBelowHorizon && isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
               float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
               if (SunMask <= 0) SunMask = 0; // removes backing faces
 
@@ -515,7 +531,10 @@ void ShadeViewport () {
           float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
           float valuesSUM_RAD = SkyMask;
-          if (isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
+          // Same sunIsBelowHorizon guard as pass 1 above - keeps this
+          // repair pass from disagreeing with pass 1 on pixels it
+          // re-casts.
+          if (!sunIsBelowHorizon && isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
             float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
             if (SunMask <= 0) SunMask = 0;
             valuesSUM_RAD += SunMask;
