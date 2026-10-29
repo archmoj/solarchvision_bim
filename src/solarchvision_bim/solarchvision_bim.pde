@@ -229,11 +229,30 @@ void keyPressed (KeyEvent e) {
         addNewSelectionToPreviousSelection = 0;
       }
 
+      boolean wasEditingSpinner = UI_rollout.isEditingSpinner();
+
+      // Whether THIS keypress is the one that's about to reach
+      // UI_rollout.keyPressed(e) below AND is an Esc - i.e. whether an Esc
+      // is about to cancel an in-progress spinner edit there (UI_rollout.pde's
+      // own "case ESC": drops the typed text, sets editActive false, leaves
+      // the spinner's real value untouched). Captured BEFORE that call runs,
+      // specifically because isEditingSpinner() checked AFTER it would
+      // always read "not editing" - cancelling IS what sets editActive
+      // false, as part of handling this exact keypress - so checking it
+      // fresh further down could never tell "Esc just cancelled a spinner
+      // edit" apart from "Esc arrived with nothing active" (the whole point
+      // of this flag). Used below to stop that one Esc there, rather than
+      // (as `wasEditingSpinner` alone would, mishandling the admittedly
+      // unreachable-today case of a spinner edit somehow still active while
+      // typeUserCommand==1) blocking every later Esc cascade a spinner
+      // merely happens to still be active for.
+      boolean escAboutToCancelSpinnerEdit = wasEditingSpinner && (typeUserCommand == 0) && (key == ESC);
+
       if (typeUserCommand == 0) {
 
         UI_consoleBar.updated();
 
-        if (UI_rollout.isEditingSpinner()) {
+        if (wasEditingSpinner) {
           UI_rollout.keyPressed(e);
         } else {
           STUDY.keyPressed(e);
@@ -264,7 +283,19 @@ void keyPressed (KeyEvent e) {
           if(key == ESC) {
             key = 0; // Overrides the default ESC key behavior that exits a Processing sketch
 
-            if (UI_menuBar.selected_parent != -1) {
+            // An Esc that just cancelled a spinner edit (escAboutToCancelSpinnerEdit,
+            // above) already did its one job up there - UI_rollout.keyPressed(e)
+            // dropped the typed text and left the spinner's real value
+            // untouched - and must stop there. Without this check, every Esc
+            // keypress still falls all the way through this same cascade
+            // regardless of what it already did above, so cancelling a spinner
+            // edit would ALSO close an open menu, dismiss a pick list, or (what
+            // was actually being seen) silently remove a pinned STUDY/WIN3D
+            // hover point the person never asked to touch - none of which "stop
+            // typing in this box" should ever imply.
+            if (escAboutToCancelSpinnerEdit) {
+              // handled above - nothing else should happen for this Esc
+            } else if (UI_menuBar.selected_parent != -1) {
               UI_menuBar.deselect();
             } else if (typeUserCommand == 1) {
               typeUserCommand = 0;
