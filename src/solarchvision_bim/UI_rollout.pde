@@ -848,6 +848,8 @@ class UI_rollout {
     }
 
     if (this.include) {
+      this.drawRenderButton();
+
       if (isInside(X_clicked, Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY)) {
         X_clicked = -1;
         Y_clicked = -1;
@@ -857,6 +859,71 @@ class UI_rollout {
     if (this.editStateChanged) {
       this.draw();
     }
+  }
+
+  // "SOLARCHVISION render": one persistent button pinned to the bottom of
+  // the rollout panel (this.cY + this.dY, bottom-anchored so it stays put
+  // regardless of how much content the current parent/child page above
+  // it has), drawn and click-checked on every page rather than being
+  // part of any one PARENT_*/CHILD_* branch above - a one-click "prep and
+  // show the render" shortcut, not a per-page setting.
+  //
+  // renderButtonBounds()/handleRenderButtonClick() are split out of
+  // drawRenderButton() itself, rather than inlined together the way the
+  // tab-selector loop earlier in draw() mixes its own hit-testing and
+  // drawing - this way the click logic (the part actually worth testing)
+  // stays free of any rect()/fill()/text() graphics calls, directly
+  // callable headless, the same separation UI_caseBar.pde's own
+  // handleImpactControlsClicks()/renderImpactControlsGrid() already keep.
+  float[] renderButtonBounds () {
+    float x1 = this.cX + 5 * this.view_S;
+    float x2 = this.cX + this.dX - 5 * this.view_S;
+    float y2 = this.cY + this.dY - 5 * this.view_S;
+    float y1 = y2 - 25 * this.view_S;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  void handleRenderButtonClick () {
+    if (this.editActive) return;
+
+    float[] b = renderButtonBounds();
+    if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) return;
+
+    // Bake first (so the viewport has something fresh to show)...
+    callAction("Prebake Viewport");
+    // ...drop the sticky shaded-viewport preview if it's currently on top
+    // (WIN3D.showShading - see its own comment, WIN3D.pde) - a render
+    // should show the actual model, not a leftover grayscale shading
+    // overlay sitting over it...
+    if (WIN3D.showShading) callAction("Unshade Viewport");
+    // ...then jump straight to the Skin Potential graph matching
+    // whichever impact type (Active/Passive) is currently selected,
+    // rather than always picking one regardless of the study's own
+    // current setting.
+    callAction(STUDY.impactTypeIndex == Impact_ACTIVE ? "Skin Potential (Active)" : "Skin Potential (Passive)");
+
+    // Consumes its own click, same as the generic rollout-wide catch-all
+    // right after this call in draw() - checked first, so a click here
+    // never also falls through to that catch-all.
+    X_clicked = -1;
+    Y_clicked = -1;
+  }
+
+  void drawRenderButton () {
+    this.handleRenderButtonClick();
+
+    float[] b = renderButtonBounds();
+
+    strokeWeight(2);
+    stroke(0);
+    fill(255, 204, 0); // bold amber/gold - deliberately stands out against the panel's own plain white/gray
+    rect(b[0], b[2], b[1] - b[0], b[3] - b[2]);
+    strokeWeight(0);
+
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(14 * this.view_S);
+    text("SOLARCHVISION render", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
   }
 
   boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v) {

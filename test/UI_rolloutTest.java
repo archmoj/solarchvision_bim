@@ -342,4 +342,126 @@ class UI_rolloutTest {
     });
     assertEquals("a", app.UI_rollout.editText); // untouched, never read past the end
   }
+
+  // ================= renderButtonBounds / handleRenderButtonClick =========
+  // ================= (the "SOLARCHVISION render" button) ===================
+  // drawRenderButton() itself (rect()/fill()/text()) isn't covered here,
+  // same reasoning as this class's other draw()-touching methods (top-of-
+  // file comment) - what's covered is the pure geometry
+  // (renderButtonBounds()) and the click logic (handleRenderButtonClick()),
+  // which calls no graphics functions at all, by design (drawRenderButton()'s
+  // own comment on why they're split).
+
+  // cX/cY/dX/dY/view_S all ultimately derive from pixel_W/pixel_H/pixel_A/
+  // pixel_B (globals.pde), which stay at their own Java-default 0 in a
+  // bare `new solarchvision_bim()` test instance - only setup() computes
+  // them for real. Left at their own field-initializer defaults, dY in
+  // particular (2 * pixel_H) collapses to 0, which doesn't make
+  // renderButtonBounds() degenerate on its own (y1 still ends up < y2),
+  // but isInside() (global_functions.pde) uses strict `<`, not `<=`, so
+  // any other similarly-zeroed combination can silently produce a
+  // bounds box no click position computed from those same zeroed values
+  // could ever land strictly inside. Set explicitly here instead of
+  // relying on those defaults, so every one of these tests' own click
+  // targets are computed against real, known numbers.
+  private void setExplicitRolloutBounds () {
+    app.UI_rollout.cX = 100;
+    app.UI_rollout.cY = 200;
+    app.UI_rollout.dX = 300;
+    app.UI_rollout.dY = 400;
+    app.UI_rollout.view_S = 1;
+  }
+
+  @Test
+  void renderButtonBounds_isPinnedToTheBottomOfThePanel () {
+    setExplicitRolloutBounds();
+
+    float[] b = app.UI_rollout.renderButtonBounds();
+
+    assertEquals(105f, b[0], 0.01f); // x1
+    assertEquals(395f, b[1], 0.01f); // x2
+    assertEquals(570f, b[2], 0.01f); // y1 == cY + dY - 5 - 25
+    assertEquals(595f, b[3], 0.01f); // y2 == cY + dY - 5, bottom-anchored
+  }
+
+  @Test
+  void handleRenderButtonClick_outsideTheButton_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    boolean[] ran = {false};
+    app.allActions.put("prebake viewport", (args) -> ran[0] = true);
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderButtonBounds();
+    int clickedX = (int) (b[0] - 100); // well to the left of the button
+    app.X_clicked = clickedX;
+    app.Y_clicked = (int) b[2];
+
+    app.UI_rollout.handleRenderButtonClick();
+
+    assertFalse(ran[0]);
+    assertEquals(clickedX, app.X_clicked); // click NOT consumed
+  }
+
+  @Test
+  void handleRenderButtonClick_whileEditingASpinner_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    boolean[] ran = {false};
+    app.allActions.put("prebake viewport", (args) -> ran[0] = true);
+    app.UI_rollout.editActive = true;
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderButtonClick();
+
+    assertFalse(ran[0]);
+  }
+
+  @Test
+  void handleRenderButtonClick_insideTheButton_skipsUnshadeWhenShadingIsOff_andUsesSkinPotentialActive () {
+    app.allActions = new java.util.HashMap<>();
+    java.util.List<String> calledOrder = new java.util.ArrayList<>();
+    app.allActions.put("prebake viewport", (args) -> calledOrder.add("prebake"));
+    app.allActions.put("unshade viewport", (args) -> calledOrder.add("unshade"));
+    app.allActions.put("skin potential (active)", (args) -> calledOrder.add("active"));
+    app.allActions.put("skin potential (passive)", (args) -> calledOrder.add("passive"));
+
+    app.WIN3D.showShading = false; // "if necessary" - not necessary here
+    app.STUDY.impactTypeIndex = app.Impact_ACTIVE;
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderButtonClick();
+
+    assertEquals(java.util.Arrays.asList("prebake", "active"), calledOrder);
+    assertEquals(-1, app.X_clicked); // click consumed, same as the generic rollout catch-all
+    assertEquals(-1, app.Y_clicked);
+  }
+
+  @Test
+  void handleRenderButtonClick_alsoUnshadesWhenShadingIsOn_andUsesSkinPotentialPassive () {
+    app.allActions = new java.util.HashMap<>();
+    java.util.List<String> calledOrder = new java.util.ArrayList<>();
+    app.allActions.put("prebake viewport", (args) -> calledOrder.add("prebake"));
+    app.allActions.put("unshade viewport", (args) -> calledOrder.add("unshade"));
+    app.allActions.put("skin potential (active)", (args) -> calledOrder.add("active"));
+    app.allActions.put("skin potential (passive)", (args) -> calledOrder.add("passive"));
+
+    app.WIN3D.showShading = true; // "if necessary" - it is, here
+    app.STUDY.impactTypeIndex = app.Impact_PASSIVE;
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderButtonClick();
+
+    assertEquals(java.util.Arrays.asList("prebake", "unshade", "passive"), calledOrder);
+  }
 }
