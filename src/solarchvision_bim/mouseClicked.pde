@@ -1542,12 +1542,14 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
       WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
     }
 
-    if (mouseButton == LEFT) {
-      WORLD.zoom = max(WORLD.zoom, 5); // zoom in to confirm exactly where the click landed
-    }
-    // Right click keeps the current zoom level instead, for
-    // comparing several rough locations across a wider area
-    // without the view snapping in on every click.
+    // Left and right click are combined here: either one zooms in to
+    // confirm exactly where the click landed (this used to be left-click
+    // only, with right-click deliberately leaving the zoom level alone -
+    // for comparing several rough locations across a wider area without
+    // the view snapping in on every click - but that distinction has been
+    // folded away so a click on the map always behaves the same
+    // regardless of which button made it).
+    WORLD.zoom = max(WORLD.zoom, 5);
 
     // Each picker's handleMapClick() finds nearby candidates of its
     // own dataset around (mouse_lon, mouse_lat); if there's more

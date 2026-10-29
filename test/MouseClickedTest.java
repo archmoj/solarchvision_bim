@@ -1608,4 +1608,96 @@ class MouseClickedTest {
       "a bare-action collision would leave both untouched");
     assertEquals(app.LEFT, app.mouseButton, "mouseButton must be restored after the simulated click");
   }
+
+  // ================= handleWorldClickAt - left/right click combined ========
+  // Left- and right-click on the WORLD map used to differ in exactly one
+  // way: left-click forced WORLD.zoom up to confirm where the click
+  // landed, right-click deliberately left the zoom level alone. That
+  // distinction has since been folded away - a click on the map always
+  // zooms in now, regardless of which button made it - so both tests
+  // below assert the SAME outcome for opposite buttons, which is the
+  // point: there's no longer a button-dependent branch to tell apart.
+  //
+  // currentDataSource is set to a value that matches none of the five
+  // dataID_* constants, so every StationPicker.handleMapClick() call
+  // below takes its own shallow "not the active dataset" path (just
+  // record which station is nearest, no download_*/update_* network or
+  // file I/O) - see StationPicker.handleMapClick()'s and each
+  // select*Station()'s own comments (mouseClicked.pde) for why that path
+  // is the side-effect-free one.
+
+  private void setUpMinimalWorldClickState () {
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
+    app.WORLD.dX = 400;
+    app.WORLD.dY = 300;
+    app.WORLD.sX = 1;
+    app.WORLD.sY = 1;
+    app.WORLD.oX = 0;
+    app.WORLD.oY = 0;
+
+    app.currentDataSource = -1; // matches no dataID_* constant
+
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setLatitude(10);
+    app.climateTypicalYearCoordinates[0].setLongitude(20);
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("tmy_station.epw");
+
+    app.climateArchiveCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateArchiveCoordinates[0].setLatitude(10);
+    app.climateArchiveCoordinates[0].setLongitude(20);
+    app.climateArchiveCoordinates[0].setClimateEngineeringFilename("archive_station.bin");
+
+    app.climateEngineeringCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateEngineeringCoordinates[0].setLatitude(10);
+    app.climateEngineeringCoordinates[0].setLongitude(20);
+    app.climateEngineeringCoordinates[0].setClimateEngineeringFilename("engineering_station.bin");
+
+    app.ensembleForecastCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.ensembleForecastCoordinates[0].setLatitude(10);
+    app.ensembleForecastCoordinates[0].setLongitude(20);
+    app.ensembleForecastCoordinates[0].setEnsembleForecastFilename("forecast_station.bin");
+
+    app.ensembleObservationCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.ensembleObservationCoordinates[0].setLatitude(10);
+    app.ensembleObservationCoordinates[0].setLongitude(20);
+    app.ensembleObservationCoordinates[0].setCode("OBS0");
+  }
+
+  @Test
+  void handleWorldClickAt_zoomsIn_onLeftClick () {
+    setUpMinimalWorldClickState();
+    app.WORLD.zoom = 1;
+    app.mouseButton = app.LEFT;
+
+    app.handleWorldClickAt(0, 0);
+
+    assertTrue(app.WORLD.zoom >= 5);
+  }
+
+  @Test
+  void handleWorldClickAt_alsoZoomsIn_onRightClick () {
+    // The actual regression this guards: right-click used to leave
+    // WORLD.zoom completely untouched here.
+    setUpMinimalWorldClickState();
+    app.WORLD.zoom = 1;
+    app.mouseButton = app.RIGHT;
+
+    app.handleWorldClickAt(0, 0);
+
+    assertTrue(app.WORLD.zoom >= 5);
+  }
+
+  @Test
+  void handleWorldClickAt_doesNotLowerAnAlreadyHigherZoom () {
+    // WORLD.zoom = max(WORLD.zoom, 5) - a click while already zoomed in
+    // further than the confirm level must not zoom back OUT.
+    setUpMinimalWorldClickState();
+    app.WORLD.zoom = 9;
+    app.mouseButton = app.RIGHT;
+
+    app.handleWorldClickAt(0, 0);
+
+    assertEquals(9, app.WORLD.zoom);
+  }
 }
