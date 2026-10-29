@@ -83,9 +83,29 @@ class ProgressWindow extends java.awt.Frame {
     g.drawString(this.label + ": " + (int) (this.fraction * 100) + "%", 10, h - 16);
   }
 
+  // Paints synchronously, directly on the calling thread, rather than
+  // calling this.repaint() (AWT's normal path) - repaint() only queues a
+  // paint event for AWT's own event-dispatch thread to get to whenever it
+  // next runs, which is fine when each call here is separated by enough
+  // real work (preBakeViewport()'s own ray-casting, calculate_
+  // VertexSolar_array()'s own per-face loop) for the EDT to catch up in
+  // between, but import_objects_IFC()'s/import_objects_OBJ()'s own per-
+  // entity/per-line parsing can be fast enough that the whole import
+  // finishes and dispose()s this window before the EDT ever gets a single
+  // chance to actually paint anything - an empty window that flashes by,
+  // confirmed against a real IFC import, not a hypothetical. Painting
+  // directly here - still just as cheap and rare as before (only called
+  // from inside each caller's own delta >= 1 throttle, not every single
+  // iteration) - guarantees the bar is actually drawn before this method,
+  // and whatever loop iteration called it, returns, regardless of how
+  // fast the surrounding work is.
   void updateFraction (float f) {
     this.fraction = f;
-    this.repaint();
+    java.awt.Graphics g = this.getGraphics();
+    if (g != null) {
+      this.paint(g);
+      g.dispose();
+    }
   }
 }
 
