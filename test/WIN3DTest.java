@@ -252,7 +252,7 @@ class WIN3DTest {
   // ================= isRepeatableCommandKey ==============================
 
   @Test
-  void isRepeatableCommandKey_recognizesTheNumpadAndCommaPeriodKeysOnly () {
+  void isRepeatableCommandKey_recognizesTheNumpadCommaPeriodAndShadeStepKeys () {
     assertTrue(app.WIN3D.isRepeatableCommandKey(','));
     assertTrue(app.WIN3D.isRepeatableCommandKey('+'));
     assertTrue(app.WIN3D.isRepeatableCommandKey('4')); // a numpad rotate/pan digit is repeatable...
@@ -263,6 +263,11 @@ class WIN3DTest {
     assertFalse(app.WIN3D.isRepeatableCommandKey('5'));
     assertFalse(app.WIN3D.isRepeatableCommandKey('c')); // ...and letter commands are not either
     assertFalse(app.WIN3D.isRepeatableCommandKey('a'));
+    // Space/Backspace: day-cycle shading step + preview
+    // (handleCommandKey()'s own ' '/BACKSPACE cases) - the same
+    // incremental-nudge shape as the rotate/pan/zoom keys above.
+    assertTrue(app.WIN3D.isRepeatableCommandKey(' '));
+    assertTrue(app.WIN3D.isRepeatableCommandKey(app.BACKSPACE));
   }
 
   // ================= dispatchNavKey routing ==============================
@@ -526,6 +531,34 @@ class WIN3DTest {
 
     app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
     assertEquals(4f, app.WIN3D.positionX, 0.0001f);
+  }
+
+  // Alt+arrows (day-cycle shading) are now repeatable too - navKeyRepeatable
+  // no longer excludes them (keyPressed()'s own comment on why that's
+  // safe: altDown only ever reaches navKeyRepeatable's computation
+  // alongside a coded arrow key in the first place). processHeldKey()
+  // itself doesn't care which flavor of arrow it's repeating - this just
+  // confirms the combination actually re-fires handleAltArrowKeys(),
+  // the same way the plain-arrow test above confirms handleArrowKeys().
+  @Test
+  void processHeldKey_repeatsAltArrowKeysTooOnceConfirmedAsAHold () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyAlt = true;
+    app.WIN3D.navKeyShift = false;
+    app.WIN3D.navKeyCode = app.RIGHT; // handleAltArrowKeys(RIGHT) -> "Shade Next Hour"
+    app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.WIN3D.navKeyRepeating = false;
+    app.SHADE_HOUR_ANGLE = 0;
+    app.SHADE_DATE_ANGLE = 0;
+
+    app.WIN3D.processHeldKey(); // crosses the initial delay - fires, enters repeat phase
+    assertEquals(1, app.SHADE_HOUR_ANGLE);
+    assertTrue(app.WIN3D.navKeyRepeating);
+
+    app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
+    assertEquals(2, app.SHADE_HOUR_ANGLE);
   }
 
   @Test

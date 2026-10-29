@@ -481,16 +481,23 @@ class WIN3D {
     this.navKeyCode = keyCode;
     this.navKeyShift = e.isShiftDown();
 
-    // Arrow keys / Shift+arrows (camera or selection nudges) always repeat
-    // while held; among the plain command keys, only the incremental
-    // view rotate/pan/zoom ones do (this also covers Ctrl+,/Ctrl+., since
-    // ',' and '.' are already repeatable below regardless of Ctrl).
-    // Everything else (camera cycling, shading toggle, day-cycle, Delete,
-    // rebuild-trigger, snap-to-look, Shift+Tab) is a discrete/one-shot/
+    // Arrow keys / Shift+arrows / Alt+arrows (camera, selection, or
+    // day-cycle shading nudges) always repeat while held - this.
+    // navKeyCoded alone covers all three, since altDown here can only
+    // ever be true alongside a coded arrow key in the first place (the
+    // early-return guard above already discards every other Alt+key
+    // combination before this point, so there's no "Alt+some-other-
+    // coded-key" case this could be accidentally over-including).
+    // Among the plain command keys, only the incremental view rotate/
+    // pan/zoom ones, plus Space/Backspace (day-cycle shading, same
+    // reasoning as Alt+arrows - see handleCommandKey()'s own ' '/
+    // BACKSPACE cases) repeat (this also covers Ctrl+,/Ctrl+., since ','
+    // and '.' are already repeatable below regardless of Ctrl).
+    // Everything else (camera cycling, shading toggle, Delete, rebuild-
+    // trigger, snap-to-look, Shift+Tab) is a discrete/one-shot/
     // destructive action and must stay single-press only, regardless of
     // how long the key is held.
-    this.navKeyRepeatable = !altDown &&
-      (this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar));
+    this.navKeyRepeatable = this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar);
 
     // Deliberately NOT reduceShadingQualityForNavHold() here - see that
     // method's own comment on why it waits for processHeldKey() to
@@ -562,6 +569,12 @@ class WIN3D {
       case '/':
       case '+':
       case '-':
+      // Day-cycle shading step/preview (handleCommandKey()'s own ' '/
+      // BACKSPACE cases - "Shade Next/Previous Hour" then "Shade
+      // Viewport") - same incremental-nudge shape as the rotate/pan/zoom
+      // keys just above, so it gets the same repeat-while-held treatment.
+      case ' ':
+      case BACKSPACE:
         return true;
       default:
         return false;
