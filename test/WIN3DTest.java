@@ -528,6 +528,129 @@ class WIN3DTest {
     assertEquals(4f, app.WIN3D.positionX, 0.0001f);
   }
 
+  @Test
+  void processHeldKey_doesNotReduceShadingQualityBeforeTheInitialDelayElapses () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = false;
+    app.WIN3D.navKeyChar = '1';
+    app.WIN3D.navKeyFrameCounter = 0;
+    app.WIN3D.navKeyRepeating = false;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+
+    // one call short of the initial delay - the hold isn't confirmed yet,
+    // so shadingQuality must stay untouched (see
+    // reduceShadingQualityForNavHold()'s own comment on why it waits for
+    // this, rather than reducing on the very first keyPressed()).
+    for (int i = 0; i < app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1; i++) {
+      app.WIN3D.processHeldKey();
+    }
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+
+    app.WIN3D.processHeldKey(); // the delay-th call - hold confirmed, now it reduces
+    assertEquals(0.75f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    assertEquals(0.75f * app.WIN3D.NAV_HOLD_SHADING_QUALITY_FACTOR, app.WIN3D.shadingQuality, 0.0001f);
+  }
+
+  @Test
+  void processHeldKey_keepsShadingQualityReducedAcrossRepeatedCallsOnceConfirmed () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = false;
+    app.WIN3D.navKeyChar = '1';
+    app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.WIN3D.navKeyRepeating = false;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+
+    app.WIN3D.processHeldKey(); // crosses the initial delay - reduces once
+    float reduced = app.WIN3D.shadingQuality;
+    assertEquals(0.75f * app.WIN3D.NAV_HOLD_SHADING_QUALITY_FACTOR, reduced, 0.0001f);
+
+    app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
+    // Still reduced, not reduced a second time on top of itself.
+    assertEquals(reduced, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(0.75f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+  }
+
+  // Exactly the scenario this whole mechanism exists for: a quick tap
+  // (never crosses NAV_KEY_INITIAL_DELAY_FRAMES before release) must
+  // produce one single-quality ShadeViewport() re-bake, not a cheap one
+  // immediately followed by a second, full-quality one on release.
+  // Doesn't call keyPressed() itself (needs a real KeyEvent - see
+  // solarchvision_bimTest.java's own comment), but keyPressed() only ever
+  // sets navKeyHeld/navKeyRepeatable/etc. and calls dispatchNavKey() -
+  // never reduceShadingQualityForNavHold() itself, by the diff this test
+  // guards - so simulating its post-press state directly here is
+  // equivalent for this test's purpose.
+  @Test
+  void aQuickTapThatNeverReachesTheRepeatThresholdNeverTouchesShadingQuality () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyCode = app.DOWN;
+    app.WIN3D.navKeyFrameCounter = 0;
+    app.WIN3D.navKeyRepeating = false;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+    app.WIN3D.showShading = true;
+    app.WIN3D.shadingNeedsRebuild = false; // as if keyPressed()'s own dispatchNavKey() already flagged and it hasn't been consumed, irrelevant here
+    app.WIN3D.update = false;
+
+    // A handful of frames pass, well short of the initial delay - the
+    // key releases before processHeldKey() ever confirms a hold.
+    for (int i = 0; i < app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1; i++) {
+      app.WIN3D.processHeldKey();
+    }
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.DOWN;
+    app.WIN3D.keyReleased();
+
+    // Nothing was ever reduced, so keyReleased() has nothing to restore -
+    // no second view_changed()/rebuild from the release.
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertFalse(app.WIN3D.update);
+    assertFalse(app.WIN3D.shadingNeedsRebuild);
+  }
+
+  // The mirror image: an actual hold confirms, reduces quality, and
+  // releasing afterward restores it plus forces the one final full-
+  // quality re-bake, same as the dedicated keyReleased() tests above.
+  @Test
+  void aSustainedHoldReducesShadingQualityThenRestoresItOnRelease () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyCode = app.DOWN;
+    app.WIN3D.navKeyFrameCounter = 0;
+    app.WIN3D.navKeyRepeating = false;
+    app.WIN3D.shadingQuality = 0.75f;
+    app.WIN3D.shadingQualityBeforeNavHold = -1;
+    app.WIN3D.showShading = true;
+    app.WIN3D.shadingNeedsRebuild = false;
+    app.WIN3D.update = false;
+
+    // Enough frames to cross the initial delay and confirm the hold.
+    for (int i = 0; i < app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES; i++) {
+      app.WIN3D.processHeldKey();
+    }
+    assertEquals(0.75f * app.WIN3D.NAV_HOLD_SHADING_QUALITY_FACTOR, app.WIN3D.shadingQuality, 0.0001f);
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.DOWN;
+    app.WIN3D.keyReleased();
+
+    assertEquals(0.75f, app.WIN3D.shadingQuality, 0.0001f);
+    assertEquals(-1f, app.WIN3D.shadingQualityBeforeNavHold, 0.0001f);
+    assertTrue(app.WIN3D.update);
+    assertTrue(app.WIN3D.shadingNeedsRebuild);
+  }
+
   // ================= camera-navigation math ==============================
 
   @Test

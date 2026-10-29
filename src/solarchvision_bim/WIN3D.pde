@@ -492,8 +492,9 @@ class WIN3D {
     this.navKeyRepeatable = !altDown &&
       (this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar));
 
-    this.reduceShadingQualityForNavHold();
-
+    // Deliberately NOT reduceShadingQualityForNavHold() here - see that
+    // method's own comment on why it waits for processHeldKey() to
+    // actually confirm a hold instead.
     this.navKeyHeld = true;
     this.navKeyFrameCounter = 0;
     this.navKeyRepeating = false;
@@ -502,31 +503,42 @@ class WIN3D {
   }
 
   // A repeatable key held down re-fires its action (dispatchNavKey(), via
-  // processHeldKey()) every frame for as long as it stays held - and,
-  // while the sticky shaded-viewport overlay is on, each of those
-  // re-fires is itself a view_changed() call that flags a full
-  // ShadeViewport() re-bake (WIN3D.shadingNeedsRebuild - see its own
-  // comment). Dropping shadingQuality for the hold's own duration keeps
-  // that per-frame re-bake cheap enough to actually track continuous
-  // navigation instead of stalling it one full-resolution bake behind
-  // every frame - keyReleased() below restores the real value (and
-  // triggers one final full-quality re-bake) the moment the key comes
-  // back up.
+  // processHeldKey()) every frame once the hold is confirmed - and, while
+  // the sticky shaded-viewport overlay is on, each of those re-fires is
+  // itself a view_changed() call that flags a full ShadeViewport()
+  // re-bake (WIN3D.shadingNeedsRebuild - see its own comment). Dropping
+  // shadingQuality keeps that per-frame re-bake cheap enough to actually
+  // track continuous navigation instead of stalling it one full-
+  // resolution bake behind every frame - keyReleased() restores the real
+  // value (and triggers one final full-quality re-bake) the moment the
+  // key comes back up.
   //
-  // Pulled out of keyPressed() (which needs a real KeyEvent - this test
-  // suite deliberately never constructs one, see solarchvision_bimTest.
-  // java's own comment) into its own no-argument method purely so the
-  // actual quality math is directly unit-testable against navKeyRepeatable
-  // alone, the same reasoning ShadeViewport.pde's own dismissShading()
-  // was split out for.
+  // Called from processHeldKey() - once navKeyRepeating first flips true,
+  // i.e. once the hold has actually crossed NAV_KEY_INITIAL_DELAY_FRAMES
+  // and is confirmed as a genuine hold - rather than from keyPressed()
+  // itself. A single tap-and-release (shorter than that delay) never
+  // reaches this at all: dispatchNavKey() from keyPressed() alone already
+  // produces exactly one ShadeViewport() re-bake, at full quality, with
+  // nothing here to later "restore" on release and re-bake a second time
+  // for no visual benefit - the earlier keyPressed()-driven version of
+  // this reduced quality (and so forced that pointless second full-
+  // quality bake on release) for every tap, not just real holds.
+  //
+  // Pulled out into its own no-argument method - rather than inlined
+  // where it's called - purely so the actual quality math stays directly
+  // unit-testable against navKeyRepeatable alone, without also needing a
+  // real KeyEvent (this test suite deliberately never constructs one, see
+  // solarchvision_bimTest.java's own comment) or a full processHeldKey()
+  // frame-counter sequence - the same reasoning ShadeViewport.pde's own
+  // dismissShading() was split out for.
   void reduceShadingQualityForNavHold () {
     // Not repeatable (a discrete/one-shot key - camera cycling, shading
     // toggle, etc.) - never re-fires from processHeldKey() regardless of
     // how long it's held, so there's no per-frame re-bake cost to guard
     // against here. Already reduced (shadingQualityBeforeNavHold is its
-    // "not currently reduced" -1 sentinel otherwise) - a second
-    // repeatable key pressed before the first one's release must not
-    // stomp the saved original with the already-reduced value.
+    // "not currently reduced" -1 sentinel otherwise) - processHeldKey()
+    // calls this every repeat frame, not just the first, so this guard
+    // also just makes every call after the first a no-op.
     if (!this.navKeyRepeatable || this.shadingQualityBeforeNavHold >= 0) return;
 
     this.shadingQualityBeforeNavHold = this.shadingQuality;
@@ -565,6 +577,11 @@ class WIN3D {
       if (this.navKeyFrameCounter >= threshold) {
         this.navKeyFrameCounter = 0;
         this.navKeyRepeating = true;
+        // Only reached once the hold has actually crossed the initial
+        // delay - i.e. once this is confirmed as a real hold, not a
+        // single tap-and-release - so reduceShadingQualityForNavHold()'s
+        // own comment on why it belongs here, not in keyPressed(), holds.
+        this.reduceShadingQualityForNavHold();
         this.dispatchNavKey();
       }
     }
