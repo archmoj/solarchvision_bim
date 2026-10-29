@@ -152,10 +152,14 @@ Scale s=? sx=? sy=? sz=? x=? y=? z=?
     the active viewport's own center) - ray casting, LookAtDirection,
     Pick/Assign, Move, and Create all follow from here exactly as they
     would for a real click
--   `MAPLEFTCLICK`, `MAPRIGHTCLICK`: Simulate a left/right click on the
-    location map (`x`/`y` are map-local coordinates) - repositions the
-    station and runs the nearest-station/pick-list lookups a real map
-    click would
+-   `MAPLEFTCLICK`, `MAPRIGHTCLICK`: Simulate a click on the location map
+    (`x`/`y` are map-local coordinates) - repositions the station, zooms
+    in to confirm, and runs the nearest-station/pick-list lookups a real
+    map click would. The two commands behave identically to each other -
+    a real left click on the map no longer reaches this at all (it pins
+    the station-name hover there instead - see "Hover creation" below),
+    so only a real right click does what both of these simulate; both
+    commands are kept for script/macro compatibility
 
 ```
 LeftClick x=? y=?
@@ -359,10 +363,11 @@ Mesh m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.
 
 ### Hover creation
 
--   `HOVER`: Creates a hover point or multiple hover points.
+-   `HOVER`: Creates a hover point or multiple hover points, replacing
+    any that already exist.
 
 ```
-Hover m=? tes=? lyr=? x1,y1 x2,y2 etc.
+Hover x1,y1 x2,y2 etc.
 ```
 
 -   `CLEARHOVER`: Clear all hover points
@@ -370,6 +375,15 @@ Hover m=? tes=? lyr=? x1,y1 x2,y2 etc.
 ```
 ClearHover
 ```
+
+A hover point created this way is a fixed screen position, the same as a
+point pinned by clicking in the 3D view or on a study graph. A point
+pinned by left-clicking the location map specifically is different: it
+remembers the (longitude, latitude) it was pinned at rather than its
+screen position, so it keeps tracking that same spot - and the station
+names shown for it - as the map is panned or zoomed, and is removed
+automatically once that spot is no longer part of the map's current
+view.
 
 ------------------------------------------------------------------------
 

@@ -98,7 +98,7 @@ For model-based studies such as `Skin Potential (Active)` and `Skin Potential (P
 ### 3. Get familiar with the workspace
 
 - **3D view:** Create, select, edit, and inspect buildings, surfaces, terrain, trees, and other objects. Supported environmental effects are visualized here.
-- **World view:** Explore geographic context, select a project location, and work with available map, station, and terrain information.
+- **World view:** Explore geographic context and work with available map, station, and terrain information. Hover over the map to see which stations are nearby; right-click sets the project location; left-click pins that station list in place (see [Explore the map interactively](#explore-the-map-interactively)).
 - **Study/time view:** Inspect time-series graphs, environmental studies, and statistical or scenario results.
 - **Case Bar:** Choose the hours, days, and scenarios or years included in a study, and select a statistical summary where available.
 - **Command bar:** Enter commands for precise settings and repeatable workflows. Press `TAB` to show or hide it.
@@ -147,6 +147,14 @@ Use the `Location` menu to select a project location and load or download suppor
 - **HRDPS/GDPS forecast imagery:** Available through the atmospheric visualization workflow where configured.
 
 Coverage and availability vary by location and workflow. Some geographic features, including terrain mesh and terrain texture, require an API key. For Canadian CWEEDS data, consult [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html). CWEEDS files are expected under `input/climate/CWEEDS/`.
+
+### Explore the map interactively
+
+The World view's map responds to the mouse directly, without going through a menu:
+
+- **Hover** over the map to see the short name of whichever weather or climate station(s) are nearby, without clicking - a quick way to see what's around before committing to a location. When zoomed out over a dataset with many stations, the list is automatically kept short, with a note of how many additional nearby stations were left out rather than listing them all.
+- **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
+- **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map. Press `ESC` to remove the most recently pinned point - on the map, in the 3D view, or on a study graph.
 
 ### Check data before interpreting results
 
@@ -212,6 +220,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | Shortcut | Action |
 | --- | --- |
 | `TAB` | Show or hide the command bar |
+| `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, or remove the most recently pinned hover point - whichever applies |
 | `a` / `A` | Switch between active and passive impact views in the 3D view |
 | `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
 | `d` / `D` | Change the impact-display day in the 3D view |
