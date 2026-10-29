@@ -243,6 +243,28 @@ void ShadeViewport () {
   // every pixel this call), rather than re-checked per pixel below.
   boolean sunIsBelowHorizon = (SunR[3] <= 0);
 
+  // Moon3D.pde's own simplified model (funcs.MoonPosition's own comment)
+  // reused here, same DATE/HOUR inputs the Sun already uses, purely as a
+  // second, much weaker light source for the sunIsBelowHorizon case below
+  // - a real moon only lights (and casts its own faint shadows) at
+  // night, never alongside direct sunlight, and only while it's actually
+  // above the horizon itself (MoonR[3] > 0) - a sun-down night with the
+  // moon also below the horizon gets no direct light at all, same as
+  // before this. Computed unconditionally (cheap, a few trig calls), not
+  // just when sunIsBelowHorizon, so moonIsAboveHorizon below reads
+  // naturally either way.
+  float[] MoonR = funcs.MoonPosition(STATION.getLatitude(), SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+  float[] MoonV = { MoonR[1], MoonR[2], MoonR[3] };
+  float[] MoonV_unit = funcs.vec3_unit(new float[]{ MoonV[0], MoonV[1], MoonV[2] });
+  boolean moonIsAboveHorizon = sunIsBelowHorizon && (MoonR[3] > 0);
+
+  // How much of a full direct-light contribution (the same SunMask/
+  // MoonMask dot-product term, see below) the Moon gets, relative to the
+  // Sun - "slight" per this feature's own ask, nowhere near the Sun's
+  // own full-strength term, just enough to pick out subtle moonlit
+  // highlights and shadows against an otherwise flat-diffuse night face.
+  final float MOON_DIRECT_RADIATION_FACTOR = 0.15;
+
   // First pass (below) just records which Face each pixel's ray actually
   // hit, -1 for "didn't hit a Face" (no hit at all, or hit something else
   // sharing the same grid - a Model1D or a Model2Ds billboard), and that
@@ -416,26 +438,46 @@ void ShadeViewport () {
             ray_start[0] = RxP[1];
             ray_start[1] = RxP[2];
             ray_start[2] = RxP[3];
-            ray_direction[0] = SunV[0];
-            ray_direction[1] = SunV[1];
-            ray_direction[2] = SunV[2];
 
             float Alpha = 90 - funcs.acos_ang(face_norm[2]);
             float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
             float valuesSUM_RAD = SkyMask; // diffuse radiation
-            // Below the horizon, there's no direct sun to contribute at
-            // all - skip both the shadow ray and the SunMask dot product
-            // outright, rather than relying on isIntersected_Faces() to
-            // (incorrectly) report an occlusion that doesn't exist
-            // without real ground geometry. The face still gets its
-            // (fully opaque, see the alpha below) diffuse-only shading.
-            if (!sunIsBelowHorizon && isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
-              float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
-              if (SunMask <= 0) SunMask = 0; // removes backing faces
+            if (!sunIsBelowHorizon) {
+              // The common case: full-strength direct sunlight, same as
+              // always.
+              ray_direction[0] = SunV[0];
+              ray_direction[1] = SunV[1];
+              ray_direction[2] = SunV[2];
 
-              valuesSUM_RAD += SunMask; // direct radiation
+              if (isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
+                float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+                if (SunMask <= 0) SunMask = 0; // removes backing faces
+
+                valuesSUM_RAD += SunMask; // direct radiation
+              }
+            } else if (moonIsAboveHorizon) {
+              // Sun down, Moon up: the exact same shadow-ray/dot-product
+              // shape as the Sun's own branch above, just toward the
+              // Moon instead and scaled down to a slight contribution
+              // (MOON_DIRECT_RADIATION_FACTOR, above) - a faint, subtly
+              // directional moonlit highlight and shadow rather than
+              // another full "sun".
+              ray_direction[0] = MoonV[0];
+              ray_direction[1] = MoonV[1];
+              ray_direction[2] = MoonV[2];
+
+              if (isIntersected_Faces(ray_start, ray_direction, 0, true, faceTestStampLocal, currentRayStampLocal) == 0) {
+                float MoonMask = funcs.vec_dot(MoonV_unit, funcs.vec3_unit(face_norm));
+                if (MoonMask <= 0) MoonMask = 0; // removes backing faces
+
+                valuesSUM_RAD += MOON_DIRECT_RADIATION_FACTOR * MoonMask; // slight moonlit direct contribution
+              }
             }
+            // else: Sun and Moon both below the horizon - no direct-light
+            // ray cast at all, same diffuse-only SkyMask shading as
+            // before this feature, for the same no-ground-geometry
+            // reason the Sun's own sunIsBelowHorizon guard exists for.
 
             float v = valuesSUM_RAD * 150;
 
@@ -523,21 +565,34 @@ void ShadeViewport () {
           ray_start[0] = RxP[1];
           ray_start[1] = RxP[2];
           ray_start[2] = RxP[3];
-          ray_direction[0] = SunV[0];
-          ray_direction[1] = SunV[1];
-          ray_direction[2] = SunV[2];
 
           float Alpha = 90 - funcs.acos_ang(face_norm[2]);
           float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
+          // Same sunIsBelowHorizon/moonIsAboveHorizon branching as pass 1
+          // above - keeps this repair pass from disagreeing with pass 1
+          // on pixels it re-casts.
           float valuesSUM_RAD = SkyMask;
-          // Same sunIsBelowHorizon guard as pass 1 above - keeps this
-          // repair pass from disagreeing with pass 1 on pixels it
-          // re-casts.
-          if (!sunIsBelowHorizon && isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
-            float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
-            if (SunMask <= 0) SunMask = 0;
-            valuesSUM_RAD += SunMask;
+          if (!sunIsBelowHorizon) {
+            ray_direction[0] = SunV[0];
+            ray_direction[1] = SunV[1];
+            ray_direction[2] = SunV[2];
+
+            if (isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
+              float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+              if (SunMask <= 0) SunMask = 0;
+              valuesSUM_RAD += SunMask;
+            }
+          } else if (moonIsAboveHorizon) {
+            ray_direction[0] = MoonV[0];
+            ray_direction[1] = MoonV[1];
+            ray_direction[2] = MoonV[2];
+
+            if (isIntersected_Faces(ray_start, ray_direction, 0, true, repairStamp, repairCounter) == 0) {
+              float MoonMask = funcs.vec_dot(MoonV_unit, funcs.vec3_unit(face_norm));
+              if (MoonMask <= 0) MoonMask = 0;
+              valuesSUM_RAD += MOON_DIRECT_RADIATION_FACTOR * MoonMask;
+            }
           }
 
           float v = valuesSUM_RAD * 150;
