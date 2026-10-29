@@ -353,21 +353,21 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Process Active Impact", () -> {
+  putAction("Process Active Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
-  putAction("Process Passive Impact", () -> {
+  putAction("Process Passive Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
-  putAction("Process Solid Impact", () -> {
+  putAction("Process Solid Impact on Selected Sections", () -> {
     allSolidImpacts.calculate_Impact_selectedSections();
 
     view_changed();

@@ -1052,8 +1052,8 @@ around.
 
 ### Impact analysis
 
--   `Process Active Impact`, `Process Passive Impact`,
-    `Process Solid Impact`
+-   `Process Active Impact on Selected Sections`, `Process Passive Impact on Selected Sections`,
+    `Process Solid Impact on Selected Sections`
 -   `Wind Pattern (Active)`, `Wind Pattern (Passive)`
 -   `Skin Potential (Active)`, `Skin Potential (Passive)`
 -   `Pose Potential (Active)`, `Pose Potential (Passive)`
