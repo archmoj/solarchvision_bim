@@ -1,3 +1,67 @@
+// A small borderless native AWT window showing preBakeViewport()'s
+// progress - NOT drawn through Processing's own P2D/JOGL-backed canvas
+// at all. An earlier version tried drawing straight onto that canvas and
+// forcing a mid-frame present via g.endDraw()/g.beginDraw() - it never
+// actually appeared, which lines up with how this sketch's own renderer
+// (P2D, solarchvision_bim.pde's own settings()) really presents frames:
+// JOGL/NEWT's own animator thread drives the buffer swap on its own
+// cycle, not simply whenever endDraw() happens to be called, so calling
+// it manually mid an already-open frame didn't trigger one.
+//
+// AWT is a completely separate windowing toolkit from JOGL/NEWT, with
+// its own event-dispatch thread, already running in this same JVM
+// process regardless (java.awt.Toolkit/Clipboard are already imported,
+// solarchvision_bim.pde's own imports) - a plain AWT Frame updates and
+// actually appears on screen the moment repaint() is called, independent
+// of whatever Processing's own thread is doing or blocked on. This is
+// the standard, portable Java technique for showing progress during a
+// long synchronous call, rather than something specific to this
+// renderer - but it's still worth confirming directly once built, same
+// as the earlier attempt should have been before being taken on faith.
+//
+// Floats free on screen rather than literally "above the render button"
+// (UI_rollout.pde's own SOLARCHVISION render button, on Processing's own
+// canvas) - a separate OS window has no reliable way to know that
+// button's exact on-screen position (especially relative to Processing's
+// own window, which this doesn't query), so centering on the default
+// screen is the simplest, most robustly correct placement; move it if a
+// more precise position turns out to matter once this is confirmed
+// working.
+class PrebakeProgressWindow extends java.awt.Frame {
+  volatile float fraction = 0;
+
+  PrebakeProgressWindow () {
+    super("Prebaking...");
+    this.setUndecorated(true);
+    this.setSize(280, 44);
+    this.setLocationRelativeTo(null); // centers on the default screen
+    this.setAlwaysOnTop(true);
+    this.setBackground(new java.awt.Color(240, 240, 240));
+  }
+
+  void paint (java.awt.Graphics g) {
+    int w = this.getWidth();
+    int h = this.getHeight();
+
+    g.setColor(new java.awt.Color(230, 230, 230));
+    g.fillRect(0, 0, w, h);
+
+    g.setColor(java.awt.Color.BLACK);
+    g.drawRect(5, 5, w - 11, h - 11);
+
+    g.setColor(new java.awt.Color(255, 204, 0)); // same bold amber/gold as the render button itself
+    g.fillRect(6, 6, (int) ((w - 12) * constrain(this.fraction, 0, 1)), h - 12);
+
+    g.setColor(java.awt.Color.BLACK);
+    g.drawString("Prebaking: " + (int) (this.fraction * 100) + "%", 10, h - 16);
+  }
+
+  void updateFraction (float f) {
+    this.fraction = f;
+    this.repaint();
+  }
+}
+
 void preBakeViewport () {
 
   int preBakeViewport_startMillis = millis();
@@ -357,7 +421,16 @@ void preBakeViewport () {
     }));
   }
 
-  awaitAll(futures); // see parallel_utils.pde's own comment
+  // showPrebakeProgress (globals.pde) off: the exact same, already-proven
+  // blocking wait as every other parallel loop in this codebase. On: a
+  // polling wait that also draws and presents the progress bar
+  // (awaitAllWithProgress()'s own comment, parallel_utils.pde, on why a
+  // bare blocking wait can't show one at all).
+  if (showPrebakeProgress) {
+    awaitAllWithProgress(futures, completedChunks, numChunks);
+  } else {
+    awaitAll(futures); // see parallel_utils.pde's own comment
+  }
   executor.shutdown();
 
   // Rounding each chunk's own target down to whole block characters can

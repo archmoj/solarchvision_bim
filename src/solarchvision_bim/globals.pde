@@ -83,6 +83,15 @@ float globalAlbedo = 0; // 0-100
 
 float celestialMagnification = 16.0; // <<<<<<<<<<
 
+// Whether preBakeViewport() (preBakeViewport.pde) draws and presents a
+// progress bar above the "SOLARCHVISION render" button (UI_rollout.pde)
+// while it bakes, instead of leaving the screen frozen for the whole
+// bake the way it otherwise would - see awaitAllWithProgress()'s own
+// comment for why a bake this synchronous needs a manual mid-call
+// present trick to show anything at all. Off: zero change from the
+// existing, already-proven awaitAll() wait path.
+boolean showPrebakeProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;

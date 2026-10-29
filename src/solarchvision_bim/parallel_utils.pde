@@ -19,6 +19,80 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
   }
 }
 
+// Same wait-and-propagate contract as awaitAll() just above (including,
+// at the very end, the exact same per-future get()/catch sequence - once
+// every future is done, that loop returns or throws immediately, same as
+// awaitAll() itself would have, so calling it a second "wait" here costs
+// nothing extra), but polls completedChunks[0] on the calling thread
+// instead of blocking on each future one at a time - the only way a
+// caller this synchronous (preBakeViewport(), called straight from a
+// click handler within draw()'s own call chain, with nothing to hand
+// this work off to) can still periodically draw and present a progress
+// bar: Processing's own screen only actually updates once draw() itself
+// returns for that frame, and draw() can't return until this whole call
+// does, so without manually forcing a present partway through (see
+// drawPrebakeProgressBar()'s own comment on the endDraw()/beginDraw()
+// trick that does it), a bare blocking wait - the exact shape awaitAll()
+// above is - would leave the screen frozen the entire time regardless of
+// how precisely progress is tracked underneath.
+//
+// Scoped to preBakeViewport()'s own call site, not folded into awaitAll()
+// itself: every other parallel loop in this codebase (ShadeViewport.
+// pde's two passes, SolarImpacts.pde) shares that one and has no
+// equivalent mid-bake UI of its own to refresh, so they keep the
+// simpler, already-proven plain blocking wait.
+void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> futures, int[] completedChunks, int numChunks) {
+  // PrebakeProgressWindow (preBakeViewport.pde's own comment on why a
+  // plain AWT window, not Processing's own canvas) - shown for this
+  // call's own duration only, disposed in the finally block below
+  // whether this finishes normally or a worker exception propagates out
+  // of the future.get() loop at the end.
+  PrebakeProgressWindow progressWindow = new PrebakeProgressWindow();
+  progressWindow.setVisible(true);
+
+  try {
+    int lastDrawnPercent = -1;
+
+    while (true) {
+      boolean allDone = true;
+      for (java.util.concurrent.Future<?> future : futures) {
+        if (!future.isDone()) {
+          allDone = false;
+          break;
+        }
+      }
+
+      int percent = (int) floor(100.0f * completedChunks[0] / numChunks);
+      if (percent != lastDrawnPercent) {
+        progressWindow.updateFraction(percent / 100.0f);
+        lastDrawnPercent = percent;
+      }
+
+      if (allDone) break;
+
+      try {
+        Thread.sleep(50); // poll interval - frequent enough to feel live, far too coarse to meaningfully compete with the worker threads' own ray-casting for CPU
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+      }
+    }
+
+    for (java.util.concurrent.Future<?> future : futures) {
+      try {
+        future.get();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+      } catch (java.util.concurrent.ExecutionException e) {
+        throw new RuntimeException(e.getCause());
+      }
+    }
+  } finally {
+    progressWindow.dispose();
+  }
+}
+
 // Finds suspected hit/miss-flip artifacts without touching anything: a
 // residual, very low-probability race in the parallel ray-casting these
 // pixels come from (still not fully root-caused, despite a long
