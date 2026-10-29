@@ -276,6 +276,45 @@ class UI_consoleBar {
         case RIGHT:
           if (this.editCursor < this.editText.length()) this.editCursor++;
           break;
+
+        // Processing's own PConstants only names UP/DOWN/LEFT/RIGHT (and
+        // a handful of others) as bare keyCode constants - Home/End have
+        // no such shorthand. Worse, this sketch always runs on the P2D
+        // renderer (settings(), solarchvision_bim.pde) - P2D/P3D get
+        // their key events from JOGL/NEWT, not AWT, and NEWT's own
+        // keyCode values for Home/End (com.jogamp.newt.event.KeyEvent.
+        // VK_HOME/VK_END, 2/3) are NOT the same numbers as the familiar
+        // java.awt.event.KeyEvent.VK_HOME/VK_END (36/35) - confirmed
+        // against real P2D sketches, not just in theory (several
+        // Processing forum/GitHub reports of exactly this NEWT-vs-AWT
+        // keyCode mismatch for Home/End/Page Up/Page Down under P2D/P3D).
+        // Both constants are fully-qualified rather than imported,
+        // specifically to avoid colliding with the bare KeyEvent already
+        // in scope everywhere in this sketch (processing.event.KeyEvent,
+        // e.g. the keyPressed(KeyEvent e) parameter just above) - a plain
+        // import of either would shadow one or the other. Both case
+        // labels point at the same action (Java allows several labels to
+        // share one case body) - the NEWT one because that's what this
+        // sketch's own P2D renderer actually delivers, the AWT one kept
+        // alongside it defensively, the same safety-net shape Processing
+        // forum reports of this exact issue already reach for, in case a
+        // future Processing/JOGL version or some other platform ever
+        // reports the AWT numbers here instead.
+        //
+        // Not part of isRepeatableArrow (keyPressed(), above) the way the
+        // arrows just above are - jumping straight to the start/end of
+        // the line is a one-shot move (the very first press already gets
+        // there; there's nothing further for a held repeat to do), not
+        // an incremental one.
+        case com.jogamp.newt.event.KeyEvent.VK_HOME:
+        case java.awt.event.KeyEvent.VK_HOME:
+          this.editCursor = 0;
+          break;
+
+        case com.jogamp.newt.event.KeyEvent.VK_END:
+        case java.awt.event.KeyEvent.VK_END:
+          this.editCursor = this.editText.length();
+          break;
       }
     } else {
       switch(keyChar) {

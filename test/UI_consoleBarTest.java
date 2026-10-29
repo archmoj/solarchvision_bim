@@ -53,6 +53,90 @@ class UI_consoleBarTest {
     assertEquals(3, app.UI_consoleBar.editCursor);
   }
 
+  // Home/End are covered against BOTH keyCode namespaces dispatchEditKey()
+  // itself handles (its own comment there, UI_consoleBar.pde) -
+  // com.jogamp.newt.event.KeyEvent's, what this sketch's own always-P2D
+  // renderer actually delivers at runtime (2/3, NOT the more familiar AWT
+  // 36/35 - a real, confirmed P2D/P3D quirk, not a hypothetical), and
+  // java.awt.event.KeyEvent's, kept as a defensive fallback. Both need
+  // their own test: they're genuinely different int values reaching the
+  // same case body, so a test against only one namespace could never
+  // catch the other's case label going missing or silently drifting to
+  // the wrong keyCode.
+  //
+  // The NEWT side is asserted here as a plain int literal, NOT
+  // com.jogamp.newt.event.KeyEvent.VK_HOME/VK_END themselves - unlike the
+  // app itself (built through Processing's own --build, which does put
+  // the JOGL jars backing P2D/P3D on its classpath), test/run_tests.sh
+  // compiles this file with plain javac against just core.jar - no JOGL
+  // on that classpath at all - so referencing that class here, even only
+  // to read a constant, fails this suite's own build with "package
+  // com.jogamp.newt.event does not exist". The production code's own
+  // comment (UI_consoleBar.pde) is the source of truth for where 2/3
+  // actually come from; NEWT_VK_HOME/NEWT_VK_END below just name them for
+  // readability here.
+
+  static final int NEWT_VK_HOME = 2;
+  static final int NEWT_VK_END = 3;
+
+  @Test
+  void dispatchEditKey_homeMovesCursorToTheStartOfTheLine_newtCode () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 2;
+    app.UI_consoleBar.dispatchEditKey(true, NEWT_VK_HOME, (char) 0);
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_homeMovesCursorToTheStartOfTheLine_awtCode () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 2;
+    app.UI_consoleBar.dispatchEditKey(true, java.awt.event.KeyEvent.VK_HOME, (char) 0);
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_homeDoesNothingAlreadyAtTheStart () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 0;
+    app.UI_consoleBar.dispatchEditKey(true, NEWT_VK_HOME, (char) 0);
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_endMovesCursorToTheEndOfTheLine_newtCode () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 1;
+    app.UI_consoleBar.dispatchEditKey(true, NEWT_VK_END, (char) 0);
+    assertEquals(3, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_endMovesCursorToTheEndOfTheLine_awtCode () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 1;
+    app.UI_consoleBar.dispatchEditKey(true, java.awt.event.KeyEvent.VK_END, (char) 0);
+    assertEquals(3, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_endDoesNothingAlreadyAtTheEnd () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 3;
+    app.UI_consoleBar.dispatchEditKey(true, NEWT_VK_END, (char) 0);
+    assertEquals(3, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_newtAndAwtHomeEndCodesAreGenuinelyDifferentNumbers () {
+    // Guards the whole premise above: if a future JOGL/AWT version ever
+    // made these equal, half of the dual-case-label coverage would
+    // silently become redundant rather than meaningful - this fails
+    // loudly instead.
+    assertNotEquals(NEWT_VK_HOME, java.awt.event.KeyEvent.VK_HOME);
+    assertNotEquals(NEWT_VK_END, java.awt.event.KeyEvent.VK_END);
+  }
+
   // ================= dispatchEditKey - command history cycling ================
 
   @Test
