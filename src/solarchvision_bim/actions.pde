@@ -1450,18 +1450,20 @@ void build_allActions() {
     view_changed();
   });
 
+  // Tropo3D.i_Map() is now derived directly from SHADE_HOUR_ANGLE (its
+  // own comment, Tropo3D.pde) rather than its own independently-advanced
+  // counter, so "advancing/rewinding troposphere time" is exactly
+  // "Shade Next/Previous Hour" (same actions 't'/'T' - WIN3D.pde's own
+  // handleCommandKey() - and Alt+Right/Left already use) - kept as their
+  // own named actions (rather than removed outright) since they're both
+  // documented (command/README.md) and independently reachable from the
+  // command line.
   putAction("Advance Troposphere Time", () -> {
-    Tropo3D.i_Map += TROPO_deltaTime;
-    if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
-    WORLD.revise();
-    WIN3D.revise();
+    callAction("Shade Next Hour");
   });
 
   putAction("Rewind Troposphere Time", () -> {
-    Tropo3D.i_Map -= TROPO_deltaTime;
-    if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
-    WORLD.revise();
-    WIN3D.revise();
+    callAction("Shade Previous Hour");
   });
 
   putAction("Next Impact Day", () -> {
@@ -1488,11 +1490,20 @@ void build_allActions() {
 
   putAction("Shade Next Hour", () -> {
     nextShadeHour();
+    // Tropo3D.i_Map() tracks SHADE_HOUR_ANGLE now (its own comment,
+    // Tropo3D.pde), and Tropo3D.draw() is called from both WIN3D.pde and
+    // WORLD.pde (the troposphere layer shows in both the 3D viewport and
+    // the world/site map) - view_changed() below only revises WIN3D, so
+    // WORLD needs its own explicit revise() here too, or its own drawn
+    // troposphere tile would be left showing the hour it had before this
+    // step.
+    WORLD.revise();
     view_changed();
   });
 
   putAction("Shade Previous Hour", () -> {
     previousShadeHour();
+    WORLD.revise(); // see "Shade Next Hour"'s own comment just above
     view_changed();
   });
 

@@ -1249,18 +1249,26 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_tAndCapitalT_moveTropoTimeInOppositeDirectionsAndClampAtStudyBounds () {
+  void handleCommandKey_tAndCapitalT_stepSHADE_HOUR_ANGLE_sameAsAltRightLeft () {
+    // 't'/'T' call "Shade Next/Previous Hour" directly now - the exact
+    // same actions Alt+Right/Left use (handleAltArrowKeys()'s own
+    // comment) - so this just confirms that wiring, not the hour-
+    // stepping/wrap logic itself (nextShadeHour()/previousShadeHour()'s
+    // own tests, and WIN3DActionsTest.java's "Advance/Rewind Troposphere
+    // Time" tests, already cover that in detail). Tropo3D.i_Map()
+    // (Tropo3D.pde) derives from SHADE_HOUR_ANGLE directly, so it tracks
+    // right along with it.
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.TROPO_deltaTime = 1;
+    app.SHADE_HOUR_ANGLE = 10;
 
-    app.Tropo3D.i_Map = 23; // already at endHour
-    app.WIN3D.handleCommandKey('t', false); // steps forward, then clamps back since it exceeded endHour
-    assertEquals(23, app.Tropo3D.i_Map);
+    app.WIN3D.handleCommandKey('t', false);
+    assertEquals(11, app.SHADE_HOUR_ANGLE);
+    assertEquals(11, app.Tropo3D.i_Map());
 
-    app.Tropo3D.i_Map = 0; // already at startHour
-    app.WIN3D.handleCommandKey('T', false); // steps backward, then clamps back since it went below startHour
-    assertEquals(0, app.Tropo3D.i_Map);
+    app.WIN3D.handleCommandKey('T', false);
+    assertEquals(10, app.SHADE_HOUR_ANGLE);
+    assertEquals(10, app.Tropo3D.i_Map());
   }
 
   @Test

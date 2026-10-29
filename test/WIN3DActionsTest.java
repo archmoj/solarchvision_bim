@@ -293,56 +293,70 @@ class WIN3DActionsTest {
   }
 
   // ================= WIN3D t / WIN3D Shift+T (troposphere time) ===========
+  // "Advance/Rewind Troposphere Time" are now thin delegates to "Shade
+  // Next/Previous Hour" (actions.pde's own comment on why) - Tropo3D.
+  // i_Map() (Tropo3D.pde) derives straight from SHADE_HOUR_ANGLE, so
+  // these tests go through SHADE_HOUR_ANGLE and nextShadeHour()/
+  // previousShadeHour()'s own wrap behavior (STUDY.isInHourlyRange(),
+  // SHADE_FIRST_HOUR/SHADE_LAST_HOUR) - the same thing the equivalent
+  // Alt+Right/Left tests already exercise - rather than a troposphere-
+  // specific clamp-and-revert that no longer exists.
 
-  // "Wraps" here means the step gets reverted right back to the boundary
-  // it started from (Tropo3D.i_Map += delta; if over endHour, -= delta
-  // again), not a jump to the opposite end - staying at endHour is the
-  // actual, correct behavior, confirmed by reading the action's own body
-  // rather than assumed.
   @Test
-  void keyT_atEndHour_revertsBackToEndHourInsteadOfGoingPastIt () {
+  void keyT_advancesSHADE_HOUR_ANGLEAndTropo3DsIMapTogether () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.Tropo3D.i_Map = app.STUDY.endHour;
+    app.SHADE_HOUR_ANGLE = 10;
 
     String hint = app.runScriptLine("Advance Troposphere Time");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertEquals(app.STUDY.endHour, app.Tropo3D.i_Map, 0.0001f);
+    assertEquals(11, app.SHADE_HOUR_ANGLE);
+    assertEquals(11, app.Tropo3D.i_Map());
   }
 
   @Test
-  void keyT_belowEndHour_advancesByTropoDeltaTime () {
+  void keyT_wrapsPastTheLastHourBackToTheFirst_sameAsAltRight () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.Tropo3D.i_Map = app.STUDY.startHour;
+    app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
 
     app.runScriptLine("Advance Troposphere Time");
 
-    assertEquals(app.STUDY.startHour + app.TROPO_deltaTime, app.Tropo3D.i_Map, 0.0001f);
+    assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
+    assertEquals(app.SHADE_FIRST_HOUR, app.Tropo3D.i_Map());
   }
 
   @Test
-  void keyShiftT_atStartHour_revertsBackToStartHourInsteadOfGoingPastIt () {
+  void keyShiftT_rewindsSHADE_HOUR_ANGLEAndTropo3DsIMapTogether () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.Tropo3D.i_Map = app.STUDY.startHour;
+    app.SHADE_HOUR_ANGLE = 10;
 
     String hint = app.runScriptLine("Rewind Troposphere Time");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertEquals(app.STUDY.startHour, app.Tropo3D.i_Map, 0.0001f);
+    assertEquals(9, app.SHADE_HOUR_ANGLE);
+    assertEquals(9, app.Tropo3D.i_Map());
   }
 
   @Test
-  void keyShiftT_aboveStartHour_rewindsByTropoDeltaTime () {
+  void keyShiftT_wrapsBeforeTheFirstHourBackToTheLastHourInRange_sameAsAltLeft () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.Tropo3D.i_Map = app.STUDY.endHour;
+    app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
 
     app.runScriptLine("Rewind Troposphere Time");
 
-    assertEquals(app.STUDY.endHour - app.TROPO_deltaTime, app.Tropo3D.i_Map, 0.0001f);
+    // Not SHADE_LAST_HOUR (24) - with this STUDY.startHour/endHour range,
+    // hour 24 isn't itself "in range" (STUDY.isInHourlyRange(24) is
+    // false: 24 % 24 == 0 is the only hour-24-equivalent value actually
+    // in [0, 23]), so previousShadeHour() keeps decrementing past it down
+    // to 23, the real last hour in range - the exact same wrap
+    // previousShadeHour()'s own existing WIN3DTest.java coverage already
+    // establishes for Alt+Left.
+    assertEquals(23, app.SHADE_HOUR_ANGLE);
+    assertEquals(23, app.Tropo3D.i_Map());
   }
 
   // ================= WIN3D d / WIN3D Shift+D (impact display day) ========

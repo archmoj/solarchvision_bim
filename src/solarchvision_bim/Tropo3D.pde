@@ -15,7 +15,22 @@ class Tropo3D {
   float lat_step = 1; //in degrees
   float lon_step  = 1; //in degrees
 
-  int i_Map = 0; // TODO: export it or reset it?
+  // Which of the TROPO_timeSteps (24, one per hour) cached slots
+  // (Filenames/Map/BoundariesX/BoundariesY) is currently shown - synced
+  // with SHADE_HOUR_ANGLE (the same hour ShadeViewport()/Sun3D.pde/
+  // Moon3D.pde already track, and what Alt+Left/Right, Space/Backspace
+  // and 't'/'T' (WIN3D.pde's own handleCommandKey()) all step through
+  // "Shade Next/Previous Hour", actions.pde) rather than its own
+  // independently-advanced counter, so the troposphere layer always
+  // reflects whatever hour the rest of the live view is already showing,
+  // with nothing to keep in sync by hand. % TROPO_timeSteps wraps
+  // SHADE_HOUR_ANGLE's own [SHADE_FIRST_HOUR, SHADE_LAST_HOUR] = [0, 24]
+  // range (see those fields' own comments) down into this array's valid
+  // [0, 23] index range - SHADE_HOUR_ANGLE is never negative, so plain %
+  // (not Java's general floor-mod workaround) is enough here.
+  int i_Map () {
+    return SHADE_HOUR_ANGLE % TROPO_timeSteps;
+  }
 
   boolean displaySurface = false;
   boolean displayTexture = true;
@@ -363,7 +378,7 @@ class Tropo3D {
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
-    int n_Map = this.i_Map;
+    int n_Map = this.i_Map();
     if (this.Filenames[n_Map].equals("")) return; // not to display empty images
 
     if (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D) {

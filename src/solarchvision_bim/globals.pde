@@ -47,7 +47,7 @@ DATATYPE DataType = new DATATYPE();
 
 int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 
-int TROPO_deltaTime = (WMS_type == DATATYPE.FORECAST_GDPS) ? 3 : 1;
+int TROPO_deltaTime = 1;
 int TROPO_timeSteps = 24;
 
 float interpolationWeight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest

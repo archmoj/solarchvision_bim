@@ -803,11 +803,17 @@ class WIN3D {
         callAction("Previous Camera");
         break;
 
+      // Same action Alt+Right/Left themselves call (handleAltArrowKeys()
+      // above) - not "Advance/Rewind Troposphere Time" (still callable by
+      // name from the command line, actions.pde, but now just a thin
+      // delegate to these same two) - so 't'/'T' step the hour exactly
+      // the way Alt+Right/Left already do, not through an extra layer of
+      // indirection.
       case 't':
-        callAction("Advance Troposphere Time");
+        callAction("Shade Next Hour");
         break;
       case 'T':
-        callAction("Rewind Troposphere Time");
+        callAction("Shade Previous Hour");
         break;
 
       case 'd':
