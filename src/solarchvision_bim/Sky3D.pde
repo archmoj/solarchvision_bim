@@ -321,8 +321,20 @@ class Sky3D {
   // sunlight is gone.
   final color nightFlatColor = color(0);
 
+  // Whichever of flatColor/nightFlatColor above actually represents the
+  // sky right now - the single source of truth for "the sky's own flat
+  // color", so this dome (cacheWriteDomeFlat() below) and anything else
+  // that wants to blend with or tint towards the sky's color (Moon3D.pde's
+  // own halfSkyColor()/vertexColor(), e.g. - the Moon's visible at night
+  // far more than during the day, so it has every reason to track this
+  // the same way the dome itself does) never drift out of sync with each
+  // other over which flat color is "current".
+  color currentFlatColor () {
+    return this.sunIsBelowHorizon() ? this.nightFlatColor : this.flatColor;
+  }
+
   void cacheWriteDomeFlat (PShape shape) {
-    color fillColor = this.sunIsBelowHorizon() ? this.nightFlatColor : this.flatColor;
+    color fillColor = this.currentFlatColor();
     for (int f = 0; f < skyFaces.length; f++) {
       shape.fill(fillColor); // same flat color regardless of shade mode here
       for (int j = 0; j < skyFaces[f].length; j++) {

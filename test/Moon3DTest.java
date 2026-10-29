@@ -22,6 +22,19 @@ class Moon3DTest {
     app.STATION.setLatitude(43.7f); // an arbitrary non-degenerate latitude -
                                     // avoids the lat=0 default, which isn't
                                     // wrong, just not representative.
+
+    // An unambiguous daytime baseline - Sky3D.currentFlatColor() (used by
+    // Moon3D's own halfSkyColor()/vertexColor()) now depends on
+    // Sky3D.sunIsBelowHorizon(), itself derived from SHADE_DATE_ANGLE/
+    // SHADE_HOUR_ANGLE, so the many tests below that assume it resolves
+    // to the daytime blue flatColor need a definite "Sun is up" state
+    // rather than leaning on SHADE_DATE_ANGLE's own -1 sentinel default
+    // (ShadeViewport.pde's own comment on it) happening to still read as
+    // daytime - explicit, not incidental, same reasoning as setLatitude
+    // just above. Tests specifically about the Sun-down/black-flatColor
+    // behavior override SHADE_HOUR_ANGLE back down to night themselves.
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12;
   }
 
   // ================= computeFrame(): orthonormality ===========================
@@ -523,6 +536,18 @@ class Moon3DTest {
   }
 
   @Test
+  void halfSkyColor_isBlackWhenTheSunIsDown () {
+    // Sky3D.currentFlatColor() (Sky3D.pde) switches to nightFlatColor
+    // (black) once the Sun's below the horizon - halfSkyColor() should
+    // track that, same as Sky3D's own dome does, rather than always
+    // tinting the Moon towards daytime blue regardless of whether the
+    // Sun is actually up.
+    app.SHADE_HOUR_ANGLE = 0; // midnight - unambiguously night at this latitude
+    int[] half = app.Moon3D.halfSkyColor();
+    assertArrayEquals(new int[]{0, 0, 0}, half);
+  }
+
+  @Test
   void brightenTexture_withMixWithSkyColor_addsHalfSkyColorOnTopOfTheLevelMultiply () {
     app.Moon3D.mixWithSkyColor = true;
     processing.core.PImage img = app.createImage(1, 1, processing.core.PConstants.ARGB);
@@ -601,6 +626,19 @@ class Moon3DTest {
       app.Sky3D.flatColor & 0xFF
     };
     assertArrayEquals(expected, result);
+  }
+
+  @Test
+  void vertexColor_atTheDarkFloor_usesBlackWhenTheSunIsDown () {
+    // Same Sky3D.currentFlatColor() switch as halfSkyColor()'s own
+    // night-time test above - the eclipse-silhouette color should track
+    // the Sun being down too, not just the Moon's own general sky tint.
+    app.SHADE_HOUR_ANGLE = 0; // midnight
+    int[] sky = app.Moon3D.halfSkyColor(); // also black now, but irrelevant here - sky is unused at the dark floor
+
+    int[] result = app.Moon3D.vertexColor(app.Moon3D.DARK_SIDE_AMBIENT, sky);
+
+    assertArrayEquals(new int[]{0, 0, 0}, result);
   }
 
   @Test

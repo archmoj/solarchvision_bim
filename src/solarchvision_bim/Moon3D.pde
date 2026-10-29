@@ -113,12 +113,16 @@ class Moon3D {
   // Half of skyColor's own R/G/B, as {r, g, b} - shared by brightenTexture()
   // and writeFaceWIN3D(), the two places that actually mix it in, so the
   // split between them never drifts out of sync with each other or with
-  // skyColor itself.
+  // skyColor itself. Sky3D.currentFlatColor() - not the always-blue
+  // Sky3D.flatColor directly - so a night-sky Moon tints towards black
+  // like the dome itself does, rather than always towards daytime blue
+  // regardless of whether the Sun is actually up.
   int[] halfSkyColor () {
+    color skyColor = Sky3D.currentFlatColor();
     return new int[]{
-      ((Sky3D.flatColor >> 16) & 0xFF) / 2,
-      ((Sky3D.flatColor >> 8) & 0xFF) / 2,
-      (Sky3D.flatColor & 0xFF) / 2
+      ((skyColor >> 16) & 0xFF) / 2,
+      ((skyColor >> 8) & 0xFF) / 2,
+      (skyColor & 0xFF) / 2
     };
   }
 
@@ -138,20 +142,23 @@ class Moon3D {
 
   // The tint()/fill() RGB for one vertex, given its own brightness -
   // useSkyColorForNightSide (see its own comment) overrides
-  // tintColorForGray() entirely with Sky3D's own flat sky color, but only
-  // for vertices truly AT the dark floor, not just dim: solar eclipses
-  // only happen at new moon, where the whole visible disk already sits
-  // at that floor (this app's one-sided culling, see shouldDrawSubFace(),
-  // already keeps the lit far side out of view), so there's no real need
-  // to blend smoothly through the thin terminator band the way
-  // brightness itself does - a vertex is either part of the eclipsing
-  // silhouette or it isn't.
+  // tintColorForGray() entirely with Sky3D's own current flat sky color
+  // (Sky3D.currentFlatColor() - black at night, same as halfSkyColor()
+  // above, rather than the always-blue Sky3D.flatColor directly), but
+  // only for vertices truly AT the dark floor, not just dim: solar
+  // eclipses only happen at new moon, where the whole visible disk
+  // already sits at that floor (this app's one-sided culling, see
+  // shouldDrawSubFace(), already keeps the lit far side out of view), so
+  // there's no real need to blend smoothly through the thin terminator
+  // band the way brightness itself does - a vertex is either part of the
+  // eclipsing silhouette or it isn't.
   int[] vertexColor (float brightness, int[] sky) {
     if (this.useSkyColorForNightSide && brightness <= DARK_SIDE_AMBIENT + 0.001) {
+      color skyColor = Sky3D.currentFlatColor();
       return new int[]{
-        (Sky3D.flatColor >> 16) & 0xFF,
-        (Sky3D.flatColor >> 8) & 0xFF,
-        Sky3D.flatColor & 0xFF
+        (skyColor >> 16) & 0xFF,
+        (skyColor >> 8) & 0xFF,
+        skyColor & 0xFF
       };
     }
     return tintColorForGray(round(255 * brightness), sky);
