@@ -1164,6 +1164,43 @@ class WIN3DTest {
     assertEquals(282, app.SHADE_DATE_ANGLE);
   }
 
+  // ================= impactDayToDayOfYear ===============================
+  // Pulled out of sync_SHADE_DATE_ANGLE() (its own comment) so Tropo3D.
+  // pde's own selectedDayHasForecastAvailable() can ask the same "what
+  // calendar day does impactDisplayDay N represent" question without a
+  // second, separately-maintained copy of this math - covered directly
+  // here as its own pure function, on top of its existing indirect
+  // coverage via sync_SHADE_DATE_ANGLE()/the "Next Impact Day" tests
+  // above.
+
+  @Test
+  void impactDayToDayOfYear_forDayOne_isExactlyTIMEsBeginDay () {
+    // j == 0 for day 1 - "use beginDay for the case of total" - so this
+    // is the same single day both "total" (0) and 1 resolve to.
+    app.TIME.beginDay = 100;
+    app.STUDY.dayIncrement = 30;
+
+    assertEquals(100, app.impactDayToDayOfYear(1));
+    assertEquals(100, app.impactDayToDayOfYear(0));
+  }
+
+  @Test
+  void impactDayToDayOfYear_stepsForwardByDayIncrementPerSlot () {
+    app.TIME.beginDay = 100;
+    app.STUDY.dayIncrement = 30;
+
+    assertEquals(130, app.impactDayToDayOfYear(2)); // j == 1
+    assertEquals(160, app.impactDayToDayOfYear(3)); // j == 2
+  }
+
+  @Test
+  void impactDayToDayOfYear_wrapsAroundThe365DayYear () {
+    app.TIME.beginDay = 350;
+    app.STUDY.dayIncrement = 30;
+
+    assertEquals((350 + 30) % 365, app.impactDayToDayOfYear(2));
+  }
+
   // ================= dismissShading (Esc's own end to the sticky shaded-
   // viewport preview - see WIN3D.showShading's own comment) ==============
 

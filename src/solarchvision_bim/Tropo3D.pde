@@ -355,9 +355,40 @@ class Tropo3D {
     img.save(target);
   }
 
+  // Whether the currently-displayed day (impactDisplayDay, via
+  // SHADE_DATE_ANGLE - same date ShadeViewport()/Sun3D.pde/Moon3D.pde
+  // already show) is the one this WMS layer actually has data for.
+  // Tropo3D's own download/cache (load_images(), currentUTC() above) is
+  // always anchored to the real wall-clock "now" (getNow_inUTC(), i.e.
+  // Processing's own year()/month()/day()/hour() - not TIME.beginDay, not
+  // SHADE_DATE_ANGLE) - a live weather WMS feed has no forecast for an
+  // arbitrary date the study's own day-stepping (impactDisplayDay/
+  // STUDY.dayIncrement, which can represent any date range a project
+  // happens to be configured for) might be showing, only for whatever
+  // real day it was actually downloaded for. TROPO_timeSteps (24, one
+  // slot per hour) is sized for exactly one calendar day's worth of data,
+  // not a multi-day forecast window, so this is a single-day match, not a
+  // "close enough" range: impactDayToDayOfYear(impactDisplayDay)
+  // (ShadeViewport.pde) against today's own day-of-year
+  // (TIME.convert2Date(), the same 0-364 Jan-1-is-0 convention). Ignores
+  // year on both sides - impactDisplayDay's own date range has no year of
+  // its own (TIME.beginDay is a day-of-year, not a full calendar date),
+  // so "the same day of year as today" is the closest meaningful
+  // equivalent this app's own date model can express, not a deliberate
+  // "any year is fine" design choice.
+  boolean selectedDayHasForecastAvailable () {
+    int simulatedDayOfYear = impactDayToDayOfYear(impactDisplayDay);
+
+    int[] nowUTC = getNow_inUTC();
+    int todayDayOfYear = TIME.convert2Date(nowUTC[1], nowUTC[2]);
+
+    return simulatedDayOfYear == todayDayOfYear;
+  }
+
   boolean shouldDraw (int target_window) {
     if (!this.displaySurface || !this.displayTexture) return false;
     if (target_window == TypeWindow.STUDY) return false;
+    if (!this.selectedDayHasForecastAvailable()) return false;
     return true;
   }
 

@@ -28,6 +28,20 @@ class Tropo3DTest {
     return app.FLOAT_r_Earth + app.Tropo3D.parameterAltitude;
   }
 
+  // Sets impactDisplayDay/TIME.beginDay so Tropo3D.selectedDayHasForecastAvailable()
+  // (its own comment) reads true - impactDisplayDay == 1 maps straight to
+  // TIME.beginDay (impactDayToDayOfYear()'s own "use beginDay for the
+  // case of total" comment - j == 0 for day 1), so setting TIME.beginDay
+  // to today's own real day-of-year is enough. Tests that aren't
+  // specifically about date-gating call this first, so they isolate
+  // whatever they're actually testing instead of incidentally depending
+  // on what day it happens to be when the suite runs.
+  private void setImpactDisplayDayToToday () {
+    app.impactDisplayDay = 1;
+    int[] nowUTC = app.getNow_inUTC();
+    app.TIME.beginDay = app.TIME.convert2Date(nowUTC[1], nowUTC[2]);
+  }
+
   // ================= corner winding =============================================
 
   @Test
@@ -365,6 +379,7 @@ class Tropo3DTest {
 
   @Test
   void shouldDraw_isFalseWhenDisplaySurfaceOrDisplayTextureIsOffOrForStudy () {
+    setImpactDisplayDayToToday(); // isolates these checks from selectedDayHasForecastAvailable()'s own, separately tested below
     app.Tropo3D.displaySurface = true;
     app.Tropo3D.displayTexture = true;
     assertTrue(app.Tropo3D.shouldDraw(app.TypeWindow.WIN3D));
@@ -378,6 +393,65 @@ class Tropo3DTest {
 
     app.Tropo3D.displayTexture = true;
     assertFalse(app.Tropo3D.shouldDraw(app.TypeWindow.STUDY));
+  }
+
+  // ================= selectedDayHasForecastAvailable / date sync ===================
+  // Tropo3D's own download/cache (load_images(), currentUTC()) is always
+  // anchored to the real wall-clock "now" (getNow_inUTC()) - NOT TIME.
+  // beginDay, NOT SHADE_DATE_ANGLE/impactDisplayDay, which can represent
+  // any date range a given project's own study happens to be configured
+  // for (STUDY.dayIncrement steps from TIME.beginDay - a plain project-
+  // specific field, not tied to today in any way on its own). These were
+  // never synced before shouldDraw()'s own new check (its comment) - this
+  // section is what actually confirms they're reconciled correctly now.
+
+  @Test
+  void selectedDayHasForecastAvailable_isTrueWhenImpactDisplayDayOneMapsToToday () {
+    // impactDisplayDay == 1 is the exact example from the request this
+    // feature was built for - it's not special-cased on its own, just a
+    // natural consequence of impactDayToDayOfYear(1) == TIME.beginDay
+    // (ShadeViewport.pde's own comment on why).
+    setImpactDisplayDayToToday();
+
+    assertTrue(app.Tropo3D.selectedDayHasForecastAvailable());
+  }
+
+  @Test
+  void selectedDayHasForecastAvailable_isFalseWhenTheSimulatedDayIsNotToday () {
+    setImpactDisplayDayToToday();
+    // One real day off from today (still day 1 - so still exactly
+    // TIME.beginDay, just no longer today's own day-of-year).
+    app.TIME.beginDay = (app.TIME.beginDay + 1) % 365;
+
+    assertFalse(app.Tropo3D.selectedDayHasForecastAvailable());
+  }
+
+  @Test
+  void selectedDayHasForecastAvailable_alsoTracksOtherImpactDisplayDaySlots_notJustOne () {
+    // Not hardcoded to slot 1 - any impactDisplayDay whose own date
+    // (TIME.beginDay + (day - 1) * STUDY.dayIncrement, wrapped) happens
+    // to land on today should match too.
+    app.STUDY.dayIncrement = 1;
+    int[] nowUTC = app.getNow_inUTC();
+    int today = app.TIME.convert2Date(nowUTC[1], nowUTC[2]);
+
+    app.impactDisplayDay = 3; // j == 2, so TIME.beginDay + 2 == today
+    app.TIME.beginDay = ((today - 2) % 365 + 365) % 365;
+
+    assertTrue(app.Tropo3D.selectedDayHasForecastAvailable());
+  }
+
+  @Test
+  void shouldDraw_isFalseWhenTheSimulatedDayIsNotToday_evenWithEverythingElseOn () {
+    app.Tropo3D.displaySurface = true;
+    app.Tropo3D.displayTexture = true;
+    // Deliberately NOT setImpactDisplayDayToToday() - the fresh app's own
+    // defaults (impactDisplayDay == 0, TIME.beginDay == 0, i.e. Jan 1)
+    // already won't match today on essentially any day of the year this
+    // suite actually runs.
+    assertFalse(app.Tropo3D.selectedDayHasForecastAvailable(), "test precondition: today isn't Jan 1");
+
+    assertFalse(app.Tropo3D.shouldDraw(app.TypeWindow.WIN3D));
   }
 
   @Test
