@@ -106,7 +106,9 @@ boolean showSkinPotentialProgress = true;
 // Potential" flow (called from STUDY.plotImpact_urban() whenever
 // updateImpactGraph is set), with its own day/hour/RAD_TYPE-nested
 // parallel work, not something showSkinPotentialProgress above already
-// covers.
+// covers. One window spans that function's own 2 real steps (day
+// accumulation, then a summary-palette pass over every pixel) - see
+// where it's created, that function's own comment, for why both matter.
 boolean showCalcImpactProgress = true;
 
 // Same idea again, for import_objects_OBJ() (import_objects_OBJ.pde) and

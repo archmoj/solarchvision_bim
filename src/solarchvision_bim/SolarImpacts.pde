@@ -478,19 +478,33 @@ class SolarImpacts {
       this.isCalculatingImpact = true;
 
       // showCalcImpactProgress (globals.pde's own comment) - ProgressWindow
-      // (preBakeViewport.pde) again, updated once per day (the day loop
-      // below, STUDY.startDay..STUDY.endDay) rather than per individual
-      // accumulation pass: this function's own hot loop runs hundreds of
-      // day/hour/RAD_TYPE passes (this function's own comment on calcImpact_
-      // accumulationMillis just below), each already parallelized and
-      // awaited on its own (awaitAll(calcImpact_accumulationFutures) -
-      // see that call's own site) - tracking every individual pass would
-      // mean threading a counter through that inner concurrency too, the
-      // same complexity awaitAllWithProgress() (parallel_utils.pde) exists
-      // for preBakeViewport()'s own single parallel pass. Per-day is a far
+      // (preBakeViewport.pde), spanning this whole p-block's own 2 real
+      // steps (the "for (int p = 0; p < 1; p++)" below runs exactly once,
+      // but does two genuinely separate passes inside: day accumulation,
+      // then a summary-palette pass over every pixel once all days are
+      // in) - [0, 0.5] for the first, [0.5, 1.0] for the second, each
+      // updated at its own call site below, rather than disposing this
+      // window (or just leaving it stuck at a stale 100%) once the first
+      // step finishes, which would make the second look like dead time.
+      //
+      // Day accumulation is updated once per day (STUDY.startDay..
+      // STUDY.endDay) rather than per individual accumulation pass: this
+      // function's own hot loop runs hundreds of day/hour/RAD_TYPE passes
+      // (this function's own comment on calcImpact_accumulationMillis
+      // just below), each already parallelized and awaited on its own
+      // (awaitAll(calcImpact_accumulationFutures) - see that call's own
+      // site) - tracking every individual pass would mean threading a
+      // counter through that inner concurrency too, the same complexity
+      // awaitAllWithProgress() (parallel_utils.pde) exists for
+      // preBakeViewport()'s own single parallel pass. Per-day is a far
       // simpler, cheaply-available granularity (the day loop is already
-      // this function's own outermost unit of work) that still updates
-      // often enough to be useful relative to the whole call's runtime.
+      // this function's own outermost unit of work for that step) that
+      // still updates often enough to be useful relative to the whole
+      // call's runtime. The summary-palette pass, by contrast, really is
+      // one big per-pixel loop (RES1*RES2) with no inner concurrency to
+      // thread through, so it's tracked directly, throttled to whole-
+      // percent steps the same way the console bars elsewhere in this
+      // codebase are (see that loop's own comment).
       //
       // Not wrapped in a try/finally: disposed as a bare statement
       // alongside calcImpact_executor.shutdown() at this function's own
@@ -619,7 +633,11 @@ class SolarImpacts {
         for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
           if (calcImpactProgressWindow != null) {
-            calcImpactProgressWindow.updateFraction((j - STUDY.startDay) / (float) max(1, STUDY.endDay - STUDY.startDay));
+            // First of this p-block's own 2 steps (that comment's own
+            // wording) - day accumulation, then the summary palette loop
+            // below - so this half of the bar is [0, 0.5], not [0, 1]:
+            // see that loop's own matching update for the other half.
+            calcImpactProgressWindow.updateFraction(0.5f * (j - STUDY.startDay) / (float) max(1, STUDY.endDay - STUDY.startDay));
           }
 
           now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
@@ -903,7 +921,26 @@ class SolarImpacts {
             total_Image_RGBA[q].loadPixels();
           }
 
+          // Second of this p-block's own 2 steps (day accumulation just
+          // above was the first, [0, 0.5]) - this half is [0.5, 1.0].
+          // Throttled to whole-percent steps, same shape as the console
+          // bars elsewhere in this codebase (e.g. calculate_
+          // VertexSolar_array.pde's own) - RES1*RES2 can be well over a
+          // million pixels, and updateFraction() now paints synchronously
+          // (ProgressWindow's own comment, preBakeViewport.pde), so
+          // calling it every single pixel, not just every whole percent,
+          // would add real, avoidable overhead to this loop.
+          int calcImpactSummaryLastDrawnPercent = -1;
+
           for (int np = 0; np < (RES1 * RES2); np++) {
+            if (calcImpactProgressWindow != null) {
+              int percent = (int) floor(100.0f * np / (RES1 * RES2));
+              if (percent != calcImpactSummaryLastDrawnPercent) {
+                calcImpactProgressWindow.updateFraction(0.5f + 0.5f * percent / 100.0f);
+                calcImpactSummaryLastDrawnPercent = percent;
+              }
+            }
+
             int Image_X = np % RES1;
             int Image_Y = np / RES1;
 
@@ -927,6 +964,13 @@ class SolarImpacts {
               total_Image_RGBA[q].pixels[np] = paletteMapImpactValue(q, Image_A, Image_R, Image_G, Image_B);
             }
           }
+
+          // The loop's own throttled updates above never quite land on
+          // exactly 100 (floor(100 * np / total) for the very last np is
+          // just short of it) - one last explicit update so the bar
+          // visibly finishes before calcImpactProgressWindow gets
+          // disposed at this function's own end.
+          if (calcImpactProgressWindow != null) calcImpactProgressWindow.updateFraction(1.0f);
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
 
