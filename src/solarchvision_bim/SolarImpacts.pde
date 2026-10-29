@@ -478,14 +478,17 @@ class SolarImpacts {
       this.isCalculatingImpact = true;
 
       // showCalcImpactProgress (globals.pde's own comment) - ProgressWindow
-      // (preBakeViewport.pde), spanning this whole p-block's own 2 real
+      // (preBakeViewport.pde), spanning this whole p-block's own 3 real
       // steps (the "for (int p = 0; p < 1; p++)" below runs exactly once,
-      // but does two genuinely separate passes inside: day accumulation,
-      // then a summary-palette pass over every pixel once all days are
-      // in) - [0, 0.5] for the first, [0.5, 1.0] for the second, each
+      // but does three genuinely separate passes inside: day accumulation;
+      // a summary-palette pass over every pixel once all days are in; and
+      // a small per-variation finishing pass - updatePixels() plus,
+      // optionally, this.record_IMG's own disk save) - [0, 0.5] for the
+      // first, [0.5, 0.9] for the second, [0.9, 1.0] for the third, each
       // updated at its own call site below, rather than disposing this
-      // window (or just leaving it stuck at a stale 100%) once the first
-      // step finishes, which would make the second look like dead time.
+      // window (or leaving it stuck at a stale percentage) once an
+      // earlier step finishes, which would make whatever's left look like
+      // dead time.
       //
       // Day accumulation is updated once per day (STUDY.startDay..
       // STUDY.endDay) rather than per individual accumulation pass: this
@@ -504,7 +507,12 @@ class SolarImpacts {
       // one big per-pixel loop (RES1*RES2) with no inner concurrency to
       // thread through, so it's tracked directly, throttled to whole-
       // percent steps the same way the console bars elsewhere in this
-      // codebase are (see that loop's own comment).
+      // codebase are (see that loop's own comment). The final per-
+      // variation pass is small (numberOfImpactVariations, typically 2),
+      // but this.record_IMG's own save() is real, potentially slow disk
+      // I/O - worth its own share of the bar rather than happening
+      // entirely after the bar already claimed to be done (see that
+      // loop's own comment).
       //
       // Not wrapped in a try/finally: disposed as a bare statement
       // alongside calcImpact_executor.shutdown() at this function's own
@@ -936,7 +944,7 @@ class SolarImpacts {
             if (calcImpactProgressWindow != null) {
               int percent = (int) floor(100.0f * np / (RES1 * RES2));
               if (percent != calcImpactSummaryLastDrawnPercent) {
-                calcImpactProgressWindow.updateFraction(0.5f + 0.5f * percent / 100.0f);
+                calcImpactProgressWindow.updateFraction(0.5f + 0.4f * percent / 100.0f);
                 calcImpactSummaryLastDrawnPercent = percent;
               }
             }
@@ -965,13 +973,18 @@ class SolarImpacts {
             }
           }
 
-          // The loop's own throttled updates above never quite land on
-          // exactly 100 (floor(100 * np / total) for the very last np is
-          // just short of it) - one last explicit update so the bar
-          // visibly finishes before calcImpactProgressWindow gets
-          // disposed at this function's own end.
-          if (calcImpactProgressWindow != null) calcImpactProgressWindow.updateFraction(1.0f);
-
+          // Third of this p-block's own 3 real steps now (day
+          // accumulation [0, 0.5], the per-pixel summary palette pass
+          // just above [0.5, 0.9]) - this q loop's own [0.9, 1.0], not a
+          // final flat jump to 1.0 right after the pixel pass above: this
+          // loop's own this.Image[q][0].save(myFile) (this.record_IMG) is
+          // real, potentially slow per-variation disk I/O, not a trivial
+          // tail, so it's worth its own share of the bar rather than
+          // happening entirely after the bar already claimed to be done.
+          // numberOfImpactVariations is small (2, Active/Passive) and
+          // each iteration's own save is already the natural per-
+          // iteration unit of work, so this updates once per q with no
+          // extra throttling needed, unlike the pixel loop just above.
           for (int q = 0; q < numberOfImpactVariations; q++) {
 
             total_Image_RGBA[q].updatePixels();
@@ -984,6 +997,10 @@ class SolarImpacts {
               println("File created:" + myFile);
             }
             //}
+
+            if (calcImpactProgressWindow != null) {
+              calcImpactProgressWindow.updateFraction(0.9f + 0.1f * (q + 1) / (float) numberOfImpactVariations);
+            }
           }
           calcImpact_summaryPaletteMillis += millis() - calcImpact_summaryPaletteT0;
         }
