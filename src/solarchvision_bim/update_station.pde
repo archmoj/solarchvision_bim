@@ -16,6 +16,7 @@ void update_station (int Step) {
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
 
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
+    sync_SHADE_DATE_ANGLE();
 
     // Keep already-loaded textures tracking the real lon/lat they were
     // captured at as the station moves (see Land3D.pde's

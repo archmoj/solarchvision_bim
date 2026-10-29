@@ -89,7 +89,7 @@ final int SHADE_STEP_DAYS = 30; //90;
 
 // initial values of choice
 int SHADE_HOUR_ANGLE = 10;
-int SHADE_DATE_ANGLE = 0; // This would be set to TIME.beginDay later in the process.
+int SHADE_DATE_ANGLE = -1; // This would be set to TIME.beginDay later in the process.
 
 volatile boolean isShadingViewport = false;
 
