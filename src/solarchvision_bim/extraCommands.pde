@@ -2669,6 +2669,16 @@ String __SHADE_VIEWPORT__ (String[] parts) {
     return hint;
 }
 
+String __UNSHADE_VIEWPORT__ (String[] parts) {
+    String hint = "";
+    // dismissShading() (ShadeViewport.pde) - the same call the "Unshade
+    // Viewport" action (actions.pde) and the main Esc cascade
+    // (solarchvision_bim.pde) both make - already forces its own repaint
+    // (view_changed()), so there's nothing else to do here.
+    dismissShading();
+    return hint;
+}
+
 String __PREBAKE_VIEWPORT__ (String[] parts) {
     String hint = "";
     preBakeViewport();

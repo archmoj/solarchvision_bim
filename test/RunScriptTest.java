@@ -1271,4 +1271,33 @@ class RunScriptTest {
 
     assertEquals(33.3f, app.STATION.getLatitude(), 0.001f);
   }
+
+  // ================= UNSHADE.VIEWPORT ========================================
+  // Dispatch wiring only - dismissShading()'s own logic is already fully
+  // covered directly (WIN3DTest.java), and "Unshade Viewport" the
+  // allActions name is covered in WIN3DActionsTest.java; neither of those
+  // exercises this command's own switch-case/__UNSHADE_VIEWPORT__
+  // dispatch path, which is genuinely separate (___executeScriptLine___,
+  // only reached once allActions.get() - checked first, by the full
+  // "Unshade Viewport" name - has no match for whatever was typed).
+
+  @Test
+  void unshadeDotViewport_reachesDismissShadingThroughTheLegacySwitch () {
+    app.WIN3D.showShading = true;
+
+    String hint = app.runScriptLine("UNSHADE.VIEWPORT");
+
+    assertEquals("", hint);
+    assertFalse(app.WIN3D.showShading);
+  }
+
+  @Test
+  void unshadeDotViewport_isCaseInsensitiveLikeEveryOtherCommand () {
+    app.WIN3D.showShading = true;
+
+    String hint = app.runScriptLine("unshade.viewport");
+
+    assertEquals("", hint);
+    assertFalse(app.WIN3D.showShading);
+  }
 }

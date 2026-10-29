@@ -434,6 +434,8 @@ Includes commands such as:
 -   `SHADE.SOLID`: Solid parameter shading
 -   `SHADE.ELEVATION`: Elevation shading
 -   `SHADE.VIEWPORT`: Shades the viewport
+-   `UNSHADE.VIEWPORT`: Turns off the shaded viewport preview (also
+    reachable as `Unshade Viewport`)
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport (also reachable as
     `Prebake Viewport`)
 
@@ -1090,12 +1092,12 @@ triggering a computation:
     `Shade Surface Materials`
 -   `Shade Global Solar`, `Shade Vertex Solar`, `Shade Vertex Solid`,
     `Shade Vertex Elevation`
--   `Shade Viewport`
+-   `Shade Viewport`, `Unshade Viewport`
 -   `Shade Next Hour`, `Shade Previous Hour`, `Shade Next Day`,
     `Shade Previous Day`
 
-(these are equivalent to the `SHADE.*` commands under
-[Shading and rendering](#shading-and-rendering) above)
+(these are equivalent to the matching `SHADE.*`/`UNSHADE.*` commands
+under [Shading and rendering](#shading-and-rendering) above)
 
 ### Geometry editing
 
