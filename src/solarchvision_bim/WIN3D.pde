@@ -1162,6 +1162,13 @@ class WIN3D {
   }
 
   float shadingQuality = 0.75f;
+
+  // Sticky, not one-shot: set true by ShadeViewport() once it's finished
+  // baking Shade_RGBA, and left true - draw_WIN3D_layers.pde redraws that
+  // same image over the viewport every single frame, including through a
+  // camera drag, for as long as this stays true - until dismissShading()
+  // (ShadeViewport.pde, called from the main Esc cascade in
+  // solarchvision_bim.pde) explicitly turns it back off.
   boolean showShading = false;
 
   // One-shot: set by the day-navigation/impact-type-toggle actions

@@ -868,6 +868,27 @@ class WIN3DTest {
     assertEquals(282, app.SHADE_DATE_ANGLE);
   }
 
+  // ================= dismissShading (Esc's own end to the sticky shaded-
+  // viewport preview - see WIN3D.showShading's own comment) ==============
+
+  @Test
+  void dismissShading_turnsOffShowShadingAndReportsItWasOn () {
+    app.WIN3D.showShading = true;
+
+    assertTrue(app.dismissShading());
+
+    assertFalse(app.WIN3D.showShading);
+  }
+
+  @Test
+  void dismissShading_isANoOpAndReportsNothingToDoWhenAlreadyOff () {
+    app.WIN3D.showShading = false;
+
+    assertFalse(app.dismissShading());
+
+    assertFalse(app.WIN3D.showShading);
+  }
+
   // ================= handleCommandKey (remaining safe branches) ============
 
   @Test

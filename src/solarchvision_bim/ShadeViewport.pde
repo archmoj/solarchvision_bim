@@ -709,6 +709,12 @@ void ShadeViewport () {
     // at the unrelated allSolarImpacts.RES1/RES2, and was never meant to
     // be shown over the viewport - flagging it for display here would
     // both pop up an overlay nobody asked for and stretch it wrong.
+    //
+    // Sticky from here on (draw_WIN3D_layers.pde no longer clears this
+    // itself after one frame) - stays up across camera moves, re-shading
+    // to a new hour/day (this same flag, just set true again over
+    // whatever Shade_RGBA this call just produced), anything short of an
+    // explicit dismissShading() call below, from Esc.
     WIN3D.showShading = true;
   }
 
@@ -771,4 +777,20 @@ void sync_SHADE_DATE_ANGLE () {
   }
 
   SHADE_DATE_ANGLE = (int) (360 * ((286 + now_j) % 365) / 365.0);
+}
+
+// Turns off the sticky shaded-viewport overlay ShadeViewport() leaves on
+// screen (see WIN3D.showShading's own comment there and in
+// draw_WIN3D_layers.pde) - the Esc cascade's own way of ending that
+// preview, same boolean-returning-"did I actually have something to do"
+// shape as cancelActivePickList()/removeLastHoverPoint() (mouseClicked.
+// pde/hover.pde) that the rest of that same cascade already uses, so Esc
+// only consumes itself here (and stops short of also removing a pinned
+// hover point the person never asked to touch) when shading was actually
+// showing.
+boolean dismissShading () {
+  if (!WIN3D.showShading) return false;
+
+  WIN3D.showShading = false;
+  return true;
 }

@@ -55,8 +55,19 @@ void draw_WIN3D_layers () {
     WIN3D.draw();
   }
 
+  // Sticky, not one-shot: stays on screen every frame - including while
+  // the camera's being dragged, since WIN3D.update alone already keeps
+  // this whole function (and WIN3D.draw() under it) running every frame
+  // of that drag - until something explicitly turns WIN3D.showShading
+  // back off. The live model (WIN3D.draw() above, when WIN3D.update)
+  // keeps redrawing underneath every frame regardless; this frozen
+  // overlay - still carrying the alpha from ShadeViewport()'s own hit/
+  // miss pixels (see that function's own comment) - only covers the
+  // model-shaped pixels it had at bake time, so the rotating model shows
+  // through everywhere else rather than being hidden behind a stale
+  // rectangle. dismissShading() (ShadeViewport.pde) is the only place
+  // that clears this, from Esc.
   if (WIN3D.showShading) {
-    WIN3D.showShading = false;
     image(Shade_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
   }
 
