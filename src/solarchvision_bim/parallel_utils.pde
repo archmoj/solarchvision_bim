@@ -42,12 +42,12 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // equivalent mid-bake UI of its own to refresh, so they keep the
 // simpler, already-proven plain blocking wait.
 void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> futures, int[] completedChunks, int numChunks) {
-  // PrebakeProgressWindow (preBakeViewport.pde's own comment on why a
-  // plain AWT window, not Processing's own canvas) - shown for this
-  // call's own duration only, disposed in the finally block below
-  // whether this finishes normally or a worker exception propagates out
-  // of the future.get() loop at the end.
-  PrebakeProgressWindow progressWindow = new PrebakeProgressWindow();
+  // ProgressWindow (preBakeViewport.pde's own comment on why a plain AWT
+  // window, not Processing's own canvas) - shown for this call's own
+  // duration only, disposed in the finally block below whether this
+  // finishes normally or a worker exception propagates out of the
+  // future.get() loop at the end.
+  ProgressWindow progressWindow = new ProgressWindow("Prebaking");
   progressWindow.setVisible(true);
 
   try {

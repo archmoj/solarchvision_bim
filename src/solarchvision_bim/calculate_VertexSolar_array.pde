@@ -108,22 +108,36 @@ void calculate_VertexSolar_array () {
   float printed_Progress = 0;
   StringBuilder barBuffer = new StringBuilder();
 
-  progressBarHeader();
-  for (int f = 0; f < allFaces.nodes.length; f++) {
-    if (control != USER_AUTO) {
-      Progress = 100 * f / float(allFaces.nodes.length);
-      float delta = floor(Progress - printed_Progress);
-      if (delta >= 1) {
-        barBuffer.setLength(0);
-        for (int c = 0; c < delta; c++) {
-          barBuffer.append('█');
-        }
-        print(barBuffer.toString()); // one print() call instead of `delta` calls
-        printed_Progress = floor(Progress);
-      }
-    }
+  // showSkinPotentialProgress (globals.pde's own comment on the name) -
+  // same ProgressWindow (preBakeViewport.pde) as "Prebaking", just a
+  // different label, created/disposed around this whole loop rather than
+  // polled from a separate wait call the way preBakeViewport()'s own
+  // awaitAllWithProgress() needs to: this loop is plain single-threaded
+  // iteration on the calling thread itself, with no concurrent futures
+  // to wait on, so updateFraction() can simply be called directly,
+  // inline, alongside the existing console bar's own identical
+  // delta >= 1 throttle below - no separate polling loop needed.
+  ProgressWindow progressWindow = showSkinPotentialProgress ? new ProgressWindow("Skin Potential") : null;
+  if (progressWindow != null) progressWindow.setVisible(true);
 
-    int vsb = allFaces.getVisibility(f);
+  try {
+    progressBarHeader();
+    for (int f = 0; f < allFaces.nodes.length; f++) {
+      if (control != USER_AUTO) {
+        Progress = 100 * f / float(allFaces.nodes.length);
+        float delta = floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          barBuffer.setLength(0);
+          for (int c = 0; c < delta; c++) {
+            barBuffer.append('█');
+          }
+          print(barBuffer.toString()); // one print() call instead of `delta` calls
+          printed_Progress = floor(Progress);
+          if (progressWindow != null) progressWindow.updateFraction(Progress / 100.0f);
+        }
+      }
+
+      int vsb = allFaces.getVisibility(f);
 
     if (vsb > 0) {
 
@@ -315,6 +329,9 @@ void calculate_VertexSolar_array () {
 
       }
     }
+  } // closes the for (int f...) loop
+  } finally {
+    if (progressWindow != null) progressWindow.dispose();
   }
 
   for (int idx = 0; idx < numDaySlots; idx++) {

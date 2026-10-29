@@ -92,6 +92,15 @@ float celestialMagnification = 16.0; // <<<<<<<<<<
 // existing, already-proven awaitAll() wait path.
 boolean showPrebakeProgress = true;
 
+// Same idea as showPrebakeProgress just above, but for calculate_
+// VertexSolar_array() (calculate_VertexSolar_array.pde) - the per-face
+// computation behind the "Skin Potential" graph (UI_rollout.pde's own
+// render button), named for that since that's the single-threaded,
+// synchronous call most likely to actually show it long enough to
+// matter, even though the same function also runs for the live
+// viewport's own Vertex_Solar shading mode.
+boolean showSkinPotentialProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;
