@@ -113,6 +113,18 @@ void preBakeViewport () {
 
   int preBakeViewport_startMillis = millis();
 
+  // showPrebakeProgress (globals.pde)/canShowProgressWindow() (this
+  // file's own comment) - owned by this function itself now, not
+  // awaitAllWithProgress() (parallel_utils.pde), since the bar now spans
+  // every real step below, not just the main ray-casting loop: the
+  // Direct_RGBA/Diffuse_RGBA PNG saves after it, and the two further
+  // ShadeViewport() calls (Model2Ds mask, face-edges texture) after
+  // those, all take real time too and, left untracked, would leave the
+  // bar stuck at a stale "done" through all of it. Disposed once, at
+  // this function's own very end.
+  ProgressWindow prebakeProgressWindow = (showPrebakeProgress && canShowProgressWindow()) ? new ProgressWindow("Prebaking") : null;
+  if (prebakeProgressWindow != null) prebakeProgressWindow.setVisible(true);
+
   showWaitCursor();
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
@@ -468,16 +480,15 @@ void preBakeViewport () {
     }));
   }
 
-  // showPrebakeProgress (globals.pde) off: the exact same, already-proven
-  // blocking wait as every other parallel loop in this codebase. On: a
-  // polling wait that also draws and presents the progress bar
-  // (awaitAllWithProgress()'s own comment, parallel_utils.pde, on why a
-  // bare blocking wait can't show one at all).
-  if (showPrebakeProgress) {
-    awaitAllWithProgress(futures, completedChunks, numChunks);
-  } else {
-    awaitAll(futures); // see parallel_utils.pde's own comment
-  }
+  // prebakeProgressWindow null (showPrebakeProgress off, or headless):
+  // the exact same, already-proven blocking wait as every other parallel
+  // loop in this codebase. Non-null: a polling wait that also draws and
+  // presents the progress bar (awaitAllWithProgress()'s own comment,
+  // parallel_utils.pde, on why a bare blocking wait can't show one at
+  // all) - [0, 0.6] of the bar's own full range, this being the single
+  // biggest step but not the only one left (this function's own comment
+  // at the top on the rest).
+  awaitAllWithProgress(futures, completedChunks, numChunks, prebakeProgressWindow, 0.0f, 0.6f);
   executor.shutdown();
 
   // Rounding each chunk's own target down to whole block characters can
@@ -495,9 +506,29 @@ void preBakeViewport () {
   println("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
   phaseStartMillis = millis();
 
+  // [0.6, 0.65] of prebakeProgressWindow's own full range (this
+  // function's own comment at the top) - n_Map * 2 separate saves, each
+  // real per-file disk I/O, so tracked and throttled the same shape as
+  // every other whole-percent-step progress loop in this codebase (e.g.
+  // calculate_VertexSolar_array.pde's own), not a single flat jump
+  // before/after like the two ShadeViewport() calls further down get
+  // (those have no per-file/per-pixel loop of their own this function
+  // can see into without instrumenting ShadeViewport() itself).
+  int prebakeDirectSavesTotal = n_Map * 2;
+  int prebakeDirectSavesLastDrawnPercent = -1;
+
   for (int m = 0; m < n_Map; m++) {
 
     for (int SHD = 0; SHD <= 1; SHD++) {
+
+      if (prebakeProgressWindow != null) {
+        int done = m * 2 + SHD;
+        int percent = (int) floor(100.0f * done / prebakeDirectSavesTotal);
+        if (percent != prebakeDirectSavesLastDrawnPercent) {
+          prebakeProgressWindow.updateFraction(0.6f + 0.05f * percent / 100.0f);
+          prebakeDirectSavesLastDrawnPercent = percent;
+        }
+      }
 
       String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
@@ -518,6 +549,8 @@ void preBakeViewport () {
     }
   }
 
+  if (prebakeProgressWindow != null) prebakeProgressWindow.updateFraction(0.65f);
+
   println("Direct_RGBA PNG saves (" + (n_Map * 2) + " files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
   phaseStartMillis = millis();
 
@@ -535,7 +568,23 @@ void preBakeViewport () {
 
     Diffuse_RGBA[SHD].loadPixels();
 
+    // [0.65, 0.75] overall (this function's own comment at the top),
+    // split into one half per SHD (just 2 total) with this per-pixel
+    // loop's own progress tracked within each half - same throttled-
+    // percent shape as the Direct_RGBA saves loop just above, since
+    // RES1*RES2 can be a meaningfully large loop on its own, unlike the
+    // handful of SHD iterations wrapping it.
+    int prebakeDiffuseLastDrawnPercent = -1;
+
     for (int np = 0; np < (RES1 * RES2); np++) {
+
+      if (prebakeProgressWindow != null) {
+        int percent = (int) floor(100.0f * np / (RES1 * RES2));
+        if (percent != prebakeDiffuseLastDrawnPercent) {
+          prebakeProgressWindow.updateFraction(0.65f + 0.05f * SHD + 0.05f * percent / 100.0f);
+          prebakeDiffuseLastDrawnPercent = percent;
+        }
+      }
 
       if (is_defined(Diffuse_Matrix[SHD][np])) {
 
@@ -557,6 +606,8 @@ void preBakeViewport () {
 
   println("Diffuse_RGBA PNG saves (2 files) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
 
+  if (prebakeProgressWindow != null) prebakeProgressWindow.updateFraction(0.75f);
+
   // Bake the Model2Ds-only (tree/person) visibility mask alongside the
   // Direct/Diffuse images just saved above, at this same prebake
   // resolution and under the same Folder_Shadings/NearLatitude_Stamp()/
@@ -574,6 +625,14 @@ void preBakeViewport () {
   noShadeOnlyVisible2DTextures = true;
   ShadeViewport();
   noShadeOnlyVisible2DTextures = false;
+
+  // [0.75, 0.875] for this call - no per-chunk/per-pixel progress of its
+  // own to track (ShadeViewport() has none of this feature's own
+  // instrumentation - a much bigger change than this function's own
+  // steps needed), so just a jump straight to this step's own endpoint
+  // once it returns, same as a single-iteration step elsewhere in this
+  // codebase would get.
+  if (prebakeProgressWindow != null) prebakeProgressWindow.updateFraction(0.875f);
 
   // Same reasoning, same setup already in place - just the one extra
   // ShadeViewport() call, in its own mode, saving its own file. Rendered
@@ -596,6 +655,11 @@ void preBakeViewport () {
   ShadeViewport();
   noShadeOnlyVisibleFaceEdges = false;
 
+  // [0.875, 1.0] - same single jump as call #1 above, once this one
+  // (rendered at FACE_EDGE_RESOLUTION_MULTIPLIER x resolution, so likely
+  // the slower of the two) returns. This is the bar's own last step.
+  if (prebakeProgressWindow != null) prebakeProgressWindow.updateFraction(1.0f);
+
   WIN3D.dX = pre_faceEdges_dX;
   WIN3D.dY = pre_faceEdges_dY;
 
@@ -611,4 +675,15 @@ void preBakeViewport () {
   // texture) - each also prints its own elapsed time on the way, so this
   // total and their two sub-totals are both visible, not just the sum.
   println("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
+
+  // Not wrapped in a try/finally: every other progress window in this
+  // codebase that spans this much of a function (SolarImpacts.pde's own
+  // calcImpactProgressWindow, e.g.) disposes as a bare statement at the
+  // very end for the same reason - this function already has no try/
+  // finally anywhere in it, so adding one just for this would be new
+  // exception-safety this function doesn't otherwise have, not
+  // consistency with how it already handles the rest of its own cleanup
+  // (WIN3D.dX/dY/shadingQuality restores above, executor.shutdown()
+  // earlier, none of them try/finally-wrapped either).
+  if (prebakeProgressWindow != null) prebakeProgressWindow.dispose();
 }

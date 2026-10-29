@@ -41,67 +41,61 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // pde's two passes, SolarImpacts.pde) shares that one and has no
 // equivalent mid-bake UI of its own to refresh, so they keep the
 // simpler, already-proven plain blocking wait.
-void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> futures, int[] completedChunks, int numChunks) {
-  // canShowProgressWindow() (preBakeViewport.pde's own comment on why) -
-  // this function is only ever called once its own caller has already
-  // decided showPrebakeProgress is on, so headless is the one remaining
-  // reason this might still have no real window to show - fall straight
-  // back to a plain blocking wait in that case, same as preBakeViewport()
-  // itself would call directly with the flag off, rather than letting
-  // "new ProgressWindow(...)" throw java.awt.HeadlessException.
-  if (!canShowProgressWindow()) {
+//
+// progressWindow is owned by the caller now (preBakeViewport.pde's own
+// comment on why: that bar now spans several further steps after this
+// call returns, not just this one) - null here means exactly what it
+// means at every other show*Progress call site in this codebase
+// (showPrebakeProgress off, or headless - preBakeViewport.pde already
+// resolved canShowProgressWindow() before ever constructing one), so
+// this function itself just falls back to the plain blocking wait rather
+// than needing its own separate headless check. rangeMin/rangeMax let
+// the caller place this call's own share of a bar that covers more than
+// just this one step on a 0-1 scale (preBakeViewport() currently passes
+// [0, 0.6]) - percent is still computed 0-100 internally exactly as
+// before, just mapped into [rangeMin, rangeMax] on the way out.
+void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> futures, int[] completedChunks, int numChunks, ProgressWindow progressWindow, float rangeMin, float rangeMax) {
+  if (progressWindow == null) {
     awaitAll(futures);
     return;
   }
 
-  // ProgressWindow (preBakeViewport.pde's own comment on why a plain AWT
-  // window, not Processing's own canvas) - shown for this call's own
-  // duration only, disposed in the finally block below whether this
-  // finishes normally or a worker exception propagates out of the
-  // future.get() loop at the end.
-  ProgressWindow progressWindow = new ProgressWindow("Prebaking");
-  progressWindow.setVisible(true);
+  int lastDrawnPercent = -1;
 
-  try {
-    int lastDrawnPercent = -1;
-
-    while (true) {
-      boolean allDone = true;
-      for (java.util.concurrent.Future<?> future : futures) {
-        if (!future.isDone()) {
-          allDone = false;
-          break;
-        }
-      }
-
-      int percent = (int) floor(100.0f * completedChunks[0] / numChunks);
-      if (percent != lastDrawnPercent) {
-        progressWindow.updateFraction(percent / 100.0f);
-        lastDrawnPercent = percent;
-      }
-
-      if (allDone) break;
-
-      try {
-        Thread.sleep(50); // poll interval - frequent enough to feel live, far too coarse to meaningfully compete with the worker threads' own ray-casting for CPU
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new RuntimeException(e);
-      }
-    }
-
+  while (true) {
+    boolean allDone = true;
     for (java.util.concurrent.Future<?> future : futures) {
-      try {
-        future.get();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new RuntimeException(e);
-      } catch (java.util.concurrent.ExecutionException e) {
-        throw new RuntimeException(e.getCause());
+      if (!future.isDone()) {
+        allDone = false;
+        break;
       }
     }
-  } finally {
-    progressWindow.dispose();
+
+    int percent = (int) floor(100.0f * completedChunks[0] / numChunks);
+    if (percent != lastDrawnPercent) {
+      progressWindow.updateFraction(rangeMin + (rangeMax - rangeMin) * percent / 100.0f);
+      lastDrawnPercent = percent;
+    }
+
+    if (allDone) break;
+
+    try {
+      Thread.sleep(50); // poll interval - frequent enough to feel live, far too coarse to meaningfully compete with the worker threads' own ray-casting for CPU
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
+  }
+
+  for (java.util.concurrent.Future<?> future : futures) {
+    try {
+      future.get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    } catch (java.util.concurrent.ExecutionException e) {
+      throw new RuntimeException(e.getCause());
+    }
   }
 }
 
