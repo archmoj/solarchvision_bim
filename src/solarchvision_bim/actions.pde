@@ -1477,22 +1477,22 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Shade Time +1 Hour", () -> {
+  putAction("Shade Next Hour", () -> {
     adjustShadeTime(1);
     view_changed();
   });
 
-  putAction("Shade Time -1 Hour", () -> {
+  putAction("Shade Previous Hour", () -> {
     adjustShadeTime(-1);
     view_changed();
   });
 
-  putAction("Shade Time +1 Day", () -> {
+  putAction("Shade Next Day", () -> {
     adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
     view_changed();
   });
 
-  putAction("Shade Time -1 Day", () -> {
+  putAction("Shade Previous Day", () -> {
     adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
     view_changed();
   });

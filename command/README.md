@@ -1091,8 +1091,8 @@ triggering a computation:
 -   `Shade Global Solar`, `Shade Vertex Solar`, `Shade Vertex Solid`,
     `Shade Vertex Elevation`
 -   `Shade Viewport`
--   `Shade Time +1 Hour`, `Shade Time -1 Hour`, `Shade Time +1 Day`,
-    `Shade Time -1 Day`
+-   `Shade Next Hour`, `Shade Previous Hour`, `Shade Next Day`,
+    `Shade Previous Day`
 
 (these are equivalent to the `SHADE.*` commands under
 [Shading and rendering](#shading-and-rendering) above)

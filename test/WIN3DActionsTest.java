@@ -417,7 +417,7 @@ class WIN3DActionsTest {
     app.SHADE_HOUR_ANGLE = 0;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("Shade Time +1 Hour");
+    String hint = app.runScriptLine("Shade Next Hour");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1, app.SHADE_HOUR_ANGLE);
@@ -428,7 +428,7 @@ class WIN3DActionsTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("Shade Time -1 Hour");
+    String hint = app.runScriptLine("Shade Previous Hour");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.SHADE_LAST_HOUR - 1, app.SHADE_HOUR_ANGLE);
@@ -439,7 +439,7 @@ class WIN3DActionsTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("Shade Time +1 Day");
+    String hint = app.runScriptLine("Shade Next Day");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     // A full day's worth of hourly steps (SHADE_HOURS_PER_DAY + 1) wraps

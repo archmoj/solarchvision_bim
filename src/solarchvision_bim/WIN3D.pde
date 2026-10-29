@@ -584,22 +584,22 @@ class WIN3D {
   void handleAltArrowKeys (int keyCode) {
     switch (keyCode) {
       case RIGHT:
-        runScriptLine("Shade Time +1 Hour");
+        runScriptLine("Shade Next Hour");
         this.revise();
         break;
 
       case LEFT:
-        runScriptLine("Shade Time -1 Hour");
+        runScriptLine("Shade Previous Hour");
         this.revise();
         break;
 
       case UP:
-        runScriptLine("Shade Time +1 Day");
+        runScriptLine("Shade Next Day");
         this.revise();
         break;
 
       case DOWN:
-        runScriptLine("Shade Time -1 Day");
+        runScriptLine("Shade Previous Day");
         this.revise();
         break;
     }
@@ -739,12 +739,12 @@ class WIN3D {
 
       case ' ':
         this.revise();
-        runScriptLines(new String[]{"Shade Time +1 Hour", "=", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Next Hour", "=", "Shade Viewport"});
         break;
 
       case BACKSPACE:
         this.revise();
-        runScriptLines(new String[]{"Shade Time -1 Hour", "=", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Previous Hour", "=", "Shade Viewport"});
         break;
     }
   }
