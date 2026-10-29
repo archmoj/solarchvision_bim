@@ -117,7 +117,7 @@ void calculate_VertexSolar_array () {
   // to wait on, so updateFraction() can simply be called directly,
   // inline, alongside the existing console bar's own identical
   // delta >= 1 throttle below - no separate polling loop needed.
-  ProgressWindow progressWindow = showSkinPotentialProgress ? new ProgressWindow("Skin Potential") : null;
+  ProgressWindow progressWindow = (showSkinPotentialProgress && canShowProgressWindow()) ? new ProgressWindow("Skin Potential") : null;
   if (progressWindow != null) progressWindow.setVisible(true);
 
   try {

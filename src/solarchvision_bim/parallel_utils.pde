@@ -42,6 +42,18 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 // equivalent mid-bake UI of its own to refresh, so they keep the
 // simpler, already-proven plain blocking wait.
 void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> futures, int[] completedChunks, int numChunks) {
+  // canShowProgressWindow() (preBakeViewport.pde's own comment on why) -
+  // this function is only ever called once its own caller has already
+  // decided showPrebakeProgress is on, so headless is the one remaining
+  // reason this might still have no real window to show - fall straight
+  // back to a plain blocking wait in that case, same as preBakeViewport()
+  // itself would call directly with the flag off, rather than letting
+  // "new ProgressWindow(...)" throw java.awt.HeadlessException.
+  if (!canShowProgressWindow()) {
+    awaitAll(futures);
+    return;
+  }
+
   // ProgressWindow (preBakeViewport.pde's own comment on why a plain AWT
   // window, not Processing's own canvas) - shown for this call's own
   // duration only, disposed in the finally block below whether this

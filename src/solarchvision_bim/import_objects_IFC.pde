@@ -2790,6 +2790,24 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   StringBuilder barBuffer = new StringBuilder();
   int totalF = ents.size() + productIds.size();
 
+  // showImportProgress (globals.pde's own comment) - ProgressWindow
+  // (preBakeViewport.pde), one instance spanning BOTH passes below
+  // (the entity scan, then the product loop): f/totalF already counts
+  // continuously across both (f keeps incrementing, never reset, between
+  // them), so Progress is already a single, unified 0-100 metric for the
+  // whole function - updateFraction() just needs calling alongside each
+  // pass's own identical delta >= 1 throttle, same as import_objects_
+  // OBJ.pde's own single-pass version. Disposed as a bare statement
+  // alongside showArrowCursor() at this function's own end, not wrapped
+  // in try/finally: matches this function's own existing convention (no
+  // try/finally anywhere in it already) for the same reason SolarImpacts.
+  // pde's calculate_Impact_CurrentPreBaked() left its own cleanup bare -
+  // several hundred lines of further product-processing code follow
+  // these two loops before the function actually finishes, too much to
+  // safely re-indent under a try block for this.
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing IFC") : null;
+  if (importProgressWindow != null) importProgressWindow.setVisible(true);
+
   int f = -1;
   for (Integer id : ents.keySet()) {
     f++;
@@ -2803,6 +2821,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
         }
         print(barBuffer.toString()); // one print() call instead of `delta` calls
         printed_Progress = floor(Progress);
+        if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
       }
     }
 
@@ -2877,6 +2896,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
         }
         print(barBuffer.toString()); // one print() call instead of `delta` calls
         printed_Progress = floor(Progress);
+        if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
       }
     }
 
@@ -3110,5 +3130,6 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     __SETLATLON__(new String[] { "SETLATLON", "" + ifcImportGotoLatLon[0], "" + ifcImportGotoLatLon[1] });
   }
 
+  if (importProgressWindow != null) importProgressWindow.dispose();
   showArrowCursor();
 }

@@ -477,6 +477,31 @@ class SolarImpacts {
 
       this.isCalculatingImpact = true;
 
+      // showCalcImpactProgress (globals.pde's own comment) - ProgressWindow
+      // (preBakeViewport.pde) again, updated once per day (the day loop
+      // below, STUDY.startDay..STUDY.endDay) rather than per individual
+      // accumulation pass: this function's own hot loop runs hundreds of
+      // day/hour/RAD_TYPE passes (this function's own comment on calcImpact_
+      // accumulationMillis just below), each already parallelized and
+      // awaited on its own (awaitAll(calcImpact_accumulationFutures) -
+      // see that call's own site) - tracking every individual pass would
+      // mean threading a counter through that inner concurrency too, the
+      // same complexity awaitAllWithProgress() (parallel_utils.pde) exists
+      // for preBakeViewport()'s own single parallel pass. Per-day is a far
+      // simpler, cheaply-available granularity (the day loop is already
+      // this function's own outermost unit of work) that still updates
+      // often enough to be useful relative to the whole call's runtime.
+      //
+      // Not wrapped in a try/finally: disposed as a bare statement
+      // alongside calcImpact_executor.shutdown() at this function's own
+      // end instead, matching that same statement's own existing
+      // convention here (no try/finally around executor cleanup either) -
+      // consistent with, not an exception to, how this specific function
+      // already accepts that an exception part-way through leaves its own
+      // cleanup undone.
+      ProgressWindow calcImpactProgressWindow = (showCalcImpactProgress && canShowProgressWindow()) ? new ProgressWindow("Skin Potential") : null;
+      if (calcImpactProgressWindow != null) calcImpactProgressWindow.setVisible(true);
+
       // STEP 0 (not yet parallelized): timing instrumentation only, no
       // behavior change - a baseline to compare each later parallelized
       // step against. Three categories, matched to the three per-pixel
@@ -592,6 +617,10 @@ class SolarImpacts {
         }
 
         for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
+
+          if (calcImpactProgressWindow != null) {
+            calcImpactProgressWindow.updateFraction((j - STUDY.startDay) / (float) max(1, STUDY.endDay - STUDY.startDay));
+          }
 
           now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
 
@@ -936,6 +965,7 @@ class SolarImpacts {
 
       calcImpact_executor.shutdown();
       this.isCalculatingImpact = false;
+      if (calcImpactProgressWindow != null) calcImpactProgressWindow.dispose();
     }
   }
 

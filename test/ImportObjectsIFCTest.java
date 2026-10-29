@@ -3496,4 +3496,19 @@ class ImportObjectsIFCTest {
     assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the actor in between");
     assertEquals(1, app.allModel2Ds.num);
   }
+
+  // ================= progress window headless-safety =======================
+  // import_objects_IFC() now shows a ProgressWindow (preBakeViewport.pde) -
+  // a real java.awt.Frame - while showImportProgress (globals.pde) is on,
+  // which defaults to true. Every one of this file's many other tests
+  // already exercises that path and would have thrown java.awt.
+  // HeadlessException the moment it tried to construct one, in exactly
+  // this environment - canShowProgressWindow()'s own guard (checked
+  // before ever constructing one) is what keeps them passing; this test
+  // makes that guarantee explicit instead of just incidental (see
+  // ImportObjectsOBJTest.java's own matching pair of tests).
+  @Test
+  void canShowProgressWindow_isFalseInThisHeadlessTestEnvironment () {
+    assertFalse(app.canShowProgressWindow());
+  }
 }

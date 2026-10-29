@@ -192,4 +192,31 @@ class ImportObjectsOBJTest {
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(1, app.allGroups.num);
   }
+
+  // ================= progress window headless-safety =======================
+  // import_objects_OBJ() now shows a ProgressWindow (preBakeViewport.pde) -
+  // a real java.awt.Frame - while showImportProgress (globals.pde) is on,
+  // which defaults to true. Every test in this file, and every test
+  // above this one, already exercises that path and would have thrown
+  // java.awt.HeadlessException the moment it tried to construct one, in
+  // exactly this environment - canShowProgressWindow()'s own guard
+  // (checked before ever constructing one) is what keeps them passing.
+  // This test makes that guarantee explicit instead of just incidental.
+
+  @Test
+  void canShowProgressWindow_isFalseInThisHeadlessTestEnvironment () {
+    assertFalse(app.canShowProgressWindow());
+  }
+
+  @Test
+  void importObjectsOBJ_neverThrowsHeadlessExceptionEvenWithShowImportProgressOn () throws IOException {
+    Path objFile = Files.createTempFile("import-headless-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 1 2 3\n");
+
+    app.showImportProgress = true;
+
+    assertDoesNotThrow(() -> {
+      app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+    });
+  }
 }

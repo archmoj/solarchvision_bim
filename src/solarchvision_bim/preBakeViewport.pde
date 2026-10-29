@@ -32,6 +32,26 @@
 // screen is the simplest, most robustly correct placement for either
 // caller; move it if a more precise position turns out to matter once
 // this is confirmed working.
+// Whether a ProgressWindow (below) can actually be created here, on top
+// of whichever show*Progress flag (globals.pde) a given caller checks -
+// java.awt.GraphicsEnvironment.isHeadless() is the standard, reliable
+// Java check for "is there an actual display to put a window on", NOT
+// control != USER_AUTO (the existing console-bar guard throughout this
+// codebase, e.g. calculate_VertexSolar_array.pde's own) - that one only
+// distinguishes interactive-GUI output from automated/batch output
+// (control defaults to USER_GUI, not USER_AUTO, so it's true by default
+// in a plain test app too), it was never meant to detect whether a
+// display actually exists, and the two aren't reliably the same thing:
+// a batch/USER_AUTO run can still have a real display, same as the many
+// existing unit tests that call import_objects_OBJ()/import_objects_IFC()
+// directly (confirmed, not assumed) do NOT have one at all - without
+// this check, every one of those would have thrown
+// java.awt.HeadlessException the moment this feature's own window tried
+// to construct, something a console print() never risked.
+boolean canShowProgressWindow () {
+  return !java.awt.GraphicsEnvironment.isHeadless();
+}
+
 class ProgressWindow extends java.awt.Frame {
   volatile float fraction = 0;
   String label;

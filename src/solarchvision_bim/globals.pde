@@ -101,6 +101,21 @@ boolean showPrebakeProgress = true;
 // viewport's own Vertex_Solar shading mode.
 boolean showSkinPotentialProgress = true;
 
+// Same idea again, for allSolarImpacts.calculate_Impact_CurrentPreBaked()
+// (SolarImpacts.pde) - a second, separate step in the same "Skin
+// Potential" flow (called from STUDY.plotImpact_urban() whenever
+// updateImpactGraph is set), with its own day/hour/RAD_TYPE-nested
+// parallel work, not something showSkinPotentialProgress above already
+// covers.
+boolean showCalcImpactProgress = true;
+
+// Same idea again, for import_objects_OBJ() (import_objects_OBJ.pde) and
+// import_objects_IFC() (import_objects_IFC.pde) - both already track
+// their own Progress/console bar the same shape as the three above, over
+// a plain single-threaded loop (import_objects_IFC() has two, one per
+// pass - see that file's own comment).
+boolean showImportProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;

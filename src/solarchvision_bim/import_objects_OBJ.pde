@@ -26,21 +26,34 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
 
   progressBarHeader();
 
-  for (int f = 0; f < FileALL.length; f++) {
-    if (control != USER_AUTO) {
-      Progress = 100 * f / totalLines;
-      int delta = (int) floor(Progress - printed_Progress);
-      if (delta >= 1) {
-        barBuffer.setLength(0);
-        for (int c = 0; c < delta; c++) {
-          barBuffer.append('█');
-        }
-        print(barBuffer.toString()); // one print() call instead of `delta` calls
-        printed_Progress = floor(Progress);
-      }
-    }
+  // showImportProgress (globals.pde's own comment) - ProgressWindow
+  // (preBakeViewport.pde), updated inline alongside the existing console
+  // bar's own delta >= 1 throttle, same shape as calculate_VertexSolar_
+  // array.pde's own. Wrapped in try/finally (this loop is short enough
+  // that doing so safely doesn't mean re-indenting hundreds of lines,
+  // unlike SolarImpacts.pde's own calculate_Impact_CurrentPreBaked(),
+  // which left its own cleanup as a bare statement instead for exactly
+  // that reason).
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing OBJ") : null;
+  if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
-    String lineSTR = FileALL[f];
+  try {
+    for (int f = 0; f < FileALL.length; f++) {
+      if (control != USER_AUTO) {
+        Progress = 100 * f / totalLines;
+        int delta = (int) floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          barBuffer.setLength(0);
+          for (int c = 0; c < delta; c++) {
+            barBuffer.append('█');
+          }
+          print(barBuffer.toString()); // one print() call instead of `delta` calls
+          printed_Progress = floor(Progress);
+          if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
+        }
+      }
+
+      String lineSTR = FileALL[f];
 
     String[] parts = splitTokens(lineSTR);
     if (parts == null || parts.length == 0) continue; // skip blank lines
@@ -72,6 +85,9 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
     }
     // any other tag (vt, vn, usemtl, mtllib, #comment, ...) is intentionally
     // ignored.
+    }
+  } finally {
+    if (importProgressWindow != null) importProgressWindow.dispose();
   }
 
   int remaining = (int) floor(100 - printed_Progress);
