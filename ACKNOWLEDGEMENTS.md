@@ -5,8 +5,13 @@
 The author would like to acknowledge the assistance from Mr. Lewis Poulin at
 the Canadian Meteorological Center for his assistance between 2014 and 2016 in
 learning more about deterministic and ensemble numerical weather forecast datasets,
-summarized in part in his [presentations](http://collaboration.cmc.ec.gc.ca/cmc/cmoi/product_guide/docs/REFcsts/ICEBO2013_Montreal_LewisPoulin_20131010-track4B-Session19_final.pdf) at the 2013 International Conference for
-Enhanced Building Operations, Montreal, 2013.
+summarized in part in his presentation,
+["Weather Forecast Data an Important Input into Building Management Systems"](https://oaktrust.library.tamu.edu/server/api/core/bitstreams/7097814d-d58f-444b-a978-e1ae4dd6523e/content)
+(ESL-IC-13-10-34), at the 2013 International Conference for Enhanced Building
+Operations, Montreal, 2013 — archived by Texas A&M's Energy Systems
+Laboratory, since the original `collaboration.cmc.ec.gc.ca` link (Environment
+Canada's internal collaboration portal) is no longer reachable from outside
+Environment Canada's own network.
 
 ## Thank you
 
