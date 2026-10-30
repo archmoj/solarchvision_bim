@@ -147,19 +147,42 @@ U.S. government work), though NASA still asks for credit — which these
 `credit.md` files already give. Nothing new needed here; worth knowing they
 exist.
 
-### World map tiles and scale-figure imagery — provenance not documented
+### Scale-figure silhouettes — Dezignus "People Silhouettes" (vector freebie)
 
-`input/images/worldmap/` (1,244 tiles, ~131 MB) and `input/images/people/`
-(43 files) have **no `credit.md` and no embedded metadata** (checked both
-directly — EXIF/PNG text chunks are empty). The `worldmap/` tile filenames
-follow a bounding-box naming pattern consistent with a WMS export (plausibly
-the same family of government/NASA sources as the other imagery, given how
-this project sources everything else), but that's an inference, not a
-confirmed source — I'm not comfortable asserting a credit I can't verify.
-**This is a real gap**: if these came from a source with its own license
-(a stock-imagery pack, a specific tile provider), that should be recorded
-the same way the other four image folders already are, before this gets
-redistributed more widely. Worth the maintainer's own check.
+`input/images/people/` (43 PNG files)
+
+Source identified and confirmed directly (fetched the live page, still up
+at the original URL): [dezignus.com/people-silhouettes](https://dezignus.com/people-silhouettes),
+a free vector (EPS) silhouette pack posted November 12, 2007. These PNGs
+are individually exported/rendered from that EPS set with transparency
+added, not the original file itself — consistent with each one having its
+own, slightly different pixel dimensions (checked earlier: not a uniform
+grid, which a straight bulk-export would produce).
+
+The site's own stated terms, in its own words rather than a formal license
+name: free to use, including for commercial work (web design, print,
+illustration, book/CD covers, logos), with one restriction — don't resell
+the freebie file itself as-is. No attribution is required to use the
+graphics in finished work (a backlink is only asked for if someone writes
+a *tutorial about* the freebie itself, not for ordinary use) — but since
+this repo doesn't currently credit it anywhere, adding a one-line
+`input/images/people/credit.md` (source URL, like the other four image
+folders already have) would bring this folder in line with the rest and
+cost nothing, now that the source is known. Worth doing regardless of
+whether the terms strictly require it.
+
+### World map tiles — provenance still not documented
+
+`input/images/worldmap/` (1,244 tiles, ~131 MB) has **no `credit.md` and
+no embedded metadata** (checked directly — EXIF/PNG text chunks are
+empty). The tile filenames follow a bounding-box naming pattern consistent
+with a WMS export (plausibly the same family of government/NASA sources as
+the other imagery, given how this project sources everything else), but
+that's an inference, not a confirmed source — unlike `people/` above,
+nothing here has actually been tracked down yet. **This is still a real
+gap**: if these came from a source with its own license, that should be
+recorded the same way the other folders now are, before this gets
+redistributed more widely.
 
 ### Tree imagery — procedurally generated, not third-party content
 
