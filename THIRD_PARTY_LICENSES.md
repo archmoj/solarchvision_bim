@@ -165,11 +165,16 @@ illustration, book/CD covers, logos), with one restriction — don't resell
 the freebie file itself as-is. No attribution is required to use the
 graphics in finished work (a backlink is only asked for if someone writes
 a *tutorial about* the freebie itself, not for ordinary use) — but since
-this repo doesn't currently credit it anywhere, adding a one-line
-`input/images/people/credit.md` (source URL, like the other four image
-folders already have) would bring this folder in line with the rest and
-cost nothing, now that the source is known. Worth doing regardless of
-whether the terms strictly require it.
+this repo doesn't currently credit it anywhere, a one-line credit file
+(source URL, like the other four image folders already have) would bring
+this folder in line with the rest and cost nothing, now that the source
+is known. That file lives at `input/images/people-credit.md`, a sibling
+of the `people/` folder rather than a file inside it — `Model2Ds.pde`'s
+people-image loader scans every file in that folder directly and calls
+`loadImage()` on each one, so a `credit.md` placed inside it isn't just
+inert clutter, it's something the app tries to load as a texture. (A
+`credit.md` placed inside `worldmap/` turned out worse: confirmed
+directly, it broke a real build — see the next section.)
 
 ### World map tiles — Natural Resources Canada (NRCan), Open Government Licence – Canada
 
@@ -208,8 +213,18 @@ elsewhere for Government of Canada geospatial data is along the lines of
 "Contains information licensed under the Open Government Licence –
 Canada." Since these tiles are described as adapted (cropped to a
 project's lat/lon, not used unmodified), that's consistent with what
-OGL-Canada allows. `input/images/worldmap/credit.md` now records this,
-matching the other five image folders.
+OGL-Canada allows. This is recorded in `input/images/worldmap-credit.md`
+— a sibling of the `worldmap/` folder, not a file inside it, matching
+`people-credit.md` above and for the same reason, except more pressing
+here: `WORLD.pde`'s tile loader lists every file in that folder and
+splits each filename on `_`, expecting at least 7 parts (the bounding
+box and EN/FR names baked into every real tile's own name). A `credit.md`
+placed inside that folder has none of those, so it isn't just loaded
+incorrectly, it crashes the app outright
+(`ArrayIndexOutOfBoundsException` reading `Parts[1]`) — confirmed
+directly: an earlier version of this file lived at
+`input/images/worldmap/credit.md` and did exactly that in a real build,
+before being moved here.
 
 ### Tree imagery — procedurally generated, not third-party content
 
