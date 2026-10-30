@@ -1,5 +1,12 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: >-
+  If you use this software, please cite it as below. This citation covers
+  the software itself; if your own work also depends on a specific
+  weather/climate dataset, elevation source, or imagery this software
+  uses, see THIRD_PARTY_LICENSES.md for what each one is and how it
+  expects to be credited, and ACKNOWLEDGEMENTS.md for the research
+  and people this project builds on — consider citing those directly
+  too, separately from this software citation.
 
 authors:
   - family-names: "Samimi"
