@@ -220,6 +220,22 @@ anything new to the app.
   a single formal license text of its own. None of this data is committed to
   this repo (`input/climate/.gitignore` keeps downloaded files out of git) —
   each person/CI run fetches what it needs.
+- **3D building import (`import/*.py`/`.js`, optional, run on demand)** —
+  `SOLARCHVISION_OSM_3D_in_obj.py`/`.js` (OpenStreetMap, via Overpass) and
+  `SOLARCHVISION_Overture_3D_in_obj.py` (Overture Maps' Buildings theme,
+  confirmed ODbL directly against Overture's own release notes) both
+  produce `buildings.obj`/`buildings.svs` under the
+  **Open Database License (ODbL)** — see `import/README.md`'s own
+  "Data sources" table for the full breakdown, including per-script trees
+  support. Unlike everything else in this section, ODbL isn't just an
+  attribution ask: redistributing a database built from this data (not the
+  SOLARCHVISION-BIM project itself, but someone's *own* OBJ/SVS output,
+  if they share it onward) carries a share-alike requirement, similar in
+  spirit to GPL but for data. None of this output is committed to this
+  repo or bundled in `dist/` — the matching GitHub Actions workflows
+  (`osm-3d-import-js.yml`, `osm-3d-import-py.yml`,
+  `overture-3d-import.yml`) just run the script on demand and hand back
+  an ephemeral build artifact to whoever triggered it.
 - **X3D viewer (HTML export only)** — `export_objects_HTML.pde` loads
   `x3dom.js`/`x3dom.css` from `x3dom.org`'s own CDN into the exported HTML
   file, not into `dist/` itself. X3DOM is dual-licensed MIT/GPL-3 (confirmed
