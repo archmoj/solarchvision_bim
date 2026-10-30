@@ -241,6 +241,55 @@ anything new to the app.
   file, not into `dist/` itself. X3DOM is dual-licensed MIT/GPL-3 (confirmed
   from its own `LICENSE` file), so either applies.
 
+### A privacy note on these calls
+
+Every call above is a direct HTTP request from the machine running
+SOLARCHVISION-BIM (or `import/`'s scripts) to that service — there's no
+proxy or intermediary server of this project's own in between. Two things
+that necessarily travel with a direct request like that are worth knowing
+if a project's study location is personally identifying (a home address,
+say, rather than a public site):
+
+- **The requesting IP address** — standard for any direct HTTP request, and
+  enough on its own for the receiving service to derive a rough
+  geolocation (ISP/region), independent of anything else in the request.
+- **The exact query itself** — most of these calls include the project's
+  latitude/longitude directly as a parameter (elevation, satellite
+  texture, and Overpass/OSM queries all do this), since that's what makes
+  the result useful. Google Static Maps specifically also requires a
+  personal or organizational `GOOGLE_STATIC_MAPS_API_KEY`, which Google
+  ties to whichever Google Cloud account that key belongs to — a more
+  direct identity link than anything else in this list, and the only one
+  of these calls where supplying credentials is involved at all.
+
+None of this is particular to SOLARCHVISION-BIM — it's just what a direct
+HTTPS request *is* — and whether it matters depends entirely on whether the
+location being studied is one the person would rather not have associated
+with their network/IP or account in a third party's logs. A few things
+someone could **possibly** do about it, each a genuine trade-off rather
+than a complete fix:
+
+- **Query a nearby public point instead of the exact address** — offsetting
+  the project's coordinates by some distance before fetching elevation,
+  imagery, or OSM data decouples the request from the precise location,
+  at the cost of the fetched data (terrain, imagery, nearby trees) no
+  longer matching the real site exactly.
+- **Route the traffic through a VPN or proxy** — addresses the IP-based
+  exposure specifically, not the coordinates in the query itself; the
+  `import/` scripts already read `HTTPS_PROXY`/`HTTP_PROXY` (documented in
+  `import/README.md`, there for corporate-firewall reasons, but usable for
+  this too), and `--overpass-url` already lets OSM queries go to a
+  self-hosted or different Overpass instance instead of the public ones.
+- **Skip `GOOGLE_STATIC_MAPS_API_KEY` entirely** — this is already the
+  default: without it, satellite texture downloads stay on Esri's
+  key-less endpoint rather than ever reaching Google, avoiding that
+  particular account-level link altogether.
+
+This project doesn't control any of the receiving services' own logging,
+retention, or data-sharing practices — their own privacy policies (not
+this file) are the actual authority on what each one does with a request
+once received.
+
 ---
 
 This list covers `dist/lib/`, the bundled assets, and the live data sources
