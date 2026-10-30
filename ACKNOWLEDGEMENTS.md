@@ -13,6 +13,32 @@ Laboratory, since the original `collaboration.cmc.ec.gc.ca` link (Environment
 Canada's internal collaboration portal) is no longer reachable from outside
 Environment Canada's own network.
 
+## Prof. Dr. Farshad Nasrollahi, Technische Universität Berlin
+
+The author thanks Prof. Dr. Farshad Nasrollahi, co-author of the
+foundational SOLARCHVISION publication
+[*Intelligent Design using Solar-Climatic Vision*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
+(Young Cities Research Paper Series, Volume 09, 2014), for his guidance
+and collaboration during the Young Cities Research Project at TU Berlin.
+
+That volume's own acknowledgements, in turn, credit a wider circle of
+support this project's early research grew out of: the German Federal
+Ministry of Education and Research (BMBF), which funded the Young Cities
+Research Project, and the German Academic Exchange Service (DAAD); TU
+Berlin's Chair of Building Technology and Architectural Design and its
+chairman, Prof. Dipl.-Ing. Claus Steffan, along with Prof. Dr. Rudolf
+Schäfer, the Young Cities project's director; Environment Canada's
+National Climate Data and Information Archive, the Iran Meteorological
+Organization, and the U.S. Department of Energy, for weather and climate
+data; Dr. Mohammad Yousef Nili, Dr. Mansoureh Tahbaz, Dr. Ali Namazian,
+and Dr. Hadi Nadimi at Shahid Beheshti University in Tehran, and Dr.
+Robert Off and Dr. Rainer E. Blum at Anhalt University of Applied
+Sciences in Dessau, for their reflections on aspects of that work;
+colleagues at TU Berlin and R.M.M. Solarch Studio; Hossein Farahani, for
+the photography of Iran's sky, landscape, and architecture that
+illustrates that volume; and Cornelia Saalmann, Sharon Heidenreich, and
+büro-d, for its editing, proofreading, and layout.
+
 ## Thank you
 
 SOLARCHVISION-BIM exists on top of other people's work — software, data,
@@ -88,4 +114,4 @@ and under what terms; this is the human version of that list: thank you to
 This list is kept by hand and almost certainly incomplete somewhere. If
 your name, project, or work should be here and isn't, please
 [open an issue](https://github.com/archmoj/solarchvision_bim/issues) or a
-pull request — it would be added.
+pull request — it'll be added.
