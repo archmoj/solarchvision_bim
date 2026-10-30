@@ -79,7 +79,9 @@ Or use SSH if you have an SSH key configured with GitHub:
 git clone git@github.com:archmoj/solarchvision_bim.git
 ```
 
-Pre-built files and launch requirements can vary by release. If the application does not start, check the repository instructions and the files supplied in `dist` for your platform.
+Pre-built files and launch requirements can vary by release. If the application does not start, check the [`dist/` instructions](dist/README.md) for your platform.
+
+Prefer to run it from source, or contribute code? See [CONTRIBUTING.md](CONTRIBUTING.md) for installing Processing and building/running the sketch directly.
 
 ### 2. Try a first study
 
@@ -414,6 +416,8 @@ SOLARCHVISION-BIM is open source. If it is useful to your work:
 - **Explore the code and contribute** improvements, documentation, or bug reports.
 
 When reporting an issue, include your operating system, the steps to reproduce the problem, the relevant dataset or workflow, and any error message that may help diagnose it.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for installing Processing, running the application from source, running the test suite, and building a distributable.
 
 ## License
 
