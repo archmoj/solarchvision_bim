@@ -47,6 +47,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
+      # build-dist.sh's own first move is `rm -rf dist/`, which would
+      # take dist/README.md out with it - stash a copy here, before that
+      # happens, so it can be copied back into dist/linux-amd64/ below,
+      # alongside what actually gets uploaded (build-dist.sh's own output
+      # never had it in the first place - it's dist/README.md, not
+      # dist/<variant>/README.md).
+      - name: Preserve dist/README.md
+        run: cp dist/README.md /tmp/dist-README.md
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -76,6 +85,9 @@ jobs:
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
           ./build-dist.sh linux-amd64
+
+      - name: Restore dist/README.md into the build output
+        run: cp /tmp/dist-README.md dist/linux-amd64/README.md
 
       - name: smoke-test the build
         env:
@@ -112,6 +124,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
+      # Same reason as build-linux's own identical step: build-dist.sh's
+      # `rm -rf dist/` would otherwise take dist/README.md out with it,
+      # and its per-variant output never had it to begin with.
+      - name: Preserve dist/README.md
+        run: cp dist/README.md /tmp/dist-README.md
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -142,6 +160,9 @@ jobs:
           chmod +x build-dist.sh
           ./build-dist.sh windows-amd64
 
+      - name: Restore dist/README.md into the build output
+        run: cp /tmp/dist-README.md dist/windows-amd64/README.md
+
       - name: Upload dist
         uses: actions/upload-artifact@v4
         with:
@@ -163,6 +184,15 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
+
+      # Same reason as build-linux's own identical step: build-dist.sh's
+      # `rm -rf dist/` would otherwise take dist/README.md out with it,
+      # and its per-variant output never had it to begin with. One stash
+      # covers both macos-x86_64 and macos-aarch64 below - they share
+      # the same dist/README.md, just copied into each variant's own
+      # output folder.
+      - name: Preserve dist/README.md
+        run: cp dist/README.md /tmp/dist-README.md
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -191,6 +221,11 @@ jobs:
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
           ./build-dist.sh macos-x86_64 macos-aarch64
+
+      - name: Restore dist/README.md into both build outputs
+        run: |
+          cp /tmp/dist-README.md dist/macos-x86_64/README.md
+          cp /tmp/dist-README.md dist/macos-aarch64/README.md
 
       - name: Check both builds are structurally complete
         run: |
