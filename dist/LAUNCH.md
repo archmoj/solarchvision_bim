@@ -83,11 +83,13 @@ certified engineering calculations and do not replace professional review or
 specialist simulations where required (see the project's `README.md`).
 
 The third-party libraries bundled in `lib/` (JOGL, GlueGen, iText, Bouncy
-Castle, Apache Commons, and others) carry their own licenses, separate from
-this project's own GPL-2.0 — see `THIRD_PARTY_LICENSES.md` (same place as
-`LICENSE.md` above: next to this file in a CI build, or
+Castle, Apache Commons, and others), the bundled font and imagery, and the
+weather/elevation/imagery data sources the application fetches live all
+carry their own separate terms, apart from this project's own GPL-2.0 — see
+`THIRD_PARTY_LICENSES.md` (same place as `LICENSE.md` above: next to this
+file in a CI build, or
 [on GitHub](https://github.com/archmoj/solarchvision_bim/blob/main/THIRD_PARTY_LICENSES.md)
-otherwise) for exactly which license applies to which jar.
+otherwise) for exactly which terms apply to what.
 
 ## Troubleshooting
 

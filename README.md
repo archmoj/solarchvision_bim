@@ -421,4 +421,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for installing Processing, running the ap
 
 ## License
 
-The source code and documentation are released under the [GNU General Public License v2](LICENSE.md). Bundled third-party libraries (in `dist/lib/`, once built) carry their own separate licenses — see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+The source code and documentation are released under the [GNU General Public License v2](LICENSE.md). Bundled third-party libraries (in `dist/lib/`, once built), the bundled font and imagery, and the external weather/elevation/imagery data sources used at runtime all carry their own separate terms — see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
