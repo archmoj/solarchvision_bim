@@ -65,6 +65,21 @@ chmod +x solarchvision_bim_linux-amd64   # if it isn't already executable
    - Alternatively: **System Settings → Privacy & Security** usually shows an
      "Open Anyway" button right after a blocked first launch attempt.
 
+## License
+
+SOLARCHVISION-BIM is distributed under the **GNU General Public License v2**
+(GPL-2.0) — see [`LICENSE.md`](../LICENSE.md) at the repository root for the
+full text. As that license states, the program is provided **"as is," without
+warranty of any kind**, express or implied — read `LICENSE.md` before relying
+on it for anything you consider load-bearing. Outputs from the application
+are not certified engineering calculations and do not replace professional
+review or specialist simulations where required (see the main
+[project README](../README.md)).
+
+The third-party libraries bundled in `lib/` (JOGL, GlueGen, iText, Bouncy
+Castle, Apache Commons, and others) carry their own licenses, separate from
+this project's own GPL-2.0.
+
 ## Troubleshooting
 
 - **"Cannot run sketch without a display" (Linux):** your JRE is headless — see
