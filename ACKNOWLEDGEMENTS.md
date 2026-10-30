@@ -21,6 +21,7 @@ foundational SOLARCHVISION publication
 (Young Cities Research Paper Series, Volume 09, 2014), for his guidance
 and collaboration during the Young Cities Research Project at TU Berlin.
 
+## Further reading
 That volume's own acknowledgements, in turn, credit a wider circle of
 support this project's early research grew out of: the German Federal
 Ministry of Education and Research (BMBF), which funded the Young Cities
@@ -31,13 +32,33 @@ Schäfer, the Young Cities project's director; Environment Canada's
 National Climate Data and Information Archive, the Iran Meteorological
 Organization, and the U.S. Department of Energy, for weather and climate
 data; Dr. Mohammad Yousef Nili, Dr. Mansoureh Tahbaz, Dr. Ali Namazian,
-and Dr. Hadi Nadimi at Shahid Beheshti University in Tehran, and Dr.
-Robert Off and Dr. Rainer E. Blum at Anhalt University of Applied
+and Dr. Hadi Nadimi at Shahid Beheshti University in Tehran, and
+Dr. Robert Off and Dr. Rainer E. Blum at Anhalt University of Applied
 Sciences in Dessau, for their reflections on aspects of that work;
 colleagues at TU Berlin and R.M.M. Solarch Studio; Hossein Farahani, for
 the photography of Iran's sky, landscape, and architecture that
 illustrates that volume; and Cornelia Saalmann, Sharon Heidenreich, and
 büro-d, for its editing, proofreading, and layout.
+
+This project's research draws on a far larger body of work than can be
+named individually above. The References section of
+[*Intelligent Design using Solar-Climatic Vision*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
+the Young Cities Research Paper Series volume this project grew out of
+runs many pages longer, citing contributors, institutions, and data
+sources across decades of related work. See that volume's own reference
+list for the full picture — it's where this book's (and this project's)
+research is actually grounded.
+
+## Additional research collaborators and data providers
+
+The author also thanks
+[Dr. Kaveh Rashidzadeh](https://www.linkedin.com/in/kaveh-rashidzadeh-bba3a91a/),
+[Dr. Farzin Haghparast](https://www.linkedin.com/in/farzin-haghparast-2a295840/),
+and Arash Hafezipour for their invaluable input during this project's
+research, and **Meteonorm**/**Meteotest** (the Swiss meteorological-data
+software and the company behind it) and **White Box Technologies**
+(a weather-file data provider) for the weather and climate data their
+tools and services have contributed to this work along the way.
 
 ## Thank you
 
