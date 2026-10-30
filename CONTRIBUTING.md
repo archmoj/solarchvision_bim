@@ -2,7 +2,7 @@
 
 This covers getting the project running **from source** for development. If
 you just want to use the application, see the [project README](README.md#get-started)
-or grab a pre-built binary from [`dist/`](dist/README.md) instead — nothing
+or grab a pre-built binary from [`dist/`](dist/LAUNCH.md) instead — nothing
 here is required for that.
 
 ## Prerequisites
@@ -151,7 +151,7 @@ setup, in [`test/image/README.md`](test/image/README.md).
 Needs Processing 4.5.x+ specifically (`--export` doesn't exist in the
 legacy CLI) at `PROCESSING_HOME` (`~/processing/4.5.2` by default). See
 `build-dist.sh`'s own header comment for what it does and why macOS always
-builds without a bundled JVM; `dist/README.md` is what end users running
+builds without a bundled JVM; `dist/LAUNCH.md` is what end users running
 the result actually see.
 
 ## Where to go next

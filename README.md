@@ -79,7 +79,7 @@ Or use SSH if you have an SSH key configured with GitHub:
 git clone git@github.com:archmoj/solarchvision_bim.git
 ```
 
-Pre-built files and launch requirements can vary by release. If the application does not start, check the [`dist/` instructions](dist/README.md) for your platform.
+Pre-built files and launch requirements can vary by release. If the application does not start, check the [`dist/` launch instructions](dist/LAUNCH.md) for your platform.
 
 Prefer to run it from source, or contribute code? See [CONTRIBUTING.md](CONTRIBUTING.md) for installing Processing and building/running the sketch directly.
 
