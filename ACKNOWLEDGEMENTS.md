@@ -125,6 +125,12 @@ and under what terms; this is the human version of that list: thank you to
   countless answered questions this project's development has, directly
   or indirectly, leaned on along the way.
 
+- **[GitHub](https://github.com/)** and **[GitHub Actions](https://github.com/features/actions)**
+  for hosting this repository and for the CI that builds, tests, and
+  packages it on every push — `ci.yml`, `dist.yml`, `test-dist.yml`,
+  `image-tests.yml`, and the import workflows all run on it, free of
+  charge for a public repository.
+
 - And everyone who's filed an issue, opened a pull request, starred the
   repository, or just used SOLARCHVISION-BIM and shared feedback — an
   open-source project like this one keeps going because people care
