@@ -357,6 +357,8 @@ These three scenarios give a project team a way to explore "distinctly on the hi
 
 ## Method and publications
 
+SOLARCHVISION-BIM is the product of the author's own research into solar-climatic design, carried on for decades and implemented by hand — connecting weather data, building geometry, and environmental analysis into one tool, one design question at a time. The publications below mark some of that work's milestones, not where it started or where it stops.
+
 The following publications describe the principles behind SOLARCHVISION's solar-climatic approach and show how weather data, solar orientation, building geometry, and urban context can inform design decisions.
 
 - Samimi, Mojtaba, and Farshad Nasrollahi. [*Intelligent Design using Solar-Climatic Vision: Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8). Young Cities Research Paper Series, Volume 09, 2014.
