@@ -171,18 +171,45 @@ folders already have) would bring this folder in line with the rest and
 cost nothing, now that the source is known. Worth doing regardless of
 whether the terms strictly require it.
 
-### World map tiles — provenance still not documented
+### World map tiles — Natural Resources Canada (NRCan), Open Government Licence – Canada
 
-`input/images/worldmap/` (1,244 tiles, ~131 MB) has **no `credit.md` and
-no embedded metadata** (checked directly — EXIF/PNG text chunks are
-empty). The tile filenames follow a bounding-box naming pattern consistent
-with a WMS export (plausibly the same family of government/NASA sources as
-the other imagery, given how this project sources everything else), but
-that's an inference, not a confirmed source — unlike `people/` above,
-nothing here has actually been tracked down yet. **This is still a real
-gap**: if these came from a source with its own license, that should be
-recorded the same way the other folders now are, before this gets
-redistributed more widely.
+`input/images/worldmap/` (1,244 tiles, ~131 MB)
+
+The 11 `L_*`-prefixed tiles — bounding-box crops named after specific
+Canadian cities/regions (`Vancouver`, `Montreal`/`Montréal`, `Calgary`,
+`Edmonton`, `Winnipeg`, `Halifax`, `Toronto`, `Ottawa`, `Kingston`,
+`Québec-City`/`Ville-de-Québec`, and one named `Pan-Am-2015`, matching the
+2015 Pan American Games held in Toronto) — are confirmed adapted from an
+NRCan product, taken from
+[NRCan's Geomatics download directory](https://natural-resources.canada.ca/science-data/science-research/geomatics/download-directory-documentation)
+around 2015.
+
+The remaining 1,233 tiles (`A_`/`B_`/`C_`/`D_`/`E_` prefixes, bounding-box
+coordinates, `EN_FR_` suffix) weren't separately confirmed, but checking
+NRCan's own data catalog while documenting the `L_*` tiles above turned up
+an exact match worth noting: NRCan publishes an **"Atlas of Canada
+Small-scale Reference Maps"** series — World and Canada maps, bilingual
+English/French, JPG format — which is exactly this filename pattern
+(bilingual JPG tiles). I haven't independently confirmed byte-for-byte
+that these specific files came from that specific product rather than a
+close sibling in the same NRCan collection, but given the confirmed `L_*`
+tiles are from the same download directory, this is very likely the same
+or an adjacent NRCan source, not a coincidence.
+
+Either way, the license is the same: NRCan's geospatial downloads
+(`ftp.maps.canada.ca`/`geogratis`) are published under the
+**[Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada)**
+— the same license already cited above for the Environment Canada weather
+feeds — confirmed directly against NRCan's own catalog entries for this
+specific map series, not assumed from the department alone. OGL-Canada
+permits free reuse, including commercial use, modification, and
+redistribution, with an attribution requirement; the standard form used
+elsewhere for Government of Canada geospatial data is along the lines of
+"Contains information licensed under the Open Government Licence –
+Canada." Since these tiles are described as adapted (cropped to a
+project's lat/lon, not used unmodified), that's consistent with what
+OGL-Canada allows. `input/images/worldmap/credit.md` now records this,
+matching the other five image folders.
 
 ### Tree imagery — procedurally generated, not third-party content
 
