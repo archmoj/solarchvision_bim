@@ -13,8 +13,8 @@
 # state (commit, branch, whether the working tree was clean) it was
 # built from, since nothing else in the dist folder says that once it's
 # been unzipped somewhere on its own - and copies LICENSE.md,
-# THIRD_PARTY_LICENSES.md, package.json, README.md and CITATION.cff
-# there too (the last with
+# THIRD_PARTY_LICENSES.md, ACKNOWLEDGEMENTS.md, package.json, README.md
+# and CITATION.cff there too (the last with
 # version/date-released filled in, since the committed one deliberately
 # leaves those out - see the loop below).
 #
@@ -293,6 +293,7 @@ EOF
 
   cp LICENSE.md "$OUT/LICENSE.md"
   cp THIRD_PARTY_LICENSES.md "$OUT/THIRD_PARTY_LICENSES.md"
+  cp ACKNOWLEDGEMENTS.md "$OUT/ACKNOWLEDGEMENTS.md"
   cp package.json "$OUT/package.json"
   # The whole thing, not an extract - most of it (GUI usage, keyboard
   # shortcuts, the command line) is exactly what someone running a

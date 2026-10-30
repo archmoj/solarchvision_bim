@@ -1,12 +1,7 @@
 # SOLARCHVISION-BIM
 # Copyright (C) 2014-2026 Mojtaba Samimi (M.Arch)
 
-## Acknowledgement
-The author would like to acknowledge the assistance from Mr. Lewis Poulin at
-the Canadian Meteorological Center for his assistance between 2014 and 2016 in
-learning more about deterministic and ensemble numerical weather forecast datasets,
-summarized in part in his [presentations](http://collaboration.cmc.ec.gc.ca/cmc/cmoi/product_guide/docs/REFcsts/ICEBO2013_Montreal_LewisPoulin_20131010-track4B-Session19_final.pdf) at the 2013 International Conference for
-Enhanced Building Operations, Montreal, 2013.
+See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for acknowledgements and thanks.
 
 ## Programming language
 This SOLARCHVISION project is mainly developed in [Processing](https://processing.org/) on top of Java.
