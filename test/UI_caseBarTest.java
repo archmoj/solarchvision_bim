@@ -287,8 +287,13 @@ class UI_caseBarTest {
 
     app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
 
-    // roundTo((100 - 50) / 12, 0.5) == 4.0
-    assertEquals(4.0f, app.STUDY.dayIncrement, 0.001f);
+    // There are endDay - startDay - 1 == 11 dayIncrement-sized steps
+    // between the first drawn group's center (j == startDay, which
+    // left-click keeps centered on TIME.date) and the last drawn
+    // group's center (j == endDay - 1) - not endDay - startDay == 12 -
+    // so the last group's center lands on the dragged-to day too.
+    // roundTo((100 - 50) / 11, 0.5) == 4.5
+    assertEquals(4.5f, app.STUDY.dayIncrement, 0.001f);
   }
 
   @Test
@@ -308,6 +313,136 @@ class UI_caseBarTest {
     app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
 
     assertEquals(1f, app.STUDY.dayIncrement, 0.001f);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_dividesByTheStepCountNotTheGroupCount_evenWithANonZeroStartDay () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.TIME.date = 10;
+    app.STUDY.startDay = 2;
+    app.STUDY.endDay = 8; // daySteps == endDay - startDay - 1 == 5, not the 6-group count
+    app.X_clicked = 279; // -> dayOfYearFromClick(279, 0, 365) == 200
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    // roundTo((200 - 10) / 5, 0.5) == 38.0 - dividing by the 6-group
+    // count instead (190 / 6 == 31.67, rounding to 31.5) would give a
+    // clearly different value, so this pins down which one is used.
+    assertEquals(38.0f, app.STUDY.dayIncrement, 0.001f);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_guardsTheStepCountAgainstDivideByZero_withOnlyOneGroup () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.TIME.date = 50;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 1; // only one group drawn -> endDay - startDay - 1 == 0, floored to 1
+    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    // Without the >= 1 floor this would divide by zero.
+    // roundTo((100 - 50) / 1, 0.5) == 50.0
+    assertEquals(50.0f, app.STUDY.dayIncrement, 0.001f);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_setsDaysMergedCountToTheRoundedDayIncrement () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.vm.daysMergedCount(0);
+    app.TIME.date = 50;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 12; // daySteps == 11
+    app.STUDY.daysMergedCount = 1; // different from the target, so the change is observable
+    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    // selectedValue == 4.5 (see ...setsDayIncrementFromTheDragSpan above);
+    // round(4.5) == 5 - Java's Math.round rounds a .5 tie up, the same
+    // direction that keeps the last band's center from falling short.
+    assertEquals(5, app.STUDY.daysMergedCount);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_zeroLengthDragSetsDaysMergedCountToOneToo () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.vm.daysMergedCount(0);
+    app.TIME.date = 100;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 12;
+    app.STUDY.daysMergedCount = 5; // different from the target, so the change is observable
+    // dayOfYearFromClick(179, 0, 365) == 100, a zero-length drag - see
+    // ...neverGoesBelowOne above, which pins the matching dayIncrement
+    // clamp.
+    app.X_clicked = 179;
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    assertEquals(1, app.STUDY.daysMergedCount);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_clampsDaysMergedCountToTheSpinnersOwnUpperBound () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.vm.daysMergedCount(0);
+    app.TIME.date = 182.5f;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 2; // daySteps == endDay - startDay - 1 == 1
+    app.STUDY.daysMergedCount = 1; // different from the clamped target, so the change is observable
+    app.X_clicked = 79; // -> dayOfYearFromClick(79, 0, 365) == 0, wraps to 365 since TIME.date > 0
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    // selectedValue == roundTo((365 - 182.5) / 1, 0.5) == 182.5 - "Day
+    // Increment"'s own upper bound. round(182.5) == 183 (ties round up),
+    // which handleDaysClick must still clamp to "Days Merged Count"'s
+    // own, lower, 182 upper bound rather than pass 183 straight through
+    // (which putValueAction would otherwise reject outright, leaving
+    // daysMergedCount unchanged).
+    assertEquals(182.5f, app.STUDY.dayIncrement, 0.001f);
+    assertEquals(182, app.STUDY.daysMergedCount);
+  }
+
+  @Test
+  void handleDaysClick_rightClick_leavesBothValuesAloneWhenAlreadyAtTheBestFit () {
+    app.allActions = new java.util.HashMap<>();
+    app.vm.dayIncrement(0);
+    app.vm.daysMergedCount(0);
+    app.TIME.date = 50;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 12; // daySteps == 11
+    app.STUDY.dayIncrement = 4.5f; // already the value this drag would compute
+    app.STUDY.daysMergedCount = 5; // already round(4.5) == 5
+    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.Y_clicked = 10;
+    app.mouseButton = app.RIGHT;
+    app.UI_caseBar.update = false;
+
+    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+
+    // Neither value actually changes here, so neither putValueAction
+    // should fire its onChanged/revise callback - UI_caseBar.update
+    // staying false is the observable proof that happened for both
+    // "Day Increment" and "Days Merged Count", not just one of them.
+    assertEquals(4.5f, app.STUDY.dayIncrement, 0.001f);
+    assertEquals(5, app.STUDY.daysMergedCount);
+    assertFalse(app.UI_caseBar.update);
   }
 
   @Test

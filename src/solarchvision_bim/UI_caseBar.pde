@@ -187,9 +187,38 @@ class UI_caseBar {
     if (mouseButton == RIGHT) {
       float _DATE2 = dayOfYearFromClick(X_clicked, x1, x2);
       if (TIME.date > _DATE2) _DATE2 += 365;
-      float selectedValue = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
+
+      // drawDaysBands centers group j's band at j * dayIncrement + beginDay
+      // (STUDY.startDay is a hardcoded 0, so the first drawn group, j ==
+      // STUDY.startDay, is centered at beginDay alone - which left-click
+      // keeps equal to TIME.date, landing the clicked start day in the
+      // middle of the first band). The last group actually drawn is
+      // j == STUDY.endDay - 1 (drawDaysBands loops j < STUDY.endDay), so
+      // there are only (STUDY.endDay - STUDY.startDay - 1) dayIncrement
+      // steps between the first group's center and the last group's -
+      // one fewer than the (STUDY.endDay - STUDY.startDay) group count
+      // itself. Dividing by the step count, not the group count, is what
+      // places the last group's center exactly on the clicked end day,
+      // the same way the first group's center sits on the start day.
+      int daySteps = STUDY.endDay - STUDY.startDay - 1;
+      if (daySteps < 1) daySteps = 1;
+      float selectedValue = funcs.roundTo((_DATE2 - TIME.date) / float(daySteps), 0.5);
       if (selectedValue < 1) selectedValue = 1;
       runScriptLine("Day Increment " + selectedValue);
+
+      // Keep daysMergedCount in step with that same spacing so adjacent
+      // bands tile the period without a gap between them. selectedValue
+      // was just snapped to the nearest 0.5 above, so it only ever lands
+      // on a whole number or a whole number plus exactly .5 - round()
+      // (ties up), not truncation, gives an exact match in the former
+      // case and rounds up (a bounded, predictable half-day overlap) in
+      // the latter, rather than always falling short.
+      int bestFitDaysMergedCount = round(selectedValue);
+      if (bestFitDaysMergedCount < 1) bestFitDaysMergedCount = 1;
+      if (bestFitDaysMergedCount > 182) bestFitDaysMergedCount = 182;
+      if (bestFitDaysMergedCount != STUDY.daysMergedCount) {
+        runScriptLine("Days Merged Count " + bestFitDaysMergedCount);
+      }
     }
   }
 
