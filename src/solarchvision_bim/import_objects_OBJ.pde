@@ -1,4 +1,27 @@
+// One-shot: whether the very next import_objects_OBJ() call should open
+// objGlbShowImportOptionsDialog() (fileSelected.pde) before doing
+// anything else - armed only by selectFile_ImportObj(), the real,
+// interactive "pick a file from the menu" path, same shape as
+// ifcImportShowOptionsDialog (import_objects_IFC.pde) for IFC's own
+// options. Defaults to (and, every other way import_objects_OBJ() can be
+// reached - a script's own IMPORT_OBJ command, or a test calling
+// import_objects_OBJ() directly - stays) false, so none of those paths
+// ever see a dialog pop up.
+boolean objImportShowOptionsDialog = false;
+
 void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Consumed (reset) here regardless of whether the dialog is shown or
+  // how the person answers it - see ifcImportShowOptionsDialog's own
+  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // already a real path on disk, not back when selectFile_ImportObj()
+  // first asked for one. A cancelled dialog aborts the whole import
+  // immediately, before touching allPoints/allFaces or printing anything
+  // below - as if import_objects_OBJ() had never been called at all.
+  if (objImportShowOptionsDialog) {
+    objImportShowOptionsDialog = false;
+    if (!objGlbShowImportOptionsDialog("OBJ import options")) return;
+  }
+
   println("Importing OBJ. Please wait...");
   showWaitCursor();
 
@@ -67,8 +90,13 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
       float x = cx + sx * float(parts[1]);
       float y = cy + sy * float(parts[2]);
       float z = cz + sz * float(parts[3]);
-      //importVerticeNumber.append(allPoints.create(x, -z, y));
-      importVerticeNumber.append(allPoints.create(x, y, z));
+      // importSwapAxisYZ (fileSelected.pde) - off by default, so this
+      // stays the plain passthrough it already was.
+      if (importSwapAxisYZ) {
+        importVerticeNumber.append(allPoints.create(x, -z, y));
+      } else {
+        importVerticeNumber.append(allPoints.create(x, y, z));
+      }
     } else if (tag.equalsIgnoreCase("f")) {
       int FaceDegree = parts.length - 1;
       int[] newFace = new int[FaceDegree];

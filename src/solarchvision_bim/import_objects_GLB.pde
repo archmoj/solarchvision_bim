@@ -59,7 +59,29 @@ final int GLB_COMPONENT_UNSIGNED_SHORT = 5123;
 final int GLB_COMPONENT_UNSIGNED_INT   = 5125;
 final int GLB_COMPONENT_FLOAT          = 5126;
 
+// One-shot: whether the very next import_objects_GLB() call should open
+// objGlbShowImportOptionsDialog() (fileSelected.pde) before doing
+// anything else - armed only by selectFile_ImportGlb(), the real,
+// interactive "pick a file from the menu" path, same shape as
+// objImportShowOptionsDialog (import_objects_OBJ.pde) and
+// ifcImportShowOptionsDialog (import_objects_IFC.pde). Defaults to (and,
+// every other way import_objects_GLB() can be reached stays) false, so
+// a script command or a test calling import_objects_GLB() directly never
+// sees a dialog pop up.
+boolean glbImportShowOptionsDialog = false;
+
 void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Consumed (reset) here regardless of whether the dialog is shown or
+  // how the person answers it - see ifcImportShowOptionsDialog's own
+  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // already a real path on disk. A cancelled dialog aborts the whole
+  // import immediately, before touching allPoints/allFaces or printing
+  // anything below - as if import_objects_GLB() had never been called.
+  if (glbImportShowOptionsDialog) {
+    glbImportShowOptionsDialog = false;
+    if (!objGlbShowImportOptionsDialog("GLB import options")) return;
+  }
+
   println("Importing GLB. Please wait...");
   showWaitCursor();
 
@@ -367,17 +389,22 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
 
       worldMatrix.mult(local, world);
 
-      // Direct passthrough, no axis swap - matching
-      // import_objects_OBJ.pde's own choice: its "allPoints.create(x,
-      // -z, y)" Y-up/Z-up conversion sits commented out there in favor
-      // of a plain "allPoints.create(x, y, z)", so an imported OBJ keeps
-      // whatever axes its own file used. GLB follows that same
-      // established behavior here, rather than applying a swap OBJ
-      // doesn't - keeping the two importers consistent with each other
-      // is worth more than one of them being spec-"correct" on its own.
-      float finalX = glb_cx + glb_sx * world.x;
-      float finalY = glb_cy + glb_sy * world.y;
-      float finalZ = glb_cz + glb_sz * world.z;
+      // importSwapAxisYZ (fileSelected.pde) - shared with
+      // import_objects_OBJ.pde's own "allPoints.create(x, -z, y)" vs
+      // "allPoints.create(x, y, z)" choice, so the two importers' axis
+      // treatment always matches each other, whichever way the person
+      // importing sets it. Off by default - the same plain passthrough
+      // this already was.
+      float finalX, finalY, finalZ;
+      if (importSwapAxisYZ) {
+        finalX = glb_cx + glb_sx * world.x;
+        finalY = glb_cy + glb_sy * (-world.z);
+        finalZ = glb_cz + glb_sz * world.y;
+      } else {
+        finalX = glb_cx + glb_sx * world.x;
+        finalY = glb_cy + glb_sy * world.y;
+        finalZ = glb_cz + glb_sz * world.z;
+      }
 
       pointIndex[i] = allPoints.create(finalX, finalY, finalZ);
     }

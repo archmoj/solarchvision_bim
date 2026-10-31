@@ -11,11 +11,54 @@ void selectFile_SaveAs () {
 }
 
 void selectFile_ImportObj () {
+  // Arms objImportShowOptionsDialog (import_objects_OBJ.pde) the same
+  // way selectFile_ImportIfc() below arms ifcImportShowOptionsDialog for
+  // its own five options.
+  objImportShowOptionsDialog = true;
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
 void selectFile_ImportGlb () {
+  // Arms glbImportShowOptionsDialog (import_objects_GLB.pde) the same way.
+  glbImportShowOptionsDialog = true;
   selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
+}
+
+// Whether to rotate the file's own Y-up axis convention into this app's
+// own (commonly Z-up) one - see import_objects_OBJ.pde's own
+// "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
+// and import_objects_GLB.pde's matching one, for why this is off by
+// default and shared between the two formats: a plain OBJ has no spec-
+// mandated up-axis of its own, and keeping the two importers' axis
+// treatment consistent with each other matters more than either being
+// "correct" in isolation - this one checkbox lets the PERSON importing
+// decide, per import, rather than either importer silently guessing.
+boolean importSwapAxisYZ = false;
+
+// Shared by both formats (one option, one checkbox) since that's exactly
+// the axis convention they already agree to share - see
+// import_objects_OBJ.pde's/import_objects_GLB.pde's own
+// objImportShowOptionsDialog/glbImportShowOptionsDialog for how each
+// arms this the same way ifcImportShowOptionsDialog (below) arms IFC's
+// own five-option version of the same dialog.
+boolean objGlbShowImportOptionsDialog (String title) {
+
+  javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(swapAxisBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, title, javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where it was unless this dialog's own OK button is
+  // actually pressed - a cancelled dialog must never half-apply a choice
+  // (same reasoning as ifcShowImportOptionsDialog's own comment below).
+  importSwapAxisYZ = swapAxisBox.isSelected();
+
+  return true;
 }
 
 // Lets the person importing check/uncheck ifcImportFurniture/
@@ -147,6 +190,13 @@ void _fileSelected_ImportObj (File selectedFile) {
   String Filename = "";
 
   if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportIfc()'s own identical line
+    // below: cancelling the native file chooser itself never reaches
+    // import_objects_OBJ(), which is otherwise what consumes
+    // objImportShowOptionsDialog - without this, it would stay armed and
+    // pop the options dialog up on the next import_objects_OBJ() call
+    // regardless of how that one was started.
+    objImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
@@ -186,6 +236,14 @@ void _fileSelected_ImportGlb (File selectedFile) {
   String Filename = "";
 
   if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s own identical line
+    // above (and _fileSelected_ImportIfc()'s below): cancelling the
+    // native file chooser itself never reaches import_objects_GLB(),
+    // which is otherwise what consumes glbImportShowOptionsDialog -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_GLB() call regardless of how that one
+    // was started.
+    glbImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
