@@ -367,16 +367,17 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
 
       worldMatrix.mult(local, world);
 
-      // glTF is always Y-up (right-handed); this app is Z-up - swap Y
-      // and Z, negating the new Y, to convert. This is the same mapping
-      // import_objects_OBJ.pde's own commented-out
-      // "allPoints.create(x, -z, y)" line already spells out, left
-      // disabled there only because plain OBJ has no spec-mandated
-      // up-axis to convert FROM - glTF's is fixed, so this conversion is
-      // unambiguous here.
+      // Direct passthrough, no axis swap - matching
+      // import_objects_OBJ.pde's own choice: its "allPoints.create(x,
+      // -z, y)" Y-up/Z-up conversion sits commented out there in favor
+      // of a plain "allPoints.create(x, y, z)", so an imported OBJ keeps
+      // whatever axes its own file used. GLB follows that same
+      // established behavior here, rather than applying a swap OBJ
+      // doesn't - keeping the two importers consistent with each other
+      // is worth more than one of them being spec-"correct" on its own.
       float finalX = glb_cx + glb_sx * world.x;
-      float finalY = glb_cy + glb_sy * (-world.z);
-      float finalZ = glb_cz + glb_sz * world.y;
+      float finalY = glb_cy + glb_sy * world.y;
+      float finalZ = glb_cz + glb_sz * world.z;
 
       pointIndex[i] = allPoints.create(finalX, finalY, finalZ);
     }
