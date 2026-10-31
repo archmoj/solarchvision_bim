@@ -42,26 +42,35 @@ void selectFile_ImportPly () {
   selectInput("Select PLY file to import:", "_fileSelected_ImportPly", new File(Folder_Import + "/_.ply"));
 }
 
+void selectFile_ImportDae () {
+  // Arms daeImportShowOptionsDialog (import_objects_DAE.pde) the same way.
+  daeImportShowOptionsDialog = true;
+  selectInput("Select DAE file to import:", "_fileSelected_ImportDae", new File(Folder_Import + "/_.dae"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see import_objects_OBJ.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
 // and import_objects_GLB.pde's/import_objects_STL.pde's/import_objects_
-// DXF.pde's/import_objects_PLY.pde's matching ones, for why this is off
-// by default and shared across all five formats: none of OBJ/STL/DXF/PLY
-// has a spec-mandated up-axis of its own, and keeping every importer's
-// axis treatment consistent with the others matters more than any one of
-// them being "correct" in isolation - this one checkbox lets the PERSON
-// importing decide, per import, rather than any importer silently
-// guessing.
+// DXF.pde's/import_objects_PLY.pde's/import_objects_DAE.pde's matching
+// ones, for why this is off by default and shared across all six
+// formats: none of OBJ/STL/DXF/PLY/DAE has a single, reliably-declared
+// up-axis of its own (DAE's <up_axis> is read nowhere in this version -
+// see import_objects_DAE.pde's own header comment for why), and keeping
+// every importer's axis treatment consistent with the others matters
+// more than any one of them being "correct" in isolation - this one
+// checkbox lets the PERSON importing decide, per import, rather than any
+// importer silently guessing.
 boolean importSwapAxisYZ = false;
 
-// Shared by OBJ/GLB/STL/DXF/PLY (one option, one checkbox) since that's
-// exactly the axis convention they already agree to share - see
+// Shared by OBJ/GLB/STL/DXF/PLY/DAE (one option, one checkbox) since
+// that's exactly the axis convention they already agree to share - see
 // import_objects_OBJ.pde's/import_objects_GLB.pde's/import_objects_STL.
-// pde's/import_objects_DXF.pde's/import_objects_PLY.pde's own
-// objImportShowOptionsDialog/glbImportShowOptionsDialog/
-// stlImportShowOptionsDialog/dxfImportShowOptionsDialog/
-// plyImportShowOptionsDialog for how each arms this the same way
+// pde's/import_objects_DXF.pde's/import_objects_PLY.pde's/import_
+// objects_DAE.pde's own objImportShowOptionsDialog/
+// glbImportShowOptionsDialog/stlImportShowOptionsDialog/
+// dxfImportShowOptionsDialog/plyImportShowOptionsDialog/
+// daeImportShowOptionsDialog for how each arms this the same way
 // ifcImportShowOptionsDialog (below) arms IFC's own five-option version
 // of the same dialog.
 boolean axisSwapShowImportOptionsDialog (String title) {
@@ -414,6 +423,52 @@ void _fileSelected_ImportPly (File selectedFile) {
     // import_objects_STL()'s/import_objects_DXF()'s own calls just above
     // this one's siblings - import_objects_PLY() adds faces straight
     // into allFaces without ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportDae (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s/_fileSelected_ImportPly()'s own identical lines
+    // above (and _fileSelected_ImportIfc()'s below): cancelling the
+    // native file chooser itself never reaches import_objects_DAE(),
+    // which is otherwise what consumes daeImportShowOptionsDialog -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_DAE() call regardless of how that one
+    // was started.
+    daeImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_DAE(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s
+    // own calls just above this one's siblings - import_objects_DAE()
+    // adds faces straight into allFaces without ever calling
+    // model_changed() itself.
     model_changed();
 
     int number_of_allGroups_after = allGroups.num;

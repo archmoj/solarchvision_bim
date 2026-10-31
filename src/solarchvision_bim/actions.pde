@@ -310,6 +310,10 @@ void build_allActions() {
     selectFile_ImportPly();
   });
 
+  putAction("Import DAE", () -> {
+    selectFile_ImportDae();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });
