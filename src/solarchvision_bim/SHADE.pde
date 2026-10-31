@@ -54,7 +54,24 @@ class SHADE {
   float get_SolarImpact_atXYZ (float x, float y, float z, float x2, float y2, float z2, float x3, float y3, float z3) {
     float v = FLOAT_undefined;
     int q = this.findID_SolarImpact_atXYZ(x, y, z, x2, y2, z2, x3, y3, z3);
-    if (q >= 0) {
+    // impactDisplayDay < VertexSolar_amounts[WIN3D.impactTypeIndex].length
+    // mirrors win3DOverlay_dataFresh()'s own guard on allSolarImpacts.Image
+    // (SolarImpacts.pde) and draw_STUDY_layers.pde's own on
+    // STUDY.dayHighlightCandidates - the same "End Day" shrink leaves
+    // impactDisplayDay pointing past whatever's actually been (re)baked
+    // can reach here too: VertexSolar_amounts is sized off STUDY.endDay at
+    // global_functions.pde's own (re)allocation, but "End Day"'s own
+    // OnChange (react.applyCaseBarAndBake) only flags that stale - the
+    // actual resize/rebake happens incrementally, over however many later
+    // frames draw_WIN3D_layers() takes to work through it - and unlike
+    // those two call sites, nothing upstream already gates reaching this
+    // one on that data being fresh: WIN3D.shadingMode == Vertex_Solar is
+    // this path's only other condition (Faces.pde/Land3D.pde), unrelated
+    // to whether this particular array has caught up yet. Without this,
+    // a stale impactDisplayDay here throws ArrayIndexOutOfBoundsException
+    // instead of just rendering a visibly stale value.
+    if ((q >= 0) && (VertexSolar_amounts != null) &&
+        (impactDisplayDay < VertexSolar_amounts[WIN3D.impactTypeIndex].length)) {
       v = VertexSolar_amounts[WIN3D.impactTypeIndex][impactDisplayDay][q];
     }
     return v;
