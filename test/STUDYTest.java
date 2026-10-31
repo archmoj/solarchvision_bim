@@ -622,4 +622,69 @@ class STUDYTest {
     app.STUDY.handleCtrlCharKey();
     assertEquals((float) (100 * Math.sqrt(0.5)), app.STUDY.verticalUnitScale, 0.01f);
   }
+
+  // ================= dayCellBounds ======================================
+  // The bounding square each day index's rectangle is recorded with, via
+  // recordDayHighlightCandidate() (STUDY.pde), for draw_STUDY_layers.pde's
+  // own live, every-frame redraw of whichever one impactDisplayDay
+  // currently points at - pure math, pulled out specifically so it can be
+  // checked here without the surrounding functions' own this.graphics
+  // calls, which need a real drawing pass already underway (consistent
+  // with every other STUDY.pde/hover.pde function that touches
+  // this.graphics not being independently testable - see e.g.
+  // WorldStationHoverTest.java's own header comment on place_WORLD_hover()).
+  // Matches, verbatim, the bounds every plotImpact_wind/urban/global call
+  // already draws its own per-day backdrop square within (dayCellBounds()'s
+  // own comment, STUDY.pde).
+
+  @Test
+  void dayCellBounds_isCenteredOnTheDayColumnWithNoOffsetOrScaling () {
+    app.STUDY.centralGraphOffsetX = 0;
+    app.STUDY.centralGraphScale = 200; // 100 * (200/200) = 100 -> half-width/height of 100 * sx_Plot
+
+    float[] b = app.STUDY.dayCellBounds(3, 10f); // j=3, sx_Plot=10
+
+    // cx = (3 + 0 + 0.5) * 10 = 35; half = 100 * (200/200) * 10 = 1000
+    assertEquals(35f - 1000f, b[0], 0.001f); // x (left edge)
+    assertEquals(-1000f, b[1], 0.001f);      // y (top edge)
+    assertEquals(2000f, b[2], 0.001f);       // w
+    assertEquals(2000f, b[3], 0.001f);       // h
+  }
+
+  @Test
+  void dayCellBounds_shrinksWithCentralGraphScale () {
+    app.STUDY.centralGraphOffsetX = 0;
+    app.STUDY.centralGraphScale = 100; // half the default 200 -> half the size
+
+    float[] b = app.STUDY.dayCellBounds(0, 10f);
+
+    // cx = (0 + 0 + 0.5) * 10 = 5; half = 100 * (100/200) * 10 = 500
+    assertEquals(5f - 500f, b[0], 0.001f);
+    assertEquals(-500f, b[1], 0.001f);
+    assertEquals(1000f, b[2], 0.001f);
+    assertEquals(1000f, b[3], 0.001f);
+  }
+
+  @Test
+  void dayCellBounds_shiftsWithCentralGraphOffsetX () {
+    app.STUDY.centralGraphOffsetX = 2;
+    app.STUDY.centralGraphScale = 200;
+
+    float[] b = app.STUDY.dayCellBounds(0, 10f);
+
+    // cx = (0 + 2 + 0.5) * 10 = 25; half = 1000, so x = 25 - 1000
+    assertEquals(25f - 1000f, b[0], 0.001f);
+  }
+
+  @Test
+  void dayCellBounds_advancesByOneSxPlotPerDayIndex () {
+    app.STUDY.centralGraphOffsetX = 0;
+    app.STUDY.centralGraphScale = 200;
+
+    float[] b0 = app.STUDY.dayCellBounds(0, 10f);
+    float[] b1 = app.STUDY.dayCellBounds(1, 10f);
+
+    assertEquals(10f, b1[0] - b0[0], 0.001f); // one sx_Plot farther right
+    assertEquals(b0[1], b1[1], 0.001f);       // same vertical placement
+  }
 }

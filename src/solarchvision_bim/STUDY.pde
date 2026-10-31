@@ -60,6 +60,18 @@ class STUDY {
   // that motivated urbanThumbnailHoverInfo in the first place.
   ArrayList<GlobalPoseHoverInfo> globalPoseHoverInfo;
 
+  // Every day index's own on-screen rectangle, from every panel drawn
+  // this render pass (drawDailyGrid()'s own dayCellBounds()-based ones
+  // for the plotImpact_wind/urban/global/sunpath/cycles family, and
+  // plotHourly()'s own plain day-column ones) - recorded via
+  // recordDayHighlightCandidate(), both above. Not drawn here: see
+  // draw_STUDY_layers.pde's own header comment for why impactDisplayDay's
+  // highlight has to be a live, every-frame overlay instead of something
+  // baked into this.graphics directly. Reset once per render pass, in
+  // renderFrame() below - same reasoning as urbanThumbnailHoverInfo's own
+  // comment above.
+  ArrayList<StudyDayHighlightCandidate> dayHighlightCandidates;
+
   // Same idea again, for "Hourly Sun" (plotImpact_sunpath() internally -
   // see studySunpathHover.pde's own comment on the UI-label/internal-name
   // mismatch) - a growing list of individual points rather than a grid,
@@ -778,6 +790,71 @@ class STUDY {
     }
 
     this.drawInfo(sx_Plot, 1);
+
+    // Recorded here, once per day, rather than drawn directly - see
+    // draw_STUDY_layers.pde's own header comment for why: this.graphics
+    // is STUDY's own cached buffer, only actually re-rendered when
+    // STUDY.update is set, but impactDisplayDay ("Next/Previous Impact
+    // Day", actions.pde) changes without ever setting that - drawing
+    // directly into this buffer would leave the highlight frozen at
+    // whichever day was selected the last time STUDY actually re-rendered
+    // for some other reason. drawDailyGrid() is the one place every
+    // impact-graph type (wind/urban/global/sunpath/cycles) already routes
+    // through regardless of which is active, so recording here covers
+    // all of them from one call site.
+    for (int j = this.startDay; j < this.endDay; j++) {
+      float[] b = this.dayCellBounds(j, sx_Plot);
+      this.recordDayHighlightCandidate(j, b[0], b[1], b[0] + b[2], b[1] + b[3]);
+    }
+  }
+
+  // Day index j's own bounding square, in plotImpact()'s local graphics
+  // space (already translated to x_Plot, y_Plot by the time drawDailyGrid()/
+  // plotImpact_wind()/.../plotImpact_global() run) - centered at
+  // (j + centralGraphOffsetX + 0.5) * sx_Plot horizontally and y=0
+  // vertically, centralGraphScale * sx_Plot wide and tall. Matches,
+  // verbatim, the bounds every plotImpact_wind/urban/global call already
+  // draws its own per-day backdrop square and content within (e.g.
+  // plotImpact_wind's own "this.graphics.rect((j + (this.
+  // centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) *
+  // sx_Plot, ...)" just above its allWindRoses.Image[...] call) and
+  // drawPositionGrid()'s own circular content for sunpath/cycles (whose
+  // outermost ring, radius 90 * (centralGraphScale / 200) * sx_Plot, sits
+  // just inside this same square) - pulled out here, rather than reusing
+  // one of those existing inline copies directly, so
+  // recordDayHighlightCandidate()'s own callers have one formula to call
+  // instead of depending on whichever graph type happened to run.
+  // Returned as {x, y, w, h} (CORNER-mode rect args) to match those
+  // existing inline copies' own shape.
+  float[] dayCellBounds (int j, float sx_Plot) {
+    float half = 100 * (this.centralGraphScale / 200) * sx_Plot;
+    float cx = (j + this.centralGraphOffsetX + 0.5) * sx_Plot;
+    return new float[]{ cx - half, -half, 2 * half, 2 * half };
+  }
+
+  // Records day index j's own rectangle (opposite corners x1,y1/x2,y2,
+  // still in this.graphics' own CURRENT local coordinate space - i.e.
+  // whatever pushMatrix()/translate() the caller is already inside) as a
+  // StudyDayHighlightCandidate, converted through this.graphics.screenX()/
+  // screenY() (which resolves the full active transform matrix, same as
+  // plotImpact_urban()'s own info.centerX = this.graphics.screenX(...)
+  // already does for its own hover bookkeeping) and then through the same
+  // cX/cY/ImageScale compositing transform endFrame()'s own blit uses -
+  // the exact inverse of studyUrbanHover_hitTest()'s own "actual screen
+  // coordinates -> this.graphics' device-pixel space" conversion
+  // (hoverOnStudyImpact.pde), run the other way here so the result lands
+  // in real, on-screen pixel coordinates up front. draw_STUDY_layers.pde
+  // then only has to filter this list by dayIndex, every frame, with no
+  // further transform work of its own.
+  void recordDayHighlightCandidate (int j, float x1, float y1, float x2, float y2) {
+    StudyDayHighlightCandidate c = new StudyDayHighlightCandidate();
+    c.dayIndex = j;
+    c.x1 = this.cX + this.graphics.screenX(x1, y1) / this.ImageScale;
+    c.y1 = this.cY + this.graphics.screenY(x1, y1) / this.ImageScale;
+    c.x2 = this.cX + this.graphics.screenX(x2, y2) / this.ImageScale;
+    c.y2 = this.cY + this.graphics.screenY(x2, y2) / this.ImageScale;
+
+    this.dayHighlightCandidates.add(c);
   }
 
 
@@ -1625,6 +1702,18 @@ class STUDY {
       this.drawData(Ax_LINES, Ay_LINES, Bx_LINES, By_LINES);
     }
 
+    // Recorded here, once per day - see drawDailyGrid()'s own matching
+    // comment, and draw_STUDY_layers.pde's header comment, for why this
+    // is recorded (for a later, live, every-frame redraw) rather than
+    // drawn directly into this.graphics here.
+    // Shift_DOWN mirrors drawTimeGrid()'s own local copy exactly (its
+    // grid lines span i from 100 down to this same Shift_DOWN), so each
+    // day's recorded rectangle matches that grid's own full height.
+    float Shift_DOWN = (this.verticalNegativePadding != 0) ? -75 : 0;
+    for (int j = this.startDay; j < this.endDay; j++) {
+      this.recordDayHighlightCandidate(j, j * sx_Plot, -100 * this.view_S, (j + 1) * sx_Plot, -Shift_DOWN * this.view_S);
+    }
+
     this.graphics.popMatrix();
   }
 
@@ -2030,6 +2119,7 @@ class STUDY {
 
     this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
+    this.dayHighlightCandidates = new ArrayList<StudyDayHighlightCandidate>();
     this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
     this.cyclesHoverPoints = new ArrayList<CyclesHoverPoint>();
     this.normalsHoverColumns = new ArrayList<NormalsHoverColumn>();

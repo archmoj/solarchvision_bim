@@ -161,6 +161,7 @@ void draw () {
       } else {
         if (!isBakingInProgress()) {
           draw_WIN3D_layers();
+          draw_STUDY_layers();
           drawAllHovers();
 
           draw_UI_layers();
