@@ -191,6 +191,20 @@ void place_WORLD_hover (int xMouse, int yMouse) {
 
   if (!WORLD.include) return;
 
+  // A station picker's own list (mouseClicked.pde's StationPicker.draw(),
+  // called from WORLD.draw() via drawPickLists()) paints an opaque panel
+  // directly over WORLD - but drawAllHovers() (hover.pde) runs AFTER
+  // WORLD.draw() each frame, so without this guard a hover box (the live,
+  // mouse-following one, or any already-pinned point's) would still get
+  // queued and painted right on top of that list, on top of whatever row
+  // the user is trying to read/click. Skipping this entirely while any
+  // list is showing hides both - live preview and pinned points alike -
+  // for as long as the list stays open; clearWorldHover() (this file)
+  // then erases whatever hover box was left over from the frame before
+  // the list opened, the same way it already does whenever this function
+  // simply has nothing to show.
+  if (isAnyPickListActive()) return;
+
   if (worldHover_pre_screen == null) return; // nothing captured yet (WORLD hasn't drawn a single frame)
 
   // A pan/drag in progress means the map underneath is actively sliding
