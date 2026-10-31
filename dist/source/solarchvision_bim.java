@@ -19289,7 +19289,24 @@ class SHADE {
   public float get_SolarImpact_atXYZ (float x, float y, float z, float x2, float y2, float z2, float x3, float y3, float z3) {
     float v = FLOAT_undefined;
     int q = this.findID_SolarImpact_atXYZ(x, y, z, x2, y2, z2, x3, y3, z3);
-    if (q >= 0) {
+    // impactDisplayDay < VertexSolar_amounts[WIN3D.impactTypeIndex].length
+    // mirrors win3DOverlay_dataFresh()'s own guard on allSolarImpacts.Image
+    // (SolarImpacts.pde) and draw_STUDY_layers.pde's own on
+    // STUDY.dayHighlightCandidates - the same "End Day" shrink leaves
+    // impactDisplayDay pointing past whatever's actually been (re)baked
+    // can reach here too: VertexSolar_amounts is sized off STUDY.endDay at
+    // global_functions.pde's own (re)allocation, but "End Day"'s own
+    // OnChange (react.applyCaseBarAndBake) only flags that stale - the
+    // actual resize/rebake happens incrementally, over however many later
+    // frames draw_WIN3D_layers() takes to work through it - and unlike
+    // those two call sites, nothing upstream already gates reaching this
+    // one on that data being fresh: WIN3D.shadingMode == Vertex_Solar is
+    // this path's only other condition (Faces.pde/Land3D.pde), unrelated
+    // to whether this particular array has caught up yet. Without this,
+    // a stale impactDisplayDay here throws ArrayIndexOutOfBoundsException
+    // instead of just rendering a visibly stale value.
+    if ((q >= 0) && (VertexSolar_amounts != null) &&
+        (impactDisplayDay < VertexSolar_amounts[WIN3D.impactTypeIndex].length)) {
       v = VertexSolar_amounts[WIN3D.impactTypeIndex][impactDisplayDay][q];
     }
     return v;
@@ -34612,9 +34629,14 @@ class UI_menuBar {
       "New",
       "Open",
       ___divider___,
-      "Import OBJ",
-      "Import IFC",
       "Import Commands",
+      "Import DAE",
+      "Import DXF",
+      "Import GLB",
+      "Import IFC",
+      "Import OBJ",
+      "Import PLY",
+      "Import STL",
       ___divider___,
       "Hold",
       "Fetch",
@@ -48250,6 +48272,26 @@ public void build_allActions() {
     selectFile_ImportIfc();
   });
 
+  putAction("Import GLB", () -> {
+    selectFile_ImportGlb();
+  });
+
+  putAction("Import STL", () -> {
+    selectFile_ImportStl();
+  });
+
+  putAction("Import DXF", () -> {
+    selectFile_ImportDxf();
+  });
+
+  putAction("Import PLY", () -> {
+    selectFile_ImportPly();
+  });
+
+  putAction("Import DAE", () -> {
+    selectFile_ImportDae();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });
@@ -52284,6 +52326,7 @@ public void draw_STUDY_layers () {
 
   int j = impactDisplayDay - 1; // globals.pde's own "0:total 1:day-1 2:day-2 etc."
   if (j < 0) return; // "total" - the whole graph already is the range, nothing to single out
+  if (j >= STUDY.endDay) return;
 
   boolean drewSomething = false;
 
@@ -56201,7 +56244,86 @@ public void selectFile_SaveAs () {
 }
 
 public void selectFile_ImportObj () {
+  // Arms objImportShowOptionsDialog (import_objects_OBJ.pde) the same
+  // way selectFile_ImportIfc() below arms ifcImportShowOptionsDialog for
+  // its own five options.
+  objImportShowOptionsDialog = true;
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
+}
+
+public void selectFile_ImportGlb () {
+  // Arms glbImportShowOptionsDialog (import_objects_GLB.pde) the same way.
+  glbImportShowOptionsDialog = true;
+  selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
+}
+
+public void selectFile_ImportStl () {
+  // Arms stlImportShowOptionsDialog (import_objects_STL.pde) the same way.
+  stlImportShowOptionsDialog = true;
+  selectInput("Select STL file to import:", "_fileSelected_ImportStl", new File(Folder_Import + "/_.stl"));
+}
+
+public void selectFile_ImportDxf () {
+  // Arms dxfImportShowOptionsDialog (import_objects_DXF.pde) the same way.
+  dxfImportShowOptionsDialog = true;
+  selectInput("Select DXF file to import:", "_fileSelected_ImportDxf", new File(Folder_Import + "/_.dxf"));
+}
+
+public void selectFile_ImportPly () {
+  // Arms plyImportShowOptionsDialog (import_objects_PLY.pde) the same way.
+  plyImportShowOptionsDialog = true;
+  selectInput("Select PLY file to import:", "_fileSelected_ImportPly", new File(Folder_Import + "/_.ply"));
+}
+
+public void selectFile_ImportDae () {
+  // Arms daeImportShowOptionsDialog (import_objects_DAE.pde) the same way.
+  daeImportShowOptionsDialog = true;
+  selectInput("Select DAE file to import:", "_fileSelected_ImportDae", new File(Folder_Import + "/_.dae"));
+}
+
+// Whether to rotate the file's own Y-up axis convention into this app's
+// own (commonly Z-up) one - see import_objects_OBJ.pde's own
+// "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
+// and import_objects_GLB.pde's/import_objects_STL.pde's/import_objects_
+// DXF.pde's/import_objects_PLY.pde's/import_objects_DAE.pde's matching
+// ones, for why this is off by default and shared across all six
+// formats: none of OBJ/STL/DXF/PLY/DAE has a single, reliably-declared
+// up-axis of its own (DAE's <up_axis> is read nowhere in this version -
+// see import_objects_DAE.pde's own header comment for why), and keeping
+// every importer's axis treatment consistent with the others matters
+// more than any one of them being "correct" in isolation - this one
+// checkbox lets the PERSON importing decide, per import, rather than any
+// importer silently guessing.
+boolean importSwapAxisYZ = false;
+
+// Shared by OBJ/GLB/STL/DXF/PLY/DAE (one option, one checkbox) since
+// that's exactly the axis convention they already agree to share - see
+// import_objects_OBJ.pde's/import_objects_GLB.pde's/import_objects_STL.
+// pde's/import_objects_DXF.pde's/import_objects_PLY.pde's/import_
+// objects_DAE.pde's own objImportShowOptionsDialog/
+// glbImportShowOptionsDialog/stlImportShowOptionsDialog/
+// dxfImportShowOptionsDialog/plyImportShowOptionsDialog/
+// daeImportShowOptionsDialog for how each arms this the same way
+// ifcImportShowOptionsDialog (below) arms IFC's own five-option version
+// of the same dialog.
+public boolean axisSwapShowImportOptionsDialog (String title) {
+
+  javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(swapAxisBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, title, javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where it was unless this dialog's own OK button is
+  // actually pressed - a cancelled dialog must never half-apply a choice
+  // (same reasoning as ifcShowImportOptionsDialog's own comment below).
+  importSwapAxisYZ = swapAxisBox.isSelected();
+
+  return true;
 }
 
 // Lets the person importing check/uncheck ifcImportFurniture/
@@ -56333,6 +56455,13 @@ public void _fileSelected_ImportObj (File selectedFile) {
   String Filename = "";
 
   if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportIfc()'s own identical line
+    // below: cancelling the native file chooser itself never reaches
+    // import_objects_OBJ(), which is otherwise what consumes
+    // objImportShowOptionsDialog - without this, it would stay armed and
+    // pop the options dialog up on the next import_objects_OBJ() call
+    // regardless of how that one was started.
+    objImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
@@ -56354,6 +56483,225 @@ public void _fileSelected_ImportObj (File selectedFile) {
     // switch_category() below still triggers a redraw via its own
     // view_changed(), but that redraw would just replay the stale,
     // pre-import cached PShape.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+public void _fileSelected_ImportGlb (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s own identical line
+    // above (and _fileSelected_ImportIfc()'s below): cancelling the
+    // native file chooser itself never reaches import_objects_GLB(),
+    // which is otherwise what consumes glbImportShowOptionsDialog -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_GLB() call regardless of how that one
+    // was started.
+    glbImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_GLB(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s own call just above this
+    // one's sibling - import_objects_GLB() adds faces straight into
+    // allFaces without ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+public void _fileSelected_ImportStl (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s own identical lines above (and _fileSelected_
+    // ImportIfc()'s below): cancelling the native file chooser itself
+    // never reaches import_objects_STL(), which is otherwise what
+    // consumes stlImportShowOptionsDialog - without this, it would stay
+    // armed and pop the options dialog up on the next
+    // import_objects_STL() call regardless of how that one was started.
+    stlImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_STL(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s own
+    // calls just above this one's siblings - import_objects_STL() adds
+    // faces straight into allFaces without ever calling model_changed()
+    // itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+public void _fileSelected_ImportDxf (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s own identical lines
+    // above (and _fileSelected_ImportIfc()'s below): cancelling the
+    // native file chooser itself never reaches import_objects_DXF(),
+    // which is otherwise what consumes dxfImportShowOptionsDialog -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_DXF() call regardless of how that one
+    // was started.
+    dxfImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_DXF(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s own calls just above this one's siblings -
+    // import_objects_DXF() adds faces straight into allFaces without
+    // ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+public void _fileSelected_ImportPly (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s own identical lines above (and _fileSelected_
+    // ImportIfc()'s below): cancelling the native file chooser itself
+    // never reaches import_objects_PLY(), which is otherwise what
+    // consumes plyImportShowOptionsDialog - without this, it would stay
+    // armed and pop the options dialog up on the next
+    // import_objects_PLY() call regardless of how that one was started.
+    plyImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_PLY(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s own calls just above
+    // this one's siblings - import_objects_PLY() adds faces straight
+    // into allFaces without ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+public void _fileSelected_ImportDae (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s/_fileSelected_ImportPly()'s own identical lines
+    // above (and _fileSelected_ImportIfc()'s below): cancelling the
+    // native file chooser itself never reaches import_objects_DAE(),
+    // which is otherwise what consumes daeImportShowOptionsDialog -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_DAE() call regardless of how that one
+    // was started.
+    daeImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_DAE(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s
+    // own calls just above this one's siblings - import_objects_DAE()
+    // adds faces straight into allFaces without ever calling
+    // model_changed() itself.
     model_changed();
 
     int number_of_allGroups_after = allGroups.num;
@@ -59740,6 +60088,1433 @@ public void addNearbyWorldStationCandidates (STATION[] coords, int displayAllLev
     distsSq.add(distSq);
   }
 }
+// Minimal, dependency-free importer for a DAE (COLLADA) file - the same
+// "hand-roll the parser, no external library" choice import_objects_OBJ.
+// pde/import_objects_IFC.pde/import_objects_GLB.pde/import_objects_STL.
+// pde/import_objects_DXF.pde/import_objects_PLY.pde already make for
+// their own formats. COLLADA is plain XML, openly published by the
+// Khronos Group (the same body behind glTF), so "dependency-free" here
+// just means Processing's own built-in XML class - already used
+// elsewhere in this project for its own save/load-project format (see
+// xml_helpers.pde/save_project.pde/load_project.pde) - rather than any
+// new parsing machinery of its own.
+//
+// A COLLADA document separates WHAT geometry exists (<library_geometries>,
+// each a <mesh> of vertex positions plus <triangles>/<polylist>
+// primitives referencing them by index - see daeProcessGeometry()'s own
+// comment) from WHERE it's actually placed (<library_visual_scenes>'s
+// own <node> hierarchy, each node transformed by some combination of
+// <translate>/<rotate>/<scale>/<matrix> and instancing zero or more
+// geometries via <instance_geometry url="#id">) - the same two-part
+// shape import_objects_GLB.pde's own node-hierarchy walk already
+// handles for glTF, and reused here the same way (daeWalkNode()
+// composing each node's own PMatrix3D, same as glbWalkNode()).
+//
+// v1 scope, deliberately kept simple:
+//   - Only <triangles> and <polylist> primitives are read (the two
+//     common ways a COLLADA mesh represents polygon faces) - any other
+//     primitive type (<polygons>, <lines>, <linestrips>, <trifans>,
+//     <tristrips>) is skipped. Each polygon becomes one app-native face
+//     with however many corners it declares (<polylist>'s own <vcount>,
+//     or always 3 for <triangles>) - the same "whatever n-gon the file
+//     itself declares" choice import_objects_IFC.pde's/import_objects_
+//     DXF.pde's/import_objects_PLY.pde's own faces already make.
+//   - Only a primitive's own VERTEX-semantic <input> (the position
+//     index) is read; any other input a primitive carries (NORMAL,
+//     TEXCOORD, COLOR, ...) only affects how its own interleaved index
+//     list is strided over - see daePrimitiveStride()'s own comment -
+//     not what's actually built.
+//   - <library_geometries> entries whose own <mesh> this version can't
+//     make sense of (a <spline>/<convex_mesh> instead of straight
+//     polygon data, or no <vertices>/POSITION source at all) are
+//     skipped entirely, the same way an unsupported primitive type is.
+//   - Materials are intentionally not read at all - every imported face
+//     gets the single material the m parameter (below) names, the same
+//     "whole import, one material unless cycled per sub-object" shape
+//     import_objects_GLB.pde's own per-mesh handling already uses -
+//     cycled here once per <instance_geometry> reference actually
+//     processed (daeWalkNode()'s own call to it), the natural COLLADA
+//     equivalent of a new OBJ "g" tag/GLB node-with-a-mesh.
+//   - <asset><up_axis> (COLLADA's own declared Y_UP/Z_UP/X_UP) is read
+//     nowhere in this version - the shared importSwapAxisYZ option
+//     (fileSelected.pde) already lets the person importing choose this
+//     explicitly, the same way for every format this importer suite
+//     supports, which matters more here than auto-detecting it per file
+//     - see importSwapAxisYZ's own comment for why.
+
+boolean daeImportShowOptionsDialog = false;
+
+// Transform parameters and the material-cycling flag for the CURRENT
+// import_objects_DAE() call - same "a few fields shared across one whole
+// import" shape glb_cx/glb_cycleMaterial/... (import_objects_GLB.pde)
+// already use.
+float dae_cx, dae_cy, dae_cz, dae_sx, dae_sy, dae_sz;
+boolean daeCycleMaterial;
+
+int daeFacesImported = 0;
+
+int dae_totalGeometryInstances = 0;
+int dae_processedGeometryInstances = 0;
+float dae_printedProgress = 0;
+ProgressWindow dae_progressWindow = null;
+
+public void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/import_
+  // objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s own
+  // identical blocks - see any one's own comment, or ifcImportShow
+  // OptionsDialog's (import_objects_IFC.pde), for why this sits here
+  // rather than earlier, and what a cancelled dialog does.
+  if (daeImportShowOptionsDialog) {
+    daeImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("DAE import options")) return;
+  }
+
+  println("Importing DAE. Please wait...");
+  showWaitCursor();
+
+  daeCycleMaterial = (m == -1);
+  if (m == -1) current_Material = 0;
+  else current_Material = m;
+
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
+  dae_cx = cx; dae_cy = cy; dae_cz = cz;
+  dae_sx = sx; dae_sy = sy; dae_sz = sz;
+
+  importedObjectName = OPESYS.getFilenameFromPath(FileName);
+
+  XML collada = null;
+  try {
+    collada = loadXML(FileName);
+  } catch (RuntimeException e) {
+    println("\nDAE import: could not parse '" + FileName + "' (" + e.getMessage() + ")");
+  }
+  if (collada == null) {
+    println("\nDAE import: could not read '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  XML libraryVisualScenes = collada.getChild("library_visual_scenes");
+  if (libraryVisualScenes == null) {
+    println("\nDAE import: no library_visual_scenes found in '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  // The file can declare several visual scenes but only actually display
+  // one, named by <scene><instance_visual_scene url="#id"/> - that's the
+  // one read here. A missing/unresolved <scene> falls back to the first
+  // declared visual_scene instead of giving up outright, best-effort,
+  // same spirit as this file's own other fallbacks.
+  XML visualScene = null;
+  XML sceneEl = collada.getChild("scene");
+  if (sceneEl != null) {
+    XML instVS = sceneEl.getChild("instance_visual_scene");
+    if (instVS != null) {
+      String vsId = daeRefId(daeAttr(instVS, "url"));
+      visualScene = daeFindById(collada, vsId);
+    }
+  }
+  if (visualScene == null) {
+    XML[] scenes = libraryVisualScenes.getChildren("visual_scene");
+    if (scenes.length > 0) visualScene = scenes[0];
+  }
+  if (visualScene == null) {
+    println("\nDAE import: no visual scene found in '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  if (addToLastGroup == false) {
+    // No group created here directly - see daeWalkNode()'s own comment
+    // on why that happens once per <instance_geometry> instead, the
+    // same granularity import_objects_GLB.pde's own node walk already
+    // uses.
+  }
+
+  progressBarHeader();
+
+  dae_totalGeometryInstances = 0;
+  for (XML node : visualScene.getChildren("node")) {
+    dae_totalGeometryInstances += daeCountGeometryInstances(node);
+  }
+  dae_processedGeometryInstances = 0;
+  dae_printedProgress = 0;
+  daeFacesImported = 0;
+
+  dae_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing DAE") : null;
+  if (dae_progressWindow != null) dae_progressWindow.setVisible(true);
+
+  try {
+    PMatrix3D identity = new PMatrix3D();
+    for (XML node : visualScene.getChildren("node")) {
+      daeWalkNode(collada, node, identity);
+    }
+  } finally {
+    if (dae_progressWindow != null) dae_progressWindow.dispose();
+    dae_progressWindow = null;
+  }
+
+  if (daeFacesImported == 0) {
+    println("\nDAE import: no faces were imported - this version only reads <triangles>/<polylist> primitives reachable from the scene's own node hierarchy");
+  }
+
+  int remaining = (int) floor(100 - dae_printedProgress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
+
+  showArrowCursor();
+}
+
+// this.getString(name) itself, without a default value, isn't confirmed
+// to return "" rather than null when the attribute is absent - so every
+// attribute read in this file goes through this wrapper instead of
+// calling .getString() directly, to stay safe regardless.
+public String daeAttr (XML el, String name) {
+  String v = el.getString(name);
+  return (v == null) ? "" : v;
+}
+
+// Strips a COLLADA "#id" reference down to the bare id daeFindById()
+// below looks up - COLLADA always writes these with the leading "#"
+// (a URI fragment), never a bare id on its own.
+public String daeRefId (String url) {
+  if ((url != null) && url.startsWith("#")) return url.substring(1);
+  return url;
+}
+
+// Finds the element anywhere in the document whose own "id" attribute
+// matches - COLLADA has no single central lookup table of its own, so
+// every #id reference (a primitive's own <input source="#..."/>, a
+// node's own <instance_geometry url="#..."/>, ...) is resolved this way.
+// A plain recursive scan rather than a prebuilt index: real COLLADA
+// files are small enough (dozens to a few hundred elements, not
+// millions) that this stays cheap, matching the "keep it simple" spirit
+// of this importer's other choices over an optimization v1 doesn't need.
+public XML daeFindById (XML el, String id) {
+  if ((id == null) || (id.length() == 0)) return null;
+  if (daeAttr(el, "id").equals(id)) return el;
+  for (XML child : el.getChildren()) {
+    XML found = daeFindById(child, id);
+    if (found != null) return found;
+  }
+  return null;
+}
+
+// The first `expectedCount` whitespace-separated numbers in `text` (a
+// <translate>/<rotate>/<scale>/<matrix> element's own content, or a
+// <float_array>'s), or null if there aren't that many - used instead of
+// letting a malformed/truncated element throw partway through building a
+// transform or a point.
+public float[] daeFloats (String text, int expectedCount) {
+  if (text == null) return null;
+  String[] tokens = splitTokens(text);
+  if ((tokens == null) || (tokens.length < expectedCount)) return null;
+  float[] out = new float[expectedCount];
+  for (int i = 0; i < expectedCount; i++) out[i] = PApplet.parseFloat(tokens[i]);
+  return out;
+}
+
+public int daeCountGeometryInstances (XML nodeEl) {
+  int count = nodeEl.getChildren("instance_geometry").length;
+  for (XML child : nodeEl.getChildren("node")) count += daeCountGeometryInstances(child);
+  return count;
+}
+
+// One console/ProgressWindow update, called once per <instance_geometry>
+// actually processed (daeWalkNode(), below) - the same per-mesh
+// granularity glbReportProgress() (import_objects_GLB.pde) already uses,
+// for the same reason: counting actual faces/vertices up front would
+// need its own full pre-pass this version doesn't do.
+public void daeReportProgress () {
+  if (control == USER_AUTO) return;
+
+  dae_processedGeometryInstances += 1;
+
+  float Progress = (dae_totalGeometryInstances > 0) ? (100 * dae_processedGeometryInstances / (float) dae_totalGeometryInstances) : 100;
+  int delta = (int) floor(Progress - dae_printedProgress);
+  if (delta >= 1) {
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < delta; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    dae_printedProgress = floor(Progress);
+    if (dae_progressWindow != null) dae_progressWindow.updateFraction(Progress / 100.0f);
+  }
+}
+
+// One point, already in world space (the caller has already applied the
+// owning node's own transform), carried through cx/cy/cz/sx/sy/sz and
+// importSwapAxisYZ (fileSelected.pde, shared with every other importer)
+// the same way those already do.
+public int daeCreatePoint (float x, float y, float z) {
+  float finalX, finalY, finalZ;
+  if (importSwapAxisYZ) {
+    finalX = dae_cx + dae_sx * x;
+    finalY = dae_cy + dae_sy * (-z);
+    finalZ = dae_cz + dae_sz * y;
+  } else {
+    finalX = dae_cx + dae_sx * x;
+    finalY = dae_cy + dae_sy * y;
+    finalZ = dae_cz + dae_sz * z;
+  }
+  return allPoints.create(finalX, finalY, finalZ);
+}
+
+// Visits node `nodeEl` and every one of its descendants, composing each
+// one's own local transform (daeNodeLocalMatrix(), below) onto its
+// parent's already-composed world matrix - the same "clone, then apply
+// on top of the clone" shape glbWalkNode() (import_objects_GLB.pde)
+// already uses (that function's own comment has the fuller "mirrors
+// pushMatrix()" story).
+public void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
+  PMatrix3D worldMatrix = parentMatrix.get(); // clone - mirrors pushMatrix()
+  worldMatrix.apply(daeNodeLocalMatrix(nodeEl));
+
+  for (XML instGeom : nodeEl.getChildren("instance_geometry")) {
+    daeReportProgress();
+
+    String geomId = daeRefId(daeAttr(instGeom, "url"));
+    XML geometryEl = daeFindById(collada, geomId);
+    if (geometryEl == null) continue;
+
+    // One group per <instance_geometry> reference actually processed -
+    // see this file's own header comment on grouping/material cycling.
+    if (daeCycleMaterial) current_Material = 1 + (current_Material % 8);
+    if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+    daeProcessGeometry(collada, geometryEl, worldMatrix);
+  }
+
+  for (XML child : nodeEl.getChildren("node")) {
+    daeWalkNode(collada, child, worldMatrix);
+  }
+}
+
+// One node's own local transform as a PMatrix3D, composed from however
+// many <translate>/<rotate>/<scale>/<matrix> children it has, applied IN
+// THE ORDER THEY APPEAR - COLLADA explicitly allows any number of these,
+// in any order, each one composing onto whatever came before it (unlike
+// glTF's own node transform, which is always exactly one of "a single
+// matrix" or "a single TRS triple" - see glbNodeMatrix()'s own comment,
+// import_objects_GLB.pde).
+public PMatrix3D daeNodeLocalMatrix (XML nodeEl) {
+  PMatrix3D m = new PMatrix3D(); // identity
+
+  for (XML child : nodeEl.getChildren()) {
+    String tag = child.getName();
+    if (tag == null) continue;
+
+    if (tag.equals("translate")) {
+      float[] v = daeFloats(XML_getContent(child), 3);
+      if (v != null) m.translate(v[0], v[1], v[2]);
+    } else if (tag.equals("rotate")) {
+      // COLLADA's own <rotate> is axis-angle, angle in DEGREES - radians()
+      // converts to what PMatrix3D.rotate() itself expects.
+      float[] v = daeFloats(XML_getContent(child), 4);
+      if (v != null) m.rotate(radians(v[3]), v[0], v[1], v[2]);
+    } else if (tag.equals("scale")) {
+      float[] v = daeFloats(XML_getContent(child), 3);
+      if (v != null) m.scale(v[0], v[1], v[2]);
+    } else if (tag.equals("matrix")) {
+      // COLLADA's own <matrix> is already row-major - the same argument
+      // order PMatrix3D's own 16-float constructor/apply() expect,
+      // unlike glTF's column-major node matrices (glbNodeMatrix(),
+      // import_objects_GLB.pde, has to reorder those - this doesn't).
+      float[] v = daeFloats(XML_getContent(child), 16);
+      if (v != null) {
+        m.apply(new PMatrix3D(
+          v[0],  v[1],  v[2],  v[3],
+          v[4],  v[5],  v[6],  v[7],
+          v[8],  v[9],  v[10], v[11],
+          v[12], v[13], v[14], v[15]
+        ));
+      }
+    }
+    // "instance_geometry" (handled by the caller, daeWalkNode()), "extra",
+    // a nested "node" (also handled by the caller), or anything else: not
+    // a transform element, skipped here.
+  }
+
+  return m;
+}
+
+// Reads geometryEl's own <mesh> - its position source (found through the
+// standard COLLADA indirection: <mesh>'s own <vertices> element has a
+// POSITION-semantic <input> naming the actual <source>, since a
+// primitive's own <input semantic="VERTEX"> points at <vertices>, not
+// straight at <source> - see this file's own header comment) - then its
+// own <triangles>/<polylist> primitives, each built against that same,
+// once-built point list.
+public void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix) {
+  XML mesh = geometryEl.getChild("mesh");
+  if (mesh == null) return; // not polygon geometry (e.g. <spline>/<convex_mesh>) - not supported in this version
+
+  XML verticesEl = mesh.getChild("vertices");
+  if (verticesEl == null) return;
+
+  String positionSourceId = null;
+  for (XML input : verticesEl.getChildren("input")) {
+    if (daeAttr(input, "semantic").equals("POSITION")) {
+      positionSourceId = daeRefId(daeAttr(input, "source"));
+      break;
+    }
+  }
+  if (positionSourceId == null) return;
+
+  XML positionSource = daeFindById(collada, positionSourceId);
+  if (positionSource == null) return;
+
+  XML floatArray = positionSource.getChild("float_array");
+  if (floatArray == null) return;
+
+  String[] floatTokens = splitTokens(XML_getContent(floatArray));
+  if (floatTokens == null) return;
+
+  // Built once per <mesh> - every <triangles>/<polylist> primitive
+  // inside it shares this exact same vertex-position array, referencing
+  // it by plain 0-based index.
+  int vertexCount = floatTokens.length / 3;
+  int[] pointIndex = new int[vertexCount];
+  PVector local = new PVector();
+  PVector world = new PVector();
+  for (int i = 0; i < vertexCount; i++) {
+    local.x = PApplet.parseFloat(floatTokens[i * 3]);
+    local.y = PApplet.parseFloat(floatTokens[i * 3 + 1]);
+    local.z = PApplet.parseFloat(floatTokens[i * 3 + 2]);
+    worldMatrix.mult(local, world);
+    pointIndex[i] = daeCreatePoint(world.x, world.y, world.z);
+  }
+
+  for (XML prim : mesh.getChildren()) {
+    String tag = prim.getName();
+    if (tag == null) continue;
+
+    if (tag.equals("triangles")) {
+      daePrimitiveFixed(prim, pointIndex, 3);
+    } else if (tag.equals("polylist")) {
+      daePrimitiveVariable(prim, pointIndex);
+    }
+    // "polygons"/"lines"/"linestrips"/"trifans"/"tristrips" and anything
+    // else (including "source"/"vertices" themselves): not supported in
+    // this version - see this file's own header comment.
+  }
+}
+
+// A primitive's own stride (how many index numbers each of its own
+// vertices occupies in its <p> list) and the VERTEX-semantic <input>'s
+// own offset within that stride - every <input> (VERTEX, NORMAL,
+// TEXCOORD, COLOR, ...) interleaves its own index at its own declared
+// offset, so the stride is one more than the LARGEST offset actually
+// used, regardless of how many inputs there are or whether their
+// offsets are sequential; only the VERTEX one's own offset is read
+// (that's the only property this version actually builds anything
+// from), returned as {stride, vertexOffset} - vertexOffset is -1 if no
+// VERTEX-semantic input exists at all (not a real face this version can
+// read from).
+public int[] daePrimitiveStride (XML prim) {
+  int stride = 1;
+  int vertexOffset = -1;
+  for (XML input : prim.getChildren("input")) {
+    int offset = input.getInt("offset", 0);
+    if (offset + 1 > stride) stride = offset + 1;
+    if (daeAttr(input, "semantic").equals("VERTEX")) vertexOffset = offset;
+  }
+  return new int[]{ stride, vertexOffset };
+}
+
+// <triangles>: every primitive is exactly `verticesPerPrimitive` (always
+// 3) vertices, back to back in the one <p> list - this file's own header
+// comment has the fuller "what a stride/offset is" story.
+public void daePrimitiveFixed (XML prim, int[] pointIndex, int verticesPerPrimitive) {
+  int[] strideInfo = daePrimitiveStride(prim);
+  int stride = strideInfo[0];
+  int vertexOffset = strideInfo[1];
+  if (vertexOffset < 0) return;
+
+  XML pEl = prim.getChild("p");
+  if (pEl == null) return;
+
+  String[] tokens = splitTokens(XML_getContent(pEl));
+  if (tokens == null) return;
+
+  int count = prim.getInt("count", 0);
+
+  for (int f = 0; f < count; f++) {
+    int[] face = new int[verticesPerPrimitive];
+    boolean ok = true;
+    for (int v = 0; v < verticesPerPrimitive; v++) {
+      int tokenPos = (f * verticesPerPrimitive + v) * stride + vertexOffset;
+      if (tokenPos >= tokens.length) { ok = false; break; }
+      int vi = PApplet.parseInt(tokens[tokenPos]);
+      if ((vi < 0) || (vi >= pointIndex.length)) { ok = false; break; }
+      face[v] = pointIndex[vi];
+    }
+    if (ok) {
+      allFaces.create(face);
+      daeFacesImported += 1;
+    }
+  }
+}
+
+// <polylist>: each primitive's own vertex count comes from its matching
+// entry in <vcount> instead of being fixed - otherwise the exact same
+// stride/offset reading daePrimitiveFixed() above already does.
+public void daePrimitiveVariable (XML prim, int[] pointIndex) {
+  int[] strideInfo = daePrimitiveStride(prim);
+  int stride = strideInfo[0];
+  int vertexOffset = strideInfo[1];
+  if (vertexOffset < 0) return;
+
+  XML vcountEl = prim.getChild("vcount");
+  XML pEl = prim.getChild("p");
+  if ((vcountEl == null) || (pEl == null)) return;
+
+  String[] vcountTokens = splitTokens(XML_getContent(vcountEl));
+  String[] pTokens = splitTokens(XML_getContent(pEl));
+  if ((vcountTokens == null) || (pTokens == null)) return;
+
+  int count = prim.getInt("count", 0);
+
+  int pPos = 0;
+  for (int poly = 0; poly < count; poly++) {
+    if (poly >= vcountTokens.length) break;
+    int n = PApplet.parseInt(vcountTokens[poly]);
+
+    int[] face = new int[n];
+    boolean ok = (n >= 3);
+    for (int v = 0; ok && (v < n); v++) {
+      int tokenPos = pPos + v * stride + vertexOffset;
+      if (tokenPos >= pTokens.length) { ok = false; break; }
+      int vi = PApplet.parseInt(pTokens[tokenPos]);
+      if ((vi < 0) || (vi >= pointIndex.length)) { ok = false; break; }
+      face[v] = pointIndex[vi];
+    }
+    if (ok) {
+      allFaces.create(face);
+      daeFacesImported += 1;
+    }
+
+    pPos += n * stride;
+  }
+}
+// Minimal, dependency-free importer for a DXF file - the same "hand-roll
+// the parser, no external library" choice import_objects_OBJ.pde/
+// import_objects_IFC.pde/import_objects_GLB.pde/import_objects_STL.pde
+// already make for their own formats. DXF's own spec is proprietary but
+// openly published by Autodesk (same status IFC's own STEP format has),
+// so this is as feasible to hand-roll as those.
+//
+// DXF's whole file is a flat sequence of "group code" / "value" pairs,
+// each on its own line - this parser pairs those lines up once up front
+// (import_objects_DXF()'s own codes[]/values[] arrays, below), then
+// walks the result with a single cursor, collecting each "0"-prefixed
+// entity's own fields (everything up to
+// the next "0") into a pair of small lists and handing them to
+// dxfHandleEntity() - the same shape whether that block is a real
+// ENTITIES-section entity, a TABLES-section table entry, or a BLOCKS-
+// section block definition; only entities actually seen while inside
+// the ENTITIES section are dispatched (see the main loop's own
+// inEntities tracking) - skipping TABLES/BLOCKS/HEADER/CLASSES/OBJECTS
+// entirely, including BLOCKS' own geometry (unplaced block *definitions*,
+// not actually placed in the drawing - importing those too would import
+// duplicate, wrongly-positioned geometry for anything placed via INSERT).
+//
+// v1 scope, deliberately kept simple - only entities that actually
+// carry solid 3D face geometry:
+//   - 3DFACE: a 3- or 4-cornered flat face (DXF's own oldest, simplest
+//     way to represent one) - a face with only 3 distinct corners is
+//     written either by omitting its 4th point's own group codes
+//     (13/23/33) entirely, or - the more common convention - by
+//     repeating the 3rd point's coordinates as the 4th; either way
+//     becomes a true 3-point face here, not a degenerate quad.
+//   - POLYLINE flagged as a "polyface mesh" (group 70, bit 64) followed
+//     by a run of VERTEX entities (a mesh's own shared point list, then
+//     its own face list - see dxfHandleVertex()'s own comment for how
+//     those two kinds of VERTEX record are told apart) and a closing
+//     SEQEND - DXF's older, AutoCAD-native equivalent of an indexed
+//     mesh (its own MESH entity, introduced far later/ AutoCAD 2010+,
+//     isn't read in this version). A plain/2D POLYLINE (the 64 bit not
+//     set) is skipped instead - its own VERTEX/SEQEND run is still
+//     consumed so the main loop's own cursor stays in sync, just
+//     without building anything from it.
+// Every other entity type - LINE, LWPOLYLINE, CIRCLE, ARC, SPLINE, MESH,
+// TEXT/MTEXT, DIMENSION, HATCH, SOLID, POINT, INSERT (block references),
+// ... - is intentionally skipped: not solid 3D face geometry (or, for
+// INSERT/MESH, a kind this version doesn't build).
+//
+// Each entity's own layer (group code 8, "0" if absent) becomes this
+// importer's own group/material-cycling boundary - the natural DXF
+// equivalent of import_objects_OBJ.pde's own "g" tag/import_objects_STL.
+// pde's own "solid" block, since CAD users already organize a drawing's
+// own geometry by layer far more consistently than by any other
+// grouping DXF offers.
+
+boolean dxfImportShowOptionsDialog = false;
+
+// Transform parameters, the material-cycling flag, and the running
+// polyface-mesh/layer state for the CURRENT import_objects_DXF() call -
+// same "a few fields shared across one whole import" shape glb_cx/
+// glb_cycleMaterial/... (import_objects_GLB.pde) already use.
+float dxf_cx, dxf_cy, dxf_cz, dxf_sx, dxf_sy, dxf_sz;
+boolean dxfCycleMaterial;
+String dxfCurrentLayer = null;
+boolean dxfPolyfaceActive = false;
+IntList dxfPolyfaceLocalPoints = new IntList(); // allPoints indices, in the order this polyface mesh's own coordinate VERTEX records declared them
+int dxfEntitiesImported = 0;
+
+public void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/
+  // import_objects_STL()'s own identical blocks - see any one's own
+  // comment, or ifcImportShowOptionsDialog's (import_objects_IFC.pde),
+  // for why this sits here rather than earlier, and what a cancelled
+  // dialog does.
+  if (dxfImportShowOptionsDialog) {
+    dxfImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("DXF import options")) return;
+  }
+
+  println("Importing DXF. Please wait...");
+  showWaitCursor();
+
+  dxfCycleMaterial = (m == -1);
+  if (m == -1) current_Material = 0;
+  else current_Material = m;
+
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
+  dxf_cx = cx; dxf_cy = cy; dxf_cz = cz;
+  dxf_sx = sx; dxf_sy = sy; dxf_sz = sz;
+
+  dxfCurrentLayer = null;
+  dxfPolyfaceActive = false;
+  dxfPolyfaceLocalPoints.clear();
+  dxfEntitiesImported = 0;
+
+  importedObjectName = OPESYS.getFilenameFromPath(FileName);
+
+  String[] FileALL = loadStrings(FileName);
+  if (FileALL == null) FileALL = new String[0];
+
+  // DXF's own group-code/value lines strictly alternate - pair them up
+  // once, rather than re-deriving "is this an even or odd line" logic
+  // throughout the rest of this file. A trailing, unpaired last line (an
+  // odd total count - a truncated/malformed file) is silently dropped
+  // here rather than read past the end.
+  int pairCount = FileALL.length / 2;
+  int[] codes = new int[pairCount];
+  String[] values = new String[pairCount];
+  for (int i = 0; i < pairCount; i++) {
+    codes[i] = PApplet.parseInt(trim(FileALL[i * 2]));       // int(String) on a malformed line returns 0 rather than throwing - Processing's own documented behavior
+    values[i] = trim(FileALL[i * 2 + 1]);
+  }
+
+  float totalPairs = pairCount; // computed once, not every iteration - same as import_objects_OBJ.pde's own totalLines
+  float Progress = 0;
+  float printed_Progress = 0;
+  StringBuilder barBuffer = new StringBuilder();
+
+  progressBarHeader();
+
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing DXF") : null;
+  if (importProgressWindow != null) importProgressWindow.setVisible(true);
+
+  try {
+    int idx = 0;
+    boolean inEntities = false;
+
+    while (idx < pairCount) {
+      if (control != USER_AUTO) {
+        Progress = 100 * idx / totalPairs;
+        int delta = (int) floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          barBuffer.setLength(0);
+          for (int c = 0; c < delta; c++) {
+            barBuffer.append('█');
+          }
+          print(barBuffer.toString());
+          printed_Progress = floor(Progress);
+          if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
+        }
+      }
+
+      int code = codes[idx];
+      String value = values[idx];
+
+      if (code != 0) { idx += 1; continue; } // a stray non-"0" line at this level (HEADER's own "9"-coded variables, XDATA, ...) - skip past it one pair at a time
+
+      if (value.equals("EOF")) break;
+
+      if (value.equals("SECTION")) {
+        idx += 1;
+        String sectionName = "";
+        if ((idx < pairCount) && (codes[idx] == 2)) {
+          sectionName = values[idx];
+          idx += 1;
+        }
+        inEntities = sectionName.equals("ENTITIES");
+        continue;
+      }
+
+      if (value.equals("ENDSEC")) {
+        inEntities = false;
+        idx += 1;
+        continue;
+      }
+
+      // Any other "0"-coded value here is an entity-shaped block -
+      // TABLES/BLOCKS use this exact same "0, TYPE, ...own fields...,
+      // next 0" shape too, which is why this reads the same way
+      // regardless of section; only inEntities (above) decides whether
+      // it's actually acted on below.
+      String entityType = value;
+      idx += 1;
+
+      IntList eCodes = new IntList();
+      StringList eValues = new StringList();
+      while ((idx < pairCount) && (codes[idx] != 0)) {
+        eCodes.append(codes[idx]);
+        eValues.append(values[idx]);
+        idx += 1;
+      }
+
+      if (inEntities) {
+        dxfHandleEntity(entityType, eCodes, eValues);
+      }
+    }
+  } finally {
+    if (importProgressWindow != null) importProgressWindow.dispose();
+  }
+
+  if (dxfEntitiesImported == 0) {
+    println("\nDXF import: no 3DFACE or polyface-mesh POLYLINE entities found - this version doesn't read any other entity type's geometry (LWPOLYLINE, MESH, block/INSERT references, ...)");
+  }
+
+  int remaining = (int) floor(100 - printed_Progress);
+  barBuffer.setLength(0);
+  for (int c = 0; c < remaining; c++) {
+    barBuffer.append('█');
+  }
+  print(barBuffer.toString());
+  println();
+
+  showArrowCursor();
+}
+
+// One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
+// (fileSelected.pde, shared with import_objects_OBJ.pde/import_objects_
+// GLB.pde/import_objects_STL.pde) the same way those three importers'
+// own per-vertex code already does.
+public int dxfCreatePoint (float x, float y, float z) {
+  float finalX, finalY, finalZ;
+  if (importSwapAxisYZ) {
+    finalX = dxf_cx + dxf_sx * x;
+    finalY = dxf_cy + dxf_sy * (-z);
+    finalZ = dxf_cz + dxf_sz * y;
+  } else {
+    finalX = dxf_cx + dxf_sx * x;
+    finalY = dxf_cy + dxf_sy * y;
+    finalZ = dxf_cz + dxf_sz * z;
+  }
+  return allPoints.create(finalX, finalY, finalZ);
+}
+
+// The value for group code `code` within one entity's own collected
+// fields, or `defaultValue` if that code never appeared. A linear scan
+// rather than a map: every entity this importer reads has only a
+// handful of fields, so this stays cheap, and it keeps dxfCreatePoint()/
+// the handlers below reading directly off the same eCodes/eValues pair
+// the main loop already built, with no extra per-entity data structure.
+public String dxfFind (IntList eCodes, StringList eValues, int code, String defaultValue) {
+  for (int i = 0; i < eCodes.size(); i++) {
+    if (eCodes.get(i) == code) return eValues.get(i);
+  }
+  return defaultValue;
+}
+
+public float dxfFindFloat (IntList eCodes, StringList eValues, int code, float defaultValue) {
+  String v = dxfFind(eCodes, eValues, code, null);
+  if (v == null) return defaultValue;
+  return PApplet.parseFloat(v);
+}
+
+// Dispatches one ENTITIES-section entity (eCodes/eValues already holding
+// everything between its own leading "0" and the next one) by type - see
+// this file's own header comment for exactly which types are handled.
+public void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
+  // A layer change starts a new group here (see this file's own header
+  // comment for why) - only for the two entity types that can actually
+  // start new geometry: an individual VERTEX's own layer (if it somehow
+  // differs from its POLYLINE header's) isn't meaningful for the
+  // polyface mesh it's building, so layer tracking is deliberately not
+  // applied there.
+  if (entityType.equals("3DFACE") || entityType.equals("POLYLINE")) {
+    String layer = dxfFind(eCodes, eValues, 8, "0");
+    if (!layer.equals(dxfCurrentLayer)) {
+      dxfCurrentLayer = layer;
+      if (dxfCycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling import_objects_OBJ.pde's own does
+      if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+  }
+
+  if (entityType.equals("3DFACE")) {
+    dxfHandle3DFace(eCodes, eValues);
+  } else if (entityType.equals("POLYLINE")) {
+    dxfHandlePolylineStart(eCodes, eValues);
+  } else if (entityType.equals("VERTEX")) {
+    dxfHandleVertex(eCodes, eValues);
+  } else if (entityType.equals("SEQEND")) {
+    dxfPolyfaceActive = false;
+  }
+  // every other entity type (LINE, LWPOLYLINE, CIRCLE, ARC, SPLINE,
+  // TEXT, MTEXT, DIMENSION, INSERT, HATCH, SOLID, POINT, ELLIPSE,
+  // MESH, ...) is intentionally skipped - see this file's own header
+  // comment.
+}
+
+public void dxfHandle3DFace (IntList eCodes, StringList eValues) {
+  float x1 = dxfFindFloat(eCodes, eValues, 10, 0);
+  float y1 = dxfFindFloat(eCodes, eValues, 20, 0);
+  float z1 = dxfFindFloat(eCodes, eValues, 30, 0);
+
+  float x2 = dxfFindFloat(eCodes, eValues, 11, 0);
+  float y2 = dxfFindFloat(eCodes, eValues, 21, 0);
+  float z2 = dxfFindFloat(eCodes, eValues, 31, 0);
+
+  float x3 = dxfFindFloat(eCodes, eValues, 12, 0);
+  float y3 = dxfFindFloat(eCodes, eValues, 22, 0);
+  float z3 = dxfFindFloat(eCodes, eValues, 32, 0);
+
+  boolean hasFourth = eCodes.hasValue(13);
+  float x4 = dxfFindFloat(eCodes, eValues, 13, x3);
+  float y4 = dxfFindFloat(eCodes, eValues, 23, y3);
+  float z4 = dxfFindFloat(eCodes, eValues, 33, z3);
+
+  int p1 = dxfCreatePoint(x1, y1, z1);
+  int p2 = dxfCreatePoint(x2, y2, z2);
+  int p3 = dxfCreatePoint(x3, y3, z3);
+
+  // See this file's own header comment on 3DFACE for why either shape
+  // (the 4th point's own group codes missing, or present but numerically
+  // the same as the 3rd point's) is read as a true 3-point face.
+  boolean isTriangle = !hasFourth || ((abs(x4 - x3) < 0.000001f) && (abs(y4 - y3) < 0.000001f) && (abs(z4 - z3) < 0.000001f));
+
+  if (isTriangle) {
+    allFaces.create(new int[]{ p1, p2, p3 });
+  } else {
+    int p4 = dxfCreatePoint(x4, y4, z4);
+    allFaces.create(new int[]{ p1, p2, p3, p4 });
+  }
+
+  dxfEntitiesImported += 1;
+}
+
+public void dxfHandlePolylineStart (IntList eCodes, StringList eValues) {
+  int flags = (int) dxfFindFloat(eCodes, eValues, 70, 0);
+  dxfPolyfaceActive = ((flags & 64) != 0); // bit 64: "polyface mesh" - see this file's own header comment
+  dxfPolyfaceLocalPoints.clear();
+}
+
+// A VERTEX entity belonging to the POLYLINE currently being read (if
+// any - dxfPolyfaceActive). A polyface mesh's own vertex run is really
+// two different kinds of record sharing the one VERTEX entity type: its
+// shared point list comes first (plain x/y/z coordinates, groups
+// 10/20/30), then its face list (each one's groups 71/72/73/74 holding
+// up to four 1-based indices INTO that point list, in the order its own
+// coordinate records appeared - a negative index marks that edge
+// invisible, which this importer doesn't track, so just the absolute
+// value is used). Telling the two apart by whether ANY of 71-74 are
+// present (rather than trying to parse this VERTEX's own group-70 flags
+// bit-for-bit) is deliberately the more robust signal: real-world
+// exporters are far more consistent about always writing 71+ on a face
+// record and never on a coordinate record than about which exact flag-
+// 70 bit combination they use for either kind.
+public void dxfHandleVertex (IntList eCodes, StringList eValues) {
+  if (!dxfPolyfaceActive) return;
+
+  boolean isFaceDef = eCodes.hasValue(71) || eCodes.hasValue(72) || eCodes.hasValue(73) || eCodes.hasValue(74);
+
+  if (isFaceDef) {
+    IntList faceIndices = new IntList();
+    int[] faceGroupCodes = { 71, 72, 73, 74 };
+    for (int faceGroupCode : faceGroupCodes) {
+      if (eCodes.hasValue(faceGroupCode)) {
+        int raw = (int) dxfFindFloat(eCodes, eValues, faceGroupCode, 0);
+        int localIndex = abs(raw) - 1;
+        if ((raw != 0) && (localIndex >= 0) && (localIndex < dxfPolyfaceLocalPoints.size())) {
+          faceIndices.append(dxfPolyfaceLocalPoints.get(localIndex));
+        }
+      }
+    }
+    if (faceIndices.size() >= 3) {
+      allFaces.create(faceIndices.array());
+      dxfEntitiesImported += 1;
+    }
+  } else {
+    float x = dxfFindFloat(eCodes, eValues, 10, 0);
+    float y = dxfFindFloat(eCodes, eValues, 20, 0);
+    float z = dxfFindFloat(eCodes, eValues, 30, 0);
+    dxfPolyfaceLocalPoints.append(dxfCreatePoint(x, y, z));
+  }
+}
+// Minimal, dependency-free importer for a GLB (binary glTF 2.0) file -
+// the same "hand-roll the parser, no external library" choice
+// import_objects_IFC.pde already makes for its own, very different,
+// format (see that file's own header comment: "Minimal, dependency-free
+// parser/importer for a STEP (ISO-10303-21) '.ifc' file").
+//
+// v1 scope, deliberately kept simple:
+//   - Geometry only: positions and triangle indices. No normals, UVs,
+//     materials/textures, animation, skins, or cameras/lights - every
+//     imported face gets the same single material (the m parameter
+//     below), the same way a "different objects: different materials"
+//     commented-out alternative sits unused in import_objects_OBJ.pde.
+//   - Each primitive must be an indexed triangle list (mode 4, glTF's
+//     own default - the overwhelmingly common case; every other
+//     primitive mode is skipped with a console message) with a POSITION
+//     accessor of type VEC3/FLOAT and an indices accessor of type
+//     SCALAR/UNSIGNED_BYTE/UNSIGNED_SHORT/UNSIGNED_INT - covers the
+//     large majority of real-world exports.
+//   - Only the embedded, self-contained binary buffer (buffer 0, the BIN
+//     chunk every "single .glb file" carries) is read - no external or
+//     data-URI buffers, no sparse accessors.
+//   - Draco-compressed meshes (KHR_draco_mesh_compression) are detected
+//     and the whole import is cancelled with a clear message rather than
+//     silently importing nothing: Draco needs a dedicated decoder this
+//     importer doesn't have in v1.
+//   - Node hierarchies (including nested children) ARE walked and their
+//     transforms (either a raw matrix, or separate translation/rotation/
+//     scale) composed via PMatrix3D - already used the same way for
+//     composing a transform chain in Model1Ds.pde's own tree-branch
+//     code. Skipping this would misplace or entirely drop geometry in
+//     any file that groups objects under parent nodes, which real
+//     exporters (Blender's default among them) do routinely.
+//
+// glTF itself has no fixed JSON-parsing dependency concern here: Processing's
+// own JSONObject/JSONArray already handle it (Land3D.pde's own elevation-
+// API call already uses the same classes), so this stays as dependency-free
+// as import_objects_OBJ.pde/import_objects_IFC.pde already are.
+
+// Transform parameters for the CURRENT import_objects_GLB() call, read by
+// glbWalkNode()/glbEmitMesh() below without threading them through every
+// recursive call - the same "a few fields shared across one whole import,
+// rather than passed through every call" shape current_Material/
+// current_Tessellation/... (globals.pde) already use for every importer,
+// here just scoped to this file specifically since cx/cy/cz/sx/sy/sz
+// aren't needed anywhere outside a GLB import.
+float glb_cx, glb_cy, glb_cz, glb_sx, glb_sy, glb_sz;
+boolean glb_cycleMaterial; // true when the caller passed m == -1 - see import_objects_OBJ.pde's own identical "g" tag handling
+
+int glb_meshCount = 0;
+int glb_meshesProcessed = 0;
+float glb_printedProgress = 0;
+ProgressWindow glb_progressWindow = null;
+
+// glTF accessor componentType constants - only the subset this importer
+// actually reads (POSITION is always FLOAT; indices are always one of
+// the three unsigned integer types).
+final int GLB_COMPONENT_UNSIGNED_BYTE  = 5121;
+final int GLB_COMPONENT_UNSIGNED_SHORT = 5123;
+final int GLB_COMPONENT_UNSIGNED_INT   = 5125;
+final int GLB_COMPONENT_FLOAT          = 5126;
+
+// One-shot: whether the very next import_objects_GLB() call should open
+// axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
+// anything else - armed only by selectFile_ImportGlb(), the real,
+// interactive "pick a file from the menu" path, same shape as
+// objImportShowOptionsDialog (import_objects_OBJ.pde) and
+// ifcImportShowOptionsDialog (import_objects_IFC.pde). Defaults to (and,
+// every other way import_objects_GLB() can be reached stays) false, so
+// a script command or a test calling import_objects_GLB() directly never
+// sees a dialog pop up.
+boolean glbImportShowOptionsDialog = false;
+
+public void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Consumed (reset) here regardless of whether the dialog is shown or
+  // how the person answers it - see ifcImportShowOptionsDialog's own
+  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // already a real path on disk. A cancelled dialog aborts the whole
+  // import immediately, before touching allPoints/allFaces or printing
+  // anything below - as if import_objects_GLB() had never been called.
+  if (glbImportShowOptionsDialog) {
+    glbImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("GLB import options")) return;
+  }
+
+  println("Importing GLB. Please wait...");
+  showWaitCursor();
+
+  glb_cycleMaterial = (m == -1);
+  if (m == -1) current_Material = 0;
+  else current_Material = m;
+
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
+  glb_cx = cx; glb_cy = cy; glb_cz = cz;
+  glb_sx = sx; glb_sy = sy; glb_sz = sz;
+
+  importedObjectName = OPESYS.getFilenameFromPath(FileName);
+
+  byte[] raw = loadBytes(FileName);
+  if ((raw == null) || (raw.length < 12)) {
+    println("\nGLB import: could not read '" + FileName + "' (file missing, unreadable, or too short to be a .glb)");
+    showArrowCursor();
+    return;
+  }
+
+  // 12-byte header: magic "glTF" (4 ASCII bytes), version (uint32 LE,
+  // not otherwise checked - this importer doesn't depend on which 2.x
+  // minor revision wrote the file), total length (uint32 LE).
+  if (!((raw[0] == 'g') && (raw[1] == 'l') && (raw[2] == 'T') && (raw[3] == 'F'))) {
+    println("\nGLB import: '" + FileName + "' is not a .glb file (missing the 'glTF' magic bytes)");
+    showArrowCursor();
+    return;
+  }
+
+  int totalLength = binReadU32LE(raw, 8);
+  if (totalLength > raw.length) totalLength = raw.length; // tolerate a slightly short/truncated trailing pad
+
+  // Chunk loop: the JSON chunk always comes first (required by spec); the
+  // BIN chunk, if present, always comes second - but this reads either
+  // order and just keeps whichever JSON/BIN chunk it sees first of each,
+  // since nothing here depends on strict ordering beyond "JSON exists".
+  String jsonText = null;
+  int binStart = -1;
+  int binLength = 0;
+
+  int pos = 12;
+  while (pos + 8 <= totalLength) {
+    int chunkLength = binReadU32LE(raw, pos);
+    boolean isJSON = (raw[pos + 4] == 'J') && (raw[pos + 5] == 'S') && (raw[pos + 6] == 'O') && (raw[pos + 7] == 'N');
+    boolean isBIN  = (raw[pos + 4] == 'B') && (raw[pos + 5] == 'I') && (raw[pos + 6] == 'N') && (raw[pos + 7] == 0);
+    int chunkDataStart = pos + 8;
+
+    if (chunkDataStart + chunkLength > totalLength) break; // malformed/truncated - stop reading chunks rather than read past the end
+
+    if (isJSON && (jsonText == null)) {
+      jsonText = new String(raw, chunkDataStart, chunkLength, java.nio.charset.StandardCharsets.UTF_8);
+    } else if (isBIN && (binStart == -1)) {
+      binStart = chunkDataStart;
+      binLength = chunkLength;
+    }
+
+    pos = chunkDataStart + chunkLength;
+  }
+
+  if (jsonText == null) {
+    println("\nGLB import: no JSON chunk found in '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  JSONObject json = null;
+  try {
+    json = JSONObject.parse(jsonText);
+  } catch (RuntimeException e) {
+    println("\nGLB import: could not parse the JSON chunk (" + e.getMessage() + ")");
+  }
+  if (json == null) {
+    showArrowCursor();
+    return;
+  }
+
+  // The embedded binary buffer (glTF's own buffer 0, with no "uri" - the
+  // standard shape for a self-contained .glb). v1 only reads from this
+  // one in-memory slice - see this file's own header comment for why.
+  byte[] bin = (binStart >= 0) ? java.util.Arrays.copyOfRange(raw, binStart, binStart + binLength) : new byte[0];
+
+  if (json.hasKey("extensionsRequired")) {
+    JSONArray required = json.getJSONArray("extensionsRequired");
+    for (int i = 0; i < required.size(); i++) {
+      if (required.getString(i).equals("KHR_draco_mesh_compression")) {
+        println("\nGLB import: '" + FileName + "' requires Draco mesh compression (KHR_draco_mesh_compression), which this importer does not support yet - import cancelled.");
+        showArrowCursor();
+        return;
+      }
+    }
+  }
+
+  if (!json.hasKey("nodes") || !json.hasKey("scenes")) {
+    println("\nGLB import: no scene/node data found in '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  JSONArray scenes = json.getJSONArray("scenes");
+  int sceneIndex = json.hasKey("scene") ? json.getInt("scene") : 0;
+  if ((sceneIndex < 0) || (sceneIndex >= scenes.size())) {
+    println("\nGLB import: no valid default scene found in '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  JSONObject sceneObj = scenes.getJSONObject(sceneIndex);
+  JSONArray rootNodeIndices = sceneObj.hasKey("nodes") ? sceneObj.getJSONArray("nodes") : new JSONArray();
+
+  glb_meshCount = json.hasKey("meshes") ? json.getJSONArray("meshes").size() : 0;
+  glb_meshesProcessed = 0;
+  glb_printedProgress = 0;
+
+  progressBarHeader();
+
+  // Same showImportProgress/ProgressWindow pattern import_objects_OBJ.pde
+  // already uses - see that file's own comment on it.
+  glb_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing GLB") : null;
+  if (glb_progressWindow != null) glb_progressWindow.setVisible(true);
+
+  try {
+    PMatrix3D identity = new PMatrix3D();
+    for (int i = 0; i < rootNodeIndices.size(); i++) {
+      glbWalkNode(json, bin, rootNodeIndices.getInt(i), identity);
+    }
+  } finally {
+    if (glb_progressWindow != null) glb_progressWindow.dispose();
+    glb_progressWindow = null;
+  }
+
+  int remaining = (int) floor(100 - glb_printedProgress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
+
+  showArrowCursor();
+}
+
+// One console/ProgressWindow update, called once per mesh processed -
+// same delta >= 1 throttle and '█' console bar import_objects_OBJ.pde's
+// own per-line loop already uses, just keyed off glb_meshesProcessed/
+// glb_meshCount (a mesh, not a line, is the natural unit of progress for
+// a GLB file) instead.
+public void glbReportProgress () {
+  if (control == USER_AUTO) return;
+
+  float Progress = (glb_meshCount > 0) ? (100 * glb_meshesProcessed / PApplet.parseFloat(glb_meshCount)) : 100;
+  int delta = (int) floor(Progress - glb_printedProgress);
+  if (delta >= 1) {
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < delta; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    glb_printedProgress = floor(Progress);
+    if (glb_progressWindow != null) glb_progressWindow.updateFraction(Progress / 100.0f);
+  }
+}
+
+// Visits node `nodeIndex` and every one of its descendants, composing
+// each one's own local transform (glbNodeMatrix(), below) onto its
+// parent's already-composed world matrix - the same "clone, then apply
+// on top of the clone" shape Model1Ds.pde's own cacheBranch()/
+// cacheElement() use for their own PMatrix3D chains (see that file's own
+// comment: "mirrors pushMatrix()").
+public void glbWalkNode (JSONObject json, byte[] bin, int nodeIndex, PMatrix3D parentMatrix) {
+  JSONArray nodes = json.getJSONArray("nodes");
+  if ((nodeIndex < 0) || (nodeIndex >= nodes.size())) return;
+
+  JSONObject node = nodes.getJSONObject(nodeIndex);
+
+  PMatrix3D worldMatrix = parentMatrix.get(); // clone - mirrors pushMatrix()
+  worldMatrix.apply(glbNodeMatrix(node));
+
+  if (node.hasKey("mesh")) {
+    glbEmitMesh(json, bin, node.getInt("mesh"), worldMatrix);
+  }
+
+  if (node.hasKey("children")) {
+    JSONArray children = node.getJSONArray("children");
+    for (int i = 0; i < children.size(); i++) {
+      glbWalkNode(json, bin, children.getInt(i), worldMatrix);
+    }
+  }
+}
+
+// Each node's own local transform as a PMatrix3D - either a raw 4x4
+// matrix (glTF's own column-major float[16], reordered here into
+// PMatrix3D's row-major set()/apply() argument order - element (row r,
+// col c) sits at a[c*4 + r] in glTF's array) or composed from separate
+// translation/rotation(quaternion)/scale, glTF's other allowed shape
+// (defaults when a node omits one: translation {0,0,0}, rotation
+// {0,0,0,1} (identity), scale {1,1,1}).
+public PMatrix3D glbNodeMatrix (JSONObject node) {
+  PMatrix3D m = new PMatrix3D(); // identity
+
+  if (node.hasKey("matrix")) {
+    JSONArray a = node.getJSONArray("matrix");
+    m.set(
+      a.getFloat(0), a.getFloat(4), a.getFloat(8),  a.getFloat(12),
+      a.getFloat(1), a.getFloat(5), a.getFloat(9),  a.getFloat(13),
+      a.getFloat(2), a.getFloat(6), a.getFloat(10), a.getFloat(14),
+      a.getFloat(3), a.getFloat(7), a.getFloat(11), a.getFloat(15)
+    );
+    return m;
+  }
+
+  float tx = 0, ty = 0, tz = 0;
+  if (node.hasKey("translation")) {
+    JSONArray t = node.getJSONArray("translation");
+    tx = t.getFloat(0); ty = t.getFloat(1); tz = t.getFloat(2);
+  }
+
+  float qx = 0, qy = 0, qz = 0, qw = 1;
+  if (node.hasKey("rotation")) {
+    JSONArray q = node.getJSONArray("rotation");
+    qx = q.getFloat(0); qy = q.getFloat(1); qz = q.getFloat(2); qw = q.getFloat(3);
+  }
+
+  float sx = 1, sy = 1, sz = 1;
+  if (node.hasKey("scale")) {
+    JSONArray s = node.getJSONArray("scale");
+    sx = s.getFloat(0); sy = s.getFloat(1); sz = s.getFloat(2);
+  }
+
+  m.translate(tx, ty, tz);
+
+  // Standard quaternion -> 3x3 rotation matrix, embedded in a 4x4
+  // (bottom row/right column left as identity).
+  float xx = qx * qx, yy = qy * qy, zz = qz * qz;
+  float xy = qx * qy, xz = qx * qz, yz = qy * qz;
+  float wx = qw * qx, wy = qw * qy, wz = qw * qz;
+
+  m.apply(
+    1 - 2 * (yy + zz),     2 * (xy - wz),     2 * (xz + wy), 0,
+        2 * (xy + wz), 1 - 2 * (xx + zz),     2 * (yz - wx), 0,
+        2 * (xz - wy),     2 * (yz + wx), 1 - 2 * (xx + yy), 0,
+                    0,                 0,                 0, 1
+  );
+
+  m.scale(sx, sy, sz);
+
+  return m;
+}
+
+// Every supported primitive of mesh `meshIndex`, with every vertex
+// carried through worldMatrix (that node's own fully-composed transform)
+// before being handed to allPoints.create() - see this file's own header
+// comment for exactly which primitive shapes are (and aren't) supported.
+public void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMatrix) {
+  glb_meshesProcessed += 1;
+  glbReportProgress();
+
+  JSONArray meshes = json.getJSONArray("meshes");
+  if ((meshIndex < 0) || (meshIndex >= meshes.size())) return;
+
+  JSONArray primitives = meshes.getJSONObject(meshIndex).getJSONArray("primitives");
+
+  for (int p = 0; p < primitives.size(); p++) {
+    JSONObject prim = primitives.getJSONObject(p);
+
+    int mode = prim.hasKey("mode") ? prim.getInt("mode") : 4; // glTF's own default: 4 = TRIANGLES
+    if (mode != 4) {
+      println("\nGLB import: skipping a primitive with mode " + mode + " (only triangle lists are supported in this version)");
+      continue;
+    }
+
+    if (prim.hasKey("extensions") && prim.getJSONObject("extensions").hasKey("KHR_draco_mesh_compression")) {
+      println("\nGLB import: skipping a Draco-compressed primitive (not supported in this version)");
+      continue;
+    }
+
+    if (!prim.hasKey("attributes") || !prim.hasKey("indices")) {
+      println("\nGLB import: skipping a primitive missing POSITION or indices");
+      continue;
+    }
+
+    JSONObject attributes = prim.getJSONObject("attributes");
+    if (!attributes.hasKey("POSITION")) {
+      println("\nGLB import: skipping a primitive with no POSITION attribute");
+      continue;
+    }
+
+    float[] positions = glbReadVec3FloatAccessor(json, bin, attributes.getInt("POSITION"));
+    int[] indices = glbReadIndexAccessor(json, bin, prim.getInt("indices"));
+    if ((positions == null) || (indices == null)) continue;
+
+    if (glb_cycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling import_objects_OBJ.pde's own does
+    if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+    int vertCount = positions.length / 3;
+    int[] pointIndex = new int[vertCount];
+
+    PVector local = new PVector();
+    PVector world = new PVector();
+
+    for (int i = 0; i < vertCount; i++) {
+      local.x = positions[i * 3];
+      local.y = positions[i * 3 + 1];
+      local.z = positions[i * 3 + 2];
+
+      worldMatrix.mult(local, world);
+
+      // importSwapAxisYZ (fileSelected.pde) - shared with
+      // import_objects_OBJ.pde's own "allPoints.create(x, -z, y)" vs
+      // "allPoints.create(x, y, z)" choice, so the two importers' axis
+      // treatment always matches each other, whichever way the person
+      // importing sets it. Off by default - the same plain passthrough
+      // this already was.
+      float finalX, finalY, finalZ;
+      if (importSwapAxisYZ) {
+        finalX = glb_cx + glb_sx * world.x;
+        finalY = glb_cy + glb_sy * (-world.z);
+        finalZ = glb_cz + glb_sz * world.y;
+      } else {
+        finalX = glb_cx + glb_sx * world.x;
+        finalY = glb_cy + glb_sy * world.y;
+        finalZ = glb_cz + glb_sz * world.z;
+      }
+
+      pointIndex[i] = allPoints.create(finalX, finalY, finalZ);
+    }
+
+    for (int i = 0; i + 2 < indices.length; i += 3) {
+      int[] newFace = {
+        pointIndex[indices[i]],
+        pointIndex[indices[i + 1]],
+        pointIndex[indices[i + 2]]
+      };
+      allFaces.create(newFace);
+    }
+  }
+}
+
+// Reads a VEC3/FLOAT accessor (the shape POSITION always has) into a
+// flat {x0,y0,z0, x1,y1,z1, ...} array, or null (with a console message)
+// if this accessor isn't that shape, is sparse, or its data isn't in the
+// embedded buffer 0 this importer reads from.
+public float[] glbReadVec3FloatAccessor (JSONObject json, byte[] bin, int accessorIndex) {
+  JSONArray accessors = json.getJSONArray("accessors");
+  if ((accessorIndex < 0) || (accessorIndex >= accessors.size())) return null;
+
+  JSONObject accessor = accessors.getJSONObject(accessorIndex);
+  int componentType = accessor.hasKey("componentType") ? accessor.getInt("componentType") : -1;
+  String type = accessor.hasKey("type") ? accessor.getString("type") : "";
+  int count = accessor.hasKey("count") ? accessor.getInt("count") : 0;
+
+  if ((componentType != GLB_COMPONENT_FLOAT) || !type.equals("VEC3")) {
+    println("\nGLB import: unsupported POSITION accessor (componentType=" + componentType + ", type=" + type + ")");
+    return null;
+  }
+
+  if (!accessor.hasKey("bufferView")) {
+    println("\nGLB import: a POSITION accessor with no bufferView isn't supported (sparse accessors aren't supported in this version)");
+    return null;
+  }
+
+  JSONArray bufferViews = json.getJSONArray("bufferViews");
+  int bufferViewIndex = accessor.getInt("bufferView");
+  if ((bufferViewIndex < 0) || (bufferViewIndex >= bufferViews.size())) return null;
+  JSONObject bufferView = bufferViews.getJSONObject(bufferViewIndex);
+
+  if (bufferView.hasKey("buffer") && (bufferView.getInt("buffer") != 0)) {
+    println("\nGLB import: a bufferView pointing at a buffer other than the embedded one (buffer 0) isn't supported in this version");
+    return null;
+  }
+
+  int accessorByteOffset = accessor.hasKey("byteOffset") ? accessor.getInt("byteOffset") : 0;
+  int bufferViewByteOffset = bufferView.hasKey("byteOffset") ? bufferView.getInt("byteOffset") : 0;
+  int byteStride = bufferView.hasKey("byteStride") ? bufferView.getInt("byteStride") : 12; // tightly packed VEC3 FLOAT = 12 bytes
+  int base = bufferViewByteOffset + accessorByteOffset;
+
+  float[] out = new float[count * 3];
+  for (int i = 0; i < count; i++) {
+    int o = base + i * byteStride;
+    if (o + 12 > bin.length) {
+      println("\nGLB import: POSITION accessor reads past the end of the embedded buffer");
+      return null;
+    }
+    out[i * 3]     = binReadFloatLE(bin, o);
+    out[i * 3 + 1] = binReadFloatLE(bin, o + 4);
+    out[i * 3 + 2] = binReadFloatLE(bin, o + 8);
+  }
+  return out;
+}
+
+// Reads a SCALAR index accessor - UNSIGNED_BYTE/UNSIGNED_SHORT/
+// UNSIGNED_INT, the three types glTF allows for "indices" - into a plain
+// int[], widening every value (Java has no unsigned integer types of its
+// own). null (with a console message) for anything else unsupported, the
+// same reasons as glbReadVec3FloatAccessor() above.
+public int[] glbReadIndexAccessor (JSONObject json, byte[] bin, int accessorIndex) {
+  JSONArray accessors = json.getJSONArray("accessors");
+  if ((accessorIndex < 0) || (accessorIndex >= accessors.size())) return null;
+
+  JSONObject accessor = accessors.getJSONObject(accessorIndex);
+  int componentType = accessor.hasKey("componentType") ? accessor.getInt("componentType") : -1;
+  int count = accessor.hasKey("count") ? accessor.getInt("count") : 0;
+
+  int componentSize;
+  if (componentType == GLB_COMPONENT_UNSIGNED_BYTE) componentSize = 1;
+  else if (componentType == GLB_COMPONENT_UNSIGNED_SHORT) componentSize = 2;
+  else if (componentType == GLB_COMPONENT_UNSIGNED_INT) componentSize = 4;
+  else {
+    println("\nGLB import: unsupported indices componentType=" + componentType);
+    return null;
+  }
+
+  if (!accessor.hasKey("bufferView")) {
+    println("\nGLB import: an indices accessor with no bufferView isn't supported (sparse accessors aren't supported in this version)");
+    return null;
+  }
+
+  JSONArray bufferViews = json.getJSONArray("bufferViews");
+  int bufferViewIndex = accessor.getInt("bufferView");
+  if ((bufferViewIndex < 0) || (bufferViewIndex >= bufferViews.size())) return null;
+  JSONObject bufferView = bufferViews.getJSONObject(bufferViewIndex);
+
+  if (bufferView.hasKey("buffer") && (bufferView.getInt("buffer") != 0)) {
+    println("\nGLB import: a bufferView pointing at a buffer other than the embedded one (buffer 0) isn't supported in this version");
+    return null;
+  }
+
+  int accessorByteOffset = accessor.hasKey("byteOffset") ? accessor.getInt("byteOffset") : 0;
+  int bufferViewByteOffset = bufferView.hasKey("byteOffset") ? bufferView.getInt("byteOffset") : 0;
+  int byteStride = bufferView.hasKey("byteStride") ? bufferView.getInt("byteStride") : componentSize;
+  int base = bufferViewByteOffset + accessorByteOffset;
+
+  int[] out = new int[count];
+  for (int i = 0; i < count; i++) {
+    int o = base + i * byteStride;
+    if (o + componentSize > bin.length) {
+      println("\nGLB import: indices accessor reads past the end of the embedded buffer");
+      return null;
+    }
+    if (componentSize == 1) out[i] = bin[o] & 0xFF;
+    else if (componentSize == 2) out[i] = binReadU16LE(bin, o);
+    else out[i] = binReadU32LE(bin, o);
+  }
+  return out;
+}
+
+// Little-endian byte readers - every number in a GLB binary chunk (chunk
+// headers, and every accessor's own packed data) is little-endian per
+// spec, regardless of the platform this importer runs on. Generic enough
+// (just byte-offset math, nothing GLB-specific) that import_objects_STL.
+// pde's own binary-STL path reuses these directly rather than
+// duplicating the same bit-twiddling - binary STL's own triangle count
+// and per-vertex floats are little-endian too.
+public int binReadU32LE (byte[] b, int off) {
+  return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8) | ((b[off + 2] & 0xFF) << 16) | ((b[off + 3] & 0xFF) << 24);
+}
+
+public int binReadU16LE (byte[] b, int off) {
+  return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8);
+}
+
+public float binReadFloatLE (byte[] b, int off) {
+  return Float.intBitsToFloat(binReadU32LE(b, off));
+}
 // Minimal, dependency-free parser/importer for a STEP (ISO-10303-21)
 // ".ifc" file - the plain-text exchange format BIM software (Revit,
 // ArchiCAD, Blender BIM, ...) writes when a user exports "IFC".
@@ -62875,7 +64650,30 @@ public void import_objects_IFC (String FileName, int m, int tes, int lyr, int vs
   if (importProgressWindow != null) importProgressWindow.dispose();
   showArrowCursor();
 }
+// One-shot: whether the very next import_objects_OBJ() call should open
+// axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
+// anything else - armed only by selectFile_ImportObj(), the real,
+// interactive "pick a file from the menu" path, same shape as
+// ifcImportShowOptionsDialog (import_objects_IFC.pde) for IFC's own
+// options. Defaults to (and, every other way import_objects_OBJ() can be
+// reached - a script's own IMPORT_OBJ command, or a test calling
+// import_objects_OBJ() directly - stays) false, so none of those paths
+// ever see a dialog pop up.
+boolean objImportShowOptionsDialog = false;
+
 public void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Consumed (reset) here regardless of whether the dialog is shown or
+  // how the person answers it - see ifcImportShowOptionsDialog's own
+  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // already a real path on disk, not back when selectFile_ImportObj()
+  // first asked for one. A cancelled dialog aborts the whole import
+  // immediately, before touching allPoints/allFaces or printing anything
+  // below - as if import_objects_OBJ() had never been called at all.
+  if (objImportShowOptionsDialog) {
+    objImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("OBJ import options")) return;
+  }
+
   println("Importing OBJ. Please wait...");
   showWaitCursor();
 
@@ -62944,8 +64742,13 @@ public void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vs
       float x = cx + sx * PApplet.parseFloat(parts[1]);
       float y = cy + sy * PApplet.parseFloat(parts[2]);
       float z = cz + sz * PApplet.parseFloat(parts[3]);
-      //importVerticeNumber.append(allPoints.create(x, -z, y));
-      importVerticeNumber.append(allPoints.create(x, y, z));
+      // importSwapAxisYZ (fileSelected.pde) - off by default, so this
+      // stays the plain passthrough it already was.
+      if (importSwapAxisYZ) {
+        importVerticeNumber.append(allPoints.create(x, -z, y));
+      } else {
+        importVerticeNumber.append(allPoints.create(x, y, z));
+      }
     } else if (tag.equalsIgnoreCase("f")) {
       int FaceDegree = parts.length - 1;
       int[] newFace = new int[FaceDegree];
@@ -62976,6 +64779,739 @@ public void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vs
   println();
 
   showArrowCursor();
+}
+// Minimal, dependency-free importer for a PLY (Polygon File Format /
+// Stanford Triangle Format) file - the same "hand-roll the parser, no
+// external library" choice import_objects_OBJ.pde/import_objects_IFC.
+// pde/import_objects_GLB.pde/import_objects_STL.pde/import_objects_DXF.
+// pde already make for their own formats. PLY's own spec is fully
+// public (Stanford, no licensing question at all, unlike DXF's "openly
+// published but still proprietary" status).
+//
+// PLY always starts with a plain-text header (even in a binary file -
+// only the DATA section after it differs) declaring, in order, a list
+// of "element"s (e.g. "vertex", "face"), each with its own ordered list
+// of "property" fields - either a plain scalar (a type and a name) or a
+// list (a count type, a value type, and a name - e.g. a face's own
+// vertex-index list). plyParseHeader() reads that header once, byte by
+// byte (not via loadStrings() - see its own comment for why), building
+// plyElements/plyFormat and returning the exact byte offset the DATA
+// section starts at; plyImportAscii()/plyImportBinary() (one or the
+// other, depending on plyFormat) then walk every element's own declared
+// instances in that same order, property by property, exactly as
+// declared - the only way to read either variant correctly, since nothing
+// in the data section itself names which property is which.
+//
+// v1 scope, deliberately kept simple - only the two elements, and
+// properties, that matter for solid mesh geometry:
+//   - "vertex": only its own "x"/"y"/"z" properties (case-insensitive)
+//     are read; every other property a vertex might carry (normals,
+//     per-vertex color, confidence/quality, texture coordinates, ...) is
+//     correctly skipped over (still needed to stay in sync - see
+//     plySizeOf()) without being interpreted.
+//   - "face": only its own FIRST list property is read, as that face's
+//     vertex-index list (whatever its own name happens to be -
+//     "vertex_indices" and "vertex_index" are both common in the wild,
+//     so this deliberately doesn't match on a specific name at all); any
+//     list or scalar properties after it (a rare per-face color, or a
+//     second list for e.g. per-corner texture coordinates) are skipped.
+//     Each face becomes one single app-native face however many corners
+//     its own index list has (3 or more) - the same "whatever n-gon the
+//     file itself declares, not forced into triangles" choice
+//     import_objects_IFC.pde's own n-gon faces and import_objects_DXF.
+//     pde's own 3DFACE/polyface-mesh faces already make.
+//   - Any OTHER element (e.g. "edge", or a custom one some tool adds) is
+//     skipped entirely, its own instances still correctly walked
+//     property by property so the shared byte/line cursor stays in sync
+//     for whatever comes after it.
+//
+// No OBJ "g"/STL "solid"/DXF "layer"-style natural sub-object boundary
+// exists in PLY at all - its own element list is just a small, fixed set
+// of homogeneous arrays, closer in shape to binary STL's own single
+// implicit solid - so the whole imported file is always a single group.
+
+boolean plyImportShowOptionsDialog = false;
+
+// Transform parameters for the CURRENT import_objects_PLY() call - same
+// "a few fields shared across one whole import" shape glb_cx/... (import_
+// objects_GLB.pde) already uses.
+float ply_cx, ply_cy, ply_cz, ply_sx, ply_sy, ply_sz;
+
+String plyFormat = ""; // "ascii" / "binary_little_endian" / "binary_big_endian", read from the header
+
+class PlyProperty {
+  boolean isList;
+  String countType; // only meaningful when isList
+  String valueType; // for a list: its own value type; for a scalar: the property's own type
+  String name;
+}
+
+class PlyElement {
+  String name;
+  int count;
+  ArrayList<PlyProperty> properties = new ArrayList<PlyProperty>();
+}
+
+ArrayList<PlyElement> plyElements = new ArrayList<PlyElement>();
+
+int plyFacesImported = 0;
+
+long ply_totalInstances = 0;
+long ply_processedInstances = 0;
+float ply_printedProgress = 0;
+ProgressWindow ply_progressWindow = null;
+
+public void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/
+  // import_objects_STL()'s/import_objects_DXF()'s own identical blocks -
+  // see any one's own comment, or ifcImportShowOptionsDialog's (import_
+  // objects_IFC.pde), for why this sits here rather than earlier, and
+  // what a cancelled dialog does.
+  if (plyImportShowOptionsDialog) {
+    plyImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("PLY import options")) return;
+  }
+
+  println("Importing PLY. Please wait...");
+  showWaitCursor();
+
+  if (m == -1) current_Material = 0;
+  else current_Material = m;
+
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
+  ply_cx = cx; ply_cy = cy; ply_cz = cz;
+  ply_sx = sx; ply_sy = sy; ply_sz = sz;
+
+  importedObjectName = OPESYS.getFilenameFromPath(FileName);
+
+  if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+  byte[] raw = loadBytes(FileName);
+  if ((raw == null) || (raw.length == 0)) {
+    println("\nPLY import: could not read '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  int dataStartByteOffset = plyParseHeader(raw);
+  if (dataStartByteOffset < 0) {
+    println("\nPLY import: '" + FileName + "' doesn't look like a valid PLY file (missing the 'ply' magic line or 'end_header')");
+    showArrowCursor();
+    return;
+  }
+
+  ply_totalInstances = 0;
+  for (PlyElement element : plyElements) ply_totalInstances += element.count;
+  ply_processedInstances = 0;
+  ply_printedProgress = 0;
+  plyFacesImported = 0;
+
+  progressBarHeader();
+
+  ply_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing PLY") : null;
+  if (ply_progressWindow != null) ply_progressWindow.setVisible(true);
+
+  try {
+    if (plyFormat.equals("ascii")) {
+      plyImportAscii(raw, dataStartByteOffset);
+    } else if (plyFormat.equals("binary_little_endian")) {
+      plyImportBinary(raw, dataStartByteOffset, true);
+    } else if (plyFormat.equals("binary_big_endian")) {
+      plyImportBinary(raw, dataStartByteOffset, false);
+    } else {
+      println("\nPLY import: unrecognized format '" + plyFormat + "' (expected ascii, binary_little_endian, or binary_big_endian)");
+    }
+  } finally {
+    if (ply_progressWindow != null) ply_progressWindow.dispose();
+    ply_progressWindow = null;
+  }
+
+  if (plyFacesImported == 0) {
+    println("\nPLY import: no faces were imported - this version only reads the 'vertex' element's own x/y/z and the 'face' element's own first list property (its vertex-index list)");
+  }
+
+  int remaining = (int) floor(100 - ply_printedProgress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
+
+  showArrowCursor();
+}
+
+// One console/ProgressWindow update, called once per element instance
+// processed (vertex, face, or any skipped element alike) - same
+// delta >= 1 throttle glbReportProgress() (import_objects_GLB.pde)
+// already uses.
+public void plyReportProgress () {
+  if (control == USER_AUTO) return;
+
+  ply_processedInstances += 1;
+
+  float Progress = (ply_totalInstances > 0) ? (100 * ply_processedInstances / (float) ply_totalInstances) : 100;
+  int delta = (int) floor(Progress - ply_printedProgress);
+  if (delta >= 1) {
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < delta; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    ply_printedProgress = floor(Progress);
+    if (ply_progressWindow != null) ply_progressWindow.updateFraction(Progress / 100.0f);
+  }
+}
+
+// One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
+// (fileSelected.pde, shared with every other importer) the same way
+// those already do.
+public int plyCreatePoint (float x, float y, float z) {
+  float finalX, finalY, finalZ;
+  if (importSwapAxisYZ) {
+    finalX = ply_cx + ply_sx * x;
+    finalY = ply_cy + ply_sy * (-z);
+    finalZ = ply_cz + ply_sz * y;
+  } else {
+    finalX = ply_cx + ply_sx * x;
+    finalY = ply_cy + ply_sy * y;
+    finalZ = ply_cz + ply_sz * z;
+  }
+  return allPoints.create(finalX, finalY, finalZ);
+}
+
+// Byte size of one PLY scalar type - both its "short" names (char,
+// uchar, short, ushort, int, uint, float, double) and its fixed-width
+// aliases (int8, uint8, int16, uint16, int32, uint32, float32, float64)
+// are in real use, so both are recognized. -1 for anything else -
+// callers treat that as "stop importing, this file uses something this
+// version doesn't recognize" rather than guess and silently desync the
+// rest of a binary file's own byte cursor.
+public int plySizeOf (String type) {
+  if (type.equals("char") || type.equals("uchar") || type.equals("int8") || type.equals("uint8")) return 1;
+  if (type.equals("short") || type.equals("ushort") || type.equals("int16") || type.equals("uint16")) return 2;
+  if (type.equals("int") || type.equals("uint") || type.equals("float") || type.equals("float32") || type.equals("int32") || type.equals("uint32")) return 4;
+  if (type.equals("double") || type.equals("float64")) return 8;
+  return -1;
+}
+
+// Reads `size` bytes at `off` as a plain unsigned integer, widened into
+// a long - correct, and all this importer ever needs, for list counts
+// and vertex-index values (always non-negative in real files); NOT
+// correct for a genuinely negative signed value, which this importer
+// never reads one of.
+public long plyReadUInt (byte[] b, int off, int size, boolean littleEndian) {
+  long v = 0;
+  if (littleEndian) {
+    for (int i = 0; i < size; i++) v |= ((long) (b[off + i] & 0xFF)) << (8 * i);
+  } else {
+    for (int i = 0; i < size; i++) v = (v << 8) | (b[off + i] & 0xFF);
+  }
+  return v;
+}
+
+// Reads one value of PLY type `type` at `off` as a plain number -
+// bit-reinterpreted as float/double for those two types (their only
+// sensible reading), or just the plain unsigned integer value widened to
+// double for anything else (an x/y/z property declared as an integer
+// type would be unusual, but still reads as a real number this way,
+// rather than being bit-reinterpreted into nonsense the way reusing the
+// float/double path for every type would).
+public double plyReadNumber (byte[] b, int off, String type, boolean littleEndian) {
+  if (type.equals("float") || type.equals("float32")) {
+    long bits = plyReadUInt(b, off, 4, littleEndian);
+    return Float.intBitsToFloat((int) bits);
+  }
+  if (type.equals("double") || type.equals("float64")) {
+    long bits = plyReadUInt(b, off, 8, littleEndian);
+    return Double.longBitsToDouble(bits);
+  }
+  int size = plySizeOf(type);
+  return (double) plyReadUInt(b, off, size, littleEndian);
+}
+
+// Scans `raw` for PLY's own text header (always ASCII/UTF-8, regardless
+// of the file's declared ascii/binary DATA format - only the data
+// section after "end_header" differs) - returns the byte offset right
+// after "end_header"'s own line terminator (where the data section
+// begins), or -1 if the leading "ply" line or "end_header" itself wasn't
+// found. Reads the header byte-by-byte (not via loadStrings(), the
+// pattern every other text-based importer here uses) specifically so the
+// exact byte offset the data starts at is known precisely - the only way
+// to find a BINARY file's own data section at all, since there's no
+// line-based structure to fall back on there once the header ends.
+public int plyParseHeader (byte[] raw) {
+  plyElements.clear();
+  plyFormat = "";
+
+  int pos = 0;
+  boolean firstLine = true;
+  PlyElement currentElement = null;
+
+  while (pos < raw.length) {
+    int lineStart = pos;
+    while ((pos < raw.length) && (raw[pos] != '\n')) pos += 1;
+    int lineEnd = pos; // exclusive, not counting '\n'
+    if (pos < raw.length) pos += 1; // consume the '\n' itself
+
+    int trimmedEnd = lineEnd;
+    if ((trimmedEnd > lineStart) && (raw[trimmedEnd - 1] == '\r')) trimmedEnd -= 1; // tolerate CRLF line endings too
+
+    String line = new String(raw, lineStart, trimmedEnd - lineStart, java.nio.charset.StandardCharsets.UTF_8).trim();
+
+    if (firstLine) {
+      firstLine = false;
+      if (!line.equals("ply")) return -1;
+      continue;
+    }
+
+    if (line.length() == 0) continue;
+
+    String[] tokens = splitTokens(line);
+    if ((tokens == null) || (tokens.length == 0)) continue;
+
+    String kw = tokens[0];
+
+    if (kw.equals("format")) {
+      if (tokens.length >= 2) plyFormat = tokens[1];
+    } else if (kw.equals("element")) {
+      if (tokens.length >= 3) {
+        currentElement = new PlyElement();
+        currentElement.name = tokens[1];
+        currentElement.count = PApplet.parseInt(tokens[2]);
+        plyElements.add(currentElement);
+      }
+    } else if (kw.equals("property")) {
+      if ((currentElement != null) && (tokens.length >= 3)) {
+        PlyProperty prop = new PlyProperty();
+        if (tokens[1].equals("list") && (tokens.length >= 5)) {
+          prop.isList = true;
+          prop.countType = tokens[2];
+          prop.valueType = tokens[3];
+          prop.name = tokens[4];
+        } else {
+          prop.isList = false;
+          prop.valueType = tokens[1];
+          prop.name = tokens[2];
+        }
+        currentElement.properties.add(prop);
+      }
+    } else if (kw.equals("end_header")) {
+      return pos; // pos already advanced past this line's own newline
+    }
+    // "comment"/"obj_info" and anything else: ignored
+  }
+
+  return -1; // no "end_header" found
+}
+
+public void plyImportAscii (byte[] raw, int dataStartByteOffset) {
+  String dataText = new String(raw, dataStartByteOffset, raw.length - dataStartByteOffset, java.nio.charset.StandardCharsets.UTF_8);
+  String[] lines = split(dataText, '\n');
+
+  // allPoints index for every "vertex" instance, in file order - a face's
+  // own index list is always a plain 0-based index into this same,
+  // single, whole-file vertex list.
+  IntList vertexGlobalIndex = new IntList();
+
+  int lineIdx = 0;
+
+  for (PlyElement element : plyElements) {
+    boolean isVertex = element.name.equals("vertex");
+    boolean isFace = element.name.equals("face");
+
+    for (int n = 0; n < element.count; n++) {
+      plyReportProgress();
+
+      if (lineIdx >= lines.length) {
+        println("\nPLY import: data ends before the header's own element/property counts expected it to - stopping early");
+        return;
+      }
+
+      String[] tokens = splitTokens(trim(lines[lineIdx]));
+      lineIdx += 1;
+      if (tokens == null) tokens = new String[0];
+
+      int tokenIdx = 0;
+      float x = 0, y = 0, z = 0;
+      IntList faceIndices = null;
+
+      for (PlyProperty prop : element.properties) {
+        if (prop.isList) {
+          if (tokenIdx >= tokens.length) break;
+          int count = PApplet.parseInt(tokens[tokenIdx]);
+          tokenIdx += 1;
+
+          if (isFace && (faceIndices == null)) {
+            faceIndices = new IntList();
+            for (int k = 0; k < count; k++) {
+              if (tokenIdx >= tokens.length) break;
+              faceIndices.append(PApplet.parseInt(tokens[tokenIdx]));
+              tokenIdx += 1;
+            }
+          } else {
+            tokenIdx += count; // a non-face list, or this face's 2nd+ list property - skipped
+          }
+        } else {
+          if (tokenIdx >= tokens.length) break;
+          String tok = tokens[tokenIdx];
+          tokenIdx += 1;
+
+          if (isVertex) {
+            if (prop.name.equalsIgnoreCase("x")) x = PApplet.parseFloat(tok);
+            else if (prop.name.equalsIgnoreCase("y")) y = PApplet.parseFloat(tok);
+            else if (prop.name.equalsIgnoreCase("z")) z = PApplet.parseFloat(tok);
+          }
+        }
+      }
+
+      if (isVertex) {
+        vertexGlobalIndex.append(plyCreatePoint(x, y, z));
+      } else if (isFace) {
+        plyEmitFace(faceIndices, vertexGlobalIndex);
+      }
+    }
+  }
+}
+
+public void plyImportBinary (byte[] raw, int dataStartByteOffset, boolean littleEndian) {
+  int pos = dataStartByteOffset;
+
+  IntList vertexGlobalIndex = new IntList(); // same role as plyImportAscii()'s own
+
+  for (PlyElement element : plyElements) {
+    boolean isVertex = element.name.equals("vertex");
+    boolean isFace = element.name.equals("face");
+
+    for (int n = 0; n < element.count; n++) {
+      plyReportProgress();
+
+      float x = 0, y = 0, z = 0;
+      IntList faceIndices = null;
+      boolean truncatedOrUnsupported = false;
+
+      for (PlyProperty prop : element.properties) {
+        if (prop.isList) {
+          int countSize = plySizeOf(prop.countType);
+          int valueSize = plySizeOf(prop.valueType);
+          if ((countSize < 0) || (valueSize < 0) || (pos + countSize > raw.length)) { truncatedOrUnsupported = true; break; }
+
+          int count = (int) plyReadUInt(raw, pos, countSize, littleEndian);
+          pos += countSize;
+
+          if (isFace && (faceIndices == null)) {
+            faceIndices = new IntList();
+            for (int k = 0; k < count; k++) {
+              if (pos + valueSize > raw.length) { truncatedOrUnsupported = true; break; }
+              faceIndices.append((int) plyReadUInt(raw, pos, valueSize, littleEndian));
+              pos += valueSize;
+            }
+          } else {
+            // Computed and bounds-checked as a long, not plain int
+            // multiplication, before being added to pos: a corrupted
+            // file's garbage count value could otherwise overflow
+            // count * valueSize as an int before this ever gets the
+            // chance to notice it runs past the end of raw.
+            long skipBytes = (long) count * valueSize;
+            if (pos + skipBytes > raw.length) { truncatedOrUnsupported = true; break; }
+            pos += (int) skipBytes; // safe to narrow: already checked pos + skipBytes <= raw.length, itself a valid (so, int-range) array length
+          }
+        } else {
+          int valueSize = plySizeOf(prop.valueType);
+          if ((valueSize < 0) || (pos + valueSize > raw.length)) { truncatedOrUnsupported = true; break; }
+
+          if (isVertex) {
+            double v = plyReadNumber(raw, pos, prop.valueType, littleEndian);
+            if (prop.name.equalsIgnoreCase("x")) x = (float) v;
+            else if (prop.name.equalsIgnoreCase("y")) y = (float) v;
+            else if (prop.name.equalsIgnoreCase("z")) z = (float) v;
+          }
+          pos += valueSize;
+        }
+      }
+
+      if (truncatedOrUnsupported) {
+        println("\nPLY import: truncated binary data, or a property type this version doesn't recognize - stopping early");
+        return;
+      }
+
+      if (isVertex) {
+        vertexGlobalIndex.append(plyCreatePoint(x, y, z));
+      } else if (isFace) {
+        plyEmitFace(faceIndices, vertexGlobalIndex);
+      }
+    }
+  }
+}
+
+// Builds one app-native face from a face element instance's own already-
+// read index list (whatever length - 3 or more - it declared), mapping
+// each 0-based PLY vertex index through vertexGlobalIndex (the
+// allPoints index actually created for it, in file order) - shared by
+// plyImportAscii()/plyImportBinary() so this lookup/bounds-checking
+// logic exists exactly once.
+public void plyEmitFace (IntList faceIndices, IntList vertexGlobalIndex) {
+  if ((faceIndices == null) || (faceIndices.size() < 3)) return;
+
+  int[] face = new int[faceIndices.size()];
+  for (int k = 0; k < face.length; k++) {
+    int vi = faceIndices.get(k);
+    if ((vi < 0) || (vi >= vertexGlobalIndex.size())) return; // out-of-range index - skip this face rather than build it from a wrong/nonexistent point
+    face[k] = vertexGlobalIndex.get(vi);
+  }
+
+  allFaces.create(face);
+  plyFacesImported += 1;
+}
+// Minimal, dependency-free importer for an STL file - both the plain-
+// text ASCII variant and the binary one - the same "hand-roll the
+// parser, no external library" choice import_objects_OBJ.pde/
+// import_objects_IFC.pde/import_objects_GLB.pde already make for their
+// own formats.
+//
+// STL has no material/texture/group concept of its own at all - every
+// triangle in the file just gets the single material the m parameter
+// (below) names, the same "whole import, one material unless cycled per
+// sub-object" shape import_objects_OBJ.pde's own "g" tag already uses.
+// The one place STL DOES have its own natural sub-object boundary is
+// ASCII STL's optional multiple "solid ... endsolid" blocks in a single
+// file (uncommon, but real - some tools write one per separate part) -
+// each one becomes its own group here, cycling material the same way a
+// new OBJ "g" tag does. Binary STL has no such boundary (always exactly
+// one implicit solid), so a binary file is always a single group.
+//
+// Binary vs ASCII detection: the standard heuristic every real-world STL
+// reader uses, since a binary file's own 80-byte header is free-form
+// text and can (deliberately, by some exporters, to fool a naive reader)
+// start with "solid " too - read the triangle count a binary STL always
+// stores as a little-endian uint32 right after that header (byte offset
+// 80), and check whether the file's own total size exactly matches what
+// that many binary triangles would occupy (84 + 50 * count: a 12-byte
+// normal, three 12-byte vertices, and a 2-byte "attribute byte count"
+// per triangle). If it does, read it as binary; if not (including any
+// file too short to even hold that header), read it as ASCII.
+//
+// Per-vertex/face normals are read from a binary file (12 bytes right
+// before each triangle's own 3 vertices) but not used - this app derives
+// its own face normals rather than trusting a file's possibly-stale
+// ones, the same way import_objects_OBJ.pde's own parser already skips
+// every "vn" line without reading it.
+
+boolean stlImportShowOptionsDialog = false;
+
+// Transform parameters and the material-cycling flag for the CURRENT
+// import_objects_STL() call - same "a few fields shared across one
+// whole import" shape glb_cx/glb_cycleMaterial/... (import_objects_GLB.
+// pde) already use, for the same reason: stlCreatePoint()/the ASCII
+// "solid" handling below need them without threading extra parameters
+// through every call.
+float stl_cx, stl_cy, stl_cz, stl_sx, stl_sy, stl_sz;
+boolean stlCycleMaterial;
+
+public void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s own
+  // identical blocks - see either one's own comment, or
+  // ifcImportShowOptionsDialog's (import_objects_IFC.pde), for why this
+  // sits here rather than earlier, and what a cancelled dialog does.
+  if (stlImportShowOptionsDialog) {
+    stlImportShowOptionsDialog = false;
+    if (!axisSwapShowImportOptionsDialog("STL import options")) return;
+  }
+
+  println("Importing STL. Please wait...");
+  showWaitCursor();
+
+  stlCycleMaterial = (m == -1);
+  if (m == -1) current_Material = 0;
+  else current_Material = m;
+
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
+  stl_cx = cx; stl_cy = cy; stl_cz = cz;
+  stl_sx = sx; stl_sy = sy; stl_sz = sz;
+
+  importedObjectName = OPESYS.getFilenameFromPath(FileName);
+
+  byte[] raw = loadBytes(FileName);
+  if ((raw == null) || (raw.length == 0)) {
+    println("\nSTL import: could not read '" + FileName + "'");
+    showArrowCursor();
+    return;
+  }
+
+  boolean binary = false;
+  if (raw.length >= 84) {
+    int triangleCount = binReadU32LE(raw, 80);
+    long expectedBinarySize = 84L + 50L * (triangleCount & 0xFFFFFFFFL); // masked: triangleCount read as unsigned
+    if (expectedBinarySize == raw.length) binary = true;
+  }
+
+  progressBarHeader();
+
+  if (binary) {
+    stlImportBinary(raw);
+  } else {
+    stlImportAscii(FileName);
+  }
+
+  showArrowCursor();
+}
+
+// One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
+// (fileSelected.pde, shared with import_objects_OBJ.pde/import_objects_
+// GLB.pde) the same way those two importers' own per-vertex code
+// already does.
+public int stlCreatePoint (float x, float y, float z) {
+  float finalX, finalY, finalZ;
+  if (importSwapAxisYZ) {
+    finalX = stl_cx + stl_sx * x;
+    finalY = stl_cy + stl_sy * (-z);
+    finalZ = stl_cz + stl_sz * y;
+  } else {
+    finalX = stl_cx + stl_sx * x;
+    finalY = stl_cy + stl_sy * y;
+    finalZ = stl_cz + stl_sz * z;
+  }
+  return allPoints.create(finalX, finalY, finalZ);
+}
+
+public void stlImportBinary (byte[] raw) {
+  int triangleCount = binReadU32LE(raw, 80);
+
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing STL") : null;
+  if (importProgressWindow != null) importProgressWindow.setVisible(true);
+
+  // No "solid"/"endsolid" boundary of its own in binary STL - the whole
+  // file is a single group, matching this file's own header comment.
+  if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+  float printed_Progress = 0;
+
+  try {
+    int pos = 84; // right after the 80-byte header + 4-byte triangle count
+    for (int t = 0; t < triangleCount; t++) {
+      if (pos + 50 > raw.length) {
+        println("\nSTL import: file is shorter than its own triangle count claims - stopping early");
+        break;
+      }
+
+      if (control != USER_AUTO) {
+        float Progress = 100 * t / PApplet.parseFloat(triangleCount);
+        int delta = (int) floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          StringBuilder barBuffer = new StringBuilder();
+          for (int c = 0; c < delta; c++) barBuffer.append('█');
+          print(barBuffer.toString());
+          printed_Progress = floor(Progress);
+          if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
+        }
+      }
+
+      int base = pos + 12; // skip the 12-byte normal - see this file's own header comment
+
+      int p0 = stlCreatePoint(binReadFloatLE(raw, base),      binReadFloatLE(raw, base + 4),  binReadFloatLE(raw, base + 8));
+      int p1 = stlCreatePoint(binReadFloatLE(raw, base + 12), binReadFloatLE(raw, base + 16), binReadFloatLE(raw, base + 20));
+      int p2 = stlCreatePoint(binReadFloatLE(raw, base + 24), binReadFloatLE(raw, base + 28), binReadFloatLE(raw, base + 32));
+
+      allFaces.create(new int[]{ p0, p1, p2 });
+
+      pos += 50; // 12 (normal) + 36 (3 vertices) + 2 (attribute byte count)
+    }
+  } finally {
+    if (importProgressWindow != null) importProgressWindow.dispose();
+  }
+
+  int remaining = (int) floor(100 - printed_Progress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
+}
+
+public void stlImportAscii (String FileName) {
+  String[] FileALL = loadStrings(FileName);
+  if (FileALL == null) FileALL = new String[0];
+
+  float totalLines = FileALL.length; // computed once, not every iteration - same as import_objects_OBJ.pde's own
+  float Progress = 0;
+  float printed_Progress = 0;
+  StringBuilder barBuffer = new StringBuilder();
+
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing STL") : null;
+  if (importProgressWindow != null) importProgressWindow.setVisible(true);
+
+  // Up to 3 vertices (x,y,z each) for the facet currently being read,
+  // between its own "facet normal ..."/"outer loop" and "endloop"/
+  // "endfacet" lines.
+  float[] pendingVertices = new float[9];
+  int pendingVertexCount = 0;
+
+  try {
+    for (int f = 0; f < FileALL.length; f++) {
+      if (control != USER_AUTO) {
+        Progress = 100 * f / totalLines;
+        int delta = (int) floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          barBuffer.setLength(0);
+          for (int c = 0; c < delta; c++) {
+            barBuffer.append('█');
+          }
+          print(barBuffer.toString());
+          printed_Progress = floor(Progress);
+          if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
+        }
+      }
+
+      String lineSTR = FileALL[f];
+
+      String[] parts = splitTokens(lineSTR);
+      if (parts == null || parts.length == 0) continue; // skip blank lines
+
+      String tag = parts[0];
+
+      if (tag.equalsIgnoreCase("solid")) {
+        if (stlCycleMaterial) current_Material = 1 + (current_Material % 8);
+        if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      } else if (tag.equalsIgnoreCase("vertex") && (parts.length >= 4)) {
+        if (pendingVertexCount < 3) {
+          pendingVertices[pendingVertexCount * 3]     = PApplet.parseFloat(parts[1]);
+          pendingVertices[pendingVertexCount * 3 + 1] = PApplet.parseFloat(parts[2]);
+          pendingVertices[pendingVertexCount * 3 + 2] = PApplet.parseFloat(parts[3]);
+          pendingVertexCount += 1;
+        }
+      } else if (tag.equalsIgnoreCase("endfacet")) {
+        if (pendingVertexCount == 3) {
+          int p0 = stlCreatePoint(pendingVertices[0], pendingVertices[1], pendingVertices[2]);
+          int p1 = stlCreatePoint(pendingVertices[3], pendingVertices[4], pendingVertices[5]);
+          int p2 = stlCreatePoint(pendingVertices[6], pendingVertices[7], pendingVertices[8]);
+          allFaces.create(new int[]{ p0, p1, p2 });
+        }
+        pendingVertexCount = 0;
+      }
+      // any other tag ("facet" - "facet normal ..." lines are only
+      // matched on this first token, so the normal itself is never
+      // read, same as this file's own header comment on that -,
+      // "outer", "loop", "endloop", "endsolid", a bare solid name,
+      // ...) is intentionally ignored, the same "only the tags that
+      // matter are handled, everything else silently skipped" shape
+      // import_objects_OBJ.pde's own parser already uses.
+    }
+  } finally {
+    if (importProgressWindow != null) importProgressWindow.dispose();
+  }
+
+  int remaining = (int) floor(100 - printed_Progress);
+  barBuffer.setLength(0);
+  for (int c = 0; c < remaining; c++) {
+    barBuffer.append('█');
+  }
+  print(barBuffer.toString());
+  println();
 }
 STATION[] climateArchiveCoordinates;
 
