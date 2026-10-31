@@ -1,5 +1,5 @@
 // One-shot: whether the very next import_objects_OBJ() call should open
-// objGlbShowImportOptionsDialog() (fileSelected.pde) before doing
+// axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
 // anything else - armed only by selectFile_ImportObj(), the real,
 // interactive "pick a file from the menu" path, same shape as
 // ifcImportShowOptionsDialog (import_objects_IFC.pde) for IFC's own
@@ -19,7 +19,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   // below - as if import_objects_OBJ() had never been called at all.
   if (objImportShowOptionsDialog) {
     objImportShowOptionsDialog = false;
-    if (!objGlbShowImportOptionsDialog("OBJ import options")) return;
+    if (!axisSwapShowImportOptionsDialog("OBJ import options")) return;
   }
 
   println("Importing OBJ. Please wait...");

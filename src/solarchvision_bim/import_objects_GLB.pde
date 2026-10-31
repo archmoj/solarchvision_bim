@@ -60,7 +60,7 @@ final int GLB_COMPONENT_UNSIGNED_INT   = 5125;
 final int GLB_COMPONENT_FLOAT          = 5126;
 
 // One-shot: whether the very next import_objects_GLB() call should open
-// objGlbShowImportOptionsDialog() (fileSelected.pde) before doing
+// axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
 // anything else - armed only by selectFile_ImportGlb(), the real,
 // interactive "pick a file from the menu" path, same shape as
 // objImportShowOptionsDialog (import_objects_OBJ.pde) and
@@ -79,7 +79,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   // anything below - as if import_objects_GLB() had never been called.
   if (glbImportShowOptionsDialog) {
     glbImportShowOptionsDialog = false;
-    if (!objGlbShowImportOptionsDialog("GLB import options")) return;
+    if (!axisSwapShowImportOptionsDialog("GLB import options")) return;
   }
 
   println("Importing GLB. Please wait...");
@@ -116,7 +116,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
     return;
   }
 
-  int totalLength = glbReadU32LE(raw, 8);
+  int totalLength = binReadU32LE(raw, 8);
   if (totalLength > raw.length) totalLength = raw.length; // tolerate a slightly short/truncated trailing pad
 
   // Chunk loop: the JSON chunk always comes first (required by spec); the
@@ -129,7 +129,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   int pos = 12;
   while (pos + 8 <= totalLength) {
-    int chunkLength = glbReadU32LE(raw, pos);
+    int chunkLength = binReadU32LE(raw, pos);
     boolean isJSON = (raw[pos + 4] == 'J') && (raw[pos + 5] == 'S') && (raw[pos + 6] == 'O') && (raw[pos + 7] == 'N');
     boolean isBIN  = (raw[pos + 4] == 'B') && (raw[pos + 5] == 'I') && (raw[pos + 6] == 'N') && (raw[pos + 7] == 0);
     int chunkDataStart = pos + 8;
@@ -465,9 +465,9 @@ float[] glbReadVec3FloatAccessor (JSONObject json, byte[] bin, int accessorIndex
       println("\nGLB import: POSITION accessor reads past the end of the embedded buffer");
       return null;
     }
-    out[i * 3]     = glbReadFloatLE(bin, o);
-    out[i * 3 + 1] = glbReadFloatLE(bin, o + 4);
-    out[i * 3 + 2] = glbReadFloatLE(bin, o + 8);
+    out[i * 3]     = binReadFloatLE(bin, o);
+    out[i * 3 + 1] = binReadFloatLE(bin, o + 4);
+    out[i * 3 + 2] = binReadFloatLE(bin, o + 8);
   }
   return out;
 }
@@ -522,23 +522,27 @@ int[] glbReadIndexAccessor (JSONObject json, byte[] bin, int accessorIndex) {
       return null;
     }
     if (componentSize == 1) out[i] = bin[o] & 0xFF;
-    else if (componentSize == 2) out[i] = glbReadU16LE(bin, o);
-    else out[i] = glbReadU32LE(bin, o);
+    else if (componentSize == 2) out[i] = binReadU16LE(bin, o);
+    else out[i] = binReadU32LE(bin, o);
   }
   return out;
 }
 
 // Little-endian byte readers - every number in a GLB binary chunk (chunk
 // headers, and every accessor's own packed data) is little-endian per
-// spec, regardless of the platform this importer runs on.
-int glbReadU32LE (byte[] b, int off) {
+// spec, regardless of the platform this importer runs on. Generic enough
+// (just byte-offset math, nothing GLB-specific) that import_objects_STL.
+// pde's own binary-STL path reuses these directly rather than
+// duplicating the same bit-twiddling - binary STL's own triangle count
+// and per-vertex floats are little-endian too.
+int binReadU32LE (byte[] b, int off) {
   return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8) | ((b[off + 2] & 0xFF) << 16) | ((b[off + 3] & 0xFF) << 24);
 }
 
-int glbReadU16LE (byte[] b, int off) {
+int binReadU16LE (byte[] b, int off) {
   return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8);
 }
 
-float glbReadFloatLE (byte[] b, int off) {
-  return Float.intBitsToFloat(glbReadU32LE(b, off));
+float binReadFloatLE (byte[] b, int off) {
+  return Float.intBitsToFloat(binReadU32LE(b, off));
 }

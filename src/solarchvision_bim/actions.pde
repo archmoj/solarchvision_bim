@@ -298,6 +298,10 @@ void build_allActions() {
     selectFile_ImportGlb();
   });
 
+  putAction("Import STL", () -> {
+    selectFile_ImportStl();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });

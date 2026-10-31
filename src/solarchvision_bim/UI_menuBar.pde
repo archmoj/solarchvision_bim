@@ -69,6 +69,7 @@ class UI_menuBar {
       "Import OBJ",
       "Import IFC",
       "Import GLB",
+      "Import STL",
       "Import Commands",
       ___divider___,
       "Hold",

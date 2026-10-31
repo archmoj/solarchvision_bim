@@ -24,24 +24,32 @@ void selectFile_ImportGlb () {
   selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
 }
 
+void selectFile_ImportStl () {
+  // Arms stlImportShowOptionsDialog (import_objects_STL.pde) the same way.
+  stlImportShowOptionsDialog = true;
+  selectInput("Select STL file to import:", "_fileSelected_ImportStl", new File(Folder_Import + "/_.stl"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see import_objects_OBJ.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
-// and import_objects_GLB.pde's matching one, for why this is off by
-// default and shared between the two formats: a plain OBJ has no spec-
-// mandated up-axis of its own, and keeping the two importers' axis
-// treatment consistent with each other matters more than either being
-// "correct" in isolation - this one checkbox lets the PERSON importing
-// decide, per import, rather than either importer silently guessing.
+// and import_objects_GLB.pde's/import_objects_STL.pde's matching ones,
+// for why this is off by default and shared across all three formats:
+// none of OBJ/STL has a spec-mandated up-axis of its own, and keeping
+// every importer's axis treatment consistent with the others matters
+// more than any one of them being "correct" in isolation - this one
+// checkbox lets the PERSON importing decide, per import, rather than any
+// importer silently guessing.
 boolean importSwapAxisYZ = false;
 
-// Shared by both formats (one option, one checkbox) since that's exactly
+// Shared by OBJ/GLB/STL (one option, one checkbox) since that's exactly
 // the axis convention they already agree to share - see
-// import_objects_OBJ.pde's/import_objects_GLB.pde's own
-// objImportShowOptionsDialog/glbImportShowOptionsDialog for how each
-// arms this the same way ifcImportShowOptionsDialog (below) arms IFC's
-// own five-option version of the same dialog.
-boolean objGlbShowImportOptionsDialog (String title) {
+// import_objects_OBJ.pde's/import_objects_GLB.pde's/import_objects_STL.
+// pde's own objImportShowOptionsDialog/glbImportShowOptionsDialog/
+// stlImportShowOptionsDialog for how each arms this the same way
+// ifcImportShowOptionsDialog (below) arms IFC's own five-option version
+// of the same dialog.
+boolean axisSwapShowImportOptionsDialog (String title) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
 
@@ -260,6 +268,49 @@ void _fileSelected_ImportGlb (File selectedFile) {
     // Same reason as import_objects_OBJ()'s own call just above this
     // one's sibling - import_objects_GLB() adds faces straight into
     // allFaces without ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportStl (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s own identical lines above (and _fileSelected_
+    // ImportIfc()'s below): cancelling the native file chooser itself
+    // never reaches import_objects_STL(), which is otherwise what
+    // consumes stlImportShowOptionsDialog - without this, it would stay
+    // armed and pop the options dialog up on the next
+    // import_objects_STL() call regardless of how that one was started.
+    stlImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_STL(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s own
+    // calls just above this one's siblings - import_objects_STL() adds
+    // faces straight into allFaces without ever calling model_changed()
+    // itself.
     model_changed();
 
     int number_of_allGroups_after = allGroups.num;
