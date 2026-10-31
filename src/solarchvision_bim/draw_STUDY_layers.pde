@@ -86,6 +86,7 @@ void draw_STUDY_layers () {
 
   int j = impactDisplayDay - 1; // globals.pde's own "0:total 1:day-1 2:day-2 etc."
   if (j < 0) return; // "total" - the whole graph already is the range, nothing to single out
+  if (j >= STUDY.endDay) return;
 
   boolean drewSomething = false;
 
