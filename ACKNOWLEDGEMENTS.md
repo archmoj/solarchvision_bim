@@ -72,7 +72,7 @@ and under what terms; this is the human version of that list: thank you to
   this entire project is written in and built on top of.
 
 - **[Climate.OneBuilding.Org](https://climate.onebuilding.org/)**, created
-  and maintained by [Dru Crawley](https://www.linkedin.com/in/drucrawley/)
+  and maintained by [Linda Lawrie](https://www.linkedin.com/in/linda-lawrie-6265b370/) and [Dru Crawley](https://www.linkedin.com/in/drucrawley/)
   — the Father of EnergyPlus! — for the free TMY/EPW weather-file archive
   this project's weather data draws on.
 
