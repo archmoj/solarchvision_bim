@@ -89,6 +89,31 @@ void draw_STUDY_layers () {
 
   boolean drewSomething = false;
 
+  pushStyle();
+  rectMode(CORNERS);
+  fill(191, 63);
+  noStroke();
+  // Draw outer rectangle with inner holes
+  beginShape();
+  // Outer rectangle (clockwise)
+  vertex(STUDY.cX, STUDY.cY);
+  vertex(STUDY.cX + STUDY.dX, STUDY.cY);
+  vertex(STUDY.cX + STUDY.dX, STUDY.cY + STUDY.dY);
+  vertex(STUDY.cX, STUDY.cY + STUDY.dY);
+  for (StudyDayHighlightCandidate c : STUDY.dayHighlightCandidates) {
+    if (c.dayIndex != j) continue;
+
+    // inner hole (counter-clockwise)
+    beginContour();
+    vertex(c.x1, c.y1);
+    vertex(c.x1, c.y2);
+    vertex(c.x2, c.y2);
+    vertex(c.x2, c.y1);
+    endContour();
+  }
+  endShape(CLOSE);
+  popStyle();
+
   for (StudyDayHighlightCandidate c : STUDY.dayHighlightCandidates) {
     if (c.dayIndex != j) continue;
 
@@ -96,7 +121,7 @@ void draw_STUDY_layers () {
     rectMode(CORNERS);
     noFill();
     stroke(255, 127, 0); // same "currently selected" orange UI_caseBar's own highlighted buttons use
-    strokeWeight(STUDY.strokeScale * 3);
+    strokeWeight(3);
     rect(c.x1, c.y1, c.x2, c.y2);
     popStyle();
 
