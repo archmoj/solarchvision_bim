@@ -573,6 +573,66 @@ class MouseClickedTest {
     assertFalse(app.climateTypicalYearPicker.cancel());
   }
 
+  // ================= isAnyPickListActive ===================================
+  // Backs two other fixes, both only testable here since the functions that
+  // actually call it touch real graphics or live mouse dispatch: mouseClicked()'s
+  // own WORLD click handling routes a LEFT click through the list (selecting a
+  // row, or clicking away to cancel it) instead of pinning a hover point
+  // whenever this is true, and place_WORLD_hover() (hoverOnWorldStations.pde -
+  // see WorldStationHoverTest.java's own header comment) skips showing any
+  // WORLD hover box at all while this is true, so a pinned hover can't float on
+  // top of an open list.
+
+  @Test
+  void isAnyPickListActive_isFalseWhenNoPickerIsShowing () {
+    assertFalse(app.isAnyPickListActive());
+  }
+
+  @Test
+  void isAnyPickListActive_isTrueWhenOnePickerIsShowing () {
+    app.climateArchivePicker.active = true;
+
+    assertTrue(app.isAnyPickListActive());
+  }
+
+  @Test
+  void isAnyPickListActive_checksEveryPicker_notJustTheFirstOne () {
+    // ALL_PICKERS lists climateTypicalYearPicker first - making a LATER
+    // picker (ensembleObservationPicker, listed last) the active one
+    // catches an implementation that only checked the first entry.
+    app.ensembleObservationPicker.active = true;
+
+    assertTrue(app.isAnyPickListActive());
+  }
+
+  @Test
+  void isAnyPickListActive_goesBackToFalseOnceThatPickerCloses () {
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[]{0, 1, 2};
+
+    app.climateTypicalYearPicker.cancel();
+
+    assertFalse(app.isAnyPickListActive());
+  }
+
+  @Test
+  void isAnyPickListActive_isTrueOnceHandleMapClickActuallyOpensAList () {
+    // Ties this helper to the real open-a-list path (handleMapClick_
+    // opensTheListForACandidateWithinRangeOfTheActiveDataSource, further
+    // below, already covers climateTypicalYearPicker.active itself)
+    // rather than only to active being poked directly.
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setLatitude(10);
+    app.climateTypicalYearCoordinates[0].setLongitude(20);
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("only_station.epw");
+
+    app.currentDataSource = app.dataID_climateTypicalYear;
+
+    app.climateTypicalYearPicker.handleMapClick(20, 10); // well within the picker's own maxDist
+
+    assertTrue(app.isAnyPickListActive());
+  }
+
   @Test
   void handleWheel_scrollsOnlyWhileActiveAndOverWorldAndThereIsSomethingToScroll () {
     app.WORLD.cX = 0;
