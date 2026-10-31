@@ -678,20 +678,35 @@ class MouseClickedTest {
   }
 
   @Test
-  void selectClimateTypicalYearStation_updatesPositionAndFilenameButSkipsReloadWhenNotTheActiveDataSource () {
+  void selectClimateTypicalYearStation_updatesFilenameButLeavesPositionAndSkipsReloadWhenNotTheActiveDataSource () {
     app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("new_station.epw");
     app.climateTypicalYearCoordinates[0].setClimateTypicalYearDownload("http://example.com/new_station.epw");
 
     app.STATION.setClimateTypicalYearFilename("old_station.epw");
+    app.STATION.setLongitude(1);
+    app.STATION.setLatitude(2);
     app.currentDataSource = app.dataID_climateEngineering; // NOT Climate Typical Year - the risky reload block is skipped
 
     app.selectClimateTypicalYearStation(0, 12.5f, 34.5f);
 
-    assertEquals(12.5f, app.STATION.getLongitude(), 0.0001f);
-    assertEquals(34.5f, app.STATION.getLatitude(), 0.0001f);
+    // Climate Typical Year's own "nearest station" bookkeeping still
+    // updates even while a different dataset is active (same as before
+    // pickers existed) - but, since this dataset ISN'T the active one,
+    // STATION itself must NOT move: WORLD's own view reads STATION's
+    // position directly every frame (WORLD.pde), so moving it here would
+    // recenter the map on a station that was never actually selected,
+    // just because this background lookup happened to run.
+    assertEquals(1f, app.STATION.getLongitude(), 0.0001f);
+    assertEquals(2f, app.STATION.getLatitude(), 0.0001f);
     assertEquals("new_station.epw", app.STATION.getClimateTypicalYearFilename());
   }
+
+  // Deliberately no matching "...updatesPositionWhenItIsTheActiveDataSource"
+  // test here: triggering that branch for real means calling
+  // download_climateTypicalYear()/update_climateTypicalYear(), which do
+  // genuine network and file I/O - exactly the "risky reload block" this
+  // section's own header comment avoids for every other case here too.
 
   // ============ computeCreateParams (extracted) ===========
 

@@ -31,7 +31,7 @@ class NearestStationTest {
       stationAt(-5, -5)   // medium
     };
 
-    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords);
+    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords, app.STATION.getLongitude(), app.STATION.getLatitude());
 
     assertEquals(1, nearest.index);
     float expectedDist = app.funcs.lon_lat_dist(1, 1, 0, 0);
@@ -49,7 +49,7 @@ class NearestStationTest {
 
     solarchvision_bim.STATION[] coords = { stationAt(190, 0) };
 
-    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords);
+    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords, app.STATION.getLongitude(), app.STATION.getLatitude());
 
     assertEquals(0, nearest.index);
     assertEquals(0f, nearest.dist, 1f); // co-located after wrapping, not a near-antipodal distance

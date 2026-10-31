@@ -831,7 +831,7 @@ void rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
 }
 
 // Result of a nearest-station search: which index in the array was closest, and how far (in the
-// same units funcs.lon_lat_dist returns) it was from STATION's current position.
+// same units funcs.lon_lat_dist returns) it was from the reference point searched against.
 class NearestStation {
   int index = -1;
   float dist = FLOAT_undefined;
@@ -839,8 +839,14 @@ class NearestStation {
 
 // Shared by the SWOB/NAEFS/CWEEDS/CLMREC/TMYEPW "which station did the user click nearest to"
 // lookups in mouseClicked(): scans `coords` and returns the index (and distance) of whichever
-// station is closest to STATION's current longitude/latitude.
-NearestStation findNearestStation (STATION[] coords) {
+// station is closest to (lon, lat) - the click itself (StationPicker.handleMapClick's own
+// callers pass the exact lon/lat they already have in hand), NOT read from STATION's own
+// current position: STATION only ever moves once a selection is actually confirmed for its
+// own active dataset (see each select*Station() function's own currentDataSource == dataID_X
+// guard, further below), so for a background/inactive dataset's own "quietly select the
+// nearest one" fallback, STATION's position can be stale - sometimes by a lot - relative to
+// where this particular click actually landed.
+NearestStation findNearestStation (STATION[] coords, float lon, float lat) {
 
   NearestStation nearest = new NearestStation();
 
@@ -850,7 +856,7 @@ NearestStation findNearestStation (STATION[] coords) {
     float _lon = coords[f].getLongitude();
     if (_lon > 180) _lon -= 360; // << important!
 
-    float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+    float d = funcs.lon_lat_dist(_lon, _lat, lon, lat);
 
     if (nearest.dist > d) {
       nearest.dist = d;
@@ -1200,7 +1206,11 @@ abstract class StationPicker {
   // landed on (if any), or just cancels the list if it landed elsewhere.
   // Either way the click is fully consumed - returns true whenever this
   // picker was active, so the caller can skip treating this same click as
-  // picking a new map location.
+  // picking a new map location. Only the row-pick branch below actually
+  // selects anything (this.select(), same as handleMapClick()'s own
+  // direct-hit branch below uses) - clicking away to cancel leaves
+  // STATION exactly where it already was, not wherever this click
+  // happened to land.
   boolean handleClick () {
     if (!this.active) return false;
 
@@ -1231,9 +1241,19 @@ abstract class StationPicker {
   // candidates around (lon, lat); if there's at least one AND this
   // dataset is the active data source, shows the picker (even for a
   // single candidate, so the user can see/confirm it or click away to
-  // cancel) instead of silently guessing. Otherwise (0 candidates within
-  // range, or a different dataset is active) just quietly selects the
-  // single nearest one, same as every dataset did before pickers existed.
+  // cancel) instead of silently guessing - and, critically, without
+  // moving STATION yet (select(), below, is only reached once the user
+  // actually picks a row in handleClick(), or immediately right below
+  // for a dataset that isn't ambiguous to begin with). Otherwise - 0
+  // candidates within range, or a different dataset is active - this
+  // click can't be ambiguous for this dataset, so it selects the single
+  // nearest one right away: a real, visible move of STATION when this IS
+  // the active dataset (select()'s own currentDataSource == dataID_X
+  // guard passes), or - every OTHER, inactive dataset, which reaches
+  // this exact same branch on every single click, there being no
+  // per-dataset gating before this call, only within select() itself -
+  // purely the quiet "keep each dataset's own nearest station current"
+  // bookkeeping that predates pickers entirely, invisible on screen.
   void handleMapClick (float lon, float lat) {
     STATION[] coords = this.getCoords();
     int[] nearby = findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
@@ -1245,7 +1265,7 @@ abstract class StationPicker {
       this.mouseLat = lat;
       this.scrollOffset = 0;
     } else {
-      int f = (nearby.length > 0) ? nearby[0] : findNearestStation(coords).index;
+      int f = (nearby.length > 0) ? nearby[0] : findNearestStation(coords, lon, lat).index;
       this.select(f, lon, lat);
     }
   }
@@ -1340,15 +1360,21 @@ void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getClimateTypicalYearFilename().equals(climateTypicalYearCoordinates[f].getClimateTypicalYearFilename())) return;
 
-  STATION.setLatitude(mouse_lat);
-  STATION.setLongitude(mouse_lon);
-
   STATION.setClimateTypicalYearFilename(climateTypicalYearCoordinates[f].getClimateTypicalYearFilename()); // epw filename
   STATION.setClimateTypicalYearDownload(climateTypicalYearCoordinates[f].getClimateTypicalYearDownload()); // epw filename
 
   println("\nNearest epw filename:", climateTypicalYearCoordinates[f].getClimateTypicalYearFilename());
 
   if (currentDataSource == dataID_climateTypicalYear) {
+    // Only moves STATION - and so, since WORLD's own view center is read
+    // straight off STATION's position every frame (WORLD.pde), only
+    // recenters the map - once this dataset is both the active one and
+    // actually selected. A background/inactive dataset's own quiet
+    // "nearest station" bookkeeping above never reaches this block, so
+    // it can never move STATION or the map.
+    STATION.setLatitude(mouse_lat);
+    STATION.setLongitude(mouse_lon);
+
     STATION.setCity(climateTypicalYearCoordinates[f].getCity());
     STATION.setProvince(climateTypicalYearCoordinates[f].getProvince());
     STATION.setCountry(climateTypicalYearCoordinates[f].getCountry());
@@ -1375,14 +1401,16 @@ void selectClimateArchiveStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getClimateEngineeringFilename().equals(climateArchiveCoordinates[f].getClimateEngineeringFilename())) return;
 
-  STATION.setLatitude(mouse_lat);
-  STATION.setLongitude(mouse_lon);
-
   STATION.setClimateEngineeringFilename(climateArchiveCoordinates[f].getClimateEngineeringFilename()); // Climate Archive filename
 
   println("\nNearest Climate Archive filename:", climateArchiveCoordinates[f].getClimateEngineeringFilename());
 
   if (currentDataSource == dataID_climateArchive) {
+
+    // See selectClimateTypicalYearStation's own comment on this same
+    // move, just above its own setLatitude/setLongitude call.
+    STATION.setLatitude(mouse_lat);
+    STATION.setLongitude(mouse_lon);
 
     STATION.setCity(climateArchiveCoordinates[f].getCity());
     STATION.setProvince(climateArchiveCoordinates[f].getProvince());
@@ -1405,14 +1433,16 @@ void selectClimateEngineeringStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getClimateEngineeringFilename().equals(climateEngineeringCoordinates[f].getClimateEngineeringFilename())) return;
 
-  STATION.setLatitude(mouse_lat);
-  STATION.setLongitude(mouse_lon);
-
   STATION.setClimateEngineeringFilename(climateEngineeringCoordinates[f].getClimateEngineeringFilename()); // Climate Engineering filename
 
   println("\nNearest Climate Engineering filename:", climateEngineeringCoordinates[f].getClimateEngineeringFilename());
 
   if (currentDataSource == dataID_climateEngineering) {
+
+    // See selectClimateTypicalYearStation's own comment on this same
+    // move, just above its own setLatitude/setLongitude call.
+    STATION.setLatitude(mouse_lat);
+    STATION.setLongitude(mouse_lon);
 
     STATION.setCity(climateEngineeringCoordinates[f].getCity());
     STATION.setProvince(climateEngineeringCoordinates[f].getProvince());
@@ -1439,14 +1469,16 @@ void selectEnsembleForecastStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getEnsembleForecastFilename().equals(ensembleForecastCoordinates[f].getEnsembleForecastFilename())) return;
 
-  STATION.setLatitude(mouse_lat);
-  STATION.setLongitude(mouse_lon);
-
   STATION.setEnsembleForecastFilename(ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
   println("\nNearest naefs filename:", ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
   if (currentDataSource == dataID_ensembleForecast) {
+    // See selectClimateTypicalYearStation's own comment on this same
+    // move, just above its own setLatitude/setLongitude call.
+    STATION.setLatitude(mouse_lat);
+    STATION.setLongitude(mouse_lon);
+
     STATION.setCity(ensembleForecastCoordinates[f].getCity());
     STATION.setProvince(ensembleForecastCoordinates[f].getProvince());
     STATION.setCountry(ensembleForecastCoordinates[f].getCountry());
@@ -1486,14 +1518,16 @@ void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) 
 
   if (STATION.getEnsembleObservationFilename().equals(ensembleObservationCoordinates[f].getEnsembleObservationFilename())) return;
 
-  STATION.setLatitude(mouse_lat);
-  STATION.setLongitude(mouse_lon);
-
   STATION.setEnsembleObservationFilename(ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
   println("\nNearest swob filename:", ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
   if (currentDataSource == dataID_ensembleObservation) {
+    // See selectClimateTypicalYearStation's own comment on this same
+    // move, just above its own setLatitude/setLongitude call.
+    STATION.setLatitude(mouse_lat);
+    STATION.setLongitude(mouse_lon);
+
     STATION.setCity(ensembleObservationCoordinates[f].getCity());
     STATION.setProvince(ensembleObservationCoordinates[f].getProvince());
     STATION.setCountry(ensembleObservationCoordinates[f].getCountry());
@@ -1546,25 +1580,29 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
     float mouse_lon = WORLD.unprojLon(localX);
     float mouse_lat = WORLD.unprojLat(localY);
 
-    pre_locationLatitude = locationLatitude;
-    pre_locationLongitude = locationLongitude;
-
-    STATION.setLatitude(mouse_lat);
-    STATION.setLongitude(mouse_lon);
-
-    if ((pre_locationLatitude != locationLatitude) ||
-        (pre_locationLongitude != locationLongitude)) {
-
-      WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
-    }
-
     // Left and right click are combined here: either one zooms in to
-    // confirm exactly where the click landed (this used to be left-click
+    // confirm a genuine new map click landed (this used to be left-click
     // only, with right-click deliberately leaving the zoom level alone -
-    // for comparing several rough locations across a wider area without
-    // the view snapping in on every click - but that distinction has been
-    // folded away so a click on the map always behaves the same
-    // regardless of which button made it).
+    // that distinction has been folded away so a click on the map always
+    // behaves the same regardless of which button made it). This is
+    // independent of any station getting selected below: it always runs
+    // for a real click on the map, whatever currentDataSource is and
+    // whether or not that click turns out to be ambiguous for it.
+    //
+    // What does NOT happen here, deliberately, is moving STATION itself
+    // (which is what actually recenters WORLD's own view - WORLD.pde
+    // reads STATION's position directly, every frame) or deciding which
+    // station is "the" clicked one - that used to happen right here too,
+    // unconditionally, before this click was even checked for being
+    // ambiguous: a click that turned out to need a picker list (below)
+    // would already have recentered the map on the clicked point before
+    // the user ever got to pick a row - or cancel - from that list. Each
+    // select*Station() function (this file, below) now only moves
+    // STATION once ITS OWN dataset is both the active one and actually
+    // confirmed: immediately, from handleMapClick() below, for an
+    // unambiguous click, or later, from StationPicker.handleClick(),
+    // once the user actually picks a row - never for a click that lands
+    // on the list only to cancel it.
     WORLD.zoom = max(WORLD.zoom, 5);
 
     // Each picker's handleMapClick() finds nearby candidates of its
