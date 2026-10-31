@@ -345,7 +345,7 @@ class STUDY {
 
 
   // Number of impactGraphIndex modes (kept in sync with the impactGraphIndex_* constants).
-  final static int PLOT_IMPACTS_MODE_COUNT = 11;
+  final static int PLOT_IMPACTS_MODE_COUNT = 10;
 
   // Number of plotLayoutIndex modes cycled by Ctrl+PageUp/PageDown.
   final static int PLOT_SETUP_MODE_COUNT = 10;
