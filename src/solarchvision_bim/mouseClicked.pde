@@ -1300,6 +1300,17 @@ boolean handlePickListClick () {
   return false;
 }
 
+// Whether any picker's list is currently showing - used by mouseClicked()'s
+// own WORLD click handling to decide whether a LEFT click should be routed
+// to the list (selecting a row, or clicking away to cancel it) instead of
+// its usual "pin a hover point" behavior. At most one picker is ever active
+// at once (see ALL_PICKERS's own comment), but this checks all of them
+// since which one (if any) that is can vary.
+boolean isAnyPickListActive () {
+  for (StationPicker picker : ALL_PICKERS) if (picker.active) return true;
+  return false;
+}
+
 boolean handlePickListWheel (float wheelValue) {
   for (StationPicker picker : ALL_PICKERS) if (picker.handleWheel(wheelValue)) return true;
   return false;
@@ -2103,7 +2114,7 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            if (mouseButton == LEFT) {
+            if ((mouseButton == LEFT) && !isAnyPickListActive()) {
               // Left click now pins a hover point here instead of acting
               // on the map - the same "click anywhere to pin whatever's
               // hoverable right there" pattern STUDY's own click handling
@@ -2119,6 +2130,12 @@ void mouseClicked () {
               // the live, mouse-following preview already uses - this is
               // just the first time anything actually calls
               // addHoverPoint() with WORLD's own screen coordinates.
+              //
+              // Only while no picker list is showing, though (the
+              // isAnyPickListActive() check above): with a list open, a
+              // left click picking a row (or clicking away to cancel it)
+              // has to win out over pinning a hover point on top of it -
+              // see the else branch below, which now handles that too.
               //
               // findLiveHoverBox() again lets the new pin start out
               // exactly where the live preview was actually showing, if
@@ -2145,9 +2162,20 @@ void mouseClicked () {
               worldHoverPointGeo.put(newRow, new float[]{ pinLon, pinLat });
             } else {
               // Right click keeps the map's own click-to-act behavior
-              // (handleWorldClickAt(), via the MapRightClick command)
-              // entirely to itself now: placing STATION at the clicked
-              // location and zooming in to confirm it.
+              // (handleWorldClickAt(), via the MapRightClick command) -
+              // placing STATION at the clicked location and zooming in to
+              // confirm it. A LEFT click lands here too now, but only
+              // while a picker's list is already showing (the
+              // isAnyPickListActive() check in the LEFT branch above):
+              // handleWorldClickAt() itself checks
+              // handlePickListTrackClick()/handlePickListClick() first,
+              // before anything location-picking, and neither of those
+              // (nor the StationPicker click handling behind them) looks
+              // at mouseButton at all - so routing a left click through
+              // here lets it pick a row (or click away to cancel the
+              // list) exactly the way a right click already could,
+              // without also being able to place STATION/zoom the way a
+              // right click on the map itself still can.
               float Image_X = X_clicked - (WORLD.cX + 0.5 * WORLD.dX);
               float Image_Y = Y_clicked - (WORLD.cY + 0.5 * WORLD.dY);
 
