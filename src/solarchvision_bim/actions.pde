@@ -306,6 +306,10 @@ void build_allActions() {
     selectFile_ImportDxf();
   });
 
+  putAction("Import PLY", () -> {
+    selectFile_ImportPly();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });

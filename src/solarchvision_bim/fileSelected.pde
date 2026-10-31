@@ -36,24 +36,32 @@ void selectFile_ImportDxf () {
   selectInput("Select DXF file to import:", "_fileSelected_ImportDxf", new File(Folder_Import + "/_.dxf"));
 }
 
+void selectFile_ImportPly () {
+  // Arms plyImportShowOptionsDialog (import_objects_PLY.pde) the same way.
+  plyImportShowOptionsDialog = true;
+  selectInput("Select PLY file to import:", "_fileSelected_ImportPly", new File(Folder_Import + "/_.ply"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see import_objects_OBJ.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
 // and import_objects_GLB.pde's/import_objects_STL.pde's/import_objects_
-// DXF.pde's matching ones, for why this is off by default and shared
-// across all four formats: none of OBJ/STL/DXF has a spec-mandated
-// up-axis of its own, and keeping every importer's axis treatment
-// consistent with the others matters more than any one of them being
-// "correct" in isolation - this one checkbox lets the PERSON importing
-// decide, per import, rather than any importer silently guessing.
+// DXF.pde's/import_objects_PLY.pde's matching ones, for why this is off
+// by default and shared across all five formats: none of OBJ/STL/DXF/PLY
+// has a spec-mandated up-axis of its own, and keeping every importer's
+// axis treatment consistent with the others matters more than any one of
+// them being "correct" in isolation - this one checkbox lets the PERSON
+// importing decide, per import, rather than any importer silently
+// guessing.
 boolean importSwapAxisYZ = false;
 
-// Shared by OBJ/GLB/STL/DXF (one option, one checkbox) since that's
+// Shared by OBJ/GLB/STL/DXF/PLY (one option, one checkbox) since that's
 // exactly the axis convention they already agree to share - see
 // import_objects_OBJ.pde's/import_objects_GLB.pde's/import_objects_STL.
-// pde's/import_objects_DXF.pde's own objImportShowOptionsDialog/
-// glbImportShowOptionsDialog/stlImportShowOptionsDialog/
-// dxfImportShowOptionsDialog for how each arms this the same way
+// pde's/import_objects_DXF.pde's/import_objects_PLY.pde's own
+// objImportShowOptionsDialog/glbImportShowOptionsDialog/
+// stlImportShowOptionsDialog/dxfImportShowOptionsDialog/
+// plyImportShowOptionsDialog for how each arms this the same way
 // ifcImportShowOptionsDialog (below) arms IFC's own five-option version
 // of the same dialog.
 boolean axisSwapShowImportOptionsDialog (String title) {
@@ -362,6 +370,50 @@ void _fileSelected_ImportDxf (File selectedFile) {
     // import_objects_STL()'s own calls just above this one's siblings -
     // import_objects_DXF() adds faces straight into allFaces without
     // ever calling model_changed() itself.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportPly (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s own identical lines above (and _fileSelected_
+    // ImportIfc()'s below): cancelling the native file chooser itself
+    // never reaches import_objects_PLY(), which is otherwise what
+    // consumes plyImportShowOptionsDialog - without this, it would stay
+    // armed and pop the options dialog up on the next
+    // import_objects_PLY() call regardless of how that one was started.
+    plyImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_PLY(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s own calls just above
+    // this one's siblings - import_objects_PLY() adds faces straight
+    // into allFaces without ever calling model_changed() itself.
     model_changed();
 
     int number_of_allGroups_after = allGroups.num;

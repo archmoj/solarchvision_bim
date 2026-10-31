@@ -71,6 +71,7 @@ class UI_menuBar {
       "Import GLB",
       "Import STL",
       "Import DXF",
+      "Import PLY",
       "Import Commands",
       ___divider___,
       "Hold",
