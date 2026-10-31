@@ -294,6 +294,10 @@ void build_allActions() {
     selectFile_ImportIfc();
   });
 
+  putAction("Import GLB", () -> {
+    selectFile_ImportGlb();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });

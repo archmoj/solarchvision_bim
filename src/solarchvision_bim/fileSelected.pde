@@ -14,6 +14,10 @@ void selectFile_ImportObj () {
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
+void selectFile_ImportGlb () {
+  selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
+}
+
 // Lets the person importing check/uncheck ifcImportFurniture/
 // ifcImportOrient/ifcImportRelocate/ifcImportIndoorSpace/
 // ifcImportOutdoorSpace (see import_objects_IFC.pde's own
@@ -164,6 +168,40 @@ void _fileSelected_ImportObj (File selectedFile) {
     // switch_category() below still triggers a redraw via its own
     // view_changed(), but that redraw would just replay the stale,
     // pre-import cached PShape.
+    model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportGlb (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_GLB(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s own call just above this
+    // one's sibling - import_objects_GLB() adds faces straight into
+    // allFaces without ever calling model_changed() itself.
     model_changed();
 
     int number_of_allGroups_after = allGroups.num;
