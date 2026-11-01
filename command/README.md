@@ -56,6 +56,12 @@ This page has two parts:
 -   `FETCH`: Fetches the scene
 -   `IMPORT.OBJ`: Imports a `.obj` file
 -   `IMPORT.GBXML`: Imports a gbXML (`.xml`) file
+-   `IMPORT.IFC`: Imports an `.ifc` file
+-   `IMPORT.DAE`: Imports a `.dae` file
+-   `IMPORT.DXF`: Imports a `.dxf` file
+-   `IMPORT.GLB`: Imports a `.glb` file
+-   `IMPORT.PLY`: Imports a `.ply` file
+-   `IMPORT.STL`: Imports a `.stl` file
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

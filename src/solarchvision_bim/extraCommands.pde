@@ -98,6 +98,41 @@ String __IMPORT_GBXML__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_GLB__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportGlb(new File(parts[1]));
+    else selectFile_ImportGlb();
+    return hint;
+}
+
+String __IMPORT_STL__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportStl(new File(parts[1]));
+    else selectFile_ImportStl();
+    return hint;
+}
+
+String __IMPORT_DXF__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportDxf(new File(parts[1]));
+    else selectFile_ImportDxf();
+    return hint;
+}
+
+String __IMPORT_PLY__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportPly(new File(parts[1]));
+    else selectFile_ImportPly();
+    return hint;
+}
+
+String __IMPORT_DAE__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportDae(new File(parts[1]));
+    else selectFile_ImportDae();
+    return hint;
+}
+
 String __RUN_SCRIPT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));
