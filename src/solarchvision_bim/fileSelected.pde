@@ -151,6 +151,42 @@ void selectFile_ImportIfc () {
   selectInput("Select IFC file to import:", "_fileSelected_ImportIfc", new File(Folder_Import + "/_.ifc"));
 }
 
+// Lets the person importing check/uncheck gbxmlImportOrient/
+// gbxmlImportRelocate (see import_objects_GBXML.pde's own
+// GBXML_IMPORT_NORTH/GBXML_IMPORT_GOTO_LATLON - these two variables are
+// what actually gets checked at import time, those constants are only
+// their starting values). Called from import_objects_GBXML() itself,
+// not from here - same reasoning, and the same "a cancelled dialog
+// must never half-apply a choice" behavior, as ifcShowImportOptionsDialog()'s
+// own comment just above.
+boolean gbxmlShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox orientBox = new javax.swing.JCheckBox("Rotate to the project's true north", gbxmlImportOrient);
+  javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", gbxmlImportRelocate);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(orientBox);
+  panel.add(relocateBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "gbXML import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  gbxmlImportOrient = orientBox.isSelected();
+  gbxmlImportRelocate = relocateBox.isSelected();
+
+  return true;
+}
+
+void selectFile_ImportGbxml () {
+  // Arms gbxmlImportShowOptionsDialog (import_objects_GBXML.pde) the
+  // same way selectFile_ImportIfc() above arms ifcImportShowOptionsDialog
+  // for its own options.
+  gbxmlImportShowOptionsDialog = true;
+  selectInput("Select gbXML file to import:", "_fileSelected_ImportGbxml", new File(Folder_Import + "/_.xml"));
+}
+
 void selectFile_RunScript () {
   selectInput("Select SVS file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.svs"));
 }
@@ -511,6 +547,52 @@ void _fileSelected_ImportIfc (File selectedFile) {
     // and calls model_changed() itself exactly once, at the very end of
     // the whole import - so no extra call is needed here either.
     import_objects_IFC(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportGbxml (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s/_fileSelected_ImportPly()'s/_fileSelected_
+    // ImportDae()'s own identical lines above: cancelling the native
+    // file chooser itself never reaches import_objects_GBXML(), which
+    // is otherwise what consumes gbxmlImportShowOptionsDialog - without
+    // this, it would stay armed and pop the options dialog up on the
+    // next import_objects_GBXML() call regardless of how that one was
+    // started.
+    gbxmlImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_GBXML(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s/
+    // import_objects_DAE()'s own calls just above this one's siblings -
+    // import_objects_GBXML() adds faces straight into allFaces without
+    // ever calling model_changed() itself.
+    model_changed();
 
     int number_of_allGroups_after = allGroups.num;
 

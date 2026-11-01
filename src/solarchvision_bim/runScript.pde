@@ -284,6 +284,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "ALLVIEWPORTS": return  __ALLVIEWPORTS__(parts);
     case "CAMERAROLLXY": return  __CAMERAROLLXY__(parts);
     case "GROUP>VERTEX": return  __GROUP$VERTEX__(parts);
+    case "IMPORT.GBXML": return  __IMPORT_GBXML__(parts);
     case "ORTHOGRAPHIC": return  __ORTHOGRAPHIC__(parts);
     case "POLYGONHYPER": return  __POLYGONHYPER__(parts);
     case "SHADE.GLOBAL": return  __SHADE_GLOBAL__(parts);

@@ -55,6 +55,7 @@ This page has two parts:
 -   `HOLD`: Holds the scene
 -   `FETCH`: Fetches the scene
 -   `IMPORT.OBJ`: Imports a `.obj` file
+-   `IMPORT.GBXML`: Imports a gbXML (`.xml`) file
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

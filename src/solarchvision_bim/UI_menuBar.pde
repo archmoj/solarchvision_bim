@@ -69,6 +69,7 @@ class UI_menuBar {
       "Import Commands",
       "Import DAE",
       "Import DXF",
+      "Import gbXML",
       "Import GLB",
       "Import IFC",
       "Import OBJ",

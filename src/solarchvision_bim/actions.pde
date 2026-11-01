@@ -294,6 +294,10 @@ void build_allActions() {
     selectFile_ImportIfc();
   });
 
+  putAction("Import gbXML", () -> {
+    selectFile_ImportGbxml();
+  });
+
   putAction("Import GLB", () -> {
     selectFile_ImportGlb();
   });
