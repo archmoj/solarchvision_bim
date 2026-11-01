@@ -1,6 +1,6 @@
 class STATION {
 
-  final static String CLASS_STAMP = "STATION";
+  final static String CLASS_STAMP = "Station";
 
   float elevation = 0;
   float latitude = 0;

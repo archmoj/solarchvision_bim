@@ -4,7 +4,7 @@ int calcRolloutWidth () {
 
 class UI_rollout {
 
-  final static String CLASS_STAMP = "UI_rollout";
+  final static String CLASS_STAMP = "UiRollout";
 
   int cX = 2 * pixel_W;
   int cY = pixel_A + pixel_B + 0;

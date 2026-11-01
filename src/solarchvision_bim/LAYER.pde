@@ -2,7 +2,7 @@ int _numberOfLayers = 0;
 
 class LAYER {
 
-  final static String CLASS_STAMP = "LAYER";
+  final static String CLASS_STAMP = "Layer";
 
   public int id;
 

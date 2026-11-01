@@ -1,6 +1,6 @@
 class TIME {
 
-  final static String CLASS_STAMP = "TIME";
+  final static String CLASS_STAMP = "Time";
 
   int modelRun = 0; //12;
 

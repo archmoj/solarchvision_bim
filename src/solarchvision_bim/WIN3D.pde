@@ -1,6 +1,6 @@
 class WIN3D {
 
-  final static String CLASS_STAMP = "WIN3D";
+  final static String CLASS_STAMP = "Viewport3D";
 
   // scales
   float scale;

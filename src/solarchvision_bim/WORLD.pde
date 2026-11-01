@@ -1,6 +1,6 @@
 class WORLD {
 
-  final static String CLASS_STAMP = "WORLD";
+  final static String CLASS_STAMP = "ViewportMap";
 
   // scales
   float sX = 1;

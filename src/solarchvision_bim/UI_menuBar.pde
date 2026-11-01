@@ -3,7 +3,7 @@ final String ___divider___ = String.valueOf(DIVIDER_MARK);
 
 class UI_menuBar {
 
-  final static String CLASS_STAMP = "UI_menuBar";
+  final static String CLASS_STAMP = "UiMenuBar";
 
   // ---------------------------------------------------------------------
   // Layout / interaction state

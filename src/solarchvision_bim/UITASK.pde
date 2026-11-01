@@ -1,6 +1,6 @@
 class UITASK {
 
-  final static String CLASS_STAMP = "UITASK";
+  final static String CLASS_STAMP = "UiTask";
 
   int num = 0;
 

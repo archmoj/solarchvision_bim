@@ -1,6 +1,6 @@
 class UI_toolBar {
 
-  final static String CLASS_STAMP = "UI_toolBar";
+  final static String CLASS_STAMP = "UiToolBar";
 
   boolean update = true;
 

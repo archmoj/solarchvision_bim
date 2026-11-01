@@ -1,6 +1,6 @@
 class OBJECTTYPE {
 
-  final static String CLASS_STAMP = "OBJECTTYPE";
+  final static String CLASS_STAMP = "ObjectType";
 
   final static int TERRAIN = 0;
   final static int MODEL1D = 1;
