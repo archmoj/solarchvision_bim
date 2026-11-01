@@ -27,12 +27,12 @@ class Model2Ds {
   // gets a single camera-facing quad - no canopy cap, and
   // verticalShadingSections above doesn't apply to them - and that quad
   // is flagged non-shadow-casting (entireFaceCastsShadow in
-  // isIntersected_Faces.pde), so a person is visible to and can be
+  // isIntersectedFaces.pde), so a person is visible to and can be
   // darkened by other things' shadows without ever casting one themselves.
   boolean showPeopleInShade = true;
 
   // How a person is actually painted once showPeopleInShade above has let
-  // them into the grid at all - see ShadeViewport.pde's own use of this.
+  // them into the grid at all - see shadeViewport3D.pde's own use of this.
   // true (the default): pasted with their own real photo colors, exactly
   // like a tree - no radiance computation needed for them at all, same
   // reasoning as a tree's own raw paste.
@@ -230,7 +230,7 @@ class Model2Ds {
   }
 
 
-  // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed trees into
+  // Called by buildFaceGrid() (isIntersectedFaces.pde) to feed trees into
   // the raycasting grid used for shading, the same way allFaces.
   // addToFaceGrid()/allModel1Ds.addToFaceGrid() already feed faces and
   // branches. Each tree contributes several vertical quads crossed through
@@ -238,7 +238,7 @@ class Model2Ds {
   // this is Option 2 from the investigation (an imaginary canopy solid,
   // e.g. an icosahedron, would shade identically regardless of species;
   // this reuses the tree's own texture instead). Each quad is
-  // geometrically just a flat rectangle, so isIntersected_Faces.pde's
+  // geometrically just a flat rectangle, so isIntersectedFaces.pde's
   // testFaceHit() also samples that texture's alpha channel at the hit
   // point (entireFaceAlphaTexture/entireFaceUVBasis, populated per quad
   // below) and treats a transparent pixel - outside the foliage silhouette
@@ -251,12 +251,12 @@ class Model2Ds {
   // same MAP[f]<0 flip trick), and the two canopy-cap quads are built off
   // that same orientation rather than a fixed one. buildFaceGrid() only
   // ever runs outside the normal per-frame draw() cycle (ShadeViewport()/
-  // preBakeViewport()/calculate_VertexSolar_array() - see Model1Ds.pde's
+  // preBakeViewport()/calculate_VertexSolar_array() - see model1Ds.pde's
   // own addToFaceGrid() comment on that), so "the camera" here means
   // whatever WIN3D's camera fields hold at the moment the grid is built,
   // same as this.draw(TypeWindow.WIN3D) would use if called right then -
   // this is NOT re-evaluated per ray or per sun angle. The point:
-  // ShadeViewport.pde now samples this tree's own texture color directly
+  // shadeViewport3D.pde now samples this tree's own texture color directly
   // at the ray hit, so for THAT sampled color to match what the WIN3D
   // render actually shows from the current camera, the quad primary
   // camera rays are most likely to land on needs to be the same quad, at
@@ -266,7 +266,7 @@ class Model2Ds {
   // a single camera-facing quad (same t0, no extra angles, no canopy cap -
   // verticalShadingSections above only applies to trees), and flagged
   // non-shadow-casting (entireFaceCastsShadow.add(false), see
-  // isIntersected_Faces.pde's own declaration) rather than left out
+  // isIntersectedFaces.pde's own declaration) rather than left out
   // entirely like before - see showPeopleInShade's own comment for why.
   //
   // More than one vertical quad (see verticalShadingSections above): a
@@ -468,7 +468,7 @@ class Model2Ds {
 
   // Whether addToFaceGrid() above would actually add anything to the
   // raycasting grid right now - a tree always would, a person only if
-  // showPeopleInShade. ShadeViewport.pde/preBakeViewport.pde use this to
+  // showPeopleInShade. shadeViewport3D.pde/preBakeViewport3D.pde use this to
   // decide whether forcing a full grid rebuild on every bake (see their
   // own comments on why camera-facing billboards need that at all) is
   // worth paying for - an empty scene, or one with only trees and no

@@ -111,7 +111,7 @@ class WIN3D {
     if (!this.update) return;
 
     // Whatever renders below would just be painted over by
-    // draw_WIN3D_layers.pde's white clearing rect this same frame - skip
+    // drawViewport3DLayers.pde's white clearing rect this same frame - skip
     // it, and consume this.update as if a normal draw had happened.
     // WIN3D.showSolarImpactOverride is a one-shot flag draw_WIN3D_layers.
     // pde consumes within this same call, so deferring to "the next
@@ -213,7 +213,7 @@ class WIN3D {
     // NOTE: the palette is no longer part of this.graphics (see
     // drawPalette()'s own comment), so a recorded/saved frame here no
     // longer includes it - it's only composited onto the main canvas
-    // afterward, by draw_WIN3D_layers.pde, which saveRecordedFrame() below
+    // afterward, by drawViewport3DLayers.pde, which saveRecordedFrame() below
     // doesn't capture.
     if (this.record_IMG || this.record_AUTO) {
       saveRecordedFrame();
@@ -281,7 +281,7 @@ class WIN3D {
   // off the camera's field of view/zoom). That made it tricky to reason
   // about and tied its size to the 3D projection for no real benefit, since
   // it's conceptually just a HUD. drawPalette() is called directly from
-  // draw_WIN3D_layers.pde, after both WIN3D's own render and the
+  // drawViewport3DLayers.pde, after both WIN3D's own render and the
   // solar-impact overlay, so it always ends up on top of both - including
   // on frames where WIN3D.draw() itself was skipped entirely (see
   // win3DOverlay_needsClearRect()'s own comment), which is exactly when the
@@ -537,7 +537,7 @@ class WIN3D {
   // unit-testable against navKeyRepeatable alone, without also needing a
   // real KeyEvent (this test suite deliberately never constructs one, see
   // solarchvision_bimTest.java's own comment) or a full processHeldKey()
-  // frame-counter sequence - the same reasoning ShadeViewport.pde's own
+  // frame-counter sequence - the same reasoning shadeViewport3D.pde's own
   // dismissShading() was split out for.
   void reduceShadingQualityForNavHold () {
     // Not repeatable (a discrete/one-shot key - camera cycling, shading
@@ -1268,10 +1268,10 @@ class WIN3D {
   float shadingQualityBeforeNavHold = -1;
 
   // Sticky, not one-shot: set true by ShadeViewport() once it's finished
-  // baking Shade_RGBA, and left true - draw_WIN3D_layers.pde redraws that
+  // baking Shade_RGBA, and left true - drawViewport3DLayers.pde redraws that
   // same image over the viewport every single frame, including through a
   // camera drag, for as long as this stays true - until dismissShading()
-  // (ShadeViewport.pde, called from the main Esc cascade in
+  // (shadeViewport3D.pde, called from the main Esc cascade in
   // solarchvision_bim.pde) explicitly turns it back off.
   boolean showShading = false;
 
@@ -1279,7 +1279,7 @@ class WIN3D {
   // funnels into it too, so a model edit sets this the same way a camera
   // move does) whenever showShading is already true, meaning the Shade_
   // RGBA this overlay is still showing was baked from a camera/model
-  // state that's now stale. draw_WIN3D_layers.pde checks this once per
+  // state that's now stale. drawViewport3DLayers.pde checks this once per
   // frame and, when set, re-runs ShadeViewport() right there before
   // drawing - which both refreshes Shade_RGBA and clears this flag again
   // (see its own comment) - so the sticky overlay tracks the live camera/
@@ -1290,7 +1290,7 @@ class WIN3D {
   // Set unconditionally by ShadeViewport() itself (the one place every
   // trigger - the sticky auto-rebuild above, the "Shade Viewport" action,
   // Space/Backspace, the SHADE.VIEWPORT command, ... - all eventually
-  // call through) whenever it finishes a bake, so draw_WIN3D_layers.pde
+  // call through) whenever it finishes a bake, so drawViewport3DLayers.pde
   // knows to actually paint the fresh Shade_RGBA at least once - distinct
   // from shadingNeedsRebuild (which only fires from the auto-rebuild
   // path, via view_changed()): a bake triggered directly, outside that
@@ -1308,7 +1308,7 @@ class WIN3D {
   // regardless of whether it ends up actually showing anything.
   boolean showSolarImpactOverride = false;
 
-  // Set each frame by draw_WIN3D_layers.pde to record whether it actually
+  // Set each frame by drawViewport3DLayers.pde to record whether it actually
   // drew the WIN3D solar-impact overlay that frame (the one-shot override
   // above has usually already been consumed to false by the time anything
   // else would want to ask, so this is the only reliable way to know) -

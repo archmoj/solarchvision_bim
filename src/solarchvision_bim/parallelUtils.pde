@@ -3,7 +3,7 @@
 // than losing it - a silent partial result (some pixels never written
 // because their chunk's thread died) would be far worse than failing
 // loudly here. Shared by every parallel per-pixel chunk loop in this
-// codebase - preBakeViewport.pde's own ray-casting loop, ShadeViewport.
+// codebase - preBakeViewport3D.pde's own ray-casting loop, ShadeViewport.
 // pde's two passes - so the same wait/propagate behavior doesn't have to
 // be hand-copied at each call site.
 void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
@@ -38,15 +38,15 @@ void awaitAll (java.util.List<java.util.concurrent.Future<?>> futures) {
 //
 // Scoped to preBakeViewport()'s own call site, not folded into awaitAll()
 // itself: every other parallel loop in this codebase (ShadeViewport.
-// pde's two passes, SolarImpacts.pde) shares that one and has no
+// pde's two passes, solarImpacts.pde) shares that one and has no
 // equivalent mid-bake UI of its own to refresh, so they keep the
 // simpler, already-proven plain blocking wait.
 //
-// progressWindow is owned by the caller now (preBakeViewport.pde's own
+// progressWindow is owned by the caller now (preBakeViewport3D.pde's own
 // comment on why: that bar now spans several further steps after this
 // call returns, not just this one) - null here means exactly what it
 // means at every other show*Progress call site in this codebase
-// (showPrebakeProgress off, or headless - preBakeViewport.pde already
+// (showPrebakeProgress off, or headless - preBakeViewport3D.pde already
 // resolved canShowProgressWindow() before ever constructing one), so
 // this function itself just falls back to the plain blocking wait rather
 // than needing its own separate headless check. rangeMin/rangeMax let
@@ -102,7 +102,7 @@ void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> future
 // Finds suspected hit/miss-flip artifacts without touching anything: a
 // residual, very low-probability race in the parallel ray-casting these
 // pixels come from (still not fully root-caused, despite a long
-// investigation - see ShadeViewport.pde's own comments on what was ruled
+// investigation - see shadeViewport3D.pde's own comments on what was ruled
 // out) can occasionally flip one pixel's alpha the wrong way - opaque
 // where it should have missed, or transparent where it should have hit.
 //

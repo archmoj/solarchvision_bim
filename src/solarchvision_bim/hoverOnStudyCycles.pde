@@ -1,8 +1,8 @@
-// Hover for "Sun Path" - note the UI label (actions.pde, UI_menuBar.pde)
+// Hover for "Sun Path" - note the UI label (actions.pde, uiMenuBar.pde)
 // and the internal name don't match: this is plotImpact_cycles()
-// (STUDY.pde), which delegates its actual drawing to Sun3D.pde's
+// (viewport2D.pde), which delegates its actual drawing to sun3D.pde's
 // drawCycles() - the same mesh WIN3D's live 3D view and the OBJ exporter
-// both also use, via drawPattern()/export_objects_OBJ.pde. Only the
+// both also use, via drawPattern()/exportObj.pde. Only the
 // target_window == TypeWindow.STUDY branch inside drawCycles() records
 // anything here (STUDY.cyclesHoverPoints); WIN3D/OBJ3D/WORLD never touch
 // this list, so there's nothing to add or guard against on those - hover
@@ -25,12 +25,12 @@
 // it, so there's no fixed formula to invert the way a regular grid has.
 class CyclesHoverPoint {
   float screenX, screenY;
-  float hitRadius; // roughly one quad-cell's own on-screen size at this vertex (Sun3D.pde's own drawCycles(), same "offset and measure" trick as SunpathHoverPoint's own hitRadius) - since the mesh tiles solidly, this is generous enough that hovering anywhere actually drawn finds something, while still returning nothing once the mouse leaves the mesh entirely (background, the palette legend, title text)
+  float hitRadius; // roughly one quad-cell's own on-screen size at this vertex (sun3D.pde's own drawCycles(), same "offset and measure" trick as SunpathHoverPoint's own hitRadius) - since the mesh tiles solidly, this is generous enough that hovering anywhere actually drawn finds something, while still returning nothing once the mouse leaves the mesh entirely (background, the palette legend, title text)
   float Alpha, Beta; // sun's own altitude/azimuth at this vertex
   float valuesSUM; // this vertex's own value - received radiation (Active) or direct effect (Passive), same single-number display drawCycles() itself already colors the mesh by
   int impactTypeIndex;
   int hour; // 0-23 - this vertex's own hour-grid index (drawCycles()'s own "a"), a single point in time, not a window - unlike calendarDay/daysMergedHalf below, hours are never merged in this graph
-  int calendarDay; // drawCycles()'s own "now_j2" for this vertex's ROW (merged-day-group) - the SAME actual date used to fetch the data this vertex's own valuesSUM was computed from, same wrapped 0-364 day index TIME.getDayText() (TIME.pde) expects
+  int calendarDay; // drawCycles()'s own "now_j2" for this vertex's ROW (merged-day-group) - the SAME actual date used to fetch the data this vertex's own valuesSUM was computed from, same wrapped 0-364 day index TIME.getDayText() (time.pde) expects
   int daysMergedHalf; // STUDY.daysMergedCount's own half-width at the moment this point was recorded, 0 when daysMergedCount <= 1 (no day-merging) - same field/meaning as NormalsHoverColumn's and ProbsHoverBox's own daysMergedHalf
 }
 
@@ -71,7 +71,7 @@ CyclesHoverPoint studyCyclesHover_hitTest (int xMouse, int yMouse) {
 // (hoverOnStudySunpath.pde) rather than redefining it, since both
 // graphs show the exact same sun-position formatting. The value line
 // gets its own descriptive label (matching plotImpact_cycles()'s own
-// on-graph legend text exactly - STUDY.pde - "Direct solar radiation"/
+// on-graph legend text exactly - viewport2D.pde - "Direct solar radiation"/
 // "Direct solar effect") rather than showing a bare number, since
 // unlike Hourly Sun this graph doesn't already show that label next to
 // every point it draws. Time/date formatted the same "Window:"/

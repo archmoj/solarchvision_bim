@@ -14,7 +14,7 @@ import java.nio.file.Path;
 //
 // Each test below writes the smallest STEP snippet that exercises one
 // path, rather than a realistic whole-building export - see
-// import_objects_IFC.pde's own file-header comment for exactly which
+// importIfc.pde's own file-header comment for exactly which
 // IFC entities/attributes each path corresponds to, and for the
 // documented limitations (holes, curves, booleans, IfcMappedItem) a
 // couple of tests below confirm are skipped-and-counted, not silently
@@ -615,7 +615,7 @@ class ImportObjectsIFCTest {
     assertEquals(300f, app.allPoints.getZ(0), 0.0001f);
   }
 
-  // ================= IfcWindow always draws as glass (Materials.pde 9) =======
+  // ================= IfcWindow always draws as glass (materials.pde 9) =======
 
   @Test
   void importObjectsIFC_ifcWindow_alwaysGetsMaterial9_insteadOfTheFixedWallMaterial () throws IOException {
@@ -672,7 +672,7 @@ class ImportObjectsIFCTest {
     assertEquals(9, app.allFaces.options[3][0], "second window: always material 9");
   }
 
-  // ================= associated IfcMaterial -> Materials.pde named colors ====
+  // ================= associated IfcMaterial -> materials.pde named colors ====
 
   @Test
   void importObjectsIFC_wallWithConcreteMaterial_getsIFC_MATERIAL_CONCRETE () throws IOException {
@@ -3070,7 +3070,7 @@ class ImportObjectsIFCTest {
     // A single-face product followed by a 6-face extrusion - checks
     // allGroups.Faces[][] directly, the part of the queue-then-flush
     // refactor (see ifcQueuePoint()/ifcQueueFace()/
-    // ifcFlushPendingGeometry() in import_objects_IFC.pde) most at risk
+    // ifcFlushPendingGeometry() in importIfc.pde) most at risk
     // of an off-by-one, since group start/stop indices are now stamped
     // against "virtual" (not-yet-real) face indices during the import
     // and only become real once everything is flushed at the end.
@@ -3498,7 +3498,7 @@ class ImportObjectsIFCTest {
   }
 
   // ================= progress window headless-safety =======================
-  // import_objects_IFC() now shows a ProgressWindow (preBakeViewport.pde) -
+  // import_objects_IFC() now shows a ProgressWindow (preBakeViewport3D.pde) -
   // a real java.awt.Frame - while showImportProgress (globals.pde) is on,
   // which defaults to true. Every one of this file's many other tests
   // already exercises that path and would have thrown java.awt.

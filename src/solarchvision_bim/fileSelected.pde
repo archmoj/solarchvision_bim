@@ -11,7 +11,7 @@ void selectFile_SaveAs () {
 }
 
 void selectFile_ImportObj () {
-  // Arms objImportShowOptionsDialog (import_objects_OBJ.pde) the same
+  // Arms objImportShowOptionsDialog (importObj.pde) the same
   // way selectFile_ImportIfc() below arms ifcImportShowOptionsDialog for
   // its own five options.
   objImportShowOptionsDialog = true;
@@ -19,44 +19,44 @@ void selectFile_ImportObj () {
 }
 
 void selectFile_ImportGlb () {
-  // Arms glbImportShowOptionsDialog (import_objects_GLB.pde) the same way.
+  // Arms glbImportShowOptionsDialog (importGlb.pde) the same way.
   glbImportShowOptionsDialog = true;
   selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
 }
 
 void selectFile_ImportStl () {
-  // Arms stlImportShowOptionsDialog (import_objects_STL.pde) the same way.
+  // Arms stlImportShowOptionsDialog (importStl.pde) the same way.
   stlImportShowOptionsDialog = true;
   selectInput("Select STL file to import:", "_fileSelected_ImportStl", new File(Folder_Import + "/_.stl"));
 }
 
 void selectFile_ImportDxf () {
-  // Arms dxfImportShowOptionsDialog (import_objects_DXF.pde) the same way.
+  // Arms dxfImportShowOptionsDialog (importDxf.pde) the same way.
   dxfImportShowOptionsDialog = true;
   selectInput("Select DXF file to import:", "_fileSelected_ImportDxf", new File(Folder_Import + "/_.dxf"));
 }
 
 void selectFile_ImportPly () {
-  // Arms plyImportShowOptionsDialog (import_objects_PLY.pde) the same way.
+  // Arms plyImportShowOptionsDialog (importPly.pde) the same way.
   plyImportShowOptionsDialog = true;
   selectInput("Select PLY file to import:", "_fileSelected_ImportPly", new File(Folder_Import + "/_.ply"));
 }
 
 void selectFile_ImportDae () {
-  // Arms daeImportShowOptionsDialog (import_objects_DAE.pde) the same way.
+  // Arms daeImportShowOptionsDialog (importDae.pde) the same way.
   daeImportShowOptionsDialog = true;
   selectInput("Select DAE file to import:", "_fileSelected_ImportDae", new File(Folder_Import + "/_.dae"));
 }
 
 // Whether to rotate the file's own Y-up axis convention into this app's
-// own (commonly Z-up) one - see import_objects_OBJ.pde's own
+// own (commonly Z-up) one - see importObj.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
-// and import_objects_GLB.pde's/import_objects_STL.pde's/import_objects_
-// DXF.pde's/import_objects_PLY.pde's/import_objects_DAE.pde's matching
+// and importGlb.pde's/importStl.pde's/import
+// Dxf.pde's/importPly.pde's/importDae.pde's matching
 // ones, for why this is off by default and shared across all six
 // formats: none of OBJ/STL/DXF/PLY/DAE has a single, reliably-declared
 // up-axis of its own (DAE's <up_axis> is read nowhere in this version -
-// see import_objects_DAE.pde's own header comment for why), and keeping
+// see importDae.pde's own header comment for why), and keeping
 // every importer's axis treatment consistent with the others matters
 // more than any one of them being "correct" in isolation - this one
 // checkbox lets the PERSON importing decide, per import, rather than any
@@ -65,8 +65,8 @@ boolean importSwapAxisYZ = false;
 
 // Shared by OBJ/GLB/STL/DXF/PLY/DAE (one option, one checkbox) since
 // that's exactly the axis convention they already agree to share - see
-// import_objects_OBJ.pde's/import_objects_GLB.pde's/import_objects_STL.
-// pde's/import_objects_DXF.pde's/import_objects_PLY.pde's/import_
+// importObj.pde's/importGlb.pde's/importStl.
+// pde's/importDxf.pde's/importPly.pde's/import_
 // objects_DAE.pde's own objImportShowOptionsDialog/
 // glbImportShowOptionsDialog/stlImportShowOptionsDialog/
 // dxfImportShowOptionsDialog/plyImportShowOptionsDialog/
@@ -95,13 +95,13 @@ boolean axisSwapShowImportOptionsDialog (String title) {
 
 // Lets the person importing check/uncheck ifcImportFurniture/
 // ifcImportOrient/ifcImportRelocate/ifcImportIndoorSpace/
-// ifcImportOutdoorSpace (see import_objects_IFC.pde's own
+// ifcImportOutdoorSpace (see importIfc.pde's own
 // IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/IFC_IMPORT_GOTO_LATLON/
 // IFC_IMPORT_INDOOR_SPACE/IFC_IMPORT_OUTDOOR_SPACE - these five
 // variables are what actually gets checked at import time, those
 // constants are only their starting values). Called from
 // import_objects_IFC() itself, not from here - see
-// ifcImportShowOptionsDialog's own comment in import_objects_IFC.pde
+// ifcImportShowOptionsDialog's own comment in importIfc.pde
 // for exactly when, and why that's after a file's already been picked
 // rather than before. A plain Swing dialog (JCheckBox in a JOptionPane)
 // rather than one of this app's own custom-drawn rollouts: selectInput()
@@ -144,7 +144,7 @@ boolean ifcShowImportOptionsDialog () {
 }
 
 void selectFile_ImportIfc () {
-  // Arms ifcImportShowOptionsDialog (import_objects_IFC.pde) so the
+  // Arms ifcImportShowOptionsDialog (importIfc.pde) so the
   // options dialog shows once the file this picks is actually about to
   // be imported, not here - see that variable's own comment for why.
   ifcImportShowOptionsDialog = true;
@@ -152,7 +152,7 @@ void selectFile_ImportIfc () {
 }
 
 // Lets the person importing check/uncheck gbxmlImportOrient/
-// gbxmlImportRelocate (see import_objects_GBXML.pde's own
+// gbxmlImportRelocate (see importGbxml.pde's own
 // GBXML_IMPORT_NORTH/GBXML_IMPORT_GOTO_LATLON - these two variables are
 // what actually gets checked at import time, those constants are only
 // their starting values). Called from import_objects_GBXML() itself,
@@ -180,7 +180,7 @@ boolean gbxmlShowImportOptionsDialog () {
 }
 
 void selectFile_ImportGbxml () {
-  // Arms gbxmlImportShowOptionsDialog (import_objects_GBXML.pde) the
+  // Arms gbxmlImportShowOptionsDialog (importGbxml.pde) the
   // same way selectFile_ImportIfc() above arms ifcImportShowOptionsDialog
   // for its own options.
   gbxmlImportShowOptionsDialog = true;
@@ -281,7 +281,7 @@ void _fileSelected_ImportObj (File selectedFile) {
 
     // import_objects_OBJ() adds faces straight into allFaces without ever
     // calling model_changed() itself - without this, the imported geometry
-    // would never bump allFaces.winCacheGeneration (see Faces.pde's WIN3D
+    // would never bump allFaces.winCacheGeneration (see faces.pde's WIN3D
     // retained-mode cache) and so would never actually appear in WIN3D:
     // switch_category() below still triggers a redraw via its own
     // view_changed(), but that redraw would just replay the stale,

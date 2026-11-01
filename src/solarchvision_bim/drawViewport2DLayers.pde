@@ -1,5 +1,5 @@
 // One day index's own on-screen rectangle (already-converted real screen
-// pixel coordinates, two opposite corners) - see STUDY.pde's own
+// pixel coordinates, two opposite corners) - see viewport2D.pde's own
 // recordDayHighlightCandidate() for how these get built, and
 // dayHighlightCandidates' own comment there for when the list holding
 // them gets reset.
@@ -18,13 +18,13 @@ class StudyDayHighlightCandidate {
 boolean studyLayers_wasShownLastFrame = false;
 
 // Draws impactDisplayDay's own highlight rectangle live, every frame,
-// straight onto the screen - mirrors draw_WIN3D_layers.pde's own pattern
+// straight onto the screen - mirrors drawViewport3DLayers.pde's own pattern
 // for exactly the same underlying reason: STUDY.draw() only actually
 // re-renders STUDY.graphics (the cached buffer, blitted to screen in
 // endFrame()) when STUDY.update is set, since a full render replots every
 // data point in the active graph(s) and is comparatively expensive - but
 // impactDisplayDay ("Next/Previous Impact Day", actions.pde, and the
-// matching case-bar buttons, UI_caseBar.pde) changes WITHOUT ever setting
+// matching case-bar buttons, uiCaseBar.pde) changes WITHOUT ever setting
 // STUDY.update (deliberately: stepping through days is meant to feel
 // instant, not trigger a full graph replot every click). A highlight
 // drawn directly into STUDY.graphics would only ever show whichever day
@@ -33,7 +33,7 @@ boolean studyLayers_wasShownLastFrame = false;
 // originally existed to fix.
 //
 // Instead, STUDY's own real render pass (drawDailyGrid()/plotHourly(),
-// STUDY.pde) cheaply records every day index's own on-screen rectangle,
+// viewport2D.pde) cheaply records every day index's own on-screen rectangle,
 // for every panel it draws, into STUDY.dayHighlightCandidates - geometry
 // only, no data lookups, so recording every day costs nothing extra
 // worth skipping. This function then just filters that already-computed

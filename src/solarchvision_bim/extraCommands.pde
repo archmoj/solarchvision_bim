@@ -2105,7 +2105,7 @@ String __SOLID__ (String[] parts) {
 }
 
 // allGroups.beginNewGroup(...) itself has no validity guard at all
-// (just appends the 9 values directly - see Groups.pde), so none is
+// (just appends the 9 values directly - see groups.pde), so none is
 // added here either, unlike SOLID's px/py/pz/sx/sy/sz/v check just
 // above - matching the direct call in mouseClicked.pde this replaces,
 // which also calls it unconditionally.
@@ -2713,7 +2713,7 @@ String __SHADE_VIEWPORT__ (String[] parts) {
 
 String __UNSHADE_VIEWPORT__ (String[] parts) {
     String hint = "";
-    // dismissShading() (ShadeViewport.pde) - the same call the "Unshade
+    // dismissShading() (shadeViewport3D.pde) - the same call the "Unshade
     // Viewport" action (actions.pde) and the main Esc cascade
     // (solarchvision_bim.pde) both make - already forces its own repaint
     // (view_changed()), so there's nothing else to do here.

@@ -59,7 +59,7 @@ void draw_WIN3D_layers () {
   // the camera's being dragged, since WIN3D.update alone already keeps
   // this whole function (and WIN3D.draw() under it) running every frame
   // of that drag - until something explicitly turns WIN3D.showShading
-  // back off. dismissShading() (ShadeViewport.pde) is the only place that
+  // back off. dismissShading() (shadeViewport3D.pde) is the only place that
   // does that, from Esc.
   if (WIN3D.showShading) {
     // view_changed()/model_changed() (global_functions.pde) set this
@@ -85,7 +85,7 @@ void draw_WIN3D_layers () {
     // entirely - the "Shade Viewport" action, Space/Backspace, the
     // SHADE.VIEWPORT command, ... all eventually call ShadeViewport()
     // directly, bypassing shadingNeedsRebuild/view_changed() altogether -
-    // see that field's own comment, WIN3D.pde, for why checking
+    // see that field's own comment, viewport3D.pde, for why checking
     // shadingNeedsRebuild here instead would miss every one of those and
     // silently never paint the result). showShading keeps this whole
     // function running every single frame regardless of either (its own
@@ -93,7 +93,7 @@ void draw_WIN3D_layers () {
     // true - nothing moved, nothing baked, genuinely stale - would still
     // repaint the exact same pixels for no reason: wasted work for the
     // plain image() call, and visibly wrong for Overlay3D's own alpha-
-    // blended fills (SOLID_STYLE, GROUP_BOX_STYLE, etc., Overlay3D.pde),
+    // blended fills (SOLID_STYLE, GROUP_BOX_STYLE, etc., overlay3D.pde),
     // which would darken/thicken a little more with every such frame
     // they're drawn on top of themselves, never actually settling at
     // their real, once-blended intensity. Reads mayDrawPalette, never
@@ -112,8 +112,8 @@ void draw_WIN3D_layers () {
       image(Shade_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
 
       // Selection highlights, the camera gizmo, axes, group boxes, etc.
-      // (Overlay3D.pde) - WIN3D.draw() already draws these once itself
-      // (its own endImageScale(), WIN3D.pde) whenever it runs, but the
+      // (overlay3D.pde) - WIN3D.draw() already draws these once itself
+      // (its own endImageScale(), viewport3D.pde) whenever it runs, but the
       // image(Shade_RGBA, ...) call just above would otherwise bury that
       // content right back under the shaded overlay - redraw it on top
       // again here so it stays visible.
@@ -216,7 +216,7 @@ void draw_WIN3D_layers () {
 
 // Returns {destX, destY, destW, destH, srcX, srcY, srcW, srcH}: where img
 // actually lands on screen, and which part of it, under the same
-// aspect-fit rules draw_WIN3D_layers.pde's own drawing code always has
+// aspect-fit rules drawViewport3DLayers.pde's own drawing code always has
 // (centered pillarbox for a wider image, center-cropped-and-stretched for
 // a taller one). Shared between that drawing code and
 // drawSolarImpactHover() below, rather than each recomputing this

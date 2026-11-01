@@ -100,7 +100,7 @@ extruded "block massing," which is what OSM's tags support well.
 [SOLARCHVISION_BIM](https://github.com/archmoj/solarchvision_bim) (the
 desktop app this data feeds into) has its own script command for adding
 geometry, `Mesh` — see `src/solarchvision_bim/runScript.pde`'s
-`case "MESH":`, which calls `Create3D.pde`'s `add_Mesh`. Unlike
+`case "MESH":`, which calls `create3D.pde`'s `add_Mesh`. Unlike
 `buildings.obj`, SOLARCHVISION_BIM's own face model natively supports a
 face with any number of vertices, not just 3 — so a hole-free footprint's
 cap doesn't need triangulating at all here, just written as one line

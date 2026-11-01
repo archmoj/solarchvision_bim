@@ -22,14 +22,14 @@ class Sky3D {
   // face/subFace to WIN3D.graphics as a fresh beginShape()/vertex()/
   // endShape() on every redraw - including every pure camera move, which
   // changes nothing here (position, tessellation, shading and palette are
-  // all camera-independent). Same fix as Faces.pde/Model1Ds.pde: build a
+  // all camera-independent). Same fix as faces.pde/model1Ds.pde: build a
   // PShape once and reuse it. winCacheGeneration is bumped at the end of
-  // calculate_GlobalSolar_array.pde, since that's what actually changes
+  // calculateGlobalSolarArray.pde, since that's what actually changes
   // the per-vertex colors in shaded mode (SHADE.vertexRender_Global_Solar)
   // without going through any of the scalar knobs tracked below - the
-  // same reason Faces.pde's own cache bumps the same kind of counter
+  // same reason faces.pde's own cache bumps the same kind of counter
   // there. Palette/shading-mode knobs are scattered across ValueModifier.
-  // pde/UI_rollout.pde the same way Faces.pde's were, so PAL_type/
+  // pde/uiRollout.pde the same way faces.pde's were, so PAL_type/
   // direction/multiplier (already resolved by activePalette() before
   // drawWIN3D() is even called) are compared directly instead of chasing
   // every place impactTypeIndex or the colorscale fields above can change.
@@ -82,9 +82,9 @@ class Sky3D {
   }
 
   // Whether the Sun is at or below the horizon right now - same
-  // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE this class's own sibling Sun3D.pde
+  // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE this class's own sibling sun3D.pde
   // already uses for the live view's actual sun position (its own SunR),
-  // and the same <= 0 threshold ShadeViewport.pde's own sunIsBelowHorizon
+  // and the same <= 0 threshold shadeViewport3D.pde's own sunIsBelowHorizon
   // uses for the shaded-viewport preview. A small, cheap call (funcs.
   // SunPosition, not the heavier SunPositionRadiation) - fine to call
   // from all three of its own call sites below rather than caching the
@@ -273,10 +273,10 @@ class Sky3D {
   // is false, never on a plain camera move.
   PShape build_win3DCache (int PAL_type, int PAL_direction, float PAL_multiplier) {
 
-    // ONE shape, QUADS mode, for the whole dome - see Model1Ds.pde's own
+    // ONE shape, QUADS mode, for the whole dome - see model1Ds.pde's own
     // fix for why: plain beginShape() is generic POLYGON mode, GLU-
     // tessellated and retained per shape. skyFaces is always 4-vertex
-    // (built as new int[...][4] in Create3D.pde) and the tessellated
+    // (built as new int[...][4] in create3D.pde) and the tessellated
     // subfaces below are always exactly 4 vertices too, with no partial
     // quads in either branch, so QUADS mode is always valid.
     PShape shape = createShape();
@@ -324,7 +324,7 @@ class Sky3D {
   // Whichever of flatColor/nightFlatColor above actually represents the
   // sky right now - the single source of truth for "the sky's own flat
   // color", so this dome (cacheWriteDomeFlat() below) and anything else
-  // that wants to blend with or tint towards the sky's color (Moon3D.pde's
+  // that wants to blend with or tint towards the sky's color (moon3D.pde's
   // own halfSkyColor()/vertexColor(), e.g. - the Moon's visible at night
   // far more than during the day, so it has every reason to track this
   // the same way the dome itself does) never drift out of sync with each

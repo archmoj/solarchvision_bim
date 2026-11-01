@@ -44,7 +44,7 @@ class AveragedScenarioValuesTest {
   // the distribution a sample can be closer to or farther from in a way
   // that makes it a "better" or "worse" estimate - Ave by definition, the
   // other three by being rank-weighted means over the whole distribution
-  // (NORMAL.pde) rather than order statistics - so, unlike every other
+  // (normal.pde) rather than order statistics - so, unlike every other
   // stat, all four get a plain equal-weight average instead of the
   // triangular rank weighting.
 
@@ -205,7 +205,7 @@ class AveragedScenarioValuesTest {
   }
 
   // ================= averagedScenarioLayerValue ============================
-  // No filter check at all (matches Sun3D.pde's first call site) - only
+  // No filter check at all (matches sun3D.pde's first call site) - only
   // is_undefined() gates a sample.
 
   @Test

@@ -12,9 +12,9 @@ import processing.core.PShape;
 // callable directly here with no reflection needed.
 //
 // draw() itself only builds/writes the sun disc (same self-contained
-// shape as Moon3D.pde's own draw()) - the grid/path/pattern/cycles
+// shape as moon3D.pde's own draw()) - the grid/path/pattern/cycles
 // drawing (drawGrid(), drawPath(), drawPattern(), drawCycles()) are
-// separate methods WIN3D.pde calls directly, not reached through draw()
+// separate methods viewport3D.pde calls directly, not reached through draw()
 // at all, and all of them touch WIN3D.graphics/STUDY.graphics
 // unconditionally - confirmed by hand against the real compiled app,
 // same WIN3D.graphics boundary as everywhere else in this app (see
@@ -77,7 +77,7 @@ class Sun3DTest {
     // celestial pole instead of the north one (the pole reference's own
     // sign was backwards), which put the real Moon's north pole visibly
     // at the bottom of its own texture (same construction, shared bug -
-    // see Moon3D.pde's buildRightUp()). Checked here against an
+    // see moon3D.pde's buildRightUp()). Checked here against an
     // independently-derived north direction - the difference between
     // funcs.SunPosition() at a genuinely high vs. low declination, not
     // read from the app's own pole variable - so this actually catches a
@@ -312,7 +312,7 @@ class Sun3DTest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
 
     // Not re-deriving PAINT's own palette math here (out of scope for
-    // this file - it's PAINT.pde's own responsibility) - just confirming
+    // this file - it's paint.pde's own responsibility) - just confirming
     // paletteValueToColor() wires rawValue/palType/palDirection through
     // to it and back correctly, against a result confirmed by hand
     // against the real compiled app.
@@ -339,7 +339,7 @@ class Sun3DTest {
   }
 
   // ================= brightenLevel / brightenTexture() =============================
-  // Same construction as Moon3D.pde's own (see its own comment) - a
+  // Same construction as moon3D.pde's own (see its own comment) - a
   // plain, one-time pixel multiply applied to the loaded texture itself,
   // duplicated here rather than shared, the same way the two files'
   // (right, up) frame construction already is. Same tests, mirrored.
@@ -417,7 +417,7 @@ class Sun3DTest {
   //
   // Regression coverage for the "Enlarge 3D Viewport leaves the sun-path
   // grid at the old scale" bug: drawGridSegment() bakes WIN3D.scale into
-  // each cached segment's own coordinates (see Sun3D.pde's own comment on
+  // each cached segment's own coordinates (see sun3D.pde's own comment on
   // this cache), but win3DCache_gridIsValid() never checks WIN3D.scale -
   // so nothing about the cache's own key notices a viewport resize.
   // update_frame_layout.pde already nulled the sun disc's win3DCache on

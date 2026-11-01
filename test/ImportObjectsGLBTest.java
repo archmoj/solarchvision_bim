@@ -15,7 +15,7 @@ import java.nio.file.Path;
 // with no extra seeding.
 //
 // Each test below builds the smallest valid .glb byte stream that
-// exercises one path - see import_objects_GLB.pde's own file-header
+// exercises one path - see importGlb.pde's own file-header
 // comment for exactly which glTF shapes each path corresponds to, and
 // for the documented v1-scope limitations (indexed TRIANGLES only, a
 // VEC3/FLOAT POSITION accessor, an unsigned-integer indices accessor,
@@ -37,7 +37,7 @@ class ImportObjectsGLBTest {
   // Minimal .glb byte-stream builder - every number a .glb container
   // itself (as opposed to the JSON text it carries) uses is little-
   // endian per spec, regardless of the platform running this test - see
-  // import_objects_GLB.pde's own binReadU32LE()/binReadFloatLE() comment.
+  // importGlb.pde's own binReadU32LE()/binReadFloatLE() comment.
   // ---------------------------------------------------------------------
 
   private void writeU32LE (ByteArrayOutputStream out, int v) {

@@ -185,7 +185,7 @@ class Model2DsTest {
 
   // addToFaceGrid() reads entirePointsX/Y/Z/entireFaces/entireFaceAlphaTexture/
   // entireFaceUVBasis/entireFaceCastsShadow directly (the same globals
-  // buildFaceGrid() would normally own - see isIntersected_Faces.pde) and
+  // buildFaceGrid() would normally own - see isIntersectedFaces.pde) and
   // WIN3D.rotationZ/cameraX/Y/projectionTypeIndex for its camera-facing t0.
   // Orthographic with rotationZ=0 is used throughout so t0 is an exact,
   // easy-to-hand-check PI (cos=-1, sin=0), independent of any camera

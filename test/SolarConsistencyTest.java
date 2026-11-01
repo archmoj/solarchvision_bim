@@ -2,9 +2,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Cross-checks that Pose Potential (SolarAtSurface(), called from STUDY.pde's
+// Cross-checks that Pose Potential (SolarAtSurface(), called from viewport2D.pde's
 // plotImpact_global()), Skin Potential (calculate_Impact_CurrentPreBaked(),
-// SolarImpacts.pde) and Shade Vertex Solar (calculate_VertexSolar_array())
+// solarImpacts.pde) and Shade Vertex Solar (calculate_VertexSolar_array())
 // - three independently-written pipelines computing generally the same
 // measure, per this session's own investigation into why their palettes'
 // numbers didn't initially agree - genuinely land on the same value for a
@@ -60,8 +60,8 @@ class SolarConsistencyTest {
 
     // Skin Potential: RAD_VALUE * COL_V1, where COL_V1 is this same
     // SunMask, baked into an 8-bit PNG channel (255*SunMask) and read
-    // back as (channel/255.0) - see preBakeViewport.pde's and
-    // SolarImpacts.pde's own comments on that round-trip. The diffuse
+    // back as (channel/255.0) - see preBakeViewport3D.pde's and
+    // solarImpacts.pde's own comments on that round-trip. The diffuse
     // (RAD_TYPE==1) pass contributes diffuse(=0)*its own COL_V1 = 0.
     float sunMask = sunMaskForHorizontalSurface(SunR);
     float quantizedCOL_V1 = Math.round(255 * sunMask) / 255.0f;
@@ -81,8 +81,8 @@ class SolarConsistencyTest {
   @Test
   void horizontalUnobstructedSurfaceAtTheEquator_allThreeMethodsAgree_scaledToADailyTotal () {
     // Same scenario, carried through each pipeline's own per-day
-    // valuesMUL = DayTime/validHourCount scaling (SolarImpacts.pde,
-    // calculate_VertexSolar_array.pde, STUDY.pde's plotImpact_global() -
+    // valuesMUL = DayTime/validHourCount scaling (solarImpacts.pde,
+    // calculateVertexSolarArray.pde, viewport2D.pde's plotImpact_global() -
     // all three use this identical formula) - confirms the day-level
     // total actually shown on the palette agrees, not just one hour's
     // contribution to it, since that's what this session's fixes were
@@ -118,8 +118,8 @@ class SolarConsistencyTest {
   }
 
   // ================= diffuse-only case (direct=0, diffuse=200 W/m2) ========
-  // Skin Potential (preBakeViewport.pde) and Shade Vertex Solar
-  // (calculate_VertexSolar_array.pde) both average the real sky-dome
+  // Skin Potential (preBakeViewport3D.pde) and Shade Vertex Solar
+  // (calculateVertexSolarArray.pde) both average the real sky-dome
   // DiffuseVectors sample set via the identical cosine-weighted formula
   // (build_SkySphere() turns out to have no graphics dependency and is
   // directly callable here), so those two should land on the exact same
@@ -156,7 +156,7 @@ class SolarConsistencyTest {
     return sum / (instance.DiffuseVectors.length / 2.0f);
   }
 
-  // Mirrors SolarAtSurface()'s own VECT computation (SolarAtSurface.pde) -
+  // Mirrors SolarAtSurface()'s own VECT computation (solarAtSurface.pde) -
   // a surface's unit normal for a given tilt (Alpha, 90=horizontal,
   // 0=vertical) and orientation (Beta, a compass-style bearing measured
   // from south: Beta=0 faces south, Beta=90 faces east - confirmed by
@@ -412,7 +412,7 @@ class SolarConsistencyTest {
     // down badly - SolarAtSurface()'s old linear SkyMask approximation
     // ran roughly 2x the Monte-Carlo estimate specifically at a 45-
     // degree-downward tilt (see this section's own header comment and
-    // SolarAtSurface.pde's own comment on the fix). With the corrected
+    // solarAtSurface.pde's own comment on the fix). With the corrected
     // formula in place, this agrees within the same tolerance every other
     // orientation in this file does.
     assertDiffuseAgreesClosely(-45, 0, "south-down");

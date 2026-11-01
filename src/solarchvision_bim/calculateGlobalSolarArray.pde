@@ -244,7 +244,7 @@ void calculate_GlobalSolar_array () {
   // model_changed() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
   if (allFaces != null) {
-    // Same reasoning as calculate_VertexSolar_array.pde's own identical
+    // Same reasoning as calculateVertexSolarArray.pde's own identical
     // block - see that one's comment. This bump is a "repaint stale face
     // colors" signal, not a structural/material edit, and allSolarImpacts.
     // Image[][] (the WIN3D solar-impact overlay) never reads GlobalSolar

@@ -214,14 +214,14 @@ class Model1Ds {
   float leafSize;
 
   // --- WIN3D retained-mode cache -------------------------------------------
-  // Same idea as Faces.pde's cache: orbiting/panning/zooming WIN3D's camera
+  // Same idea as faces.pde's cache: orbiting/panning/zooming WIN3D's camera
   // doesn't change any tree's shape or position, only the view matrix, so
   // there's no need to re-walk the recursive branch generator every such
   // frame. Unlike Faces, colors here are fixed constants (trunk/leaf), so
   // the only thing that invalidates this cache is the tree data itself
   // changing - which already goes through the same pervasive model_changed()
   // hook used for every create/edit/move/delete of a Model1D (confirmed by
-  // checking Move3D.pde/Rotate3D.pde/Scale3D.pde/Drop3D.pde/Edit3D.pde's
+  // checking move3D.pde/rotate3D.pde/scale3D.pde/drop3D.pde/edit3D.pde's
   // call sites), so a single generation counter bumped there is enough -
   // no scalar-state comparison needed like Faces' shading knobs required.
   int winCacheGeneration = 0;
@@ -229,13 +229,13 @@ class Model1Ds {
   int win3DCache_builtGeneration = -1;
 
   // Flat, UNSCALED (raw model-space, matching allPoints.getX/Y/Z()'s own
-  // convention - see Faces.pde's own TypeWindow.RENDER branch, which
+  // convention - see faces.pde's own TypeWindow.RENDER branch, which
   // populates entirePointsX/Y/Z the same unscaled way) point/face lists,
   // built in the exact same pass as win3DCache above (cacheLocalFace()
   // appends to both). These use tree-local indices, not the spatial
   // grid's global ones - addToFaceGrid() below offsets them when copying
   // this cache into the global entirePointsX/Y/Z/entireFaces (see
-  // isIntersected_Faces.pde), since those lists are rebuilt fresh every
+  // isIntersectedFaces.pde), since those lists are rebuilt fresh every
   // call to buildFaceGrid(). Kept in sync with win3DCache's own validity,
   // not tracked separately.
   ArrayList<Float> win3DCache_modelPointsX = new ArrayList<Float>();
@@ -475,7 +475,7 @@ class Model1Ds {
   // buffer regardless of how many trees are in the scene, instead of one
   // shape holding every tree (a single huge, doubling-reallocated buffer
   // is its own OOM risk for a large enough forest, independent of the
-  // GLU-tessellation one QUADS mode already avoids - see Faces.pde's own
+  // GLU-tessellation one QUADS mode already avoids - see faces.pde's own
   // chunking fix, added for the same reason after a large OBJ import).
   final int WIN3D_CACHE_CHUNK_QUADS = 10000;
 
@@ -501,7 +501,7 @@ class Model1Ds {
     // unbounded QUADS shape either (see WIN3D_CACHE_CHUNK_QUADS's own
     // comment). QUADS is a fixed-topology primitive Processing can
     // rasterize directly, no GLU tessellation needed - the same trick
-    // Earth3D.pde's sphere already uses for its own single-shape mesh.
+    // earth3D.pde's sphere already uses for its own single-shape mesh.
     PShape group = createShape(GROUP);
     this.win3DCache_quadsChunk = null;
     this.win3DCache_quadsChunkCount = 0;
@@ -551,7 +551,7 @@ class Model1Ds {
     return group;
   }
 
-  // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed the
+  // Called by buildFaceGrid() (isIntersectedFaces.pde) to feed the
   // spatial raycasting grid every tree's geometry, reusing the same
   // object-space data already computed for win3DCache (same cacheBranch()/
   // cacheElement()/cacheTrunk()/cacheLeaf()/cacheLocalFace() pass) rather
@@ -687,7 +687,7 @@ class Model1Ds {
   // (that was the first OOM: generic beginShape() is GLU-tessellated and
   // retains real memory per shape, and this is called ~1,000+ times per
   // tree), and not a single unbounded shape either (that was the second
-  // OOM, hit on a large imported OBJ - see Faces.pde's own chunking fix).
+  // OOM, hit on a large imported OBJ - see faces.pde's own chunking fix).
   // localVerts is always exactly 4 points (a trunk ring segment or a
   // leaf's cube face), so this always emits exactly one quad - all 4
   // vertices into the same chunk, requested once up front so a flush
@@ -717,7 +717,7 @@ class Model1Ds {
       shape.fill(fr, fg, fb);
       shape.vertex(dst.x, dst.y, dst.z);
 
-      // entirePointsX/Y/Z (see addToFaceGrid() and Faces.pde's own
+      // entirePointsX/Y/Z (see addToFaceGrid() and faces.pde's own
       // TypeWindow.RENDER branch) take the RAW (non-negated) local y and
       // negate the Y *output* instead - not the same transform as
       // negating y on the *input* the way the vertex(x,-y,z) convention

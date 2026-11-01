@@ -93,7 +93,7 @@ private void putAction(String s, Action fn) {
 // normal lookup already wraps it in still fires (one "[Action]: name"
 // line, same as always), but runScriptLine's own string-transform and
 // switch-case lookup are skipped entirely. For a caller that already
-// knows the exact action name at compile time (UI_toolBar.pde's own
+// knows the exact action name at compile time (uiToolBar.pde's own
 // performAction, mainly) and doesn't need runScriptLine's broader
 // dispatch (command names, bypassAllActionsFor, etc.), going through
 // runScriptLine("CameraRollXY") only to have that command's own no-args
@@ -107,7 +107,7 @@ void callAction(String name) {
   allActions.get(name.toLowerCase()).run(new String[]{name});
 }
 
-// Shared by putValueAction (below) and _Spinner (UI_rollout.pde): revise
+// Shared by putValueAction (below) and _Spinner (uiRollout.pde): revise
 // the views a spinner-style field's update1/update2/update3 flags say
 // should refresh when its value actually changes.
 void reviseByUpdateFlags(int update1, int update2, int update3) {
@@ -720,7 +720,7 @@ void build_allActions() {
   });
 
   putAction("Unshade Viewport", () -> {
-    // dismissShading() (ShadeViewport.pde) - the same call the Esc
+    // dismissShading() (shadeViewport3D.pde) - the same call the Esc
     // cascade in solarchvision_bim.pde makes - already forces its own
     // repaint (view_changed()), so there's nothing else to do here.
     dismissShading();
@@ -1379,7 +1379,7 @@ void build_allActions() {
     // Pre-existing bug, found (not introduced) while testing this move:
     // the original "allCameras.num - 1" wrap-around assumes at least one
     // camera exists - with zero cameras in the scene it computes -1, not
-    // a valid index, which crashes downstream (Model2Ds.pde,
+    // a valid index, which crashes downstream (model2Ds.pde,
     // ArrayIndexOutOfBoundsException) the next time anything renders.
     // Confirmed via `git show` that this exact line, unchanged, already
     // existed before this file started reusing it as an action -
@@ -1475,9 +1475,9 @@ void build_allActions() {
   });
 
   // Tropo3D.i_Map() is now derived directly from SHADE_HOUR_ANGLE (its
-  // own comment, Tropo3D.pde) rather than its own independently-advanced
+  // own comment, tropo3D.pde) rather than its own independently-advanced
   // counter, so "advancing/rewinding troposphere time" is exactly
-  // "Shade Next/Previous Hour" (same actions 't'/'T' - WIN3D.pde's own
+  // "Shade Next/Previous Hour" (same actions 't'/'T' - viewport3D.pde's own
   // handleCommandKey() - and Alt+Right/Left already use) - kept as their
   // own named actions (rather than removed outright) since they're both
   // documented (command/README.md) and independently reachable from the
@@ -1515,8 +1515,8 @@ void build_allActions() {
   putAction("Shade Next Hour", () -> {
     nextShadeHour();
     // Tropo3D.i_Map() tracks SHADE_HOUR_ANGLE now (its own comment,
-    // Tropo3D.pde), and Tropo3D.draw() is called from both WIN3D.pde and
-    // WORLD.pde (the troposphere layer shows in both the 3D viewport and
+    // tropo3D.pde), and Tropo3D.draw() is called from both viewport3D.pde and
+    // viewportMap.pde (the troposphere layer shows in both the 3D viewport and
     // the world/site map) - view_changed() below only revises WIN3D, so
     // WORLD needs its own explicit revise() here too, or its own drawn
     // troposphere tile would be left showing the hour it had before this

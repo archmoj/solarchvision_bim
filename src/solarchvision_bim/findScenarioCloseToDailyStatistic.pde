@@ -24,7 +24,7 @@ int scenarioSampleCount (int l) {
   // MidHigh ("Leaning Low"/"Well-tempered"/"Leaning High") don't target a
   // single sharp point in the distribution the way a percentile or an
   // extreme does - Ave by definition, the other three by being
-  // rank-weighted means over the WHOLE distribution (see NORMAL.pde's
+  // rank-weighted means over the WHOLE distribution (see normal.pde's
   // own top comment on them) rather than order statistics - so there's
   // much less of a single point for an extra sample to drift away from,
   // and pulling in more samples buys more noise reduction at

@@ -242,7 +242,7 @@ class Moon3D {
   // actually depend on that call's own (Alpha, Beta): the station tilt,
   // tA/tB from MoonPosition(), and the tidal-locking (forward, up, right)
   // frame. None of it changes within one draw() call, so it's computed
-  // once there instead and passed in - same refactor as Sun3D.pde.
+  // once there instead and passed in - same refactor as sun3D.pde.
   class SkyFrame {
     float ta;
     float tA, tB;
@@ -289,7 +289,7 @@ class Moon3D {
     float stationLat = STATION.getLatitude();
     f.ta = 90 - stationLat;
 
-    // Real position tracking, same architecture as Sun3D.pde: MoonR/tA/tB
+    // Real position tracking, same architecture as sun3D.pde: MoonR/tA/tB
     // move the sphere's POSITION across the sky via the translation step
     // in buildSubFace, using the exact same SHADE_DATE_ANGLE/
     // SHADE_HOUR_ANGLE this app already drives the Sun with (see
@@ -310,7 +310,7 @@ class Moon3D {
     // own comment), same as Rup/Rright below being skipped when
     // !displayTexture. SunPosition() returns a unit vector already in
     // this exact frame (confirmed by hand: this is the same relationship
-    // Sun3D.pde's own Fx/Fy/Fz have to its own tA/tB, just not negated
+    // sun3D.pde's own Fx/Fy/Fz have to its own tA/tB, just not negated
     // here since Fx/Fy/Fz above are themselves the negation of
     // SunPosition's raw output).
     if (this.displayShadow) {
@@ -330,10 +330,10 @@ class Moon3D {
       f.Gupz = gridRightUp[5];
     }
 
-    // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
+    // Tidal locking, same (forward, up, right) construction as sun3D.pde -
     // a plain (lat, lon) shift only locks WHICH POINT faces the station,
     // not the texture's roll around that point (checked by hand, same
-    // conclusion as Sun3D.pde: it isn't enough on its own). F is "which
+    // conclusion as sun3D.pde: it isn't enough on its own). F is "which
     // point faces the station"; the pole reference used here is the
     // NORTH celestial pole (see buildRightUp()'s own comment on how
     // that's confirmed, and the real bug it caused when it was backwards).
@@ -351,7 +351,7 @@ class Moon3D {
   }
 
   // --- WIN3D retained-mode cache --------------------------------------------
-  // Same shape as Sun3D.pde's own sun-disc cache: draw() is WIN3D-only
+  // Same shape as sun3D.pde's own sun-disc cache: draw() is WIN3D-only
   // already, so a straight build-once-and-replay. Position depends on the
   // same SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE/station-latitude trio as the
   // Sun; phase shading additionally depends on the Sun's own direction
@@ -404,7 +404,7 @@ class Moon3D {
   }
 
   PShape build_win3DCache () {
-    // ONE shape, QUADS mode, for the whole sphere - see Model1Ds.pde's own
+    // ONE shape, QUADS mode, for the whole sphere - see model1Ds.pde's own
     // fix for why: plain beginShape() is generic POLYGON mode, GLU-
     // tessellated and retained per shape. buildSubFace() always returns
     // exactly 4 vertices and shouldDrawSubFace() below skips a whole cell

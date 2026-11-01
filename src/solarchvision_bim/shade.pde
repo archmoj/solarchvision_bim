@@ -56,7 +56,7 @@ class SHADE {
     int q = this.findID_SolarImpact_atXYZ(x, y, z, x2, y2, z2, x3, y3, z3);
     // impactDisplayDay < VertexSolar_amounts[WIN3D.impactTypeIndex].length
     // mirrors win3DOverlay_dataFresh()'s own guard on allSolarImpacts.Image
-    // (SolarImpacts.pde) and draw_STUDY_layers.pde's own on
+    // (solarImpacts.pde) and drawViewport2DLayers.pde's own on
     // STUDY.dayHighlightCandidates - the same "End Day" shrink leaves
     // impactDisplayDay pointing past whatever's actually been (re)baked
     // can reach here too: VertexSolar_amounts is sized off STUDY.endDay at
@@ -66,7 +66,7 @@ class SHADE {
     // frames draw_WIN3D_layers() takes to work through it - and unlike
     // those two call sites, nothing upstream already gates reaching this
     // one on that data being fresh: WIN3D.shadingMode == Vertex_Solar is
-    // this path's only other condition (Faces.pde/Land3D.pde), unrelated
+    // this path's only other condition (faces.pde/land3D.pde), unrelated
     // to whether this particular array has caught up yet. Without this,
     // a stale impactDisplayDay here throws ArrayIndexOutOfBoundsException
     // instead of just rendering a visibly stale value.

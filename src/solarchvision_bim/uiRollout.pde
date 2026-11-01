@@ -873,7 +873,7 @@ class UI_rollout {
   // tab-selector loop earlier in draw() mixes its own hit-testing and
   // drawing - this way the click logic (the part actually worth testing)
   // stays free of any rect()/fill()/text() graphics calls, directly
-  // callable headless, the same separation UI_caseBar.pde's own
+  // callable headless, the same separation uiCaseBar.pde's own
   // handleImpactControlsClicks()/renderImpactControlsGrid() already keep.
   float[] renderButtonBounds () {
     float x1 = this.cX + 5 * this.view_S;
@@ -892,7 +892,7 @@ class UI_rollout {
     // Bake first (so the viewport has something fresh to show)...
     callAction("Prebake Viewport");
     // ...drop the sticky shaded-viewport preview if it's currently on top
-    // (WIN3D.showShading - see its own comment, WIN3D.pde) - a render
+    // (WIN3D.showShading - see its own comment, viewport3D.pde) - a render
     // should show the actual model, not a leftover grayscale shading
     // overlay sitting over it...
     if (WIN3D.showShading) callAction("Unshade Viewport");
@@ -1254,7 +1254,7 @@ class UI_rollout {
     return this.editActive;
   }
 
-  // --- Continuous key-hold repeat (see WIN3D.pde) -----------------------
+  // --- Continuous key-hold repeat (see viewport3D.pde) -----------------------
   // Processing does not forward OS key-repeat events while a key stays
   // held, so Left/Right/Backspace/Delete are re-run from draw(), via
   // processHeldKey(), for as long as they remain held. Delay-then-repeat,

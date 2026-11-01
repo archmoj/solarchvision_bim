@@ -88,7 +88,7 @@ class ExportObjectsOBJTest {
 
   @Test
   void exportObj_appliesExtraSubdivision_whenTheFacesMaterialIsZero () throws IOException {
-    // Faces.pde's own OBJ3D export branch: "if (this.getMaterial(f) == 0)
+    // faces.pde's own OBJ3D export branch: "if (this.getMaterial(f) == 0)
     // tessellation += this.displayTessellation;" - material 0 specifically
     // (not any other material) gets Faces.displayTessellation (2 by
     // default) added to its export tessellation, regardless of the face's

@@ -127,7 +127,7 @@ if [ "$#" -lt 1 ]; then
   echo "==> No tests given - defaulting to every command/test/*.svs: $*"
 fi
 
-# sketchPath() (used as BaseFolder in update_folders.pde) resolves to
+# sketchPath() (used as BaseFolder in updateFolders.pde) resolves to
 # Processing's own install directory, not the repo directly - see
 # test/image/README.md for why. The input/command/projects
 # symlink-or-junction setup run-with-latest-processing.sh/.bat itself

@@ -12,7 +12,7 @@ import java.nio.file.Path;
 // never-setup()'d instance with no extra seeding.
 //
 // Each test below writes the smallest DXF group-code/value file that
-// exercises one path - see import_objects_DXF.pde's own file-header
+// exercises one path - see importDxf.pde's own file-header
 // comment for exactly which entity types/group codes each path
 // corresponds to, and for the documented v1-scope limitation (only
 // 3DFACE and polyface-mesh POLYLINE carry solid 3D face geometry;

@@ -48,7 +48,7 @@ class WORLD {
 
   // Bumped once per actual redraw (see draw()'s own end-of-update-block
   // increment below) - same purpose as STUDY's own renderGeneration
-  // (STUDY.pde): lets hoverOnWorldStations.pde's own clearWorldHover()
+  // (viewport2D.pde): lets hoverOnWorldStations.pde's own clearWorldHover()
   // tell "WORLD genuinely redrew since I last looked" apart from "WORLD's
   // update flag just happens to still be false", the same distinction
   // clearStudyHover() (hoverOnStudyImpact.pde) already needs STUDY's own
@@ -540,7 +540,7 @@ class WORLD {
 
 
   void draw () {
-    // Same guard as STUDY.draw() / draw_WIN3D_layers() - see STUDY.pde's
+    // Same guard as STUDY.draw() / draw_WIN3D_layers() - see viewport2D.pde's
     // own comment on this. this.update is left untouched so the redraw
     // just waits for a later frame once the menu's closed.
     if (UI_menuBar.selected_parent != -1) return;

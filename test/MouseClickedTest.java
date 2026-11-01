@@ -69,7 +69,7 @@ class MouseClickedTest {
   // The ObjectCategory.SOLID branch's own local rx/ry/rz (half-widths,
   // same as every other shape branch) land in the "SOLID" command's own
   // sx/sy/sz named parameters, not its rx/ry/rz ones - confirmed against
-  // Solids.pde's create(x,y,z,px,py,pz,sx,sy,sz,tx,ty,tz,v) signature
+  // solids.pde's create(x,y,z,px,py,pz,sx,sy,sz,tx,ty,tz,v) signature
   // directly, not assumed from parameter names matching across the two
   // call sites. DEF[0] stores all 13 raw create() arguments in order, so
   // comparing it directly is a precise check of exactly what reached
@@ -754,7 +754,7 @@ class MouseClickedTest {
     // updates even while a different dataset is active (same as before
     // pickers existed) - but, since this dataset ISN'T the active one,
     // STATION itself must NOT move: WORLD's own view reads STATION's
-    // position directly every frame (WORLD.pde), so moving it here would
+    // position directly every frame (viewportMap.pde), so moving it here would
     // recenter the map on a station that was never actually selected,
     // just because this background lookup happened to run.
     assertEquals(1f, app.STATION.getLongitude(), 0.0001f);

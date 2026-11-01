@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Most cases were rewritten to call runScriptLine("SomeAction") instead
 // of the matching UI_setTo_X(...) directly, reusing an existing command
 // or putAction wherever one produced the exact same effect - see
-// UI_toolBar.pde's own comments on each case for why a particular name
+// uiToolBar.pde's own comments on each case for why a particular name
 // was (or wasn't) safe to reuse. These tests confirm the actual
 // resulting state matches what the original direct call would have
 // produced, not just that runScriptLine(...) returned without error -

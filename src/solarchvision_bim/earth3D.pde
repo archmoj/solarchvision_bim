@@ -11,7 +11,7 @@ class Earth3D {
   // is rendered around the station) and lat_step/lon_step (the mesh's own
   // tessellation resolution) together, since clipRadiusDegrees_X /
   // lat_step (or lon_step) - i.e. vertex count - stays fixed either way.
-  // Exposed as a spinner (see UI_rollout.pde); whenever it changes,
+  // Exposed as a spinner (see uiRollout.pde); whenever it changes,
   // recomputeLevelOfDetailDependents() must be called to keep
   // clipRadiusDegrees_Lat/Lon and lat_step/lon_step in sync, since those
   // are plain stored fields, not computed on the fly.
@@ -236,7 +236,7 @@ class Earth3D {
   // sit near a tile edge), so this doesn't just look up a single tile: it
   // uses one directly when it fully contains the clip window (best
   // quality, no resampling), or composites every overlapping tile into one
-  // mosaic image otherwise - mirroring the overlap/crop math WORLD.pde's
+  // mosaic image otherwise - mirroring the overlap/crop math viewportMap.pde's
   // own drawZoomedTiles() uses to composite neighboring tiles on screen.
   //
   // Cached and only rebuilt when the station's location actually changes,
@@ -392,14 +392,14 @@ class Earth3D {
 
   // --- WIN3D retained-mode cache -------------------------------------------
   // This sphere is location-driven, not model-driven: nothing it renders
-  // depends on allFaces/allModel1Ds/etc, so unlike Faces.pde/Model1Ds.pde
+  // depends on allFaces/allModel1Ds/etc, so unlike faces.pde/model1Ds.pde
   // this cache is deliberately NOT tied to model_changed() - orbiting the
   // camera or editing the 3D model should never rebuild it, only the
   // station moving (or the handful of other things below) should. Every
   // one of those inputs is a cheap scalar (or, for the resolved texture
   // tile, one PImage reference plus its 4 boundary floats), so rather than
   // chase every UI control that could touch one of them (same lesson as
-  // Faces.pde's shading knobs), win3DCache_isValid() just compares the
+  // faces.pde's shading knobs), win3DCache_isValid() just compares the
   // live values against what the cache was built with on every draw() -
   // no separate "something changed" hook needed at all.
   PShape win3DCache = null;
@@ -432,7 +432,7 @@ class Earth3D {
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
   // Grid-line edges are deliberately NOT baked into win3DCache as LINES
-  // child PShapes - that was tried for Faces.pde's edges too and never
+  // child PShapes - that was tried for faces.pde's edges too and never
   // actually rendered there, in any ordering of the style calls. These are
   // cached as the same plain object-space endpoint data flushEdgeBatch()
   // already draws from every frame, and draw() replays them through that
@@ -792,7 +792,7 @@ class Earth3D {
   // before. Shaded mode (false) instead colors each vertex per
   // WIN3D.shadingMode - currently SHADE.Global_Solar (sky-bucket solar
   // exposure, needs this vertex's neighbors within the same subface, same
-  // as Faces.pde/Terrain.pde) and SHADE.Vertex_Elevation (colored by the
+  // as faces.pde/terrain.pde) and SHADE.Vertex_Elevation (colored by the
   // vertex's own bumped height) - falling back to plain white for any
   // other shadingMode value, matching Terrain's own default. Both modes
   // stay inside the single batched beginShape(QUADS) from

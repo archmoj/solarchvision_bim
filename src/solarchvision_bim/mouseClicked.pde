@@ -1367,7 +1367,7 @@ void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
 
   if (currentDataSource == dataID_climateTypicalYear) {
     // Only moves STATION - and so, since WORLD's own view center is read
-    // straight off STATION's position every frame (WORLD.pde), only
+    // straight off STATION's position every frame (viewportMap.pde), only
     // recenters the map - once this dataset is both the active one and
     // actually selected. A background/inactive dataset's own quiet
     // "nearest station" bookkeeping above never reaches this block, so
@@ -1590,7 +1590,7 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
     // whether or not that click turns out to be ambiguous for it.
     //
     // What does NOT happen here, deliberately, is moving STATION itself
-    // (which is what actually recenters WORLD's own view - WORLD.pde
+    // (which is what actually recenters WORLD's own view - viewportMap.pde
     // reads STATION's position directly, every frame) or deciding which
     // station is "the" clicked one - that used to happen right here too,
     // unconditionally, before this click was even checked for being
@@ -2001,7 +2001,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
             // - the command's own "rx"/"ry"/"rz" names are its
             // tx/ty/tz (rotation) parameters instead, where the
             // direct call's literal 0, 0, rot go. Traced
-            // against Solids.pde's own create(...) signature
+            // against solids.pde's own create(...) signature
             // directly, not assumed from either side's naming.
             runScriptLine("Solid x=" + x + " y=" + y + " z=" + z +
               " px=" + px + " py=" + py + " pz=" + pz +

@@ -12,7 +12,7 @@ import java.nio.file.Path;
 // never-setup()'d instance with no extra seeding.
 //
 // Each test below writes the smallest gbXML document that exercises one
-// path - see import_objects_GBXML.pde's own file-header comment for
+// path - see importGbxml.pde's own file-header comment for
 // exactly which elements/attributes each path corresponds to, and for
 // the documented v1-scope limitations (Opening geometry is never
 // actually subtracted from its host Surface; Opening's own
@@ -101,7 +101,7 @@ class ImportObjectsGBXMLTest {
   void importObjectsGBXML_rectangularGeometry_isUsedWhenPlanarGeometryIsMissing () throws IOException {
     // Azimuth 0 (north), Tilt 90 (vertical) - this importer's own derived
     // basis puts Width along world +X and Height along world +Z, the
-    // outward normal along world +Y - see import_objects_GBXML.pde's own
+    // outward normal along world +Y - see importGbxml.pde's own
     // gbxmlRectangularGeometryPoints() comment for the full derivation.
     Path f = gbxmlFile("gbxml-rectangular-test", """
         <gbXML lengthUnit="Meters">
@@ -323,8 +323,8 @@ class ImportObjectsGBXMLTest {
     );
 
     // m == -1 (cycle through 1-8) should NOT apply here - a floor always
-    // reads as concrete, the same unconditional priority import_objects_
-    // IFC.pde's own ifcLooksLikeAFloor() default gets.
+    // reads as concrete, the same unconditional priority import
+    // Ifc.pde's own ifcLooksLikeAFloor() default gets.
     app.import_objects_GBXML(f.toString(), -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(app.IFC_MATERIAL_CONCRETE, app.allFaces.options[0][0]);
@@ -470,7 +470,7 @@ class ImportObjectsGBXMLTest {
     assertEquals(90f, app.gbxmlImportNorthRotationAngle, 0.0001f);
 
     // A 90-degree rotation about Z around the world origin sends
-    // (x,y,0) to (-y,x,0) - see import_objects_IFC.pde's own
+    // (x,y,0) to (-y,x,0) - see importIfc.pde's own
     // ifcRotateImportedModelToTrueNorth()/Rotate3D.rotateAroundVector()'s
     // own comment, reused as-is here (see this file's own header
     // comment).

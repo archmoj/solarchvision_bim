@@ -17,7 +17,7 @@ import java.nio.file.Path;
 // never-setup()'d instance with no extra seeding.
 //
 // Each test below writes the smallest PLY file that exercises one path -
-// see import_objects_PLY.pde's own file-header comment for exactly which
+// see importPly.pde's own file-header comment for exactly which
 // elements/properties each path corresponds to, and for the documented
 // v1-scope limitation (only "vertex"'s own x/y/z and "face"'s own first
 // list property are read; every other element/property is still walked,

@@ -4,7 +4,7 @@ This exists to establish the pattern so more tests can be added the same way.
 
 ## Why this isn't a normal `javac`/JUnit setup
 
-Every `.pde` tab (e.g. `Earth3D.pde`) declares one top-level `class
+Every `.pde` tab (e.g. `earth3D.pde`) declares one top-level `class
 X { ... }`. Processing's own preprocessor merges all tabs
 in `src/solarchvision_bim/` into a single generated Java file, where:
 
@@ -94,6 +94,6 @@ full HTML/XML/CSV report uploaded as a `coverage-report` build artifact.
 
 Anything that touches `WIN3D.graphics`, `PImage`, or live UI/mouse state
 isn't unit-testable as-is - the sustainable path is the one used for
-`Earth3D.pde` in this session: pull the pure decision/math logic out of
+`earth3D.pde` in this session: pull the pure decision/math logic out of
 the drawing code into its own small method first (like `buildVertex()`/
 `isStationGridCell()`), then test the extracted piece.

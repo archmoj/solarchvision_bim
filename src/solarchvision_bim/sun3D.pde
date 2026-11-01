@@ -25,7 +25,7 @@ class Sun3D {
 
   boolean fitInSkyDome = true;
 
-  // Same reasoning as Moon3D.pde's own brightenLevel: the bundled
+  // Same reasoning as moon3D.pde's own brightenLevel: the bundled
   // texture's own raw pixels render dimmer than the real Sun looks to
   // the naked eye, and this is the one thing that can fix that - a
   // one-time multiply of the loaded texture's own pixels (see
@@ -48,7 +48,7 @@ class Sun3D {
   }
 
   // Multiplies every pixel's own R/G/B by level, in place, clamped to
-  // 255 - see Moon3D.pde's own brightenTexture() for the full reasoning;
+  // 255 - see moon3D.pde's own brightenTexture() for the full reasoning;
   // this is the identical construction, just duplicated rather than
   // shared, the same way the two files' (right, up) frame construction
   // already is.
@@ -135,7 +135,7 @@ class Sun3D {
     f.Fz = -funcs.sin_ang(f.tA);
 
     // Unlike the sphere's own body rotation (tb, still always 0 here, same
-    // as Moon3D.pde), tA/tB move the sphere's POSITION across the sky
+    // as moon3D.pde), tA/tB move the sphere's POSITION across the sky
     // over the course of a day - but the texture-to-surface mapping never
     // follows that move, so a station-facing patch of texture at one hour
     // becomes whatever patch happened to be on that side of the
@@ -161,7 +161,7 @@ class Sun3D {
       // positive here, the south one negative. (An earlier derivation
       // here assumed the negated version - substituting Declination = 90
       // into SunPosition()'s own x/y/z formula - was already north,
-      // which was backwards; see Moon3D.pde's buildRightUp(), which this
+      // which was backwards; see moon3D.pde's buildRightUp(), which this
       // same construction was later copied from, for the real bug that
       // caused - the Moon's north pole visibly at the bottom of its own
       // texture.)
@@ -199,10 +199,10 @@ class Sun3D {
   // --- WIN3D retained-mode cache (sun disc) --------------------------------
   // draw() is WIN3D-only already (no target_window dispatch, unlike
   // drawGrid()/drawPath()/drawPattern() below), so this is a straight
-  // build-once-and-replay like Faces.pde/Sky3D.pde: the disc's shape
+  // build-once-and-replay like faces.pde/sky3D.pde: the disc's shape
   // depends only on where the sun currently is (station latitude +
   // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE - the same two globals
-  // adjustShadeTime()/ShadeViewport.pde's own "move time" controls change)
+  // adjustShadeTime()/shadeViewport3D.pde's own "move time" controls change)
   // plus a handful of display toggles - never on the camera.
   PShape win3DCache = null;
   float win3DCache_stationLat = Float.NaN;
@@ -236,7 +236,7 @@ class Sun3D {
 
   PShape build_win3DCache () {
     // ONE shape, QUADS mode, for the whole disc - not one createShape()
-    // per grid cell (see Model1Ds.pde's own fix for why: plain beginShape()
+    // per grid cell (see model1Ds.pde's own fix for why: plain beginShape()
     // is generic POLYGON mode, GLU-tessellated and retained per shape;
     // buildSubFace() always returns exactly 4 vertices, so QUADS mode -
     // fixed-topology, no GLU tessellation needed - is always valid here).
@@ -302,7 +302,7 @@ class Sun3D {
   // drawGrid() is shared with the STUDY target, unlike draw() above, so it
   // can't just be replaced outright - see drawGrid()'s own cache-hit/
   // cache-miss split below. The grid lines are plain segments (no fill),
-  // and the earlier Earth3D.pde/Faces.pde edges bug showed PShape LINES
+  // and the earlier earth3D.pde/faces.pde edges bug showed PShape LINES
   // children don't reliably render here - so, same fix as those: cache the
   // raw endpoint data, not a PShape, and replay it through the same
   // drawGridSegment()-shaped WIN3D.graphics.line() calls that already work.
@@ -508,7 +508,7 @@ class Sun3D {
 
 
   // --- WIN3D retained-mode cache (drawPath/drawPattern) ---------------------
-  // Unlike every other WIN3D.pde-drawn class so far, these two don't shade
+  // Unlike every other viewport3D.pde-drawn class so far, these two don't shade
   // from the precomputed GlobalSolar/VertexSolar_amounts arrays - they read
   // live climate/weather data via getValue_currentDataSource()/
   // FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(), gated by a much wider set of
@@ -519,7 +519,7 @@ class Sun3D {
   // enumerable this way - the case-bar sample-range sliders
   // (sampleYearStart/End, sampleMemberStart/End, sampleStationStart/End -
   // get_startK_endK()'s own inputs) and the data actually being reloaded -
-  // bumped from UI_caseBar.revise() (see UI_caseBar.pde), which is already
+  // bumped from UI_caseBar.revise() (see uiCaseBar.pde), which is already
   // the pervasive "something about the active case/data selection changed"
   // hook for exactly these (every "Use <data source>" action, the case-bar
   // range-slider drag/release/wheel handlers, and file loads all call it).
@@ -591,7 +591,7 @@ class Sun3D {
   }
 
   // Segments cached as raw endpoint + stroke-color + weight data, NOT a
-  // PShape - same fix as Faces.pde's/Earth3D.pde's edges: PShape LINES
+  // PShape - same fix as faces.pde's/earth3D.pde's edges: PShape LINES
   // children don't reliably render here, in any ordering of the style
   // calls, so these are replayed through the same live WIN3D.graphics.
   // line() call that already works, just reading cached values instead of
@@ -891,7 +891,7 @@ class Sun3D {
   // WIN3D cache: the quad-emission block below then also records each
   // quad it draws into a PShape child added to that group, alongside the
   // unchanged live WIN3D.graphics.* calls - same dual live+cache pattern
-  // as Earth3D.pde's sphere. Every other caller (export_objects_OBJ.pde's
+  // as earth3D.pde's sphere. Every other caller (exportObj.pde's
   // direct STUDY-target call, and drawPattern() itself for STUDY/OBJ3D)
   // passes null here and this behaves exactly as before.
   void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot, PShape win3DCacheGroup) {

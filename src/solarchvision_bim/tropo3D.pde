@@ -17,9 +17,9 @@ class Tropo3D {
 
   // Which of the TROPO_timeSteps (24, one per hour) cached slots
   // (Filenames/Map/BoundariesX/BoundariesY) is currently shown - synced
-  // with SHADE_HOUR_ANGLE (the same hour ShadeViewport()/Sun3D.pde/
-  // Moon3D.pde already track, and what Alt+Left/Right, Space/Backspace
-  // and 't'/'T' (WIN3D.pde's own handleCommandKey()) all step through
+  // with SHADE_HOUR_ANGLE (the same hour ShadeViewport()/sun3D.pde/
+  // moon3D.pde already track, and what Alt+Left/Right, Space/Backspace
+  // and 't'/'T' (viewport3D.pde's own handleCommandKey()) all step through
   // "Shade Next/Previous Hour", actions.pde) rather than its own
   // independently-advanced counter, so the troposphere layer always
   // reflects whatever hour the rest of the live view is already showing,
@@ -116,7 +116,7 @@ class Tropo3D {
     if (dt.hour < 0) {
       dt.hour += 24;
       dt.day -= 1;
-      // Valid days are 1..lengthOfMonths[month-1] (see TIME.pde), so day
+      // Valid days are 1..lengthOfMonths[month-1] (see time.pde), so day
       // rolling over means it reaching 0, not dropping below 0 - matches
       // advanceHourForward()'s own "day > lengthOfMonths[month-1]" check
       // on the way up, one end of the same range. The same off-by-one
@@ -356,7 +356,7 @@ class Tropo3D {
   }
 
   // Whether the currently-displayed day (impactDisplayDay, via
-  // SHADE_DATE_ANGLE - same date ShadeViewport()/Sun3D.pde/Moon3D.pde
+  // SHADE_DATE_ANGLE - same date ShadeViewport()/sun3D.pde/moon3D.pde
   // already show) is the one this WMS layer actually has data for.
   // Tropo3D's own download/cache (load_images(), currentUTC() above) is
   // always anchored to the real wall-clock "now" (getNow_inUTC(), i.e.
@@ -369,7 +369,7 @@ class Tropo3D {
   // slot per hour) is sized for exactly one calendar day's worth of data,
   // not a multi-day forecast window, so this is a single-day match, not a
   // "close enough" range: impactDayToDayOfYear(impactDisplayDay)
-  // (ShadeViewport.pde) against today's own day-of-year
+  // (shadeViewport3D.pde) against today's own day-of-year
   // (TIME.convert2Date(), the same 0-364 Jan-1-is-0 convention). Ignores
   // year on both sides - impactDisplayDay's own date range has no year of
   // its own (TIME.beginDay is a day-of-year, not a full calendar date),

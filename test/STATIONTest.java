@@ -46,7 +46,7 @@ class STATIONTest {
   @Test
   void settersAndGetters_roundTripEachFilenameField () {
     // setEnsembleObservationFilename previously assigned ensembleForecastFilename instead of its own
-    // parameter (a copy-paste bug) - fixed in STATION.pde alongside this test.
+    // parameter (a copy-paste bug) - fixed in station.pde alongside this test.
     solarchvision_bim.STATION s = app.new STATION();
 
     s.setEnsembleObservationFilename("swob.csv");

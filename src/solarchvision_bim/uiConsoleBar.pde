@@ -150,7 +150,7 @@ class UI_consoleBar {
     return runScriptLine(lastCommand);
   }
 
-  // --- Continuous key-hold repeat (see WIN3D.pde) -----------------------
+  // --- Continuous key-hold repeat (see viewport3D.pde) -----------------------
   // Processing does not forward OS key-repeat events while a key stays
   // held, so the arrow keys and Backspace/Delete are re-run once per
   // frame (from draw(), via processHeldKey()) for as long as they remain

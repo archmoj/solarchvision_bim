@@ -83,8 +83,8 @@ float globalAlbedo = 0; // 0-100
 
 float celestialMagnification = 16.0; // <<<<<<<<<<
 
-// Whether preBakeViewport() (preBakeViewport.pde) draws and presents a
-// progress bar above the "SOLARCHVISION render" button (UI_rollout.pde)
+// Whether preBakeViewport() (preBakeViewport3D.pde) draws and presents a
+// progress bar above the "SOLARCHVISION render" button (uiRollout.pde)
 // while it bakes, instead of leaving the screen frozen for the whole
 // bake the way it otherwise would - see awaitAllWithProgress()'s own
 // comment for why a bake this synchronous needs a manual mid-call
@@ -93,8 +93,8 @@ float celestialMagnification = 16.0; // <<<<<<<<<<
 boolean showPrebakeProgress = true;
 
 // Same idea as showPrebakeProgress just above, but for calculate_
-// VertexSolar_array() (calculate_VertexSolar_array.pde) - the per-face
-// computation behind the "Skin Potential" graph (UI_rollout.pde's own
+// VertexSolar_array() (calculateVertexSolarArray.pde) - the per-face
+// computation behind the "Skin Potential" graph (uiRollout.pde's own
 // render button), named for that since that's the single-threaded,
 // synchronous call most likely to actually show it long enough to
 // matter, even though the same function also runs for the live
@@ -102,7 +102,7 @@ boolean showPrebakeProgress = true;
 boolean showSkinPotentialProgress = true;
 
 // Same idea again, for allSolarImpacts.calculate_Impact_CurrentPreBaked()
-// (SolarImpacts.pde) - a second, separate step in the same "Skin
+// (solarImpacts.pde) - a second, separate step in the same "Skin
 // Potential" flow (called from STUDY.plotImpact_urban() whenever
 // updateImpactGraph is set), with its own day/hour/RAD_TYPE-nested
 // parallel work, not something showSkinPotentialProgress above already
@@ -112,8 +112,8 @@ boolean showSkinPotentialProgress = true;
 // function's own comment, for why each one matters.
 boolean showCalcImpactProgress = true;
 
-// Same idea again, for import_objects_OBJ() (import_objects_OBJ.pde) and
-// import_objects_IFC() (import_objects_IFC.pde) - both already track
+// Same idea again, for import_objects_OBJ() (importObj.pde) and
+// import_objects_IFC() (importIfc.pde) - both already track
 // their own Progress/console bar the same shape as the three above, over
 // a plain single-threaded loop (import_objects_IFC() has two, one per
 // pass - see that file's own comment).

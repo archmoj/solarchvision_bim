@@ -255,7 +255,7 @@ void place_WORLD_hover (int xMouse, int yMouse) {
 // draw a box" with a single null check.
 //
 // "Currently visible" follows the exact same isWithinView()/isInside()
-// checks WORLD.pde's own drawStationDataset() (and the SWOB-specific inline
+// checks viewportMap.pde's own drawStationDataset() (and the SWOB-specific inline
 // loop right above it in WORLD.draw(), which predates drawStationDataset())
 // already use to decide what to actually draw, and only looks at a dataset
 // at all while that dataset's own "show all" markers are switched on

@@ -1,4 +1,4 @@
-// Hover for drawNormals() (STUDY.pde) - the 9-statistic-line overlay
+// Hover for drawNormals() (viewport2D.pde) - the 9-statistic-line overlay
 // (Min/Max/Average/25th/50th/75th percentile/Mid-Low/Middle/Mid-High)
 // shared by every plotHourly() graph: temperature, humidity, wind speed,
 // direct/diffuse radiation, whichever layer is actually active when a

@@ -234,7 +234,7 @@ void keyPressed (KeyEvent e) {
 
       // Whether THIS keypress is the one that's about to reach
       // UI_rollout.keyPressed(e) below AND is an Esc - i.e. whether an Esc
-      // is about to cancel an in-progress spinner edit there (UI_rollout.pde's
+      // is about to cancel an in-progress spinner edit there (uiRollout.pde's
       // own "case ESC": drops the typed text, sets editActive false, leaves
       // the spinner's real value untouched). Captured BEFORE that call runs,
       // specifically because isEditingSpinner() checked AFTER it would
@@ -304,7 +304,7 @@ void keyPressed (KeyEvent e) {
             } else if (cancelActivePickList()) {
               WORLD.revise();
             } else if (dismissShading()) {
-              // ShadeViewport.pde's own dismissShading() - checked (and,
+              // shadeViewport3D.pde's own dismissShading() - checked (and,
               // same as escAboutToCancelSpinnerEdit above, stops this
               // cascade right here) before removeLastHoverPoint() below,
               // so an Esc that was actually meant to end the sticky

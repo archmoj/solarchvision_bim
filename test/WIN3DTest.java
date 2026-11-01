@@ -1225,7 +1225,7 @@ class WIN3DTest {
     // Nothing left to rebuild or paint towards...
     assertFalse(app.WIN3D.shadingNeedsRebuild);
     assertFalse(app.WIN3D.shadingNeedsRepaint);
-    // ...and WIN3D.update must come back true, or draw_WIN3D_layers.pde's
+    // ...and WIN3D.update must come back true, or drawViewport3DLayers.pde's
     // own early-return gate would skip WIN3D.draw() entirely next frame
     // (nothing else changed) and leave the last-drawn shaded pixels
     // stuck on screen instead of clearing back to the live view.
@@ -1293,7 +1293,7 @@ class WIN3DTest {
     // stepping/wrap logic itself (nextShadeHour()/previousShadeHour()'s
     // own tests, and WIN3DActionsTest.java's "Advance/Rewind Troposphere
     // Time" tests, already cover that in detail). Tropo3D.i_Map()
-    // (Tropo3D.pde) derives from SHADE_HOUR_ANGLE directly, so it tracks
+    // (tropo3D.pde) derives from SHADE_HOUR_ANGLE directly, so it tracks
     // right along with it.
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;

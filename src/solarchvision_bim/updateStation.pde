@@ -19,7 +19,7 @@ void update_station (int Step) {
     sync_SHADE_DATE_ANGLE();
 
     // Keep already-loaded textures tracking the real lon/lat they were
-    // captured at as the station moves (see Land3D.pde's
+    // captured at as the station moves (see land3D.pde's
     // recomputeTextureOffsets()). This is every live way the station can
     // move - the GUI spinners, clicking the map, and the SETLAT/SETLON/
     // SETLATLON/SETLONLAT commands all funnel through Step 0 - so without

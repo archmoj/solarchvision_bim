@@ -23,7 +23,7 @@
 // extra variance (~11% more than equal weights' theoretical minimum) to
 // stay closer to the actually-requested stat - and, just as importantly,
 // it keeps this rule consistent across however many samples
-// scenarioSampleCount() (FIND_SCENARIO_CLOSE_TO_DAILY_STAT.pde) picks for
+// scenarioSampleCount() (findScenarioCloseToDailyStatistic.pde) picks for
 // a given stat: 1 (unweighted) -> 2 (2:1) -> 3 (3:2:1) is the same
 // triangular rule at every step, rather than a plain average at one
 // sample count and a different kind of estimator at another.
@@ -36,7 +36,7 @@
 // picked for being slightly farther from that point really is a
 // slightly worse estimate of it. None of these four target a single
 // such point: the average has no point to drift away from at all, and
-// MidLow/Middle/MidHigh (see NORMAL.pde's own top comment on them) are
+// MidLow/Middle/MidHigh (see normal.pde's own top comment on them) are
 // themselves rank-weighted means built from the WHOLE distribution, not
 // order statistics - so the 2nd/3rd-closest-to-the-target samples aren't
 // "worse" estimates of it the way they'd be for a true percentile, and
@@ -118,7 +118,7 @@ float[] averagedScenarioHourlyValues (int i, int[] sampleNowK, int[] sampleNowJ,
   return new float[] { sumRdir / weightSum, sumRdif / weightSum, sumEdir / weightSum, sumEdif / weightSum };
 }
 
-// The narrower case (Sun3D.pde's sun-path coloring, its first call site):
+// The narrower case (sun3D.pde's sun-path coloring, its first call site):
 // a single raw layer value, weight-averaged across samples via
 // scenarioSampleWeight() above, with no isMemberCounted filter applied at
 // all - matching that one call site's own existing behavior, which never

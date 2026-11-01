@@ -72,7 +72,7 @@ void update_frame_layout () {
     // rebuilt against the new one too, same reasoning as the Faces/
     // Model1Ds/Terrain caches invalidated by model_changed() just above.
     // Sky3D already uses a winCacheGeneration counter like those three (see
-    // Sky3D.pde / calculate_GlobalSolar_array.pde), so bump it the same
+    // sky3D.pde / calculateGlobalSolarArray.pde), so bump it the same
     // way; Sun3D/Moon3D/Earth3D have no such counter - their
     // win3DCache_isValid() just checks win3DCache != null (see their own
     // "WIN3D retained-mode cache" blocks), so null the cache out directly.

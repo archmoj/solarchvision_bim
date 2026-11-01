@@ -39,8 +39,8 @@ class STUDYTest {
   // The fix for the hour-range over-extrapolation bug: funcs.DayTime()
   // (astronomical daylight duration) clamped to the duration of the
   // user's own selected hour range, via isInHourlyRange(), whenever that
-  // range is narrower than the full day. SolarImpacts.pde, calculate_
-  // GlobalSolar_array.pde, calculate_VertexSolar_array.pde and STUDY.pde's
+  // range is narrower than the full day. solarImpacts.pde, calculate
+  // GlobalSolarArray.pde, calculateVertexSolarArray.pde and viewport2D.pde's
   // own plotImpact_global() all extrapolate valuesSUM/valuesNUM (an
   // average over only the hours actually satisfying isInHourlyRange())
   // into a day total by multiplying by this duration - restricting the
@@ -625,17 +625,17 @@ class STUDYTest {
 
   // ================= dayCellBounds ======================================
   // The bounding square each day index's rectangle is recorded with, via
-  // recordDayHighlightCandidate() (STUDY.pde), for draw_STUDY_layers.pde's
+  // recordDayHighlightCandidate() (viewport2D.pde), for drawViewport2DLayers.pde's
   // own live, every-frame redraw of whichever one impactDisplayDay
   // currently points at - pure math, pulled out specifically so it can be
   // checked here without the surrounding functions' own this.graphics
   // calls, which need a real drawing pass already underway (consistent
-  // with every other STUDY.pde/hover.pde function that touches
+  // with every other viewport2D.pde/hover.pde function that touches
   // this.graphics not being independently testable - see e.g.
   // WorldStationHoverTest.java's own header comment on place_WORLD_hover()).
   // Matches, verbatim, the bounds every plotImpact_wind/urban/global call
   // already draws its own per-day backdrop square within (dayCellBounds()'s
-  // own comment, STUDY.pde).
+  // own comment, viewport2D.pde).
 
   @Test
   void dayCellBounds_isCenteredOnTheDayColumnWithNoOffsetOrScaling () {

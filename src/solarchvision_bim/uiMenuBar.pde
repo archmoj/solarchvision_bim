@@ -919,7 +919,7 @@ class UI_menuBar {
   // Handles Up/Down/Left/Right/Enter while a menu is open.
   // Returns true if the key was consumed so that other elements must not
   // process it.
-  // --- Continuous key-hold navigation (see WIN3D.pde) ------------------
+  // --- Continuous key-hold navigation (see viewport3D.pde) ------------------
   // Processing does not forward OS key-repeat events while a key stays
   // held, so Up/Down/Left/Right are re-run once per frame (from draw(),
   // via processHeldKey()) for as long as they remain held. Enter is a

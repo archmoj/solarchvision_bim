@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Covers studyImpactHover.pde's pure logic: deepClone4D() (the
 // independence guarantee the whole multi-row fix depends on),
 // win3DOverlay_rawValuesAt_fromSnapshot() (the snapshot-based mirror of
-// SolarImpacts.pde's own live-data lookup), studyUrbanHover_hitTest()
+// solarImpacts.pde's own live-data lookup), studyUrbanHover_hitTest()
 // (including the exact multi-row scenario that motivated this feature -
 // viewLayout==2's three stacked percentile rows), and the (q, raw)
 // overload of hoverLines(). draw_STUDY_hover() and

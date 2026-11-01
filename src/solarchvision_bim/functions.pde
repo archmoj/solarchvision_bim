@@ -197,12 +197,12 @@ class Functions {
 
   // Same test, raw coordinates instead of float[3] args - lets a hot
   // caller (testFaceHit() below, called for every candidate face every
-  // grid-walk step of every ray cast - see isIntersected_Faces.pde's own
+  // grid-walk step of every ray cast - see isIntersectedFaces.pde's own
   // comment on that volume) skip wrapping each point in a throwaway
   // array just to call this, when it already has the coordinates as
   // plain floats. The float[]-array overload above is unchanged and
-  // still what every other caller (Faces.pde, Polylines.pde, Select3D.pde,
-  // Land3D.pde) uses, since none of them are in a per-candidate-face loop
+  // still what every other caller (faces.pde, polylines.pde, select3D.pde,
+  // land3D.pde) uses, since none of them are in a per-candidate-face loop
   // like this one.
   boolean isInside_Triangle (
     float Px, float Py, float Pz,
@@ -615,8 +615,8 @@ class Functions {
   //    sky); near full moon it's a full 12 hours out of phase (rising as
   //    the Sun sets). DateAngle spans 360 over exactly 365 days - the
   //    same day-of-year/365.0 convention every DATE_ANGLE site in this
-  //    app uses (sync_SHADE_DATE_ANGLE() in ShadeViewport.pde, Sun3D.pde,
-  //    SolarImpacts.pde, STUDY.pde, etc. - all "360 * (day % 365) /
+  //    app uses (sync_SHADE_DATE_ANGLE() in shadeViewport3D.pde, sun3D.pde,
+  //    solarImpacts.pde, viewport2D.pde, etc. - all "360 * (day % 365) /
   //    365.0", never 365.25), so this phase needs to cycle
   //    (365.0 / 29.53) ≈ 12.36 times as fast.
   // 2) Its declination swings through a comparable range to the Sun's

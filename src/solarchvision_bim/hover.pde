@@ -147,7 +147,7 @@ void removeHoverPointAt (int index) {
 // another's.
 //
 // Skipped entirely while a UI_menuBar dropdown is open, same reasoning
-// as STUDY.draw()'s own guard (STUDY.pde): clearStudyHover()'s own
+// as STUDY.draw()'s own guard (viewport2D.pde): clearStudyHover()'s own
 // restore, and every placeHoversAt() call below it, paint directly onto
 // the live screen with no idea the dropdown might be sitting over part
 // of whichever region they touch - STUDY's, WIN3D's, or both - so any of
@@ -394,11 +394,11 @@ void placeHoversAt (int xMouse, int yMouse) {
 // floating box near the cursor, whenever there's real data there - see
 // hoverLines()'s own comment for what. Set this true to see
 // the raw A/R/G/B channel values instead (see win3DOverlay_rawValuesAt()'s
-// own comment, SolarImpacts.pde, for what those are).
+// own comment, solarImpacts.pde, for what those are).
 boolean showARGB_inHover = false;
 
 // No snapshot/restore trick here (tried twice now - see git history on
-// this file for both attempts). UI_menuBar.pde's dropdown can use one
+// this file for both attempts). uiMenuBar.pde's dropdown can use one
 // (its own pre_screen field) because nothing else repaints that region on
 // its own; this area doesn't have that guarantee in either direction - the
 // overlay's own per-frame redraw fights a restore when the mouse holds
@@ -743,7 +743,7 @@ float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float 
 
 // Returns the text lines to show for Image[q][dayIndex]'s pixel (x, y),
 // or null if there's no real data there (see win3DOverlay_rawValuesAt()'s
-// own comment, SolarImpacts.pde).
+// own comment, solarImpacts.pde).
 //
 // Defaults (showARGB_inHover false) to what SOLARCHVISION's passive/
 // active solar-climatic impact method actually found there, rather than
@@ -754,7 +754,7 @@ float[] resolveHoverBoxPosition (float xMouse, float yMouse, float destX, float 
 //   Active (G): the solar radiation actually received, kWh/m2.
 //   Passive (R, B): sun received in cold hours or blocked in warm hours
 //   counts as a benefit (P, kept in B); the reverse counts as harm (N,
-//   kept in R) - see Matrix_ARGB's own build site (SolarImpacts.pde) for
+//   kept in R) - see Matrix_ARGB's own build site (solarImpacts.pde) for
 //   exactly how these get accumulated hour by hour. The comparison score
 //   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
 //   passive palette color itself is already chosen from.

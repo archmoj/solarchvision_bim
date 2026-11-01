@@ -65,7 +65,7 @@ class STUDY {
   // for the plotImpact_wind/urban/global/sunpath/cycles family, and
   // plotHourly()'s own plain day-column ones) - recorded via
   // recordDayHighlightCandidate(), both above. Not drawn here: see
-  // draw_STUDY_layers.pde's own header comment for why impactDisplayDay's
+  // drawViewport2DLayers.pde's own header comment for why impactDisplayDay's
   // highlight has to be a live, every-frame overlay instead of something
   // baked into this.graphics directly. Reset once per render pass, in
   // renderFrame() below - same reasoning as urbanThumbnailHoverInfo's own
@@ -85,7 +85,7 @@ class STUDY {
   // mismatch, and hoverOnStudyCycles.pde's own comment for why this one's
   // different again: a continuous, vertex-interpolated mesh rather than
   // either Hourly Sun's independent points or Pose Potential's discrete
-  // grid buckets). Populated by Sun3D.pde's drawCycles() itself, not by a
+  // grid buckets). Populated by sun3D.pde's drawCycles() itself, not by a
   // STUDY method - that's where the mesh's vertices actually get drawn,
   // for STUDY only (WIN3D/OBJ3D/WORLD don't touch this list, by design).
   ArrayList<CyclesHoverPoint> cyclesHoverPoints;
@@ -238,8 +238,8 @@ class STUDY {
   // endHour, via isInHourlyRange()) whenever that range is narrower than
   // the full day.
   //
-  // SolarImpacts.pde, calculate_GlobalSolar_array.pde and calculate_
-  // VertexSolar_array.pde all extrapolate a sum of hourly samples into a
+  // solarImpacts.pde, calculateGlobalSolarArray.pde and calculate
+  // VertexSolarArray.pde all extrapolate a sum of hourly samples into a
   // total energy value the same way: average-per-sample (valuesSUM /
   // valuesNUM) times this duration. That's a sound "average times
   // duration equals total" approach when the sampled hours span a fair
@@ -382,7 +382,7 @@ class STUDY {
     }
   }
 
-  // See actions.pde's own STUDY.pde-key-shortcuts section (right after
+  // See actions.pde's own viewport2D.pde-key-shortcuts section (right after
   // the WIN3D one) for the full explanation of these action names
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
@@ -792,7 +792,7 @@ class STUDY {
     this.drawInfo(sx_Plot, 1);
 
     // Recorded here, once per day, rather than drawn directly - see
-    // draw_STUDY_layers.pde's own header comment for why: this.graphics
+    // drawViewport2DLayers.pde's own header comment for why: this.graphics
     // is STUDY's own cached buffer, only actually re-rendered when
     // STUDY.update is set, but impactDisplayDay ("Next/Previous Impact
     // Day", actions.pde) changes without ever setting that - drawing
@@ -843,7 +843,7 @@ class STUDY {
   // the exact inverse of studyUrbanHover_hitTest()'s own "actual screen
   // coordinates -> this.graphics' device-pixel space" conversion
   // (hoverOnStudyImpact.pde), run the other way here so the result lands
-  // in real, on-screen pixel coordinates up front. draw_STUDY_layers.pde
+  // in real, on-screen pixel coordinates up front. drawViewport2DLayers.pde
   // then only has to filter this list by dayIndex, every frame, with no
   // further transform work of its own.
   void recordDayHighlightCandidate (int j, float x1, float y1, float x2, float y2) {
@@ -1703,7 +1703,7 @@ class STUDY {
     }
 
     // Recorded here, once per day - see drawDailyGrid()'s own matching
-    // comment, and draw_STUDY_layers.pde's header comment, for why this
+    // comment, and drawViewport2DLayers.pde's header comment, for why this
     // is recorded (for a later, live, every-frame redraw) rather than
     // drawn directly into this.graphics here.
     // Shift_DOWN mirrors drawTimeGrid()'s own local copy exactly (its

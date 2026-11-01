@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 // covering directly: the location-setting commands (also a regression
 // check that they still update STATION, not just locationLatitude/locationLongitude),
 // argument parsing/hints, dispatch to allActions (the integration point
-// with ValueModifier.pde's command-line actions), and the small pure
+// with valueModifier.pde's command-line actions), and the small pure
 // parseParams/getF/getI helpers at the bottom of the file.
 class RunScriptTest {
 
@@ -613,7 +613,7 @@ class RunScriptTest {
   }
 
   // ================= allActions fallback dispatch ============================
-  // The integration point with ValueModifier.pde/actions.pde: a command
+  // The integration point with valueModifier.pde/actions.pde: a command
   // not matched by the switch falls through to a full-line match against
   // allActions, then a first-token match.
 
@@ -698,7 +698,7 @@ class RunScriptTest {
   // only discards a match when the *matched key itself* is exactly one of
   // bypassAllActionsFor's names, not merely when the line starts with one
   // - these lock in the original, narrower behavior that mechanism is
-  // still meant to guarantee (see UI_toolBar.pde's own "Scale"/"Move"
+  // still meant to guarantee (see uiToolBar.pde's own "Scale"/"Move"
   // case comments), so a future change can't silently widen it back out.
 
   @Test
@@ -958,7 +958,7 @@ class RunScriptTest {
 
   // The few commands above each exercise runScriptLine's dispatch by hand
   // (full-line, first-token, and the multi-word trailing-value fallback).
-  // This drives every single ValueModifier.pde command the same way, one
+  // This drives every single valueModifier.pde command the same way, one
   // parameter appended to its name, through runScriptLine itself - not by
   // calling its allActions entry directly (that's ValueModifierTest's own
   // registration-only smoke test). "1" is used as the probe value for all
@@ -1251,7 +1251,7 @@ class RunScriptTest {
   @Test
   void runDotScript_withAFilename_runsThatFileFromFolder_Import () throws java.io.IOException {
     // Folder_Import has no field initializer any more (see
-    // update_folders.pde's locateBaseFolder()/update_input_folders(),
+    // updateFolders.pde's locateBaseFolder()/update_input_folders(),
     // only called from setup() - never on a fresh test instance) - set
     // directly here rather than relying on either of those, since this
     // test is only about RUN.SCRIPT's own dispatch, not folder

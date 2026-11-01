@@ -92,7 +92,7 @@ class GlobalFunctionsTest {
     assertEquals(0, app.allPoints.getLength());
     assertEquals(0, app.allSolids.DEF.length);
     assertEquals(0, app.allSections.num);
-    // Not 0: Cameras.makeEmpty() (see Cameras.pde) always calls
+    // Not 0: Cameras.makeEmpty() (see cameras.pde) always calls
     // add_first() afterward, so there's always at least one camera - a
     // default "home" view - confirmed by hand against the real compiled
     // app, since this.num starting at 0 and jumping back to 1 isn't
@@ -129,7 +129,7 @@ class GlobalFunctionsTest {
   @Test
   void viewChanged_leavesShadingNeedsRebuildAloneWhenShadingIsNotShowing () {
     // Not worth flagging a rebuild for an overlay nobody's looking at -
-    // see WIN3D.shadingNeedsRebuild's own comment (WIN3D.pde).
+    // see WIN3D.shadingNeedsRebuild's own comment (viewport3D.pde).
     app.WIN3D.showShading = false;
     app.WIN3D.shadingNeedsRebuild = false;
 
@@ -247,7 +247,7 @@ class GlobalFunctionsTest {
 
   @Test
   void globalSolarResizeArray_blanksTheArrayBackToUndefined_evenIfItAlreadyHeldRealData () {
-    // This is the exact mechanism behind a real regression: STUDY.pde's
+    // This is the exact mechanism behind a real regression: viewport2D.pde's
     // plotImpact_global() calls this (only to keep the array's
     // dimensions right for plotting) whenever GlobalSolar_rebuild_array
     // is set - and since STUDY.draw() runs before draw_WIN3D_layersAndHover()

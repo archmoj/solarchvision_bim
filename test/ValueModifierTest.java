@@ -137,7 +137,7 @@ class ValueModifierTest {
   @Test
   void startHour_commandLineAction_flagsBothVertexAndGlobalSolarForRebuild () {
     // react.applyCaseBarAndBake is wired to several ValueModifier fields
-    // (see ValueModifier.pde) - Start Hour exercises that shared path
+    // (see valueModifier.pde) - Start Hour exercises that shared path
     // here. Both caches must come out flagged regardless of which
     // shading mode happens to be active, same as find_which_bakings_to_
     // regenerate's own test - this is what actually drives both Vertex

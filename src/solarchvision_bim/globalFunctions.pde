@@ -53,10 +53,10 @@ volatile boolean should_rebuildFaceGrid = true;
 // Centralizes every "is some multi-threaded bake currently reading
 // shared state that draw()/keyPressed()/keyReleased() etc. must not
 // touch right now" check into one place, rather than each guard site
-// listing every bake's own flag by hand - ShadeViewport.pde's own
+// listing every bake's own flag by hand - shadeViewport3D.pde's own
 // isShadingViewport was the first of these, found the hard way, one
 // missed call site at a time; calculate_Impact_CurrentPreBaked()'s own
-// allSolarImpacts.isCalculatingImpact (SolarImpacts.pde) was added
+// allSolarImpacts.isCalculatingImpact (solarImpacts.pde) was added
 // proactively alongside its own parallelization instead. Any future
 // bake that spawns its own worker threads over shared state should add
 // its own flag here too, rather than inventing a new guard pattern.
@@ -68,11 +68,11 @@ void model_changed () {
   should_rebuildFaceGrid = true;
 
   // Any structural/material edit invalidates the WIN3D retained-mode
-  // caches (see Faces.pde's / Model1Ds.pde's / Land3D.pde's "WIN3D
+  // caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D
   // retained-mode cache" blocks) - this piggybacks on model_changed()
   // rather than adding a new hook, since it's already called from every
   // create/edit/move/delete/import site for all three classes - including
-  // Move3D.pde/Scale3D.pde/Rotate3D.pde's TerrainVertices() functions,
+  // move3D.pde/scale3D.pde/rotate3D.pde's TerrainVertices() functions,
   // which edit Terrain.Mesh directly through the normal selection/move
   // system (separately from Terrain.update_mesh()'s own full-reload bump).
   if (allFaces != null) allFaces.winCacheGeneration++;
@@ -90,7 +90,7 @@ void view_changed () {
   // to refresh for - a camera move (view_changed() called directly, e.g.
   // from a drag/rotate) and a model edit (model_changed() -> here) alike.
   // Only worth flagging while that overlay is actually showing -
-  // WIN3D.shadingNeedsRebuild's own comment (WIN3D.pde) covers where this
+  // WIN3D.shadingNeedsRebuild's own comment (viewport3D.pde) covers where this
   // gets consumed and cleared again.
   if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
 }

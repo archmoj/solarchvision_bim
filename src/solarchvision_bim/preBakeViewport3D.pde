@@ -1,7 +1,7 @@
 // A small borderless native AWT window showing the progress of a long,
-// synchronous computation (preBakeViewport() below; calculate_
-// VertexSolar_array.pde, the "Skin Potential" graph's own - see that
-// file's own comment, since clicking "Skin Potential" itself (UI_rollout.
+// synchronous computation (preBakeViewport() below;
+// calculateVertexSolarArray.pde, the "Skin Potential" graph's own - see that
+// file's own comment, since clicking "Skin Potential" itself (uiRollout.
 // pde's render button, setimpactGraphIndex()) doesn't recompute
 // anything, the underlying per-face data does) - NOT drawn through
 // Processing's own P2D/JOGL-backed canvas at all. An earlier version
@@ -25,7 +25,7 @@
 // as the earlier attempt should have been before being taken on faith.
 //
 // Floats free on screen rather than pinned to any particular Processing
-// UI element (UI_rollout.pde's own SOLARCHVISION render button, say) - a
+// UI element (uiRollout.pde's own SOLARCHVISION render button, say) - a
 // separate OS window has no reliable way to know any Processing-drawn
 // element's exact on-screen position (especially relative to Processing's
 // own window, which this doesn't query), so centering on the default
@@ -37,7 +37,7 @@
 // java.awt.GraphicsEnvironment.isHeadless() is the standard, reliable
 // Java check for "is there an actual display to put a window on", NOT
 // control != USER_AUTO (the existing console-bar guard throughout this
-// codebase, e.g. calculate_VertexSolar_array.pde's own) - that one only
+// codebase, e.g. calculateVertexSolarArray.pde's own) - that one only
 // distinguishes interactive-GUI output from automated/batch output
 // (control defaults to USER_GUI, not USER_AUTO, so it's true by default
 // in a plain test app too), it was never meant to detect whether a
@@ -129,7 +129,7 @@ void preBakeViewport () {
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
 
-  // Force a fresh build - see ShadeViewport.pde's own comment on this:
+  // Force a fresh build - see shadeViewport3D.pde's own comment on this:
   // Model2Ds.addToFaceGrid()'s tree/person billboards are camera-facing,
   // and this method's own intersectAll() below (for each screen pixel)
   // needs that to reflect the camera as it is right now, not whatever it
@@ -165,7 +165,7 @@ void preBakeViewport () {
 
   // The camera this whole bake - Direct/Diffuse PNGs, and the Model2Ds
   // mask - is actually computed from. See win3DOverlay_recordCameraState()'s
-  // own comment (SolarImpacts.pde) for why this needs to happen here,
+  // own comment (solarImpacts.pde) for why this needs to happen here,
   // rather than wherever calculate_Impact_CurrentPreBaked() next happens
   // to run.
   allSolarImpacts.win3DOverlay_recordCameraState();
@@ -261,12 +261,12 @@ void preBakeViewport () {
   // coherence survives at a chunk boundary.
   //
   // intersectAll()/isIntersected_Faces() are called here through their
-  // explicit-stamp overloads (isIntersected_Faces.pde), passing each
+  // explicit-stamp overloads (isIntersectedFaces.pde), passing each
   // chunk's own plain local faceTestStampLocal/currentRayStampLocal,
   // rather than through the ThreadLocal-backed overloads this loop used
   // to go through (and that every other caller - mouseClicked,
-  // calculate_VertexSolar_array.pde, etc. - still does; unaffected).
-  // ShadeViewport.pde's own parallel pass hit stray per-pixel hit/miss
+  // calculateVertexSolarArray.pde, etc. - still does; unaffected).
+  // shadeViewport3D.pde's own parallel pass hit stray per-pixel hit/miss
   // corruption traced to ThreadLocal.get() itself under real multi-core
   // concurrency, not to the grid walk or its dedup logic - see that
   // file's own comment on how that was narrowed down - and this loop
@@ -510,7 +510,7 @@ void preBakeViewport () {
   // function's own comment at the top) - n_Map * 2 separate saves, each
   // real per-file disk I/O, so tracked and throttled the same shape as
   // every other whole-percent-step progress loop in this codebase (e.g.
-  // calculate_VertexSolar_array.pde's own), not a single flat jump
+  // calculateVertexSolarArray.pde's own), not a single flat jump
   // before/after like the two ShadeViewport() calls further down get
   // (those have no per-file/per-pixel loop of their own this function
   // can see into without instrumenting ShadeViewport() itself).
@@ -637,7 +637,7 @@ void preBakeViewport () {
   // Same reasoning, same setup already in place - just the one extra
   // ShadeViewport() call, in its own mode, saving its own file. Rendered
   // at FACE_EDGE_RESOLUTION_MULTIPLIER times the usual resolution (see
-  // that constant's own comment, ShadeViewport.pde): WIN3D.dX/dY
+  // that constant's own comment, shadeViewport3D.pde): WIN3D.dX/dY
   // temporarily doubled for just this one call - ShadeViewport()'s own
   // invQuality already derives itself from whichever RES1/RES2 actually
   // end up in use (its own comment on that), rather than assuming
@@ -677,7 +677,7 @@ void preBakeViewport () {
   println("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
 
   // Not wrapped in a try/finally: every other progress window in this
-  // codebase that spans this much of a function (SolarImpacts.pde's own
+  // codebase that spans this much of a function (solarImpacts.pde's own
   // calcImpactProgressWindow, e.g.) disposes as a bare statement at the
   // very end for the same reason - this function already has no try/
   // finally anywhere in it, so adding one just for this would be new

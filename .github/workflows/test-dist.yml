@@ -211,7 +211,7 @@ jobs:
       # build-dist produced something - loads input/images/sun/Sun.jpg
       # (locateBaseFolder() walking up from dist/ to find input/, now
       # that dist/ sits inside the repo rather than needing a separate
-      # fetch - see update_folders.pde), runs a bundled
+      # fetch - see updateFolders.pde), runs a bundled
       # command/test/*.svs script, and produces its screenshot. Same
       # check as dist.yml's own linux smoke test.
       #

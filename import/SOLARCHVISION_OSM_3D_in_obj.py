@@ -25,7 +25,7 @@ falling back to --tree-default-height (default 10.0 m).
 
 buildings.svs (SOLARCHVISION_BIM's `Mesh` script command; see
 src/solarchvision_bim/runScript.pde's `case "MESH":`, which calls
-Create3D.pde's add_Mesh) looks like:
+create3D.pde's add_Mesh) looks like:
 
     Mesh m:7 tes:0 lyr:0 -20.0000,-10.0000,0.0000 20.0000,-10.0000,0.0000 20.0000,10.0000,0.0000 -20.0000,10.0000,0.0000
     ...

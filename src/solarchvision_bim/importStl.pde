@@ -1,13 +1,13 @@
 // Minimal, dependency-free importer for an STL file - both the plain-
 // text ASCII variant and the binary one - the same "hand-roll the
-// parser, no external library" choice import_objects_OBJ.pde/
-// import_objects_IFC.pde/import_objects_GLB.pde already make for their
+// parser, no external library" choice importObj.pde/
+// importIfc.pde/importGlb.pde already make for their
 // own formats.
 //
 // STL has no material/texture/group concept of its own at all - every
 // triangle in the file just gets the single material the m parameter
 // (below) names, the same "whole import, one material unless cycled per
-// sub-object" shape import_objects_OBJ.pde's own "g" tag already uses.
+// sub-object" shape importObj.pde's own "g" tag already uses.
 // The one place STL DOES have its own natural sub-object boundary is
 // ASCII STL's optional multiple "solid ... endsolid" blocks in a single
 // file (uncommon, but real - some tools write one per separate part) -
@@ -29,14 +29,14 @@
 // Per-vertex/face normals are read from a binary file (12 bytes right
 // before each triangle's own 3 vertices) but not used - this app derives
 // its own face normals rather than trusting a file's possibly-stale
-// ones, the same way import_objects_OBJ.pde's own parser already skips
+// ones, the same way importObj.pde's own parser already skips
 // every "vn" line without reading it.
 
 boolean stlImportShowOptionsDialog = false;
 
 // Transform parameters and the material-cycling flag for the CURRENT
 // import_objects_STL() call - same "a few fields shared across one
-// whole import" shape glb_cx/glb_cycleMaterial/... (import_objects_GLB.
+// whole import" shape glb_cx/glb_cycleMaterial/... (importGlb.
 // pde) already use, for the same reason: stlCreatePoint()/the ASCII
 // "solid" handling below need them without threading extra parameters
 // through every call.
@@ -46,7 +46,7 @@ boolean stlCycleMaterial;
 void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s own
   // identical blocks - see either one's own comment, or
-  // ifcImportShowOptionsDialog's (import_objects_IFC.pde), for why this
+  // ifcImportShowOptionsDialog's (importIfc.pde), for why this
   // sits here rather than earlier, and what a cancelled dialog does.
   if (stlImportShowOptionsDialog) {
     stlImportShowOptionsDialog = false;
@@ -97,8 +97,8 @@ void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int 
 }
 
 // One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
-// (fileSelected.pde, shared with import_objects_OBJ.pde/import_objects_
-// GLB.pde) the same way those two importers' own per-vertex code
+// (fileSelected.pde, shared with importObj.pde/import
+// Glb.pde) the same way those two importers' own per-vertex code
 // already does.
 int stlCreatePoint (float x, float y, float z) {
   float finalX, finalY, finalZ;
@@ -171,7 +171,7 @@ void stlImportAscii (String FileName) {
   String[] FileALL = loadStrings(FileName);
   if (FileALL == null) FileALL = new String[0];
 
-  float totalLines = FileALL.length; // computed once, not every iteration - same as import_objects_OBJ.pde's own
+  float totalLines = FileALL.length; // computed once, not every iteration - same as importObj.pde's own
   float Progress = 0;
   float printed_Progress = 0;
   StringBuilder barBuffer = new StringBuilder();
@@ -233,7 +233,7 @@ void stlImportAscii (String FileName) {
       // "outer", "loop", "endloop", "endsolid", a bare solid name,
       // ...) is intentionally ignored, the same "only the tags that
       // matter are handled, everything else silently skipped" shape
-      // import_objects_OBJ.pde's own parser already uses.
+      // importObj.pde's own parser already uses.
     }
   } finally {
     if (importProgressWindow != null) importProgressWindow.dispose();

@@ -78,7 +78,7 @@ class SolarImpactsTest {
   // camera fields currently are, so calling it on a bare app - without
   // first hand-setting every field it reads - already produces a
   // self-consistent "fresh" baseline to compare against below, the same
-  // way the real preBakeViewport.pde call site does.
+  // way the real preBakeViewport3D.pde call site does.
 
   @Test
   void cameraMatches_isFalse_beforeAnyCameraHasEverBeenRecorded () {
@@ -187,7 +187,7 @@ class SolarImpactsTest {
   }
 
   // ================= win3DOverlay_isFresh =================================================
-  // Real usage always records the camera first (preBakeViewport.pde, at its
+  // Real usage always records the camera first (preBakeViewport3D.pde, at its
   // own top) and the analysis second (calculate_Impact_CurrentPreBaked(),
   // once it has actually read that bake's PNGs) - these tests follow that
   // same order rather than the reverse, since win3DOverlay_recordCameraState()

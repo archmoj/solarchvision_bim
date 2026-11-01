@@ -185,7 +185,7 @@ class ModifyGeometryTest {
   // allGroups.inserted_nFaces, faceBaseVertices/faceCentroid,
   // allPoints.create, spliceFaceWithNewFaces, and appendNewFaceSelection,
   // all wired together - closer to the "genuine integration test" the
-  // rest of Modify3D.pde would need than a unit test of one piece.
+  // rest of modify3D.pde would need than a unit test of one piece.
   //
   // Before writing it, switch_category/_selection_changed/
   // _view_changed and UI_toolBar.revise()/WIN3D.revise() were checked:
@@ -522,7 +522,7 @@ class ModifyGeometryTest {
   // between to change it. Both searches were unreachable dead code, so
   // the function did nothing except select vertices, build an all-false
   // toRemove array, and deselect - no welding ever actually happened.
-  // Fixed by removing those two guards (see Modify3D.pde); `found` is
+  // Fixed by removing those two guards (see modify3D.pde); `found` is
   // what those searches COMPUTE, not a precondition for running them,
   // matching the pattern weldObjectsVertices_Selection already used
   // correctly.

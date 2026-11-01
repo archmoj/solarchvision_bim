@@ -109,7 +109,7 @@ void calculate_VertexSolar_array () {
   StringBuilder barBuffer = new StringBuilder();
 
   // showSkinPotentialProgress (globals.pde's own comment on the name) -
-  // same ProgressWindow (preBakeViewport.pde) as "Prebaking", just a
+  // same ProgressWindow (preBakeViewport3D.pde) as "Prebaking", just a
   // different label, created/disposed around this whole loop rather than
   // polled from a separate wait call the way preBakeViewport()'s own
   // awaitAllWithProgress() needs to: this loop is plain single-threaded

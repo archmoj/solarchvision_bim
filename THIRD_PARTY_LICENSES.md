@@ -169,7 +169,7 @@ this repo doesn't currently credit it anywhere, a one-line credit file
 (source URL, like the other four image folders already have) would bring
 this folder in line with the rest and cost nothing, now that the source
 is known. That file lives at `input/images/people-credit.md`, a sibling
-of the `people/` folder rather than a file inside it — `Model2Ds.pde`'s
+of the `people/` folder rather than a file inside it — `model2Ds.pde`'s
 people-image loader scans every file in that folder directly and calls
 `loadImage()` on each one, so a `credit.md` placed inside it isn't just
 inert clutter, it's something the app tries to load as a texture. (A
@@ -216,7 +216,7 @@ project's lat/lon, not used unmodified), that's consistent with what
 OGL-Canada allows. This is recorded in `input/images/worldmap-credit.md`
 — a sibling of the `worldmap/` folder, not a file inside it, matching
 `people-credit.md` above and for the same reason, except more pressing
-here: `WORLD.pde`'s tile loader lists every file in that folder and
+here: `viewportMap.pde`'s tile loader lists every file in that folder and
 splits each filename on `_`, expecting at least 7 parts (the bounding
 box and EN/FR names baked into every real tile's own name). A `credit.md`
 placed inside that folder has none of those, so it isn't just loaded
@@ -253,7 +253,7 @@ here too, rather than this file assuming it.
 
 None of this is shipped in `dist/` — it's fetched over the network the
 first time a project actually needs it, each under the issuing service's
-own terms rather than a software license. `Land3D.pde` already handles
+own terms rather than a software license. `land3D.pde` already handles
 attribution for two of these itself: every successful elevation or texture
 download gets logged to that project's own `elevations.md`/`textures.md`
 (via `appendTerrainReference()`), one row per file with its source and URL
@@ -269,7 +269,7 @@ anything new to the app.
   [Google Static Maps](https://developers.google.com/maps/documentation/maps-static)
   (`maps.googleapis.com`, fallback — only used if the person running the
   app supplies their own `GOOGLE_STATIC_MAPS_API_KEY`, since Google retired
-  the free tier; see `Land3D.pde`'s own comment on this). Esri's and
+  the free tier; see `land3D.pde`'s own comment on this). Esri's and
   Google's terms both require attribution and place limits on reuse/caching
   — the app's own `textures.md` logging is part of meeting that, but the
   terms themselves go beyond what a log file covers (e.g. Google's
@@ -301,7 +301,7 @@ anything new to the app.
   (`osm-3d-import-js.yml`, `osm-3d-import-py.yml`,
   `overture-3d-import.yml`) just run the script on demand and hand back
   an ephemeral build artifact to whoever triggered it.
-- **X3D viewer (HTML export only)** — `export_objects_HTML.pde` loads
+- **X3D viewer (HTML export only)** — `exportHtml.pde` loads
   `x3dom.js`/`x3dom.css` from `x3dom.org`'s own CDN into the exported HTML
   file, not into `dist/` itself. X3DOM is dual-licensed MIT/GPL-3 (confirmed
   from its own `LICENSE` file), so either applies.

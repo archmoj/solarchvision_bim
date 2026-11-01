@@ -139,7 +139,7 @@ class Terrain {
 
   // Transient state used only while actually rebuilding the cache (see
   // draw()'s own use of win3DCache_rebuilding) - not part of the cache
-  // itself. Quads are chunked the same way Faces.pde's/Model1Ds.pde's
+  // itself. Quads are chunked the same way faces.pde's/model1Ds.pde's
   // caches are, for the same reason: one shape holding the whole terrain
   // mesh would need one huge, doubling-reallocated vertex buffer for a
   // large enough grid. Keyed by n_Map (-1 for the shaded/no-texture

@@ -1,6 +1,6 @@
 // Minimal, dependency-free importer for a DXF file - the same "hand-roll
-// the parser, no external library" choice import_objects_OBJ.pde/
-// import_objects_IFC.pde/import_objects_GLB.pde/import_objects_STL.pde
+// the parser, no external library" choice importObj.pde/
+// importIfc.pde/importGlb.pde/importStl.pde
 // already make for their own formats. DXF's own spec is proprietary but
 // openly published by Autodesk (same status IFC's own STEP format has),
 // so this is as feasible to hand-roll as those.
@@ -45,7 +45,7 @@
 //
 // Each entity's own layer (group code 8, "0" if absent) becomes this
 // importer's own group/material-cycling boundary - the natural DXF
-// equivalent of import_objects_OBJ.pde's own "g" tag/import_objects_STL.
+// equivalent of importObj.pde's own "g" tag/importStl.
 // pde's own "solid" block, since CAD users already organize a drawing's
 // own geometry by layer far more consistently than by any other
 // grouping DXF offers.
@@ -55,7 +55,7 @@ boolean dxfImportShowOptionsDialog = false;
 // Transform parameters, the material-cycling flag, and the running
 // polyface-mesh/layer state for the CURRENT import_objects_DXF() call -
 // same "a few fields shared across one whole import" shape glb_cx/
-// glb_cycleMaterial/... (import_objects_GLB.pde) already use.
+// glb_cycleMaterial/... (importGlb.pde) already use.
 float dxf_cx, dxf_cy, dxf_cz, dxf_sx, dxf_sy, dxf_sz;
 boolean dxfCycleMaterial;
 String dxfCurrentLayer = null;
@@ -66,7 +66,7 @@ int dxfEntitiesImported = 0;
 void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/
   // import_objects_STL()'s own identical blocks - see any one's own
-  // comment, or ifcImportShowOptionsDialog's (import_objects_IFC.pde),
+  // comment, or ifcImportShowOptionsDialog's (importIfc.pde),
   // for why this sits here rather than earlier, and what a cancelled
   // dialog does.
   if (dxfImportShowOptionsDialog) {
@@ -113,7 +113,7 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
     values[i] = trim(FileALL[i * 2 + 1]);
   }
 
-  float totalPairs = pairCount; // computed once, not every iteration - same as import_objects_OBJ.pde's own totalLines
+  float totalPairs = pairCount; // computed once, not every iteration - same as importObj.pde's own totalLines
   float Progress = 0;
   float printed_Progress = 0;
   StringBuilder barBuffer = new StringBuilder();
@@ -206,8 +206,8 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
 }
 
 // One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
-// (fileSelected.pde, shared with import_objects_OBJ.pde/import_objects_
-// GLB.pde/import_objects_STL.pde) the same way those three importers'
+// (fileSelected.pde, shared with importObj.pde/import
+// Glb.pde/importStl.pde) the same way those three importers'
 // own per-vertex code already does.
 int dxfCreatePoint (float x, float y, float z) {
   float finalX, finalY, finalZ;
@@ -256,7 +256,7 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
     String layer = dxfFind(eCodes, eValues, 8, "0");
     if (!layer.equals(dxfCurrentLayer)) {
       dxfCurrentLayer = layer;
-      if (dxfCycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling import_objects_OBJ.pde's own does
+      if (dxfCycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling importObj.pde's own does
       if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
   }

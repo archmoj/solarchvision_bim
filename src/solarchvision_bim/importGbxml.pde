@@ -1,14 +1,14 @@
 // Minimal, dependency-free importer for a gbXML (Green Building XML)
 // file - the open, XML-based schema most energy-modeling tools (Revit's
 // own "Export gbXML", OpenStudio, Trane TRACE, IES-VE, cove.tool, ...)
-// read and write for a building's envelope geometry. Like import_objects_
-// IFC.pde, this is a BIM interchange format importer that plugs into the
+// read and write for a building's envelope geometry. Like import
+// Ifc.pde, this is a BIM interchange format importer that plugs into the
 // same File > Import menu, the same IMPORT.* script-command family, and
-// the same shared Materials.pde palette - see that file's own header
+// the same shared materials.pde palette - see that file's own header
 // comment for the fuller "why hand-roll this instead of a library"
 // story, which applies here too: gbXML is plain, openly published XML
 // (http://www.gbxml.org), read here with Processing's own built-in XML
-// class the same way import_objects_DAE.pde already reads COLLADA.
+// class the same way importDae.pde already reads COLLADA.
 //
 // gbXML's own geometry model is far simpler than IFC's: every
 // <CartesianPoint> a Surface's own geometry uses is already an absolute
@@ -21,8 +21,8 @@
 //   - <Surface surfaceType="..."><PlanarGeometry><PolyLoop><CartesianPoint>...:
 //     the general case - an arbitrary n-gon read straight off the file's
 //     own point list, one app-native face per Surface, the same "keep
-//     the file's own n-gon, don't triangulate" choice import_objects_
-//     IFC.pde's own IfcFace/IfcPolyLoop reading makes (see
+//     the file's own n-gon, don't triangulate" choice import
+//     Ifc.pde's own IfcFace/IfcPolyLoop reading makes (see
 //     gbxmlPlanarGeometryPoints() below).
 //   - <Surface surfaceType="..."><RectangularGeometry>: a Surface
 //     described by its own Azimuth/Tilt/Width/Height plus one
@@ -37,37 +37,37 @@
 //     own face - see the known-limitation note below), the same
 //     PlanarGeometry/PolyLoop reading as a Surface's own geometry.
 //   - <Campus><Location><CADModelAzimuth>/<Latitude>/<Longitude>: this
-//     file's own analogues of import_objects_IFC.pde's TrueNorth
+//     file's own analogues of importIfc.pde's TrueNorth
 //     rotation and RefLatitude/RefLongitude station relocation - see
 //     gbxmlImportOrient/gbxmlImportRelocate below, and
-//     ifcRotateImportedModelToTrueNorth() (import_objects_IFC.pde),
+//     ifcRotateImportedModelToTrueNorth() (importIfc.pde),
 //     reused as-is here rather than reimplemented, since that function
 //     never actually depended on anything IFC-specific (just an angle
 //     and two "where did this import's own geometry start" counts).
 //   - <gbXML lengthUnit="..."> - Meters (assumed when absent, same
-//     "undeclared unit, assume already metric" fallback import_objects_
-//     IFC.pde's own ifcDetectLengthUnitScale() makes), Feet, Inches,
+//     "undeclared unit, assume already metric" fallback import
+//     Ifc.pde's own ifcDetectLengthUnitScale() makes), Feet, Inches,
 //     Centimeters or Millimeters - converted to metres the same way
 //     every other importer in this app works, applied to every
 //     coordinate/Width/Height this importer reads. See
 //     gbxmlUnitScale() below.
 //   - surfaceType/windowType -> material: a handful of gbXML's own
 //     enumerated values are matched against the exact same shared
-//     Materials.pde palette import_objects_IFC.pde's own IFC_MATERIAL_*
+//     materials.pde palette importIfc.pde's own IFC_MATERIAL_*
 //     constants already index into (these constants, like every other
 //     top-level .pde declaration in this sketch, are visible here too -
 //     Processing merges every tab into one class) - see
 //     gbxmlMaterialForSurfaceType()/gbxmlMaterialForWindowType() below.
 //     A Surface/Opening whose type doesn't match anything falls back to
 //     the caller's own m/1-8 cycling choice, exactly the priority order
-//     import_objects_IFC.pde's own material-choice block already uses.
+//     importIfc.pde's own material-choice block already uses.
 //
 // Known, deliberate limitations - the same "note it here, surface it in
-// the post-import summary, don't silently guess" philosophy import_
-// objects_IFC.pde's own header comment follows:
+// the post-import summary, don't silently guess" philosophy
+// importIfc.pde's own header comment follows:
 //   - An Opening is imported as its own, separate, overlapping face -
 //     not actually subtracted from its host Surface's own face. Same
-//     practical result as import_objects_IFC.pde's own uncut-opening
+//     practical result as importIfc.pde's own uncut-opening
 //     handling (IfcBooleanResult/IfcBooleanClippingResult - see that
 //     file's header): the wall/roof still shows up solid, window and
 //     all, rather than with a true hole cut for it. A general polygon
@@ -84,7 +84,7 @@
 //   - A Surface whose own surfaceType is "Air" - a modeled boundary
 //     between two spaces with no physical construction of its own, the
 //     closest gbXML equivalent to IFC's own IfcVirtualElement - is
-//     skipped on purpose, the same reasoning import_objects_IFC.pde's
+//     skipped on purpose, the same reasoning importIfc.pde's
 //     own ifcNonGeometryProductTypes gives for IfcVirtualElement/
 //     IfcOpeningElement. An Opening whose own windowType is "Air" (an
 //     interior doorway modeled with no actual door) is skipped the same
@@ -94,20 +94,20 @@
 //     already carry every piece of real building-envelope geometry a
 //     Space's own footprint would just duplicate, the same role IFC's
 //     own walls/slabs/roofs play relative to IfcSpace; unlike
-//     import_objects_IFC.pde, which does import an interior IfcSpace's
+//     importIfc.pde, which does import an interior IfcSpace's
 //     own room volume by default (see that file's own IFC_MATERIAL_
 //     INDOOR_SPACE), gbXML's own <Space> is a flat footprint, not a
 //     volume, so there's no equivalent "room boundary" geometry here
 //     worth drawing.
 //   - gbXML's own <CADModelAzimuth> is read and applied exactly the way
-//     import_objects_IFC.pde's own ifcTrueNorthAngleDegrees() documents
+//     importIfc.pde's own ifcTrueNorthAngleDegrees() documents
 //     its own TrueNorth reading: taken directly as a clockwise-about-Z
 //     rotation (Rotate3D.selection's own the_Vector=2 convention, same
 //     as that function), which is the gbXML schema's own documented
 //     meaning ("the number of degrees clockwise from true north that
 //     the model's own +Y axis is situated") - not independently
-//     verified against a real gbXML export the way several of import_
-//     objects_IFC.pde's own assumptions are noted as being, so flagged
+//     verified against a real gbXML export the way several of
+//     importIfc.pde's own assumptions are noted as being, so flagged
 //     here with the same honesty.
 //   - Every length this importer reads assumes a single, file-wide
 //     lengthUnit (the gbXML root element's own declared one) - gbXML
@@ -118,7 +118,7 @@ boolean gbxmlImportShowOptionsDialog = false;
 
 // Whether to rotate the whole imported model, around the world origin,
 // to correct for the project's own CADModelAzimuth - on by default, the
-// same default import_objects_IFC.pde's own IFC_IMPORT_NORTH gives its
+// same default importIfc.pde's own IFC_IMPORT_NORTH gives its
 // TrueNorth rotation, and for the same reason (see that constant's own
 // comment).
 final boolean GBXML_IMPORT_NORTH = true;
@@ -126,14 +126,14 @@ boolean gbxmlImportOrient = GBXML_IMPORT_NORTH;
 
 // Whether to navigate the app's own "station" (STATION.latitude/
 // longitude) to the file's own <Location><Latitude>/<Longitude> once
-// loading finishes - on by default, same reasoning as import_objects_
-// IFC.pde's own IFC_IMPORT_GOTO_LATLON.
+// loading finishes - on by default, same reasoning as import
+// Ifc.pde's own IFC_IMPORT_GOTO_LATLON.
 final boolean GBXML_IMPORT_GOTO_LATLON = true;
 boolean gbxmlImportRelocate = GBXML_IMPORT_GOTO_LATLON;
 
 // Running counters for the post-import summary (and for tests) - reset
 // at the top of every import_objects_GBXML() call, same shape as
-// import_objects_IFC.pde's own ifcImport* counters.
+// importIfc.pde's own ifcImport* counters.
 int gbxmlImportSurfaceCount = 0;
 int gbxmlImportOpeningCount = 0;
 int gbxmlImportFaceCount = 0;
@@ -149,8 +149,8 @@ float[] gbxmlImportGotoLatLon = null;
 
 // The multiplier that converts a raw length value read from the file
 // into metres - see gbxmlUnitScale() below. Reset to 1 (assume metres)
-// at the top of every import_objects_GBXML() call, same as import_
-// objects_IFC.pde's own ifcLengthUnitScale.
+// at the top of every import_objects_GBXML() call, same as
+// importIfc.pde's own ifcLengthUnitScale.
 float gbxmlLengthUnitScale = 1;
 
 void gbxmlNoteSkipped (String reason) {
@@ -162,11 +162,11 @@ void gbxmlNoteSkipped (String reason) {
 // ---------------------------------------------------------------------
 // Small XML helpers - gbXML's own child-element text content (e.g.
 // <Coordinate>12.5</Coordinate>, <Azimuth>180</Azimuth>) is read through
-// XML_getContent() (xml_helpers.pde, already shared with import_objects_
-// DAE.pde/load_project.pde/...); attribute values (surfaceType,
+// XML_getContent() (xmlHelpers.pde, already shared with
+// importDae.pde/loadProject.pde/...); attribute values (surfaceType,
 // windowType, lengthUnit, id, ...) are read through XML.getString(name)
 // directly, Processing's own documented "attribute" accessor - the same
-// split import_objects_DAE.pde's own daeAttr() already relies on.
+// split importDae.pde's own daeAttr() already relies on.
 // ---------------------------------------------------------------------
 
 // Every descendant of `el` (at any depth, not just direct children)
@@ -281,7 +281,7 @@ ArrayList<PVector> gbxmlPlanarGeometryPoints (XML planarGeometryEl) {
 //
 // Azimuth is a compass bearing in degrees (0=north, measured clockwise -
 // the same convention this app's own SolarImpacts.R uses, and the same
-// one import_objects_IFC.pde's own ifcTrueNorthAngleDegrees() reads
+// one importIfc.pde's own ifcTrueNorthAngleDegrees() reads
 // TrueNorth against); Tilt is degrees from horizontal (0 = facing
 // straight up, as a flat roof's own outward normal does; 90 = vertical,
 // a wall facing its own Azimuth direction; 180 = facing straight down).
@@ -315,8 +315,8 @@ ArrayList<PVector> gbxmlRectangularGeometryPoints (XML rectEl) {
   PVector heightDir = widthDir.cross(normal);
   if (heightDir.mag() < 0.0001) {
     // Degenerate (Width/Height direction colinear with the normal) -
-    // fall back to world +Z, the same "arbitrary axis" fix import_
-    // objects_IFC.pde's own ifcAxis2Placement3DToFrame() uses for its
+    // fall back to world +Z, the same "arbitrary axis" fix
+    // importIfc.pde's own ifcAxis2Placement3DToFrame() uses for its
     // own equivalent degeneracy.
     heightDir = new PVector(0, 0, 1);
   }
@@ -350,8 +350,8 @@ ArrayList<PVector> gbxmlGeometryPoints (XML ownerEl) {
   return pts; // whatever PlanarGeometry gave (possibly empty) - caller decides what "too few" means
 }
 
-// One face, built directly from already-world points - unlike import_
-// objects_IFC.pde's own ifcEmitFace()/ifcQueuePoint()/ifcQueueFace(),
+// One face, built directly from already-world points - unlike
+// importIfc.pde's own ifcEmitFace()/ifcQueuePoint()/ifcQueueFace(),
 // which stage everything and bulk-flush at the very end (that file's
 // own comment explains why: a single BIM import can mean hundreds of
 // thousands of faces, where allPoints.create()/allFaces.create()'s own
@@ -359,14 +359,14 @@ ArrayList<PVector> gbxmlGeometryPoints (XML ownerEl) {
 // file's own Surfaces/Openings number in the tens to low thousands, not
 // hundreds of thousands - building-envelope geometry, not a fully
 // tessellated BIM model - so creating straight into allPoints/allFaces
-// per face, the same direct way import_objects_DAE.pde's own
+// per face, the same direct way importDae.pde's own
 // daeCreatePoint()/allFaces.create(face) calls already do, is simple
 // and plenty fast here.
 void gbxmlEmitFace (ArrayList<PVector> pts, int material, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Drop consecutive duplicate points (zero-length edges), and a
   // trailing point that just repeats the first (an explicitly closed
   // loop), before deciding whether there's still a real polygon left -
-  // the exact same cleanup import_objects_IFC.pde's own ifcEmitFace()
+  // the exact same cleanup importIfc.pde's own ifcEmitFace()
   // does for the same reason.
   ArrayList<PVector> cleaned = new ArrayList<PVector>();
   for (PVector p : pts) {
@@ -394,7 +394,7 @@ void gbxmlEmitFace (ArrayList<PVector> pts, int material, float cx, float cy, fl
   // varies per Surface/Opening); only current_Material is set here,
   // immediately before the one allFaces.create(...) call that actually
   // reads it, the same "current_Material right before create()" shape
-  // import_objects_DAE.pde's/import_objects_DXF.pde's own per-primitive
+  // importDae.pde's/importDxf.pde's own per-primitive
   // material cycling already uses.
   current_Material = material;
   allFaces.create(faceNodes);
@@ -404,12 +404,12 @@ void gbxmlEmitFace (ArrayList<PVector> pts, int material, float cx, float cy, fl
 // ---------------------------------------------------------------------
 // Material assignment: surfaceType/windowType matched, by exact
 // (case-insensitive) name, against gbXML's own enumerated values -
-// simpler than import_objects_IFC.pde's own free-text IfcMaterial-name
+// simpler than importIfc.pde's own free-text IfcMaterial-name
 // keyword matching (ifcMaterialNameToConstant()), since surfaceType/
 // windowType are themselves a closed, schema-defined enumeration rather
 // than free text. Returns null (not a guess) for anything else, so the
 // caller falls back to its own m/1-8 cycling choice, the same priority
-// import_objects_IFC.pde's own material-choice block already gives an
+// importIfc.pde's own material-choice block already gives an
 // unmatched product.
 // ---------------------------------------------------------------------
 
@@ -421,7 +421,7 @@ Integer gbxmlMaterialForSurfaceType (String surfaceType) {
   // coordination-stage gbXML file very often has no construction/
   // material of its own assigned yet, and an unmatched one just cycling
   // through 1-8 like an ordinary wall reads as arbitrary, not
-  // structural - the same reasoning import_objects_IFC.pde's own
+  // structural - the same reasoning importIfc.pde's own
   // ifcStructuralProductTypes/ifcLooksLikeAFloor() default to
   // IFC_MATERIAL_CONCRETE for exactly this reason.
   if (t.equalsIgnoreCase("InteriorFloor") || t.equalsIgnoreCase("ExposedFloor")
@@ -431,14 +431,14 @@ Integer gbxmlMaterialForSurfaceType (String surfaceType) {
   }
 
   // A shading device (an overhang, fin, louvered canopy, ...) - gbXML's
-  // own dedicated surfaceType for this, the same default import_
-  // objects_IFC.pde's own ifcLooksLikeAShadingDevice() gives
+  // own dedicated surfaceType for this, the same default
+  // importIfc.pde's own ifcLooksLikeAShadingDevice() gives
   // IfcShadingDevice/a Name-matched shading element (most real shading
   // hardware is aluminum or painted steel).
   if (t.equalsIgnoreCase("Shade")) return IFC_MATERIAL_STEEL;
 
   // Curtain-wall glazing panels - mostly glass by definition, the same
-  // "easy to add to this set" case import_objects_IFC.pde's own
+  // "easy to add to this set" case importIfc.pde's own
   // ifcGlassProductTypes comment names IfcCurtainWall as an example of.
   if (t.equalsIgnoreCase("CurtainWall")) return IFC_MATERIAL_GLASS;
 
@@ -451,7 +451,7 @@ Integer gbxmlMaterialForWindowType (String windowType) {
 
   if (t.equalsIgnoreCase("FixedWindow") || t.equalsIgnoreCase("OperableWindow")
     || t.equalsIgnoreCase("FixedSkylight") || t.equalsIgnoreCase("OperableSkylight")) {
-    // Always glass, the same unconditional way import_objects_IFC.pde's
+    // Always glass, the same unconditional way importIfc.pde's
     // own ifcGlassProductTypes always draws an IfcWindow with
     // IFC_MATERIAL_GLASS regardless of m or any other material choice.
     return IFC_MATERIAL_GLASS;
@@ -462,7 +462,7 @@ Integer gbxmlMaterialForWindowType (String windowType) {
 
 // ---------------------------------------------------------------------
 // Site: <Campus><Location><Latitude>/<Longitude>/<CADModelAzimuth> -
-// gbXML's own, much simpler analogues of import_objects_IFC.pde's own
+// gbXML's own, much simpler analogues of importIfc.pde's own
 // IfcSite.RefLatitude/RefLongitude (ifcSiteLatLonDecimalDegrees()) and
 // IfcGeometricRepresentationContext.TrueNorth
 // (ifcTrueNorthAngleDegrees()) - already plain decimal degrees here,
@@ -471,8 +471,8 @@ Integer gbxmlMaterialForWindowType (String windowType) {
 
 // {latitude, longitude} in decimal degrees, rounded to 4 decimal places
 // (roughly 11m at the equator - only ever meant to get the station to
-// the right part of the world, the same precision import_objects_
-// IFC.pde's own ifcSiteLatLonDecimalDegrees() settles for) - or null
+// the right part of the world, the same precision import
+// Ifc.pde's own ifcSiteLatLonDecimalDegrees() settles for) - or null
 // when the file's own Location has no usable Latitude/Longitude at all.
 float[] gbxmlSiteLatLonDecimalDegrees (XML location) {
   if (location == null) return null;
@@ -502,7 +502,7 @@ float[] gbxmlSiteLatLonDecimalDegrees (XML location) {
 void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_DAE()'s/...
   // own identical blocks - see any one's own comment, or
-  // ifcImportShowOptionsDialog's (import_objects_IFC.pde), for why this
+  // ifcImportShowOptionsDialog's (importIfc.pde), for why this
   // sits here rather than earlier, and what a cancelled dialog does.
   if (gbxmlImportShowOptionsDialog) {
     gbxmlImportShowOptionsDialog = false;
@@ -551,7 +551,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   gbxmlFindAll(root, "Location", locations);
   XML location = locations.size() > 0 ? locations.get(0) : null;
 
-  // Computed up front, same as import_objects_IFC.pde's own
+  // Computed up front, same as importIfc.pde's own
   // ifcImportNorthRotationAngle - left at 0 (meaning "don't rotate"),
   // without even reading the file's own Location, whenever the toggle
   // itself is off.
@@ -561,7 +561,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   gbxmlFindAll(root, "Surface", surfaces);
 
   // Captured before any geometry is added, so
-  // ifcRotateImportedModelToTrueNorth() (import_objects_IFC.pde, reused
+  // ifcRotateImportedModelToTrueNorth() (importIfc.pde, reused
   // as-is - see this file's own header comment) can later select
   // exactly this import's own faces/model2Ds, not any that were already
   // in the scene.
@@ -611,7 +611,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
 
     // The new group has to exist before any face is created into it -
     // Faces.create() stamps every face it creates into allGroups' own
-    // current (last) group, the same reasoning import_objects_IFC.pde's
+    // current (last) group, the same reasoning importIfc.pde's
     // own identical block gives.
     if (addToLastGroup == false) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -663,7 +663,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   if (importProgressWindow != null) importProgressWindow.dispose();
 
   // Only meaningful once the geometry it rotates actually exists in
-  // allFaces/allModel2Ds - see import_objects_IFC.pde's own identical
+  // allFaces/allModel2Ds - see importIfc.pde's own identical
   // ordering/comment on ifcRotateImportedModelToTrueNorth() for why
   // this runs here, after every Surface/Opening has already been
   // created, rather than earlier alongside where
@@ -690,7 +690,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   println(summary);
 
   // Last step of loading a gbXML file, after the summary above - see
-  // import_objects_IFC.pde's own identical-in-spirit
+  // importIfc.pde's own identical-in-spirit
   // IFC_IMPORT_GOTO_LATLON comment for why this runs at all. Left
   // alone - the station stays wherever it already was - whenever the
   // file gives no usable Latitude/Longitude.

@@ -184,7 +184,7 @@ class Earth3DTest {
   }
 
   // ================= buildVertex / buildSubFace / buildStationVertex ====
-  // Simpler than Sun3D.pde's/Moon3D.pde's own buildSubFace() tests: no
+  // Simpler than sun3D.pde's/moon3D.pde's own buildSubFace() tests: no
   // SkyFrame, no tA/tB, no tidal-locking construction at all here -
   // Earth's own texture is real geography, so it's deliberately NOT
   // re-oriented for the station/time the way the Sun's and Moon's are;
@@ -201,7 +201,7 @@ class Earth3DTest {
   // actually need it rather than added to the shared setUp()). That
   // surfaced a real, if incidental, blocker: it called Processing's own
   // green(c), which needs a live sketch surface (this.g) this app has no
-  // other reason to require here - fixed in Earth3D.pde itself (see its
+  // other reason to require here - fixed in earth3D.pde itself (see its
   // own comment there) by extracting the channel directly instead, which
   // also removes that dependency for the real app, not just for these
   // tests.
@@ -273,7 +273,7 @@ class Earth3DTest {
   void buildVertex_inGlobalSolarOrVertexElevationShadingMode_alsoLeavesUVAtZero () {
     loadRealEarthImages();
 
-    // showTexture() (see Earth3D.pde) turns the texture off in these two
+    // showTexture() (see earth3D.pde) turns the texture off in these two
     // shading modes specifically, even with displayTexture still true -
     // those modes color every face from the solar/elevation palette
     // instead, so the geography texture would never actually be seen.

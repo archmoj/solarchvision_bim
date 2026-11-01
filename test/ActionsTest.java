@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // putAction/putValueAction (a private helper and a package-visible one,
 // respectively) are exercised together here since putValueAction is the
 // only way to reach putAction's Action-taking overload from outside
-// actions.pde - which is also how every ValueModifier.pde method and
+// actions.pde - which is also how every valueModifier.pde method and
 // UI_rollout.registerSpinnerActions() actually reach it, so this is
 // exercising the real path, not a shortcut around it.
 class ActionsTest {

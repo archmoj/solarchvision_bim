@@ -151,7 +151,7 @@ class FunctionsTest {
   }
 
   // The raw-coordinate overload testFaceHit() now calls directly (see
-  // isIntersected_Faces.pde's own comment on avoiding a float[3]
+  // isIntersectedFaces.pde's own comment on avoiding a float[3]
   // allocation per candidate face) must agree with the float[]-array one
   // above, which it now delegates to internally.
   @Test
@@ -207,7 +207,7 @@ class FunctionsTest {
 
   @Test
   void intersect_segmentXsegment_findsAGenuineCrossingPoint () {
-    // Regression test for a sign bug in diffB1A1 (see Functions.pde) that
+    // Regression test for a sign bug in diffB1A1 (see functions.pde) that
     // made this branch report ordinary crossing segments as
     // non-intersecting for any pair that didn't already return early
     // above (shared endpoint, or one endpoint lying on the other
@@ -293,7 +293,7 @@ class FunctionsTest {
   void moonPosition_directionVectorIsAlwaysUnitLength () {
     // Same invariant as sunPosition_directionVectorIsAlwaysUnitLength
     // above - MoonPosition shares SunPosition's own rotation formula (see
-    // Functions.pde's own comment on MoonPosition), just with phase-
+    // functions.pde's own comment on MoonPosition), just with phase-
     // shifted inputs, so the same rotation-preserves-length argument holds.
     float[][] cases = {
       {0f, 80f, 2f}, {45f, 180f, -3f}, {-30f, 300f, 6f}, {60f, 10f, 0f}
@@ -341,8 +341,8 @@ class FunctionsTest {
 
   // --- getSubFace ----------------------------------------------------------
   // The subdivision engine behind the "material 0 on a face gets extra
-  // export/solar-sample resolution" feature (see export_objects_OBJ.pde,
-  // calculate_VertexSolar_array.pde, and command/README.md's own
+  // export/solar-sample resolution" feature (see exportObj.pde,
+  // calculateVertexSolarArray.pde, and command/README.md's own
   // "Object creation" section) - called once per sub-face index, not all
   // at once, so these tests exercise it the same way its real callers do.
 
@@ -393,7 +393,7 @@ class FunctionsTest {
   @Test
   void getSubFace_atHigherTessellation_subdividesEachCornerQuadFurther () {
     // Not re-deriving the tessellation=2 "rotate tri-grid cells" checker-
-    // boarding by hand (see getSubFace's own comment in Functions.pde) -
+    // boarding by hand (see getSubFace's own comment in functions.pde) -
     // confirmed against the real compiled app before writing this -
     // just confirming it actually subdivides smaller than tessellation=1's
     // own quad (every coordinate half the size), and that the vertex count

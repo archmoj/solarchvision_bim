@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Same reasoning, and the same tests, as Sun3DTest.java - Moon3D.pde's
+// Same reasoning, and the same tests, as Sun3DTest.java - moon3D.pde's
 // computeFrame()/buildSubFace() share the exact same (forward, up, right)
 // construction, just driven by funcs.MoonPosition() instead of
 // funcs.SunPosition(). See Sun3DTest.java's own class comment for why
@@ -29,7 +29,7 @@ class Moon3DTest {
     // SHADE_HOUR_ANGLE, so the many tests below that assume it resolves
     // to the daytime blue flatColor need a definite "Sun is up" state
     // rather than leaning on SHADE_DATE_ANGLE's own -1 sentinel default
-    // (ShadeViewport.pde's own comment on it) happening to still read as
+    // (shadeViewport3D.pde's own comment on it) happening to still read as
     // daytime - explicit, not incidental, same reasoning as setLatitude
     // just above. Tests specifically about the Sun-down/black-flatColor
     // behavior override SHADE_HOUR_ANGLE back down to night themselves.
@@ -203,7 +203,7 @@ class Moon3DTest {
   // below runs with) - the mesh itself is now built directly in the
   // Sun-aligned (frame.Gright, frame.Gup, frame.Sx/Sy/Sz) basis instead,
   // so that displayNightSide's cutoff follows an actual grid line instead
-  // of cutting diagonally across faces (see Moon3D.pde's own comments on
+  // of cutting diagonally across faces (see moon3D.pde's own comments on
   // SkyFrame.Gright/Gup and buildSubFace() for the full reasoning).
   // Texture locking is still exactly what it was - these two helpers
   // split that back out: one for "a fixed point in the Earth-locked
@@ -406,7 +406,7 @@ class Moon3DTest {
     app.SHADE_DATE_ANGLE = 7;
 
     // Confirmed against a real compiled app comparison before extracting
-    // this (see Moon3D.pde's own comment on rowIsEntirelyDark()): makes
+    // this (see moon3D.pde's own comment on rowIsEntirelyDark()): makes
     // exactly the same skip/draw decisions, row for row, as the old
     // per-face, post-hoc brightness check this replaced.
     assertFalse(app.Moon3D.rowIsEntirelyDark(90), "sub-solar pole - fully lit");
@@ -470,7 +470,7 @@ class Moon3DTest {
 
   // ================= brightenLevel / brightenTexture() =============================
   // A plain, one-time pixel multiply applied to the loaded texture itself
-  // (see Moon3D.pde's own comment on why illuminateDaySide, a per-vertex/
+  // (see moon3D.pde's own comment on why illuminateDaySide, a per-vertex/
   // per-frame tint, can't substitute for this) - tested here against a
   // small synthetic image, not the real bundled one, so the exact
   // before/after pixel values are known rather than inferred.
@@ -515,7 +515,7 @@ class Moon3DTest {
 
   // ================= mixWithSkyColor / skyColor =====================================
   // By daylight the real Moon reads as blue-tinted, not gray - see
-  // Moon3D.pde's own comment on mixWithSkyColor for the full reasoning,
+  // moon3D.pde's own comment on mixWithSkyColor for the full reasoning,
   // including why this has to be additive rather than a second
   // multiplicative tint.
 
@@ -537,7 +537,7 @@ class Moon3DTest {
 
   @Test
   void halfSkyColor_isBlackWhenTheSunIsDown () {
-    // Sky3D.currentFlatColor() (Sky3D.pde) switches to nightFlatColor
+    // Sky3D.currentFlatColor() (sky3D.pde) switches to nightFlatColor
     // (black) once the Sun's below the horizon - halfSkyColor() should
     // track that, same as Sky3D's own dome does, rather than always
     // tinting the Moon towards daytime blue regardless of whether the

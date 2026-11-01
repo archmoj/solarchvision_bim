@@ -18,21 +18,21 @@ class Materials {
       // 8: a faint, mostly-transparent grey for an interior IfcSpace's
       // own volume (a room/zone boundary, not real building fabric) -
       // alpha 63, a bare outline rather than something meant to read as
-      // a solid surface. See import_objects_IFC.pde's
+      // a solid surface. See importIfc.pde's
       // IFC_MATERIAL_INDOOR_SPACE.
       { 63,  63,  63,  63}, // 8 Indoor space (IfcSpace room/zone volume, PredefinedType INTERNAL or unset)
-      {127, 127, 127, 127}, // 9  translucent gray ("glass"; see import_objects_IFC.pde's IFC_MATERIAL_GLASS)
+      {127, 127, 127, 127}, // 9  translucent gray ("glass"; see importIfc.pde's IFC_MATERIAL_GLASS)
       // 10: the same idea as material 8's own grey, but less transparent
       // (alpha 191, not 63) for an exterior IfcSpace's own volume - a
       // courtyard, terrace or other outdoor amenity area still worth
       // seeing the footprint of, unlike an indoor room's own volume,
       // which this app otherwise has no reason to render as anything
-      // but a faint outline. See import_objects_IFC.pde's
+      // but a faint outline. See importIfc.pde's
       // IFC_MATERIAL_OUTDOOR_SPACE.
       {191, 191, 191, 191}, // 10 Outdoor space (IfcSpace room/zone volume, PredefinedType EXTERNAL)
       // 11-17: representative colors for common real-world building
       // materials, for the IFC importer to pick by IfcMaterial name (see
-      // import_objects_IFC.pde's IFC_MATERIAL_* constants and
+      // importIfc.pde's IFC_MATERIAL_* constants and
       // ifcMaterialNameToConstant()) rather than cycling through 1-8.
       // RGB values and opacity from the "Standard IFC Materials Mapping
       // Table for 3D Visualization" reference table; alpha is 255 for
@@ -50,14 +50,14 @@ class Materials {
       // (0,255,0, fully saturated "pure" green, one of the original
       // 8 cycling colors, not meant to represent anything specific)
       // which would look cartoonish next to the realistic tones above.
-      // See import_objects_IFC.pde's IFC_MATERIAL_VEGETATION.
+      // See importIfc.pde's IFC_MATERIAL_VEGETATION.
       {255,  76, 153,  56}, // 18 Vegetation (Green Roof, Green Wall, Garden/Grass)
       // 19: a translucent pool blue for standing water - alpha 127,
       // the same "50%, no cast shadow" value as material 9 (glass) and
       // 15 (insulation) above (see Faces.castShadows()'s own
       // alpha > 127 check) - a pool's water surface shouldn't cast a
       // hard shadow the way its coping/deck does.
-      // See import_objects_IFC.pde's IFC_MATERIAL_WATER.
+      // See importIfc.pde's IFC_MATERIAL_WATER.
       {127,  64, 164, 223}  // 19 Water (Pool)
     };
 

@@ -181,7 +181,7 @@ for VARIANT in "${VARIANTS[@]}"; do
   rm -rf "$OUT"
   "$PROCESSING_BIN" cli --sketch="$SKETCH_DIR" --output="$OUT" --force --variant="$VARIANT" "${EXPORT_EXTRA_FLAGS[@]}" --export
 
-  # Where BaseFolder = sketchPath() (see update_folders.pde) resolves to
+  # Where BaseFolder = sketchPath() (see updateFolders.pde) resolves to
   # - alongside data/ (the sketch's own bundled data, already present:
   # data/font/ on every variant) is the one part of this confirmed by
   # directly running the result, for linux-amd64/windows-amd64 (see
@@ -230,7 +230,7 @@ for VARIANT in "${VARIANTS[@]}"; do
   # subpackages neither this sketch nor anything it depends on actually
   # uses (compare solarchvision_bim.pde's own, much narrower explicit
   # import list - just one commons-compress class, BZip2CompressorInputStream,
-  # genuinely gets used, in download_ENSEMBLE_FORECAST.pde). --export's
+  # genuinely gets used, in downloadEnsembleForecast.pde). --export's
   # dependency resolution follows those wildcard imports literally,
   # bundling entire unrelated libraries (plus, in commons-io/commons-
   # compress's case, fetching a redundant newer copy alongside an older

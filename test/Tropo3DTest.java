@@ -7,10 +7,10 @@ import java.io.IOException;
 
 // The simplest of the four buildSubFace()s tested this session (see
 // Sun3DTest.java, Moon3DTest.java, Earth3DTest.java): same tb/ta
-// station-centering as Earth3D.pde, same plain unrotated texture mapping
+// station-centering as earth3D.pde, same plain unrotated texture mapping
 // (this is a weather-data overlay tied to real lat/lon, same reasoning as
 // Earth's own geography - not a celestial body needing tidal locking), but
-// with no separate buildVertex() helper and, unlike Earth3D.pde, no
+// with no separate buildVertex() helper and, unlike earth3D.pde, no
 // per-vertex pixel sampling (no computeElevationBump() equivalent at all -
 // the shell sits at one constant altitude) - so no load_images()/no
 // graphics-context blocker to work around here; directly callable with no
@@ -92,7 +92,7 @@ class Tropo3DTest {
 
   @Test
   void buildSubFace_atTheStationsOwnCoordinates_centersOnTheStationAtTheShellAltitude () {
-    // Same tb/ta construction as Earth3D.pde: rotates so the station's own
+    // Same tb/ta construction as earth3D.pde: rotates so the station's own
     // (lat, lon) sits at the model's origin/orientation. Checked with
     // Alpha/Beta set to the station's own coordinates, so corner 0 (which
     // uses them unmodified - see the winding test above) is the point
@@ -229,7 +229,7 @@ class Tropo3DTest {
     // Confirmed by hand against the real compiled app before fixing this:
     // the original "if (dt.day < 0)" check left day sitting at the
     // otherwise-invalid value 0 instead of rolling over, since days are
-    // 1..lengthOfMonths[month-1] (see TIME.pde) and decrementing from 1
+    // 1..lengthOfMonths[month-1] (see time.pde) and decrementing from 1
     // lands exactly on 0, never below it. February has 28 days here (see
     // TIME.lengthOfMonths - no leap-year handling in this app).
     solarchvision_bim.Tropo3D.DateTimeUTC dt = dateTime(2026, 3, 1, 0);
@@ -410,7 +410,7 @@ class Tropo3DTest {
     // impactDisplayDay == 1 is the exact example from the request this
     // feature was built for - it's not special-cased on its own, just a
     // natural consequence of impactDayToDayOfYear(1) == TIME.beginDay
-    // (ShadeViewport.pde's own comment on why).
+    // (shadeViewport3D.pde's own comment on why).
     setImpactDisplayDayToToday();
 
     assertTrue(app.Tropo3D.selectedDayHasForecastAvailable());
@@ -481,7 +481,7 @@ class Tropo3DTest {
   // ================= recolorCloudLayer / recolorSatelliteVisibility ===============
   // Both read/write real files (no this.g/graphics-context dependency
   // this time - they use plain bit-shifting on the pixel color, not
-  // Processing's red()/green()/blue(), so none of the Earth3D.pde-style
+  // Processing's red()/green()/blue(), so none of the earth3D.pde-style
   // blocker applies here). Their loop bound is hardcoded to
   // TROPO_DOWNLOAD_WIDTH*TROPO_DOWNLOAD_HEIGHT - matching what the real
   // download endpoint always actually returns - not the image's own

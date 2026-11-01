@@ -1,7 +1,7 @@
 // Minimal, dependency-free importer for a PLY (Polygon File Format /
 // Stanford Triangle Format) file - the same "hand-roll the parser, no
-// external library" choice import_objects_OBJ.pde/import_objects_IFC.
-// pde/import_objects_GLB.pde/import_objects_STL.pde/import_objects_DXF.
+// external library" choice importObj.pde/importIfc.
+// pde/importGlb.pde/importStl.pde/importDxf.
 // pde already make for their own formats. PLY's own spec is fully
 // public (Stanford, no licensing question at all, unlike DXF's "openly
 // published but still proprietary" status).
@@ -36,7 +36,7 @@
 //     Each face becomes one single app-native face however many corners
 //     its own index list has (3 or more) - the same "whatever n-gon the
 //     file itself declares, not forced into triangles" choice
-//     import_objects_IFC.pde's own n-gon faces and import_objects_DXF.
+//     importIfc.pde's own n-gon faces and importDxf.
 //     pde's own 3DFACE/polyface-mesh faces already make.
 //   - Any OTHER element (e.g. "edge", or a custom one some tool adds) is
 //     skipped entirely, its own instances still correctly walked
@@ -51,8 +51,8 @@
 boolean plyImportShowOptionsDialog = false;
 
 // Transform parameters for the CURRENT import_objects_PLY() call - same
-// "a few fields shared across one whole import" shape glb_cx/... (import_
-// objects_GLB.pde) already uses.
+// "a few fields shared across one whole import" shape glb_cx/... (import
+// Glb.pde) already uses.
 float ply_cx, ply_cy, ply_cz, ply_sx, ply_sy, ply_sz;
 
 String plyFormat = ""; // "ascii" / "binary_little_endian" / "binary_big_endian", read from the header
@@ -82,8 +82,8 @@ ProgressWindow ply_progressWindow = null;
 void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/
   // import_objects_STL()'s/import_objects_DXF()'s own identical blocks -
-  // see any one's own comment, or ifcImportShowOptionsDialog's (import_
-  // objects_IFC.pde), for why this sits here rather than earlier, and
+  // see any one's own comment, or ifcImportShowOptionsDialog's
+  // (importIfc.pde), for why this sits here rather than earlier, and
   // what a cancelled dialog does.
   if (plyImportShowOptionsDialog) {
     plyImportShowOptionsDialog = false;
@@ -164,7 +164,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
 
 // One console/ProgressWindow update, called once per element instance
 // processed (vertex, face, or any skipped element alike) - same
-// delta >= 1 throttle glbReportProgress() (import_objects_GLB.pde)
+// delta >= 1 throttle glbReportProgress() (importGlb.pde)
 // already uses.
 void plyReportProgress () {
   if (control == USER_AUTO) return;

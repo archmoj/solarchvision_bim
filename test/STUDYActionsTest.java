@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// STUDY.pde's own counterpart to Key3DActionsTest.java - see that file's
+// viewport2D.pde's own counterpart to Key3DActionsTest.java - see that file's
 // own comment for the reasoning (STUDYTest.java already covers each key
 // handler dispatching correctly by name; this covers the actions
 // themselves, invoked directly via runScriptLine, which is the new

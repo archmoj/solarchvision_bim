@@ -1,5 +1,5 @@
 // One thumbnail's worth of hover-relevant info, captured by plotImpact_
-// urban() (STUDY.pde) at the moment it draws that thumbnail. daySnapshot
+// urban() (viewport2D.pde) at the moment it draws that thumbnail. daySnapshot
 // is a deep clone of whichever 4D [q][component][x][y] array (Matrix_ARGB
 // [dayIndex], or total_Matrix_ARGB for the summary) was live at that
 // exact moment - cloned rather than referenced because viewLayout==2 can
@@ -13,7 +13,7 @@ class UrbanThumbnailHoverInfo {
   float centerX, centerY;
   int impactTypeIndex;
   float[][][][] daySnapshot;
-  float mul; // dayValuesMUL[dayIndex] for a real day, or 1.0/dayCount for the summary - see win3DOverlay_rawValuesAt()'s own two cases, SolarImpacts.pde
+  float mul; // dayValuesMUL[dayIndex] for a real day, or 1.0/dayCount for the summary - see win3DOverlay_rawValuesAt()'s own two cases, solarImpacts.pde
 }
 
 // A real (not shallow) copy of a [q][component][x][y]-shaped array -
@@ -35,7 +35,7 @@ float[][][][] deepClone4D (float[][][][] src) {
   return dst;
 }
 
-// Same per-pixel logic as win3DOverlay_rawValuesAt() (SolarImpacts.pde),
+// Same per-pixel logic as win3DOverlay_rawValuesAt() (solarImpacts.pde),
 // reading from an explicitly-passed-in snapshot/multiplier instead of
 // allSolarImpacts' own live Matrix_ARGB/total_Matrix_ARGB/dayValuesMUL -
 // daySnapshot already has whichever one of those applies baked in (a
@@ -63,7 +63,7 @@ float[] win3DOverlay_rawValuesAt_fromSnapshot (int q, float[][][][] daySnapshot,
 // reimplemented), but over STUDY's Skin Potential thumbnails instead of
 // the live 3D viewport's overlay.
 //
-// Unlike WIN3D's own overlay, which draw_WIN3D_layers.pde repaints fresh
+// Unlike WIN3D's own overlay, which drawViewport3DLayers.pde repaints fresh
 // every single frame (so a hover box drawn on top of it is naturally
 // gone the moment the next frame's overlay is painted over it), STUDY's
 // own graph only redraws when STUDY.update is true - solarchvision_bim.
@@ -71,7 +71,7 @@ float[] win3DOverlay_rawValuesAt_fromSnapshot (int q, float[][][][] daySnapshot,
 // whatever was already on screen untouched. So a hover box drawn here
 // would otherwise stick around on every later frame until something else
 // happens to paint over that same screen region. The pre_screen
-// capture/restore technique (precedented in UI_menuBar.pde's own dropdown
+// capture/restore technique (precedented in uiMenuBar.pde's own dropdown
 // menus) handles exactly this: capture a clean, hover-free snapshot right
 // after STUDY genuinely redraws, then each frame restore that snapshot
 // first (erasing whatever hover box was drawn last frame, if any) before
@@ -154,7 +154,7 @@ void place_STUDY_hover (int xMouse, int yMouse) {
   // above, and the same fix: Hourly Sun and Sun Path have exactly the
   // same exposure those two do, via setupPlot_cycles() (plotLayoutIndex
   // -2/-1, the "Layout -2"/"Layout -1" menu actions) and the WIND_PASSIVE/
-  // SUNPATH_PASSIVE combined-layout branches elsewhere in STUDY.pde - all
+  // SUNPATH_PASSIVE combined-layout branches elsewhere in viewport2D.pde - all
   // of which temporarily flip this.impactGraphIndex to draw a second
   // graph within the same pass, then restore it before returning. By the
   // time draw_STUDY_hover() runs, impactGraphIndex no longer reflects

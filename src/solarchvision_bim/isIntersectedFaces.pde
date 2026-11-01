@@ -26,13 +26,13 @@ float cellSizeX, cellSizeY, cellSizeZ;
 // traversal. These must be PER-THREAD, not one shared pair: a ray cast
 // bumps currentRayStamp and stamps faces as it goes, and two rays
 // stamping the same faceTestStamp[] array concurrently (from different
-// threads - see preBakeViewport.pde's own parallel ray-casting loop)
+// threads - see preBakeViewport3D.pde's own parallel ray-casting loop)
 // would corrupt each other's "already tested" bookkeeping - a face could
 // get skipped because some OTHER thread's unrelated ray happened to stamp
 // it this instant, silently missing a real hit. A ThreadLocal gives every
 // thread (the single main/animation thread, same as before, for every
-// other caller - ShadeViewport.pde, calculate_VertexSolar_array.pde,
-// mouseClicked's own selection, etc. - and each of preBakeViewport.pde's
+// other caller - shadeViewport3D.pde, calculateVertexSolarArray.pde,
+// mouseClicked's own selection, etc. - and each of preBakeViewport3D.pde's
 // worker threads) its own independent array + counter, at the same cost
 // as the old single shared array in the common single-threaded case,
 // since there's then only ever one ThreadLocal entry to begin with.
@@ -85,11 +85,11 @@ ArrayList<PImage> entireFaceAlphaTexture;
 //  heightDirY, heightDirZ, heightLen, vPixelNear, vPixelFar} - origin is
 // the corner at u=0/heightFrac=0; widthDir/heightDir are unit vectors (in
 // world space - widthDir is always horizontal, heightDir can be +Z for a
-// vertical billboard or horizontal for a flat cap, see Model2Ds.pde's
+// vertical billboard or horizontal for a flat cap, see model2Ds.pde's
 // addToFaceGrid()). u always maps 0..1 straight onto the texture's pixel
 // width. v is more roundabout, because it's not always the texture's full
 // height that's in play (a canopy cap deliberately samples only the
-// texture's top half, to skip the trunk - see Model2Ds.pde again): vPixel
+// texture's top half, to skip the trunk - see model2Ds.pde again): vPixel
 // at heightFrac=0 is vPixelNear, at heightFrac=1 is vPixelFar, interpolated
 // linearly between - already in pixel units, not 0..1, so passesAlphaTest()
 // below doesn't need to know which case it's in.
@@ -102,7 +102,7 @@ ArrayList<float[]> entireFaceUVBasis;
 // allFaces/allModel1Ds/Model2Ds' own tree quads all keep it. The one
 // contributor that sets it false is Model2Ds.addToFaceGrid()'s own
 // single camera-facing quad per person: people still need to be a
-// hittable, visible face (so ShadeViewport.pde can paint their own
+// hittable, visible face (so shadeViewport3D.pde can paint their own
 // texture where a primary ray lands on them) but shouldn't act as an
 // occluder for anyone/anything else's sun-ray test - see
 // faceCastsShadow() and isIntersected_Faces()'s own ignoreNonShadowCasters
@@ -113,7 +113,7 @@ ArrayList<Boolean> entireFaceCastsShadow;
 // the empty placeholder above) came from allFaces.addToFaceGrid() - set
 // once, in buildFaceGrid() below, right after that call and before
 // allModel1Ds/allModel2Ds add their own entries to the same shared grid.
-// ShadeViewport.pde's face-edges mask uses this to tell "hit a Face" from
+// shadeViewport3D.pde's face-edges mask uses this to tell "hit a Face" from
 // "hit a Model1D/Model2D" (both still real, occlusion-relevant hits, just
 // not what that mask wants painted).
 int entireFaces_facesEndIndex = 1;
@@ -133,8 +133,8 @@ float lastFaceGridCameraX = Float.NaN;
 float lastFaceGridCameraY = Float.NaN;
 
 // See lastFaceGridCameraX/Y's own comment above. Callers that only care
-// about camera-facing billboards being current (ShadeViewport.pde,
-// preBakeViewport.pde) check this (together with Model2Ds.
+// about camera-facing billboards being current (shadeViewport3D.pde,
+// preBakeViewport3D.pde) check this (together with Model2Ds.
 // hasShadingContribution() - no point tracking the camera if nothing in
 // the grid depends on it) before forcing should_rebuildFaceGrid true.
 boolean cameraHasMovedSinceFaceGridBuild () {
@@ -164,12 +164,12 @@ void buildFaceGrid () {
   entireFaceCastsShadow = new ArrayList<Boolean>();
   entireFaceCastsShadow.add(true);
 
-  allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
+  allFaces.addToFaceGrid(); // reuses faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
   entireFaces_facesEndIndex = entireFaces.size();
   padEntireFaceExtras();
-  allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
+  allModel1Ds.addToFaceGrid(); // reuses model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
   padEntireFaceExtras();
-  allModel2Ds.addToFaceGrid(); // contributes trees' billboard foliage (shadow-casting) and people's own camera-facing billboard (not shadow-casting) - see Model2Ds.pde's own addToFaceGrid() comment
+  allModel2Ds.addToFaceGrid(); // contributes trees' billboard foliage (shadow-casting) and people's own camera-facing billboard (not shadow-casting) - see model2Ds.pde's own addToFaceGrid() comment
   padEntireFaceExtras(); // safety net; addToFaceGrid() above already keeps these in lockstep itself
   //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 
@@ -287,7 +287,7 @@ final int MODEL2D_ALPHA_HIT_THRESHOLD = 128;
 // entireFaceAlphaTexture.get(f) is non-null (see entireFaceUVBasis's own
 // declaration above for the basis layout this reads). Shared by
 // passesAlphaTest() below (which only needs the alpha channel at this
-// pixel) and ShadeViewport.pde (which samples the full RGBA, to paint a
+// pixel) and shadeViewport3D.pde (which samples the full RGBA, to paint a
 // tree's own photographic color onto the shaded image rather than a flat
 // radiance value) - one UV mapping, so the two can never drift apart and
 // disagree on which pixel a given hit corresponds to.
@@ -364,7 +364,7 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
     // comment on the volume), so three fresh array allocations here were
     // three fresh pieces of garbage per candidate face, not per ray.
     // isInside_Triangle() below has a matching raw-coordinate overload
-    // for the same reason - see Functions.pde's own comment on it.
+    // for the same reason - see functions.pde's own comment on it.
     float Ax = entirePointsX.get(faceNodes[0]);
     float Ay = entirePointsY.get(faceNodes[0]);
     float Az = entirePointsZ.get(faceNodes[0]);
@@ -487,7 +487,7 @@ float[] intersectAll (float[] ray_pnt, float[] ray_dir, int firstGuess) {
 }
 
 // Explicit-stamp overload - see isIntersected_Faces()'s own explicit-
-// stamp overload below for why this exists. ShadeViewport.pde's parallel
+// stamp overload below for why this exists. shadeViewport3D.pde's parallel
 // pass calls this one, with each chunk's own plain local faceTestStamp/
 // currentRayStamp, instead of the ThreadLocal-backed overload above -
 // ThreadLocal.get() measurably contributed to stray hit/miss flips under
@@ -562,8 +562,8 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
 // (currently: Model2Ds' own per-person billboard quad - see
 // entireFaceCastsShadow's declaration above) are skipped entirely, as if
 // they weren't in the grid at all. Callers testing "is this point in
-// shadow" (ShadeViewport.pde's and calculate_VertexSolar_array.pde's own
-// sun-ray occlusion tests, preBakeViewport.pde's diffuse/direct exposure
+// shadow" (shadeViewport3D.pde's and calculateVertexSolarArray.pde's own
+// sun-ray occlusion tests, preBakeViewport3D.pde's diffuse/direct exposure
 // tests) pass true, so a person standing in front of a wall doesn't
 // itself cast a shadow onto it. The plain 3-arg overload above - used by
 // intersectAll() for primary/camera-ray hit-testing, where we WANT a
@@ -584,9 +584,9 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boole
 // (faceTestStamp, currentRayStampRef) as plain parameters instead of
 // pulling them from the ThreadLocal RayStampState above. The 4-arg
 // overload above still goes through the ThreadLocal for every other
-// caller (preBakeViewport.pde, calculate_VertexSolar_array.pde,
+// caller (preBakeViewport3D.pde, calculateVertexSolarArray.pde,
 // mouseClicked, the single-threaded case, etc.) - behavior unchanged
-// there. ShadeViewport.pde's parallel pass calls this overload instead,
+// there. shadeViewport3D.pde's parallel pass calls this overload instead,
 // with each chunk's own plain local arrays: see its own comment on why -
 // ThreadLocal.get(), not the grid walk or RayStampState's own dedup
 // logic itself, turned out to be the actual source of stray per-pixel

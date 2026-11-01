@@ -1,4 +1,4 @@
-// Hover for drawProbs() (STUDY.pde) - the probability histogram overlay
+// Hover for drawProbs() (viewport2D.pde) - the probability histogram overlay
 // shared by every plotHourly() graph, same as drawNormals()'s own hover
 // (hoverOnStudyNormals.pde). Structurally simpler than that one, though:
 // drawNormals() hovers over thin lines, which have no area of their own,

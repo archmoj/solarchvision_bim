@@ -21,7 +21,7 @@ class WorldStationHoverTest {
     // positions are easy to reason about by hand: oX=0, sX=1, dX=360 makes
     // projX(lon) == lon + 180 (lon=-180 -> x=0, lon=0 -> x=180, lon=180 ->
     // x=360); oY=0, sY=1, dY=180 makes projY(lat) == 90 - lat (lat=90 ->
-    // y=0, lat=0 -> y=90, lat=-90 -> y=180) - see WORLD.pde's own projX()/
+    // y=0, lat=0 -> y=90, lat=-90 -> y=180) - see viewportMap.pde's own projX()/
     // projY() for the general formulas these are a special case of.
     app.WORLD.oX = 0;
     app.WORLD.oY = 0;
@@ -145,7 +145,7 @@ class WorldStationHoverTest {
   void addCandidates_wrapsLongitudesAbove180BeforeProjecting () {
     // A raw longitude of 359 is the same physical point as -1 - every
     // other WORLD station loop wraps this before using it (the "<<
-    // important!" comments throughout WORLD.pde), and this one needs to
+    // important!" comments throughout viewportMap.pde), and this one needs to
     // match, or a station just past the antimeridian would project to
     // completely the wrong side of the map.
     solarchvision_bim.STATION[] coords = { stationAt(359, 0, "WRP", "Wrap City") };

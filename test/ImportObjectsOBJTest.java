@@ -194,7 +194,7 @@ class ImportObjectsOBJTest {
   }
 
   // ================= progress window headless-safety =======================
-  // import_objects_OBJ() now shows a ProgressWindow (preBakeViewport.pde) -
+  // import_objects_OBJ() now shows a ProgressWindow (preBakeViewport3D.pde) -
   // a real java.awt.Frame - while showImportProgress (globals.pde) is on,
   // which defaults to true. Every test in this file, and every test
   // above this one, already exercises that path and would have thrown

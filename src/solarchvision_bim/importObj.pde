@@ -2,7 +2,7 @@
 // axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
 // anything else - armed only by selectFile_ImportObj(), the real,
 // interactive "pick a file from the menu" path, same shape as
-// ifcImportShowOptionsDialog (import_objects_IFC.pde) for IFC's own
+// ifcImportShowOptionsDialog (importIfc.pde) for IFC's own
 // options. Defaults to (and, every other way import_objects_OBJ() can be
 // reached - a script's own IMPORT_OBJ command, or a test calling
 // import_objects_OBJ() directly - stays) false, so none of those paths
@@ -12,7 +12,7 @@ boolean objImportShowOptionsDialog = false;
 void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Consumed (reset) here regardless of whether the dialog is shown or
   // how the person answers it - see ifcImportShowOptionsDialog's own
-  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // comment (importIfc.pde) for why this sits after FileName is
   // already a real path on disk, not back when selectFile_ImportObj()
   // first asked for one. A cancelled dialog aborts the whole import
   // immediately, before touching allPoints/allFaces or printing anything
@@ -50,11 +50,11 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   progressBarHeader();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
-  // (preBakeViewport.pde), updated inline alongside the existing console
+  // (preBakeViewport3D.pde), updated inline alongside the existing console
   // bar's own delta >= 1 throttle, same shape as calculate_VertexSolar_
   // array.pde's own. Wrapped in try/finally (this loop is short enough
   // that doing so safely doesn't mean re-indenting hundreds of lines,
-  // unlike SolarImpacts.pde's own calculate_Impact_CurrentPreBaked(),
+  // unlike solarImpacts.pde's own calculate_Impact_CurrentPreBaked(),
   // which left its own cleanup as a bare statement instead for exactly
   // that reason).
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing OBJ") : null;

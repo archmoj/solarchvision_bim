@@ -5,7 +5,7 @@
 // This is the standard, well-known technique (sometimes called a
 // "keyhole" cut) for handing a polygon-with-holes to any renderer or
 // data model - like this app's own allFaces, via ifcEmitFace() in
-// import_objects_IFC.pde - that only understands a single boundary loop
+// importIfc.pde - that only understands a single boundary loop
 // per face, with no native concept of an inner hole.
 //
 // Not IFC-specific on purpose: the input/output here is plain 3D point

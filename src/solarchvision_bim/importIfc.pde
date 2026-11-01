@@ -2,7 +2,7 @@
 // ".ifc" file - the plain-text exchange format BIM software (Revit,
 // ArchiCAD, Blender BIM, ...) writes when a user exports "IFC".
 //
-// Unlike import_objects_OBJ.pde, which only ever sees raw triangles
+// Unlike importObj.pde, which only ever sees raw triangles
 // (most OBJ exporters triangulate everything on the way out), IFC's own
 // geometry is genuinely n-gon: a wall face is a quad, not two triangles
 // glued together. So every face found here is built as one n-gon - the
@@ -39,13 +39,13 @@
 //   - IfcLocalPlacement chains (including IfcAxis2Placement3D's
 //     Axis/RefDirection) are walked and composed into one world
 //     placement per product.
-//   - IfcWindow is always drawn with Materials.pde's translucent "glass"
+//   - IfcWindow is always drawn with materials.pde's translucent "glass"
 //     material (9), independently of whatever m was passed in - see
 //     ifcGlassProductTypes below. Every other product's own associated
 //     IfcMaterial (IfcRelAssociatesMaterial, by way of
 //     IfcMaterialLayerSetUsage, IfcMaterialProfileSetUsage,
 //     IfcMaterialConstituentSet or a plain IfcMaterial) is read and its
-//     name matched, keyword-style, against Materials.pde's concrete/
+//     name matched, keyword-style, against materials.pde's concrete/
 //     steel/timber/masonry/insulation/MEP/earth colors (the
 //     IFC_MATERIAL_* constants below); a product with no match falls
 //     back to m/the normal 1-8 cycle, same as before this existed.
@@ -166,7 +166,7 @@
 // post-import summary line / ifcImportSkippedReasons:
 //   - Inner face/profile boundaries ("holes" - IfcFaceBound,
 //     IfcIndexedPolygonalFaceWithVoids) ARE cut out, via PolygonHoles'
-//     own mergeHolesIntoOuterLoop() (see PolygonHoles.pde) bridging each
+//     own mergeHolesIntoOuterLoop() (see polygonHoles.pde) bridging each
 //     hole into its own face's outer boundary - but only when a face's
 //     own geometry already carries the hole explicitly, as a named
 //     inner loop in the source file, the way a Tessellation body
@@ -369,7 +369,7 @@ final boolean IFC_IMPORT_NORTH = true;
 boolean ifcImportOrient = IFC_IMPORT_NORTH;
 
 // Whether to navigate the app's own "station" (STATION.latitude/
-// longitude - see STATION.pde) to wherever the file's own IfcSite says
+// longitude - see station.pde) to wherever the file's own IfcSite says
 // the project actually is, once loading finishes - on by default. Most
 // of what this app computes (sun position, solar yield, the satellite/
 // terrain imagery WORLD.FindGoodViewport() picks, ...) depends on the
@@ -667,9 +667,9 @@ HashSet<String> ifcSolarProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSOLARDEVICE"
   ));
 
-// Materials.pde indices for the colors an IFC import can pick by name/
+// materials.pde indices for the colors an IFC import can pick by name/
 // product type instead of cycling through materials 1-8. Keep these in
-// sync with Materials.pde's own "fixed" color table and its comments.
+// sync with materials.pde's own "fixed" color table and its comments.
 // IFC_MATERIAL_GLASS is material 9, one of the three translucent grays
 // (alpha 63/127/191 for 8/9/10; everything else is fully opaque) - and,
 // as a side effect worth knowing about, Faces.castShadows() only casts
@@ -678,21 +678,21 @@ HashSet<String> ifcSolarProductTypes = new HashSet<String>(Arrays.asList(
 // one; material 10 would, which is part of why windows no longer cycle
 // into it.
 //
-// IFC_MATERIAL_SOLAR is material 0, Materials.pde's orange - not a
+// IFC_MATERIAL_SOLAR is material 0, materials.pde's orange - not a
 // separate convention invented for this importer, but the app's own
-// existing one: Faces.pde (castShadows() and several others),
-// calculate_VertexSolar_array.pde, Overlay3D.pde, ViewFromTheSky.pde
-// and snap_Faces.pde all single out "getMaterial(f) == 0" for finer,
+// existing one: faces.pde (castShadows() and several others),
+// calculateVertexSolarArray.pde, overlay3D.pde, viewFromTheSky.pde
+// and snap_faces.pde all single out "getMaterial(f) == 0" for finer,
 // boosted tessellation (current tessellation + displayTessellation)
 // specifically because that extra resolution matters for a face's own
 // solar/shading calculation - exactly what a PV panel or solar
 // collector needs for an accurate yield estimate. There's no material
-// index -1 to assign (Materials.pde has no such entry, and storing one
+// index -1 to assign (materials.pde has no such entry, and storing one
 // on a face would crash the very rendering/calculation code just
 // described) - 0 is the real, load-bearing value underneath that
 // mental shorthand, not an approximation of it.
 final int IFC_MATERIAL_SOLAR      = 0;
-// Materials.pde's own material 8 - a faint, mostly-transparent grey (not
+// materials.pde's own material 8 - a faint, mostly-transparent grey (not
 // one of the "Standard IFC Materials Mapping Table" colors at 11-19
 // below, since an IfcSpace isn't real building fabric the way a wall or
 // slab is) - for an interior IfcSpace's own room/zone volume: one whose
@@ -701,16 +701,16 @@ final int IFC_MATERIAL_SOLAR      = 0;
 // its own use in import_objects_IFC()'s material-choice block for how.
 final int IFC_MATERIAL_INDOOR_SPACE  = 8;
 final int IFC_MATERIAL_GLASS      = 9;
-// Materials.pde's own material 10 - the same grey as
+// materials.pde's own material 10 - the same grey as
 // IFC_MATERIAL_INDOOR_SPACE above, just less transparent - for an
 // exterior IfcSpace's own volume (PredefinedType EXTERNAL: a courtyard,
 // terrace, or other outdoor amenity area) instead. Deliberately not
-// included in Faces.pde's own isPointInsideAnySpaceBoundingBox(): a
+// included in faces.pde's own isPointInsideAnySpaceBoundingBox(): a
 // camera standing in an exterior space is still outside the building,
 // so a window should still read as something solid there, the same as
 // anywhere else outdoors - only IFC_MATERIAL_INDOOR_SPACE actually means
 // "indoors" in that sense. It IS still excluded, the same as indoor
-// space always has been, from Faces.pde's own excludedFromFaceGrid():
+// space always has been, from faces.pde's own excludedFromFaceGrid():
 // neither one is real building fabric, so neither should cast or
 // receive a shadow either.
 final int IFC_MATERIAL_OUTDOOR_SPACE = 10;
@@ -729,7 +729,7 @@ final int IFC_MATERIAL_WATER      = 19;
 int ifcImportSkippedCount = 0;
 // How many inner face/profile boundaries (IfcFaceBound,
 // IfcIndexedPolygonalFaceWithVoids' own voids) have actually been cut
-// out of their own outer face so far - see PolygonHoles.pde's own
+// out of their own outer face so far - see polygonHoles.pde's own
 // comment for how. No longer "ignored": this used to count holes the
 // importer left in place (hole and all); now it counts holes it
 // actually bridged out, kept for the same post-import summary line
@@ -790,7 +790,7 @@ int ifcBooleanResultDepth = 0;
 
 // The multiplier that converts a raw length value read from the file
 // into metres - the app's own working unit, same as every other
-// importer/exporter here assumes (see e.g. export_objects_OBJ.pde).
+// importer/exporter here assumes (see e.g. exportObj.pde).
 // Detected once per import, from the project's own declared length
 // unit (see ifcDetectLengthUnitScale() below); reset to 1 (assume
 // metres already) at the top of every import_objects_IFC() call, same
@@ -1338,7 +1338,7 @@ float[] ifcApply2DPlacement (float[] placement, float px, float py) {
 // WIN3D-cache refresh mid-import is both very slow and, in practice,
 // capable of reading other selection/model state mid-update and
 // crashing (an ArrayIndexOutOfBoundsException was seen here on a real
-// IFC file). import_objects_OBJ.pde already avoids exactly this, the
+// IFC file). importObj.pde already avoids exactly this, the
 // same way, for exactly this reason - it bypasses Create3D entirely and
 // calls model_changed() exactly once, right at the end of the whole
 // import, not per face. import_objects_IFC() does the same (see its own
@@ -2142,7 +2142,7 @@ boolean ifcLooksLikeImportableProduct (StepEntity e) {
 // IfcMaterialLayerSetUsage for walls/slabs, IfcMaterialProfileSetUsage
 // for beams/columns, or IfcMaterialConstituentSet for anything made of
 // several named materials at once) is read and its name matched,
-// keyword-style, against the Materials.pde entries above. A product
+// keyword-style, against the materials.pde entries above. A product
 // with no material association, or one whose name doesn't match any
 // known keyword, falls back to the caller's normal m/cycling choice
 // instead - this only ever opts a product IN to a specific color, never
@@ -2791,13 +2791,13 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int totalF = ents.size() + productIds.size();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
-  // (preBakeViewport.pde), one instance spanning BOTH passes below
+  // (preBakeViewport3D.pde), one instance spanning BOTH passes below
   // (the entity scan, then the product loop): f/totalF already counts
   // continuously across both (f keeps incrementing, never reset, between
   // them), so Progress is already a single, unified 0-100 metric for the
   // whole function - updateFraction() just needs calling alongside each
-  // pass's own identical delta >= 1 throttle, same as import_objects_
-  // OBJ.pde's own single-pass version. Disposed as a bare statement
+  // pass's own identical delta >= 1 throttle, same as import
+  // Obj.pde's own single-pass version. Disposed as a bare statement
   // alongside showArrowCursor() at this function's own end, not wrapped
   // in try/finally: matches this function's own existing convention (no
   // try/finally anywhere in it already) for the same reason SolarImpacts.
@@ -2904,7 +2904,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
     // The new group has to exist *before* any face is created into it:
     // Faces.create() stamps every face it creates into allGroups' own
-    // current (last) group, exactly like import_objects_OBJ.pde does on
+    // current (last) group, exactly like importObj.pde does on
     // every "g" line - so, unlike the material choice below, this can't
     // be deferred until after we know whether the product actually
     // produced geometry.
@@ -2970,7 +2970,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // begin with, so there's no real-world material for a file-authored
     // one to plausibly name here regardless. Short of any of those, a
     // product whose own associated IfcMaterial name matches
-    // one of Materials.pde's named colors (concrete, steel, timber,
+    // one of materials.pde's named colors (concrete, steel, timber,
     // ...) gets that color - here an explicit match *does* win, same as
     // everywhere else. Failing that, a planted surface (a green roof,
     // green wall, or garden/lawn - see ifcLooksLikeVegetation() above)

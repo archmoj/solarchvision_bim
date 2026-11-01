@@ -1,6 +1,6 @@
 // Minimal, dependency-free importer for a GLB (binary glTF 2.0) file -
 // the same "hand-roll the parser, no external library" choice
-// import_objects_IFC.pde already makes for its own, very different,
+// importIfc.pde already makes for its own, very different,
 // format (see that file's own header comment: "Minimal, dependency-free
 // parser/importer for a STEP (ISO-10303-21) '.ifc' file").
 //
@@ -9,7 +9,7 @@
 //     materials/textures, animation, skins, or cameras/lights - every
 //     imported face gets the same single material (the m parameter
 //     below), the same way a "different objects: different materials"
-//     commented-out alternative sits unused in import_objects_OBJ.pde.
+//     commented-out alternative sits unused in importObj.pde.
 //   - Each primitive must be an indexed triangle list (mode 4, glTF's
 //     own default - the overwhelmingly common case; every other
 //     primitive mode is skipped with a console message) with a POSITION
@@ -26,15 +26,15 @@
 //   - Node hierarchies (including nested children) ARE walked and their
 //     transforms (either a raw matrix, or separate translation/rotation/
 //     scale) composed via PMatrix3D - already used the same way for
-//     composing a transform chain in Model1Ds.pde's own tree-branch
+//     composing a transform chain in model1Ds.pde's own tree-branch
 //     code. Skipping this would misplace or entirely drop geometry in
 //     any file that groups objects under parent nodes, which real
 //     exporters (Blender's default among them) do routinely.
 //
 // glTF itself has no fixed JSON-parsing dependency concern here: Processing's
-// own JSONObject/JSONArray already handle it (Land3D.pde's own elevation-
+// own JSONObject/JSONArray already handle it (land3D.pde's own elevation-
 // API call already uses the same classes), so this stays as dependency-free
-// as import_objects_OBJ.pde/import_objects_IFC.pde already are.
+// as importObj.pde/importIfc.pde already are.
 
 // Transform parameters for the CURRENT import_objects_GLB() call, read by
 // glbWalkNode()/glbEmitMesh() below without threading them through every
@@ -44,7 +44,7 @@
 // here just scoped to this file specifically since cx/cy/cz/sx/sy/sz
 // aren't needed anywhere outside a GLB import.
 float glb_cx, glb_cy, glb_cz, glb_sx, glb_sy, glb_sz;
-boolean glb_cycleMaterial; // true when the caller passed m == -1 - see import_objects_OBJ.pde's own identical "g" tag handling
+boolean glb_cycleMaterial; // true when the caller passed m == -1 - see importObj.pde's own identical "g" tag handling
 
 int glb_meshCount = 0;
 int glb_meshesProcessed = 0;
@@ -63,8 +63,8 @@ final int GLB_COMPONENT_FLOAT          = 5126;
 // axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
 // anything else - armed only by selectFile_ImportGlb(), the real,
 // interactive "pick a file from the menu" path, same shape as
-// objImportShowOptionsDialog (import_objects_OBJ.pde) and
-// ifcImportShowOptionsDialog (import_objects_IFC.pde). Defaults to (and,
+// objImportShowOptionsDialog (importObj.pde) and
+// ifcImportShowOptionsDialog (importIfc.pde). Defaults to (and,
 // every other way import_objects_GLB() can be reached stays) false, so
 // a script command or a test calling import_objects_GLB() directly never
 // sees a dialog pop up.
@@ -73,7 +73,7 @@ boolean glbImportShowOptionsDialog = false;
 void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Consumed (reset) here regardless of whether the dialog is shown or
   // how the person answers it - see ifcImportShowOptionsDialog's own
-  // comment (import_objects_IFC.pde) for why this sits after FileName is
+  // comment (importIfc.pde) for why this sits after FileName is
   // already a real path on disk. A cancelled dialog aborts the whole
   // import immediately, before touching allPoints/allFaces or printing
   // anything below - as if import_objects_GLB() had never been called.
@@ -202,7 +202,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   progressBarHeader();
 
-  // Same showImportProgress/ProgressWindow pattern import_objects_OBJ.pde
+  // Same showImportProgress/ProgressWindow pattern importObj.pde
   // already uses - see that file's own comment on it.
   glb_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing GLB") : null;
   if (glb_progressWindow != null) glb_progressWindow.setVisible(true);
@@ -227,7 +227,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 }
 
 // One console/ProgressWindow update, called once per mesh processed -
-// same delta >= 1 throttle and '█' console bar import_objects_OBJ.pde's
+// same delta >= 1 throttle and '█' console bar importObj.pde's
 // own per-line loop already uses, just keyed off glb_meshesProcessed/
 // glb_meshCount (a mesh, not a line, is the natural unit of progress for
 // a GLB file) instead.
@@ -248,7 +248,7 @@ void glbReportProgress () {
 // Visits node `nodeIndex` and every one of its descendants, composing
 // each one's own local transform (glbNodeMatrix(), below) onto its
 // parent's already-composed world matrix - the same "clone, then apply
-// on top of the clone" shape Model1Ds.pde's own cacheBranch()/
+// on top of the clone" shape model1Ds.pde's own cacheBranch()/
 // cacheElement() use for their own PMatrix3D chains (see that file's own
 // comment: "mirrors pushMatrix()").
 void glbWalkNode (JSONObject json, byte[] bin, int nodeIndex, PMatrix3D parentMatrix) {
@@ -373,7 +373,7 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
     int[] indices = glbReadIndexAccessor(json, bin, prim.getInt("indices"));
     if ((positions == null) || (indices == null)) continue;
 
-    if (glb_cycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling import_objects_OBJ.pde's own does
+    if (glb_cycleMaterial) current_Material = 1 + (current_Material % 8); // same "g" tag cycling importObj.pde's own does
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     int vertCount = positions.length / 3;
@@ -390,7 +390,7 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
       worldMatrix.mult(local, world);
 
       // importSwapAxisYZ (fileSelected.pde) - shared with
-      // import_objects_OBJ.pde's own "allPoints.create(x, -z, y)" vs
+      // importObj.pde's own "allPoints.create(x, -z, y)" vs
       // "allPoints.create(x, y, z)" choice, so the two importers' axis
       // treatment always matches each other, whichever way the person
       // importing sets it. Off by default - the same plain passthrough
@@ -531,7 +531,7 @@ int[] glbReadIndexAccessor (JSONObject json, byte[] bin, int accessorIndex) {
 // Little-endian byte readers - every number in a GLB binary chunk (chunk
 // headers, and every accessor's own packed data) is little-endian per
 // spec, regardless of the platform this importer runs on. Generic enough
-// (just byte-offset math, nothing GLB-specific) that import_objects_STL.
+// (just byte-offset math, nothing GLB-specific) that importStl.
 // pde's own binary-STL path reuses these directly rather than
 // duplicating the same bit-twiddling - binary STL's own triangle count
 // and per-vertex floats are little-endian too.

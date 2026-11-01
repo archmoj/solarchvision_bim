@@ -1,5 +1,5 @@
 // One dome's worth of hover-relevant info, captured by plotImpact_global()
-// (STUDY.pde) at the moment it finishes drawing that dome (one per day,
+// (viewport2D.pde) at the moment it finishes drawing that dome (one per day,
 // plus one for the summary). valuesSUM_RAD/EFF_P/EFF_N themselves are
 // plain local variables inside plotImpact_global()'s own (a,b) loop,
 // recomputed fresh for every wedge and never otherwise kept anywhere -
@@ -26,7 +26,7 @@ class GlobalPoseHoverInfo {
 // Skin Potential's Matrix_ARGB channels - Active's G slot carries the
 // received radiation (valuesSUM_RAD), Passive's R/B slots carry N/P
 // (valuesSUM_EFF_N/valuesSUM_EFF_P) as benefit/harm, the exact same
-// mapping SolarImpacts.pde's own Matrix_ARGB already uses. A (slot 0) is
+// mapping solarImpacts.pde's own Matrix_ARGB already uses. A (slot 0) is
 // never actually displayed by hoverLines() unless
 // showARGB_inHover is on, so it's just set to match whatever's shown.
 // Mirrors plotImpact_global()'s own AVERAGE/PERCENTAGE/COMPARISON/

@@ -3,7 +3,7 @@ PImage Shade_RGBA;
 // When true, ShadeViewport() builds and saves a transparent-background
 // PNG mask containing only the pixels whose ray hits a Model2Ds object
 // (a tree or person billboard) to camera2DTexture, instead of computing
-// the normal shaded/shadowed preview - see preBakeViewport.pde, the only
+// the normal shaded/shadowed preview - see preBakeViewport3D.pde, the only
 // place meant to flip this (and camera2DTexture) around a ShadeViewport()
 // call.
 boolean noShadeOnlyVisible2DTextures = false;
@@ -17,9 +17,9 @@ String camera2DTexture = "";
 // PNG containing just the visible edges of Faces, painted black, to
 // cameraFaceEdgesTexture - instead of computing the normal shaded/
 // shadowed preview, or the 2D-object mask above. Meant to be overlaid on
-// top of the solar-impact overlay (draw_WIN3D_layers.pde) to make
+// top of the solar-impact overlay (drawViewport3DLayers.pde) to make
 // building outlines and creases easier to pick out against the heatmap -
-// see preBakeViewport.pde, the only place meant to flip this (and
+// see preBakeViewport3D.pde, the only place meant to flip this (and
 // cameraFaceEdgesTexture) around a ShadeViewport() call.
 boolean noShadeOnlyVisibleFaceEdges = false;
 
@@ -28,11 +28,11 @@ boolean noShadeOnlyVisibleFaceEdges = false;
 // "projects/model-01/shadings/44N/Viewport_FaceEdges_Camera00.png".
 String cameraFaceEdgesTexture = "";
 
-// preBakeViewport.pde renders the face-edges bake at WIN3D.dX/dY times
+// preBakeViewport3D.pde renders the face-edges bake at WIN3D.dX/dY times
 // this, rather than at allSolarImpacts.RES1/RES2 like the rest of its
 // bakes - crisper, closer-to-antialiased-looking lines once Processing's
 // own image() scales this (larger) source down to the (same as always)
-// on-screen size draw_WIN3D_layers.pde displays it at, without changing
+// on-screen size drawViewport3DLayers.pde displays it at, without changing
 // anything about how or where it's drawn there.
 final int FACE_EDGE_RESOLUTION_MULTIPLIER = 2;
 
@@ -136,7 +136,7 @@ void ShadeViewport () {
   isShadingViewport = true;
   int ShadeViewport_startMillis = millis();
 
-  // Timing breakdown, same spirit as SolarImpacts.pde's own calcImpact_*
+  // Timing breakdown, same spirit as solarImpacts.pde's own calcImpact_*
   // timers - shadeSetupMillis is whatever's left over (buildFaceGrid(),
   // everything before pass 1 dispatches, and the arraycopy/save/cursor
   // work at the very end), computed as a remainder rather than tracked
@@ -243,7 +243,7 @@ void ShadeViewport () {
   // every pixel this call), rather than re-checked per pixel below.
   boolean sunIsBelowHorizon = (SunR[3] <= 0);
 
-  // Moon3D.pde's own simplified model (funcs.MoonPosition's own comment)
+  // moon3D.pde's own simplified model (funcs.MoonPosition's own comment)
   // reused here, same DATE/HOUR inputs the Sun already uses, purely as a
   // second, much weaker light source for the sunIsBelowHorizon case below
   // - a real moon only lights (and casts its own faint shadows) at
@@ -285,19 +285,19 @@ void ShadeViewport () {
   // for this whole call (camera, geometry, sun direction) and writes
   // only its own np's slot of Shade_RGBA.pixels[]/faceEdgeHit[]/
   // faceEdgeNormalX,Y,Z[] - so there's nothing for two pixels' work to
-  // race on, same reasoning as preBakeViewport.pde's own parallel
+  // race on, same reasoning as preBakeViewport3D.pde's own parallel
   // ray-casting loop (see that loop's own comment). ray_start/
   // ray_direction used to be declared once above the loop and mutated in
   // place every pixel - each pixel below now gets its own fresh pair
-  // instead, same as preBakeViewport.pde's own loop: matches that
+  // instead, same as preBakeViewport3D.pde's own loop: matches that
   // proven-safe pattern exactly, rather than reusing one mutable pair
   // per chunk across many pixels on the same thread.
   //
   // intersectAll()/isIntersected_Faces() are called here through their
-  // explicit-stamp overloads (isIntersected_Faces.pde), passing each
+  // explicit-stamp overloads (isIntersectedFaces.pde), passing each
   // chunk's own plain local faceTestStampLocal/currentRayStampLocal,
   // rather than through the ThreadLocal-backed overloads every other
-  // caller still uses (preBakeViewport.pde, calculate_VertexSolar_array.
+  // caller still uses (preBakeViewport3D.pde, calculate_VertexSolar_array.
   // pde, mouseClicked, etc. - unaffected). ThreadLocal.get(), not the
   // grid walk or its dedup logic itself, turned out to be the actual
   // source of stray per-pixel hit/miss corruption here under real
@@ -314,7 +314,7 @@ void ShadeViewport () {
   // carried between pixels even before any of this), so there's nothing
   // else to seed here beyond the stamp state itself.
   //
-  // Chunking also matches preBakeViewport.pde's own choice, not a single
+  // Chunking also matches preBakeViewport3D.pde's own choice, not a single
   // big chunk per thread: numChunks here comes out far larger than
   // numThreads (chunkSize works out to roughly numThreads pixels per
   // chunk), so the pool's own work queue keeps handing out many small
@@ -351,7 +351,7 @@ void ShadeViewport () {
           int hitFace = (int) RxP[0];
 
           if (noShadeOnlyVisibleFaceEdges) {
-            // entireFaces_facesEndIndex (isIntersected_Faces.pde) is the
+            // entireFaces_facesEndIndex (isIntersectedFaces.pde) is the
             // exclusive upper bound of the index range allFaces contributed
             // to the shared grid - anything at or past it hit a Model1D or
             // a Model2Ds billboard instead, not a Face.
@@ -515,7 +515,7 @@ void ShadeViewport () {
   // into Shade_RGBA below reads this pass's output. See parallel_utils.
   // pde's own listSuspectPixels() for what "isolated" means and why it
   // can't be a real edge - this re-casts each flagged pixel's own ray
-  // and redoes pass 1's own shading logic for it, the same way Solar
+  // and redoes pass 1's own shading logic for it, the same way solar
   // Impacts.pde's own per-day palette loop re-casts a ray and redoes its
   // own per-pixel palette computation (see that loop's own comment).
   // Only meaningful in plain shaded-preview mode: the 2D-object mask's
@@ -758,14 +758,14 @@ void ShadeViewport () {
   showArrowCursor();
 
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
-    // draw_WIN3D_layers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
+    // drawViewport3DLayers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
     // with no aspect correction, which only matches the live preview
     // (sized off WIN3D.dX/dY itself). The mask is a background bake, sized
     // at the unrelated allSolarImpacts.RES1/RES2, and was never meant to
     // be shown over the viewport - flagging it for display here would
     // both pop up an overlay nobody asked for and stretch it wrong.
     //
-    // Sticky from here on (draw_WIN3D_layers.pde no longer clears this
+    // Sticky from here on (drawViewport3DLayers.pde no longer clears this
     // itself after one frame) - stays up across camera moves, re-shading
     // to a new hour/day (this same flag, just set true again over
     // whatever Shade_RGBA this call just produced), anything short of an
@@ -773,16 +773,16 @@ void ShadeViewport () {
     WIN3D.showShading = true;
 
     // This bake, whatever triggered it (an explicit "Shade Viewport"/
-    // Space/Backspace request, or draw_WIN3D_layers.pde's own auto-
+    // Space/Backspace request, or drawViewport3DLayers.pde's own auto-
     // rebuild below), reflects the current camera/model state as of right
     // now, so whatever earlier view_changed()/model_changed() call(s) set
-    // this mid-bake are moot - clear it here rather than leaving draw_
-    // WIN3D_layers.pde to immediately see it still set and redo the same
+    // this mid-bake are moot - clear it here rather than leaving draw
+    // Viewport3DLayers.pde to immediately see it still set and redo the same
     // work again next frame for no reason.
     WIN3D.shadingNeedsRebuild = false;
 
     // Unconditional, regardless of how this bake was triggered - see
-    // this field's own comment (WIN3D.pde) for why it has to be, unlike
+    // this field's own comment (viewport3D.pde) for why it has to be, unlike
     // shadingNeedsRebuild just above.
     WIN3D.shadingNeedsRepaint = true;
   }
@@ -838,7 +838,7 @@ void previousShadeDay () {
 // extra step) a given impactDisplayDay slot represents. impactDisplayDay
 // == 0 ("total") is treated the same as 1 (STUDY.dayIncrement * 0 steps
 // from TIME.beginDay) - "use beginDay for the case of total" below.
-// Pulled out of sync_SHADE_DATE_ANGLE() itself so Tropo3D.pde's own
+// Pulled out of sync_SHADE_DATE_ANGLE() itself so tropo3D.pde's own
 // selectedDayHasForecastAvailable() (its own comment) can ask "what
 // actual calendar day does impactDisplayDay N represent" without
 // duplicating this math a second time and risking the two drifting apart.
@@ -866,7 +866,7 @@ void sync_SHADE_DATE_ANGLE () {
 
 // Turns off the sticky shaded-viewport overlay ShadeViewport() leaves on
 // screen (see WIN3D.showShading's own comment there and in
-// draw_WIN3D_layers.pde) - the Esc cascade's own way of ending that
+// drawViewport3DLayers.pde) - the Esc cascade's own way of ending that
 // preview, same boolean-returning-"did I actually have something to do"
 // shape as cancelActivePickList()/removeLastHoverPoint() (mouseClicked.
 // pde/hover.pde) that the rest of that same cascade already uses, so Esc
@@ -881,7 +881,7 @@ boolean dismissShading () {
   WIN3D.shadingNeedsRepaint = false; // nothing left to paint towards, either
 
   // Turning showShading off alone wouldn't actually repaint anything:
-  // draw_WIN3D_layers.pde's own early-return gate (its own comment)
+  // drawViewport3DLayers.pde's own early-return gate (its own comment)
   // skips WIN3D.draw() entirely on a frame where nothing else needs it,
   // which - with no camera/model change, just this flag flipping - would
   // leave the last-drawn shaded pixels sitting on screen forever instead

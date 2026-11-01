@@ -54,7 +54,7 @@ class UI_consoleBarTest {
   }
 
   // Home/End are covered against BOTH keyCode namespaces dispatchEditKey()
-  // itself handles (its own comment there, UI_consoleBar.pde) -
+  // itself handles (its own comment there, uiConsoleBar.pde) -
   // com.jogamp.newt.event.KeyEvent's, what this sketch's own always-P2D
   // renderer actually delivers at runtime (2/3, NOT the more familiar AWT
   // 36/35 - a real, confirmed P2D/P3D quirk, not a hypothetical), and
@@ -72,7 +72,7 @@ class UI_consoleBarTest {
   // on that classpath at all - so referencing that class here, even only
   // to read a constant, fails this suite's own build with "package
   // com.jogamp.newt.event does not exist". The production code's own
-  // comment (UI_consoleBar.pde) is the source of truth for where 2/3
+  // comment (uiConsoleBar.pde) is the source of truth for where 2/3
   // actually come from; NEWT_VK_HOME/NEWT_VK_END below just name them for
   // readability here.
 

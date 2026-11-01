@@ -32,14 +32,14 @@ class Faces {
   //    on an existing, well-established hook rather than adding a new one
   //    that every future mutation site would also have to remember to call)
   //  - solar-array recomputation bumps it too (see calculate_GlobalSolar_
-  //    array.pde / calculate_VertexSolar_array.pde - those change per-vertex
+  //    array.pde / calculateVertexSolarArray.pde - those change per-vertex
   //    colors without changing winCacheGeneration via model_changed())
   //  - the handful of cheap scalar knobs below (shading mode, impact type,
   //    display-edges toggle, tessellation level, colorscale params) are
   //    compared frame-to-frame in win3DCache_isValid(), so we don't have to
   //    chase every UI control (sliders, menus, XML load, ...) that can touch
   //    them - there turned out to be a lot of those (valueModifier.pde,
-  //    UI_rollout.pde, extraCommands.pde, actions.pde, ...).
+  //    uiRollout.pde, extraCommands.pde, actions.pde, ...).
   int winCacheGeneration = 0;
 
   PShape win3DCache = null;
@@ -64,7 +64,7 @@ class Faces {
   float win3DCache_passiveColorscaleFactor = -1;
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
-  // --- raycasting grid cache (buildFaceGrid(), isIntersected_Faces.pde) ---
+  // --- raycasting grid cache (buildFaceGrid(), isIntersectedFaces.pde) ---
   // No longer a separate build pass: with Surface_Base gone, win3DCache's
   // own geometry is always fully tessellated regardless of WIN3D.
   // shadingMode, exactly what the grid needs too - so build_win3DCache()
@@ -85,7 +85,7 @@ class Faces {
   // raycasting grid (win3DCache_gridPoints*/win3DCache_gridFaces below,
   // and so entirePointsX/Y/Z/entireFaces once addToFaceGrid() copies
   // them in): since the grid is what shadow-casting/receiving and every
-  // other ray/intersection test in isIntersected_Faces.pde actually
+  // other ray/intersection test in isIntersectedFaces.pde actually
   // reads, a face excluded here simply never participates in either,
   // while still drawing normally (see build_win3DCache()'s own use of
   // this, right where it decides whether to add a face's points to the
@@ -93,7 +93,7 @@ class Faces {
   //   - IFC_MATERIAL_INDOOR_SPACE or IFC_MATERIAL_OUTDOOR_SPACE (an
   //     IfcSpace's own room/zone volume, interior or exterior - not real
   //     building fabric either way - see those constants' own comments
-  //     in import_objects_IFC.pde) are always excluded, regardless of
+  //     in importIfc.pde) are always excluded, regardless of
   //     cameraInsideASpace.
   //   - IFC_MATERIAL_GLASS is excluded only while the camera itself is
   //     inside one of the INDOOR spaces specifically (see
@@ -130,11 +130,11 @@ class Faces {
   // computing one properly, for a room that might not even be convex, is
   // a materially harder problem than this needs (the same "serious
   // computational-geometry undertaking, well out of scope" tradeoff
-  // import_objects_IFC.pde's own header comment already makes for a true
+  // importIfc.pde's own header comment already makes for a true
   // Boolean solid difference) - a bounding box is a cheap, good-enough
   // stand-in for "is the camera roughly inside this room". Each
   // contiguous run of IFC_MATERIAL_INDOOR_SPACE faces is treated as one
-  // room's own faces, since that's how import_objects_IFC.pde actually
+  // room's own faces, since that's how importIfc.pde actually
   // writes them - one run per imported IfcSpace, back to back, never
   // interleaved with another product's own faces.
   boolean isPointInsideAnySpaceBoundingBox (float px, float py, float pz) {
@@ -1548,14 +1548,14 @@ class Faces {
           // The raycasting grid gets this sub-face's own real
           // triangulation (PolygonHoles.triangulate() - see its own
           // comment) rather than the whole sub-face handed over as one
-          // N-gon: isIntersected_Faces.pde's own >3-point fallback fans
+          // N-gon: isIntersectedFaces.pde's own >3-point fallback fans
           // every face it's given from that face's vertex-average
           // centroid, which - for a concave sub-face, including exactly
           // the shape PolygonHoles.mergeHolesIntoOuterLoop() produces
           // when bridging a hole in - routinely covered part of the
           // hole's own, supposedly-transparent area with phantom
           // shadow-casting triangles. Triangulating here, once, when the
-          // grid itself is built, means isIntersected_Faces.pde never
+          // grid itself is built, means isIntersectedFaces.pde never
           // has to re-derive this face's shape from scratch per ray; it
           // only ever sees real triangles from this point on, for which
           // its own 3-point branch is already exact. Still skipped

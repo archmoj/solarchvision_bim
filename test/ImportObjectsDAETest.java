@@ -12,7 +12,7 @@ import java.nio.file.Path;
 // never-setup()'d instance with no extra seeding.
 //
 // Each test below writes the smallest COLLADA document that exercises one
-// path - see import_objects_DAE.pde's own file-header comment for exactly
+// path - see importDae.pde's own file-header comment for exactly
 // which elements/attributes each path corresponds to, and for the
 // documented v1-scope limitations (only <triangles>/<polylist>, only the
 // VERTEX-semantic input, no materials of its own) a couple of tests below

@@ -38,7 +38,7 @@
 //     NV+1-i, so smaller values pull harder. Lands between STAT_N_Ave
 //     and STAT_N_Min.
 //
-// The point of all three: FIND_SCENARIO_CLOSE_TO_DAILY_STAT.pde picks
+// The point of all three: findScenarioCloseToDailyStatistic.pde picks
 // whichever real scenario in the ensemble sits closest to one of these
 // computed values, to drive a full simulation from a single representative
 // day - Min/Max/a percentile all have the usual problem of being exactly

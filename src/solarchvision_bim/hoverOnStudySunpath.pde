@@ -1,4 +1,4 @@
-// Hover for "Hourly Sun" - note the UI label (actions.pde, UI_menuBar.pde)
+// Hover for "Hourly Sun" - note the UI label (actions.pde, uiMenuBar.pde)
 // and the internal name (plotImpact_sunpath(), impactGraphIndex_SUNPATH_*)
 // don't match: "Hourly Sun" is plotImpact_sunpath() internally, while
 // "Sun Path" (the other UI label) is plotImpact_cycles() internally.
@@ -8,7 +8,7 @@
 // continuous altitude/azimuth position - not a regular grid of buckets
 // (Pose Potential) or a smoothly vertex-interpolated mesh surface shared
 // with WIN3D's own live 3D view and OBJ export (plotImpact_cycles(), via
-// Sun3D.pde's drawCycles() - substantially more involved, and not
+// sun3D.pde's drawCycles() - substantially more involved, and not
 // attempted here).
 //
 // Unlike Pose Potential's dome, there's no grid to invert a polar
@@ -26,7 +26,7 @@ class SunpathHoverPoint {
   float valuesSUM; // the single value this graph itself already displays as text on the point - received radiation (Active) or direct effect (Passive), no P/N/Score breakdown the way Skin/Pose Potential have
   int impactTypeIndex;
   int hour; // 0-23 - this vertex's own hour-grid index (drawCycles()'s own "a"), a single point in time, not a window - unlike calendarDay/daysMergedHalf below, hours are never merged in this graph
-  int calendarDay; // drawCycles()'s own "now_j2" for this vertex's ROW (merged-day-group) - the SAME actual date used to fetch the data this vertex's own valuesSUM was computed from, same wrapped 0-364 day index TIME.getDayText() (TIME.pde) expects
+  int calendarDay; // drawCycles()'s own "now_j2" for this vertex's ROW (merged-day-group) - the SAME actual date used to fetch the data this vertex's own valuesSUM was computed from, same wrapped 0-364 day index TIME.getDayText() (time.pde) expects
   int daysMergedHalf; // STUDY.daysMergedCount's own half-width at the moment this point was recorded, 0 when daysMergedCount <= 1 (no day-merging) - same field/meaning as NormalsHoverColumn's and ProbsHoverBox's own daysMergedHalf
 }
 

@@ -2,13 +2,13 @@ class SolarImpacts {
 
   final static String CLASS_STAMP = "SolarImpacts";
 
-  // volatile: same reasoning as ShadeViewport.pde's own isShadingViewport,
+  // volatile: same reasoning as shadeViewport3D.pde's own isShadingViewport,
   // which this mirrors - set true/false around calculate_Impact_
   // CurrentPreBaked()'s own parallel work below, read from draw()/
   // keyPressed()/keyReleased() (via isBakingInProgress(), global_
   // functions.pde) on whatever thread runs those, not necessarily the one
   // that called calculate_Impact_CurrentPreBaked(). Added proactively,
-  // not after the fact this time - see ShadeViewport.pde's own isShading
+  // not after the fact this time - see shadeViewport3D.pde's own isShading
   // Viewport for what tracking this down the hard way, after the fact,
   // actually looked like.
   volatile boolean isCalculatingImpact = false;
@@ -68,19 +68,19 @@ class SolarImpacts {
   // this.Image[][] only ever gets repainted by calculate_Impact_CurrentPreBaked()
   // below, which reads the model's baked Direct/Diffuse PNGs (tied to
   // whatever geometry and camera they were baked from - see
-  // preBakeViewport.pde) plus a handful of STUDY/TIME/STATION/palette
+  // preBakeViewport3D.pde) plus a handful of STUDY/TIME/STATION/palette
   // settings ("the time of the analysis"). The day-navigation and
   // impact-type-toggle actions (actions.pde) re-show the WIN3D overlay by
   // just picking a different already-computed slice of this.Image[][],
   // without recomputing anything - win3DOverlay_isFresh() is what lets
-  // draw_WIN3D_layers.pde tell whether that slice is still trustworthy
+  // drawViewport3DLayers.pde tell whether that slice is still trustworthy
   // before actually painting it, the same win3DCache-style snapshot/
-  // compare pattern Earth3D.pde/Faces.pde/Sun3D.pde use for their own
+  // compare pattern earth3D.pde/faces.pde/sun3D.pde use for their own
   // caches.
   //
   // The camera fields are recorded separately from everything else, by a
   // separate method (win3DOverlay_recordCameraState() below), called from
-  // a separate place (preBakeViewport.pde, right at its own top, before it
+  // a separate place (preBakeViewport3D.pde, right at its own top, before it
   // overrides WIN3D.dX/dY to fit the impact resolution) - not here. The
   // Direct/Diffuse/mask PNGs calculate_Impact_CurrentPreBaked() reads are
   // tied to whichever camera preBakeViewport() actually baked them from;
@@ -99,11 +99,11 @@ class SolarImpacts {
   boolean win3DOverlay_analysisSnapshotValid = false;
 
   // One-shot: set by win3DOverlay_recordAnalysisState() whenever a fresh
-  // computation completes, so draw_WIN3D_layers.pde can tell that
+  // computation completes, so drawViewport3DLayers.pde can tell that
   // happened - and that it's worth re-checking whether the overlay should
   // now show - even on a frame where nothing set WIN3D.update (recomputing
   // via a Skin Potential graph page, say, only calls STUDY.revise()).
-  // Consumed (read-and-reset) by draw_WIN3D_layers.pde, same one-shot
+  // Consumed (read-and-reset) by drawViewport3DLayers.pde, same one-shot
   // idiom as WIN3D.showShading/showSolarImpactOverride.
   boolean win3DOverlay_recomputed = false;
 
@@ -158,7 +158,7 @@ class SolarImpacts {
 
   // Just the camera half of win3DOverlay_isFresh() below - position, zoom
   // and projection, i.e. exactly what decides whether this.Image[][] still
-  // lines up with what's actually on screen right now. draw_WIN3D_layers.pde
+  // lines up with what's actually on screen right now. drawViewport3DLayers.pde
   // checks this on its own, separately from win3DOverlay_dataFresh() below:
   // when the camera matches, the overlay is drawn straight over the live
   // (matching) WIN3D content with no white backdrop at all - any gap left
@@ -184,7 +184,7 @@ class SolarImpacts {
 
   // The model/analysis-time half of freshness, independent of the camera -
   // whether this.Image[][] itself is still correct, regardless of where
-  // the camera currently is. draw_WIN3D_layers.pde checks this on its own
+  // the camera currently is. drawViewport3DLayers.pde checks this on its own
   // (alongside win3DOverlay_cameraMatches() above) so an explicit
   // day-navigation/impact-type-toggle request can show the overlay even
   // with the camera mismatched, while still refusing to show data that's
@@ -227,7 +227,7 @@ class SolarImpacts {
     return this.win3DOverlay_dataFresh() && this.win3DOverlay_cameraMatches();
   }
 
-  // Whether draw_WIN3D_layers.pde is about to paint the white clearing
+  // Whether drawViewport3DLayers.pde is about to paint the white clearing
   // rect over the entire WIN3D area this frame - true exactly in the
   // "explicit cycling request, but the camera doesn't match" case (see
   // that file's own comment): the data is fresh, the camera doesn't
@@ -295,7 +295,7 @@ class SolarImpacts {
     return new float[] { a, r, g, b };
   }
 
-  // Called once, by preBakeViewport.pde, right at its own top - before it
+  // Called once, by preBakeViewport3D.pde, right at its own top - before it
   // overrides WIN3D.dX/dY to fit the impact resolution - so this is
   // whichever camera actually drove the Direct/Diffuse/mask PNGs it's
   // about to bake, not wherever the camera happens to sit afterward.
@@ -309,7 +309,7 @@ class SolarImpacts {
   // (now live) new camera while win3DOverlay_dataFresh() stays true
   // (nothing about STUDY/TIME/colorscale changed), so
   // win3DOverlay_cameraMatches() trivially passes again and
-  // draw_WIN3D_layers.pde would paint the stale, old-camera-derived
+  // drawViewport3DLayers.pde would paint the stale, old-camera-derived
   // this.Image[][] directly over the new camera's live view as if it
   // were fresh. Clearing it here instead forces win3DOverlay_dataFresh()
   // to fail - hiding the overlay - until calculate_Impact_
@@ -409,7 +409,7 @@ class SolarImpacts {
   // one flagged pixel - see that loop's own comment), and its summary
   // loop at the very end. Pure - reads only its own parameters plus the
   // shared, read-only allFaces/STUDY/PAINT (all stateless, see
-  // ShadeViewport.pde's own comment on that) - safe to call from many
+  // shadeViewport3D.pde's own comment on that) - safe to call from many
   // threads at once or a single thread afterward, no special handling
   // either way. Deliberately takes Image_A/R/G/B as parameters rather
   // than Matrix_ARGB/Image_X/Image_Y directly: the parallel loop needs
@@ -478,7 +478,7 @@ class SolarImpacts {
       this.isCalculatingImpact = true;
 
       // showCalcImpactProgress (globals.pde's own comment) - ProgressWindow
-      // (preBakeViewport.pde), spanning this whole p-block's own 3 real
+      // (preBakeViewport3D.pde), spanning this whole p-block's own 3 real
       // steps (the "for (int p = 0; p < 1; p++)" below runs exactly once,
       // but does three genuinely separate passes inside: day accumulation;
       // a summary-palette pass over every pixel once all days are in; and
@@ -551,7 +551,7 @@ class SolarImpacts {
       // accumulation loop's ~hundreds of passes below (one per qualifying
       // day/hour/RAD_TYPE combination) rather than a fresh thread pool per
       // pass - creating and tearing down a pool that many times in one
-      // call would be real overhead, and ShadeViewport.pde's own
+      // call would be real overhead, and shadeViewport3D.pde's own
       // isShadingViewport/volatile saga showed repeated pool churn is
       // worth avoiding on general principle, not just for performance.
       // Shut down once, after the whole function's work is done (see
@@ -580,7 +580,7 @@ class SolarImpacts {
 
       // This camera's Model2Ds (tree/person) visibility mask, baked by
       // preBakeViewport() (via ShadeViewport()'s noShadeOnlyVisible2DTextures
-      // mode - see ShadeViewport.pde) at this very same RES1 x RES2 grid, under
+      // mode - see shadeViewport3D.pde) at this very same RES1 x RES2 grid, under
       // the same Folder_Shadings/NearLatitude_Stamp()/SceneName/Camera
       // naming the Shadings[] PNGs below are loaded from. Loaded once, up
       // front, rather than per day/hour: it doesn't depend on either.
@@ -756,7 +756,7 @@ class SolarImpacts {
                       // pass's own RAD_VALUE/EFF_VALUE (locals, captured
                       // by value) and Shadings[0]/[1] (already loaded,
                       // read-only PImages - loadImage() gives a plain CPU
-                      // raster, same as ShadeViewport.pde's own billboard
+                      // raster, same as shadeViewport3D.pde's own billboard
                       // textures, safe for concurrent .get() reads - see
                       // that file's own comment on why that one wasn't
                       // the actual cause there), and writes only its own
@@ -766,7 +766,7 @@ class SolarImpacts {
                       // function's own top) rather than creating a new
                       // pool for every pass.
                       //
-                      // One chunk per thread here, not ShadeViewport.pde's
+                      // One chunk per thread here, not shadeViewport3D.pde's
                       // totalPixels/numThreads - that fine split mattered
                       // there for reasons specific to its own raycasting
                       // workload (nothing to do with chunk size itself,
@@ -933,9 +933,9 @@ class SolarImpacts {
           // above was the first, [0, 0.5]) - this half is [0.5, 1.0].
           // Throttled to whole-percent steps, same shape as the console
           // bars elsewhere in this codebase (e.g. calculate_
-          // VertexSolar_array.pde's own) - RES1*RES2 can be well over a
+          // VertexSolarArray.pde's own) - RES1*RES2 can be well over a
           // million pixels, and updateFraction() now paints synchronously
-          // (ProgressWindow's own comment, preBakeViewport.pde), so
+          // (ProgressWindow's own comment, preBakeViewport3D.pde), so
           // calling it every single pixel, not just every whole percent,
           // would add real, avoidable overhead to this loop.
           int calcImpactSummaryLastDrawnPercent = -1;

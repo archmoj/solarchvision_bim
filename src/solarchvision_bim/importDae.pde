@@ -1,12 +1,12 @@
 // Minimal, dependency-free importer for a DAE (COLLADA) file - the same
-// "hand-roll the parser, no external library" choice import_objects_OBJ.
-// pde/import_objects_IFC.pde/import_objects_GLB.pde/import_objects_STL.
-// pde/import_objects_DXF.pde/import_objects_PLY.pde already make for
+// "hand-roll the parser, no external library" choice importObj.
+// pde/importIfc.pde/importGlb.pde/importStl.
+// pde/importDxf.pde/importPly.pde already make for
 // their own formats. COLLADA is plain XML, openly published by the
 // Khronos Group (the same body behind glTF), so "dependency-free" here
 // just means Processing's own built-in XML class - already used
 // elsewhere in this project for its own save/load-project format (see
-// xml_helpers.pde/save_project.pde/load_project.pde) - rather than any
+// xmlHelpers.pde/saveProject.pde/loadProject.pde) - rather than any
 // new parsing machinery of its own.
 //
 // A COLLADA document separates WHAT geometry exists (<library_geometries>,
@@ -16,7 +16,7 @@
 // own <node> hierarchy, each node transformed by some combination of
 // <translate>/<rotate>/<scale>/<matrix> and instancing zero or more
 // geometries via <instance_geometry url="#id">) - the same two-part
-// shape import_objects_GLB.pde's own node-hierarchy walk already
+// shape importGlb.pde's own node-hierarchy walk already
 // handles for glTF, and reused here the same way (daeWalkNode()
 // composing each node's own PMatrix3D, same as glbWalkNode()).
 //
@@ -27,8 +27,8 @@
 //     <tristrips>) is skipped. Each polygon becomes one app-native face
 //     with however many corners it declares (<polylist>'s own <vcount>,
 //     or always 3 for <triangles>) - the same "whatever n-gon the file
-//     itself declares" choice import_objects_IFC.pde's/import_objects_
-//     DXF.pde's/import_objects_PLY.pde's own faces already make.
+//     itself declares" choice importIfc.pde's/import
+//     Dxf.pde's/importPly.pde's own faces already make.
 //   - Only a primitive's own VERTEX-semantic <input> (the position
 //     index) is read; any other input a primitive carries (NORMAL,
 //     TEXCOORD, COLOR, ...) only affects how its own interleaved index
@@ -41,7 +41,7 @@
 //   - Materials are intentionally not read at all - every imported face
 //     gets the single material the m parameter (below) names, the same
 //     "whole import, one material unless cycled per sub-object" shape
-//     import_objects_GLB.pde's own per-mesh handling already uses -
+//     importGlb.pde's own per-mesh handling already uses -
 //     cycled here once per <instance_geometry> reference actually
 //     processed (daeWalkNode()'s own call to it), the natural COLLADA
 //     equivalent of a new OBJ "g" tag/GLB node-with-a-mesh.
@@ -56,7 +56,7 @@ boolean daeImportShowOptionsDialog = false;
 
 // Transform parameters and the material-cycling flag for the CURRENT
 // import_objects_DAE() call - same "a few fields shared across one whole
-// import" shape glb_cx/glb_cycleMaterial/... (import_objects_GLB.pde)
+// import" shape glb_cx/glb_cycleMaterial/... (importGlb.pde)
 // already use.
 float dae_cx, dae_cy, dae_cz, dae_sx, dae_sy, dae_sz;
 boolean daeCycleMaterial;
@@ -72,7 +72,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/import_
   // objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s own
   // identical blocks - see any one's own comment, or ifcImportShow
-  // OptionsDialog's (import_objects_IFC.pde), for why this sits here
+  // OptionsDialog's (importIfc.pde), for why this sits here
   // rather than earlier, and what a cancelled dialog does.
   if (daeImportShowOptionsDialog) {
     daeImportShowOptionsDialog = false;
@@ -143,7 +143,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   if (addToLastGroup == false) {
     // No group created here directly - see daeWalkNode()'s own comment
     // on why that happens once per <instance_geometry> instead, the
-    // same granularity import_objects_GLB.pde's own node walk already
+    // same granularity importGlb.pde's own node walk already
     // uses.
   }
 
@@ -240,7 +240,7 @@ int daeCountGeometryInstances (XML nodeEl) {
 
 // One console/ProgressWindow update, called once per <instance_geometry>
 // actually processed (daeWalkNode(), below) - the same per-mesh
-// granularity glbReportProgress() (import_objects_GLB.pde) already uses,
+// granularity glbReportProgress() (importGlb.pde) already uses,
 // for the same reason: counting actual faces/vertices up front would
 // need its own full pre-pass this version doesn't do.
 void daeReportProgress () {
@@ -280,7 +280,7 @@ int daeCreatePoint (float x, float y, float z) {
 // Visits node `nodeEl` and every one of its descendants, composing each
 // one's own local transform (daeNodeLocalMatrix(), below) onto its
 // parent's already-composed world matrix - the same "clone, then apply
-// on top of the clone" shape glbWalkNode() (import_objects_GLB.pde)
+// on top of the clone" shape glbWalkNode() (importGlb.pde)
 // already uses (that function's own comment has the fuller "mirrors
 // pushMatrix()" story).
 void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
@@ -313,7 +313,7 @@ void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
 // in any order, each one composing onto whatever came before it (unlike
 // glTF's own node transform, which is always exactly one of "a single
 // matrix" or "a single TRS triple" - see glbNodeMatrix()'s own comment,
-// import_objects_GLB.pde).
+// importGlb.pde).
 PMatrix3D daeNodeLocalMatrix (XML nodeEl) {
   PMatrix3D m = new PMatrix3D(); // identity
 
@@ -336,7 +336,7 @@ PMatrix3D daeNodeLocalMatrix (XML nodeEl) {
       // COLLADA's own <matrix> is already row-major - the same argument
       // order PMatrix3D's own 16-float constructor/apply() expect,
       // unlike glTF's column-major node matrices (glbNodeMatrix(),
-      // import_objects_GLB.pde, has to reorder those - this doesn't).
+      // importGlb.pde, has to reorder those - this doesn't).
       float[] v = daeFloats(XML_getContent(child), 16);
       if (v != null) {
         m.apply(new PMatrix3D(

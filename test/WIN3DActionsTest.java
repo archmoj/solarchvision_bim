@@ -295,7 +295,7 @@ class WIN3DActionsTest {
   // ================= WIN3D t / WIN3D Shift+T (troposphere time) ===========
   // "Advance/Rewind Troposphere Time" are now thin delegates to "Shade
   // Next/Previous Hour" (actions.pde's own comment on why) - Tropo3D.
-  // i_Map() (Tropo3D.pde) derives straight from SHADE_HOUR_ANGLE, so
+  // i_Map() (tropo3D.pde) derives straight from SHADE_HOUR_ANGLE, so
   // these tests go through SHADE_HOUR_ANGLE and nextShadeHour()/
   // previousShadeHour()'s own wrap behavior (STUDY.isInHourlyRange(),
   // SHADE_FIRST_HOUR/SHADE_LAST_HOUR) - the same thing the equivalent

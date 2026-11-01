@@ -156,7 +156,7 @@ class FileSelectedTest {
     // File's own directory first - but then immediately calls
     // update_project_folders(), whose first line unconditionally
     // overwrites Folder_Project with BaseFolder + "/projects/model-01"
-    // (see update_folders.pde). So the directory the file was actually
+    // (see updateFolders.pde). So the directory the file was actually
     // opened from never survives - this looks surprising enough to be
     // worth pinning down explicitly, whether or not it's intentional.
     app._fileSelected_New(new File("/some/other/directory/MyProject.xml"));
@@ -302,7 +302,7 @@ class FileSelectedTest {
 
   @Test
   void fileSelectedImportIfc_neverArmsTheOptionsDialog_onlySelectFile_ImportIfcDoes () throws IOException {
-    // ifcImportShowOptionsDialog (import_objects_IFC.pde) defaults to
+    // ifcImportShowOptionsDialog (importIfc.pde) defaults to
     // false, and nothing on this - the non-interactive - path (a script's
     // own IMPORT_IFC command with a path already given, or a direct call
     // like this one) should ever set it: every test in this class and in

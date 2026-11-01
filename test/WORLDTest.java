@@ -181,7 +181,7 @@ class WORLDTest {
   // ================= handlePlainCharKey ===================================
   // Extracted out of keyPressed(KeyEvent) so the actual zoom-cycling logic
   // (previously only reachable through e.isAltDown()/isControlDown()) can
-  // be exercised directly, the same way STUDY.pde's handlePlainCharKey() is.
+  // be exercised directly, the same way viewport2D.pde's handlePlainCharKey() is.
 
   @Test
   void handlePlainCharKey_backtick_decrementsZoom () {

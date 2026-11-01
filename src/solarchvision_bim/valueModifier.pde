@@ -108,7 +108,7 @@ class ValueModifier {
     return out;
   }
   // The day-of-year offset applied throughout the solar/shadow math (see
-  // STUDY.pde, Sun3D.pde, WIN3D.pde, calculate_*Solar_array.pde, ...) -
+  // viewport2D.pde, sun3D.pde, viewport3D.pde, calculate*SolarArray.pde, ...) -
   // distinct from Day/Month/Year below, which describe the calendar date
   // itself. Normally kept in sync with month/day via react.applyTimeChange,
   // but UI_caseBar's "Days" tab also nudges it directly by a delta (see

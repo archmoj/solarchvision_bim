@@ -15,7 +15,7 @@ import java.nio.file.Path;
 // seeding.
 //
 // Each test below writes the smallest STL file that exercises one path -
-// see import_objects_STL.pde's own file-header comment for exactly how
+// see importStl.pde's own file-header comment for exactly how
 // binary-vs-ASCII is detected, and for the documented v1-scope
 // limitation (every triangle gets the single material the m parameter
 // names - the one real sub-object boundary STL has at all is ASCII's own
