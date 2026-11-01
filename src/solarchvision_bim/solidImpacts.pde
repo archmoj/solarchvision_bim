@@ -1221,26 +1221,26 @@ class SolidImpacts {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setFloat(parent, this.CLASS_STAMP + ".WindSpeed", this.WindSpeed);
-    XML_setFloat(parent, this.CLASS_STAMP + ".WindDirection", this.WindDirection);
-    XML_setFloat(parent, this.CLASS_STAMP + ".Power", this.Power);
+    XML_setFloat(parent, this.CLASS_STAMP + ".windSpeed", this.WindSpeed);
+    XML_setFloat(parent, this.CLASS_STAMP + ".windDirection", this.WindDirection);
+    XML_setFloat(parent, this.CLASS_STAMP + ".power", this.Power);
     XML_setBoolean(parent, this.CLASS_STAMP + ".displayPoints", this.displayPoints);
     XML_setBoolean(parent, this.CLASS_STAMP + ".displayLines", this.displayLines);
 
-    XML_setInt(parent, this.CLASS_STAMP + ".RES1", this.RES1);
-    XML_setInt(parent, this.CLASS_STAMP + ".RES2", this.RES2);
-    XML_setFloat(parent, this.CLASS_STAMP + ".Grade", this.Grade);
+    XML_setInt(parent, this.CLASS_STAMP + ".width", this.RES1);
+    XML_setInt(parent, this.CLASS_STAMP + ".height", this.RES2);
+    XML_setFloat(parent, this.CLASS_STAMP + ".grade", this.Grade);
     XML_setBoolean(parent, this.CLASS_STAMP + ".displayImage", this.displayImage);
     XML_setInt(parent, this.CLASS_STAMP + ".sectionType", this.sectionType);
     XML_setFloat(parent, this.CLASS_STAMP + ".positionStep", this.positionStep);
-    XML_setInt(parent, this.CLASS_STAMP + ".Process_subDivisions", this.Process_subDivisions);
+    XML_setInt(parent, this.CLASS_STAMP + ".processSubDivisions", this.Process_subDivisions);
     XML_setFloat(parent, this.CLASS_STAMP + ".deltaStep", this.deltaStep);
     XML_setFloat(parent, this.CLASS_STAMP + ".deltaLines", this.deltaLines);
-    XML_setFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceU", this.MinimumDistance_traceU);
-    XML_setFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceV", this.MinimumDistance_traceV);
+    XML_setFloat(parent, this.CLASS_STAMP + ".minDistTraceU", this.MinimumDistance_traceU);
+    XML_setFloat(parent, this.CLASS_STAMP + ".minDistTraceV", this.MinimumDistance_traceV);
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".Z");
+      XML child = xml.addChild(this.CLASS_STAMP + ".z");
       int ni = this.Z.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1252,7 +1252,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".R");
+      XML child = xml.addChild(this.CLASS_STAMP + ".r");
       int ni = this.R.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1264,7 +1264,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".U");
+      XML child = xml.addChild(this.CLASS_STAMP + ".u");
       int ni = this.U.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1276,7 +1276,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".V");
+      XML child = xml.addChild(this.CLASS_STAMP + ".v");
       int ni = this.V.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1288,7 +1288,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".X");
+      XML child = xml.addChild(this.CLASS_STAMP + ".x");
       int ni = this.X.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1300,7 +1300,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.addChild(this.CLASS_STAMP + ".Y");
+      XML child = xml.addChild(this.CLASS_STAMP + ".y");
       int ni = this.Y.length;
       XML_setInt(child, "ni", ni);
       String txt = "";
@@ -1319,27 +1319,27 @@ class SolidImpacts {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.WindSpeed = XML_getFloat(parent, this.CLASS_STAMP + ".WindSpeed");
-    this.WindDirection = XML_getFloat(parent, this.CLASS_STAMP + ".WindDirection");
-    this.Power = XML_getFloat(parent, this.CLASS_STAMP + ".Power");
+    this.WindSpeed = XML_getFloat(parent, this.CLASS_STAMP + ".windSpeed");
+    this.WindDirection = XML_getFloat(parent, this.CLASS_STAMP + ".windDirection");
+    this.Power = XML_getFloat(parent, this.CLASS_STAMP + ".power");
 
     this.displayPoints = XML_getBoolean(parent, this.CLASS_STAMP + ".displayPoints");
     this.displayLines = XML_getBoolean(parent, this.CLASS_STAMP + ".displayLines");
 
-    this.RES1 = XML_getInt(parent, this.CLASS_STAMP + ".RES1");
-    this.RES2 = XML_getInt(parent, this.CLASS_STAMP + ".RES2");
-    this.Grade = XML_getFloat(parent, this.CLASS_STAMP + ".Grade");
+    this.RES1 = XML_getInt(parent, this.CLASS_STAMP + ".width");
+    this.RES2 = XML_getInt(parent, this.CLASS_STAMP + ".height");
+    this.Grade = XML_getFloat(parent, this.CLASS_STAMP + ".grade");
     this.displayImage = XML_getBoolean(parent, this.CLASS_STAMP + ".displayImage");
     this.sectionType = XML_getInt(parent, this.CLASS_STAMP + ".sectionType");
     this.positionStep = XML_getFloat(parent, this.CLASS_STAMP + ".positionStep");
-    this.Process_subDivisions = XML_getInt(parent, this.CLASS_STAMP + ".Process_subDivisions");
+    this.Process_subDivisions = XML_getInt(parent, this.CLASS_STAMP + ".processSubDivisions");
     this.deltaStep = XML_getFloat(parent, this.CLASS_STAMP + ".deltaStep");
     this.deltaLines = XML_getFloat(parent, this.CLASS_STAMP + ".deltaLines");
-    this.MinimumDistance_traceU = XML_getFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceU");
-    this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + ".MinimumDistance_traceV");
+    this.MinimumDistance_traceU = XML_getFloat(parent, this.CLASS_STAMP + ".minDistTraceU");
+    this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + ".minDistTraceV");
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".Z");
+      XML child = xml.getChild(this.CLASS_STAMP + ".z");
 
       int ni = XML_getInt(child, "ni");
       this.Z = new float [ni];
@@ -1351,7 +1351,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".R");
+      XML child = xml.getChild(this.CLASS_STAMP + ".r");
 
       int ni = XML_getInt(child, "ni");
       this.R = new float [ni];
@@ -1363,7 +1363,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".U");
+      XML child = xml.getChild(this.CLASS_STAMP + ".u");
 
       int ni = XML_getInt(child, "ni");
       this.U = new float [ni];
@@ -1375,7 +1375,7 @@ class SolidImpacts {
     }
 
     {
-        XML child = xml.getChild(this.CLASS_STAMP + ".V");
+        XML child = xml.getChild(this.CLASS_STAMP + ".v");
 
       int ni = XML_getInt(child, "ni");
       this.V = new float [ni];
@@ -1387,7 +1387,7 @@ class SolidImpacts {
     }
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".X");
+      XML child = xml.getChild(this.CLASS_STAMP + ".x");
 
       int ni = XML_getInt(child, "ni");
       this.X = new float [ni];
@@ -1400,7 +1400,7 @@ class SolidImpacts {
 
 
     {
-      XML child = xml.getChild(this.CLASS_STAMP + ".Y");
+      XML child = xml.getChild(this.CLASS_STAMP + ".y");
 
       int ni = XML_getInt(child, "ni");
       this.Y = new float [ni];

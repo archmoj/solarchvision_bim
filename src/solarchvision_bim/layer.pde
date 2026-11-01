@@ -14,15 +14,15 @@ class LAYER {
   public float verticalUnitOffset = 0;
   public float verticalNegativePadding = 0;
 
-  LAYER (float verticalUnitScale, float verticalUnitOffset, float verticalNegativePadding, String unit, String description_EN, String description_FR, String name) {
+  LAYER (float verticalUnitScale, float verticalUnitOffset, float verticalNegativePadding, String unit, String descriptionEn, String descriptionFr, String name) {
 
     this.verticalUnitScale = verticalUnitScale;
     this.verticalUnitOffset = verticalUnitOffset;
     this.verticalNegativePadding = verticalNegativePadding;
     this.unit = unit;
     this.name = name;
-    this.descriptions[Language_EN] = description_EN;
-    this.descriptions[Language_FR] = description_FR;
+    this.descriptions[Language_EN] = descriptionEn;
+    this.descriptions[Language_FR] = descriptionFr;
 
     this.id = _numberOfLayers;
     _numberOfLayers++;
@@ -30,14 +30,14 @@ class LAYER {
 
   public void to_XML (XML xml) {
 
-    XML parent = xml.addChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
+    XML parent = xml.addChild(this.CLASS_STAMP + nf(this.id, 0));
 
     XML_setInt(parent, "id", this.id);
 
     XML_setString(parent, "unit", this.unit);
     XML_setString(parent, "name", this.name);
-    XML_setString(parent, "description_EN", this.descriptions[Language_EN]);
-    XML_setString(parent, "description_FR", this.descriptions[Language_FR]);
+    XML_setString(parent, "descriptionEn", this.descriptions[Language_EN]);
+    XML_setString(parent, "descriptionFr", this.descriptions[Language_FR]);
 
     XML_setFloat(parent, "verticalUnitScale", this.verticalUnitScale);
     XML_setFloat(parent, "verticalUnitOffset", this.verticalUnitOffset);
@@ -47,16 +47,16 @@ class LAYER {
 
   public void from_XML (XML xml) {
 
-    //println("\nLoading:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
+    //println("\nLoading:" + this.CLASS_STAMP + nf(this.id, 0));
 
-    XML parent = xml.getChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
+    XML parent = xml.getChild(this.CLASS_STAMP + nf(this.id, 0));
 
     this.id = XML_getInt(parent, "id");
 
     this.unit = XML_getString(parent, "unit");
     this.name = XML_getString(parent, "name");
-    this.descriptions[Language_EN] = XML_getString(parent, "description_EN");
-    this.descriptions[Language_FR] = XML_getString(parent, "description_FR");
+    this.descriptions[Language_EN] = XML_getString(parent, "descriptionEn");
+    this.descriptions[Language_FR] = XML_getString(parent, "descriptionFr");
 
     this.verticalUnitScale = XML_getFloat(parent, "verticalUnitScale");
     this.verticalUnitOffset = XML_getFloat(parent, "verticalUnitOffset");

@@ -68,7 +68,7 @@ void saveProject (String myFile) {
 
     //XML_setInt(parent, "cameraIndex", cameraIndex);
 
-    XML_setInt(parent, "allMaterials.Selection", allMaterials.Selection);
+    XML_setInt(parent, "materialSelection", allMaterials.Selection);
     XML_setFloat(parent, "overallScale", overallScale);
 
     XML_setInt(parent, "viewLayout", viewLayout);

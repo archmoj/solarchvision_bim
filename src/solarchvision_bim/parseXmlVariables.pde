@@ -54,7 +54,7 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   cameraIndex = XML_getInt(parent, "cameraIndex");
 
-  allMaterials.Selection = XML_getInt(parent, "allMaterials.Selection");
+  allMaterials.Selection = XML_getInt(parent, "materialSelection");
   overallScale = XML_getFloat(parent, "overallScale");
 
   viewLayout = XML_getInt(parent, "viewLayout");
