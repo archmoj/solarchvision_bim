@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // Guards against the exact class of bug this file is named after: two
-// different commands (in actions.pde and/or ValueModifier.pde) registering
+// different commands (in actions.pde and/or valueModifier.pde) registering
 // under the same allActions key. Since allActions is one flat map, a
 // collision doesn't fail loudly - the second registration just silently
 // overwrites the first, and the earlier command becomes unreachable from
@@ -54,7 +54,7 @@ class CommandRegistryTest {
     "put(?:Value)?Action\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\""
   );
 
-  // ValueModifier.pde's methods no longer pass a literal string to
+  // valueModifier.pde's methods no longer pass a literal string to
   // putValueAction() - they pass the `command` variable declared just
   // above it (see String command = "..."; in each method). That
   // declaration line is the exact source string to read instead.
@@ -86,7 +86,7 @@ class CommandRegistryTest {
   void noTwoRegisteredCommandsShareANormalizedKey () throws IOException {
     List<String> titles = new ArrayList<>();
     titles.addAll(extractPutActionTitles("src/solarchvision_bim/actions.pde"));
-    titles.addAll(extractCommandDeclarations("src/solarchvision_bim/ValueModifier.pde"));
+    titles.addAll(extractCommandDeclarations("src/solarchvision_bim/valueModifier.pde"));
 
     assertTrue(titles.size() > 700, "sanity check: expected hundreds of registered " +
       "commands from both files combined, found " + titles.size() + " - did a source " +
@@ -174,7 +174,7 @@ class CommandRegistryTest {
 
   // ================= a couple of ValueModifier commands, as a pattern ========
   // Demonstrates the same exact-string principle for putValueAction-based
-  // commands: the literal title from ValueModifier.pde's own
+  // commands: the literal title from valueModifier.pde's own
   // `String command = "...";` line, normalized in code - never a
   // hand-typed "ensemble_observation_max_days"-style guess.
 

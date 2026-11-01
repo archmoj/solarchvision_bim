@@ -38,7 +38,7 @@ class Faces {
   //    display-edges toggle, tessellation level, colorscale params) are
   //    compared frame-to-frame in win3DCache_isValid(), so we don't have to
   //    chase every UI control (sliders, menus, XML load, ...) that can touch
-  //    them - there turned out to be a lot of those (ValueModifier.pde,
+  //    them - there turned out to be a lot of those (valueModifier.pde,
   //    UI_rollout.pde, extraCommands.pde, actions.pde, ...).
   int winCacheGeneration = 0;
 

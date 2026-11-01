@@ -155,7 +155,7 @@ class UI_rollout {
   // WORLD get revised when the value actually changes).
   void registerSpinnerActions () {
 
-    // One vm.<name>(0) call per ValueModifier.pde method - see that file
+    // One vm.<name>(0) call per valueModifier.pde method - see that file
     // for each one's caption, bounds, update flags and (where relevant)
     // OnChange follow-up.
 
