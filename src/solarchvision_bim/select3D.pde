@@ -580,14 +580,22 @@ class Select3D {
 
       if (this.groupSelection.length > 0) {
 
+        // Bounds-checked against allGroups.Pivots.length, the same way
+        // every sibling branch above (CAMERA/SECTION/SOLID) already
+        // guards against its own selection referencing something that
+        // no longer exists (e.g. allGroups.num shrinking - via undo
+        // restoring an older state with fewer groups, or any other way
+        // a selection can go stale relative to live data) - this
+        // branch was simply missing that same guard.
         for (int o = 0; o < this.groupSelection.length; o++) {
 
           int OBJ_ID = this.groupSelection[o];
 
-          posX += allGroups.Pivots[OBJ_ID][0] / this.groupSelection.length;
-          posY += allGroups.Pivots[OBJ_ID][1] / this.groupSelection.length;
-          posZ += allGroups.Pivots[OBJ_ID][2] / this.groupSelection.length;
-
+          if (OBJ_ID < allGroups.Pivots.length) {
+            posX += allGroups.Pivots[OBJ_ID][0] / this.groupSelection.length;
+            posY += allGroups.Pivots[OBJ_ID][1] / this.groupSelection.length;
+            posZ += allGroups.Pivots[OBJ_ID][2] / this.groupSelection.length;
+          }
         }
       }
     }
