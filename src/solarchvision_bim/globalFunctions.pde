@@ -64,24 +64,41 @@ boolean isBakingInProgress () {
   return isShadingViewport || allSolarImpacts.isCalculatingImpact;
 }
 
-void model_changed () {
+// Any structural/material edit invalidates the WIN3D retained-mode
+// caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D
+// retained-mode cache" blocks). Pulled out of model_changed() into its
+// own function so undoRedo.pde's restoreProjectSnapshot() can call it
+// too, without going through the rest of model_changed() (specifically
+// recordHistoryStep() - a restore isn't a new edit to record, it's
+// replaying an old one). Without this, a plain view_changed() redraw
+// after writing new face/model1D/terrain data straight into those
+// classes' own arrays (which is exactly what parse_XML_variables()'s
+// from_XML() calls do, same as import_objects_OBJ() in fileSelected.pde
+// does for an OBJ import - see that file's own near-identical comment)
+// would just replay the stale, pre-change cached PShape instead of
+// rebuilding it - the actual bug behind "undo doesn't remove the house
+// I just added": the data was already being reverted correctly, but
+// WIN3D kept drawing the old cached geometry over top of it.
+void invalidateWin3DRetainedCaches () {
   should_rebuildFaceGrid = true;
 
-  // Any structural/material edit invalidates the WIN3D retained-mode
-  // caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D
-  // retained-mode cache" blocks) - this piggybacks on model_changed()
-  // rather than adding a new hook, since it's already called from every
-  // create/edit/move/delete/import site for all three classes - including
-  // move3D.pde/scale3D.pde/rotate3D.pde's TerrainVertices() functions,
-  // which edit Terrain.Mesh directly through the normal selection/move
-  // system (separately from Terrain.update_mesh()'s own full-reload bump).
   if (allFaces != null) allFaces.winCacheGeneration++;
   if (allModel1Ds != null) allModel1Ds.winCacheGeneration++;
   if (Terrain != null) Terrain.winCacheGeneration++;
+}
+
+void model_changed () {
+  // This piggybacks on model_changed() rather than adding a new hook,
+  // since it's already called from every create/edit/move/delete/import
+  // site for all three classes - including move3D.pde/scale3D.pde/
+  // rotate3D.pde's TerrainVertices() functions, which edit Terrain.Mesh
+  // directly through the normal selection/move system (separately from
+  // Terrain.update_mesh()'s own full-reload bump).
+  invalidateWin3DRetainedCaches();
 
   // Undo/redo history - see undoRedo.pde's own header comment for the
   // full reasoning. Piggybacks on model_changed() the same way the
-  // winCacheGeneration bumps above do: already called once per discrete
+  // cache invalidation above does: already called once per discrete
   // structural/material edit (one call per create/delete/import/batch
   // move-rotate-scale, confirmed by inspection rather than per
   // sub-object or per animation frame - see that file's comment), from

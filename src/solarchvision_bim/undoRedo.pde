@@ -143,6 +143,18 @@ void redo () {
 void restoreProjectSnapshot (XML xml) {
   parse_XML_variables(xml, false);
 
+  // Without this, WIN3D's retained-mode viewport cache would keep
+  // rendering whatever it had built before this restore - from_XML()
+  // writes straight into allFaces/allModel1Ds/Terrain's own arrays the
+  // same way an OBJ import does, and neither bumps the cache's own
+  // generation counter by itself. See globalFunctions.pde's own comment
+  // on invalidateWin3DRetainedCaches() for the full reasoning (and the
+  // bug this exact gap caused: undo correctly reverting the data but
+  // the view still showing the undone edit). Deliberately calling this
+  // directly rather than model_changed() itself - a restore isn't a new
+  // edit to record, so it must not also go through recordHistoryStep().
+  invalidateWin3DRetainedCaches();
+
   find_which_bakings_to_regenerate();
   VertexSolar_resize_array();
   GlobalSolar_resize_array();
