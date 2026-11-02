@@ -17,11 +17,19 @@
 // text edit in uiRollout.pde's _Spinner()), not continuously while
 // held - so hooking this one already-central signal doesn't flood the
 // history with near-duplicate snapshots the way hooking, say, every
-// frame of a live drag would. NOT yet wired to pure view/navigation
-// actions (camera orbit/pan/zoom, toggling what's displayed, switching
-// tools) or to anything outside model_changed()'s own reach (e.g.
-// WIN3D/STUDY/WORLD settings that don't go through it) - those are
-// separate, open questions for a later step. "Should Undo itself be
+// frame of a live drag would. NOT wired to pure view/navigation actions
+// (camera orbit/pan/zoom, toggling what's displayed, switching tools) -
+// those don't call model_changed() and don't record a step. More than
+// that, though: restoring a step deliberately leaves the viewport alone
+// too, via parse_XML_variables()'s own restoreViewport flag (false here)
+// - without it, undoing a model edit would also snap the camera back to
+// wherever it was at that earlier edit, which is no part of "undo my
+// last edit" as far as this step's scope goes. Everything else WIN3D
+// holds (current tool, shading-display mode, ...) is left alone the
+// same way, for the same reason - it's "what you're doing right now",
+// not modeling content. STUDY/WORLD settings that don't go through
+// model_changed() are a separate, open question for a later step.
+// "Should Undo itself be
 // undoable" very much WAS a real question here, not a moot one:
 // restoring a snapshot does end up calling model_changed() - repeatedly,
 // in fact, since from_XML() calls makeEmpty() (Faces/Model1Ds/Model2Ds/
@@ -174,7 +182,11 @@ void restoreProjectSnapshot (XML xml) {
   // recording if something throws partway through a restore.
   isRestoringSnapshot = true;
   try {
-    parse_XML_variables(xml, false);
+    // restoreViewport: false - undo/redo is scoped to 3D-modeling edits
+    // only (model_changed()'s own reach), not camera/viewport
+    // navigation. The person's current view stays exactly where they
+    // left it; see parse_XML_variables()'s own comment on this flag.
+    parse_XML_variables(xml, false, false);
 
     // Without this, WIN3D's retained-mode viewport cache would keep
     // rendering whatever it had built before this restore - from_XML()

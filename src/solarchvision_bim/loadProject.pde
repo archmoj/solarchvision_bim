@@ -18,12 +18,12 @@ void load_project (String myFile) {
   if (continue_process) {
 
     try {
-      parse_XML_variables(xml, false); // first try: loading without printing logs
+      parse_XML_variables(xml, false, true); // first try: loading without printing logs
     }
     catch (Exception e) {
       println("Problem loading variables:", myFile);
 
-      parse_XML_variables(xml, true); // second try with printing logs
+      parse_XML_variables(xml, true, true); // second try with printing logs
       System.exit(1);
     }
 

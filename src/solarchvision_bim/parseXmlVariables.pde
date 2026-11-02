@@ -1,4 +1,17 @@
-void parse_XML_variables (XML xml, boolean desired_diag) {
+// restoreViewport controls one line below: WIN3D.from_XML(xml) - the
+// viewport's own live camera position/orientation/zoom, active tool,
+// and shading-display settings (see viewport3D.pde's own to_XML()/
+// from_XML() for the exact field list). true for Open/Fetch (restoring
+// a project should bring back the view it was saved with), false for
+// undo/redo (see undoRedo.pde's own restoreProjectSnapshot() comment -
+// undo/redo is scoped to 3D-modeling edits only; the person navigating
+// right now should stay looking wherever they're currently looking,
+// not get snapped back to wherever the camera happened to be at some
+// earlier edit). Everything else parse_XML_variables() restores either
+// way - in particular allCameras.from_XML() (actual camera OBJECTS
+// placed in the scene, legitimate modeling content) is a completely
+// separate call, unaffected by this flag.
+void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport) {
 
   diag_XML_input = desired_diag;
 
@@ -102,7 +115,7 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   Sun3D.from_XML(xml);
 
-  WIN3D.from_XML(xml);
+  if (restoreViewport) WIN3D.from_XML(xml);
 
   User3D.from_XML(xml);
 
