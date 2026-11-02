@@ -1,6 +1,6 @@
 class Delete3D {
 
-  final static String CLASS_STAMP = "delete3D";
+  final static String CLASS_STAMP = "delete3d";
 
   float[][] removeIndices(float[][] arr, int[] ids) {
     if (ids.length == 0) return arr;

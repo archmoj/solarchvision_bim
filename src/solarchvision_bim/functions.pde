@@ -1,6 +1,6 @@
 class Functions {
 
-  final static String CLASS_STAMP = "functions";
+  final static String CLASS_STAMP = "function";
 
   final float EPSILON_DIRECTION = 0.001; // to detect parallels.
   final float EPSILON_POSITION = 0.0001; // to detect intersections i.e. in the world coordinate.

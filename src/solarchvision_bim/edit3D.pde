@@ -1,6 +1,6 @@
 class Edit3D {
 
-  final static String CLASS_STAMP = "edit3D";
+  final static String CLASS_STAMP = "edit3d";
 
   int clamp (int n, int lo, int hi) {
     if (n > hi) n = hi;

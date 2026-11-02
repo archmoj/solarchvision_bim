@@ -1,6 +1,6 @@
 class Rotate3D {
 
-  final static String CLASS_STAMP = "rotate3D";
+  final static String CLASS_STAMP = "rotate3d";
 
   void selection (float x0, float y0, float z0, float r, int the_Vector) {
     r *= PI / 180; // <<<<<<<<

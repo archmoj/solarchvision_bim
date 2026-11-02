@@ -1,6 +1,6 @@
 class Groups {
 
-  final static String CLASS_STAMP = "groups";
+  final static String CLASS_STAMP = "group";
 
   Groups () { // constructor
     makeEmpty(0);

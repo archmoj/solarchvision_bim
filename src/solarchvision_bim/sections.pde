@@ -1,6 +1,6 @@
 class Sections {
 
-  final static String CLASS_STAMP = "sections";
+  final static String CLASS_STAMP = "section";
 
   Sections () {
     makeEmpty(0);

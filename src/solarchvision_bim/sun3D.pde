@@ -1,5 +1,5 @@
 class Sun3D {
-  final static String CLASS_STAMP = "sun3D";
+  final static String CLASS_STAMP = "sun3d";
 
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;

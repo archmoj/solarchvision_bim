@@ -1,6 +1,6 @@
 class Create3D {
 
-  final static String CLASS_STAMP = "create3D";
+  final static String CLASS_STAMP = "create3d";
 
   void add_Octahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
 

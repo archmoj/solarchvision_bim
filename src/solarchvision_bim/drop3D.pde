@@ -1,6 +1,6 @@
 class Drop3D {
 
-  final static String CLASS_STAMP = "drop3D";
+  final static String CLASS_STAMP = "drop3d";
 
   void selection () {
     if (currentObjectCategory == ObjectCategory.MODEL1D) this.Model1Ds();

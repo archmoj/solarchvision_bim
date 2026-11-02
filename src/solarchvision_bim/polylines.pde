@@ -1,6 +1,6 @@
 class Polylines {
 
-  final static String CLASS_STAMP = "polylines";
+  final static String CLASS_STAMP = "polyline";
 
   Polylines () { // constructor
     makeEmpty(0);
