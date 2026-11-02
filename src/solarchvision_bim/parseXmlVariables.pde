@@ -2,7 +2,7 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   diag_XML_input = desired_diag;
 
-  XML parent = xml.getChild("variables");
+  XML parent = xml.getChild("variable");
 
   currentObjectCategory = XML_getInt(parent, "currentObjectCategory"); // see note above - confirm separately
 

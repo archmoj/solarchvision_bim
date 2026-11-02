@@ -9,7 +9,7 @@ void saveProject (String myFile) {
   xml.setName("solarchvisionV" + version);
 
   {
-    XML parent = xml.addChild("variables");
+    XML parent = xml.addChild("variable");
 
     XML_setInt(parent, "currentObjectCategory", currentObjectCategory);
 
