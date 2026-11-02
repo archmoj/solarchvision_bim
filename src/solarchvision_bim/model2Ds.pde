@@ -50,7 +50,9 @@ class Model2Ds {
 
     this.num = n;
     this.XYZS = new float [n][4];
-    this.MAP = new int [n];
+    this.Kind = new Model2DKind [n];
+    this.FileIndex = new int [n];
+    this.Mirror = new boolean [n];
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -67,35 +69,39 @@ class Model2Ds {
     model_changed();
   }
 
+  // `t` ("PEOPLE"/"TREES") picks the kind; `m`'s magnitude is now always
+  // a LOCAL index within that kind's own file list - 0 meaning "pick a
+  // random variant", otherwise clamped to [1, kind.fileCount] (both
+  // ends: unlike the old flat-index scheme, trees are no longer able to
+  // silently run past the end of the array, since there's no second
+  // kind's worth of entries sharing the same number space to run into).
+  // `m`'s sign still picks left/right mirroring, same as before.
+  //
+  // Note for callers building a Tree2/Person script command string
+  // (see mouseClicked.pde's click-to-create handling): `m` no longer
+  // needs peopleFileCount added to it first - a tree-local index is
+  // passed through exactly as-is now, regardless of how many PEOPLE
+  // files happen to exist.
   void create (String t, int m, float x, float y, float z, float s) {
 
-    int n1 = this.peopleFileCount;
-    int n2 = this.peopleFileCount + this.treesFileCount;
+    Model2DKind kind = model2DKindByTag(t);
 
     int n = abs(m);
 
-    boolean aPerson = t.equals("PEOPLE");
-    boolean aTree = t.equals("TREES");
-
     if (n == 0) {
-      if (aPerson) n = int(random(1, 1 + n1));
-      else if (aTree) n = int(random(1 + n1, 1 + n2));
-    } else {
-      if (aPerson && (n > n1)) n = n1;
-      else if (aTree) {
-        if (n < n1) n = n1 + n;
-      }
+      n = (kind.fileCount > 0) ? int(random(1, 1 + kind.fileCount)) : 0;
+    } else if (n > kind.fileCount) {
+      n = kind.fileCount;
     }
 
-    int d =
-      m > 0 ? 1 :
-      m < 0 ? -1 :
-      int(random(2)) == 0 ? -1 : 1;
+    boolean mirror =
+      m > 0 ? false :
+      m < 0 ? true :
+      int(random(2)) == 0;
 
-    int[] Temp_MAP = {
-      d * n
-    };
-    this.MAP = concat(this.MAP, Temp_MAP);
+    this.Kind = (Model2DKind[]) append(this.Kind, kind);
+    this.FileIndex = (int[]) append(this.FileIndex, n);
+    this.Mirror = (boolean[]) append(this.Mirror, mirror);
 
     float[][] Temp_XYZS = {
       {
@@ -106,7 +112,7 @@ class Model2Ds {
 
     this.num += 1;
 
-    if (this.isTree(n)) {
+    if (kind.isTree()) {
 
       if (User3D.creatorMeshOrSolidMode != 0) {
 
@@ -165,67 +171,35 @@ class Model2Ds {
     this.XYZS[n][3] *= f;
   }
 
-  int[] MAP = new int[0];
-
-  String[] ImagePath;
-  int peopleFileCount = 0;
-  int treesFileCount = 0;
+  // Per-instance identity: which kind (PEOPLE_KIND/TREES_KIND), which
+  // local index within that kind's own Images/ImagePath/ImageRatios
+  // array, and whether it's mirrored left/right. Replaces the old
+  // single `int[] MAP` (a signed, flat-array position that silently
+  // meant something different whenever either folder's file count
+  // changed - see model2DKind.pde's own comment).
+  Model2DKind[] Kind = new Model2DKind[0];
+  int[] FileIndex = new int[0];
+  boolean[] Mirror = new boolean[0];
 
   int num_visualFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back
-
-  String[] Filenames_PEOPLE;
-  String[] Filenames_TREES;
-
-  PImage[] Images;
-  float[] ImageRatios;
 
   float[][] Vertices;
   int[][] Faces;
 
-  boolean isTree (int n) {
-    if (abs(n) > this.peopleFileCount) {
-      return true;
-    }
-    return false;
+  // f is an INSTANCE index (0..num-1), not a texture index - e.g.
+  // `allModel2Ds.isTree(f)`, not a lookup against some flat image
+  // array position.
+  boolean isTree (int f) {
+    return this.Kind[f].isTree();
+  }
+
+  boolean isScalable (int f) {
+    return this.Kind[f].isScalable();
   }
 
   void load_images () {
-
-    this.ImagePath = new String [1];
-    this.ImagePath[0] = "";
-
-    this.Filenames_PEOPLE = sort(OPESYS.getFiles(Folder_People));
-    this.Filenames_TREES = sort(OPESYS.getFiles(Folder_Trees));
-
-    this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
-    this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
-
-    this.peopleFileCount = this.Filenames_PEOPLE.length;
-    this.treesFileCount = this.Filenames_TREES.length;
-
-
-    int n = this.ImagePath.length;
-
-    this.Images = new PImage [n + 1];
-    this.ImageRatios = new float [n + 1];
-
-    for (int i = 1; i < n; i++) { // leaving [0] null
-
-      if (i <= this.peopleFileCount) {
-        this.ImagePath[i] = Folder_People + "/" + this.ImagePath[i];
-      } else {
-        this.ImagePath[i] = Folder_Trees + "/" + this.ImagePath[i];
-      }
-    }
-
-    for (int i = 1; i < n; i++) {
-      this.Images[i] = loadImage(this.ImagePath[i]);
-
-      if (this.Images[i].height != 0) {
-        this.ImageRatios[i] = float(this.Images[i].width) / float(this.Images[i].height);
-      } else {
-        this.ImageRatios[i] = 1;
-      }
+    for (Model2DKind kind : ALL_MODEL2D_KINDS) {
+      kind.loadImages();
     }
   }
 
@@ -293,8 +267,9 @@ class Model2Ds {
 
     for (int f = 0; f < this.num; f++) {
 
-      int n = abs(this.MAP[f]);
-      boolean isTree = this.isTree(n);
+      Model2DKind kind = this.Kind[f];
+      int n = this.FileIndex[f];
+      boolean isTree = kind.isTree();
       if (!isTree && !this.showPeopleInShade) continue; // a person, and showPeopleInShade says to leave them out
 
       float x = this.getX(f);
@@ -303,7 +278,7 @@ class Model2Ds {
       float s = this.getS(f);
 
       float rh = 0.5 * s; // half-height; half-width too for trees (square images) - people use ImageRatios below instead
-      PImage tex = this.Images[n];
+      PImage tex = kind.Images[n];
       int texW = tex.width;
       int texH = tex.height;
 
@@ -316,7 +291,7 @@ class Model2Ds {
       float yScaled = y * overallScale;
       float t0 = PI + WIN3D.rotationZ * PI / 180.0;
       if (WIN3D.projectionTypeIndex == 1) t0 = atan2(yScaled - WIN3D.cameraY, xScaled - WIN3D.cameraX) + 0.5 * PI;
-      if (this.MAP[f] < 0) t0 += PI;
+      if (this.Mirror[f]) t0 += PI;
 
       if (!isTree) {
         // A person: exactly one camera-facing quad, full height, no cap,
@@ -324,7 +299,7 @@ class Model2Ds {
         // rw uses ImageRatios[n] (unlike the tree case below, which
         // assumes a square image) since a person's image generally isn't
         // square - same as draw()'s own rw = rh * ImageRatios[n].
-        float rw = rh * this.ImageRatios[n];
+        float rw = rh * kind.ImageRatios[n];
 
         float dx = rw * cos(t0);
         float dy = rw * sin(t0);
@@ -422,7 +397,7 @@ class Model2Ds {
       // being solid near the trunk and only thinning out near its edge,
       // which has nothing to do with where the trunk pixels actually sit
       // in the image.
-      {
+      if (kind.hasCanopyCap()) {
         float ratio = 0.5;
         float capZ = z + 2 * rh * ratio;
 
@@ -480,8 +455,7 @@ class Model2Ds {
     if (!this.displayAll) return false; // hidden entirely - addToFaceGrid() has nothing to add either way
 
     for (int f = 0; f < this.num; f++) {
-      int n = abs(this.MAP[f]);
-      if (this.isTree(n)) return true;
+      if (this.Kind[f].isTree()) return true;
       if (this.showPeopleInShade) return true;
     }
     return false;
@@ -511,90 +485,92 @@ class Model2Ds {
         if ((target_window == TypeWindow.HTML) ||
             (target_window == TypeWindow.OBJ3D)) {
 
-          int[] ImageUsed = new int [this.ImagePath.length];
+          // One used[] tally per kind now (each kind owns its own local
+          // index space) rather than one flat array shared by both -
+          // see model2DKind.pde's own comment on why a single shared
+          // space was the actual bug.
+          for (Model2DKind kind : ALL_MODEL2D_KINDS) {
 
-          for (int i = 0; i < ImageUsed.length; i++) {
-            ImageUsed[i] = 0;
-          }
+            int[] ImageUsed = new int [kind.fileCount + 1];
 
-          for (int f = 0; f < this.num; f++) {
+            for (int f = 0; f < this.num; f++) {
+              if (this.Kind[f] == kind) {
+                ImageUsed[this.FileIndex[f]] += 1;
+              }
+            }
 
-            int n = abs(this.MAP[f]);
+            for (int i = 1; i <= kind.fileCount; i++) {
 
-            ImageUsed[n] += 1;
-          }
+              if (ImageUsed[i] != 0) {
 
-          for (int i = 1; i < this.ImagePath.length; i++) {
+                String old_Texture_path = kind.ImagePath[i];
 
-            if (ImageUsed[i] != 0) {
+                String new_Texture_path = "";
 
-              String old_Texture_path = this.ImagePath[i];
+                String opacity_Texture_path = "";
 
-              String new_Texture_path = "";
+                String the_filename = "";
 
-              String opacity_Texture_path = "";
+                if (kind.ImagePath[i].equals("")) {
+                } else {
 
-              String the_filename = "";
+                  the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-              if (this.ImagePath[i].equals("")) {
-              } else {
+                  new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
+                  opacity_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
 
-                the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
+                  println("Copying texture:", old_Texture_path, ">", new_Texture_path);
+                  saveBytes(new_Texture_path, loadBytes(old_Texture_path));
 
-                new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
-                opacity_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
+                  println("Making opacity texture:", new_Texture_path);
 
-                println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-                saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+                  int RES1 = kind.Images[i].width;
+                  int RES2 = kind.Images[i].height;
 
-                println("Making opacity texture:", new_Texture_path);
+                  PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
 
-                int RES1 = this.Images[i].width;
-                int RES2 = this.Images[i].height;
+                  Opacity_Texture.loadPixels();
 
-                PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
+                  for (int np = 0; np < (RES1 * RES2); np++) {
+                    int Image_X = np % RES1;
+                    int Image_Y = np / RES1;
 
-                Opacity_Texture.loadPixels();
+                    color COL = kind.Images[i].get(Image_X, Image_Y);
+                    //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
 
-                for (int np = 0; np < (RES1 * RES2); np++) {
-                  int Image_X = np % RES1;
-                  int Image_Y = np / RES1;
+                    float COL_V = (COL >> 24 & 0xFF);
 
-                  color COL = this.Images[i].get(Image_X, Image_Y);
-                  //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                    Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);
+                  }
 
-                  float COL_V = (COL >> 24 & 0xFF);
+                  Opacity_Texture.updatePixels();
 
-                  Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);
-                }
+                  Opacity_Texture.save(opacity_Texture_path);
 
-                Opacity_Texture.updatePixels();
+                  if (target_window == TypeWindow.HTML) {
+                    htmlOutput.println("\t\t\t\t<Appearance DEF='this." + the_filename + "'>");
+                    htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
+                    htmlOutput.println("\t\t\t\t</Appearance>");
+                  }
 
-                Opacity_Texture.save(opacity_Texture_path);
+                  if (target_window == TypeWindow.OBJ3D) {
 
-                if (target_window == TypeWindow.HTML) {
-                  htmlOutput.println("\t\t\t\t<Appearance DEF='this." + the_filename + "'>");
-                  htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
-                  htmlOutput.println("\t\t\t\t</Appearance>");
-                }
+                    mtlOutput.println("newmtl " + CLASS_STAMP + the_filename);
+                    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
 
-                if (target_window == TypeWindow.OBJ3D) {
+                    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-                  mtlOutput.println("newmtl " + CLASS_STAMP + the_filename);
-                  mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-                  mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-                  mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-                  mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-                  mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-                  mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-                  mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-                  mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-                  mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-                  //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
-                  mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
-                  mtlOutput.println("\tmap_d " + Subfolder_exportMaps + "opacity_" + the_filename); // diffuse map
+                    //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
+                    mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
+                    mtlOutput.println("\tmap_d " + Subfolder_exportMaps + "opacity_" + the_filename); // diffuse map
+                  }
                 }
               }
             }
@@ -634,17 +610,18 @@ class Model2Ds {
 
         if (f != -1) {
 
-          int n = abs(this.MAP[f]);
+          Model2DKind kind = this.Kind[f];
+          int n = this.FileIndex[f];
 
-          int w = this.Images[n].width;
-          int h = this.Images[n].height;
+          int w = kind.Images[n].width;
+          int h = kind.Images[n].height;
 
           float x = this.getX(f) * overallScale;
           float y = this.getY(f) * overallScale;
           float z = this.getZ(f) * overallScale;
 
           float rh = this.getS(f) * 0.5 * overallScale;
-          float rw = rh * this.ImageRatios[n];
+          float rw = rh * kind.ImageRatios[n];
 
           float t = PI + WIN3D.rotationZ * PI / 180.0;
           if (WIN3D.projectionTypeIndex == 1) t = atan2(y - WIN3D.cameraY, x - WIN3D.cameraX) + 0.5 * PI;
@@ -655,7 +632,7 @@ class Model2Ds {
             t = 0;
           }
 
-          if (this.MAP[f] < 0) t += PI;
+          if (this.Mirror[f]) t += PI;
 
 
           float dx = rw * cos(t);
@@ -671,11 +648,14 @@ class Model2Ds {
 
             if (User3D.exporterMaintainPolygons == 1) {
               obj_lastGroupNumber += 1;
-              objOutput.println("g this." + nf(f, 0) + "_type" + nf(n, 0));
+              // kind.tag included (not just n) - n is now local to each
+              // kind, so without the tag a person and a tree could share
+              // the same local index and collide into the same group name.
+              objOutput.println("g this." + nf(f, 0) + "_type" + kind.tag + nf(n, 0));
             }
 
             if (User3D.exporterMaterialLibrary) {
-              objOutput.println("usemtl this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+              objOutput.println("usemtl this." + kind.ImagePath[n].substring(kind.ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
             }
           }
 
@@ -691,7 +671,7 @@ class Model2Ds {
 
                   WIN3D.graphics.beginShape();
 
-                  WIN3D.graphics.texture(this.Images[n]);
+                  WIN3D.graphics.texture(kind.Images[n]);
                   WIN3D.graphics.stroke(255, 255, 255, 0);
                   WIN3D.graphics.fill(255, 255, 255, 0);
 
@@ -756,7 +736,7 @@ class Model2Ds {
 
                   htmlOutput.println("\t\t\t\t<shape>");
 
-                  htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+                  htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + kind.ImagePath[n].substring(kind.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
 
                   htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
 
@@ -820,7 +800,7 @@ class Model2Ds {
                   nf += 2;
                 }
 
-                if (this.isTree(n)) { // case: trees
+                if (kind.isTree()) { // case: trees
 
                   float ratio = 0.5;
 
@@ -844,7 +824,7 @@ class Model2Ds {
                     if(Math.abs(angleWithCamera) > 45) {
                       WIN3D.graphics.beginShape();
 
-                      WIN3D.graphics.texture(this.Images[n]);
+                      WIN3D.graphics.texture(kind.Images[n]);
                       WIN3D.graphics.stroke(255, 255, 255, 0);
                       WIN3D.graphics.fill(255, 255, 255, 0);
 
@@ -908,7 +888,7 @@ class Model2Ds {
 
                     htmlOutput.println("\t\t\t\t<shape>");
 
-                    htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
+                    htmlOutput.println("\t\t\t\t\t<Appearance USE='this." + kind.ImagePath[n].substring(kind.ImagePath[n].lastIndexOf("/") + 1) + "'></Appearance>");
 
                     htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
 
@@ -1088,19 +1068,22 @@ class Model2Ds {
         float u = hitPoint[f][4];
         float v = hitPoint[f][5];
 
-        int n = abs(this.MAP[OBJ_ID]);
+        Model2DKind kind = this.Kind[OBJ_ID];
+        int n = this.FileIndex[OBJ_ID];
 
-        int RES1 = this.Images[n].width;
-        int RES2 = this.Images[n].height;
+        int RES1 = kind.Images[n].width;
+        int RES2 = kind.Images[n].height;
 
-        this.Images[n].loadPixels();
+        kind.Images[n].loadPixels();
 
-        if (n < 0) u = 1 - u;
+        // (the original had an "if (n < 0) u = 1 - u;" here, but n was
+        // already abs()'d above, so that branch could never fire - the
+        // mirror flag never affected this particular alpha sample)
 
         int Image_X = int(u * RES1);
         int Image_Y = int(v * RES2);
 
-        color COL = this.Images[n].get(Image_X, Image_Y);
+        color COL = kind.Images[n].get(Image_X, Image_Y);
         //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
 
         float COL_V = (COL >> 24 & 0xFF);
@@ -1134,18 +1117,23 @@ class Model2Ds {
 
     for (int f = 0; f < this.num; f++) {
 
-      int n = abs(this.MAP[f]);
+      Model2DKind kind = this.Kind[f];
+      int n = this.FileIndex[f];
 
-      int w = this.Images[n].width;
-      int h = this.Images[n].height;
+      int w = kind.Images[n].width;
+      int h = kind.Images[n].height;
 
       float r = this.getS(f) * 0.5;
 
       float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
 
-      if (this.MAP[f] < 0) t += PI;
+      if (this.Mirror[f]) t += PI;
 
-      if (r > 2.5) { // to select only trees!
+      // Was "if (r > 2.5)" - a size heuristic standing in for "is this a
+      // tree", since trees are normally bigger than people. kind.isTree()
+      // is the real check now, so a tiny tree or an oversized person no
+      // longer gets the wrong shadow-mask treatment.
+      if (kind.isTree()) {
 
         float x = this.getX(f);
         float y = this.getY(f);
@@ -1154,7 +1142,7 @@ class Model2Ds {
         { // Vertical mask
           TREES_graphics.beginShape();
 
-          TREES_graphics.texture(this.Images[n]);
+          TREES_graphics.texture(kind.Images[n]);
 
           x = this.getX(f);
           y = this.getY(f);
@@ -1273,7 +1261,7 @@ class Model2Ds {
 
             TREES_graphics.beginShape();
 
-            TREES_graphics.texture(this.Images[n]);
+            TREES_graphics.texture(kind.Images[n]);
 
             float[] TX = {
               0, 0, 0, 0
@@ -1345,6 +1333,12 @@ class Model2Ds {
 
 
 
+  // Identity is now written out as (kind tag, filename, mirror flag)
+  // instead of a single recomputed flat-array position - a project
+  // saved this way stays correct no matter how either input/images
+  // folder's contents change later, since "PEOPLE,woman_03.png,0" never
+  // depends on how many files happen to be in input/images/trees (or
+  // even input/images/people itself) when the project is re-opened.
   public void to_XML (XML xml) {
 
     {
@@ -1364,7 +1358,11 @@ class Model2Ds {
         txt += ",";
         txt += nf(this.getS(i), 0, 4).replace(",", "."); // <<<<
         txt += ",";
-        txt += this.MAP[i];
+        txt += this.Kind[i].tag;
+        txt += ",";
+        txt += this.Kind[i].filenameOf(this.FileIndex[i]);
+        txt += ",";
+        txt += (this.Mirror[i] ? "1" : "0");
 
         XML_setContent(child, txt);
       }
@@ -1391,7 +1389,25 @@ class Model2Ds {
         this.setY(i, float(parts[1]));
         this.setZ(i, float(parts[2]));
         this.setS(i, float(parts[3]));
-        this.MAP[i] = int(parts[4]);
+
+        Model2DKind kind = model2DKindByTag(parts[4]);
+        String filename = parts[5];
+
+        int localIndex = kind.indexOfFile(filename);
+        if (localIndex == 0) {
+          // The saved file no longer exists under this kind's folder -
+          // renamed or deleted since this project was last saved. Fall
+          // back to that kind's first available file (if any) instead
+          // of crashing or silently drifting into a different kind -
+          // the one failure mode left once identity no longer depends
+          // on folder file counts is "the exact file is simply gone".
+          println("Model2Ds.from_XML: texture file not found, falling back:", kind.tag, filename);
+          localIndex = (kind.fileCount > 0) ? 1 : 0;
+        }
+
+        this.Kind[i] = kind;
+        this.FileIndex[i] = localIndex;
+        this.Mirror[i] = (parts.length > 6) && parts[6].equals("1");
       }
 
       this.displayAll = XML_getBoolean(parent, "displayAll");

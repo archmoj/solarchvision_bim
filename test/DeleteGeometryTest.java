@@ -362,7 +362,15 @@ class DeleteGeometryTest {
     app.allModel2Ds.XYZS = new float[][]{
       floatRow(4, 100), floatRow(4, 200), floatRow(4, 300), floatRow(4, 400)
     };
-    app.allModel2Ds.MAP = new int[]{0, 0, 0, 0};
+    // Kind/FileIndex/Mirror are the three identity arrays that now move
+    // in lockstep with XYZS (replacing the old single MAP array) -
+    // distinct FileIndex values per row make the post-delete compaction
+    // check meaningful.
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{
+      app.PEOPLE_KIND, app.TREES_KIND, app.PEOPLE_KIND, app.TREES_KIND
+    };
+    app.allModel2Ds.FileIndex = new int[]{10, 20, 30, 40};
+    app.allModel2Ds.Mirror = new boolean[]{false, true, false, true};
     app.allModel2Ds.num = 4;
 
     app.allGroups.makeEmpty(2);
@@ -381,7 +389,11 @@ class DeleteGeometryTest {
     assertEquals(100f, app.allModel2Ds.XYZS[0][0], 0.0001f);
     assertEquals(300f, app.allModel2Ds.XYZS[1][0], 0.0001f);
     assertEquals(400f, app.allModel2Ds.XYZS[2][0], 0.0001f);
-    assertArrayEquals(new int[]{0, 0, 0}, app.allModel2Ds.MAP);
+    assertArrayEquals(new int[]{10, 30, 40}, app.allModel2Ds.FileIndex); // row 1 (value 20) removed, the rest compacted
+    assertArrayEquals(new boolean[]{false, false, true}, app.allModel2Ds.Mirror);
+    assertSame(app.PEOPLE_KIND, app.allModel2Ds.Kind[0]);
+    assertSame(app.PEOPLE_KIND, app.allModel2Ds.Kind[1]);
+    assertSame(app.TREES_KIND, app.allModel2Ds.Kind[2]);
   }
 
   // --- solidSelection (a full integration test) ------------------------

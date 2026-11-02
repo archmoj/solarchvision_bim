@@ -147,24 +147,19 @@ class Edit3D {
 
       if (WIN3D.currentTool != UITASK.Seed_Material) continue;
 
-      int n = allModel2Ds.MAP[OBJ_ID];
-      int sign_n = (n < 0) ? -1 : 1;
-      n = abs(n);
+      Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
+      boolean mirror = allModel2Ds.Mirror[OBJ_ID];
 
-      int n1 = allModel2Ds.peopleFileCount;
-      int n2 = allModel2Ds.peopleFileCount + allModel2Ds.treesFileCount;
+      int n = allModel2Ds.FileIndex[OBJ_ID] + p;
 
-      n += p;
+      // Wraps within this instance's own kind only - no more n1/n2
+      // cross-family offset math, since each kind now has its own
+      // local index space (see model2DKind.pde).
+      if (n > kind.fileCount) { n = 1; mirror = !mirror; }
+      if (n < 1) { n = kind.fileCount; mirror = !mirror; }
 
-      if (allModel2Ds.isTree(n)) { // case: trees
-        if (n > n2) { n = n1 + 1; sign_n *= -1; }
-        if (n < n1 + 1) { n = n2; sign_n *= -1; }
-      } else { // case: people
-        if (n > n1) { n = 1; sign_n *= -1; }
-        if (n < 1) { n = n1; sign_n *= -1; }
-      }
-
-      allModel2Ds.MAP[OBJ_ID] = n * sign_n;
+      allModel2Ds.FileIndex[OBJ_ID] = n;
+      allModel2Ds.Mirror[OBJ_ID] = mirror;
     }
   }
 

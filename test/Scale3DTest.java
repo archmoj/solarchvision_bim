@@ -187,10 +187,11 @@ class Scale3DTest {
     app.allModel2Ds.XYZS[0][3] = 1; // tree's magnitude
     app.allModel2Ds.XYZS[1][0] = 3; // person's X
     app.allModel2Ds.XYZS[1][3] = 1; // person's magnitude
-    // isTree(n) is `abs(n) > peopleFileCount` and peopleFileCount
-    // defaults to 0, so MAP value 0 reads as "not a tree" (a person)
-    // and any nonzero MAP value reads as "a tree".
-    app.allModel2Ds.MAP = new int[]{1, 0};
+    // isTree(f)/isScalable(f) are now a fixed property of each
+    // instance's own Kind - no peopleFileCount/MAP boundary involved.
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND, app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1, 1};
+    app.allModel2Ds.Mirror = new boolean[]{false, false};
 
     app.Select3D.model2DSelection = new int[]{0, 1};
 
@@ -240,7 +241,9 @@ class Scale3DTest {
     app.allModel2Ds.XYZS = new float[][]{new float[4]};
     app.allModel2Ds.XYZS[0][0] = 3;
     app.allModel2Ds.XYZS[0][3] = 1;
-    app.allModel2Ds.MAP = new int[]{1}; // a tree
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND}; // a tree
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
 
     app.allSolids.DEF = new float[][]{new float[13]};

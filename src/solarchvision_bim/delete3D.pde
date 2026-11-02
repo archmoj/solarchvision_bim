@@ -97,6 +97,46 @@ class Delete3D {
     return result;
   }
 
+  // Added for Model2Ds' per-instance identity arrays (Kind[]/Mirror[] -
+  // FileIndex[] already works via the existing int[] overload above).
+  Model2DKind[] removeIndices(Model2DKind[] arr, int[] ids) {
+    if (ids.length == 0) return arr;
+    boolean[] remove = new boolean[arr.length];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    Model2DKind[] result = new Model2DKind[arr.length - removedCount];
+    int k = 0;
+    for (int i = 0; i < arr.length; i++) {
+      if (!remove[i]) result[k++] = arr[i];
+    }
+    return result;
+  }
+
+  boolean[] removeIndices(boolean[] arr, int[] ids) {
+    if (ids.length == 0) return arr;
+    boolean[] remove = new boolean[arr.length];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    boolean[] result = new boolean[arr.length - removedCount];
+    int k = 0;
+    for (int i = 0; i < arr.length; i++) {
+      if (!remove[i]) result[k++] = arr[i];
+    }
+    return result;
+  }
+
   void selection () {
 
     if (currentObjectCategory == ObjectCategory.TERRAIN) {
@@ -216,7 +256,9 @@ class Delete3D {
     }
 
     allModel2Ds.XYZS = removeIndices(allModel2Ds.XYZS, ids);
-    allModel2Ds.MAP = removeIndices(allModel2Ds.MAP, ids);
+    allModel2Ds.Kind = removeIndices(allModel2Ds.Kind, ids);
+    allModel2Ds.FileIndex = removeIndices(allModel2Ds.FileIndex, ids);
+    allModel2Ds.Mirror = removeIndices(allModel2Ds.Mirror, ids);
     allModel2Ds.num -= ids.length;
 
     model_changed();
@@ -372,9 +414,17 @@ class Delete3D {
         float[][] endListF = (float[][]) subset(allModel2Ds.XYZS, endModel2Ds + 1);
         allModel2Ds.XYZS = (float[][]) concat(startListF, endListF);
 
-        int[] startListM = (int[]) subset(allModel2Ds.MAP, 0, startModel2Ds);
-        int[] endListM = (int[]) subset(allModel2Ds.MAP, endModel2Ds + 1);
-        allModel2Ds.MAP = (int[]) concat(startListM, endListM);
+        Model2DKind[] startListK = (Model2DKind[]) subset(allModel2Ds.Kind, 0, startModel2Ds);
+        Model2DKind[] endListK = (Model2DKind[]) subset(allModel2Ds.Kind, endModel2Ds + 1);
+        allModel2Ds.Kind = (Model2DKind[]) concat(startListK, endListK);
+
+        int[] startListFi = (int[]) subset(allModel2Ds.FileIndex, 0, startModel2Ds);
+        int[] endListFi = (int[]) subset(allModel2Ds.FileIndex, endModel2Ds + 1);
+        allModel2Ds.FileIndex = (int[]) concat(startListFi, endListFi);
+
+        boolean[] startListMi = (boolean[]) subset(allModel2Ds.Mirror, 0, startModel2Ds);
+        boolean[] endListMi = (boolean[]) subset(allModel2Ds.Mirror, endModel2Ds + 1);
+        allModel2Ds.Mirror = (boolean[]) concat(startListMi, endListMi);
 
         allModel2Ds.num = allModel2Ds.XYZS.length;
       }

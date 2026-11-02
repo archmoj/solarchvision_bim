@@ -183,8 +183,7 @@ class Scale3D {
       allModel2Ds.setY(f, P[1]);
       allModel2Ds.setZ(f, P[2]);
 
-      int n = allModel2Ds.MAP[f];
-      if (allModel2Ds.isTree(n)) { // does not scale people!
+      if (allModel2Ds.isScalable(f)) { // does not scale people!
         allModel2Ds.magS(f, sz);
       }
     }
@@ -239,8 +238,7 @@ class Scale3D {
           allModel2Ds.setY(f, P[1]);
           allModel2Ds.setZ(f, P[2]);
 
-          int n = allModel2Ds.MAP[f];
-          if (allModel2Ds.isTree(n)) { // does not scale people!
+          if (allModel2Ds.isScalable(f)) { // does not scale people!
             allModel2Ds.magS(f, sz);
           }
         }

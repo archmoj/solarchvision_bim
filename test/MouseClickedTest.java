@@ -1117,8 +1117,9 @@ class MouseClickedTest {
   void pickOrAssignModel2DSeedMaterial_isANoOpWhenTheCurrentTaskIsntSeedMaterial () {
     app.WIN3D.currentTool = app.UITASK.Move;
     app.WIN3D.toolParameterModifier = 1;
-    app.allModel2Ds.peopleFileCount = 2;
-    app.allModel2Ds.MAP = new int[]{5};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{5};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.User3D.creatorPlantTypeIndex = -1;
 
     app.pickOrAssignModel2DSeedMaterial(0);
@@ -1127,11 +1128,11 @@ class MouseClickedTest {
   }
 
   @Test
-  void pickOrAssignModel2DSeedMaterial_pickOfAPersonReadsItsTypeIntoCreatePersonType () {
+  void pickOrAssignModel2DSeedMaterial_pickOfAPersonReadsItsLocalIndexIntoCreatePersonType () {
     app.WIN3D.currentTool = app.UITASK.Seed_Material;
     app.WIN3D.toolParameterModifier = 1; // Pick
-    app.allModel2Ds.peopleFileCount = 5;
-    app.allModel2Ds.MAP = new int[]{3}; // 3 <= peopleFileCount -> a person
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{3};
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
@@ -1139,11 +1140,13 @@ class MouseClickedTest {
   }
 
   @Test
-  void pickOrAssignModel2DSeedMaterial_pickOfATreeReadsItsOffsetTypeIntoCreatePlantType () {
+  void pickOrAssignModel2DSeedMaterial_pickOfATreeReadsItsLocalIndexIntoCreatePlantType () {
     app.WIN3D.currentTool = app.UITASK.Seed_Material;
     app.WIN3D.toolParameterModifier = 1; // Pick
-    app.allModel2Ds.peopleFileCount = 5;
-    app.allModel2Ds.MAP = new int[]{8}; // 8 > peopleFileCount -> a tree, offset type = 8-5 = 3
+    // No more peopleFileCount-relative offset to work out by hand - a
+    // tree instance's own FileIndex already IS its local plant type.
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{3};
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
@@ -1151,29 +1154,32 @@ class MouseClickedTest {
   }
 
   @Test
-  void pickOrAssignModel2DSeedMaterial_assignWritesTheCurrentTypePreservingTheInstancesOwnSign () {
+  void pickOrAssignModel2DSeedMaterial_assignWritesTheCurrentTypePreservingTheInstancesOwnMirror () {
     app.WIN3D.currentTool = app.UITASK.Seed_Material;
     app.WIN3D.toolParameterModifier = 2; // Assign
-    app.allModel2Ds.peopleFileCount = 5;
-    app.allModel2Ds.MAP = new int[]{-8}; // a tree instance, flipped (negative)
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{8};
+    app.allModel2Ds.Mirror = new boolean[]{true}; // a flipped tree instance
     app.User3D.creatorPlantTypeIndex = 1;
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
-    assertEquals(-6, app.allModel2Ds.MAP[0]); // -(1 + 5), sign kept negative
+    assertEquals(1, app.allModel2Ds.FileIndex[0]);
+    assertTrue(app.allModel2Ds.Mirror[0]); // left untouched by Assign
   }
 
   @Test
   void pickOrAssignModel2DSeedMaterial_assignAllIsTreatedTheSameAsAssignSub () {
     app.WIN3D.currentTool = app.UITASK.Seed_Material;
     app.WIN3D.toolParameterModifier = 3; // Assign(all) - no group distinction for MODEL2D
-    app.allModel2Ds.peopleFileCount = 5;
-    app.allModel2Ds.MAP = new int[]{2}; // a person instance
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{2};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.User3D.creatorPersonTypeIndex = 4;
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
-    assertEquals(4, app.allModel2Ds.MAP[0]);
+    assertEquals(4, app.allModel2Ds.FileIndex[0]);
   }
 
   // ==== pickOrAssignModel1DProperty (extracted) ===========
@@ -1376,7 +1382,7 @@ class MouseClickedTest {
   @Test
   void getMoveOriginPoint_forAModel2DReturnsTheLastSelectedInstancesPosition () {
     app.currentObjectCategory = app.ObjectCategory.MODEL2D;
-    app.allModel2Ds.MAP = new int[]{0, 0, 0}; // 3 instances, values unused by getX/Y/Z
+    // (no Kind/FileIndex/Mirror filler needed - getMoveOriginPoint() only reads XYZS)
     app.allModel2Ds.XYZS = new float[][]{
       {1, 1, 1, 1}, {2, 2, 2, 1}, {99, 88, 77, 1} // last one should win
     };

@@ -314,10 +314,13 @@ class GroupsTest {
   }
 
   @Test
-  void groupSelection_model2DCategoryClonesPositionAndPreservesTreeFamily () {
+  void groupSelection_model2DCategoryClonesPositionAndPreservesTreeVariant () {
     app.allModel2Ds.XYZS = new float[][]{{5, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{3}; // abs(3) > peopleFileCount(0) -> a tree
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{3};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
+    app.TREES_KIND.fileCount = 10; // wide enough that 3 is never clamped
 
     app.currentObjectCategory = app.ObjectCategory.MODEL2D;
     app.Select3D.model2DSelection = new int[]{0};
@@ -327,10 +330,12 @@ class GroupsTest {
     assertEquals(1, app.allGroups.num);
     assertEquals(1, app.allModel2Ds.num);
     assertEquals(5f, app.allModel2Ds.getX(0), 0.0001f);
-    // create()'s own internal +/-1 sign roll on MAP means only the
-    // magnitude (and therefore the tree/person family) is guaranteed,
-    // same caveat as Clone3DTest's cloneModel2D tests.
-    assertTrue(app.allModel2Ds.isTree(app.allModel2Ds.MAP[0]));
+    // With a kind-local index, "same variation" now means exact kind +
+    // exact local index + exact mirror, guaranteed rather than just
+    // the family - see Clone3DTest's cloneModel2D tests.
+    assertSame(app.TREES_KIND, app.allModel2Ds.Kind[0]);
+    assertEquals(3, app.allModel2Ds.FileIndex[0]);
+    assertFalse(app.allModel2Ds.Mirror[0]);
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Model2Ds[0]);
   }
 

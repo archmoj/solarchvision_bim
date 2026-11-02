@@ -138,39 +138,37 @@ void pickOrAssignFaceProperty (int f) {
 }
 
 // Pulled out of mouseClicked()'s UITASK.Seed_Material handling for a
-// clicked MODEL2D instance: MODEL2D's own MAP[] encodes both which
-// PEOPLE/TREES filename an instance uses (abs(MAP[OBJ_ID])) and a
-// left/right-facing flip (its sign) in one int. Pick
-// (toolParameterModifier==1) reads the clicked instance's own type
-// into User3D.creatorPlantTypeIndex or createPersonTypeIndex depending on
-// allModel2Ds.isTree(); Assign (==2 or ==3 - both treated identically
+// clicked MODEL2D instance: each instance stores its own Kind (PEOPLE/
+// TREES), a local FileIndex within that kind's own file list, and a
+// separate Mirror flag (left/right flip) - see model2DKind.pde. Pick
+// (toolParameterModifier==1) reads the clicked instance's own local
+// FileIndex into User3D.creatorPlantTypeIndex or createPersonTypeIndex
+// depending on its kind; Assign (==2 or ==3 - both treated identically
 // here, unlike the FACE property case above) writes the current
-// createPlantTypeIndex/createPersonTypeIndex back onto MAP[OBJ_ID], carrying
-// that instance's own sign (its flip) forward unchanged.
+// createPlantTypeIndex/createPersonTypeIndex back onto that instance's
+// FileIndex, carrying its own Mirror flag forward unchanged.
 void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
   if (WIN3D.currentTool != UITASK.Seed_Material) return;
 
-  int n = allModel2Ds.MAP[OBJ_ID];
-  int sign_n = 1;
-  if (n < 0) sign_n = -1;
-  n = abs(n);
-  int n1 = allModel2Ds.peopleFileCount;
+  Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
 
   if (WIN3D.toolParameterModifier == 1) { // Pick
-    if (allModel2Ds.isTree(n)) { // case: trees
-      User3D.creatorPlantTypeIndex = n - n1;
+    if (kind.isTree()) { // case: trees
+      User3D.creatorPlantTypeIndex = allModel2Ds.FileIndex[OBJ_ID];
     }
     else { // case: people
-      User3D.creatorPersonTypeIndex = n;
+      User3D.creatorPersonTypeIndex = allModel2Ds.FileIndex[OBJ_ID];
     }
   }
   if ((WIN3D.toolParameterModifier == 2) || (WIN3D.toolParameterModifier == 3)) { // Assign
-    if (allModel2Ds.isTree(n)) { // case: trees
-      allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.creatorPlantTypeIndex + n1);
+    if (kind.isTree()) { // case: trees
+      allModel2Ds.FileIndex[OBJ_ID] = User3D.creatorPlantTypeIndex;
     }
     else { // case: people
-      allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.creatorPersonTypeIndex;
+      allModel2Ds.FileIndex[OBJ_ID] = User3D.creatorPersonTypeIndex;
     }
+    // Mirror[OBJ_ID] is left untouched - carries that instance's own
+    // flip forward unchanged, same as the original.
   }
 }
 
@@ -1934,13 +1932,13 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
           }
 
           if (CreateObject == CREATE.Plant) {
-            // n's own computation (not a straight pass-through
-            // of User3D.creatorPlantTypeIndex) stays here too -
-            // it's specific to this click-to-create workflow,
-            // not something "TREE2" itself would know how to
-            // derive.
+            // n is now a plain pass-through of creatorPlantTypeIndex:
+            // Tree2's own m= parameter is always a TREES-local index
+            // now (see Model2Ds.create()'s own comment), so there's no
+            // more need to offset it by allModel2Ds.peopleFileCount
+            // before handing it to the script command.
             int n = 0;
-            if (User3D.creatorPlantTypeIndex > 0) n = User3D.creatorPlantTypeIndex + allModel2Ds.peopleFileCount;
+            if (User3D.creatorPlantTypeIndex > 0) n = User3D.creatorPlantTypeIndex;
 
             randomSeed(millis());
             runScriptLine("Tree2 m=" + n + " x=" + x + " y=" + y + " z=" + z + " h=" + (2 * rz));

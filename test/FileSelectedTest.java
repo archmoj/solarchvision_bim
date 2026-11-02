@@ -37,13 +37,10 @@ class FileSelectedTest {
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
     app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
-    // allModel2Ds.ImagePath is normally populated by load_images() during
-    // real app startup - a fresh instance never runs that (it touches
-    // loadImage()/PImage, so it isn't something a test should call either -
-    // see test/README.md), but allModel2Ds.to_XML() (reached through
-    // saveProject() below) assumes it's at least non-null. This is
-    // load_images()'s own first two lines, with no actual image loading.
-    app.allModel2Ds.ImagePath = new String[]{""};
+    // (allModel2Ds no longer needs an ImagePath stand-in here: to_XML()
+    // now only touches each placed instance's own Kind/FileIndex, inside
+    // a loop that never runs at all when num is 0, as it is for a fresh
+    // instance - so there's nothing left to be null.)
     // Same reasoning, but shaped [rowCount][columnCount][3] - matching
     // Terrain's own default row/column counts - rather than empty: an
     // empty Mesh still satisfies to_XML() (it just writes zero <item>s),

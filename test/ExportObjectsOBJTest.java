@@ -30,7 +30,8 @@ class ExportObjectsOBJTest {
   @BeforeEach
   void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
-    app.allModel2Ds.ImagePath = new String[]{""}; // see FileSelectedTest.java
+    // (no allModel2Ds.ImagePath stand-in needed any more - see
+    // FileSelectedTest.java's own comment on why.)
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
     // See Earth3DTest.java's own comment on why this isn't
     // app.locateBaseFolder() - that walks up from sketchPath() looking

@@ -165,39 +165,40 @@ class Clone3DTest {
   // ================= cloneModel2D =====================================
 
   @Test
-  void cloneModel2D_produceSameVariationClonesPositionAndPreservesFamily () {
+  void cloneModel2D_produceSameVariationClonesPositionAndPreservesKindAndVariant () {
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
-    app.allModel2Ds.MAP = new int[]{5}; // abs(5) > peopleFileCount(0) -> a tree
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{5};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
+    app.TREES_KIND.fileCount = 10; // wide enough that 5 is never clamped
 
     app.Clone3D.cloneModel2D(0, true);
 
     assertEquals(2, app.allModel2Ds.num);
     assertEquals(10f, app.allModel2Ds.getX(1), 0.0001f);
     assertEquals(30f, app.allModel2Ds.getZ(1), 0.0001f);
-    // create()'s own internal +/-1 sign roll means only the MAGNITUDE
-    // (and therefore the tree/person family) is guaranteed preserved,
-    // not necessarily the exact signed MAP value.
-    assertTrue(app.allModel2Ds.isTree(app.allModel2Ds.MAP[1]));
+    // With a kind-local index, "same variation" now means exact kind +
+    // exact local index + exact mirror - no sign/magnitude guessing
+    // needed, unlike the old flat-MAP scheme.
+    assertSame(app.TREES_KIND, app.allModel2Ds.Kind[1]);
+    assertEquals(5, app.allModel2Ds.FileIndex[1]);
+    assertFalse(app.allModel2Ds.Mirror[1]);
   }
 
   @Test
-  void cloneModel2D_notProduceSameVariationPicksAFreshVariantOfTheSameFamily () {
-    // Widen the People/Trees ranges so "a fresh random variant" and "the
-    // exact original" are distinguishable ranges rather than both
-    // degenerately collapsing to 1 (which is what happens with the
-    // default peopleFileCount=treesFileCount=0).
-    app.allModel2Ds.peopleFileCount = 5;  // variant ids 1-5
-    app.allModel2Ds.treesFileCount = 5;   // variant ids 6-10
+  void cloneModel2D_notProduceSameVariationPicksAFreshVariantOfTheSameKind () {
+    app.TREES_KIND.fileCount = 5; // variant ids 1-5
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
-    app.allModel2Ds.MAP = new int[]{7}; // a tree (abs(7) > 5)
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{3};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
 
     app.Clone3D.cloneModel2D(0, false);
 
-    int newAbsMap = Math.abs(app.allModel2Ds.MAP[1]);
-    assertTrue(newAbsMap >= 6 && newAbsMap <= 10); // still a tree-range variant
-    assertTrue(app.allModel2Ds.isTree(app.allModel2Ds.MAP[1]));
+    assertSame(app.TREES_KIND, app.allModel2Ds.Kind[1]); // still a tree
+    assertTrue(app.allModel2Ds.FileIndex[1] >= 1 && app.allModel2Ds.FileIndex[1] <= 5); // a fresh variant within range
   }
 
   // ================= cloneSolid =======================================
@@ -260,7 +261,9 @@ class Clone3DTest {
   @Test
   void model2DsBatch_clonesEverySelectedModel2DAndSelectsOnlyTheClones () {
     app.allModel2Ds.XYZS = new float[][]{new float[4]};
-    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
     app.Select3D.model2DSelection = new int[]{0};
 
@@ -337,7 +340,9 @@ class Clone3DTest {
     app.allModel1Ds.num = 1;
 
     app.allModel2Ds.XYZS = new float[][]{new float[4]};
-    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
     app.allModel2Ds.num = 1;
 
     app.allSolids.DEF = new float[][]{new float[13]};

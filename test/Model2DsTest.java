@@ -14,22 +14,24 @@ class Model2DsTest {
   // ================= makeEmpty ========================================
 
   @Test
-  void makeEmpty_resetsXYZSAndMAPToTheGivenLength () {
+  void makeEmpty_resetsXYZSAndIdentityArraysToTheGivenLength () {
     app.allModel2Ds.makeEmpty(3);
     assertEquals(3, app.allModel2Ds.num);
     assertEquals(3, app.allModel2Ds.XYZS.length);
     assertEquals(4, app.allModel2Ds.XYZS[0].length);
-    assertEquals(3, app.allModel2Ds.MAP.length);
+    assertEquals(3, app.allModel2Ds.Kind.length);
+    assertEquals(3, app.allModel2Ds.FileIndex.length);
+    assertEquals(3, app.allModel2Ds.Mirror.length);
   }
 
   // ================= create ===========================================
 
   @Test
-  void create_appendsPositionAndScaleAndPreservesTheGivenFamilyByMagnitude () {
-    // create()'s own internal +/-1 sign roll on MAP means only the
-    // magnitude (and therefore the tree/person family) is guaranteed
-    // preserved when m is nonzero, not the exact signed value - same
-    // caveat already established in Clone3DTest's cloneModel2D tests.
+  void create_appendsPositionAndScaleAndPreservesTheGivenKindAndLocalIndex () {
+    // Unlike the old flat-array scheme, a kind's own fileCount is all
+    // that bounds its own magnitude now - no cross-kind n1/n2 math.
+    app.TREES_KIND.fileCount = 10;
+
     app.allModel2Ds.create("TREES", 5, 10, 20, 30, 2);
 
     assertEquals(1, app.allModel2Ds.num);
@@ -37,7 +39,41 @@ class Model2DsTest {
     assertEquals(20f, app.allModel2Ds.getY(0), 0.0001f);
     assertEquals(30f, app.allModel2Ds.getZ(0), 0.0001f);
     assertEquals(2f, app.allModel2Ds.getS(0), 0.0001f);
-    assertEquals(5, Math.abs(app.allModel2Ds.MAP[0]));
+    assertSame(app.TREES_KIND, app.allModel2Ds.Kind[0]);
+    assertEquals(5, app.allModel2Ds.FileIndex[0]);
+    assertFalse(app.allModel2Ds.Mirror[0]); // m=5 is positive -> not mirrored
+  }
+
+  @Test
+  void create_negativeMagnitudeMirrorsAndKeepsTheSameLocalIndex () {
+    app.PEOPLE_KIND.fileCount = 10;
+
+    app.allModel2Ds.create("PEOPLE", -3, 0, 0, 0, 1);
+
+    assertEquals(3, app.allModel2Ds.FileIndex[0]);
+    assertTrue(app.allModel2Ds.Mirror[0]);
+  }
+
+  @Test
+  void create_clampsAMagnitudePastTheKindsOwnFileCountInsteadOfRunningPastTheArray () {
+    // The old scheme had no upper clamp for TREES (only PEOPLE), so a
+    // too-large magnitude could index past the end of the flat array.
+    // Every kind is bounds-checked the same way now.
+    app.TREES_KIND.fileCount = 4;
+
+    app.allModel2Ds.create("TREES", 99, 0, 0, 0, 1);
+
+    assertEquals(4, app.allModel2Ds.FileIndex[0]);
+  }
+
+  @Test
+  void create_zeroMagnitudeWithNoFilesLoadedPicksLocalIndexZero () {
+    // fileCount defaults to 0 when loadImages() hasn't run (as in this
+    // test environment) - "pick a random variant" degrades gracefully
+    // to index 0 rather than calling random() with an empty range.
+    app.allModel2Ds.create("TREES", 0, 0, 0, 0, 1);
+
+    assertEquals(0, app.allModel2Ds.FileIndex[0]);
   }
 
   @Test
@@ -54,8 +90,9 @@ class Model2DsTest {
   void create_alsoCreatesAMatchingSolidWhenBuildingATreeAndExportModeIsSolid () {
     app.User3D.creatorMeshOrSolidMode = 1; // 0=Mesh (default, skips this branch), 1=Solid
     app.allSolids.DEF = new float[0][13];
+    app.TREES_KIND.fileCount = 10;
 
-    app.allModel2Ds.create("TREES", 3, 10, 20, 30, 2); // MAP=3 -> a tree (peopleFileCount defaults to 0)
+    app.allModel2Ds.create("TREES", 3, 10, 20, 30, 2);
 
     assertEquals(1, app.allSolids.DEF.length); // the cascade fired
     assertEquals(10f, app.allSolids.DEF[0][0], 0.0001f); // posX
@@ -67,13 +104,12 @@ class Model2DsTest {
   void create_doesNotCreateASolidForAPerson () {
     app.User3D.creatorMeshOrSolidMode = 1;
     app.allSolids.DEF = new float[0][13];
-    // peopleFileCount must be set above 0 for a nonzero MAP value to
-    // actually classify as a person rather than a tree - isTree() is
-    // `abs(n) > peopleFileCount`, so with the default peopleFileCount
-    // of 0, even MAP=1 would read as a tree.
-    app.allModel2Ds.peopleFileCount = 5;
+    // No peopleFileCount-vs-treesFileCount setup needed any more - a
+    // kind's own isTree() is just a fixed property of PEOPLE_KIND, not
+    // something derived from where its magnitude happens to fall.
+    app.PEOPLE_KIND.fileCount = 5;
 
-    app.allModel2Ds.create("PEOPLE", 1, 10, 20, 30, 2); // MAP=1, within the people range
+    app.allModel2Ds.create("PEOPLE", 1, 10, 20, 30, 2);
 
     assertEquals(0, app.allSolids.DEF.length); // no solid cascade for people
   }
@@ -110,14 +146,20 @@ class Model2DsTest {
     assertArrayEquals(new float[]{1, 1, 1, 15}, app.allModel2Ds.XYZS[0], 0.0001f);
   }
 
-  // ================= isTree ============================================
+  // ================= isTree / isScalable ================================
 
   @Test
-  void isTree_isDeterminedByMagnitudeAgainstNumFilesPeople () {
-    app.allModel2Ds.peopleFileCount = 5;
-    assertFalse(app.allModel2Ds.isTree(3));  // within the people range
-    assertFalse(app.allModel2Ds.isTree(-3)); // sign doesn't matter
-    assertTrue(app.allModel2Ds.isTree(7));   // past the people range -> a tree
+  void isTree_reflectsEachInstancesOwnKindRatherThanAMagnitudeBoundary () {
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND, app.TREES_KIND};
+    assertFalse(app.allModel2Ds.isTree(0));
+    assertTrue(app.allModel2Ds.isTree(1));
+  }
+
+  @Test
+  void isScalable_isFalseForPeopleAndTrueForTrees () {
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND, app.TREES_KIND};
+    assertFalse(app.allModel2Ds.isScalable(0)); // "does not scale people!"
+    assertTrue(app.allModel2Ds.isScalable(1));
   }
 
   // ================= intersect =========================================
@@ -129,14 +171,15 @@ class Model2DsTest {
     };
     app.allModel2Ds.Faces = new int[][]{{0, 1, 2, 3}};
     app.allModel2Ds.num_visualFaces = 1; // so OBJ_ID = f directly, one face per object
-    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
 
-    app.allModel2Ds.Images = new processing.core.PImage[2]; // index 0 left null, by convention
+    app.TREES_KIND.Images = new processing.core.PImage[2]; // index 0 left null, by convention
     processing.core.PImage img = app.createImage(4, 4, processing.core.PConstants.ARGB);
     img.loadPixels();
     for (int i = 0; i < img.pixels.length; i++) img.pixels[i] = app.color(255, 255, 255, 255); // fully opaque
     img.updatePixels();
-    app.allModel2Ds.Images[1] = img;
+    app.TREES_KIND.Images[1] = img;
 
     float[] result = app.allModel2Ds.intersect(new float[]{1, 1, 10}, new float[]{0, 0, -1});
 
@@ -154,11 +197,12 @@ class Model2DsTest {
     };
     app.allModel2Ds.Faces = new int[][]{{0, 1, 2, 3}};
     app.allModel2Ds.num_visualFaces = 1;
-    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
 
-    app.allModel2Ds.Images = new processing.core.PImage[2];
+    app.TREES_KIND.Images = new processing.core.PImage[2];
     // createImage() starts fully transparent (alpha=0) by default - left untouched here.
-    app.allModel2Ds.Images[1] = app.createImage(4, 4, processing.core.PConstants.ARGB);
+    app.TREES_KIND.Images[1] = app.createImage(4, 4, processing.core.PConstants.ARGB);
 
     float[] result = app.allModel2Ds.intersect(new float[]{1, 1, 10}, new float[]{0, 0, -1});
 
@@ -172,9 +216,10 @@ class Model2DsTest {
     };
     app.allModel2Ds.Faces = new int[][]{{0, 1, 2, 3}};
     app.allModel2Ds.num_visualFaces = 1;
-    app.allModel2Ds.MAP = new int[]{1};
-    app.allModel2Ds.Images = new processing.core.PImage[2];
-    app.allModel2Ds.Images[1] = app.createImage(4, 4, processing.core.PConstants.ARGB);
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.TREES_KIND.Images = new processing.core.PImage[2];
+    app.TREES_KIND.Images[1] = app.createImage(4, 4, processing.core.PConstants.ARGB);
 
     float[] result = app.allModel2Ds.intersect(new float[]{50, 50, 10}, new float[]{0, 0, -1});
 
@@ -219,15 +264,17 @@ class Model2DsTest {
     app.allModel2Ds.verticalShadingSections = 1;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}}; // x,y,z,s -> rh = 0.5*s = 1
-    app.allModel2Ds.MAP = new int[]{1}; // a tree (peopleFileCount defaults to 0)
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.TREES_KIND.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
 
     app.allModel2Ds.addToFaceGrid();
 
     assertEquals(3, app.entireFaces.size()); // 1 vertical quad + 2 canopy cap quads
     for (int f = 0; f < 3; f++) {
       assertTrue(app.entireFaceCastsShadow.get(f)); // a tree always casts shadows
-      assertSame(app.allModel2Ds.Images[1], app.entireFaceAlphaTexture.get(f));
+      assertSame(app.TREES_KIND.Images[1], app.entireFaceAlphaTexture.get(f));
     }
 
     // t0 = PI -> dx = rh*cos(PI) = -1, dy = rh*sin(PI) = 0
@@ -256,8 +303,10 @@ class Model2DsTest {
     app.allModel2Ds.verticalShadingSections = 2;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{1};
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.TREES_KIND.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
 
     app.allModel2Ds.addToFaceGrid();
 
@@ -270,8 +319,10 @@ class Model2DsTest {
     app.allModel2Ds.verticalShadingSections = 4;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{1};
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.TREES_KIND.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
 
     app.allModel2Ds.addToFaceGrid();
 
@@ -283,12 +334,13 @@ class Model2DsTest {
     initEmptyFaceGrid();
     app.allModel2Ds.showPeopleInShade = true;
     app.allModel2Ds.verticalShadingSections = 4; // should be ignored entirely for a person
-    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}}; // rh = 1
-    app.allModel2Ds.MAP = new int[]{2}; // within the people range
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
-    app.allModel2Ds.ImageRatios = new float[]{0, 0, 0.5f}; // rw = rh * 0.5 = 0.5, distinct from rh
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{2};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.PEOPLE_KIND.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
+    app.PEOPLE_KIND.ImageRatios = new float[]{0, 0, 0.5f}; // rw = rh * 0.5 = 0.5, distinct from rh
 
     app.allModel2Ds.addToFaceGrid();
 
@@ -304,12 +356,13 @@ class Model2DsTest {
   void addToFaceGrid_personWithShowPeopleInShadeOff_addsNothing () {
     initEmptyFaceGrid();
     app.allModel2Ds.showPeopleInShade = false;
-    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{2};
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
-    app.allModel2Ds.ImageRatios = new float[]{0, 0, 0.5f};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
+    app.allModel2Ds.FileIndex = new int[]{2};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.PEOPLE_KIND.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
+    app.PEOPLE_KIND.ImageRatios = new float[]{0, 0, 0.5f};
 
     app.allModel2Ds.addToFaceGrid();
 
@@ -323,8 +376,10 @@ class Model2DsTest {
     app.allModel2Ds.displayAll = false;
     app.allModel2Ds.num = 1;
     app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{1};
-    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.TREES_KIND.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
 
     app.allModel2Ds.addToFaceGrid();
 
@@ -344,7 +399,7 @@ class Model2DsTest {
   void hasShadingContribution_falseWhenDisplayAllIsFalseEvenWithATree () {
     app.allModel2Ds.displayAll = false;
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.MAP = new int[]{1}; // a tree
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND}; // a tree
 
     assertFalse(app.allModel2Ds.hasShadingContribution());
   }
@@ -353,7 +408,7 @@ class Model2DsTest {
   void hasShadingContribution_trueWhenATreeIsPresent () {
     app.allModel2Ds.displayAll = true;
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
 
     assertTrue(app.allModel2Ds.hasShadingContribution());
   }
@@ -362,9 +417,8 @@ class Model2DsTest {
   void hasShadingContribution_falseForAPersonOnlySceneWithShowPeopleInShadeOff () {
     app.allModel2Ds.displayAll = true;
     app.allModel2Ds.showPeopleInShade = false;
-    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.MAP = new int[]{2}; // a person
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND}; // a person
 
     assertFalse(app.allModel2Ds.hasShadingContribution());
   }
@@ -373,9 +427,8 @@ class Model2DsTest {
   void hasShadingContribution_trueForAPersonOnlySceneWithShowPeopleInShadeOn () {
     app.allModel2Ds.displayAll = true;
     app.allModel2Ds.showPeopleInShade = true;
-    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.MAP = new int[]{2};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
 
     assertTrue(app.allModel2Ds.hasShadingContribution());
   }
@@ -383,24 +436,24 @@ class Model2DsTest {
   // ================= to_XML / from_XML round trip ======================
 
   @Test
-  void toXMLThenFromXML_roundTripsPositionScaleAndMAP () {
-    // ImagePath is set to an empty array specifically to keep the
-    // ".Textures" block of to_XML/from_XML a genuine no-op (zero
-    // iterations) - with it left null (its real default), to_XML would
-    // throw on ImagePath.length; with real paths in it, both directions
-    // would attempt real file I/O (saveBytes/loadBytes/loadImage), which
-    // this suite has no safe way to exercise against real files.
+  void toXMLThenFromXML_roundTripsPositionScaleKindFileIndexAndMirror () {
+    // Filenames is set directly (rather than going through the real
+    // input/images/trees folder via loadImages()) so to_XML/from_XML's
+    // filename lookups are exercised without any real file I/O.
+    app.TREES_KIND.Filenames = new String[]{"a.png", "b.png", "c.png", "d.png", "e.png"};
+    app.TREES_KIND.fileCount = 5;
+
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
-    app.allModel2Ds.MAP = new int[]{-5};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{5}; // "e.png"
+    app.allModel2Ds.Mirror = new boolean[]{true};
     app.allModel2Ds.num = 1;
     app.allModel2Ds.displayAll = false;
-    app.allModel2Ds.ImagePath = new String[0];
 
     processing.data.XML root = new processing.data.XML("root");
     app.allModel2Ds.to_XML(root);
 
     solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
-    fresh.ImagePath = new String[0];
     fresh.from_XML(root);
 
     assertEquals(1, fresh.num);
@@ -408,7 +461,68 @@ class Model2DsTest {
     assertEquals(20f, fresh.getY(0), 0.0001f);
     assertEquals(30f, fresh.getZ(0), 0.0001f);
     assertEquals(2f, fresh.getS(0), 0.0001f);
-    assertEquals(-5, fresh.MAP[0]);
+    assertSame(app.TREES_KIND, fresh.Kind[0]); // resolved from the saved "TREES" tag
+    assertEquals(5, fresh.FileIndex[0]); // resolved from the saved "e.png" filename
+    assertTrue(fresh.Mirror[0]);
     assertFalse(fresh.displayAll);
+  }
+
+  @Test
+  void fromXML_fallsBackToTheKindsFirstFileWhenTheSavedTextureNoLongerExists () {
+    // The actual bug this refactor fixes: a project saved before a file
+    // was renamed/removed should degrade gracefully on load instead of
+    // silently resolving to a different, unrelated texture (or crashing).
+    app.TREES_KIND.Filenames = new String[]{"oak.png", "pine.png"};
+    app.TREES_KIND.fileCount = 2;
+
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 1}};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1}; // "oak.png"
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.displayAll = true;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allModel2Ds.to_XML(root);
+
+    // Simulate "oak.png" having since been removed from
+    // input/images/trees, the way a real stale save would see it.
+    processing.data.XML item = root.getChild("model2D").getChildren("item")[0];
+    item.setContent(item.getContent().replace("oak.png", "removed_file.png"));
+
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
+    fresh.from_XML(root);
+
+    assertSame(app.TREES_KIND, fresh.Kind[0]); // stays a TREES instance - never silently drifts to PEOPLE
+    assertEquals(1, fresh.FileIndex[0]); // falls back to the kind's first available file
+  }
+
+  @Test
+  void toXMLThenFromXML_resolvesTheSameFilenameToTheSameLocalIndexRegardlessOfTheOtherKindsFileCount () {
+    // The actual bug report: adding/removing files from ONE folder used
+    // to renumber every already-placed object of the OTHER kind. Here,
+    // changing PEOPLE_KIND's file count between save and load must have
+    // no effect at all on a previously-saved TREES instance.
+    app.TREES_KIND.Filenames = new String[]{"oak.png", "pine.png", "birch.png"};
+    app.TREES_KIND.fileCount = 3;
+    app.PEOPLE_KIND.fileCount = 2; // at save time
+
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 1}};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{2}; // "pine.png"
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.displayAll = true;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allModel2Ds.to_XML(root);
+
+    app.PEOPLE_KIND.fileCount = 40; // simulate many PEOPLE files added before the next load
+
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
+    fresh.from_XML(root);
+
+    assertSame(app.TREES_KIND, fresh.Kind[0]);
+    assertEquals(2, fresh.FileIndex[0]); // still "pine.png" - unaffected by PEOPLE_KIND's file count
   }
 }

@@ -1097,10 +1097,10 @@ class ValueModifier {
       putValueAction(command,
         () -> (float) User3D.creatorPersonTypeIndex,
         (v) -> { User3D.creatorPersonTypeIndex = int(v); },
-        () -> (float) (0), () -> (float) (allModel2Ds.peopleFileCount), 1,
+        () -> (float) (0), () -> (float) (PEOPLE_KIND.fileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorPersonTypeIndex, 0, allModel2Ds.peopleFileCount, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorPersonTypeIndex, 0, PEOPLE_KIND.fileCount, 1);
     }
     return out;
   }
@@ -1115,10 +1115,10 @@ class ValueModifier {
       putValueAction(command,
         () -> (float) User3D.creatorPlantTypeIndex,
         (v) -> { User3D.creatorPlantTypeIndex = int(v); },
-        () -> (float) (0), () -> (float) (allModel2Ds.treesFileCount), 1,
+        () -> (float) (0), () -> (float) (TREES_KIND.fileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorPlantTypeIndex, 0, allModel2Ds.treesFileCount, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorPlantTypeIndex, 0, TREES_KIND.fileCount, 1);
     }
     return out;
   }

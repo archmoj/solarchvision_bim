@@ -263,12 +263,11 @@ class Groups {
           float z = allModel2Ds.getZ(OBJ_ID);
           float s = allModel2Ds.getS(OBJ_ID);
 
-          int n = allModel2Ds.MAP[OBJ_ID];
-          if (allModel2Ds.isTree(n)) {
-            allModel2Ds.create("TREES", n, x, y, z, s);
-          } else {
-            allModel2Ds.create("PEOPLE", n, x, y, z, s);
-          }
+          Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
+          int n = allModel2Ds.FileIndex[OBJ_ID];
+          if (allModel2Ds.Mirror[OBJ_ID]) n = -n;
+
+          allModel2Ds.create(kind.tag, n, x, y, z, s);
         }
       }
 

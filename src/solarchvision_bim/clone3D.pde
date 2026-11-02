@@ -109,10 +109,16 @@ class Clone3D {
     float y = allModel2Ds.getY(OBJ_ID);
     float z = allModel2Ds.getZ(OBJ_ID);
     float s = allModel2Ds.getS(OBJ_ID);
-    int n = allModel2Ds.MAP[OBJ_ID];
-    String family = allModel2Ds.isTree(n) ? "TREES" : "PEOPLE";
-    if (!produce_same_variation) n = 0; // 0 means "pick a random variant"
-    allModel2Ds.create(family, n, x, y, z, s);
+
+    Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
+
+    int n = 0; // 0 means "pick a random variant"
+    if (produce_same_variation) {
+      n = allModel2Ds.FileIndex[OBJ_ID];
+      if (allModel2Ds.Mirror[OBJ_ID]) n = -n;
+    }
+
+    allModel2Ds.create(kind.tag, n, x, y, z, s);
   }
 
   void cloneSolid (int OBJ_ID) {
