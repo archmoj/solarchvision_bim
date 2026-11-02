@@ -1101,15 +1101,15 @@ class SolarImpacts {
 
     XML_setBoolean(parent, "displayImage", this.displayImage);
 
-    XML_setFloat(parent, "X", this.X);
-    XML_setFloat(parent, "Y", this.Y);
-    XML_setFloat(parent, "Z", this.Z);
-    XML_setFloat(parent, "R", this.R);
-    XML_setFloat(parent, "U", this.U);
-    XML_setFloat(parent, "V", this.V);
+    XML_setFloat(parent, "x", this.X);
+    XML_setFloat(parent, "y", this.Y);
+    XML_setFloat(parent, "z", this.Z);
+    XML_setFloat(parent, "r", this.R);
+    XML_setFloat(parent, "u", this.U);
+    XML_setFloat(parent, "v", this.V);
 
-    XML_setInt(parent, "RES1", this.RES1);
-    XML_setInt(parent, "RES2", this.RES2);
+    XML_setInt(parent, "width", this.RES1);
+    XML_setInt(parent, "height", this.RES2);
 
     XML_setInt(parent, "sectionType", this.sectionType);
   }
@@ -1121,15 +1121,15 @@ class SolarImpacts {
 
     this.displayImage = XML_getBoolean(parent, "displayImage");
 
-    this.X = XML_getFloat(parent, "X");
-    this.Y = XML_getFloat(parent, "Y");
-    this.Z = XML_getFloat(parent, "Z");
-    this.R = XML_getFloat(parent, "R");
-    this.U = XML_getFloat(parent, "U");
-    this.V = XML_getFloat(parent, "V");
+    this.X = XML_getFloat(parent, "x");
+    this.Y = XML_getFloat(parent, "y");
+    this.Z = XML_getFloat(parent, "z");
+    this.R = XML_getFloat(parent, "r");
+    this.U = XML_getFloat(parent, "u");
+    this.V = XML_getFloat(parent, "v");
 
-    this.RES1 = XML_getInt(parent, "RES1");
-    this.RES2 = XML_getInt(parent, "RES2");
+    this.RES1 = XML_getInt(parent, "width");
+    this.RES2 = XML_getInt(parent, "height");
     this.sectionType = XML_getInt(parent, "sectionType");
   }
 
