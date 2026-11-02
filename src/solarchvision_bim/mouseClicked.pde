@@ -127,7 +127,11 @@ void pickOrAssignFaceProperty (int f) {
   if (WIN3D.toolParameterModifier == 3) { // Assign(all)
     int OBJ_ID = allGroups.findGroupContainingFace(f);
 
-    for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
+    // "&& (q < allFaces.nodes.length)" - a group's own stored start/stop
+    // can go stale relative to the live array (e.g. undo restoring an
+    // older, smaller state); see select3D.pde's get_Face_Vertices() for
+    // the fuller reasoning.
+    for (int q = allGroups.getStart_Face(OBJ_ID); (q <= allGroups.getStop_Face(OBJ_ID)) && (q < allFaces.nodes.length); q++) {
       if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.creatorMaterial);
       else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.creatorTessellation);
       else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.creatorLayer);
@@ -1746,7 +1750,10 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               } else if (currentObjectCategory == ObjectCategory.GROUP) {
                 int OBJ_ID = allGroups.findGroupContainingFace(f);
 
-                for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
+                // See this file's other getStart_Face/getStop_Face loop
+                // (above, in the Seed_Material handling) for why "&& (q
+                // < allFaces.nodes.length)" is added here too.
+                for (int q = allGroups.getStart_Face(OBJ_ID); (q <= allGroups.getStop_Face(OBJ_ID)) && (q < allFaces.nodes.length); q++) {
                   flipFaceOrientationIfNeeded(q);
                 }
               }

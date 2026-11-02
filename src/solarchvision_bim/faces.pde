@@ -525,7 +525,15 @@ class Faces {
 
                   int prev_mt = -1;
 
-                  for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
+                  // "&& (f < this.nodes.length)" added here (and at this
+                  // same loop's other two occurrences below, for the
+                  // WIN3D and HTML render targets) - a group's own
+                  // stored start/stop can go stale relative to the live
+                  // array (e.g. undo restoring an older, smaller state),
+                  // the same way a selection can; see
+                  // select3D.pde's get_Face_Vertices() for the fuller
+                  // reasoning.
+                  for (int f = allGroups.getStart_Face(OBJ_ID); (f <= allGroups.getStop_Face(OBJ_ID)) && (f < this.nodes.length); f++) {
 
                     if (_turn == 3) {
                       if (User3D.exporterMaterialLibrary) {
@@ -711,7 +719,7 @@ class Faces {
                     }
                   }
 
-                  for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
+                  for (int f = allGroups.getStart_Face(OBJ_ID); (f <= allGroups.getStop_Face(OBJ_ID)) && (f < this.nodes.length); f++) {
 
                     int tessellation = this.getTessellation(f);
 
@@ -989,7 +997,7 @@ class Faces {
 
             htmlOutput.println("\t\t\t\t<group>");
 
-            for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
+            for (int f = allGroups.getStart_Face(OBJ_ID); (f <= allGroups.getStop_Face(OBJ_ID)) && (f < this.nodes.length); f++) {
 
               if (this.nodes[f].length > 2) {
 

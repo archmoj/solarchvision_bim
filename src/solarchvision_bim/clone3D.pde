@@ -252,20 +252,29 @@ class Clone3D {
         allGroups.Pivots[new_OBJ_ID][j] = allGroups.Pivots[OBJ_ID][j];
       }
 
+      // Each loop's own range check (0 <= stop, start <= stop) confirms
+      // the stored range is well-formed, not that it still fits the
+      // live array - a group's stored start/stop can go stale relative
+      // to the current array length (e.g. after undo restores an older,
+      // smaller state), the same way a selection can - see
+      // select3D.pde's get_Face_Vertices()/get_Group_Vertices() comments
+      // for the fuller reasoning. The added "&& (q < allX.num)" on each
+      // loop's own condition stops it at the live array's actual end
+      // instead.
       if ((0 <= allGroups.getStop_Model1D(OBJ_ID)) && (allGroups.getStart_Model1D(OBJ_ID) <= allGroups.getStop_Model1D(OBJ_ID))) {
-        for (int q = allGroups.getStart_Model1D(OBJ_ID); q <= allGroups.getStop_Model1D(OBJ_ID); q++) {
+        for (int q = allGroups.getStart_Model1D(OBJ_ID); (q <= allGroups.getStop_Model1D(OBJ_ID)) && (q < allModel1Ds.num); q++) {
           cloneModel1D(q, produce_same_variation, true);
         }
       }
 
       if ((0 <= allGroups.getStop_Model2D(OBJ_ID)) && (allGroups.getStart_Model2D(OBJ_ID) <= allGroups.getStop_Model2D(OBJ_ID))) {
-        for (int q = allGroups.getStart_Model2D(OBJ_ID); q <= allGroups.getStop_Model2D(OBJ_ID); q++) {
+        for (int q = allGroups.getStart_Model2D(OBJ_ID); (q <= allGroups.getStop_Model2D(OBJ_ID)) && (q < allModel2Ds.num); q++) {
           cloneModel2D(q, produce_same_variation);
         }
       }
 
       if ((0 <= allGroups.getStop_Solid(OBJ_ID)) && (allGroups.getStart_Solid(OBJ_ID) <= allGroups.getStop_Solid(OBJ_ID))) {
-        for (int q = allGroups.getStart_Solid(OBJ_ID); q <= allGroups.getStop_Solid(OBJ_ID); q++) {
+        for (int q = allGroups.getStart_Solid(OBJ_ID); (q <= allGroups.getStop_Solid(OBJ_ID)) && (q < allSolids.DEF.length); q++) {
           cloneSolid(q);
           SOLID_added += 1;
         }
@@ -273,14 +282,14 @@ class Clone3D {
 
       if (hasFaces) {
         HashMap<Integer, Integer> vertexMap = new HashMap<Integer, Integer>();
-        for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
+        for (int f = allGroups.getStart_Face(OBJ_ID); (f <= allGroups.getStop_Face(OBJ_ID)) && (f < allFaces.nodes.length); f++) {
           cloneFace(f, vertexMap);
         }
       }
 
       if (hasPolylines) {
         HashMap<Integer, Integer> vertexMap = new HashMap<Integer, Integer>();
-        for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
+        for (int f = allGroups.getStart_Polyline(OBJ_ID); (f <= allGroups.getStop_Polyline(OBJ_ID)) && (f < allPolylines.nodes.length); f++) {
           clonePolyline(f, vertexMap);
         }
       }
