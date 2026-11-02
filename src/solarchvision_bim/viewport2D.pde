@@ -2,21 +2,21 @@ class STUDY {
 
   final static String CLASS_STAMP = "Viewport2D";
 
-  int statisticalRangesColorscaleIndex = -1;
-  int statisticalRangesColorscaleDirection = -1;
-  float statisticalRangesColorscaleFactor = 2;
+  int statisticalRangesColorScaleIndex = -1;
+  int statisticalRangesColorScaleDirection = -1;
+  float statisticalRangesColorScaleFactor = 2;
 
-  int probabilitiesColorscaleIndex = -1;
-  int probabilitiesColorscaleDirection = 1;
-  float probabilitiesColorscaleFactor = 0.5;
+  int probabilitiesColorScaleIndex = -1;
+  int probabilitiesColorScaleDirection = 1;
+  float probabilitiesColorScaleFactor = 0.5;
 
-  int activeColorscaleIndex = 19; //15; //14;
-  int activeColorscaleDirection = 1;
-  float activeColorscaleFactor = 0.5; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
+  int activeColorScaleIndex = 19; //15; //14;
+  int activeColorScaleDirection = 1;
+  float activeColorScaleFactor = 0.5; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
 
-  int passiveColorscaleIndex = 1;
-  int passiveColorscaleDirection = 1;
-  float passiveColorscaleFactor = 0.125; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
+  int passiveColorScaleIndex = 1;
+  int passiveColorScaleDirection = 1;
+  float passiveColorScaleFactor = 0.125; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
 
 
   int cX = 0;
@@ -222,7 +222,7 @@ class STUDY {
   // How many of the 24 integer hours in a day satisfy the user's own
   // selected hour range (startHour/endHour, via isInHourlyRange()) -
   // shared by effectiveDayTime() below (which scales the underlying
-  // energy data for a restricted range) and paletteColorscaleMultiplier()
+  // energy data for a restricted range) and paletteColorScaleMultiplier()
   // (which scales a palette's own displayed maximum the same way).
   int selectedRangeHours () {
     int count = 0;
@@ -262,7 +262,7 @@ class STUDY {
   }
 
   // Nominal "full day" reference the existing, calibrated palette scales
-  // (allFaces.activeColorscaleFactor/passiveColorscaleFactor and their
+  // (allFaces.activeColorScaleFactor/passiveColorScaleFactor and their
   // STUDY-owned counterparts) were tuned against. A fixed constant
   // rather than a specific date's own astronomical DayTime(), because a
   // palette is drawn once per graph, not once per day the way the
@@ -277,7 +277,7 @@ class STUDY {
   // being studied.
   final float paletteNominalDayHours = 12.0;
 
-  // Scales a palette's own colorscale multiplier so its displayed
+  // Scales a palette's own colorScale multiplier so its displayed
   // maximum shrinks proportionally when the user restricts analysis to a
   // shorter-than-nominal hour range - the counterpart to
   // effectiveDayTime() (which applies the same proportional correction
@@ -286,8 +286,8 @@ class STUDY {
   // means reading it against a legend sized for that period, not a full
   // day's worth of accumulated energy. Only relevant to palettes whose
   // underlying values are themselves extrapolated via effectiveDayTime()
-  // - Skin Potential (plotImpact_urban(), via allFaces.*ColorscaleFactor)
-  // and Pose Potential (plotImpact_global(), via this.*ColorscaleFactor).
+  // - Skin Potential (plotImpact_urban(), via allFaces.*ColorScaleFactor)
+  // and Pose Potential (plotImpact_global(), via this.*ColorScaleFactor).
   // Hourly Sun, Sun Path, drawProbs, drawSorted and plotImpact_wind all
   // show raw single-hour samples, frequencies/percentiles, or a direct
   // weather reading rather than a day-extrapolated energy total, so none
@@ -296,7 +296,7 @@ class STUDY {
   // For the default, unrestricted range, selectedRangeHours() is 24 (at
   // least paletteNominalDayHours), so this returns originalMultiplier
   // unchanged.
-  float paletteColorscaleMultiplier (float originalMultiplier) {
+  float paletteColorScaleMultiplier (float originalMultiplier) {
     float effectiveHours = min(this.paletteNominalDayHours, this.selectedRangeHours());
     return originalMultiplier * (this.paletteNominalDayHours / effectiveHours);
   }
@@ -921,9 +921,9 @@ class STUDY {
 
     float _pix = 90.0 * this.view_S / this.probabilityHeightInterval;
 
-    int PAL_type = this.probabilitiesColorscaleIndex;
-    int PAL_direction = this.probabilitiesColorscaleDirection;
-    float PAL_multiplier = this.probabilitiesColorscaleFactor;
+    int PAL_type = this.probabilitiesColorScaleIndex;
+    int PAL_direction = this.probabilitiesColorScaleDirection;
+    float PAL_multiplier = this.probabilitiesColorScaleFactor;
 
     float txt_max_width = (this.probabilityWidthInterval * this.view_S * 100 / 24.0) * this.horizontalUnitScale;
     float txt_max_height = _pix;
@@ -1115,9 +1115,9 @@ class STUDY {
 
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int PAL_type = this.statisticalRangesColorscaleIndex;
-    int PAL_direction = this.statisticalRangesColorscaleDirection;
-    float PAL_multiplier = this.statisticalRangesColorscaleFactor;
+    int PAL_type = this.statisticalRangesColorScaleIndex;
+    int PAL_direction = this.statisticalRangesColorScaleDirection;
+    float PAL_multiplier = this.statisticalRangesColorScaleFactor;
 
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = countDefinedPrefix(sortedvaluesA);
@@ -2274,11 +2274,11 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorscaleIndex;
-      PAL_direction = this.activeColorscaleDirection;
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      //PAL_type = this.activeColorscaleIndex; PAL_direction = this.activeColorscaleDirection;
+      //PAL_type = this.activeColorScaleIndex; PAL_direction = this.activeColorScaleDirection;
       PAL_type = 12;
       PAL_direction = -1;
     }
@@ -2633,16 +2633,16 @@ class STUDY {
       float PAL_multiplier = 1;
 
       if (this.impactTypeIndex == Impact_ACTIVE) {
-        PAL_type = allFaces.activeColorscaleIndex;
-        PAL_direction = allFaces.activeColorscaleDirection;
-        PAL_multiplier = allFaces.activeColorscaleFactor;
+        PAL_type = allFaces.activeColorScaleIndex;
+        PAL_direction = allFaces.activeColorScaleDirection;
+        PAL_multiplier = allFaces.activeColorScaleFactor;
       }
       if (this.impactTypeIndex == Impact_PASSIVE) {
-        PAL_type = allFaces.passiveColorscaleIndex;
-        PAL_direction = allFaces.passiveColorscaleDirection;
-        PAL_multiplier = allFaces.passiveColorscaleFactor;
+        PAL_type = allFaces.passiveColorScaleIndex;
+        PAL_direction = allFaces.passiveColorScaleDirection;
+        PAL_multiplier = allFaces.passiveColorScaleFactor;
       }
-      PAL_multiplier = this.paletteColorscaleMultiplier(PAL_multiplier);
+      PAL_multiplier = this.paletteColorScaleMultiplier(PAL_multiplier);
 
       int l = this.impactLayerIndex;
 
@@ -2849,18 +2849,18 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorscaleIndex;
-      PAL_direction = this.activeColorscaleDirection;
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      PAL_type = this.passiveColorscaleIndex;
-      PAL_direction = this.passiveColorscaleDirection;
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
-    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
-    PAL_multiplier = this.paletteColorscaleMultiplier(PAL_multiplier);
+    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
+    PAL_multiplier = this.paletteColorScaleMultiplier(PAL_multiplier);
 
 
     int l = this.impactLayerIndex;
@@ -3281,8 +3281,8 @@ class STUDY {
 
 
   void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
-    this.activeColorscaleFactor = 1;
+    float savedActiveColorScaleFactor = this.activeColorScaleFactor;
+    this.activeColorScaleFactor = 1;
 
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
@@ -3299,17 +3299,17 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorscaleIndex;
-      PAL_direction = this.activeColorscaleDirection;
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      PAL_type = this.passiveColorscaleIndex;
-      PAL_direction = this.passiveColorscaleDirection;
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
-    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
+    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
 
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
@@ -3526,13 +3526,13 @@ class STUDY {
       }
     }
 
-    this.activeColorscaleFactor = savedActiveColorscaleFactor;
+    this.activeColorScaleFactor = savedActiveColorScaleFactor;
   }
 
 
   void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-    float savedActiveColorscaleFactor = this.activeColorscaleFactor;
-    this.activeColorscaleFactor = 1;
+    float savedActiveColorScaleFactor = this.activeColorScaleFactor;
+    this.activeColorScaleFactor = 1;
 
     int l = this.impactLayerIndex;
 
@@ -3564,17 +3564,17 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
-      PAL_type = this.activeColorscaleIndex;
-      PAL_direction = this.activeColorscaleDirection;
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
     if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
-      PAL_type = this.passiveColorscaleIndex;
-      PAL_direction = this.passiveColorscaleDirection;
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
-    if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
+    if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
 
     float pal_length = 400;
     float pal_ox = 700;
@@ -3657,7 +3657,7 @@ class STUDY {
       }
     }
 
-    this.activeColorscaleFactor = savedActiveColorscaleFactor;
+    this.activeColorScaleFactor = savedActiveColorScaleFactor;
   }
 
 
@@ -3750,21 +3750,21 @@ class STUDY {
     XML_setBoolean(parent, "normalLinesExporter", this.normalLinesExporter);
     XML_setBoolean(parent, "probabilitiesExporter", this.probabilitiesExporter);
 
-    XML_setInt(parent, "statisticalRangesColorscaleIndex", this.statisticalRangesColorscaleIndex);
-    XML_setInt(parent, "statisticalRangesColorscaleDirection", this.statisticalRangesColorscaleDirection);
-    XML_setFloat(parent, "statisticalRangesColorscaleFactor", this.statisticalRangesColorscaleFactor);
+    XML_setInt(parent, "statisticalRangesColorScaleIndex", this.statisticalRangesColorScaleIndex);
+    XML_setInt(parent, "statisticalRangesColorScaleDirection", this.statisticalRangesColorScaleDirection);
+    XML_setFloat(parent, "statisticalRangesColorScaleFactor", this.statisticalRangesColorScaleFactor);
 
-    XML_setInt(parent, "probabilitiesColorscaleIndex", this.probabilitiesColorscaleIndex);
-    XML_setInt(parent, "probabilitiesColorscaleDirection", this.probabilitiesColorscaleDirection);
-    XML_setFloat(parent, "probabilitiesColorscaleFactor", this.probabilitiesColorscaleFactor);
+    XML_setInt(parent, "probabilitiesColorScaleIndex", this.probabilitiesColorScaleIndex);
+    XML_setInt(parent, "probabilitiesColorScaleDirection", this.probabilitiesColorScaleDirection);
+    XML_setFloat(parent, "probabilitiesColorScaleFactor", this.probabilitiesColorScaleFactor);
 
-    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
-    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
-    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
 
-    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
-    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
-    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
 
     XML_setFloat(parent, "opacityPercentage", this.opacityPercentage);
     XML_setFloat(parent, "centralGraphScale", centralGraphScale);
@@ -3807,21 +3807,21 @@ class STUDY {
     this.normalLinesExporter = XML_getBoolean(parent, "normalLinesExporter");
     this.probabilitiesExporter = XML_getBoolean(parent, "probabilitiesExporter");
 
-    this.statisticalRangesColorscaleIndex = XML_getInt(parent, "statisticalRangesColorscaleIndex");
-    this.statisticalRangesColorscaleDirection = XML_getInt(parent, "statisticalRangesColorscaleDirection");
-    this.statisticalRangesColorscaleFactor = XML_getFloat(parent, "statisticalRangesColorscaleFactor");
+    this.statisticalRangesColorScaleIndex = XML_getInt(parent, "statisticalRangesColorScaleIndex");
+    this.statisticalRangesColorScaleDirection = XML_getInt(parent, "statisticalRangesColorScaleDirection");
+    this.statisticalRangesColorScaleFactor = XML_getFloat(parent, "statisticalRangesColorScaleFactor");
 
-    this.probabilitiesColorscaleIndex = XML_getInt(parent, "probabilitiesColorscaleIndex");
-    this.probabilitiesColorscaleDirection = XML_getInt(parent, "probabilitiesColorscaleDirection");
-    this.probabilitiesColorscaleFactor = XML_getFloat(parent, "probabilitiesColorscaleFactor");
+    this.probabilitiesColorScaleIndex = XML_getInt(parent, "probabilitiesColorScaleIndex");
+    this.probabilitiesColorScaleDirection = XML_getInt(parent, "probabilitiesColorScaleDirection");
+    this.probabilitiesColorScaleFactor = XML_getFloat(parent, "probabilitiesColorScaleFactor");
 
-    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
-    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
-    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
 
-    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
-    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
-    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
 
 
     this.opacityPercentage = XML_getFloat(parent, "opacityPercentage");

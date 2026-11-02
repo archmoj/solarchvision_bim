@@ -266,9 +266,9 @@ class Sun3DTest {
   @Test
   void activePalette_readsSunsOwnSettings_whenNotUsingStudySettings () {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.Sun3D.activeColorscaleIndex = 5;
-    app.Sun3D.activeColorscaleDirection = 1;
-    app.Sun3D.activeColorscaleFactor = 2;
+    app.Sun3D.activeColorScaleIndex = 5;
+    app.Sun3D.activeColorScaleDirection = 1;
+    app.Sun3D.activeColorScaleFactor = 2;
 
     float[] palette = app.Sun3D.activePalette(false);
 
@@ -280,9 +280,9 @@ class Sun3DTest {
   @Test
   void activePalette_readsSTUDYsSettings_whenUsingStudySettings () {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.STUDY.activeColorscaleIndex = 7;
-    app.STUDY.activeColorscaleDirection = -1;
-    app.STUDY.activeColorscaleFactor = 3;
+    app.STUDY.activeColorScaleIndex = 7;
+    app.STUDY.activeColorScaleDirection = -1;
+    app.STUDY.activeColorScaleFactor = 3;
 
     float[] palette = app.Sun3D.activePalette(true);
 
@@ -294,9 +294,9 @@ class Sun3DTest {
   @Test
   void activePalette_readsThePassiveSettings_whenImpactTypeIsPassive () {
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
-    app.Sun3D.passiveColorscaleIndex = 9;
-    app.Sun3D.passiveColorscaleDirection = -2;
-    app.Sun3D.passiveColorscaleFactor = 0.5f;
+    app.Sun3D.passiveColorScaleIndex = 9;
+    app.Sun3D.passiveColorScaleDirection = -2;
+    app.Sun3D.passiveColorScaleFactor = 0.5f;
 
     float[] palette = app.Sun3D.activePalette(false);
 
@@ -555,12 +555,12 @@ class Sun3DTest {
 
   @Test
   void toXMLThenFromXML_roundTripsThePaletteSettings () {
-    app.Sun3D.activeColorscaleIndex = 11;
-    app.Sun3D.activeColorscaleDirection = -1;
-    app.Sun3D.activeColorscaleFactor = 1.5f;
-    app.Sun3D.passiveColorscaleIndex = 13;
-    app.Sun3D.passiveColorscaleDirection = 2;
-    app.Sun3D.passiveColorscaleFactor = 0.75f;
+    app.Sun3D.activeColorScaleIndex = 11;
+    app.Sun3D.activeColorScaleDirection = -1;
+    app.Sun3D.activeColorScaleFactor = 1.5f;
+    app.Sun3D.passiveColorScaleIndex = 13;
+    app.Sun3D.passiveColorScaleDirection = 2;
+    app.Sun3D.passiveColorScaleFactor = 0.75f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.Sun3D.to_XML(root);
@@ -568,11 +568,11 @@ class Sun3DTest {
     solarchvision_bim.Sun3D fresh = app.new Sun3D();
     fresh.from_XML(root);
 
-    assertEquals(11, fresh.activeColorscaleIndex);
-    assertEquals(-1, fresh.activeColorscaleDirection);
-    assertEquals(1.5f, fresh.activeColorscaleFactor, 0.0001f);
-    assertEquals(13, fresh.passiveColorscaleIndex);
-    assertEquals(2, fresh.passiveColorscaleDirection);
-    assertEquals(0.75f, fresh.passiveColorscaleFactor, 0.0001f);
+    assertEquals(11, fresh.activeColorScaleIndex);
+    assertEquals(-1, fresh.activeColorScaleDirection);
+    assertEquals(1.5f, fresh.activeColorScaleFactor, 0.0001f);
+    assertEquals(13, fresh.passiveColorScaleIndex);
+    assertEquals(2, fresh.passiveColorScaleDirection);
+    assertEquals(0.75f, fresh.passiveColorScaleFactor, 0.0001f);
   }
 }

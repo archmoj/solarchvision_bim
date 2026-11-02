@@ -3261,25 +3261,25 @@ class ValueModifier {
     }
     return out;
   }
-  int Study_activeColorscaleIndex (int created) {
+  int Study_activeColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Study Active Colorscale Index";
+    String command = "Study Active ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.activeColorscaleIndex,
-        (v) -> { STUDY.activeColorscaleIndex = int(v); },
+        () -> (float) STUDY.activeColorScaleIndex,
+        (v) -> { STUDY.activeColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_activeColorscaleDirection (int created) {
+  int Study_activeColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3289,19 +3289,19 @@ class ValueModifier {
     int s3 = 1; //step
 
     int out = 0;
-    String command = "Study Active Colorscale Direction";
+    String command = "Study Active ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.activeColorscaleDirection,
-        (v) -> { STUDY.activeColorscaleDirection = int(v); },
+        () -> (float) STUDY.activeColorScaleDirection,
+        (v) -> { STUDY.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorscaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Study_activeColorscaleFactor (int created) {
+  float Study_activeColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3312,37 +3312,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Study Active Colorscale Factor";
+    String command = "Study Active ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> STUDY.activeColorscaleFactor,
-        (v) -> { STUDY.activeColorscaleFactor = v; },
+        () -> STUDY.activeColorScaleFactor,
+        (v) -> { STUDY.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Study_passiveColorscaleIndex (int created) {
+  int Study_passiveColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Study Passive Colorscale Index";
+    String command = "Study Passive ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.passiveColorscaleIndex,
-        (v) -> { STUDY.passiveColorscaleIndex = int(v); },
+        () -> (float) STUDY.passiveColorScaleIndex,
+        (v) -> { STUDY.passiveColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_passiveColorscaleDirection (int created) {
+  int Study_passiveColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3353,19 +3353,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Study Passive Colorscale Direction";
+    String command = "Study Passive ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.passiveColorscaleDirection,
-        (v) -> { STUDY.passiveColorscaleDirection = int(v); },
+        () -> (float) STUDY.passiveColorScaleDirection,
+        (v) -> { STUDY.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Study_passiveColorscaleFactor (int created) {
+  float Study_passiveColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3376,37 +3376,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Study Passive Colorscale Factor";
+    String command = "Study Passive ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> STUDY.passiveColorscaleFactor,
-        (v) -> { STUDY.passiveColorscaleFactor = v; },
+        () -> STUDY.passiveColorScaleFactor,
+        (v) -> { STUDY.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int statisticalRangesColorscaleIndex (int created) {
+  int statisticalRangesColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Statistical Ranges Colorscale Index";
+    String command = "Statistical Ranges ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.statisticalRangesColorscaleIndex,
-        (v) -> { STUDY.statisticalRangesColorscaleIndex = int(v); },
+        () -> (float) STUDY.statisticalRangesColorScaleIndex,
+        (v) -> { STUDY.statisticalRangesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int statisticalRangesColorscaleDirection (int created) {
+  int statisticalRangesColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3417,19 +3417,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Statistical Ranges Colorscale Direction";
+    String command = "Statistical Ranges ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.statisticalRangesColorscaleDirection,
-        (v) -> { STUDY.statisticalRangesColorscaleDirection = int(v); },
+        () -> (float) STUDY.statisticalRangesColorScaleDirection,
+        (v) -> { STUDY.statisticalRangesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float statisticalRangesColorscaleFactor (int created) {
+  float statisticalRangesColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3440,37 +3440,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Statistical Ranges Colorscale Factor";
+    String command = "Statistical Ranges ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> STUDY.statisticalRangesColorscaleFactor,
-        (v) -> { STUDY.statisticalRangesColorscaleFactor = v; },
+        () -> STUDY.statisticalRangesColorScaleFactor,
+        (v) -> { STUDY.statisticalRangesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.statisticalRangesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int probabilitiesColorscaleIndex (int created) {
+  int probabilitiesColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Probabilities Colorscale Index";
+    String command = "Probabilities ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.probabilitiesColorscaleIndex,
-        (v) -> { STUDY.probabilitiesColorscaleIndex = int(v); },
+        () -> (float) STUDY.probabilitiesColorScaleIndex,
+        (v) -> { STUDY.probabilitiesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int probabilitiesColorscaleDirection (int created) {
+  int probabilitiesColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3481,19 +3481,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Probabilities Colorscale Direction";
+    String command = "Probabilities ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) STUDY.probabilitiesColorscaleDirection,
-        (v) -> { STUDY.probabilitiesColorscaleDirection = int(v); },
+        () -> (float) STUDY.probabilitiesColorScaleDirection,
+        (v) -> { STUDY.probabilitiesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float probabilitiesColorscaleFactor (int created) {
+  float probabilitiesColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3504,15 +3504,15 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Probabilities Colorscale Factor";
+    String command = "Probabilities ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> STUDY.probabilitiesColorscaleFactor,
-        (v) -> { STUDY.probabilitiesColorscaleFactor = v; },
+        () -> STUDY.probabilitiesColorScaleFactor,
+        (v) -> { STUDY.probabilitiesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.probabilitiesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3538,25 +3538,25 @@ class ValueModifier {
     }
     return out;
   }
-  int Faces_activeColorscaleIndex (int created) {
+  int Faces_activeColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Faces Active Colorscale Index";
+    String command = "Faces Active ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) allFaces.activeColorscaleIndex,
-        (v) -> { allFaces.activeColorscaleIndex = int(v); },
+        () -> (float) allFaces.activeColorScaleIndex,
+        (v) -> { allFaces.activeColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Faces_activeColorscaleDirection (int created) {
+  int Faces_activeColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3566,19 +3566,19 @@ class ValueModifier {
     int s3 = 1; //step
 
     int out = 0;
-    String command = "Faces Active Colorscale Direction";
+    String command = "Faces Active ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) allFaces.activeColorscaleDirection,
-        (v) -> { allFaces.activeColorscaleDirection = int(v); },
+        () -> (float) allFaces.activeColorScaleDirection,
+        (v) -> { allFaces.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorscaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Faces_activeColorscaleFactor (int created) {
+  float Faces_activeColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3589,37 +3589,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Faces Active Colorscale Factor";
+    String command = "Faces Active ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> allFaces.activeColorscaleFactor,
-        (v) -> { allFaces.activeColorscaleFactor = v; },
+        () -> allFaces.activeColorScaleFactor,
+        (v) -> { allFaces.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Faces_passiveColorscaleIndex (int created) {
+  int Faces_passiveColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Faces Passive Colorscale Index";
+    String command = "Faces Passive ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) allFaces.passiveColorscaleIndex,
-        (v) -> { allFaces.passiveColorscaleIndex = int(v); },
+        () -> (float) allFaces.passiveColorScaleIndex,
+        (v) -> { allFaces.passiveColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Faces_passiveColorscaleDirection (int created) {
+  int Faces_passiveColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3630,19 +3630,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Faces Passive Colorscale Direction";
+    String command = "Faces Passive ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) allFaces.passiveColorscaleDirection,
-        (v) -> { allFaces.passiveColorscaleDirection = int(v); },
+        () -> (float) allFaces.passiveColorScaleDirection,
+        (v) -> { allFaces.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Faces_passiveColorscaleFactor (int created) {
+  float Faces_passiveColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3653,37 +3653,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Faces Passive Colorscale Factor";
+    String command = "Faces Passive ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> allFaces.passiveColorscaleFactor,
-        (v) -> { allFaces.passiveColorscaleFactor = v; },
+        () -> allFaces.passiveColorScaleFactor,
+        (v) -> { allFaces.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, allFaces.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sky3D_activeColorscaleIndex (int created) {
+  int Sky3D_activeColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Sky3D Active Colorscale Index";
+    String command = "Sky3D Active ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sky3D.activeColorscaleIndex,
-        (v) -> { Sky3D.activeColorscaleIndex = int(v); },
+        () -> (float) Sky3D.activeColorScaleIndex,
+        (v) -> { Sky3D.activeColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sky3D_activeColorscaleDirection (int created) {
+  int Sky3D_activeColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3693,19 +3693,19 @@ class ValueModifier {
     int s3 = 1; //step
 
     int out = 0;
-    String command = "Sky3D Active Colorscale Direction";
+    String command = "Sky3D Active ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sky3D.activeColorscaleDirection,
-        (v) -> { Sky3D.activeColorscaleDirection = int(v); },
+        () -> (float) Sky3D.activeColorScaleDirection,
+        (v) -> { Sky3D.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorscaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Sky3D_activeColorscaleFactor (int created) {
+  float Sky3D_activeColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3716,37 +3716,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Sky3D Active Colorscale Factor";
+    String command = "Sky3D Active ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> Sky3D.activeColorscaleFactor,
-        (v) -> { Sky3D.activeColorscaleFactor = v; },
+        () -> Sky3D.activeColorScaleFactor,
+        (v) -> { Sky3D.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sky3D_passiveColorscaleIndex (int created) {
+  int Sky3D_passiveColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Sky3D Passive Colorscale Index";
+    String command = "Sky3D Passive ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sky3D.passiveColorscaleIndex,
-        (v) -> { Sky3D.passiveColorscaleIndex = int(v); },
+        () -> (float) Sky3D.passiveColorScaleIndex,
+        (v) -> { Sky3D.passiveColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sky3D_passiveColorscaleDirection (int created) {
+  int Sky3D_passiveColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3757,19 +3757,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Sky3D Passive Colorscale Direction";
+    String command = "Sky3D Passive ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sky3D.passiveColorscaleDirection,
-        (v) -> { Sky3D.passiveColorscaleDirection = int(v); },
+        () -> (float) Sky3D.passiveColorScaleDirection,
+        (v) -> { Sky3D.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Sky3D_passiveColorscaleFactor (int created) {
+  float Sky3D_passiveColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3780,37 +3780,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Sky3D Passive Colorscale Factor";
+    String command = "Sky3D Passive ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> Sky3D.passiveColorscaleFactor,
-        (v) -> { Sky3D.passiveColorscaleFactor = v; },
+        () -> Sky3D.passiveColorScaleFactor,
+        (v) -> { Sky3D.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sky3D.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sun3D_activeColorscaleIndex (int created) {
+  int Sun3D_activeColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Sun3D Active Colorscale Index";
+    String command = "Sun3D Active ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sun3D.activeColorscaleIndex,
-        (v) -> { Sun3D.activeColorscaleIndex = int(v); },
+        () -> (float) Sun3D.activeColorScaleIndex,
+        (v) -> { Sun3D.activeColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sun3D_activeColorscaleDirection (int created) {
+  int Sun3D_activeColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3820,19 +3820,19 @@ class ValueModifier {
     int s3 = 1; //step
 
     int out = 0;
-    String command = "Sun3D Active Colorscale Direction";
+    String command = "Sun3D Active ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sun3D.activeColorscaleDirection,
-        (v) -> { Sun3D.activeColorscaleDirection = int(v); },
+        () -> (float) Sun3D.activeColorScaleDirection,
+        (v) -> { Sun3D.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorscaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Sun3D_activeColorscaleFactor (int created) {
+  float Sun3D_activeColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3843,37 +3843,37 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Sun3D Active Colorscale Factor";
+    String command = "Sun3D Active ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> Sun3D.activeColorscaleFactor,
-        (v) -> { Sun3D.activeColorscaleFactor = v; },
+        () -> Sun3D.activeColorScaleFactor,
+        (v) -> { Sun3D.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sun3D_passiveColorscaleIndex (int created) {
+  int Sun3D_passiveColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Sun3D Passive Colorscale Index";
+    String command = "Sun3D Passive ColorScale Index";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sun3D.passiveColorscaleIndex,
-        (v) -> { Sun3D.passiveColorscaleIndex = int(v); },
+        () -> (float) Sun3D.passiveColorScaleIndex,
+        (v) -> { Sun3D.passiveColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sun3D_passiveColorscaleDirection (int created) {
+  int Sun3D_passiveColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3884,19 +3884,19 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Sun3D Passive Colorscale Direction";
+    String command = "Sun3D Passive ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) Sun3D.passiveColorscaleDirection,
-        (v) -> { Sun3D.passiveColorscaleDirection = int(v); },
+        () -> (float) Sun3D.passiveColorScaleDirection,
+        (v) -> { Sun3D.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorscaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Sun3D_passiveColorscaleFactor (int created) {
+  float Sun3D_passiveColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3907,25 +3907,25 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Sun3D Passive Colorscale Factor";
+    String command = "Sun3D Passive ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
-        () -> Sun3D.passiveColorscaleFactor,
-        (v) -> { Sun3D.passiveColorscaleFactor = v; },
+        () -> Sun3D.passiveColorScaleFactor,
+        (v) -> { Sun3D.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorscaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Sun3D.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int SolidsColorscaleIndex (int created) {
+  int SolidsColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Solids Colorscale Index";
+    String command = "Solids ColorScale Index";
     if (created == 0) {
       putValueAction(command,
         () -> (float) allSolids.colorScaleIndex,
@@ -3938,7 +3938,7 @@ class ValueModifier {
     }
     return out;
   }
-  int SolidsColorscaleDirection (int created) {
+  int SolidsColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3949,7 +3949,7 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Solids Colorscale Direction";
+    String command = "Solids ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
         () -> (float) allSolids.colorScaleDirection,
@@ -3962,7 +3962,7 @@ class ValueModifier {
     }
     return out;
   }
-  float SolidsColorscaleFactor (int created) {
+  float SolidsColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3973,7 +3973,7 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Solids Colorscale Factor";
+    String command = "Solids ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
         () -> allSolids.colorScaleFactor,
@@ -3986,13 +3986,13 @@ class ValueModifier {
     }
     return out;
   }
-  int TerrainColorscaleIndex (int created) {
+  int TerrainColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "Terrain Colorscale Index";
+    String command = "Terrain ColorScale Index";
     if (created == 0) {
       putValueAction(command,
         () -> (float) Terrain.colorScaleIndex,
@@ -4004,7 +4004,7 @@ class ValueModifier {
     }
     return out;
   }
-  int TerrainColorscaleDirection (int created) {
+  int TerrainColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4015,7 +4015,7 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Terrain Colorscale Direction";
+    String command = "Terrain ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
         () -> (float) Terrain.colorScaleDirection,
@@ -4027,7 +4027,7 @@ class ValueModifier {
     }
     return out;
   }
-  float TerrainColorscaleFactor (int created) {
+  float TerrainColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4038,7 +4038,7 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Terrain Colorscale Factor";
+    String command = "Terrain ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
         () -> Terrain.colorScaleFactor,
@@ -4050,13 +4050,13 @@ class ValueModifier {
     }
     return out;
   }
-  int WindFlowsColorscaleIndex (int created) {
+  int WindFlowsColorScaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
-    String command = "WindFlows Colorscale Index";
+    String command = "WindFlows ColorScale Index";
     if (created == 0) {
       putValueAction(command,
         () -> (float) allWindFlows.colorScaleIndex,
@@ -4068,7 +4068,7 @@ class ValueModifier {
     }
     return out;
   }
-  int WindFlowsColorscaleDirection (int created) {
+  int WindFlowsColorScaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4079,7 +4079,7 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "WindFlows Colorscale Direction";
+    String command = "WindFlows ColorScale Direction";
     if (created == 0) {
       putValueAction(command,
         () -> (float) allWindFlows.colorScaleDirection,
@@ -4091,7 +4091,7 @@ class ValueModifier {
     }
     return out;
   }
-  float WindFlowsColorscaleFactor (int created) {
+  float WindFlowsColorScaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4102,7 +4102,7 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "WindFlows Colorscale Factor";
+    String command = "WindFlows ColorScale Factor";
     if (created == 0) {
       putValueAction(command,
         () -> allWindFlows.colorScaleFactor,
@@ -4798,7 +4798,7 @@ class ValueModifier {
     }
     return out;
   }
-  int exporterColorscaleResolution (int created) {
+  int exporterColorScaleResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4809,15 +4809,15 @@ class ValueModifier {
     int s4 = 1; //round
 
     int out = 0;
-    String command = "Exporter Colorscale Resolution";
+    String command = "Exporter ColorScale Resolution";
     if (created == 0) {
       putValueAction(command,
-        () -> (float) User3D.exporterColorscaleResolution,
-        (v) -> { User3D.exporterColorscaleResolution = int(v); },
+        () -> (float) User3D.exporterColorScaleResolution,
+        (v) -> { User3D.exporterColorScaleResolution = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.exporterColorscaleResolution, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.exporterColorScaleResolution, s1, s2, s3, s4);
     }
     return out;
   }

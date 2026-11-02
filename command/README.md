@@ -637,7 +637,7 @@ the user interface.
 | `Exporter Yaxis Up` | Toggle: swap the Z and Y axes on export (for tools that use Y-up) | 0 to 1 |
 | `Exporter Maintain Polygons` | Toggle: export polylines as connected poly-to-poly geometry | 0 to 1 |
 | `Exporter Material Library` | Toggle: write a companion material-library file on export | 0 or 1 |
-| `Exporter Colorscale Resolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
+| `Exporter ColorScale Resolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
 | `Exporter Precision Vertex` | Number of decimal places kept for exported vertex coordinates | 0 to 6 |
 | `Exporter Precision Vertex Texture` | Number of decimal places kept for exported texture coordinates | 0 to 6 |
 
@@ -654,9 +654,9 @@ the user interface.
 | `Terrain Load Textures` | Toggle: (re)load the land texture images | 0 or 1 |
 | `Terrain Skip Start` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
 | `Terrain Skip End` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
-| `Terrain Colorscale Index` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
-| `Terrain Colorscale Direction` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
-| `Terrain Colorscale Factor` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
+| `Terrain ColorScale Index` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
+| `Terrain ColorScale Direction` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
+| `Terrain ColorScale Factor` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
 
 ### Sky, sun, moon and atmosphere
 
@@ -685,42 +685,42 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Study Active Colorscale Index` | Colour-scale index for active-surface impact shading | _(depends on loaded data)_ |
-| `Study Active Colorscale Direction` | Colour-scale direction for active-surface impact shading | -2 to 2 |
-| `Study Active Colorscale Factor` | Colour-scale multiplier for active-surface impact shading | 0.125 to 8 |
-| `Study Passive Colorscale Index` | Colour-scale index for passive-surface impact shading | _(depends on loaded data)_ |
-| `Study Passive Colorscale Direction` | Colour-scale direction for passive-surface impact shading | -2 to 2 |
-| `Study Passive Colorscale Factor` | Colour-scale multiplier for passive-surface impact shading | 0.125 to 8 |
-| `Statistical Ranges Colorscale Index` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
-| `Statistical Ranges Colorscale Direction` | Colour-scale direction for sorted-value shading | -2 to 2 |
-| `Statistical Ranges Colorscale Factor` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
-| `Probabilities Colorscale Index` | Colour-scale index for probability shading | _(depends on loaded data)_ |
-| `Probabilities Colorscale Direction` | Colour-scale direction for probability shading | -2 to 2 |
-| `Probabilities Colorscale Factor` | Colour-scale multiplier for probability shading | 0.125 to 8 |
-| `Faces Active Colorscale Index` | Colour-scale index for face shading, active side | _(depends on loaded data)_ |
-| `Faces Active Colorscale Direction` | Colour-scale direction for face shading, active side | -2 to 2 |
-| `Faces Active Colorscale Factor` | Colour-scale multiplier for face shading, active side | 0.125 to 8 |
-| `Faces Passive Colorscale Index` | Colour-scale index for face shading, passive side | _(depends on loaded data)_ |
-| `Faces Passive Colorscale Direction` | Colour-scale direction for face shading, passive side | -2 to 2 |
-| `Faces Passive Colorscale Factor` | Colour-scale multiplier for face shading, passive side | 0.125 to 8 |
-| `Solids Colorscale Index` | Colour-scale index for solid shading | _(depends on loaded data)_ |
-| `Solids Colorscale Direction` | Colour-scale direction for solid shading | -2 to 2 |
-| `Solids Colorscale Factor` | Colour-scale multiplier for solid shading | 0.0001 to 64 |
-| `Sky3D Active Colorscale Index` | Colour-scale index for the sky dome, active-side shading | _(depends on loaded data)_ |
-| `Sky3D Active Colorscale Direction` | Colour-scale direction for the sky dome, active-side shading | -2 to 2 |
-| `Sky3D Active Colorscale Factor` | Colour-scale multiplier for the sky dome, active-side shading | 0.125 to 8 |
-| `Sky3D Passive Colorscale Index` | Colour-scale index for the sky dome, passive-side shading | _(depends on loaded data)_ |
-| `Sky3D Passive Colorscale Direction` | Colour-scale direction for the sky dome, passive-side shading | -2 to 2 |
-| `Sky3D Passive Colorscale Factor` | Colour-scale multiplier for the sky dome, passive-side shading | 0.125 to 8 |
-| `Sun3D Active Colorscale Index` | Colour-scale index for the sun path, active-side shading | _(depends on loaded data)_ |
-| `Sun3D Active Colorscale Direction` | Colour-scale direction for the sun path, active-side shading | -2 to 2 |
-| `Sun3D Active Colorscale Factor` | Colour-scale multiplier for the sun path, active-side shading | 0.125 to 8 |
-| `Sun3D Passive Colorscale Index` | Colour-scale index for the sun path, passive-side shading | _(depends on loaded data)_ |
-| `Sun3D Passive Colorscale Direction` | Colour-scale direction for the sun path, passive-side shading | -2 to 2 |
-| `Sun3D Passive Colorscale Factor` | Colour-scale multiplier for the sun path, passive-side shading | 0.125 to 8 |
-| `WindFlows Colorscale Index` | Colour-scale index for wind-flow shading | _(depends on loaded data)_ |
-| `WindFlows Colorscale Direction` | Colour-scale direction for wind-flow shading | -2 to 2 |
-| `WindFlows Colorscale Factor` | Colour-scale multiplier for wind-flow shading | 0.01 to 1.0 |
+| `Study Active ColorScale Index` | Colour-scale index for active-surface impact shading | _(depends on loaded data)_ |
+| `Study Active ColorScale Direction` | Colour-scale direction for active-surface impact shading | -2 to 2 |
+| `Study Active ColorScale Factor` | Colour-scale multiplier for active-surface impact shading | 0.125 to 8 |
+| `Study Passive ColorScale Index` | Colour-scale index for passive-surface impact shading | _(depends on loaded data)_ |
+| `Study Passive ColorScale Direction` | Colour-scale direction for passive-surface impact shading | -2 to 2 |
+| `Study Passive ColorScale Factor` | Colour-scale multiplier for passive-surface impact shading | 0.125 to 8 |
+| `Statistical Ranges ColorScale Index` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
+| `Statistical Ranges ColorScale Direction` | Colour-scale direction for sorted-value shading | -2 to 2 |
+| `Statistical Ranges ColorScale Factor` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
+| `Probabilities ColorScale Index` | Colour-scale index for probability shading | _(depends on loaded data)_ |
+| `Probabilities ColorScale Direction` | Colour-scale direction for probability shading | -2 to 2 |
+| `Probabilities ColorScale Factor` | Colour-scale multiplier for probability shading | 0.125 to 8 |
+| `Faces Active ColorScale Index` | Colour-scale index for face shading, active side | _(depends on loaded data)_ |
+| `Faces Active ColorScale Direction` | Colour-scale direction for face shading, active side | -2 to 2 |
+| `Faces Active ColorScale Factor` | Colour-scale multiplier for face shading, active side | 0.125 to 8 |
+| `Faces Passive ColorScale Index` | Colour-scale index for face shading, passive side | _(depends on loaded data)_ |
+| `Faces Passive ColorScale Direction` | Colour-scale direction for face shading, passive side | -2 to 2 |
+| `Faces Passive ColorScale Factor` | Colour-scale multiplier for face shading, passive side | 0.125 to 8 |
+| `Solids ColorScale Index` | Colour-scale index for solid shading | _(depends on loaded data)_ |
+| `Solids ColorScale Direction` | Colour-scale direction for solid shading | -2 to 2 |
+| `Solids ColorScale Factor` | Colour-scale multiplier for solid shading | 0.0001 to 64 |
+| `Sky3D Active ColorScale Index` | Colour-scale index for the sky dome, active-side shading | _(depends on loaded data)_ |
+| `Sky3D Active ColorScale Direction` | Colour-scale direction for the sky dome, active-side shading | -2 to 2 |
+| `Sky3D Active ColorScale Factor` | Colour-scale multiplier for the sky dome, active-side shading | 0.125 to 8 |
+| `Sky3D Passive ColorScale Index` | Colour-scale index for the sky dome, passive-side shading | _(depends on loaded data)_ |
+| `Sky3D Passive ColorScale Direction` | Colour-scale direction for the sky dome, passive-side shading | -2 to 2 |
+| `Sky3D Passive ColorScale Factor` | Colour-scale multiplier for the sky dome, passive-side shading | 0.125 to 8 |
+| `Sun3D Active ColorScale Index` | Colour-scale index for the sun path, active-side shading | _(depends on loaded data)_ |
+| `Sun3D Active ColorScale Direction` | Colour-scale direction for the sun path, active-side shading | -2 to 2 |
+| `Sun3D Active ColorScale Factor` | Colour-scale multiplier for the sun path, active-side shading | 0.125 to 8 |
+| `Sun3D Passive ColorScale Index` | Colour-scale index for the sun path, passive-side shading | _(depends on loaded data)_ |
+| `Sun3D Passive ColorScale Direction` | Colour-scale direction for the sun path, passive-side shading | -2 to 2 |
+| `Sun3D Passive ColorScale Factor` | Colour-scale multiplier for the sun path, passive-side shading | 0.125 to 8 |
+| `WindFlows ColorScale Index` | Colour-scale index for wind-flow shading | _(depends on loaded data)_ |
+| `WindFlows ColorScale Direction` | Colour-scale direction for wind-flow shading | -2 to 2 |
+| `WindFlows ColorScale Factor` | Colour-scale multiplier for wind-flow shading | 0.01 to 1.0 |
 
 ### Solid and solar impact analysis
 

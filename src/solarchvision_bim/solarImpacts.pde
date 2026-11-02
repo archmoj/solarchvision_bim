@@ -137,12 +137,12 @@ class SolarImpacts {
   int win3DOverlay_sampleStationStart = Integer.MIN_VALUE;
   int win3DOverlay_sampleStationEnd = Integer.MIN_VALUE;
 
-  int win3DOverlay_activeColorscaleIndex = Integer.MIN_VALUE;
-  int win3DOverlay_activeColorscaleDirection = Integer.MIN_VALUE;
-  float win3DOverlay_activeColorscaleFactor = Float.NaN;
-  int win3DOverlay_passiveColorscaleIndex = Integer.MIN_VALUE;
-  int win3DOverlay_passiveColorscaleDirection = Integer.MIN_VALUE;
-  float win3DOverlay_passiveColorscaleFactor = Float.NaN;
+  int win3DOverlay_activeColorScaleIndex = Integer.MIN_VALUE;
+  int win3DOverlay_activeColorScaleDirection = Integer.MIN_VALUE;
+  float win3DOverlay_activeColorScaleFactor = Float.NaN;
+  int win3DOverlay_passiveColorScaleIndex = Integer.MIN_VALUE;
+  int win3DOverlay_passiveColorScaleDirection = Integer.MIN_VALUE;
+  float win3DOverlay_passiveColorScaleFactor = Float.NaN;
 
   // Tolerance for win3DOverlay_cameraMatches() below: a mouse-drag orbit is
   // incremental (many small per-frame updates), so rotating away and then
@@ -211,12 +211,12 @@ class SolarImpacts {
       this.win3DOverlay_sampleMemberEnd          == sampleMemberEnd &&
       this.win3DOverlay_sampleStationStart       == sampleStationStart &&
       this.win3DOverlay_sampleStationEnd         == sampleStationEnd &&
-      this.win3DOverlay_activeColorscaleIndex    == allFaces.activeColorscaleIndex &&
-      this.win3DOverlay_activeColorscaleDirection == allFaces.activeColorscaleDirection &&
-      this.win3DOverlay_activeColorscaleFactor   == allFaces.activeColorscaleFactor &&
-      this.win3DOverlay_passiveColorscaleIndex   == allFaces.passiveColorscaleIndex &&
-      this.win3DOverlay_passiveColorscaleDirection == allFaces.passiveColorscaleDirection &&
-      this.win3DOverlay_passiveColorscaleFactor  == allFaces.passiveColorscaleFactor;
+      this.win3DOverlay_activeColorScaleIndex    == allFaces.activeColorScaleIndex &&
+      this.win3DOverlay_activeColorScaleDirection == allFaces.activeColorScaleDirection &&
+      this.win3DOverlay_activeColorScaleFactor   == allFaces.activeColorScaleFactor &&
+      this.win3DOverlay_passiveColorScaleIndex   == allFaces.passiveColorScaleIndex &&
+      this.win3DOverlay_passiveColorScaleDirection == allFaces.passiveColorScaleDirection &&
+      this.win3DOverlay_passiveColorScaleFactor  == allFaces.passiveColorScaleFactor;
   }
 
   // Convenience: both halves at once - the data is correct AND the camera
@@ -307,7 +307,7 @@ class SolarImpacts {
   // Without clearing this here, a second preBakeViewport() from a new
   // camera position would overwrite the camera snapshot to match the
   // (now live) new camera while win3DOverlay_dataFresh() stays true
-  // (nothing about STUDY/TIME/colorscale changed), so
+  // (nothing about STUDY/TIME/colorScale changed), so
   // win3DOverlay_cameraMatches() trivially passes again and
   // drawViewport3DLayers.pde would paint the stale, old-camera-derived
   // this.Image[][] directly over the new camera's live view as if it
@@ -380,12 +380,12 @@ class SolarImpacts {
     this.win3DOverlay_sampleStationStart       = sampleStationStart;
     this.win3DOverlay_sampleStationEnd         = sampleStationEnd;
 
-    this.win3DOverlay_activeColorscaleIndex    = allFaces.activeColorscaleIndex;
-    this.win3DOverlay_activeColorscaleDirection = allFaces.activeColorscaleDirection;
-    this.win3DOverlay_activeColorscaleFactor   = allFaces.activeColorscaleFactor;
-    this.win3DOverlay_passiveColorscaleIndex   = allFaces.passiveColorscaleIndex;
-    this.win3DOverlay_passiveColorscaleDirection = allFaces.passiveColorscaleDirection;
-    this.win3DOverlay_passiveColorscaleFactor  = allFaces.passiveColorscaleFactor;
+    this.win3DOverlay_activeColorScaleIndex    = allFaces.activeColorScaleIndex;
+    this.win3DOverlay_activeColorScaleDirection = allFaces.activeColorScaleDirection;
+    this.win3DOverlay_activeColorScaleFactor   = allFaces.activeColorScaleFactor;
+    this.win3DOverlay_passiveColorScaleIndex   = allFaces.passiveColorScaleIndex;
+    this.win3DOverlay_passiveColorScaleDirection = allFaces.passiveColorScaleDirection;
+    this.win3DOverlay_passiveColorScaleFactor  = allFaces.passiveColorScaleFactor;
   }
 
   void resize_Image_array () {
@@ -433,9 +433,9 @@ class SolarImpacts {
     if (q == Impact_ACTIVE) {
       valuesSUM = Image_G;
 
-      PAL_type = allFaces.activeColorscaleIndex;
-      PAL_direction = allFaces.activeColorscaleDirection;
-      PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
+      PAL_type = allFaces.activeColorScaleIndex;
+      PAL_direction = allFaces.activeColorScaleDirection;
+      PAL_multiplier = STUDY.paletteColorScaleMultiplier(allFaces.activeColorScaleFactor);
 
       //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
       //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -452,9 +452,9 @@ class SolarImpacts {
 
       valuesSUM = COMPARISON;
 
-      PAL_type = allFaces.passiveColorscaleIndex;
-      PAL_direction = allFaces.passiveColorscaleDirection;
-      PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
+      PAL_type = allFaces.passiveColorScaleIndex;
+      PAL_direction = allFaces.passiveColorScaleDirection;
+      PAL_multiplier = STUDY.paletteColorScaleMultiplier(allFaces.passiveColorScaleFactor);
 
       //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
       _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);

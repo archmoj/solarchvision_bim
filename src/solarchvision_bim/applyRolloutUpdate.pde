@@ -40,9 +40,9 @@ void applyRolloutUpdate() {
   pre_TerrainLoadMesh = Terrain.loadMesh;
   pre_TerrainLoadTextures = Terrain.loadTextures;
 
-  pre_allSolids_ColorscaleIndex = allSolids.colorScaleIndex;
-  pre_allSolids_ColorscaleDirection = allSolids.colorScaleDirection;
-  pre_allSolids_ColorscaleFactor = allSolids.colorScaleFactor;
+  pre_allSolids_ColorScaleIndex = allSolids.colorScaleIndex;
+  pre_allSolids_ColorScaleDirection = allSolids.colorScaleDirection;
+  pre_allSolids_ColorScaleFactor = allSolids.colorScaleFactor;
 
   pre_USER_createUniformSuperellipsoidPower = User3D.creatorUniformSuperellipsoidPower;
 
@@ -245,9 +245,9 @@ void applyRolloutUpdate() {
 
   react.applyCreatePowAll.run(pre_USER_createUniformSuperellipsoidPower, User3D.creatorUniformSuperellipsoidPower);
 
-  react.recalcImpact.run(pre_allSolids_ColorscaleIndex, allSolids.colorScaleIndex);
-  react.recalcImpact.run(pre_allSolids_ColorscaleDirection, allSolids.colorScaleDirection);
-  react.recalcImpact.run(pre_allSolids_ColorscaleFactor, allSolids.colorScaleFactor);
+  react.recalcImpact.run(pre_allSolids_ColorScaleIndex, allSolids.colorScaleIndex);
+  react.recalcImpact.run(pre_allSolids_ColorScaleDirection, allSolids.colorScaleDirection);
+  react.recalcImpact.run(pre_allSolids_ColorScaleFactor, allSolids.colorScaleFactor);
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
@@ -372,9 +372,9 @@ int pre_STUDY_currentLayerId;
 int pre_STUDY_SkyScenario;
 int pre_STUDY_impactGraphIndex;
 
-int pre_allSolids_ColorscaleIndex;
-int pre_allSolids_ColorscaleDirection;
-float pre_allSolids_ColorscaleFactor;
+int pre_allSolids_ColorScaleIndex;
+int pre_allSolids_ColorScaleDirection;
+float pre_allSolids_ColorScaleFactor;
 
 float pre_allSolidImpacts_Grade;
 float pre_allSolidImpacts_Power;

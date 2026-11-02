@@ -154,9 +154,9 @@ class WIN3DTest {
   void choosePaletteParams_usesTheActiveOrPassivePaletteBasedOnImpactType () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar; // enables solar palette mode
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorscaleIndex = 5;
-    app.allFaces.activeColorscaleDirection = 1;
-    app.allFaces.activeColorscaleFactor = 0.5f;
+    app.allFaces.activeColorScaleIndex = 5;
+    app.allFaces.activeColorScaleDirection = 1;
+    app.allFaces.activeColorScaleFactor = 0.5f;
 
     float[] result = app.WIN3D.choosePaletteParams();
 
@@ -185,7 +185,7 @@ class WIN3DTest {
   }
 
   // ================= choosePaletteParams (hour-range scaling) ============
-  // WIN3D's own legend reads the same allFaces colorscale fields as
+  // WIN3D's own legend reads the same allFaces colorScale fields as
   // SHADE.get_PAL_multiplier() (the actual vertex/face coloring), so both
   // must apply the same restricted-hour-range correction.
 
@@ -195,7 +195,7 @@ class WIN3DTest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.allFaces.activeColorscaleFactor = 0.625f;
+    app.allFaces.activeColorScaleFactor = 0.625f;
 
     assertEquals(0.625f, app.WIN3D.choosePaletteParams()[2], 0.0001f);
   }
@@ -206,7 +206,7 @@ class WIN3DTest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.STUDY.startHour = 12;
     app.STUDY.endHour = 12;
-    app.allFaces.activeColorscaleFactor = 0.625f;
+    app.allFaces.activeColorScaleFactor = 0.625f;
 
     assertEquals(0.625f * 12f, app.WIN3D.choosePaletteParams()[2], 0.0001f);
   }
@@ -221,7 +221,7 @@ class WIN3DTest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.STUDY.startHour = 10;
     app.STUDY.endHour = 10; // 1 hour
-    app.allFaces.activeColorscaleFactor = 0.625f;
+    app.allFaces.activeColorScaleFactor = 0.625f;
 
     float vertexMultiplier = app.SHADE.get_PAL_multiplier();
     float legendMultiplier = app.WIN3D.choosePaletteParams()[2];

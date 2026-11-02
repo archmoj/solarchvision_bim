@@ -117,7 +117,7 @@ class SolarImpactsTest {
 
   // ================= win3DOverlay_recordAnalysisState / win3DOverlay_dataFresh ========
   // Same self-consistent-baseline reasoning as above: win3DOverlay_
-  // recordAnalysisState() copies the live STUDY/TIME/STATION/colorscale
+  // recordAnalysisState() copies the live STUDY/TIME/STATION/colorScale
   // fields (and the model generation counters) it reads.
 
   @Test

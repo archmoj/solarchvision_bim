@@ -62,7 +62,7 @@ class User3D {
 
   boolean exporterMaterialLibrary = true;
   boolean exporterDoubleSided = true;
-  int exporterColorscaleResolution = 256;
+  int exporterColorScaleResolution = 256;
 
   public void to_XML (XML xml) {
 
@@ -117,7 +117,7 @@ class User3D {
     XML_setInt(parent, "exporterMaintainPolygons", this.exporterMaintainPolygons);
     XML_setBoolean(parent, "exporterMaterialLibrary", this.exporterMaterialLibrary);
     XML_setBoolean(parent, "exporterDoubleSided", this.exporterDoubleSided);
-    XML_setInt(parent, "exporterColorscaleResolution", this.exporterColorscaleResolution);
+    XML_setInt(parent, "exporterColorScaleResolution", this.exporterColorScaleResolution);
 
   }
 
@@ -178,7 +178,7 @@ class User3D {
     this.exporterMaintainPolygons = XML_getInt(parent, "exporterMaintainPolygons");
     this.exporterMaterialLibrary  = XML_getBoolean(parent, "exporterMaterialLibrary");
     this.exporterDoubleSided = XML_getBoolean(parent, "exporterDoubleSided");
-    this.exporterColorscaleResolution = XML_getInt(parent, "exporterColorscaleResolution");
+    this.exporterColorScaleResolution = XML_getInt(parent, "exporterColorScaleResolution");
 
   }
 

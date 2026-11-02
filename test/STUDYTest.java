@@ -129,9 +129,9 @@ class STUDYTest {
     assertEquals(5, app.STUDY.selectedRangeHours());
   }
 
-  // ================= paletteColorscaleMultiplier =========================
+  // ================= paletteColorScaleMultiplier =========================
   // The counterpart to effectiveDayTime() for a palette's own legend:
-  // scales a colorscale multiplier so its displayed maximum shrinks
+  // scales a colorScale multiplier so its displayed maximum shrinks
   // proportionally for a restricted hour range, using a fixed 12-hour
   // nominal reference rather than a specific date's astronomical
   // DayTime() (several legend-drawing sites have no particular date in
@@ -139,46 +139,46 @@ class STUDYTest {
   // whichever day happened to be processed last).
 
   @Test
-  void paletteColorscaleMultiplier_defaultRange_isUnchanged () {
+  void paletteColorScaleMultiplier_defaultRange_isUnchanged () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    assertEquals(0.625f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+    assertEquals(0.625f, app.STUDY.paletteColorScaleMultiplier(0.625f), 0.0001f);
   }
 
   @Test
-  void paletteColorscaleMultiplier_singleHourRange_scalesByTwelve () {
+  void paletteColorScaleMultiplier_singleHourRange_scalesByTwelve () {
     app.STUDY.startHour = 12;
     app.STUDY.endHour = 12;
-    assertEquals(0.625f * 12f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+    assertEquals(0.625f * 12f, app.STUDY.paletteColorScaleMultiplier(0.625f), 0.0001f);
   }
 
   @Test
-  void paletteColorscaleMultiplier_threeHourRange_scalesByFour () {
+  void paletteColorScaleMultiplier_threeHourRange_scalesByFour () {
     app.STUDY.startHour = 11;
     app.STUDY.endHour = 13; // 11,12,13 -> 3 hours
-    assertEquals(0.625f * 4f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+    assertEquals(0.625f * 4f, app.STUDY.paletteColorScaleMultiplier(0.625f), 0.0001f);
   }
 
   @Test
-  void paletteColorscaleMultiplier_rangeWiderThanNominal_doesNotInflateBeyondOriginal () {
+  void paletteColorScaleMultiplier_rangeWiderThanNominal_doesNotInflateBeyondOriginal () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 14; // 15 hours - wider than the 12-hour nominal reference
-    assertEquals(0.625f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+    assertEquals(0.625f, app.STUDY.paletteColorScaleMultiplier(0.625f), 0.0001f);
   }
 
   @Test
-  void paletteColorscaleMultiplier_endToEnd_matchesTheMotivatingExample () {
-    // The user's own example: 0.625 = allFaces.activeColorscaleFactor's
+  void paletteColorScaleMultiplier_endToEnd_matchesTheMotivatingExample () {
+    // The user's own example: 0.625 = allFaces.activeColorScaleFactor's
     // calibrated value, giving a default max of 8 kWh/m2 via the
     // swatch formula 0.5*q/PAL_multiplier at q=10 (5/PAL_multiplier).
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    float defaultMax = 5f / app.STUDY.paletteColorscaleMultiplier(0.625f);
+    float defaultMax = 5f / app.STUDY.paletteColorScaleMultiplier(0.625f);
     assertEquals(8f, defaultMax, 0.01f);
 
     app.STUDY.startHour = 12;
     app.STUDY.endHour = 12;
-    float oneHourMax = 5f / app.STUDY.paletteColorscaleMultiplier(0.625f);
+    float oneHourMax = 5f / app.STUDY.paletteColorScaleMultiplier(0.625f);
     assertTrue(oneHourMax < 1f, "a one-hour analysis's own max should land well under 1 kWh/m2, not stay anywhere near 8 (" + oneHourMax + ")");
   }
 
@@ -419,8 +419,8 @@ class STUDYTest {
     app.STUDY.rawLinesExporter = true;
     app.STUDY.normalLinesExporter = true;
     app.STUDY.probabilitiesExporter = false;
-    app.STUDY.statisticalRangesColorscaleIndex = 2;
-    app.STUDY.activeColorscaleFactor = 0.5f;
+    app.STUDY.statisticalRangesColorScaleIndex = 2;
+    app.STUDY.activeColorScaleFactor = 0.5f;
     app.STUDY.opacityPercentage = 60;
     app.STUDY.centralGraphScale = 1.25f;
     app.STUDY.centralGraphOffsetX = 0.0f;
@@ -452,8 +452,8 @@ class STUDYTest {
     assertEquals(3, fresh.skyScenarioSetting);
     assertTrue(fresh.rawLinesExporter);
     assertFalse(fresh.probabilitiesExporter);
-    assertEquals(2, fresh.statisticalRangesColorscaleIndex);
-    assertEquals(0.5f, fresh.activeColorscaleFactor, 0.0001f);
+    assertEquals(2, fresh.statisticalRangesColorScaleIndex);
+    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
     assertFalse(fresh.showImpactSummary);
     assertEquals(2, fresh.impactLayerIndex);
     assertEquals(3, fresh.impactGraphIndex);

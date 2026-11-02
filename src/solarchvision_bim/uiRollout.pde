@@ -313,46 +313,46 @@ class UI_rollout {
     vm.showProbabilities(0);
     vm.probabilityWidthInterval(0);
     vm.probabilityHeightInterval(0);
-    vm.Study_activeColorscaleIndex(0);
-    vm.Study_activeColorscaleDirection(0);
-    vm.Study_activeColorscaleFactor(0);
-    vm.Study_passiveColorscaleIndex(0);
-    vm.Study_passiveColorscaleDirection(0);
-    vm.Study_passiveColorscaleFactor(0);
-    vm.statisticalRangesColorscaleIndex(0);
-    vm.statisticalRangesColorscaleDirection(0);
-    vm.statisticalRangesColorscaleFactor(0);
-    vm.probabilitiesColorscaleIndex(0);
-    vm.probabilitiesColorscaleDirection(0);
-    vm.probabilitiesColorscaleFactor(0);
+    vm.Study_activeColorScaleIndex(0);
+    vm.Study_activeColorScaleDirection(0);
+    vm.Study_activeColorScaleFactor(0);
+    vm.Study_passiveColorScaleIndex(0);
+    vm.Study_passiveColorScaleDirection(0);
+    vm.Study_passiveColorScaleFactor(0);
+    vm.statisticalRangesColorScaleIndex(0);
+    vm.statisticalRangesColorScaleDirection(0);
+    vm.statisticalRangesColorScaleFactor(0);
+    vm.probabilitiesColorScaleIndex(0);
+    vm.probabilitiesColorScaleDirection(0);
+    vm.probabilitiesColorScaleFactor(0);
     vm.opacityPercentage(0);
-    vm.Faces_activeColorscaleIndex(0);
-    vm.Faces_activeColorscaleDirection(0);
-    vm.Faces_activeColorscaleFactor(0);
-    vm.Faces_passiveColorscaleIndex(0);
-    vm.Faces_passiveColorscaleDirection(0);
-    vm.Faces_passiveColorscaleFactor(0);
-    vm.Sky3D_activeColorscaleIndex(0);
-    vm.Sky3D_activeColorscaleDirection(0);
-    vm.Sky3D_activeColorscaleFactor(0);
-    vm.Sky3D_passiveColorscaleIndex(0);
-    vm.Sky3D_passiveColorscaleDirection(0);
-    vm.Sky3D_passiveColorscaleFactor(0);
-    vm.Sun3D_activeColorscaleIndex(0);
-    vm.Sun3D_activeColorscaleDirection(0);
-    vm.Sun3D_activeColorscaleFactor(0);
-    vm.Sun3D_passiveColorscaleIndex(0);
-    vm.Sun3D_passiveColorscaleDirection(0);
-    vm.Sun3D_passiveColorscaleFactor(0);
-    vm.SolidsColorscaleIndex(0);
-    vm.SolidsColorscaleDirection(0);
-    vm.SolidsColorscaleFactor(0);
-    vm.TerrainColorscaleIndex(0);
-    vm.TerrainColorscaleDirection(0);
-    vm.TerrainColorscaleFactor(0);
-    vm.WindFlowsColorscaleIndex(0);
-    vm.WindFlowsColorscaleDirection(0);
-    vm.WindFlowsColorscaleFactor(0);
+    vm.Faces_activeColorScaleIndex(0);
+    vm.Faces_activeColorScaleDirection(0);
+    vm.Faces_activeColorScaleFactor(0);
+    vm.Faces_passiveColorScaleIndex(0);
+    vm.Faces_passiveColorScaleDirection(0);
+    vm.Faces_passiveColorScaleFactor(0);
+    vm.Sky3D_activeColorScaleIndex(0);
+    vm.Sky3D_activeColorScaleDirection(0);
+    vm.Sky3D_activeColorScaleFactor(0);
+    vm.Sky3D_passiveColorScaleIndex(0);
+    vm.Sky3D_passiveColorScaleDirection(0);
+    vm.Sky3D_passiveColorScaleFactor(0);
+    vm.Sun3D_activeColorScaleIndex(0);
+    vm.Sun3D_activeColorScaleDirection(0);
+    vm.Sun3D_activeColorScaleFactor(0);
+    vm.Sun3D_passiveColorScaleIndex(0);
+    vm.Sun3D_passiveColorScaleDirection(0);
+    vm.Sun3D_passiveColorScaleFactor(0);
+    vm.SolidsColorScaleIndex(0);
+    vm.SolidsColorScaleDirection(0);
+    vm.SolidsColorScaleFactor(0);
+    vm.TerrainColorScaleIndex(0);
+    vm.TerrainColorScaleDirection(0);
+    vm.TerrainColorScaleFactor(0);
+    vm.WindFlowsColorScaleIndex(0);
+    vm.WindFlowsColorScaleDirection(0);
+    vm.WindFlowsColorScaleFactor(0);
     vm.groupDisplayPivot(0);
     vm.pivotDisplayReference(0);
     vm.groupDisplayBox(0);
@@ -387,7 +387,7 @@ class UI_rollout {
     vm.exporterMaintainPolygons(0);
     vm.exporterMaterialLibrary(0);
     vm.exporterDoubleSided(0);
-    vm.exporterColorscaleResolution(0);
+    vm.exporterColorScaleResolution(0);
     vm.Record_SolidImpact_in_JPG(0);
     vm.Record_SolidImpact_in_PDF(0);
     vm.Record_Solar_Analysis_in_JPG(0);
@@ -731,41 +731,41 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_2D_COLORS) {
 
-        STUDY.activeColorscaleIndex = vm.Study_activeColorscaleIndex(1);
-        STUDY.activeColorscaleDirection = vm.Study_activeColorscaleDirection(1);
-        STUDY.activeColorscaleFactor = vm.Study_activeColorscaleFactor(1);
-        STUDY.passiveColorscaleIndex = vm.Study_passiveColorscaleIndex(1);
-        STUDY.passiveColorscaleDirection = vm.Study_passiveColorscaleDirection(1);
-        STUDY.passiveColorscaleFactor = vm.Study_passiveColorscaleFactor(1);
-        STUDY.statisticalRangesColorscaleIndex = vm.statisticalRangesColorscaleIndex(1);
-        STUDY.statisticalRangesColorscaleDirection = vm.statisticalRangesColorscaleDirection(1);
-        STUDY.statisticalRangesColorscaleFactor = vm.statisticalRangesColorscaleFactor(1);
-        STUDY.probabilitiesColorscaleIndex = vm.probabilitiesColorscaleIndex(1);
-        STUDY.probabilitiesColorscaleDirection = vm.probabilitiesColorscaleDirection(1);
-        STUDY.probabilitiesColorscaleFactor = vm.probabilitiesColorscaleFactor(1);
+        STUDY.activeColorScaleIndex = vm.Study_activeColorScaleIndex(1);
+        STUDY.activeColorScaleDirection = vm.Study_activeColorScaleDirection(1);
+        STUDY.activeColorScaleFactor = vm.Study_activeColorScaleFactor(1);
+        STUDY.passiveColorScaleIndex = vm.Study_passiveColorScaleIndex(1);
+        STUDY.passiveColorScaleDirection = vm.Study_passiveColorScaleDirection(1);
+        STUDY.passiveColorScaleFactor = vm.Study_passiveColorScaleFactor(1);
+        STUDY.statisticalRangesColorScaleIndex = vm.statisticalRangesColorScaleIndex(1);
+        STUDY.statisticalRangesColorScaleDirection = vm.statisticalRangesColorScaleDirection(1);
+        STUDY.statisticalRangesColorScaleFactor = vm.statisticalRangesColorScaleFactor(1);
+        STUDY.probabilitiesColorScaleIndex = vm.probabilitiesColorScaleIndex(1);
+        STUDY.probabilitiesColorScaleDirection = vm.probabilitiesColorScaleDirection(1);
+        STUDY.probabilitiesColorScaleFactor = vm.probabilitiesColorScaleFactor(1);
         STUDY.opacityPercentage = vm.opacityPercentage(1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_3D_SOLAR) {
 
-        allFaces.activeColorscaleIndex = vm.Faces_activeColorscaleIndex(1);
-        allFaces.activeColorscaleDirection = vm.Faces_activeColorscaleDirection(1);
-        allFaces.activeColorscaleFactor = vm.Faces_activeColorscaleFactor(1);
-        allFaces.passiveColorscaleIndex = vm.Faces_passiveColorscaleIndex(1);
-        allFaces.passiveColorscaleDirection = vm.Faces_passiveColorscaleDirection(1);
-        allFaces.passiveColorscaleFactor = vm.Faces_passiveColorscaleFactor(1);
-        Sky3D.activeColorscaleIndex = vm.Sky3D_activeColorscaleIndex(1);
-        Sky3D.activeColorscaleDirection = vm.Sky3D_activeColorscaleDirection(1);
-        Sky3D.activeColorscaleFactor = vm.Sky3D_activeColorscaleFactor(1);
-        Sky3D.passiveColorscaleIndex = vm.Sky3D_passiveColorscaleIndex(1);
-        Sky3D.passiveColorscaleDirection = vm.Sky3D_passiveColorscaleDirection(1);
-        Sky3D.passiveColorscaleFactor = vm.Sky3D_passiveColorscaleFactor(1);
-        Sun3D.activeColorscaleIndex = vm.Sun3D_activeColorscaleIndex(1);
-        Sun3D.activeColorscaleDirection = vm.Sun3D_activeColorscaleDirection(1);
-        Sun3D.activeColorscaleFactor = vm.Sun3D_activeColorscaleFactor(1);
-        Sun3D.passiveColorscaleIndex = vm.Sun3D_passiveColorscaleIndex(1);
-        Sun3D.passiveColorscaleDirection = vm.Sun3D_passiveColorscaleDirection(1);
-        Sun3D.passiveColorscaleFactor = vm.Sun3D_passiveColorscaleFactor(1);
+        allFaces.activeColorScaleIndex = vm.Faces_activeColorScaleIndex(1);
+        allFaces.activeColorScaleDirection = vm.Faces_activeColorScaleDirection(1);
+        allFaces.activeColorScaleFactor = vm.Faces_activeColorScaleFactor(1);
+        allFaces.passiveColorScaleIndex = vm.Faces_passiveColorScaleIndex(1);
+        allFaces.passiveColorScaleDirection = vm.Faces_passiveColorScaleDirection(1);
+        allFaces.passiveColorScaleFactor = vm.Faces_passiveColorScaleFactor(1);
+        Sky3D.activeColorScaleIndex = vm.Sky3D_activeColorScaleIndex(1);
+        Sky3D.activeColorScaleDirection = vm.Sky3D_activeColorScaleDirection(1);
+        Sky3D.activeColorScaleFactor = vm.Sky3D_activeColorScaleFactor(1);
+        Sky3D.passiveColorScaleIndex = vm.Sky3D_passiveColorScaleIndex(1);
+        Sky3D.passiveColorScaleDirection = vm.Sky3D_passiveColorScaleDirection(1);
+        Sky3D.passiveColorScaleFactor = vm.Sky3D_passiveColorScaleFactor(1);
+        Sun3D.activeColorScaleIndex = vm.Sun3D_activeColorScaleIndex(1);
+        Sun3D.activeColorScaleDirection = vm.Sun3D_activeColorScaleDirection(1);
+        Sun3D.activeColorScaleFactor = vm.Sun3D_activeColorScaleFactor(1);
+        Sun3D.passiveColorScaleIndex = vm.Sun3D_passiveColorScaleIndex(1);
+        Sun3D.passiveColorScaleDirection = vm.Sun3D_passiveColorScaleDirection(1);
+        Sun3D.passiveColorScaleFactor = vm.Sun3D_passiveColorScaleFactor(1);
       }
 
 
@@ -773,15 +773,15 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_3D_SPATIAL) {
 
-        allSolids.colorScaleIndex = vm.SolidsColorscaleIndex(1);
-        allSolids.colorScaleDirection = vm.SolidsColorscaleDirection(1);
-        allSolids.colorScaleFactor = vm.SolidsColorscaleFactor(1);
-        Terrain.colorScaleIndex = vm.TerrainColorscaleIndex(1);
-        Terrain.colorScaleDirection = vm.TerrainColorscaleDirection(1);
-        Terrain.colorScaleFactor = vm.TerrainColorscaleFactor(1);
-        allWindFlows.colorScaleIndex = vm.WindFlowsColorscaleIndex(1);
-        allWindFlows.colorScaleDirection = vm.WindFlowsColorscaleDirection(1);
-        allWindFlows.colorScaleFactor = vm.WindFlowsColorscaleFactor(1);
+        allSolids.colorScaleIndex = vm.SolidsColorScaleIndex(1);
+        allSolids.colorScaleDirection = vm.SolidsColorScaleDirection(1);
+        allSolids.colorScaleFactor = vm.SolidsColorScaleFactor(1);
+        Terrain.colorScaleIndex = vm.TerrainColorScaleIndex(1);
+        Terrain.colorScaleDirection = vm.TerrainColorScaleDirection(1);
+        Terrain.colorScaleFactor = vm.TerrainColorScaleFactor(1);
+        allWindFlows.colorScaleIndex = vm.WindFlowsColorScaleIndex(1);
+        allWindFlows.colorScaleDirection = vm.WindFlowsColorScaleDirection(1);
+        allWindFlows.colorScaleFactor = vm.WindFlowsColorScaleFactor(1);
       }
 
 
@@ -835,7 +835,7 @@ class UI_rollout {
         User3D.exporterMaintainPolygons = vm.exporterMaintainPolygons(1);
         User3D.exporterMaterialLibrary = vm.exporterMaterialLibrary(1);
         User3D.exporterDoubleSided = vm.exporterDoubleSided(1);
-        User3D.exporterColorscaleResolution = vm.exporterColorscaleResolution(1);
+        User3D.exporterColorScaleResolution = vm.exporterColorScaleResolution(1);
       }
 
       if (this.child == CHILD_EXPORT_MEDIA) {

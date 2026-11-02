@@ -12,13 +12,13 @@ class Faces {
 
   int displayTessellation = 2;
 
-  int activeColorscaleIndex = 19; //15; //14;
-  int activeColorscaleDirection = 1;
-  float activeColorscaleFactor = 0.5; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
+  int activeColorScaleIndex = 19; //15; //14;
+  int activeColorScaleDirection = 1;
+  float activeColorScaleFactor = 0.5; // 0.5*10/0.5 = 10 kWh/m2 at the palette's max swatch (was 0.625, giving 8 kWh/m2)
 
-  int passiveColorscaleIndex = 1;
-  int passiveColorscaleDirection = 1;
-  float passiveColorscaleFactor = 0.125; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
+  int passiveColorScaleIndex = 1;
+  int passiveColorScaleDirection = 1;
+  float passiveColorScaleFactor = 0.125; // 2.0*(10-5)/0.125 = 80 %kW°C/m2 at the palette's max swatch (was 0.16, giving 62.5)
 
   // --- WIN3D retained-mode cache -------------------------------------------
   // Orbiting/panning/zooming the WIN3D camera does not change face geometry,
@@ -35,7 +35,7 @@ class Faces {
   //    array.pde / calculateVertexSolarArray.pde - those change per-vertex
   //    colors without changing winCacheGeneration via model_changed())
   //  - the handful of cheap scalar knobs below (shading mode, impact type,
-  //    display-edges toggle, tessellation level, colorscale params) are
+  //    display-edges toggle, tessellation level, colorScale params) are
   //    compared frame-to-frame in win3DCache_isValid(), so we don't have to
   //    chase every UI control (sliders, menus, XML load, ...) that can touch
   //    them - there turned out to be a lot of those (valueModifier.pde,
@@ -56,12 +56,12 @@ class Faces {
   int win3DCache_impactTypeIndex = -1;
   boolean win3DCache_displayEdges = true;
   int win3DCache_displayTessellation = -1;
-  int win3DCache_activeColorscaleIndex = -1;
-  int win3DCache_activeColorscaleDirection = 0;
-  float win3DCache_activeColorscaleFactor = -1;
-  int win3DCache_passiveColorscaleIndex = -1;
-  int win3DCache_passiveColorscaleDirection = 0;
-  float win3DCache_passiveColorscaleFactor = -1;
+  int win3DCache_activeColorScaleIndex = -1;
+  int win3DCache_activeColorScaleDirection = 0;
+  float win3DCache_activeColorScaleFactor = -1;
+  int win3DCache_passiveColorScaleIndex = -1;
+  int win3DCache_passiveColorScaleDirection = 0;
+  float win3DCache_passiveColorScaleFactor = -1;
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
   // --- raycasting grid cache (buildFaceGrid(), isIntersectedFaces.pde) ---
@@ -635,8 +635,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.exporterColorscaleResolution;
-            int RES2 = User3D.exporterColorscaleResolution / 16;
+            int RES1 = User3D.exporterColorScaleResolution;
+            int RES2 = User3D.exporterColorScaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -949,8 +949,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.exporterColorscaleResolution;
-            int RES2 = User3D.exporterColorscaleResolution / 16;
+            int RES1 = User3D.exporterColorScaleResolution;
+            int RES2 = User3D.exporterColorScaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -1296,12 +1296,12 @@ class Faces {
       this.win3DCache_impactTypeIndex             == WIN3D.impactTypeIndex &&
       this.win3DCache_displayEdges                == this.displayEdges &&
       this.win3DCache_displayTessellation         == this.displayTessellation &&
-      this.win3DCache_activeColorscaleIndex       == this.activeColorscaleIndex &&
-      this.win3DCache_activeColorscaleDirection   == this.activeColorscaleDirection &&
-      this.win3DCache_activeColorscaleFactor      == this.activeColorscaleFactor &&
-      this.win3DCache_passiveColorscaleIndex      == this.passiveColorscaleIndex &&
-      this.win3DCache_passiveColorscaleDirection  == this.passiveColorscaleDirection &&
-      this.win3DCache_passiveColorscaleFactor     == this.passiveColorscaleFactor &&
+      this.win3DCache_activeColorScaleIndex       == this.activeColorScaleIndex &&
+      this.win3DCache_activeColorScaleDirection   == this.activeColorScaleDirection &&
+      this.win3DCache_activeColorScaleFactor      == this.activeColorScaleFactor &&
+      this.win3DCache_passiveColorScaleIndex      == this.passiveColorScaleIndex &&
+      this.win3DCache_passiveColorScaleDirection  == this.passiveColorScaleDirection &&
+      this.win3DCache_passiveColorScaleFactor     == this.passiveColorScaleFactor &&
       this.win3DCache_impactDisplayDay            == impactDisplayDay;
   }
 
@@ -1311,12 +1311,12 @@ class Faces {
     this.win3DCache_impactTypeIndex           = WIN3D.impactTypeIndex;
     this.win3DCache_displayEdges              = this.displayEdges;
     this.win3DCache_displayTessellation       = this.displayTessellation;
-    this.win3DCache_activeColorscaleIndex     = this.activeColorscaleIndex;
-    this.win3DCache_activeColorscaleDirection = this.activeColorscaleDirection;
-    this.win3DCache_activeColorscaleFactor    = this.activeColorscaleFactor;
-    this.win3DCache_passiveColorscaleIndex     = this.passiveColorscaleIndex;
-    this.win3DCache_passiveColorscaleDirection = this.passiveColorscaleDirection;
-    this.win3DCache_passiveColorscaleFactor    = this.passiveColorscaleFactor;
+    this.win3DCache_activeColorScaleIndex     = this.activeColorScaleIndex;
+    this.win3DCache_activeColorScaleDirection = this.activeColorScaleDirection;
+    this.win3DCache_activeColorScaleFactor    = this.activeColorScaleFactor;
+    this.win3DCache_passiveColorScaleIndex     = this.passiveColorScaleIndex;
+    this.win3DCache_passiveColorScaleDirection = this.passiveColorScaleDirection;
+    this.win3DCache_passiveColorScaleFactor    = this.passiveColorScaleFactor;
     this.win3DCache_impactDisplayDay           = impactDisplayDay;
   }
 
@@ -1929,12 +1929,12 @@ class Faces {
     XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
 
-    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
-    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
-    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
-    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
-    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
-    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
   }
 
   public void from_XML (XML xml) {
@@ -1970,12 +1970,12 @@ class Faces {
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
 
-    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
-    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
-    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
-    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
-    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
-    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
   }
 
 }

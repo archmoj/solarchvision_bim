@@ -302,16 +302,16 @@ class WIN3D {
 
     if (isSolarPaletteMode()) {
       if (this.impactTypeIndex == Impact_ACTIVE) {
-        type = allFaces.activeColorscaleIndex;
-        direction = allFaces.activeColorscaleDirection;
-        multiplier = allFaces.activeColorscaleFactor;
+        type = allFaces.activeColorScaleIndex;
+        direction = allFaces.activeColorScaleDirection;
+        multiplier = allFaces.activeColorScaleFactor;
       }
       if (this.impactTypeIndex == Impact_PASSIVE) {
-        type = allFaces.passiveColorscaleIndex;
-        direction = allFaces.passiveColorscaleDirection;
-        multiplier = allFaces.passiveColorscaleFactor;
+        type = allFaces.passiveColorScaleIndex;
+        direction = allFaces.passiveColorScaleDirection;
+        multiplier = allFaces.passiveColorScaleFactor;
       }
-      multiplier = STUDY.paletteColorscaleMultiplier(multiplier);
+      multiplier = STUDY.paletteColorScaleMultiplier(multiplier);
       draw_pal = true;
     }
 

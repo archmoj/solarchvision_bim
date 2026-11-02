@@ -136,7 +136,7 @@ class SHADETest {
   void getPALType_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorscaleIndex = 19;
+    app.allFaces.activeColorScaleIndex = 19;
 
     assertEquals(19, app.SHADE.get_PAL_type());
   }
@@ -145,7 +145,7 @@ class SHADETest {
   void getPALType_usesThePassivePaletteForSolarShadeAndPassiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
-    app.allFaces.passiveColorscaleIndex = 1;
+    app.allFaces.passiveColorScaleIndex = 1;
 
     assertEquals(1, app.SHADE.get_PAL_type());
   }
@@ -176,7 +176,7 @@ class SHADETest {
   void getPALDirection_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorscaleDirection = 1;
+    app.allFaces.activeColorScaleDirection = 1;
 
     assertEquals(1, app.SHADE.get_PAL_direction());
   }
@@ -199,7 +199,7 @@ class SHADETest {
   void getPALMultiplier_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorscaleFactor = 1;
+    app.allFaces.activeColorScaleFactor = 1;
 
     assertEquals(1f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
@@ -220,8 +220,8 @@ class SHADETest {
 
   // ================= get_PAL_multiplier (hour-range scaling) =============
   // The vertex/face coloring counterpart to WIN3D's own palette legend -
-  // both read the same allFaces colorscale fields and must apply the same
-  // restricted-hour-range adjustment (STUDY.paletteColorscaleMultiplier())
+  // both read the same allFaces colorScale fields and must apply the same
+  // restricted-hour-range adjustment (STUDY.paletteColorScaleMultiplier())
   // so a surface's actual color and the legend it's read against never
   // drift apart.
 
@@ -231,7 +231,7 @@ class SHADETest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
-    app.allFaces.activeColorscaleFactor = 0.625f;
+    app.allFaces.activeColorScaleFactor = 0.625f;
 
     assertEquals(0.625f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
@@ -242,7 +242,7 @@ class SHADETest {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.STUDY.startHour = 12;
     app.STUDY.endHour = 12;
-    app.allFaces.activeColorscaleFactor = 0.625f;
+    app.allFaces.activeColorScaleFactor = 0.625f;
 
     assertEquals(0.625f * 12f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
@@ -253,7 +253,7 @@ class SHADETest {
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
     app.STUDY.startHour = 11;
     app.STUDY.endHour = 13; // 3 hours
-    app.allFaces.passiveColorscaleFactor = 0.16f;
+    app.allFaces.passiveColorScaleFactor = 0.16f;
 
     assertEquals(0.16f * 4f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }

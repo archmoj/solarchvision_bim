@@ -427,7 +427,7 @@ class SolarConsistencyTest {
     assertDiffuseAgreesClosely(-45, -90, "west-down");
   }
 
-  // ================= colorscale factor defaults =============================
+  // ================= colorScale factor defaults =============================
   // Regression coverage for the palette-matching work this session: the
   // active/passive maximum swatch each palette shows depends directly on
   // these defaults (label = 0.5*q/PAL_multiplier for active, 2.0*(q-5)/
@@ -439,28 +439,28 @@ class SolarConsistencyTest {
   // shows as its maximum.
 
   @Test
-  void facesDefaultActiveColorscaleFactor_putsTenKWhPerM2AtTheMaxSwatch () {
+  void facesDefaultActiveColorScaleFactor_putsTenKWhPerM2AtTheMaxSwatch () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(0.5f, fresh.allFaces.activeColorscaleFactor, 0.0001f);
-    assertEquals(10f, 0.5f * 10 / fresh.allFaces.activeColorscaleFactor, 0.0001f);
+    assertEquals(0.5f, fresh.allFaces.activeColorScaleFactor, 0.0001f);
+    assertEquals(10f, 0.5f * 10 / fresh.allFaces.activeColorScaleFactor, 0.0001f);
   }
 
   @Test
-  void facesDefaultPassiveColorscaleFactor_putsEightyPercentKWhCPerM2AtTheMaxSwatch () {
+  void facesDefaultPassiveColorScaleFactor_putsEightyPercentKWhCPerM2AtTheMaxSwatch () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(0.125f, fresh.allFaces.passiveColorscaleFactor, 0.0001f);
-    assertEquals(80f, 2.0f * (10 - 5) / fresh.allFaces.passiveColorscaleFactor, 0.0001f);
+    assertEquals(0.125f, fresh.allFaces.passiveColorScaleFactor, 0.0001f);
+    assertEquals(80f, 2.0f * (10 - 5) / fresh.allFaces.passiveColorScaleFactor, 0.0001f);
   }
 
   @Test
-  void studyDefaultActiveColorscaleFactor_matchesFaces_soPoseAndSkinPotentialAgree () {
+  void studyDefaultActiveColorScaleFactor_matchesFaces_soPoseAndSkinPotentialAgree () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(fresh.allFaces.activeColorscaleFactor, fresh.STUDY.activeColorscaleFactor, 0.0001f);
+    assertEquals(fresh.allFaces.activeColorScaleFactor, fresh.STUDY.activeColorScaleFactor, 0.0001f);
   }
 
   @Test
-  void studyDefaultPassiveColorscaleFactor_matchesFaces_soPoseAndSkinPotentialAgree () {
+  void studyDefaultPassiveColorScaleFactor_matchesFaces_soPoseAndSkinPotentialAgree () {
     solarchvision_bim fresh = new solarchvision_bim();
-    assertEquals(fresh.allFaces.passiveColorscaleFactor, fresh.STUDY.passiveColorscaleFactor, 0.0001f);
+    assertEquals(fresh.allFaces.passiveColorScaleFactor, fresh.STUDY.passiveColorScaleFactor, 0.0001f);
   }
 }

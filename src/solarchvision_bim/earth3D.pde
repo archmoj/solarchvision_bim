@@ -415,12 +415,12 @@ class Earth3D {
   boolean win3DCache_displayTexture = true;
   int win3DCache_shadingMode = -1;
   int win3DCache_impactTypeIndex = -1;
-  int win3DCache_activeColorscaleIndex = -1;
-  int win3DCache_activeColorscaleDirection = 0;
-  float win3DCache_activeColorscaleFactor = -1;
-  int win3DCache_passiveColorscaleIndex = -1;
-  int win3DCache_passiveColorscaleDirection = 0;
-  float win3DCache_passiveColorscaleFactor = -1;
+  int win3DCache_activeColorScaleIndex = -1;
+  int win3DCache_activeColorScaleDirection = 0;
+  float win3DCache_activeColorScaleFactor = -1;
+  int win3DCache_passiveColorScaleIndex = -1;
+  int win3DCache_passiveColorScaleDirection = 0;
+  float win3DCache_passiveColorScaleFactor = -1;
   int win3DCache_terrainColorScaleIndex = -1;
   int win3DCache_terrainColorScaleDirection = 0;
   float win3DCache_terrainColorScaleFactor = -1;
@@ -455,12 +455,12 @@ class Earth3D {
       this.win3DCache_displayTexture              == this.displayTexture &&
       this.win3DCache_shadingMode                 == WIN3D.shadingMode &&
       this.win3DCache_impactTypeIndex             == WIN3D.impactTypeIndex &&
-      this.win3DCache_activeColorscaleIndex       == allFaces.activeColorscaleIndex &&
-      this.win3DCache_activeColorscaleDirection   == allFaces.activeColorscaleDirection &&
-      this.win3DCache_activeColorscaleFactor      == allFaces.activeColorscaleFactor &&
-      this.win3DCache_passiveColorscaleIndex      == allFaces.passiveColorscaleIndex &&
-      this.win3DCache_passiveColorscaleDirection  == allFaces.passiveColorscaleDirection &&
-      this.win3DCache_passiveColorscaleFactor     == allFaces.passiveColorscaleFactor &&
+      this.win3DCache_activeColorScaleIndex       == allFaces.activeColorScaleIndex &&
+      this.win3DCache_activeColorScaleDirection   == allFaces.activeColorScaleDirection &&
+      this.win3DCache_activeColorScaleFactor      == allFaces.activeColorScaleFactor &&
+      this.win3DCache_passiveColorScaleIndex      == allFaces.passiveColorScaleIndex &&
+      this.win3DCache_passiveColorScaleDirection  == allFaces.passiveColorScaleDirection &&
+      this.win3DCache_passiveColorScaleFactor     == allFaces.passiveColorScaleFactor &&
       this.win3DCache_terrainColorScaleIndex      == Terrain.colorScaleIndex &&
       this.win3DCache_terrainColorScaleDirection  == Terrain.colorScaleDirection &&
       this.win3DCache_terrainColorScaleFactor     == Terrain.colorScaleFactor &&
@@ -484,12 +484,12 @@ class Earth3D {
     this.win3DCache_displayTexture             = this.displayTexture;
     this.win3DCache_shadingMode                = WIN3D.shadingMode;
     this.win3DCache_impactTypeIndex            = WIN3D.impactTypeIndex;
-    this.win3DCache_activeColorscaleIndex      = allFaces.activeColorscaleIndex;
-    this.win3DCache_activeColorscaleDirection  = allFaces.activeColorscaleDirection;
-    this.win3DCache_activeColorscaleFactor     = allFaces.activeColorscaleFactor;
-    this.win3DCache_passiveColorscaleIndex     = allFaces.passiveColorscaleIndex;
-    this.win3DCache_passiveColorscaleDirection = allFaces.passiveColorscaleDirection;
-    this.win3DCache_passiveColorscaleFactor    = allFaces.passiveColorscaleFactor;
+    this.win3DCache_activeColorScaleIndex      = allFaces.activeColorScaleIndex;
+    this.win3DCache_activeColorScaleDirection  = allFaces.activeColorScaleDirection;
+    this.win3DCache_activeColorScaleFactor     = allFaces.activeColorScaleFactor;
+    this.win3DCache_passiveColorScaleIndex     = allFaces.passiveColorScaleIndex;
+    this.win3DCache_passiveColorScaleDirection = allFaces.passiveColorScaleDirection;
+    this.win3DCache_passiveColorScaleFactor    = allFaces.passiveColorScaleFactor;
     this.win3DCache_terrainColorScaleIndex     = Terrain.colorScaleIndex;
     this.win3DCache_terrainColorScaleDirection = Terrain.colorScaleDirection;
     this.win3DCache_terrainColorScaleFactor    = Terrain.colorScaleFactor;
