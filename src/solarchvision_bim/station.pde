@@ -113,9 +113,9 @@ class STATION {
     XML_setFloat(child, "longitude", this.getLongitude());
     XML_setFloat(child, "timezoneLongitude", this.getTimezoneLongitude());
 
-    XML_setString(child, "ensembleForecastFilename", this.getEnsembleForecastFilename());
-    XML_setString(child, "climateEngineeringFilename", this.getClimateEngineeringFilename());
-    XML_setString(child, "climateTypicalYearFilename", this.getClimateTypicalYearFilename());
+    XML_setString(child, "ensembleForecastFileName", this.getEnsembleForecastFilename());
+    XML_setString(child, "climateEngineeringFileName", this.getClimateEngineeringFilename());
+    XML_setString(child, "climateTypicalYearFileName", this.getClimateTypicalYearFilename());
   }
 
 
@@ -133,8 +133,8 @@ class STATION {
     this.setLongitude(XML_getFloat(child, "longitude"));
     this.setTimezoneLongitude(XML_getFloat(child, "timezoneLongitude"));
 
-    this.setEnsembleForecastFilename(XML_getString(child, "ensembleForecastFilename"));
-    this.setClimateEngineeringFilename(XML_getString(child, "climateEngineeringFilename"));
-    this.setClimateTypicalYearFilename(XML_getString(child, "climateTypicalYearFilename"));
+    this.setEnsembleForecastFilename(XML_getString(child, "ensembleForecastFileName"));
+    this.setClimateEngineeringFilename(XML_getString(child, "climateEngineeringFileName"));
+    this.setClimateTypicalYearFilename(XML_getString(child, "climateTypicalYearFileName"));
   }
 }
