@@ -421,7 +421,7 @@ class Sections {
       XML_setBoolean(parent, "displayAll", this.displayAll);
     }
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".SolidImpact");
+      XML parent = xml.addChild(this.CLASS_STAMP + "SolidImpact");
       int ni = this.SolidImpact.length;
       XML_setInt(parent, "ni", ni);
       for (int i = 0; i < ni; i++) {
@@ -435,7 +435,7 @@ class Sections {
       }
     }
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".SolarImpacts");
+      XML parent = xml.addChild(this.CLASS_STAMP + "SolarImpacts");
       int ni = 0, nj = 0, nk = 0;
       ni = this.SolarImpact.length;
       if (ni > 0) {
@@ -486,7 +486,7 @@ class Sections {
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".SolidImpact");
+      XML parent = xml.getChild(this.CLASS_STAMP + "SolidImpact");
       int ni = XML_getInt(parent, "ni");
       this.SolidImpact = new PImage[ni];
       XML[] children = parent.getChildren("item");
@@ -499,7 +499,7 @@ class Sections {
       }
     }
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".SolarImpacts");
+      XML parent = xml.getChild(this.CLASS_STAMP + "SolarImpacts");
       int ni = XML_getInt(parent, "ni");
       int nj = XML_getInt(parent, "nj");
       int nk = XML_getInt(parent, "nk");

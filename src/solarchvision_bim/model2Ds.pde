@@ -1375,7 +1375,7 @@ class Model2Ds {
     }
 
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
+      XML parent = xml.addChild(this.CLASS_STAMP + "Textures");
       int ni = this.ImagePath.length;
       XML_setInt(parent, "ni", ni);
       for (int i = 0; i < ni; i++) {
@@ -1445,7 +1445,7 @@ class Model2Ds {
     }
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
+      XML parent = xml.getChild(this.CLASS_STAMP + "Textures");
 
       int ni = XML_getInt(parent, "ni");
 

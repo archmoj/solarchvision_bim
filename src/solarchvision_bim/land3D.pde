@@ -1472,7 +1472,7 @@ class Terrain {
         }
       }
 
-      XML parent = xml.addChild(this.CLASS_STAMP + ".Textures");
+      XML parent = xml.addChild(this.CLASS_STAMP + "Textures");
       XML_setInt(parent, "ni", this.Textures_num);
 
       for (int i = 0; i < this.Textures_num; i++) {
@@ -1518,7 +1518,7 @@ class Terrain {
     }
 
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
+      XML parent = xml.getChild(this.CLASS_STAMP + "Textures");
 
       int pre_Terrain_Textures_num = this.Textures_num;
       this.Textures_num = XML_getInt(parent, "ni");
