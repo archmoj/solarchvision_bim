@@ -4,6 +4,30 @@ void saveProject (String myFile) {
 
   save_folder = myFile.substring(0, myFile.lastIndexOf("/"));
 
+  XML xml = buildProjectSnapshot(true);
+
+  saveXML(xml, myFile);
+
+  println("End of saving XML:", myFile);
+}
+
+// Builds the exact same XML tree saveProject() writes to disk, entirely
+// in memory - the one shared list of "everything that makes up a
+// project" that every full-state consumer goes through: file Save (via
+// saveProject() above), Hold/Fetch (via saveProject() too), and now the
+// undo/redo snapshot stack (undoRedo.pde, which calls this directly
+// with copyTexturesAlongside: false, never touching saveProject() or
+// disk at all). A class added to this one list is automatically
+// captured everywhere it's used - the alternative, a second
+// hand-duplicated "everything that matters" list specific to undo,
+// would drift out of sync with this one exactly the way Model2Ds' own
+// save format used to drift from its in-memory layout.
+//
+// copyTexturesAlongside is passed straight through to Terrain.to_XML() -
+// see that method's own comment; every other class's to_XML() is pure
+// serialization and takes no such flag.
+XML buildProjectSnapshot (boolean copyTexturesAlongside) {
+
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
   xml.setName("solarchvisionV" + version);
@@ -96,7 +120,7 @@ void saveProject (String myFile) {
 
   allGroups.to_XML(xml);
 
-  Terrain.to_XML(xml);
+  Terrain.to_XML(xml, copyTexturesAlongside);
 
   Earth3D.to_XML(xml);
 
@@ -130,10 +154,7 @@ void saveProject (String myFile) {
     allLayers[i].to_XML(xml);
   }
 
-  saveXML(xml, myFile);
-
-  println("End of saving XML:", myFile);
-
+  return xml;
 }
 
 

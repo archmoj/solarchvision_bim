@@ -1416,7 +1416,21 @@ class Terrain {
   }
 
 
-  public void to_XML (XML xml) {    {
+  // copyTexturesAlongside controls the one part of this method that
+  // isn't pure serialization: when true, it copies every terrain
+  // texture file into a Textures/ subfolder next to the file being
+  // written (so the saved project is portable - move the .xml folder
+  // and its terrain textures travel with it) and rewrites
+  // this.Textures_path[] in place to point at the copied location. That
+  // belongs in an actual file Save (and Hold, which is also a real
+  // file), but not in an in-memory-only snapshot - see undoRedo.pde's
+  // own notes on why. The no-arg overload below is every pre-existing
+  // caller's default (true), unchanged.
+  public void to_XML (XML xml) {
+    this.to_XML(xml, true);
+  }
+
+  public void to_XML (XML xml, boolean copyTexturesAlongside) {    {
       XML parent = xml.addChild(this.CLASS_STAMP);
 
       XML_setInt(parent, "displayTessellation", this.displayTessellation);
@@ -1451,24 +1465,26 @@ class Terrain {
     }
 
     {
-      String the_dir = save_folder;
+      if (copyTexturesAlongside) {
+        String the_dir = save_folder;
 
-      for (int q = 0; q < this.Textures_num; q++) {
-        int n_Map = q;
-        int lastSlash = this.Textures_path[n_Map].lastIndexOf("/");
-        String the_filename = this.Textures_path[n_Map].substring(lastSlash + 1);
-        String sourceFolderPath = this.Textures_path[n_Map].substring(0, lastSlash);
-        String sourceFolderName = sourceFolderPath.substring(sourceFolderPath.lastIndexOf("/") + 1);
-        // Prefix the source lat/lon folder name so two different station
-        // positions' same-named ELEV_<width>.jpg files don't collide once
-        // flattened into one Textures/ folder.
-        String fileLocation = "Textures/" + sourceFolderName + "_" + the_filename;
-        String new_Texture_path = the_dir + "/" + fileLocation;
+        for (int q = 0; q < this.Textures_num; q++) {
+          int n_Map = q;
+          int lastSlash = this.Textures_path[n_Map].lastIndexOf("/");
+          String the_filename = this.Textures_path[n_Map].substring(lastSlash + 1);
+          String sourceFolderPath = this.Textures_path[n_Map].substring(0, lastSlash);
+          String sourceFolderName = sourceFolderPath.substring(sourceFolderPath.lastIndexOf("/") + 1);
+          // Prefix the source lat/lon folder name so two different station
+          // positions' same-named ELEV_<width>.jpg files don't collide once
+          // flattened into one Textures/ folder.
+          String fileLocation = "Textures/" + sourceFolderName + "_" + the_filename;
+          String new_Texture_path = the_dir + "/" + fileLocation;
 
-        if (!this.Textures_path[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-          println("Copying texture:", this.Textures_path[n_Map], ">", new_Texture_path);
-          saveBytes(new_Texture_path, loadBytes(this.Textures_path[n_Map]));
-          this.Textures_path[n_Map] = fileLocation;
+          if (!this.Textures_path[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
+            println("Copying texture:", this.Textures_path[n_Map], ">", new_Texture_path);
+            saveBytes(new_Texture_path, loadBytes(this.Textures_path[n_Map]));
+            this.Textures_path[n_Map] = fileLocation;
+          }
         }
       }
 
