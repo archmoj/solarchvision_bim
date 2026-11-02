@@ -79,6 +79,15 @@ void model_changed () {
   if (allModel1Ds != null) allModel1Ds.winCacheGeneration++;
   if (Terrain != null) Terrain.winCacheGeneration++;
 
+  // Undo/redo history - see undoRedo.pde's own header comment for the
+  // full reasoning. Piggybacks on model_changed() the same way the
+  // winCacheGeneration bumps above do: already called once per discrete
+  // structural/material edit (one call per create/delete/import/batch
+  // move-rotate-scale, confirmed by inspection rather than per
+  // sub-object or per animation frame - see that file's comment), from
+  // every site that needs this, rather than adding a second hook.
+  recordHistoryStep();
+
   view_changed();
 }
 

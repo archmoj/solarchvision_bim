@@ -1,93 +1,131 @@
-// Undo/Redo pipeline - step two: the in-memory snapshot stack itself.
+// Undo/Redo pipeline - step three: hooked up to every 3D-model edit.
+//
+// Scope for this step, deliberately: everything that already calls
+// model_changed() (globalFunctions.pde) - every create, delete, import,
+// and batch move/rotate/scale of Faces, Model1Ds, Model2Ds, Solids,
+// Polylines, Points, Cameras, Sections, Groups, and Terrain's mesh.
+// Spot-checked across the 182 call sites: it's consistently called once
+// per discrete, composite user action (e.g. add_House3_Core() builds an
+// entire house from several solids and calls it exactly once at the
+// end, same as Delete3D.model2DSelection() for a whole multi-object
+// delete) - never once per sub-object or per animation frame. There is
+// also no continuous mouse-drag editing anywhere in this app (Move3D/
+// Rotate3D/Scale3D are only ever driven by spinners, keyboard nudges,
+// mouse wheel, or import placement - never mouseDragged.pde), and
+// GUI spinners themselves change value on a click/commit basis (the
+// increment/decrement buttons, right-click-on-bar jump, and committed
+// text edit in uiRollout.pde's _Spinner()), not continuously while
+// held - so hooking this one already-central signal doesn't flood the
+// history with near-duplicate snapshots the way hooking, say, every
+// frame of a live drag would. NOT yet wired to pure view/navigation
+// actions (camera orbit/pan/zoom, toggling what's displayed, switching
+// tools) or to anything outside model_changed()'s own reach (e.g.
+// WIN3D/STUDY/WORLD settings that don't go through it) - those are
+// separate, open questions for a later step, same as "should Undo
+// itself be undoable" isn't a question here since restoring a snapshot
+// never calls model_changed() (confirmed: no from_XML() or to_XML()
+// anywhere calls it, so undo()/redo() can't recursively record
+// themselves as new steps).
+//
+// THE MODEL: a single chronological list, history[0..n], with
+// historyIndex marking which entry is the current live state. Not the
+// push-before-edit stack pair from the previous step - that shape
+// needed to capture a snapshot right BEFORE an edit, which model_changed()
+// can't give it (it only ever fires AFTER the edit it's reporting).
+// Here, every entry already IS a "state after some edit" snapshot, in
+// order, and undo/redo just move historyIndex backward/forward through
+// that list and restore whichever entry it now points at - no separate
+// redo list to keep in sync. history[0], seeded once by
+// seedUndoHistory() (drawInitialFrames.pde) right as the app finishes
+// loading, is the one baseline that isn't "after an edit" - it's what
+// makes the very first edit of a session undoable at all.
 //
 // Builds on buildProjectSnapshot() (saveProject.pde) and
-// parse_XML_variables() (parseXmlVariables.pde) - the exact same
-// full-state XML this app already builds for Save and Hold/Fetch, kept
-// here as XML objects in memory instead of ever touching disk.
+// restoreProjectSnapshot() (this file) exactly as laid out in the
+// previous step - see restoreProjectSnapshot()'s own comment for why
+// that's deliberately not load_project() or holdProject()/fetchProject().
 //
-// Deliberately NOT reusing holdProject()/fetchProject() as-is: those
-// write an actual file (saveXML()/loadXML()), and Terrain.to_XML()'s
-// "copy every texture alongside the file being written" behavior (see
-// land3D.pde's own comment on copyTexturesAlongside) only makes sense
-// for a real file someone might move or share - not a snapshot that
-// only ever needs to exist for the next few Ctrl+Z/Ctrl+Shift+Z presses.
-// buildProjectSnapshot(false) skips that part entirely.
-//
-// Deliberately NOT reusing load_project() to restore a snapshot either:
-// load_project() does a lot more than restore state from XML - it also
-// re-reads climate/weather files and unconditionally reallocates their
-// (sizable) arrays (update_station(1..4)), resets the viewport to "find
-// a good view of the whole scene" (WORLD.autoView / FindGoodViewport() /
-// update_frame_layout()), and resets the active creation tool
-// (UI_setTo_Create_Nothing()) - all correct and wanted when opening a
-// different file, all wrong for undoing one edit: nobody expects
-// Ctrl+Z to also recentre their camera, refetch weather data over the
-// network, or cancel whatever they were about to place. restoreProjectSnapshot()
-// below calls parse_XML_variables() directly - the same from_XML()
-// dispatch load_project() itself goes through - then only the cheap,
-// state-size-dependent refresh load_project() also does afterward
-// (resizing the solar arrays, flagging stale bakes/impact images,
-// redrawing every view) - never the heavier parts above it.
-//
-// What's still NOT decided here, on purpose: WHEN a snapshot gets
-// pushed. Nothing currently calls pushUndoSnapshot() - that's a real
-// design question of its own (every putAction dispatch? every committed
-// putValueAction change, and what counts as "committed" while a spinner
-// is being dragged? excluding camera/navigation actions, the way most
-// 3D/CAD tools do? excluding Undo/Redo themselves, obviously?) and
-// deserves to be worked out as its own step rather than guessed at
-// here. For now: Ctrl+Z/Ctrl+Shift+Z and the "Undo"/"Redo" actions are
-// real, pushUndoSnapshot() is ready to be called, and undo()/redo()
-// will correctly restore whatever was last pushed - but nothing pushes
-// yet, so the stack stays empty (and says so) until that next step.
+// Still NOT decided, on purpose: whether New/Open/Fetch should clear and
+// reseed this history (right now they don't - the history silently
+// keeps referring to whatever project was open before, which is wrong
+// the moment someone opens a different file mid-session and then
+// presses Ctrl+Z). Flagging it rather than quietly leaving it unnoticed,
+// but treating it as its own follow-up rather than guessing at it here.
 
-final int MAX_UNDO_STEPS = 50; // bounds memory growth - each snapshot is a full scene-graph XML tree
+final int MAX_UNDO_STEPS = 50; // bounds memory growth - each entry is a full scene-graph XML tree
 
-ArrayList<XML> undoStack = new ArrayList<XML>();
-ArrayList<XML> redoStack = new ArrayList<XML>();
+ArrayList<XML> history = new ArrayList<XML>();
+int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 
-// Captures the current state and pushes it as the next undo step,
-// clearing the redo stack - the standard rule that a fresh edit after
-// an undo discards whatever "future" that undo had uncovered, since
-// redoing past a brand-new edit would mean redoing into a timeline that
-// no longer exists. Not yet called from anywhere - see this file's own
-// header comment.
-void pushUndoSnapshot () {
-  undoStack.add(buildProjectSnapshot(false));
+// The one baseline entry that isn't "state after an edit" - see this
+// file's own header comment. Called once, from drawInitialFrames.pde,
+// right before the app starts accepting input.
+void seedUndoHistory () {
+  if (history == null) history = new ArrayList<XML>(); // see recordHistoryStep()'s own comment on why this can't be assumed
+  history.clear();
+  history.add(buildProjectSnapshot(false));
+  historyIndex = 0;
+}
 
-  if (undoStack.size() > MAX_UNDO_STEPS) {
-    undoStack.remove(0);
+// Called from model_changed() itself - see this file's own header
+// comment for why that one hook is enough for this step's scope.
+void recordHistoryStep () {
+  // model_changed() can fire before this file's own field initializers
+  // below (history/historyIndex) have run at all: Processing/Java
+  // initializes a class's fields in tab-concatenation order, and
+  // several of the "all<Thing>" container classes (Faces, Model1Ds,
+  // Model2Ds, Solids, ...) call makeEmpty() -> model_changed() from
+  // their OWN constructor - which fires the moment the sketch's own
+  // `allFaces = new Faces();`-style field initializer runs, during the
+  // sketch object's construction, possibly before history/historyIndex
+  // further down this same file have been assigned. At that point
+  // `history` is still null (its own `= new ArrayList<XML>()` hasn't
+  // executed yet) and `historyIndex` is still Java's bare default int
+  // value of 0 (not yet its explicit `= -1` either) - so a
+  // `historyIndex < 0` check alone can't tell "too early" apart from
+  // "ready", hence the null check here instead. None of this is a real
+  // edit to record anyway - it's empty-initialization boilerplate, long
+  // before setup() - the actual baseline is seedUndoHistory(), called
+  // from drawInitialFrames.pde well after every such constructor has
+  // already run.
+  if ((history == null) || (historyIndex < 0)) return;
+
+  // Discard any redo branch sitting beyond the current position: a
+  // fresh edit after one or more undos means that uncovered "future"
+  // can never be reached again (the standard rule - see this file's own
+  // header comment on the previous step's design, which this still
+  // follows).
+  while (history.size() > historyIndex + 1) {
+    history.remove(history.size() - 1);
   }
 
-  redoStack.clear();
+  history.add(buildProjectSnapshot(false));
+  historyIndex = history.size() - 1;
+
+  while (history.size() > MAX_UNDO_STEPS) {
+    history.remove(0);
+    historyIndex -= 1;
+  }
 }
 
 void undo () {
-  if (undoStack.isEmpty()) {
+  if (historyIndex <= 0) {
     displayDirective("Undo: nothing to undo.");
     return;
   }
 
-  // Capture where we are now, so Redo can come back to exactly this,
-  // before it gets overwritten by the restore below.
-  redoStack.add(buildProjectSnapshot(false));
-
-  XML snapshot = undoStack.remove(undoStack.size() - 1);
-  restoreProjectSnapshot(snapshot);
+  historyIndex -= 1;
+  restoreProjectSnapshot(history.get(historyIndex));
 }
 
 void redo () {
-  if (redoStack.isEmpty()) {
+  if (historyIndex >= history.size() - 1) {
     displayDirective("Redo: nothing to redo.");
     return;
   }
 
-  // Symmetric with undo() above: capture where we are now, so a later
-  // Undo can come back to exactly this.
-  undoStack.add(buildProjectSnapshot(false));
-
-  XML snapshot = redoStack.remove(redoStack.size() - 1);
-  restoreProjectSnapshot(snapshot);
+  historyIndex += 1;
+  restoreProjectSnapshot(history.get(historyIndex));
 }
 
 // The lean counterpart to load_project(): runs the same from_XML()
@@ -96,8 +134,12 @@ void redo () {
 // the scene graph's shape changes (vertex/face/day-range counts feeding
 // into the solar arrays' dimensions, stale bake/impact-image flags,
 // redrawing every view) - never the file-open-specific work
-// load_project() does on top of that. See this file's own header
-// comment for the full reasoning on why those two are kept apart.
+// load_project() does on top of that (re-reading climate/weather files
+// and reallocating their arrays, resetting the viewport to "find a good
+// view", resetting the active creation tool). Confirmed safe to call
+// from undo()/redo() without recursing back into recordHistoryStep():
+// neither parse_XML_variables() nor any from_XML()/to_XML() it reaches
+// calls model_changed().
 void restoreProjectSnapshot (XML xml) {
   parse_XML_variables(xml, false);
 

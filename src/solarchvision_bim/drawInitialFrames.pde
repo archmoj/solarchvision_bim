@@ -203,6 +203,15 @@ boolean draw_initial_frames () {
 
     InitializationStep = frameCount;
     Last_initializationStep = frameCount;
+
+    // Undo/redo's baseline: model_changed() only ever records the state
+    // AFTER an edit (see its own comment), so without this the very
+    // first edit of a session would have nothing to undo back to -
+    // there'd be no record of "before". Right here, right after
+    // everything else above has finished loading and just before the
+    // app starts accepting input, is the one clean "nothing has been
+    // edited yet" moment to capture it.
+    seedUndoHistory();
   } else {
     return false;
   }
