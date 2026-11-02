@@ -1,6 +1,6 @@
 class User3D {
 
-  final static String CLASS_STAMP = "user3d";
+  final static String CLASS_STAMP = "user3D";
 
   int creatorMaterial = 7; //0;
   int creatorTessellation = 0;

@@ -1,6 +1,6 @@
 class STUDY {
 
-  final static String CLASS_STAMP = "viewport2d";
+  final static String CLASS_STAMP = "viewport2D";
 
   int statisticalRangesColorScaleIndex = -1;
   int statisticalRangesColorScaleDirection = -1;

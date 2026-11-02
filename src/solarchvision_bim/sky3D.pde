@@ -1,6 +1,6 @@
 class Sky3D {
 
-  final static String CLASS_STAMP = "sky3d";
+  final static String CLASS_STAMP = "sky3D";
 
   boolean displaySurface = true;
 
