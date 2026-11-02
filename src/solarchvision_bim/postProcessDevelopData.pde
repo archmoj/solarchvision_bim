@@ -144,7 +144,7 @@ void postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.verticalNegativePadding = 0;
               LAYER_developed.unit = "W/m²";
               LAYER_developed.descriptions[Language_EN] = "Wind power";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              LAYER_developed.descriptions[Language_FR] = "Énergie éolienne";
             }
 
             if (developLayerOption == DEV_RadiationOnTracker) {
@@ -163,7 +163,7 @@ void postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.verticalNegativePadding = 0;
               LAYER_developed.unit = "W/m²";
               LAYER_developed.descriptions[Language_EN] = "Radiation on solar tracker";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              LAYER_developed.descriptions[Language_FR] = "Rayonnement sur un suiveur solaire";
             }
 
 
@@ -222,32 +222,32 @@ void postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.unit = "W/m²";
 
               if (developLayerOption == DEV_RadiationOnSurface) {
-                LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_EN] = "Radiation on inclination " + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur plan incliné";
               } else if (developLayerOption == DEV_RadiationOnSouth) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on South surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface Sud";
               } else if (developLayerOption == DEV_RadiationOnEast) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on East surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface Est";
               } else if (developLayerOption == DEV_RadiationOnNorth) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on North surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface Nord";
               } else if (developLayerOption == DEV_RadiationOnWest) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on West surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la face Ouest";
               } else if (developLayerOption == DEV_RadiationOnSE) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on S.E. surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface S.-E.";
               } else if (developLayerOption == DEV_RadiationOnNE) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on N.E. surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface N.-E.";
               } else if (developLayerOption == DEV_RadiationOnNW) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on N.W. surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface N.-O.";
               } else if (developLayerOption == DEV_RadiationOnSW) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on S.W. surface";
-                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+                LAYER_developed.descriptions[Language_FR] = "Rayonnement sur la surface S.-O.";
               }
             }
 
