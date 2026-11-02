@@ -232,6 +232,30 @@ void keyPressed (KeyEvent e) {
 
       boolean wasEditingSpinner = UI_rollout.isEditingSpinner();
 
+      // Global Undo/Redo - Ctrl+Z / Ctrl+Shift+Z. Checked here, before
+      // the typeUserCommand/wasEditingSpinner dispatch below, so it only
+      // ever fires while the person isn't actively typing a console
+      // command or editing a spinner's value (same context
+      // STUDY/WORLD/WIN3D.keyPressed() get called in just below), and so
+      // it works regardless of which viewport or tool is active - rather
+      // than being one more case inside WIN3D.keyPressed()'s own Ctrl-key
+      // guard there, which is deliberately narrow (only Ctrl+,/Ctrl+.)
+      // and scoped to viewport navigation, not a fit for something meant
+      // to work everywhere. Routed through callAction(), same as every
+      // other keyboard-triggered command in this file, so Undo/Redo are
+      // also reachable from the command line and (if ever added) a menu
+      // item for free.
+      if (!wasEditingSpinner && (typeUserCommand == 0) &&
+          e.isControlDown() && !e.isAltDown() && (e.getKeyCode() == 90)) { // 90 = Z
+        if (e.isShiftDown()) {
+          callAction("Redo");
+        } else {
+          callAction("Undo");
+        }
+        redraw();
+        return;
+      }
+
       // Whether THIS keypress is the one that's about to reach
       // UI_rollout.keyPressed(e) below AND is an Esc - i.e. whether an Esc
       // is about to cancel an in-progress spinner edit there (uiRollout.pde's

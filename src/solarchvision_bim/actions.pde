@@ -254,6 +254,18 @@ void build_allActions() {
     link("https://solarchvision.com/");
   });
 
+  // See undoRedo.pde: undo()/redo() are currently stubs - the Ctrl+Z /
+  // Ctrl+Shift+Z shortcut (solarchvision_bim.pde's keyPressed()) and
+  // these two actions are step one (the trigger), wired ahead of the
+  // storage layer itself.
+  putAction("Undo", () -> {
+    undo();
+  });
+
+  putAction("Redo", () -> {
+    redo();
+  });
+
   putAction("New", () -> {
     /////////////////////////////
     holdProject();
