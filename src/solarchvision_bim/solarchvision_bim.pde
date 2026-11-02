@@ -22,7 +22,7 @@ import processing.pdf.*;
 String BaseFolder;
 String SceneName = "";
 
-String version = "2026";
+String version = "2027";
 
 void settings () {
   locateBaseFolder();
