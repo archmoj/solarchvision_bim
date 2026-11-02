@@ -1208,7 +1208,17 @@ String __PERSON__ (String[] parts) {
     float y = getF(p, "y", 0);
     float z = getF(p, "z", 0);
     allModel2Ds.create(t, m, x, y, z, 2.5);
-    view_changed();
+    // Was view_changed() - a plain redraw signal, not the structural-edit
+    // one. __TREE2__ right below calls model_changed() for the exact
+    // same kind of create() call; this one never did, so a person added
+    // this way (the click-to-create "Person" command - mouseClicked.pde's
+    // CREATE.Person case runs exactly this) never bumped the WIN3D
+    // retained-mode caches (harmless here, since Model2Ds draws immediate-
+    // mode, not through a cached PShape - see faces.pde's own cache for
+    // the kind of thing this WOULD have broken) and, now, never recorded
+    // an undo step either - the actual bug behind "add a person, undo
+    // doesn't remove it": no history entry existed to undo back to.
+    model_changed();
     }
     else {
     hint = "Person m=? x=? y=? z=?";
