@@ -21,11 +21,15 @@
 // actions (camera orbit/pan/zoom, toggling what's displayed, switching
 // tools) or to anything outside model_changed()'s own reach (e.g.
 // WIN3D/STUDY/WORLD settings that don't go through it) - those are
-// separate, open questions for a later step, same as "should Undo
-// itself be undoable" isn't a question here since restoring a snapshot
-// never calls model_changed() (confirmed: no from_XML() or to_XML()
-// anywhere calls it, so undo()/redo() can't recursively record
-// themselves as new steps).
+// separate, open questions for a later step. "Should Undo itself be
+// undoable" very much WAS a real question here, not a moot one:
+// restoring a snapshot does end up calling model_changed() - repeatedly,
+// in fact, since from_XML() calls makeEmpty() (Faces/Model1Ds/Model2Ds/
+// Solids/Polylines/Points/Cameras/Sections/Groups), which calls
+// model_changed() unconditionally at its own end - so parse_XML_variables()
+// alone fires it close to nine times per restore. isRestoringSnapshot
+// below exists specifically to stop each of those from recursively
+// recording itself as a new history step.
 //
 // THE MODEL: a single chronological list, history[0..n], with
 // historyIndex marking which entry is the current live state. Not the
@@ -57,6 +61,22 @@ final int MAX_UNDO_STEPS = 50; // bounds memory growth - each entry is a full sc
 ArrayList<XML> history = new ArrayList<XML>();
 int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 
+// Guards recordHistoryStep() against firing WHILE a restore is already
+// in progress - see restoreProjectSnapshot()'s own comment for why this
+// is necessary, not just defensive: makeEmpty() (Faces/Model1Ds/
+// Model2Ds/Solids/Polylines/Points/Cameras/Sections/Groups all follow
+// the same pattern) unconditionally calls model_changed() at its own
+// end, and from_XML() calls makeEmpty() as its first step to reset the
+// class to the right size before refilling it - so parse_XML_variables()
+// alone fires model_changed() (and so, without this guard,
+// recordHistoryStep()) around nine times per restore, each one
+// capturing a snapshot of whatever is STILL only half-restored at that
+// exact point in the from_XML() sequence, and stomping on historyIndex
+// along the way. This was the actual bug behind undo "not working as
+// expected": not a rendering issue, history itself was getting
+// scrambled by its own restore.
+boolean isRestoringSnapshot = false;
+
 // The one baseline entry that isn't "state after an edit" - see this
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
@@ -70,6 +90,11 @@ void seedUndoHistory () {
 // Called from model_changed() itself - see this file's own header
 // comment for why that one hook is enough for this step's scope.
 void recordHistoryStep () {
+  // See isRestoringSnapshot's own comment: a restore isn't a new edit to
+  // record, it's replaying an old one - without this, every single
+  // undo()/redo() would corrupt the very history it's reading from.
+  if (isRestoringSnapshot) return;
+
   // model_changed() can fire before this file's own field initializers
   // below (history/historyIndex) have run at all: Processing/Java
   // initializes a class's fields in tab-concatenation order, and
@@ -136,36 +161,49 @@ void redo () {
 // redrawing every view) - never the file-open-specific work
 // load_project() does on top of that (re-reading climate/weather files
 // and reallocating their arrays, resetting the viewport to "find a good
-// view", resetting the active creation tool). Confirmed safe to call
-// from undo()/redo() without recursing back into recordHistoryStep():
-// neither parse_XML_variables() nor any from_XML()/to_XML() it reaches
-// calls model_changed().
+// view", resetting the active creation tool). Safe to call from
+// undo()/redo() only because of isRestoringSnapshot below - see its own
+// comment: parse_XML_variables() does reach model_changed() repeatedly
+// (via several classes' from_XML() -> makeEmpty()), and without that
+// guard each of those would recursively record itself as a new step.
 void restoreProjectSnapshot (XML xml) {
-  parse_XML_variables(xml, false);
+  // isRestoringSnapshot (set for the entire call, including every
+  // from_XML() parse_XML_variables() below reaches) is what makes this
+  // safe to call at all - see that field's own comment. try/finally so
+  // it can't get stuck "true" and silently disable all future undo/redo
+  // recording if something throws partway through a restore.
+  isRestoringSnapshot = true;
+  try {
+    parse_XML_variables(xml, false);
 
-  // Without this, WIN3D's retained-mode viewport cache would keep
-  // rendering whatever it had built before this restore - from_XML()
-  // writes straight into allFaces/allModel1Ds/Terrain's own arrays the
-  // same way an OBJ import does, and neither bumps the cache's own
-  // generation counter by itself. See globalFunctions.pde's own comment
-  // on invalidateWin3DRetainedCaches() for the full reasoning (and the
-  // bug this exact gap caused: undo correctly reverting the data but
-  // the view still showing the undone edit). Deliberately calling this
-  // directly rather than model_changed() itself - a restore isn't a new
-  // edit to record, so it must not also go through recordHistoryStep().
-  invalidateWin3DRetainedCaches();
+    // Without this, WIN3D's retained-mode viewport cache would keep
+    // rendering whatever it had built before this restore - from_XML()
+    // writes straight into allFaces/allModel1Ds/Terrain's own arrays the
+    // same way an OBJ import does, and neither bumps the cache's own
+    // generation counter by itself. See globalFunctions.pde's own comment
+    // on invalidateWin3DRetainedCaches() for the full reasoning (and the
+    // bug this exact gap caused: undo correctly reverting the data but
+    // the view still showing the undone edit). Deliberately calling this
+    // directly rather than model_changed() itself - a restore isn't a new
+    // edit to record, so it must not also go through recordHistoryStep()
+    // (doubly so now, given isRestoringSnapshot would block it anyway -
+    // this keeps the cache invalidation itself unconditional regardless).
+    invalidateWin3DRetainedCaches();
 
-  find_which_bakings_to_regenerate();
-  VertexSolar_resize_array();
-  GlobalSolar_resize_array();
+    find_which_bakings_to_regenerate();
+    VertexSolar_resize_array();
+    GlobalSolar_resize_array();
 
-  UI_rollout.revise();
-  WORLD.revise();
-  STUDY.revise();
-  UI_menuBar.revise();
-  UI_toolBar.revise();
-  UI_caseBar.revise();
-  view_changed();
+    UI_rollout.revise();
+    WORLD.revise();
+    STUDY.revise();
+    UI_menuBar.revise();
+    UI_toolBar.revise();
+    UI_caseBar.revise();
+    view_changed();
 
-  modify_Viewport_Title();
+    modify_Viewport_Title();
+  } finally {
+    isRestoringSnapshot = false;
+  }
 }
