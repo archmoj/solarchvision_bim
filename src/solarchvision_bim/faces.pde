@@ -1,6 +1,6 @@
 class Faces {
 
-  final static String CLASS_STAMP = "Faces";
+  final static String CLASS_STAMP = "faces";
 
   Faces () { // constructor
     makeEmpty(0);

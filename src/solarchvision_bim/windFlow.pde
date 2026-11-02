@@ -1,6 +1,6 @@
 class WindFlow {
 
-  final static String CLASS_STAMP = "WindFlow";
+  final static String CLASS_STAMP = "windFlow";
 
   boolean displayAll = false;
 

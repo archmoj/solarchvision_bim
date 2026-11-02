@@ -1,6 +1,6 @@
 class Move3D {
 
-  final static String CLASS_STAMP = "Move3D";
+  final static String CLASS_STAMP = "move3D";
 
   void selection (float dx, float dy, float dz) {
     /*

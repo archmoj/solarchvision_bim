@@ -20,7 +20,7 @@
 
 class PolygonHoles {
 
-  final static String CLASS_STAMP = "PolygonHoles";
+  final static String CLASS_STAMP = "polygonHoles";
 
   // Returns a single loop that is `outer` with every loop in `holes`
   // bridged into it - rendering it as one ordinary (if self-touching)

@@ -1,6 +1,6 @@
 class UI_caseBar {
 
-  final static String CLASS_STAMP = "UiCaseBar";
+  final static String CLASS_STAMP = "uiCaseBar";
 
   boolean update = true;
   float tab;

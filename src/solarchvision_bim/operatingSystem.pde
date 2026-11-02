@@ -1,6 +1,6 @@
 class OperatingSystem {
 
-  final static String CLASS_STAMP = "OperatingSystem";
+  final static String CLASS_STAMP = "operatingSystem";
 
   String[] getFiles (String _Folder) {
     String[] filenames = new String[0];

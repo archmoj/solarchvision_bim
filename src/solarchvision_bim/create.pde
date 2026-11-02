@@ -1,6 +1,6 @@
 class CREATE {
 
-  final static String CLASS_STAMP = "Create";
+  final static String CLASS_STAMP = "create";
 
   final static int Nothing    = 0;
   final static int Plane      = 1;

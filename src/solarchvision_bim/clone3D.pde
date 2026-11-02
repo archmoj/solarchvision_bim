@@ -1,6 +1,6 @@
 class Clone3D {
 
-  final static String CLASS_STAMP = "Clone3D";
+  final static String CLASS_STAMP = "clone3D";
 
   void selection (boolean produce_same_variation) {
     if (currentObjectCategory == ObjectCategory.TERRAIN) {

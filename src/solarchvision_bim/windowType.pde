@@ -1,6 +1,6 @@
 class WINDOWTYPE {
 
-  final static String CLASS_STAMP = "WindowType";
+  final static String CLASS_STAMP = "windowType";
 
   final static int SKY2D    = -2;
   final static int LandGap  = -1;

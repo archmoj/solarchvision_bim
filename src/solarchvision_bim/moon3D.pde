@@ -1,6 +1,6 @@
 class Moon3D {
 
-  final static String CLASS_STAMP = "Moon3D";
+  final static String CLASS_STAMP = "moon3D";
 
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;

@@ -1,6 +1,6 @@
 class SolidImpacts {
 
-  final static String CLASS_STAMP = "SolidImpacts";
+  final static String CLASS_STAMP = "solidImpacts";
 
   boolean displayPoints = false;
   boolean displayLines = true;

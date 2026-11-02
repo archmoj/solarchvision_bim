@@ -1,6 +1,6 @@
 class PAINT {
 
-  final static String CLASS_STAMP = "Paint";
+  final static String CLASS_STAMP = "paint";
 
 
   int getOpacity (float opacityPercentage) {

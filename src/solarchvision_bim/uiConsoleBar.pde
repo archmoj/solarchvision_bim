@@ -1,6 +1,6 @@
 class UI_consoleBar {
 
-  final static String CLASS_STAMP = "UiConsoleBar";
+  final static String CLASS_STAMP = "uiConsoleBar";
 
   boolean update = true;
 

@@ -1,6 +1,6 @@
 class SolarImpacts {
 
-  final static String CLASS_STAMP = "SolarImpacts";
+  final static String CLASS_STAMP = "solarImpacts";
 
   // volatile: same reasoning as shadeViewport3D.pde's own isShadingViewport,
   // which this mirrors - set true/false around calculate_Impact_

@@ -1,6 +1,6 @@
 class Model2Ds {
 
-  final static String CLASS_STAMP = "Model2Ds";
+  final static String CLASS_STAMP = "model2Ds";
 
   Model2Ds () { // constructor
     makeEmpty(0);

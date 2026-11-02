@@ -1,6 +1,6 @@
 class Earth3D {
 
-  final static String CLASS_STAMP = "Earth3D";
+  final static String CLASS_STAMP = "earth3D";
 
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;

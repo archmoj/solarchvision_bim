@@ -1,6 +1,6 @@
 class SHADE {
 
-  final static String CLASS_STAMP = "Shade";
+  final static String CLASS_STAMP = "shade";
 
   final static int Surface_Wire       = 0;
   final static int Surface_White      = 1;

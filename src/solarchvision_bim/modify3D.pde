@@ -1,6 +1,6 @@
 class Modify3D {
 
-  final static String CLASS_STAMP = "Modify3D";
+  final static String CLASS_STAMP = "modify3D";
 
   void selectVertices_fromCurrentSelection () {
     if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Vertices();

@@ -1,6 +1,6 @@
 class Terrain {
 
-  final static String CLASS_STAMP = "Terrain";
+  final static String CLASS_STAMP = "terrain";
 
   boolean loadMesh = true;
   boolean loadTextures = false;

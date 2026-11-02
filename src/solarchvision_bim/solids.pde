@@ -1,6 +1,6 @@
 class Solids {
 
-  final static String CLASS_STAMP = "Solids";
+  final static String CLASS_STAMP = "solids";
 
   Solids () { // constructor
     makeEmpty(0);

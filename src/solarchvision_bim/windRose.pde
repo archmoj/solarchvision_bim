@@ -1,6 +1,6 @@
 class WindRose {
 
-  final static String CLASS_STAMP = "WindRose";
+  final static String CLASS_STAMP = "windRose";
 
   boolean rebuild_Image_array = true;
 

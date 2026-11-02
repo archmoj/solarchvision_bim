@@ -1,6 +1,6 @@
 class Select3D {
 
-  final static String CLASS_STAMP = "Select3D";
+  final static String CLASS_STAMP = "select3D";
 
   int positionVectorIndex = 2; // 0:X, 1:Y, 2:Z, 3: All
   int rotationVectorIndex = 2; // 0:X, 1:Y, 2:Z

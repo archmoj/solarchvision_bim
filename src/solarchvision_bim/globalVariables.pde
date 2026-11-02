@@ -34,7 +34,7 @@ final String[] STR_SHD = {"F", "T"};
 
 class DATATYPE {
 
-  final static String CLASS_STAMP = "DataType";
+  final static String CLASS_STAMP = "dataType";
 
   final static int SATELLITE_GOES = 0;
   final static int FORECAST_HRDPS = 1;
@@ -249,7 +249,7 @@ SHADE SHADE = new SHADE();
 
 class MESSAGE {
 
-  String CLASS_STAMP = "Message";
+  String CLASS_STAMP = "message";
 
   int cX = 0;
   int cY = height / 2;
