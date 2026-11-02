@@ -2136,18 +2136,28 @@ class Select3D {
     IntList FaceVertices = new IntList();
     boolean[] seen = new boolean[allPoints.getLength()];
 
+    // Bounds-checked both ways now - f against allFaces.nodes.length
+    // (a selection can go stale relative to live data, same reasoning
+    // as calculate_BoundingBox()'s own GROUP branch) and vNo against
+    // seen.length (allPoints.getLength()): a face's own stored vertex
+    // index exceeding the current point pool's length is the one this
+    // function (and its two siblings below) never actually guarded
+    // against - get_Group_Vertices() already bounds-checked f for
+    // exactly the first reason, but still indexed seen[vNo] unguarded.
     for (int o = this.faceSelection.length - 1; o >= 0; o--) {
 
       int OBJ_ID = this.faceSelection[o];
 
       int f = OBJ_ID;
 
-      for (int j = 0; j < allFaces.nodes[f].length; j++) {
-        int vNo = allFaces.nodes[f][j];
+      if (f < allFaces.nodes.length) {
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
 
-        if (!seen[vNo]) {
-          seen[vNo] = true;
-          FaceVertices.append(vNo);
+          if ((vNo < seen.length) && !seen[vNo]) {
+            seen[vNo] = true;
+            FaceVertices.append(vNo);
+          }
         }
       }
     }
@@ -2161,18 +2171,22 @@ class Select3D {
     IntList PolylineVertices = new IntList();
     boolean[] seen = new boolean[allPoints.getLength()];
 
+    // See get_Face_Vertices()'s own comment just above - same fix, same
+    // reasoning, mirrored here for allPolylines.
     for (int o = this.polylineSelection.length - 1; o >= 0; o--) {
 
       int OBJ_ID = this.polylineSelection[o];
 
       int f = OBJ_ID;
 
-      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-        int vNo = allPolylines.nodes[f][j];
+      if (f < allPolylines.nodes.length) {
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+          int vNo = allPolylines.nodes[f][j];
 
-        if (!seen[vNo]) {
-          seen[vNo] = true;
-          PolylineVertices.append(vNo);
+          if ((vNo < seen.length) && !seen[vNo]) {
+            seen[vNo] = true;
+            PolylineVertices.append(vNo);
+          }
         }
       }
     }
@@ -2198,7 +2212,10 @@ class Select3D {
 
             int vNo = allFaces.nodes[f][j];
 
-            if (!seen[vNo]) {
+            // f was already guarded above; vNo (the face's own stored
+            // vertex index) wasn't - see get_Face_Vertices()'s own
+            // comment on why that's the actual gap.
+            if ((vNo < seen.length) && !seen[vNo]) {
               seen[vNo] = true;
               PolymeshVertices.append(vNo);
             }
@@ -2215,7 +2232,7 @@ class Select3D {
 
             int vNo = allPolylines.nodes[f][j];
 
-            if (!seen[vNo]) {
+            if ((vNo < seen.length) && !seen[vNo]) {
               seen[vNo] = true;
               PolymeshVertices.append(vNo);
             }
