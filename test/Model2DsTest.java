@@ -393,8 +393,6 @@ class Model2DsTest {
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
     app.allModel2Ds.MAP = new int[]{-5};
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.peopleFileCount = 3;
-    app.allModel2Ds.treesFileCount = 4;
     app.allModel2Ds.displayAll = false;
     app.allModel2Ds.ImagePath = new String[0];
 
@@ -411,8 +409,6 @@ class Model2DsTest {
     assertEquals(30f, fresh.getZ(0), 0.0001f);
     assertEquals(2f, fresh.getS(0), 0.0001f);
     assertEquals(-5, fresh.MAP[0]);
-    assertEquals(3, fresh.peopleFileCount);
-    assertEquals(4, fresh.treesFileCount);
     assertFalse(fresh.displayAll);
   }
 }

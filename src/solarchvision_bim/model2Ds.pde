@@ -1370,51 +1370,6 @@ class Model2Ds {
       }
 
       XML_setBoolean(parent, "displayAll", this.displayAll);
-      XML_setInt(parent, "peopleFileCount", this.peopleFileCount);
-      XML_setInt(parent, "treesFileCount", this.treesFileCount);
-    }
-
-    {
-      XML parent = xml.addChild(this.CLASS_STAMP + "Textures");
-      int ni = this.ImagePath.length;
-      XML_setInt(parent, "ni", ni);
-      for (int i = 0; i < ni; i++) {
-
-        boolean TEXTURE_copied = false;
-
-        String the_dir = save_folder;
-
-        String the_filename = "";
-        if (this.ImagePath[i].equals("")) {
-        } else {
-          the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
-
-          String fileLocation = "Textures/" + the_filename;
-          String new_Texture_path = the_dir + "/" + fileLocation;
-
-          if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
-            TEXTURE_copied = false;
-          } else {
-            if (this.ImagePath[i].equals("")) {
-            } else {
-              println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
-              saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
-              this.ImagePath[i] = fileLocation;
-
-              TEXTURE_copied = true;
-            }
-          }
-
-          //if (TEXTURE_copied == false) {
-          //  println("Saving texture from the scene.");
-          //  this.Images[i].save(new_Texture_path);
-          //}
-        }
-
-        XML child = parent.addChild("item");
-        XML_setInt(child, "id", i);
-        XML_setContent(child, this.ImagePath[i]);
-      }
     }
   }
 
@@ -1440,46 +1395,6 @@ class Model2Ds {
       }
 
       this.displayAll = XML_getBoolean(parent, "displayAll");
-      this.peopleFileCount = XML_getInt(parent, "peopleFileCount");
-      this.treesFileCount = XML_getInt(parent, "treesFileCount");
-    }
-
-    {
-      XML parent = xml.getChild(this.CLASS_STAMP + "Textures");
-
-      int ni = XML_getInt(parent, "ni");
-
-      int reload_All_textures = 0;
-
-      if (this.ImagePath.length != ni) {
-        this.Images = new PImage [ni];
-        this.ImageRatios = new float [ni];
-
-        reload_All_textures = 1;
-      }
-
-      XML[] children = parent.getChildren("item");
-      for (int i = 0; i < ni; i++) {
-
-        String new_Texture_path = XML_getContent(children[i]);
-        if ((reload_All_textures == 0) && (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase()))) {
-        } else {
-          this.ImagePath[i] = new_Texture_path;
-          this.Images[i] = createImage(2, 2, RGB); // empty and small
-          if (this.ImagePath[i].equals("")) {
-          } else {
-            println("Loading texture(" + i + "):", this.ImagePath[i]);
-            this.Images[i] = loadImage(Folder_Project + "/" + this.ImagePath[i]);
-            println("loaded!");
-
-            if (this.Images[i].height != 0) {
-              this.ImageRatios[i] = float(this.Images[i].width) / float(this.Images[i].height);
-            } else {
-              this.ImageRatios[i] = 1;
-            }
-          }
-        }
-      }
     }
   }
 }
