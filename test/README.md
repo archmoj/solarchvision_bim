@@ -55,6 +55,26 @@ Then:
 CI (`.github/workflows/ci.yml`) runs this against both Processing
 generations, as two separate jobs (a matrix over `processing_version`).
 
+### No access to a real JUnit jar?
+
+Step 2 above needs Maven Central (or an equivalent jar host) reachable,
+which isn't always true - most notably in a sandboxed coding-agent
+session with a network allowlist that doesn't include
+`repo1.maven.org`. `test/fallback-junit/` is a stand-in for exactly that
+situation: a minimal hand-written implementation of just the JUnit 5
+pieces this repo's own tests use, plus a small runner, verified by
+actually compiling and running the whole suite against it. See
+`test/fallback-junit/README.md` for what it does and doesn't cover, then:
+
+```sh
+./test/run_tests_fallback.sh
+```
+
+which finds or installs Processing itself (no step 1 needed either) and
+runs everything end to end. Prefer the real `run_tests.sh` whenever a
+real JUnit jar is reachable - reach for this one specifically when it
+isn't.
+
 ## Coverage
 
 `run_tests.sh` generates a [JaCoCo](https://www.jacoco.org/jacoco/) coverage
