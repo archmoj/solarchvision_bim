@@ -208,6 +208,31 @@ class Select3D {
     return kept.array();
   }
 
+  // Standalone capture of just this class's own fields - not part of a
+  // full project snapshot, cheap enough to call every frame. Used by
+  // undoRedo.pde's frameStartSelectionSnapshot - see that field's own
+  // comment for why a pure selection change needs tracking at all,
+  // separately from the full buildProjectSnapshot()/recordHistoryStep()
+  // machinery.
+  XML captureSelectionSnapshot () {
+    XML standalone = new XML("selection-snapshot");
+    this.to_XML(standalone);
+    return standalone;
+  }
+
+  // Replaces target's own <select3D> child (the same child this
+  // class's to_XML()/from_XML() themselves read and write within a
+  // full project snapshot) with the one from a previously captured
+  // captureSelectionSnapshot(). Used to retroactively correct a history
+  // entry's selection after the fact - see
+  // undoRedo.pde's recordHistoryStep() for why.
+  void applySelectionSnapshotTo (XML target, XML snapshot) {
+    XML existing = target.getChild(this.CLASS_STAMP);
+    if (existing != null) target.removeChild(existing);
+    XML toCopy = snapshot.getChild(this.CLASS_STAMP);
+    if (toCopy != null) target.addChild(toCopy);
+  }
+
   int[] idsFromXML (String txt) {
     if (txt.equals("")) return new int[0];
     String[] parts = split(txt, "|");

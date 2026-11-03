@@ -285,6 +285,66 @@ class UndoRedoTest {
     assertEquals(2, app.historyIndex);
   }
 
+  // ================= frameStartSelectionSnapshot =========================
+
+  @Test
+  void undo_restoresTheSelectionAsItWasRightBeforeTheNextEditNotWhenTheEntryWasFirstRecorded () throws IOException {
+    // Reproduces the reported scenario: build something (whatever gets
+    // auto-selected the moment it's built is irrelevant and deliberately
+    // left in place here, as face 0), manually select something else
+    // afterward (a pure selection change - no model_changed(), so no new
+    // history entry gets recorded for it), then delete that. Undoing the
+    // delete should bring back what was manually selected right before
+    // the delete (face 1), not whatever was selected back when the
+    // three-face step was itself first recorded (face 0) - the original
+    // report: "insert parallel openings, select the middle one, delete
+    // it, undo - the wrong face ends up selected".
+    seed();
+
+    Path objFile = Files.createTempFile("undo-redo-selection-test", ".obj");
+    Files.writeString(objFile,
+      "g three_faces\n" +
+      "v 0 0 0\nv 1 0 0\nv 1 1 0\n" +
+      "v 2 0 0\nv 3 0 0\nv 3 1 0\n" +
+      "v 4 0 0\nv 5 0 0\nv 5 1 0\n" +
+      "f 1 2 3\nf 4 5 6\nf 7 8 9\n");
+    app.import_objects_OBJ(objFile.toString(), 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.faceSelection = new int[]{0}; // whatever the "modifier" itself left selected
+    app.model_changed(); // records the three-face step, with face 0 selected at this exact moment
+
+    // The user manually selects the middle face afterward - deliberately
+    // not going through model_changed().
+    app.Select3D.faceSelection = new int[]{1};
+    // Simulates a frame boundary having passed since the step above was
+    // recorded - draw() does this for real every frame; there is none
+    // running in this test.
+    app.frameStartSelectionSnapshot = app.Select3D.captureSelectionSnapshot();
+
+    app.Delete3D.selection(); // deletes the (manually, correctly) selected middle face
+    assertEquals(2, app.allFaces.nodes.length, "setup check");
+
+    app.undo();
+
+    assertEquals(3, app.allFaces.nodes.length, "setup check");
+    assertArrayEquals(new int[]{1}, app.Select3D.faceSelection,
+      "should restore face 1 (manually selected right before the delete), not face 0 (selected when the three-face step was first recorded)");
+  }
+
+  @Test
+  void modelChanged_withNoFrameStartSelectionCapturedYet_leavesThePreviousEntrysSelectionUnpatched () {
+    // frameStartSelectionSnapshot is only ever set by draw() - a test
+    // that never calls model_changed() through a running draw() loop
+    // (every other test in this file included) leaves it null, and
+    // recordHistoryStep() must tolerate that rather than throwing.
+    seed();
+    assertNull(app.frameStartSelectionSnapshot, "sanity check: nothing has set this in a test environment");
+
+    assertDoesNotThrow(() -> app.model_changed());
+
+    assertEquals(2, app.history.size());
+  }
+
   // ================= Select3D.clampSelectionsToCurrentData ==============
 
   @Test

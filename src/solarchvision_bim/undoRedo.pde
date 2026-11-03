@@ -85,6 +85,32 @@ int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 // scrambled by its own restore.
 boolean isRestoringSnapshot = false;
 
+// Updated once per frame, right at the start of each frame's real
+// processing (solarchvision_bim.pde's draw() - see that call site's own
+// comment), to whatever Select3D.captureSelectionSnapshot() currently
+// holds.
+//
+// Why this exists: a pure selection change (clicking to select a face)
+// never calls model_changed() and so never gets its own history step -
+// deliberately, per this file's own header comment, since not every
+// click should be its own undo step. But that means a history entry's
+// OWN originally-recorded selection can go stale the moment the user
+// selects something else afterward without editing anything yet: build
+// a grid of openings (one entry, whatever got auto-selected when the
+// modifier finished), manually select the middle one (no new entry),
+// delete it (a new entry, selection now cleared) - undoing that delete
+// would otherwise restore the grid-of-openings entry's own OLD
+// selection from when the modifier itself finished, not the middle
+// face the user actually selected afterward and deleted - a real
+// report: "undo - the selected face is not the correct one in the
+// middle; it is another face". recordHistoryStep() below patches the
+// entry it's about to supersede with this value, right before
+// recording the new one, so what undo lands back on reflects what was
+// actually selected right before that next edit started - not whatever
+// was selected back when the entry being returned to was itself first
+// captured.
+XML frameStartSelectionSnapshot = null;
+
 // The one baseline entry that isn't "state after an edit" - see this
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
@@ -122,6 +148,14 @@ void recordHistoryStep () {
   // from drawInitialFrames.pde well after every such constructor has
   // already run.
   if ((history == null) || (historyIndex < 0)) return;
+
+  // See frameStartSelectionSnapshot's own comment: patch the entry
+  // we're about to supersede with whatever was actually selected right
+  // before this edit started, not whatever its own selection happened
+  // to be when it was originally recorded.
+  if (frameStartSelectionSnapshot != null) {
+    Select3D.applySelectionSnapshotTo(history.get(historyIndex), frameStartSelectionSnapshot);
+  }
 
   // Discard any redo branch sitting beyond the current position: a
   // fresh edit after one or more undos means that uncovered "future"
