@@ -127,11 +127,18 @@ void pickOrAssignFaceProperty (int f) {
   if (WIN3D.toolParameterModifier == 3) { // Assign(all)
     int OBJ_ID = allGroups.findGroupContainingFace(f);
 
-    // "&& (q < allFaces.nodes.length)" - a group's own stored start/stop
-    // can go stale relative to the live array (e.g. undo restoring an
-    // older, smaller state); see select3D.pde's get_Face_Vertices() for
-    // the fuller reasoning.
-    for (int q = allGroups.getStart_Face(OBJ_ID); (q <= allGroups.getStop_Face(OBJ_ID)) && (q < allFaces.nodes.length); q++) {
+    // "&& (q < allFaces.options.length)" - a group's own stored
+    // start/stop can go stale relative to the live array (e.g. undo
+    // restoring an older, smaller state); see select3D.pde's
+    // get_Face_Vertices() for the fuller reasoning. options.length, not
+    // nodes.length, since every setter this loop calls
+    // (setMaterial/setTessellation/setLayer/setVisibility/setClose)
+    // writes into allFaces.options only - nodes is never touched here,
+    // so that's the one this loop's own bound actually depends on (the
+    // two are always kept in lockstep in real use, but a test fixture
+    // that only populates options, since that's all this function reads
+    // or writes, is exactly the gap nodes.length would wrongly flag).
+    for (int q = allGroups.getStart_Face(OBJ_ID); (q <= allGroups.getStop_Face(OBJ_ID)) && (q < allFaces.options.length); q++) {
       if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.creatorMaterial);
       else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.creatorTessellation);
       else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.creatorLayer);
