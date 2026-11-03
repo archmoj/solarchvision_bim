@@ -85,6 +85,12 @@ int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 // scrambled by its own restore.
 boolean isRestoringSnapshot = false;
 
+// Which frame the most recently-APPENDED (not coalesced) history entry
+// was recorded in - see recordHistoryStep()'s own comment on why
+// same-frame model_changed() calls get coalesced into one entry rather
+// than each appending their own.
+int lastRecordedStepFrame = -1;
+
 // Updated once per frame, right at the start of each frame's real
 // processing (solarchvision_bim.pde's draw() - see that call site's own
 // comment), to whatever Select3D.captureSelectionSnapshot() currently
@@ -149,6 +155,24 @@ void recordHistoryStep () {
   // already run.
   if ((history == null) || (historyIndex < 0)) return;
 
+  // Some single, user-perceived actions call model_changed() more than
+  // once: Delete3D.selection() calls it once from its own category
+  // delete (e.g. faceSelection()) and again, separately, from
+  // isolatedVertices_Selection()'s own orphaned-point cleanup pass right
+  // after - both synchronously, within the one call that is, to the
+  // person using the app, a single "Delete". Without coalescing these,
+  // every such delete would record two history entries instead of one,
+  // and a single Ctrl+Z would only undo half of it. frameCount is the
+  // signal: these always happen within the same frame (no draw() call
+  // runs between them), so replacing rather than appending whenever
+  // model_changed() fires again in the SAME frame as the step just
+  // recorded correctly merges them into the one entry the user actually
+  // expects to undo.
+  if (frameCount == lastRecordedStepFrame) {
+    history.set(historyIndex, buildProjectSnapshot(false));
+    return;
+  }
+
   // See frameStartSelectionSnapshot's own comment: patch the entry
   // we're about to supersede with whatever was actually selected right
   // before this edit started, not whatever its own selection happened
@@ -168,6 +192,7 @@ void recordHistoryStep () {
 
   history.add(buildProjectSnapshot(false));
   historyIndex = history.size() - 1;
+  lastRecordedStepFrame = frameCount;
 
   while (history.size() > MAX_UNDO_STEPS) {
     history.remove(0);

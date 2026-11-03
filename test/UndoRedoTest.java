@@ -43,14 +43,30 @@ class UndoRedoTest {
   // comment on its real call site) - every real caller is responsible
   // for calling it right after, exactly once, which is mirrored here so
   // this helper records a step the same way an actual OBJ import does.
+  //
+  // frameCount++ before the edit: a real app's draw() loop runs between
+  // any two genuinely separate user actions, which is exactly the
+  // signal recordHistoryStep() uses to tell "two edits" apart from "one
+  // edit that happens to call model_changed() twice" (see
+  // modelChanged_sameFrameAsThePreviousStep_coalescesIntoThatOneEntryInstead) -
+  // there's no running draw() loop in a test, so it's simulated here.
   private void createOneFaceViaImport () throws IOException {
+    app.frameCount++;
     Path objFile = Files.createTempFile("undo-redo-test", ".obj");
     Files.writeString(objFile, "g triangle\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\n");
     app.import_objects_OBJ(objFile.toString(), 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
     app.model_changed();
   }
 
+  // frameCount++ here too, for the same reason - Delete3D.selection()'s
+  // own two model_changed() calls (one from faceSelection(), one from
+  // isolatedVertices_Selection() right after) are naturally in the same
+  // frame as each other already (nothing advances frameCount between
+  // them), which is exactly what makes them correctly coalesce into one
+  // entry - but this whole delete still needs to land in a frame of its
+  // own, distinct from whatever edit came before it.
   private void deleteTheOneFace () {
+    app.frameCount++;
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.faceSelection = new int[]{0};
     app.Delete3D.selection();
@@ -117,13 +133,16 @@ class UndoRedoTest {
 
   @Test
   void modelChanged_afterAnUndo_discardsTheRedoBranchBeforeAppending () {
-    seed();            // history[0]
-    app.model_changed(); // history[1]
-    app.model_changed(); // history[2]
+    seed();               // history[0]
+    app.frameCount++;
+    app.model_changed();  // history[1]
+    app.frameCount++;
+    app.model_changed();  // history[2]
     assertEquals(3, app.history.size());
 
     app.undo(); // historyIndex -> 1, history[2] still sitting there as a redo target
 
+    app.frameCount++;    // a genuinely later edit, not a same-frame coalesce with the undo'd-away history[2]
     app.model_changed(); // a fresh edit - history[2] (the old redo branch) must be gone, replaced by this new one
 
     assertEquals(3, app.history.size());
@@ -131,10 +150,33 @@ class UndoRedoTest {
   }
 
   @Test
+  void modelChanged_sameFrameAsThePreviousStep_coalescesIntoThatOneEntryInstead () {
+    // The actual bug this covers: Delete3D.selection() calls
+    // model_changed() once from its own category delete and again,
+    // separately, from isolatedVertices_Selection()'s own orphaned-point
+    // cleanup pass right after - both synchronously, within the one call
+    // that is, to the person using the app, a single "Delete". Without
+    // coalescing, that one user-facing action would record two history
+    // entries, and a single Ctrl+Z would only partially undo it.
+    seed(); // history[0], frame 0
+
+    app.frameCount++;
+    app.model_changed(); // history[1], frame 1 - this is what gets recorded
+    assertEquals(2, app.history.size());
+    assertEquals(1, app.historyIndex);
+
+    app.model_changed(); // same frame (no frameCount++ here) - must replace history[1], not append history[2]
+
+    assertEquals(2, app.history.size(), "a second model_changed() in the same frame must not append a new entry");
+    assertEquals(1, app.historyIndex);
+  }
+
+  @Test
   void modelChanged_boundsHistoryToMaxUndoSteps () {
     seed();
 
     for (int i = 0; i < app.MAX_UNDO_STEPS + 10; i++) {
+      app.frameCount++; // each is its own distinct step, not a same-frame coalesce
       app.model_changed();
     }
 
@@ -167,7 +209,9 @@ class UndoRedoTest {
   @Test
   void undo_movesHistoryIndexBackOneStep () {
     seed();
+    app.frameCount++;
     app.model_changed();
+    app.frameCount++;
     app.model_changed();
     assertEquals(2, app.historyIndex);
 
@@ -179,7 +223,9 @@ class UndoRedoTest {
   @Test
   void redo_movesHistoryIndexForwardOneStepAfterAnUndo () {
     seed();
+    app.frameCount++;
     app.model_changed();
+    app.frameCount++;
     app.model_changed();
     app.undo();
     assertEquals(1, app.historyIndex);
@@ -308,6 +354,7 @@ class UndoRedoTest {
       "v 2 0 0\nv 3 0 0\nv 3 1 0\n" +
       "v 4 0 0\nv 5 0 0\nv 5 1 0\n" +
       "f 1 2 3\nf 4 5 6\nf 7 8 9\n");
+    app.frameCount++;
     app.import_objects_OBJ(objFile.toString(), 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.faceSelection = new int[]{0}; // whatever the "modifier" itself left selected
@@ -321,6 +368,7 @@ class UndoRedoTest {
     // running in this test.
     app.frameStartSelectionSnapshot = app.Select3D.captureSelectionSnapshot();
 
+    app.frameCount++; // a later, distinct action from the one that built the three faces
     app.Delete3D.selection(); // deletes the (manually, correctly) selected middle face
     assertEquals(2, app.allFaces.nodes.length, "setup check");
 
