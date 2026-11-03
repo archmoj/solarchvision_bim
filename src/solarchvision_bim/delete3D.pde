@@ -137,7 +137,20 @@ class Delete3D {
     return result;
   }
 
+  // This composite didn't call model_changed() itself before - only its
+  // several sub-methods below did, independently - which is exactly why
+  // it needs its OWN beginModelChange()/endModelChange() pair now, not
+  // just a rename: without this wrapping, each sub-method called below
+  // would still start and finish its own undo step (e.g. FACE category
+  // runs BOTH faceSelection() and isolatedVertices_Selection(), which
+  // used to mean two steps for what's one "Delete" to the person using
+  // the app - see beginModelChange()'s own comment on nesting). With it,
+  // every sub-method's own begin/end pair runs nested (modelChangeDepth
+  // already > 0 by the time they're reached) and correctly becomes a
+  // no-op as far as the undo history is concerned - only this outer
+  // pair's own 0->1/1->0 transition actually records anything.
   void selection () {
+    beginModelChange();
 
     if (currentObjectCategory == ObjectCategory.TERRAIN) {
     }
@@ -173,11 +186,15 @@ class Delete3D {
     }
 
     Select3D.deselectAll(); // important to deselect
+
+    endModelChange();
   }
 
   void cameraSelection () {
     int[] ids = sort(Select3D.cameraSelection);
-    if (ids.length == 0) return;
+    if (ids.length == 0) return; // nothing to delete - no edit, so no beginModelChange()/endModelChange() pair either
+
+    beginModelChange();
 
     boolean currentCameraIndexDeleted = false;
     int shiftBefore = 0;
@@ -200,12 +217,14 @@ class Delete3D {
     if (allCameras.num == 0) {
       allCameras.add_first();
     }
-    model_changed();
+    endModelChange();
   }
 
   void sectionSelection () {
     int[] ids = sort(Select3D.sectionSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     allSections.f_data = removeIndices(allSections.f_data, ids);
     allSections.i_data = removeIndices(allSections.i_data, ids);
@@ -213,12 +232,14 @@ class Delete3D {
     allSections.SolarImpact = removeIndices(allSections.SolarImpact, ids);
     allSections.num -= ids.length;
 
-    model_changed();
+    endModelChange();
   }
 
   void model1DSelection () {
     int[] ids = sort(Select3D.model1DSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     for (int o = ids.length - 1; o >= 0; o--) {
       int OBJ_ID = ids[o];
@@ -236,12 +257,14 @@ class Delete3D {
     allModel1Ds.i_data = removeIndices(allModel1Ds.i_data, ids);
     allModel1Ds.num -= ids.length;
 
-    model_changed();
+    endModelChange();
   }
 
   void model2DSelection () {
     int[] ids = sort(Select3D.model2DSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     for (int o = ids.length - 1; o >= 0; o--) {
       int OBJ_ID = ids[o];
@@ -261,12 +284,14 @@ class Delete3D {
     allModel2Ds.Mirror = removeIndices(allModel2Ds.Mirror, ids);
     allModel2Ds.num -= ids.length;
 
-    model_changed();
+    endModelChange();
   }
 
   void solidSelection () {
     int[] ids = sort(Select3D.solidSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     for (int o = ids.length - 1; o >= 0; o--) {
       int OBJ_ID = ids[o];
@@ -282,7 +307,7 @@ class Delete3D {
 
     allSolids.DEF = removeIndices(allSolids.DEF, ids);
 
-    model_changed();
+    endModelChange();
   }
 
   void faceSelection () {
@@ -290,6 +315,8 @@ class Delete3D {
 
     int[] ids = sort(Select3D.faceSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     for (int o = ids.length - 1; o >= 0; o--) {
       int OBJ_ID = ids[o];
@@ -306,7 +333,7 @@ class Delete3D {
     allFaces.nodes = removeIndices(allFaces.nodes, ids);
     allFaces.options = removeIndices(allFaces.options, ids);
 
-    model_changed();
+    endModelChange();
   }
 
   void polylineSelection () {
@@ -314,6 +341,8 @@ class Delete3D {
 
     int[] ids = sort(Select3D.polylineSelection);
     if (ids.length == 0) return;
+
+    beginModelChange();
 
     for (int o = ids.length - 1; o >= 0; o--) {
       int OBJ_ID = ids[o];
@@ -330,10 +359,16 @@ class Delete3D {
     allPolylines.nodes = removeIndices(allPolylines.nodes, ids);
     allPolylines.options = removeIndices(allPolylines.options, ids);
 
-    model_changed();
+    endModelChange();
   }
 
+  // Unlike its siblings above, the "nothing selected" early return here
+  // still calls what's now endModelChange() (see that branch below) -
+  // so beginModelChange() has to cover that path too, not just the
+  // normal one, and goes at the true top rather than after the guard.
   void groupSelection () {
+    beginModelChange();
+
     /////////////////////////////
     //holdProject();
     /////////////////////////////
@@ -341,7 +376,7 @@ class Delete3D {
 
     int[] ids = sort(Select3D.groupSelection);
     if (ids.length == 0) {
-      model_changed();
+      endModelChange();
       return;
     }
 
@@ -455,16 +490,21 @@ class Delete3D {
     allGroups.num -= ids.length;
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-    model_changed();
+    endModelChange();
   }
 
+  // Same reasoning as groupSelection()'s own comment above: the n==0
+  // early return still calls what's now endModelChange(), so
+  // beginModelChange() goes at the true top.
   void isolatedVertices_Selection () {
+    beginModelChange();
+
     int[] ids = sort(Select3D.vertexSelection);
     int n = ids.length;
 
     if (n == 0) {
       Select3D.deselect_Vertices();
-      model_changed();
+      endModelChange();
       return;
     }
 
@@ -513,10 +553,12 @@ class Delete3D {
     }
 
     Select3D.deselect_Vertices();
-    model_changed();
+    endModelChange();
   }
 
   void isolatedVertices_Scene () {
+    beginModelChange();
+
     int len = allVertices.length;
 
     boolean[] used = new boolean[len];
@@ -564,6 +606,6 @@ class Delete3D {
     }
 
     Select3D.deselect_Vertices();
-    model_changed();
+    endModelChange();
   }
 }

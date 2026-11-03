@@ -142,14 +142,14 @@ class SolarImpactsTest {
   @Test
   void dataFresh_goesFalse_whenTheModelChanges () {
     app.allSolarImpacts.win3DOverlay_recordAnalysisState();
-    app.model_changed(); // bumps allFaces/allModel1Ds/Terrain.winCacheGeneration
+    app.endModelChange(); // bumps allFaces/allModel1Ds/Terrain.winCacheGeneration
 
     assertFalse(app.allSolarImpacts.win3DOverlay_dataFresh());
   }
 
   // ================= win3DOverlay_resyncGenerationAfterResize ===========================
   // Regression coverage for the "Enlarge 3D Viewport hides the solar-impact
-  // overlay" bug: update_frame_layout.pde calls model_changed() purely to
+  // overlay" bug: update_frame_layout.pde calls endModelChange() purely to
   // invalidate WIN3D's retained-mode caches for its freshly-recreated
   // graphics context (see that file's own comment) - not because the
   // model's geometry actually changed - which bumps the exact
@@ -179,7 +179,7 @@ class SolarImpactsTest {
     app.allSolarImpacts.win3DOverlay_recordAnalysisState();
     assertTrue(app.allSolarImpacts.win3DOverlay_dataFresh(), "sanity: freshly recorded state must be fresh");
 
-    app.model_changed(); // what update_frame_layout.pde calls for its graphics-context reason, not a real edit
+    app.endModelChange(); // what update_frame_layout.pde calls for its graphics-context reason, not a real edit
     assertFalse(app.allSolarImpacts.win3DOverlay_dataFresh(), "a generation bump alone looks exactly like a real edit without the fix");
 
     app.allSolarImpacts.win3DOverlay_resyncGenerationAfterResize();

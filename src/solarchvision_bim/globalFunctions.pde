@@ -24,7 +24,18 @@ boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
 }
 
 
+// Called from "New" (actions.pde), after holdProject() but before the
+// person has even picked the new project's name/location (selectFile_New()
+// only arms the async file dialog - this runs synchronously right after,
+// not after that dialog resolves). Needs its own beginModelChange()/
+// endModelChange() pair around the whole sequence, the same reasoning as
+// Delete3D.selection()'s own comment: each of the nine makeEmpty() calls
+// below is now its own complete begin/end pair (see those classes' own
+// comments), and without this outer wrapping each would independently
+// record its own history entry - nine spurious entries for what's one
+// "start a new project" action, rather than one.
 void deleteAll () {
+  beginModelChange();
 
   allModel1Ds.makeEmpty(0);
   allModel2Ds.makeEmpty(0);
@@ -39,6 +50,15 @@ void deleteAll () {
   allCameras.makeEmpty(0);
 
   allGroups.makeEmpty(0);
+
+  endModelChange();
+
+  // Resolves undoRedo.pde's own previously-open question for this path
+  // too (load_project()'s own comment covers the Open/Fetch side of the
+  // same question) - "New" means a genuinely fresh project, so the undo
+  // history should start fresh from exactly this emptied-out state, not
+  // keep referring to whatever was open before it.
+  seedUndoHistory();
 }
 
 void model_added () {
@@ -66,10 +86,10 @@ boolean isBakingInProgress () {
 
 // Any structural/material edit invalidates the WIN3D retained-mode
 // caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D
-// retained-mode cache" blocks). Pulled out of model_changed() into its
+// retained-mode cache" blocks). Pulled out of endModelChange() into its
 // own function so undoRedo.pde's restoreProjectSnapshot() can call it
-// too, without going through the rest of model_changed() (specifically
-// recordHistoryStep() - a restore isn't a new edit to record, it's
+// too, without going through the rest of endModelChange() (specifically
+// commitUndoableEdit() - a restore isn't a new edit to record, it's
 // replaying an old one). Without this, a plain view_changed() redraw
 // after writing new face/model1D/terrain data straight into those
 // classes' own arrays (which is exactly what parse_XML_variables()'s
@@ -87,8 +107,50 @@ void invalidateWin3DRetainedCaches () {
   if (Terrain != null) Terrain.winCacheGeneration++;
 }
 
-void model_changed () {
-  // This piggybacks on model_changed() rather than adding a new hook,
+// Nesting depth for beginModelChange()/endModelChange() pairs - see
+// beginModelChange()'s own comment for why this exists at all (it's
+// what lets a composite action like Delete3D.selection(), which calls
+// several of its own begin/end-wrapped sub-steps, record as ONE undo
+// step instead of one per sub-step).
+int modelChangeDepth = 0;
+
+// Called at the very start of any block that's about to structurally or
+// materially edit the model - every create/edit/move/delete/import site
+// for Faces/Model1Ds/Model2Ds/Solids/Polylines/Points/Cameras/Sections/
+// Groups/Terrain's mesh, paired with a matching endModelChange() (below)
+// at that same block's end. This is the undo/redo pipeline's own hook
+// now (undoRedo.pde's beginUndoableEdit()), specifically because it's
+// guaranteed to run BEFORE the edit it's about to make - unlike
+// endModelChange() (always after, since model_changed() used to be the
+// only hook and could only ever fire post-edit). Nestable: calling this
+// while already inside another begin/end pair (modelChangeDepth > 0)
+// just increments the depth and does nothing else - only the OUTERMOST
+// (0 -> 1) transition actually touches the undo history, so a composite
+// function that wraps its own call to several already-wrapped sub-steps
+// (Delete3D.selection() calling faceSelection() then, separately,
+// isolatedVertices_Selection()) correctly records the whole thing as
+// one step, as long as the composite itself also calls
+// beginModelChange()/endModelChange() around the full sequence - the
+// inner calls alone, without that outer wrapping, would each still
+// start and finish their own step.
+void beginModelChange () {
+  if (modelChangeDepth == 0) {
+    beginUndoableEdit();
+  }
+  modelChangeDepth++;
+}
+
+// Renamed from model_changed() - everything it already did (WIN3D cache
+// invalidation, the redraw signal below) stays here, since both
+// genuinely need to run AFTER the edit, once the new state actually
+// exists to invalidate/redraw against. Undo/redo recording moved to
+// beginModelChange() instead - see its own comment on why a pre-edit
+// hook is what the history actually needed.
+void endModelChange () {
+  modelChangeDepth--;
+  if (modelChangeDepth < 0) modelChangeDepth = 0; // a stray call with no matching begin - don't let it go negative and throw off every later pairing
+
+  // This piggybacks on endModelChange() rather than adding a new hook,
   // since it's already called from every create/edit/move/delete/import
   // site for all three classes - including move3D.pde/scale3D.pde/
   // rotate3D.pde's TerrainVertices() functions, which edit Terrain.Mesh
@@ -96,14 +158,9 @@ void model_changed () {
   // Terrain.update_mesh()'s own full-reload bump).
   invalidateWin3DRetainedCaches();
 
-  // Undo/redo history - see undoRedo.pde's own header comment for the
-  // full reasoning. Piggybacks on model_changed() the same way the
-  // cache invalidation above does: already called once per discrete
-  // structural/material edit (one call per create/delete/import/batch
-  // move-rotate-scale, confirmed by inspection rather than per
-  // sub-object or per animation frame - see that file's comment), from
-  // every site that needs this, rather than adding a second hook.
-  recordHistoryStep();
+  if (modelChangeDepth == 0) {
+    commitUndoableEdit();
+  }
 
   view_changed();
 }
@@ -111,10 +168,10 @@ void model_changed () {
 void view_changed () {
   WIN3D.revise();
 
-  // model_changed() (above) always calls this at its own end, so this one
+  // endModelChange() (above) always calls this at its own end, so this one
   // check covers both triggers the sticky shaded-viewport overlay needs
   // to refresh for - a camera move (view_changed() called directly, e.g.
-  // from a drag/rotate) and a model edit (model_changed() -> here) alike.
+  // from a drag/rotate) and a model edit (endModelChange() -> here) alike.
   // Only worth flagging while that overlay is actually showing -
   // WIN3D.shadingNeedsRebuild's own comment (viewport3D.pde) covers where this
   // gets consumed and cleared again.

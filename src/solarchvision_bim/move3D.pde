@@ -26,6 +26,8 @@ class Move3D {
   }
 
   void TerrainVertices (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
       int f = Select3D.terrainVertexSelection[q];
       int i = f / Terrain.columnCount;
@@ -36,10 +38,12 @@ class Move3D {
       Terrain.Mesh[i][j][2] += dz;
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void softSelection (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.softSelection.length; q++) {
       int f = Select3D.softSelection[q];
       float v = Select3D.softSelectionFalloff[q];
@@ -47,19 +51,23 @@ class Move3D {
       allPoints.move(f, dx * v, dy * v, dz * v);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Vertices (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.vertexSelection.length; q++) {
       int f = Select3D.vertexSelection[q];
       allPoints.move(f, dx, dy, dz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Polylines (float dx, float dy, float dz) {
+    beginModelChange();
+
     int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
     for (int q = 0; q < PolylineVertices.length; q++) {
@@ -67,10 +75,12 @@ class Move3D {
       allPoints.move(f, dx, dy, dz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Faces (float dx, float dy, float dz) {
+    beginModelChange();
+
     int[] FaceVertices = Select3D.get_Face_Vertices();
 
     for (int q = 0; q < FaceVertices.length; q++) {
@@ -78,25 +88,29 @@ class Move3D {
       allPoints.move(f, dx, dy, dz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model1Ds (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model1DSelection[o];
       allModel1Ds.move(f, dx, dy, dz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model2Ds (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model2DSelection[o];
       allModel2Ds.move(f, dx, dy, dz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void moveSolid (int f, float dx, float dy, float dz) {
@@ -108,6 +122,8 @@ class Move3D {
   }
 
   void Solids (float dx, float dy, float dz) {
+    beginModelChange();
+
     boolean allSolids_updated = false;
 
     for (int q = 0; q < Select3D.solidSelection.length; q++) {
@@ -118,20 +134,24 @@ class Move3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 
   void Sections (float dx, float dy, float dz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
       allSections.move(f, dx, dy, dz);
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    model_changed();
+    endModelChange();
   }
 
   void Cameras (float dx, float dy, float dz) {
+    beginModelChange();
+
     // swapping y and z vectors to match camera's local coordinate
     float tmp = dz;
     dz = dy;
@@ -144,10 +164,12 @@ class Move3D {
       if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Groups (float dx, float dy, float dz) {
+    beginModelChange();
+
     int[] PolymeshVertices = Select3D.get_Group_Vertices();
     for (int q = 0; q < PolymeshVertices.length; q++) {
       int n = PolymeshVertices[q];
@@ -185,6 +207,6 @@ class Move3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 }

@@ -1295,15 +1295,19 @@ void build_allActions() {
   });
 
   putAction("Begin New Group at Origin", () -> {
+    beginModelChange();
+
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    model_changed();
+    endModelChange();
   });
 
   putAction("Begin New Group at Pivot", () -> {
+    beginModelChange();
+
     allGroups.beginNewGroup(
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0],
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][1],
@@ -1319,7 +1323,7 @@ void build_allActions() {
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    model_changed();
+    endModelChange();
   });
 
   putAction("Solid", () -> {
@@ -1731,15 +1735,19 @@ void build_allActions() {
   });
 
   putAction("TerrainMesh >> Group", () -> {
+    beginModelChange();
+
     Terrain.draw(TypeWindow.TerrainMesh);
 
-    model_changed();
+    endModelChange();
   });
 
   putAction("TerrainGap >> Group", () -> {
+    beginModelChange();
+
     Terrain.draw(TypeWindow.LandGap);
 
-    model_changed();
+    endModelChange();
   });
 
   putAction("Change Seed/Material", () -> {

@@ -39,6 +39,8 @@ class Rotate3D {
   }
 
   void softSelection (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.softSelection.length; q++) {
       int f = Select3D.softSelection[q];
       float v = Select3D.softSelectionFalloff[q];
@@ -50,10 +52,12 @@ class Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void TerrainVertices (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
       int f = Select3D.terrainVertexSelection[q];
       int i = f / Terrain.columnCount;
@@ -66,10 +70,12 @@ class Rotate3D {
       Terrain.Mesh[i][j][2] = z0 + R[2];
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Vertices (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.vertexSelection.length; q++) {
       int f = Select3D.vertexSelection[q];
       float[] R = rotateAroundVector(allPoints.getX(f) - x0, allPoints.getY(f) - y0, allPoints.getZ(f) - z0, r, the_Vector);
@@ -79,10 +85,12 @@ class Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Polylines (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
     for (int q = 0; q < PolylineVertices.length; q++) {
@@ -94,10 +102,12 @@ class Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Faces (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     int[] FaceVertices = Select3D.get_Face_Vertices();
 
     for (int q = 0; q < FaceVertices.length; q++) {
@@ -109,10 +119,12 @@ class Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Solids (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     boolean allSolids_updated = false;
 
     for (int q = 0; q < Select3D.solidSelection.length; q++) {
@@ -130,20 +142,24 @@ class Rotate3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 
   void Sections (float r) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
       allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    model_changed();
+    endModelChange();
   }
 
   void Cameras (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     // swapping y and z vectors to match camera's local coordinate
     if (the_Vector == 2) the_Vector = 1;
     else if (the_Vector == 1) the_Vector = 2;
@@ -159,10 +175,12 @@ class Rotate3D {
       if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.model1DSelection.length; q++) {
       int f = Select3D.model1DSelection[q];
       float[] R = rotateAroundVector(allModel1Ds.getX(f) - x0, allModel1Ds.getY(f) - y0, allModel1Ds.getZ(f) - z0, r, the_Vector);
@@ -176,10 +194,12 @@ class Rotate3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.model2DSelection.length; q++) {
       int f = Select3D.model2DSelection[q];
       float[] R = rotateAroundVector(allModel2Ds.getX(f) - x0, allModel2Ds.getY(f) - y0, allModel2Ds.getZ(f) - z0, r, the_Vector);
@@ -189,10 +209,12 @@ class Rotate3D {
       allModel2Ds.setZ(f, z0 + R[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Groups (float r, int the_Vector) {
+    beginModelChange();
+
     int[] PolymeshVertices = Select3D.get_Group_Vertices();
 
     for (int q = 0; q < PolymeshVertices.length; q++) {
@@ -262,6 +284,6 @@ class Rotate3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 }

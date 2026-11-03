@@ -17,6 +17,7 @@ class Model1Ds {
 
 
   void makeEmpty (int n) {
+    beginModelChange();
 
     this.num = n;
     this.f_data = new float [n][11];
@@ -34,7 +35,7 @@ class Model1Ds {
       Select3D.deselect_Model1Ds();
     }
 
-    model_changed();
+    endModelChange();
   }
 
 
@@ -219,7 +220,7 @@ class Model1Ds {
   // there's no need to re-walk the recursive branch generator every such
   // frame. Unlike Faces, colors here are fixed constants (trunk/leaf), so
   // the only thing that invalidates this cache is the tree data itself
-  // changing - which already goes through the same pervasive model_changed()
+  // changing - which already goes through the same pervasive endModelChange()
   // hook used for every create/edit/move/delete of a Model1D (confirmed by
   // checking move3D.pde/rotate3D.pde/scale3D.pde/drop3D.pde/edit3D.pde's
   // call sites), so a single generation counter bumped there is enough -

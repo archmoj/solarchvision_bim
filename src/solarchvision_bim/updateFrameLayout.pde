@@ -65,12 +65,27 @@ void update_frame_layout () {
   }
 
   if(WIN3D.include) {
-    model_changed(); // to update 3D caches (Faces, Model1Ds, Terrain)
+    // Was endModelChange() - but a viewport resize/layout change isn't a
+    // model edit (nothing about allFaces/allModel1Ds/Terrain/etc.
+    // actually changed here, only WIN3D.graphics), so it shouldn't
+    // record its own undo/redo step either - calling endModelChange()
+    // without any matching beginModelChange() would still do that, via
+    // the same depth-clamp-to-0 path every other not-yet-converted call
+    // site relies on (see endModelChange()'s own comment on why that's
+    // a safe default elsewhere) - except here it's actively wrong, not
+    // just imprecise, since this runs on every resize/layout change.
+    // invalidateWin3DRetainedCaches() is the one part that's still
+    // genuinely needed (to update 3D caches: Faces, Model1Ds, Terrain),
+    // same as restoreProjectSnapshot() already calls it directly for
+    // the same "need the cache invalidation, not an edit" reason.
+    invalidateWin3DRetainedCaches();
+    view_changed(); // endModelChange() always called this too - kept so the shading-rebuild flag below still gets set the same way it always did
 
     // WIN3D.graphics was just recreated above via createGraphics() - any
     // win3DCache PShape built against the old graphics context must be
     // rebuilt against the new one too, same reasoning as the Faces/
-    // Model1Ds/Terrain caches invalidated by model_changed() just above.
+    // Model1Ds/Terrain caches invalidated by invalidateWin3DRetainedCaches()
+    // just above.
     // Sky3D already uses a winCacheGeneration counter like those three (see
     // sky3D.pde / calculateGlobalSolarArray.pde), so bump it the same
     // way; Sun3D/Moon3D/Earth3D have no such counter - their
@@ -110,7 +125,7 @@ void update_frame_layout () {
     if (Sun3D != null) Sun3D.winCache_dataGeneration++;
 
     // See win3DOverlay_resyncGenerationAfterResize()'s own comment: the
-    // model_changed() call just above was for the new WIN3D.graphics
+    // endModelChange() call just above was for the new WIN3D.graphics
     // context, not an actual geometry edit, so don't let it falsely hide
     // the solar-impact overlay.
     allSolarImpacts.win3DOverlay_resyncGenerationAfterResize();

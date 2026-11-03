@@ -231,7 +231,6 @@ String __MOVE__ (String[] parts) {
         }
     }
     Move3D.selection(dx, dy, dz);
-    model_changed();
     }
     else {
     hint = "Move dx=? dy=? dz=?";
@@ -606,7 +605,6 @@ String __$ROTATESELECTION__ (String[] parts) {
     float r = 5 * -wheelValue;
     int theVector = Select3D.rotationVectorIndex;
     Rotate3D.selection(x0, y0, z0, r, theVector);
-    model_changed();
     }
     else {
     hint = "+RotateSelection v=? x0=? y0=? z0=?";
@@ -631,7 +629,6 @@ String __$SCALESELECTION__ (String[] parts) {
     if (theVector == 1) { sz = 1; sx = 1; }
     if (theVector == 2) { sx = 1; sy = 1; }
     Scale3D.selection(x0, y0, z0, sx, sy, sz);
-    model_changed();
     }
     else {
     hint = "+ScaleSelection v=? x0=? y0=? z0=?";
@@ -644,8 +641,9 @@ String __$EDITSELECTION__ (String[] parts) {
     if (parts.length > 1) {
     float wheelValue = float(parts[1]);
     int pEdit = int(-wheelValue);
+    beginModelChange();
     Edit3D.selection(pEdit);
-    model_changed();
+    endModelChange();
     }
     else {
     hint = "+EditSelection ?";
@@ -877,7 +875,6 @@ String __ROTATE__ (String[] parts) {
         }
     }
     Rotate3D.selection(x, y, z, r, v);
-    model_changed();
     }
     else {
     hint = "Rotate[X|Y|Z] r=? x=? y=? z=?";
@@ -916,7 +913,6 @@ String __SCALE__ (String[] parts) {
         }
     }
     Scale3D.selection(x, y, z, sx, sy, sz);
-    model_changed();
     }
     else {
     hint = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
@@ -924,9 +920,17 @@ String __SCALE__ (String[] parts) {
     return hint;
 }
 
+// Composite, same reasoning as Delete3D.selection()'s own comment: a
+// single "Delete" command can target several categories at once (e.g.
+// "Delete faces lines"), each already its own self-contained
+// beginModelChange()/endModelChange() pair (deleteAll(), the various
+// makeEmpty() calls, Delete3D.isolatedVertices_Selection()/selection())
+// - without this outer pair too, each target in the same command would
+// independently record its own step.
 String __DELETE__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
+    beginModelChange();
     for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
             if (low_case.equals("all")) deleteAll();
@@ -941,7 +945,7 @@ String __DELETE__ (String[] parts) {
         else if (low_case.equals("vertices")) Delete3D.isolatedVertices_Selection();
         else if (low_case.equals("selection")) Delete3D.selection();
     }
-    model_changed();
+    endModelChange();
     }
     else {
     hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
@@ -949,6 +953,13 @@ String __DELETE__ (String[] parts) {
     return hint;
 }
 
+// Composite, same reasoning as __DELETE__'s own comment just above: n
+// repetitions of clone (+ optional move/rotate), each already its own
+// self-contained beginModelChange()/endModelChange() pair (Clone3D.
+// selection()'s own sub-methods, Move3D.selection(), Rotate3D.
+// selection()) - without this outer pair too, each repetition would
+// independently record its own step, turning one "Copy n=5 ..." into
+// up to five.
 String __COPY__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
@@ -961,6 +972,7 @@ String __COPY__ (String[] parts) {
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
 
+    beginModelChange();
 
     for (int q = 0; q < n; q++) {
         Clone3D.selection(true);
@@ -970,7 +982,7 @@ String __COPY__ (String[] parts) {
         if (rz != 0) Rotate3D.selection(0, 0, 0, rz, 2);
     }
 
-    model_changed();
+    endModelChange();
     }
     else {
     hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
@@ -1207,9 +1219,10 @@ String __PERSON__ (String[] parts) {
     float x = getF(p, "x", 0);
     float y = getF(p, "y", 0);
     float z = getF(p, "z", 0);
+    beginModelChange();
     allModel2Ds.create(t, m, x, y, z, 2.5);
     // Was view_changed() - a plain redraw signal, not the structural-edit
-    // one. __TREE2__ right below calls model_changed() for the exact
+    // one. __TREE2__ right below calls endModelChange() for the exact
     // same kind of create() call; this one never did, so a person added
     // this way (the click-to-create "Person" command - mouseClicked.pde's
     // CREATE.Person case runs exactly this) never bumped the WIN3D
@@ -1218,7 +1231,7 @@ String __PERSON__ (String[] parts) {
     // the kind of thing this WOULD have broken) and, now, never recorded
     // an undo step either - the actual bug behind "add a person, undo
     // doesn't remove it": no history entry existed to undo back to.
-    model_changed();
+    endModelChange();
     }
     else {
     hint = "Person m=? x=? y=? z=?";
@@ -1238,8 +1251,9 @@ String __TREE2__ (String[] parts) {
     float z = getF(p, "z", 0);
     float h = getF(p, "h", 10.0);
     if (h != 0) {
+        beginModelChange();
         allModel2Ds.create(t, m, x, y, z, h);
-        model_changed();
+        endModelChange();
     }
     }
     else {
@@ -1289,8 +1303,9 @@ String __TREE1__ (String[] parts) {
         }
     }
     if (h != 0) {
+        beginModelChange();
         allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, trunk, leaf);
-        model_changed();
+        endModelChange();
     }
     }
     else {
@@ -1318,7 +1333,6 @@ String __BOX2P__ (String[] parts) {
     float z2 = getF(p, "z2", 0);
     if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {
         Create3D.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        model_changed();
     }
     }
     else {
@@ -1347,7 +1361,6 @@ String __BOX__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        model_changed();
     }
     }
     else {
@@ -1376,7 +1389,6 @@ String __PYRAMID__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_Pyramid_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        model_changed();
     }
     }
     else {
@@ -1406,7 +1418,6 @@ String __HOUSE3__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_House3_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        model_changed();
     }
     }
     else {
@@ -1436,7 +1447,6 @@ String __HOUSE2__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        model_changed();
     }
     }
     else {
@@ -1466,7 +1476,6 @@ String __HOUSE1__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        model_changed();
     }
     }
     else {
@@ -1508,7 +1517,6 @@ String __CYLINDER__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1540,7 +1548,6 @@ String __CONE__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_Cone(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1580,7 +1587,6 @@ String __PARAMETRIC__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r);
-        model_changed();
     }
     }
     else {
@@ -1608,7 +1614,6 @@ String __SPHERE__ (String[] parts) {
     float r = getF(p, "r", 0);
     if (d != 0) {
         Create3D.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
-        model_changed();
     }
     }
     else {
@@ -1641,7 +1646,6 @@ String __SUPERSPHERE__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {
         Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1671,7 +1675,6 @@ String __CUSHION__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1700,7 +1703,6 @@ String __OCTAHEDRON__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
         Create3D.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        model_changed();
     }
     }
     else {
@@ -1727,7 +1729,6 @@ String __ICOSAHEDRON__ (String[] parts) {
     float r = getF(p, "r", 0);
     if (d != 0) {
         Create3D.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
-        model_changed();
     }
     }
     else {
@@ -1756,7 +1757,6 @@ String __POLYGONEXTRUDE__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((d != 0) && (h != 0)) {
         Create3D.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1785,7 +1785,6 @@ String __POLYGONHYPER__ (String[] parts) {
     float r = getF(p, "r", 0);
     if ((d != 0) && (h != 0)) {
         Create3D.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1813,7 +1812,6 @@ String __POLYGONMESH__ (String[] parts) {
     float r = getF(p, "r", 0);
     if (d != 0) {
         Create3D.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
-        model_changed();
     }
     }
     else {
@@ -1841,7 +1839,6 @@ String __MESH2__ (String[] parts) {
     float z2 = getF(p, "z2", 0);
     if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {
         Create3D.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        model_changed();
     }
     }
     else {
@@ -1871,7 +1868,6 @@ String __MESH3__ (String[] parts) {
     float z3 = getF(p, "z3", 0);
     {
         Create3D.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-        model_changed();
     }
     }
     else {
@@ -1904,7 +1900,6 @@ String __MESH4__ (String[] parts) {
     float z4 = getF(p, "z4", 0);
     {
         Create3D.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-        model_changed();
     }
     }
     else {
@@ -1940,7 +1935,6 @@ String __MESH5__ (String[] parts) {
     float z5 = getF(p, "z5", 0);
     {
         Create3D.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
-        model_changed();
     }
     }
     else {
@@ -1979,7 +1973,6 @@ String __MESH6__ (String[] parts) {
     float z6 = getF(p, "z6", 0);
     {
         Create3D.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
-        model_changed();
     }
     }
     else {
@@ -2048,7 +2041,6 @@ String __H_SHADE__ (String[] parts) {
     float b = getF(p, "b", 0);
     if ((d != 0) && (w != 0)) {
         Create3D.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
-        model_changed();
     }
     }
     else {
@@ -2076,7 +2068,6 @@ String __V_SHADE__ (String[] parts) {
     float b = getF(p, "b", 0);
     if ((d != 0) && (h != 0)) {
         Create3D.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
-        model_changed();
     }
     }
     else {
@@ -2103,8 +2094,9 @@ String __SOLID__ (String[] parts) {
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
     if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {
+        beginModelChange();
         allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-        model_changed();
+        endModelChange();
     }
     }
     else {

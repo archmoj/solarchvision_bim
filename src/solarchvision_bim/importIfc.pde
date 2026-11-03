@@ -1332,7 +1332,7 @@ float[] ifcApply2DPlacement (float[] placement, float px, float py) {
 // stays exactly that, never split into triangles.
 //
 // This deliberately does NOT call Create3D.add_Mesh() directly, though:
-// that convenience wrapper also calls model_changed()/model_added() on
+// that convenience wrapper also calls endModelChange()/model_added() on
 // every single invocation, and a real building's worth of faces -
 // hundreds to thousands - each firing a full selection/bounding-box/
 // WIN3D-cache refresh mid-import is both very slow and, in practice,
@@ -1340,9 +1340,9 @@ float[] ifcApply2DPlacement (float[] placement, float px, float py) {
 // crashing (an ArrayIndexOutOfBoundsException was seen here on a real
 // IFC file). importObj.pde already avoids exactly this, the
 // same way, for exactly this reason - it bypasses Create3D entirely and
-// calls model_changed() exactly once, right at the end of the whole
+// calls endModelChange() exactly once, right at the end of the whole
 // import, not per face. import_objects_IFC() does the same (see its own
-// trailing model_changed() call).
+// trailing endModelChange() call).
 // ---------------------------------------------------------------------
 
 void ifcEmitFace (ArrayList<PVector> localPts, IfcFrame productFrame,
@@ -2724,6 +2724,8 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!ifcShowImportOptionsDialog()) return;
   }
 
+  beginModelChange();
+
   println("Importing IFC. Please wait...");
   showWaitCursor();
 
@@ -3091,7 +3093,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     ifcRotateImportedModelToTrueNorth(ifcImportNorthRotationAngle, ifcBaseFaceCount, ifcBaseModel2DCount);
   }
 
-  model_changed();
+  endModelChange();
 
   int remaining = (int) floor(100 - printed_Progress);
   barBuffer.setLength(0);

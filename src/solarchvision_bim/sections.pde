@@ -13,6 +13,8 @@ class Sections {
   int[][] i_data = new int[0][3];
 
   void makeEmpty (int n) {
+    beginModelChange();
+
     this.f_data = new float[n][6];
     this.i_data = new int[n][3];
     this.SolidImpact = new PImage[n];
@@ -22,7 +24,7 @@ class Sections {
     if (Select3D != null) {
       Select3D.deselect_Sections();
     }
-    model_changed();
+    endModelChange();
   }
 
   void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {

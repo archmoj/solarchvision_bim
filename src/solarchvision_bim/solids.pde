@@ -14,6 +14,8 @@ class Solids {
   float[][] DEF;
 
   void makeEmpty (int n) {
+    beginModelChange();
+
     this.DEF = new float [n][13];
 
     if (allGroups != null) {
@@ -28,7 +30,7 @@ class Solids {
       Select3D.deselect_Solids();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void updatePosition (int n, float a, float b, float c) {

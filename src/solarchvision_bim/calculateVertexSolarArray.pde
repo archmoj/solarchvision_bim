@@ -351,11 +351,11 @@ void calculate_VertexSolar_array () {
   println();
 
   // Per-vertex solar shading colors just changed without going through
-  // model_changed() - invalidate the WIN3D retained-mode face cache so the
+  // endModelChange() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
   if (allFaces != null) {
     // This bump is a "repaint stale face colors" signal, not a
-    // structural/material edit the way model_changed()'s own bump of
+    // structural/material edit the way endModelChange()'s own bump of
     // this same counter is - allSolarImpacts.Image[][] (the WIN3D solar-
     // impact overlay) is built from entirely separate baked PNG/Matrix_
     // ARGB data this function never touches, so win3DOverlay_dataFresh()

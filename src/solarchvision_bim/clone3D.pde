@@ -140,6 +140,8 @@ class Clone3D {
 
 
   void Model1Ds (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allModel1Ds.num;
 
     for (int o = 0; o < Select3D.model1DSelection.length; o++) {
@@ -149,9 +151,12 @@ class Clone3D {
     Select3D.deselect_Model1Ds();
     Select3D.model1DSelection = appendRange(Select3D.model1DSelection, numberBefore, allModel1Ds.num);
     selection_changed();
+    endModelChange();
   }
 
   void Model2Ds (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allModel2Ds.num;
 
     for (int o = 0; o < Select3D.model2DSelection.length; o++) {
@@ -161,9 +166,12 @@ class Clone3D {
     Select3D.deselect_Model2Ds();
     Select3D.model2DSelection = appendRange(Select3D.model2DSelection, numberBefore, allModel2Ds.num);
     selection_changed();
+    endModelChange();
   }
 
   void Faces (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allFaces.nodes.length;
 
     for (int o = 0; o < Select3D.faceSelection.length; o++) {
@@ -174,9 +182,12 @@ class Clone3D {
 
     Select3D.faceSelection = appendRange(new int[0], numberBefore, allFaces.nodes.length);
     selection_changed();
+    endModelChange();
   }
 
   void Polylines (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allPolylines.nodes.length;
 
     for (int o = 0; o < Select3D.polylineSelection.length; o++) {
@@ -186,9 +197,12 @@ class Clone3D {
 
     Select3D.polylineSelection = appendRange(new int[0], numberBefore, allPolylines.nodes.length);
     selection_changed();
+    endModelChange();
   }
 
   void Solids (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allSolids.DEF.length;
 
     for (int o = 0; o < Select3D.solidSelection.length; o++) {
@@ -198,9 +212,12 @@ class Clone3D {
     Select3D.deselect_Solids();
     Select3D.solidSelection = appendRange(Select3D.solidSelection, numberBefore, allSolids.DEF.length);
     selection_changed();
+    endModelChange();
   }
 
   void Sections (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allSections.num;
 
     for (int o = 0; o < Select3D.sectionSelection.length; o++) {
@@ -215,9 +232,12 @@ class Clone3D {
     Select3D.deselect_Sections();
     Select3D.sectionSelection = appendRange(Select3D.sectionSelection, numberBefore, allSections.num);
     selection_changed();
+    endModelChange();
   }
 
   void Cameras (boolean produce_same_variation) {
+    beginModelChange();
+
     int numberBefore = allCameras.num;
 
     for (int o = 0; o < Select3D.cameraSelection.length; o++) {
@@ -232,9 +252,12 @@ class Clone3D {
     Select3D.deselect_Cameras();
     Select3D.cameraSelection = appendRange(Select3D.cameraSelection, numberBefore, allCameras.num);
     selection_changed();
+    endModelChange();
   }
 
   void Groups (boolean produce_same_variation) {
+    beginModelChange();
+
     int SOLID_added = 0;
     int numberOfGroupsBefore = allGroups.num;
 
@@ -300,5 +323,6 @@ class Clone3D {
 
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
     selection_changed();
+    endModelChange();
   }
 }

@@ -34,6 +34,8 @@ class Drop3D {
   }
 
   void Model1Ds () {
+    beginModelChange();
+
     for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
       int OBJ_ID = Select3D.model1DSelection[o];
 
@@ -45,10 +47,12 @@ class Drop3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model2Ds () {
+    beginModelChange();
+
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int OBJ_ID = Select3D.model2DSelection[o];
 
@@ -60,6 +64,6 @@ class Drop3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 }

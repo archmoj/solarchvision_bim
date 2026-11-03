@@ -48,8 +48,17 @@ class react {
   // setting - replicated here using the old/new values OnChange gets.
   // The o == n guard matters here beyond just skipping redundant work: with
   // no change, d/r/s below would be 0/0/1 (a genuine no-op), but calling
-  // model_changed() unconditionally every frame would still force a
-  // constant, needless redraw.
+  // Move3D/Rotate3D/Scale3D.selection() unconditionally every frame would
+  // still force a constant, needless redraw.
+  //
+  // No trailing endModelChange() call here (there used to be one,
+  // redundant with whichever Move3D/Rotate3D/Scale3D sub-method the
+  // selection() call below reaches - each of those already wraps its own
+  // beginModelChange()/endModelChange() pair, see that file's own
+  // comments). Harmless when model_changed() had no state of its own to
+  // double up on; with undo/redo history now tied to that same pairing,
+  // an extra unpaired endModelChange() here would record a second,
+  // spurious step for what's one spinner drag.
   OnChange applyPosValue = (o, n) -> {
     if (o == n) return;
     float d = n - o;
@@ -59,14 +68,12 @@ class react {
     if (the_Vector == 1) { dz = 0; dx = 0; }
     if (the_Vector == 2) { dx = 0; dy = 0; }
     Move3D.selection(dx, dy, dz);
-    model_changed();
   };
   OnChange applyRotValue = (o, n) -> {
     if (o == n) return;
     float[] P = Select3D.getPivot();
     float r = n - o;
     Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotationVectorIndex);
-    model_changed();
   };
   OnChange applyScaleValue = (o, n) -> {
     if (o == n) return;
@@ -78,7 +85,6 @@ class react {
     if (the_Vector == 1) { sz = 1; sx = 1; }
     if (the_Vector == 2) { sx = 1; sy = 1; }
     Scale3D.selection(P[0], P[1], P[2], sx, sy, sz);
-    model_changed();
   };
 
   // One-off follow-up callbacks (each used by exactly one spinner).
@@ -130,8 +136,12 @@ class react {
     UI_caseBar.revise();
   };
 
-  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Terrain.update_textures(); model_changed(); };
-  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Terrain.update_mesh(); model_changed(); };
+  // Unlike Move3D/Rotate3D/Scale3D's own selection() above, Terrain's
+  // update_textures()/update_mesh() don't call beginModelChange()/
+  // endModelChange() themselves - this is the only place that edit gets
+  // recorded, so it needs the normal begin/end pairing, not removing.
+  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; beginModelChange(); Terrain.update_textures(); endModelChange(); };
+  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; beginModelChange(); Terrain.update_mesh(); endModelChange(); };
   OnChange applyCurrentCamera = (o, n) -> {
     if (o == n) return;
     WIN3D.apply_currentCameraIndex();

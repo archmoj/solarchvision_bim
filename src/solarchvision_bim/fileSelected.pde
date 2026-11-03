@@ -267,6 +267,7 @@ void _fileSelected_ImportObj (File selectedFile) {
     objImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -280,13 +281,13 @@ void _fileSelected_ImportObj (File selectedFile) {
     import_objects_OBJ(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
 
     // import_objects_OBJ() adds faces straight into allFaces without ever
-    // calling model_changed() itself - without this, the imported geometry
+    // calling endModelChange() itself - without this, the imported geometry
     // would never bump allFaces.winCacheGeneration (see faces.pde's WIN3D
     // retained-mode cache) and so would never actually appear in WIN3D:
     // switch_category() below still triggers a redraw via its own
     // view_changed(), but that redraw would just replay the stale,
     // pre-import cached PShape.
-    model_changed();
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -314,6 +315,7 @@ void _fileSelected_ImportGlb (File selectedFile) {
     glbImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -327,8 +329,8 @@ void _fileSelected_ImportGlb (File selectedFile) {
 
     // Same reason as import_objects_OBJ()'s own call just above this
     // one's sibling - import_objects_GLB() adds faces straight into
-    // allFaces without ever calling model_changed() itself.
-    model_changed();
+    // allFaces without ever calling endModelChange() itself.
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -356,6 +358,7 @@ void _fileSelected_ImportStl (File selectedFile) {
     stlImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -369,9 +372,9 @@ void _fileSelected_ImportStl (File selectedFile) {
 
     // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s own
     // calls just above this one's siblings - import_objects_STL() adds
-    // faces straight into allFaces without ever calling model_changed()
+    // faces straight into allFaces without ever calling endModelChange()
     // itself.
-    model_changed();
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -400,6 +403,7 @@ void _fileSelected_ImportDxf (File selectedFile) {
     dxfImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -414,8 +418,8 @@ void _fileSelected_ImportDxf (File selectedFile) {
     // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
     // import_objects_STL()'s own calls just above this one's siblings -
     // import_objects_DXF() adds faces straight into allFaces without
-    // ever calling model_changed() itself.
-    model_changed();
+    // ever calling endModelChange() itself.
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -444,6 +448,7 @@ void _fileSelected_ImportPly (File selectedFile) {
     plyImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -458,8 +463,8 @@ void _fileSelected_ImportPly (File selectedFile) {
     // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
     // import_objects_STL()'s/import_objects_DXF()'s own calls just above
     // this one's siblings - import_objects_PLY() adds faces straight
-    // into allFaces without ever calling model_changed() itself.
-    model_changed();
+    // into allFaces without ever calling endModelChange() itself.
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -489,6 +494,7 @@ void _fileSelected_ImportDae (File selectedFile) {
     daeImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -504,8 +510,8 @@ void _fileSelected_ImportDae (File selectedFile) {
     // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s
     // own calls just above this one's siblings - import_objects_DAE()
     // adds faces straight into allFaces without ever calling
-    // model_changed() itself.
-    model_changed();
+    // endModelChange() itself.
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -533,6 +539,7 @@ void _fileSelected_ImportIfc (File selectedFile) {
     ifcImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -544,8 +551,15 @@ void _fileSelected_ImportIfc (File selectedFile) {
 
     // Like import_objects_OBJ() above, import_objects_IFC() adds faces
     // straight into allFaces (see ifcEmitFace()'s own comment for why)
-    // and calls model_changed() itself exactly once, at the very end of
-    // the whole import - so no extra call is needed here either.
+    // and calls endModelChange() itself exactly once, at the very end of
+    // the whole import - so no extra endModelChange() call is needed
+    // here. The beginModelChange() added above is still needed, though:
+    // it's what makes import_objects_IFC()'s own trailing endModelChange()
+    // close out THIS function's own beginNewGroup() too (modelChangeDepth
+    // 1 -> 0, once import_objects_IFC() itself gets its own
+    // beginModelChange() added later it'll nest instead, 2 -> 1, with no
+    // change needed here) - without it, the group creation a few lines
+    // above would sit outside any pairing at all until that happened.
     import_objects_IFC(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
 
     int number_of_allGroups_after = allGroups.num;
@@ -576,6 +590,7 @@ void _fileSelected_ImportGbxml (File selectedFile) {
     gbxmlImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
+    beginModelChange();
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -591,8 +606,8 @@ void _fileSelected_ImportGbxml (File selectedFile) {
     // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s/
     // import_objects_DAE()'s own calls just above this one's siblings -
     // import_objects_GBXML() adds faces straight into allFaces without
-    // ever calling model_changed() itself.
-    model_changed();
+    // ever calling endModelChange() itself.
+    endModelChange();
 
     int number_of_allGroups_after = allGroups.num;
 

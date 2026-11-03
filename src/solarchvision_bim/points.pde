@@ -9,6 +9,7 @@ class Points {
   boolean displayAll = false;
 
   void makeEmpty (int n) {
+    beginModelChange();
 
     allVertices = new float [n][3];
 
@@ -19,7 +20,7 @@ class Points {
       Select3D.deselect_Vertices();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void setX (int n, float f) {

@@ -27,13 +27,13 @@ class Faces {
   // Instead we build a PShape once and reuse it until something that
   // actually affects the cached geometry/color changes:
   //  - structural/material edits bump winCacheGeneration (see the global
-  //    model_changed() in global_functions.pde, already called pervasively
+  //    endModelChange() in global_functions.pde, already called pervasively
   //    on every create/edit/move/delete/import of faces, so this piggybacks
   //    on an existing, well-established hook rather than adding a new one
   //    that every future mutation site would also have to remember to call)
   //  - solar-array recomputation bumps it too (see calculate_GlobalSolar_
   //    array.pde / calculateVertexSolarArray.pde - those change per-vertex
-  //    colors without changing winCacheGeneration via model_changed())
+  //    colors without changing winCacheGeneration via endModelChange())
   //  - the handful of cheap scalar knobs below (shading mode, impact type,
   //    display-edges toggle, tessellation level, colorScale params) are
   //    compared frame-to-frame in win3DCache_isValid(), so we don't have to
@@ -206,6 +206,7 @@ class Faces {
   int[][] options;
 
   void makeEmpty (int n) {
+    beginModelChange();
 
     this.nodes = new int [n][0];
     this.options = new int [n][6];
@@ -222,7 +223,7 @@ class Faces {
       Select3D.deselect_Faces();
     }
 
-    model_changed();
+    endModelChange();
   }
 
 

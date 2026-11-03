@@ -1,198 +1,160 @@
-// Undo/Redo pipeline - step three: hooked up to every 3D-model edit.
+// Undo/Redo pipeline - step four: a precise pre-edit hook, replacing
+// the frame-boundary heuristics the previous step needed.
 //
-// Scope for this step, deliberately: everything that already calls
-// model_changed() (globalFunctions.pde) - every create, delete, import,
-// and batch move/rotate/scale of Faces, Model1Ds, Model2Ds, Solids,
-// Polylines, Points, Cameras, Sections, Groups, and Terrain's mesh.
-// Spot-checked across the 182 call sites: it's consistently called once
-// per discrete, composite user action (e.g. add_House3_Core() builds an
-// entire house from several solids and calls it exactly once at the
-// end, same as Delete3D.model2DSelection() for a whole multi-object
-// delete) - never once per sub-object or per animation frame. There is
-// also no continuous mouse-drag editing anywhere in this app (Move3D/
-// Rotate3D/Scale3D are only ever driven by spinners, keyboard nudges,
-// mouse wheel, or import placement - never mouseDragged.pde), and
-// GUI spinners themselves change value on a click/commit basis (the
-// increment/decrement buttons, right-click-on-bar jump, and committed
-// text edit in uiRollout.pde's _Spinner()), not continuously while
-// held - so hooking this one already-central signal doesn't flood the
-// history with near-duplicate snapshots the way hooking, say, every
-// frame of a live drag would. NOT wired to pure view/navigation actions
+// Scope, still deliberate: everything that already calls
+// beginModelChange()/endModelChange() (globalFunctions.pde) - every
+// create, delete, import, and batch move/rotate/scale of Faces,
+// Model1Ds, Model2Ds, Solids, Polylines, Points, Cameras, Sections,
+// Groups, and Terrain's mesh. NOT wired to pure view/navigation actions
 // (camera orbit/pan/zoom, toggling what's displayed, switching tools) -
-// those don't call model_changed() and don't record a step. More than
-// that, though: restoring a step deliberately leaves the viewport alone
-// too, via parse_XML_variables()'s own restoreViewport flag (false here)
-// - without it, undoing a model edit would also snap the camera back to
-// wherever it was at that earlier edit, which is no part of "undo my
-// last edit" as far as this step's scope goes. Everything else WIN3D
-// holds (current tool, shading-display mode, ...) is left alone the
-// same way, for the same reason - it's "what you're doing right now",
-// not modeling content. STUDY/WORLD settings that don't go through
-// model_changed() are a separate, open question for a later step.
-// "Should Undo itself be
-// undoable" very much WAS a real question here, not a moot one:
-// restoring a snapshot does end up calling model_changed() - repeatedly,
-// in fact, since from_XML() calls makeEmpty() (Faces/Model1Ds/Model2Ds/
-// Solids/Polylines/Points/Cameras/Sections/Groups), which calls
-// model_changed() unconditionally at its own end - so parse_XML_variables()
-// alone fires it close to nine times per restore. isRestoringSnapshot
-// below exists specifically to stop each of those from recursively
-// recording itself as a new history step.
+// those don't call either function and don't record a step. Restoring a
+// step deliberately leaves the viewport alone too, via
+// parse_XML_variables()'s own restoreViewport flag (false here) - see
+// that function's own comment.
 //
 // THE MODEL: a single chronological list, history[0..n], with
-// historyIndex marking which entry is the current live state. Not the
-// push-before-edit stack pair from the previous step - that shape
-// needed to capture a snapshot right BEFORE an edit, which model_changed()
-// can't give it (it only ever fires AFTER the edit it's reporting).
-// Here, every entry already IS a "state after some edit" snapshot, in
-// order, and undo/redo just move historyIndex backward/forward through
-// that list and restore whichever entry it now points at - no separate
-// redo list to keep in sync. history[0], seeded once by
-// seedUndoHistory() (drawInitialFrames.pde) right as the app finishes
-// loading, is the one baseline that isn't "after an edit" - it's what
-// makes the very first edit of a session undoable at all.
+// historyIndex marking which entry is the current live state - same
+// shape as the previous step, but what changed is WHEN each entry gets
+// written and by what. beginModelChange()/endModelChange() give a real
+// pre-edit boundary now (endModelChange()'s own comment covers why
+// model_changed() alone couldn't), which replaces two separate
+// workarounds the previous step needed to approximate that boundary
+// without one:
+//
+//   - frameCount-based coalescing ("did the last step happen in this
+//     same frame") is gone. beginUndoableEdit()/commitUndoableEdit()
+//     only fire on the OUTERMOST begin/end transition
+//     (modelChangeDepth 0->1 / 1->0 - see beginModelChange()'s own
+//     comment), so a composite action like Delete3D.selection() (which
+//     now wraps its own several sub-steps, each already wrapped
+//     themselves, in one more begin/end pair around the whole thing)
+//     coalesces by construction, not by guessing from timing.
+//
+//   - frameStartSelectionSnapshot (a once-per-frame copy of Select3D's
+//     own state, patched into the entry about to be superseded) is
+//     gone too. beginUndoableEdit() now simply REPLACES
+//     history[historyIndex] with a fresh buildProjectSnapshot() of
+//     whatever is actually live right this instant, immediately before
+//     the edit that's about to start mutates anything - exact, not
+//     approximated from a frame boundary. Select3D's own
+//     captureSelectionSnapshot()/applySelectionSnapshotTo() helpers
+//     that existed only to support the old surgical per-field patch are
+//     gone with it; a plain whole-entry replacement needs no equivalent.
+//
+// history[0], seeded once by seedUndoHistory() (drawInitialFrames.pde)
+// right as the app finishes loading, is the one baseline entry that
+// isn't itself refreshed by a beginUndoableEdit() call (there's no
+// "edit before the first edit") - it's what makes the very first edit
+// of a session undoable at all, and beginUndoableEdit() still keeps it
+// current with whatever's selected right up until that first edit
+// actually starts.
 //
 // Builds on buildProjectSnapshot() (saveProject.pde) and
-// restoreProjectSnapshot() (this file) exactly as laid out in the
-// previous step - see restoreProjectSnapshot()'s own comment for why
-// that's deliberately not load_project() or holdProject()/fetchProject().
+// restoreProjectSnapshot() (this file) - see restoreProjectSnapshot()'s
+// own comment for why that's deliberately not load_project() or
+// holdProject()/fetchProject().
 //
-// Still NOT decided, on purpose: whether New/Open/Fetch should clear and
-// reseed this history (right now they don't - the history silently
-// keeps referring to whatever project was open before, which is wrong
-// the moment someone opens a different file mid-session and then
-// presses Ctrl+Z). Flagging it rather than quietly leaving it unnoticed,
-// but treating it as its own follow-up rather than guessing at it here.
+// New/Open/Fetch now DO clear and reseed this history - resolved while
+// fixing a more urgent, related bug in the same two places: as more
+// classes' makeEmpty() each gained their own complete beginModelChange()/
+// endModelChange() pair (see those classes' own comments), both
+// deleteAll() (globalFunctions.pde, "New") and load_project()
+// (loadProject.pde, "Open"/"Fetch") turned out to be calling several of
+// them in a row with no reentrancy guard around the whole sequence -
+// deleteAll() recording several spurious history entries for one "New"
+// instead of one (now fixed by wrapping the whole sequence in its own
+// beginModelChange()/endModelChange() pair, same reasoning as
+// Delete3D.selection()'s own comment), and load_project() doing the same
+// via parse_XML_variables()'s own from_XML() cascade (now wrapped in
+// isRestoringSnapshot, the same guard restoreProjectSnapshot() below
+// already relied on, just newly needed by this second caller too). Once
+// both were already being touched for that reason, reseeding the history
+// right after each succeeds was the natural fix for the history
+// correctness question this comment used to flag as open: a different
+// project's content, or a freshly emptied one, means the undo history
+// needs to start fresh from exactly that state, not keep referring to
+// whatever was open before it.
 
 final int MAX_UNDO_STEPS = 50; // bounds memory growth - each entry is a full scene-graph XML tree
 
 ArrayList<XML> history = new ArrayList<XML>();
 int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 
-// Guards recordHistoryStep() against firing WHILE a restore is already
-// in progress - see restoreProjectSnapshot()'s own comment for why this
-// is necessary, not just defensive: makeEmpty() (Faces/Model1Ds/
-// Model2Ds/Solids/Polylines/Points/Cameras/Sections/Groups all follow
-// the same pattern) unconditionally calls model_changed() at its own
-// end, and from_XML() calls makeEmpty() as its first step to reset the
-// class to the right size before refilling it - so parse_XML_variables()
-// alone fires model_changed() (and so, without this guard,
-// recordHistoryStep()) around nine times per restore, each one
-// capturing a snapshot of whatever is STILL only half-restored at that
-// exact point in the from_XML() sequence, and stomping on historyIndex
-// along the way. This was the actual bug behind undo "not working as
-// expected": not a rendering issue, history itself was getting
-// scrambled by its own restore.
+// Guards beginUndoableEdit()/commitUndoableEdit() against firing WHILE a
+// restore is already in progress - see restoreProjectSnapshot()'s own
+// comment for why this is necessary, not just defensive: makeEmpty()
+// (Faces/Model1Ds/Model2Ds/Solids/Polylines/Points/Cameras/Sections/
+// Groups all follow the same pattern) unconditionally calls
+// endModelChange() at its own end (now preceded by its own
+// beginModelChange(), per this step's own conversion), and from_XML()
+// calls makeEmpty() as its first step to reset the class to the right
+// size before refilling it - so parse_XML_variables() alone fires
+// several begin/end pairs per restore, each one operating on whatever
+// is STILL only half-restored at that exact point in the from_XML()
+// sequence, and stomping on historyIndex along the way, without this
+// guard.
 boolean isRestoringSnapshot = false;
-
-// Which frame the most recently-APPENDED (not coalesced) history entry
-// was recorded in - see recordHistoryStep()'s own comment on why
-// same-frame model_changed() calls get coalesced into one entry rather
-// than each appending their own.
-int lastRecordedStepFrame = -1;
-
-// Updated once per frame, right at the start of each frame's real
-// processing (solarchvision_bim.pde's draw() - see that call site's own
-// comment), to whatever Select3D.captureSelectionSnapshot() currently
-// holds.
-//
-// Why this exists: a pure selection change (clicking to select a face)
-// never calls model_changed() and so never gets its own history step -
-// deliberately, per this file's own header comment, since not every
-// click should be its own undo step. But that means a history entry's
-// OWN originally-recorded selection can go stale the moment the user
-// selects something else afterward without editing anything yet: build
-// a grid of openings (one entry, whatever got auto-selected when the
-// modifier finished), manually select the middle one (no new entry),
-// delete it (a new entry, selection now cleared) - undoing that delete
-// would otherwise restore the grid-of-openings entry's own OLD
-// selection from when the modifier itself finished, not the middle
-// face the user actually selected afterward and deleted - a real
-// report: "undo - the selected face is not the correct one in the
-// middle; it is another face". recordHistoryStep() below patches the
-// entry it's about to supersede with this value, right before
-// recording the new one, so what undo lands back on reflects what was
-// actually selected right before that next edit started - not whatever
-// was selected back when the entry being returned to was itself first
-// captured.
-XML frameStartSelectionSnapshot = null;
 
 // The one baseline entry that isn't "state after an edit" - see this
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
 void seedUndoHistory () {
-  if (history == null) history = new ArrayList<XML>(); // see recordHistoryStep()'s own comment on why this can't be assumed
+  if (history == null) history = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
   history.clear();
   history.add(buildProjectSnapshot(false));
   historyIndex = 0;
 }
 
-// Called from model_changed() itself - see this file's own header
-// comment for why that one hook is enough for this step's scope.
-void recordHistoryStep () {
-  // See isRestoringSnapshot's own comment: a restore isn't a new edit to
-  // record, it's replaying an old one - without this, every single
-  // undo()/redo() would corrupt the very history it's reading from.
+// Called from beginModelChange() itself, only on the outermost (depth
+// 0 -> 1) transition - see that function's own comment for why nesting
+// matters here. This is what makes undo land on the right SELECTION
+// (not just the right geometry) after a later edit: a pure selection
+// change (clicking a different face) never gets its own history step on
+// purpose, but replacing the CURRENT entry with a fresh snapshot right
+// here means whatever was selected right up until the moment an edit
+// actually starts is what that entry ends up holding - not whatever was
+// selected back when it was itself first recorded.
+void beginUndoableEdit () {
   if (isRestoringSnapshot) return;
 
-  // model_changed() can fire before this file's own field initializers
-  // below (history/historyIndex) have run at all: Processing/Java
-  // initializes a class's fields in tab-concatenation order, and
-  // several of the "all<Thing>" container classes (Faces, Model1Ds,
-  // Model2Ds, Solids, ...) call makeEmpty() -> model_changed() from
-  // their OWN constructor - which fires the moment the sketch's own
-  // `allFaces = new Faces();`-style field initializer runs, during the
-  // sketch object's construction, possibly before history/historyIndex
-  // further down this same file have been assigned. At that point
-  // `history` is still null (its own `= new ArrayList<XML>()` hasn't
-  // executed yet) and `historyIndex` is still Java's bare default int
-  // value of 0 (not yet its explicit `= -1` either) - so a
-  // `historyIndex < 0` check alone can't tell "too early" apart from
-  // "ready", hence the null check here instead. None of this is a real
-  // edit to record anyway - it's empty-initialization boilerplate, long
-  // before setup() - the actual baseline is seedUndoHistory(), called
-  // from drawInitialFrames.pde well after every such constructor has
-  // already run.
+  // beginModelChange() can fire before this file's own field
+  // initializers above (history/historyIndex) have run at all:
+  // Processing/Java initializes a class's fields in tab-concatenation
+  // order, and several of the "all<Thing>" container classes (Faces,
+  // Model1Ds, Model2Ds, Solids, ...) call makeEmpty() ->
+  // beginModelChange()+endModelChange() from their OWN constructor -
+  // which fires the moment the sketch's own `allFaces = new Faces();`-
+  // style field initializer runs, during the sketch object's
+  // construction, possibly before history/historyIndex further up this
+  // same file have been assigned. At that point `history` is still null
+  // (its own `= new ArrayList<XML>()` hasn't executed yet) and
+  // `historyIndex` is still Java's bare default int value of 0 (not yet
+  // its explicit `= -1` either) - so a `historyIndex < 0` check alone
+  // can't tell "too early" apart from "ready", hence the null check
+  // here instead. None of this is a real edit to record anyway - it's
+  // empty-initialization boilerplate, long before setup() - the actual
+  // baseline is seedUndoHistory(), called from drawInitialFrames.pde
+  // well after every such constructor has already run.
   if ((history == null) || (historyIndex < 0)) return;
 
-  // Some single, user-perceived actions call model_changed() more than
-  // once: Delete3D.selection() calls it once from its own category
-  // delete (e.g. faceSelection()) and again, separately, from
-  // isolatedVertices_Selection()'s own orphaned-point cleanup pass right
-  // after - both synchronously, within the one call that is, to the
-  // person using the app, a single "Delete". Without coalescing these,
-  // every such delete would record two history entries instead of one,
-  // and a single Ctrl+Z would only undo half of it. frameCount is the
-  // signal: these always happen within the same frame (no draw() call
-  // runs between them), so replacing rather than appending whenever
-  // model_changed() fires again in the SAME frame as the step just
-  // recorded correctly merges them into the one entry the user actually
-  // expects to undo.
-  if (frameCount == lastRecordedStepFrame) {
-    history.set(historyIndex, buildProjectSnapshot(false));
-    return;
-  }
+  history.set(historyIndex, buildProjectSnapshot(false));
+}
 
-  // See frameStartSelectionSnapshot's own comment: patch the entry
-  // we're about to supersede with whatever was actually selected right
-  // before this edit started, not whatever its own selection happened
-  // to be when it was originally recorded.
-  if (frameStartSelectionSnapshot != null) {
-    Select3D.applySelectionSnapshotTo(history.get(historyIndex), frameStartSelectionSnapshot);
-  }
+// Called from endModelChange() itself, only on the outermost (depth
+// 1 -> 0) transition.
+void commitUndoableEdit () {
+  if (isRestoringSnapshot) return;
+  if ((history == null) || (historyIndex < 0)) return;
 
   // Discard any redo branch sitting beyond the current position: a
   // fresh edit after one or more undos means that uncovered "future"
-  // can never be reached again (the standard rule - see this file's own
-  // header comment on the previous step's design, which this still
-  // follows).
+  // can never be reached again (the standard rule).
   while (history.size() > historyIndex + 1) {
     history.remove(history.size() - 1);
   }
 
   history.add(buildProjectSnapshot(false));
   historyIndex = history.size() - 1;
-  lastRecordedStepFrame = frameCount;
 
   while (history.size() > MAX_UNDO_STEPS) {
     history.remove(0);
@@ -241,9 +203,10 @@ void redo () {
 // and reallocating their arrays, resetting the viewport to "find a good
 // view", resetting the active creation tool). Safe to call from
 // undo()/redo() only because of isRestoringSnapshot below - see its own
-// comment: parse_XML_variables() does reach model_changed() repeatedly
-// (via several classes' from_XML() -> makeEmpty()), and without that
-// guard each of those would recursively record itself as a new step.
+// comment: parse_XML_variables() does reach beginModelChange()/
+// endModelChange() repeatedly (via several classes' from_XML() ->
+// makeEmpty()), and without that guard each of those would recursively
+// record itself as a new step.
 void restoreProjectSnapshot (XML xml) {
   // isRestoringSnapshot (set for the entire call, including every
   // from_XML() parse_XML_variables() below reaches) is what makes this
@@ -253,9 +216,10 @@ void restoreProjectSnapshot (XML xml) {
   isRestoringSnapshot = true;
   try {
     // restoreViewport: false - undo/redo is scoped to 3D-modeling edits
-    // only (model_changed()'s own reach), not camera/viewport
-    // navigation. The person's current view stays exactly where they
-    // left it; see parse_XML_variables()'s own comment on this flag.
+    // only (beginModelChange()/endModelChange()'s own reach), not
+    // camera/viewport navigation. The person's current view stays
+    // exactly where they left it; see parse_XML_variables()'s own
+    // comment on this flag.
     parse_XML_variables(xml, false, false);
 
     // See Select3D.clampSelectionsToCurrentData()'s own comment: drops
@@ -272,10 +236,11 @@ void restoreProjectSnapshot (XML xml) {
     // on invalidateWin3DRetainedCaches() for the full reasoning (and the
     // bug this exact gap caused: undo correctly reverting the data but
     // the view still showing the undone edit). Deliberately calling this
-    // directly rather than model_changed() itself - a restore isn't a new
-    // edit to record, so it must not also go through recordHistoryStep()
-    // (doubly so now, given isRestoringSnapshot would block it anyway -
-    // this keeps the cache invalidation itself unconditional regardless).
+    // directly rather than endModelChange() itself - a restore isn't a
+    // new edit to record, so it must not also go through
+    // commitUndoableEdit() (doubly so now, given isRestoringSnapshot
+    // would block it anyway - this keeps the cache invalidation itself
+    // unconditional regardless).
     invalidateWin3DRetainedCaches();
 
     find_which_bakings_to_regenerate();

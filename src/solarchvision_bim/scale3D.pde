@@ -32,6 +32,8 @@ class Scale3D {
   }
 
   void TerrainVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
       int f = Select3D.terrainVertexSelection[q];
       int i = f / Terrain.columnCount;
@@ -44,10 +46,12 @@ class Scale3D {
       Terrain.Mesh[i][j][2] = P[2];
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void softSelection (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.softSelection.length; q++) {
       int f = Select3D.softSelection[q];
       float v = Select3D.softSelectionFalloff[q];
@@ -61,10 +65,12 @@ class Scale3D {
       allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.vertexSelection.length; q++) {
       int f = Select3D.vertexSelection[q];
       float[] P = scalePointAroundPivot(allPoints.getX(f), allPoints.getY(f), allPoints.getZ(f), x0, y0, z0, sx, sy, sz);
@@ -74,10 +80,12 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Polylines (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
     for (int q = 0; q < PolylineVertices.length; q++) {
@@ -89,10 +97,12 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     int[] FaceVertices = Select3D.get_Face_Vertices();
 
     for (int q = 0; q < FaceVertices.length; q++) {
@@ -104,10 +114,12 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     boolean allSolids_updated = false;
 
     for (int q = 0; q < Select3D.solidSelection.length; q++) {
@@ -122,10 +134,12 @@ class Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 
   void Sections (float sx, float sy) {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
       allSections.setU(f, allSections.getU(f) * sx);
@@ -133,10 +147,12 @@ class Scale3D {
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    model_changed();
+    endModelChange();
   }
 
   void Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     // swapping y and z vectors to match camera's local coordinate
     float tmp = sz;
     sz = sy;
@@ -156,10 +172,12 @@ class Scale3D {
       if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model1DSelection[o];
       float[] P = scalePointAroundPivot(allModel1Ds.getX(f), allModel1Ds.getY(f), allModel1Ds.getZ(f), x0, y0, z0, sx, sy, sz);
@@ -171,10 +189,12 @@ class Scale3D {
       allModel1Ds.magS(f, sz);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model2DSelection[o];
       float[] P = scalePointAroundPivot(allModel2Ds.getX(f), allModel2Ds.getY(f), allModel2Ds.getZ(f), x0, y0, z0, sx, sy, sz);
@@ -188,10 +208,12 @@ class Scale3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
+    beginModelChange();
+
     int[] PolymeshVertices = Select3D.get_Group_Vertices();
 
     for (int q = 0; q < PolymeshVertices.length; q++) {
@@ -258,6 +280,6 @@ class Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    model_changed();
+    endModelChange();
   }
 }

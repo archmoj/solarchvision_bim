@@ -12,6 +12,7 @@ class Polylines {
   int[][] options;
 
   void makeEmpty (int n) {
+    beginModelChange();
 
     this.nodes = new int [n][0];
     this.options = new int [n][6];
@@ -28,7 +29,7 @@ class Polylines {
       Select3D.deselect_Polylines();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   int getMaterial (int n) {

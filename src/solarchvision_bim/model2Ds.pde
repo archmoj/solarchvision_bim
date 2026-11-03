@@ -47,6 +47,7 @@ class Model2Ds {
   float[][] XYZS;
 
   void makeEmpty (int n) {
+    beginModelChange();
 
     this.num = n;
     this.XYZS = new float [n][4];
@@ -66,7 +67,7 @@ class Model2Ds {
       Select3D.deselect_Model2Ds();
     }
 
-    model_changed();
+    endModelChange();
   }
 
   // `t` ("PEOPLE"/"TREES") picks the kind; `m`'s magnitude is now always

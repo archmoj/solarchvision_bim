@@ -17,14 +17,31 @@ void load_project (String myFile) {
 
   if (continue_process) {
 
+    // parse_XML_variables() reaches beginModelChange()/endModelChange()
+    // repeatedly on its own (several classes' from_XML() -> makeEmpty(),
+    // each now its own complete begin/end pair - see those classes' own
+    // comments), the exact same cascade undoRedo.pde's
+    // restoreProjectSnapshot() already guards against with
+    // isRestoringSnapshot - but this function is Open/Fetch's own
+    // "restore everything from XML" path, not that one, and had no
+    // equivalent guard: opening or fetching ANY project was recording
+    // several spurious, partially-loaded undo-history entries, one per
+    // class's own makeEmpty() call, exactly the kind of corruption
+    // isRestoringSnapshot exists to prevent - just via a different
+    // caller than the one it was first written for.
+    isRestoringSnapshot = true;
     try {
-      parse_XML_variables(xml, false, true); // first try: loading without printing logs
-    }
-    catch (Exception e) {
-      println("Problem loading variables:", myFile);
+      try {
+        parse_XML_variables(xml, false, true); // first try: loading without printing logs
+      }
+      catch (Exception e) {
+        println("Problem loading variables:", myFile);
 
-      parse_XML_variables(xml, true, true); // second try with printing logs
-      System.exit(1);
+        parse_XML_variables(xml, true, true); // second try with printing logs
+        System.exit(1);
+      }
+    } finally {
+      isRestoringSnapshot = false;
     }
 
     // loading only weather data //
@@ -65,6 +82,16 @@ void load_project (String myFile) {
 
 
     modify_Viewport_Title();
+
+    // Resolves undoRedo.pde's own previously-open question ("should
+    // New/Open/Fetch clear and reseed this history") - now that a
+    // different project's own content just fully replaced whatever was
+    // live before, the undo history needs to start fresh from exactly
+    // this state, not keep referring to the previous project's: without
+    // this, pressing Ctrl+Z right after opening a different file could
+    // try to restore a snapshot that belongs to the project that was
+    // open before it.
+    seedUndoHistory();
   }
 
 }

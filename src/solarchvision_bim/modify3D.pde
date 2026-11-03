@@ -39,6 +39,8 @@ class Modify3D {
   void repositionVertices_Selection () {
     if (currentObjectCategory != ObjectCategory.VERTEX) return;
 
+    beginModelChange();
+
     Select3D.calculate_BoundingBox();
 
     for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
@@ -49,6 +51,8 @@ class Modify3D {
     }
 
     Select3D.calculate_BoundingBox();
+
+    endModelChange();
   }
 
   void compactRemovedVertices (boolean[] toRemove) {
@@ -84,6 +88,8 @@ class Modify3D {
 
   void weldSceneVertices_Selection (float max_distance) {
     if (!isPolymeshCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectVertices_fromCurrentSelection();
 
@@ -126,10 +132,14 @@ class Modify3D {
 
     this.compactRemovedVertices(toRemove);
     Select3D.deselect_Vertices();
+
+    endModelChange();
   }
 
   void weldObjectsVertices_Selection (float max_distance) {
     if (!isPolymeshCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectVertices_fromCurrentSelection();
 
@@ -176,6 +186,8 @@ class Modify3D {
 
     this.compactRemovedVertices(toRemove);
     Select3D.deselect_Vertices();
+
+    endModelChange();
   }
 
   void accumulateOffsetFromRing (int[][] ringNodes, int vNo, int o, int _type, float _amount, float[][] Vertex_offsetValues, int[] Vertex_offsetNum) {
@@ -217,6 +229,8 @@ class Modify3D {
   void offsetVertices_Selection (int _type, float _amount) {
     if (!isPolymeshCategorySelected()) return;
 
+    beginModelChange();
+
     this.selectVertices_fromCurrentSelection();
 
     float[][] Vertex_offsetValues = new float[Select3D.vertexSelection.length][3];
@@ -241,10 +255,13 @@ class Modify3D {
     }
 
     selection_changed();
+    endModelChange();
   }
 
   void separateVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectVertices_fromCurrentSelection();
 
@@ -269,6 +286,7 @@ class Modify3D {
     }
 
     Select3D.deselect_Vertices();
+    endModelChange();
   }
 
   int[] remove_item_from_primary_list (int q, int[] primary_list) {
@@ -344,6 +362,8 @@ class Modify3D {
   void insertCornerOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
+    beginModelChange();
+
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
 
@@ -402,10 +422,13 @@ class Modify3D {
     }
 
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void insertParallelOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -482,10 +505,13 @@ class Modify3D {
     }
 
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void insertRotatedOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -553,10 +579,13 @@ class Modify3D {
     }
 
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void insertEdgeOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -616,10 +645,13 @@ class Modify3D {
     }
 
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void tessellateRowsColumns_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
@@ -712,10 +744,13 @@ class Modify3D {
 
     appendNewFaceSelection(newfaceSelection_L);
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void tessellateRectangular_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
@@ -780,10 +815,13 @@ class Modify3D {
 
     appendNewFaceSelection(newfaceSelection_L);
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void tessellateTriangular_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
@@ -834,10 +872,13 @@ class Modify3D {
 
     appendNewFaceSelection(newfaceSelection_L);
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void forceTriangulateFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -886,10 +927,13 @@ class Modify3D {
 
     appendNewFaceSelection(newfaceSelection_L);
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void optimizeFace_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -922,10 +966,18 @@ class Modify3D {
     }
 
     selection_changed();
+    endModelChange();
   }
 
+  // Also calls allGroups.beginNewGroup() itself, further down (for each
+  // group in the selection) - beginModelChange() here needs to cover
+  // that too, not just the face/vertex edits, same reasoning as
+  // fileSelected.pde's own import functions covering their own
+  // allGroups.beginNewGroup() calls.
   void extrudeFaceEdges_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -1026,10 +1078,13 @@ class Modify3D {
     }
 
     selection_changed();
+    endModelChange();
   }
 
   void autoNormalFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
+
+    beginModelChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
 
@@ -1064,9 +1119,12 @@ class Modify3D {
     }
 
     switch_category(ObjectCategory.FACE);
+    endModelChange();
   }
 
   void flattenTerrainVertices () {
+    beginModelChange();
+
     for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
       int f = Select3D.terrainVertexSelection[q];
       int i = f / Terrain.columnCount;
@@ -1074,10 +1132,12 @@ class Modify3D {
       Terrain.Mesh[i][j][2] = 0;
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void changeVisibilityFaces_Selection (int new_vsb) {
+    beginModelChange();
+
     if ((currentObjectCategory == ObjectCategory.GROUP) ||
         (currentObjectCategory == ObjectCategory.FACE) ||
         (currentObjectCategory == ObjectCategory.VERTEX)) {
@@ -1091,18 +1151,22 @@ class Modify3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void changeVisibilityFaces_Scene (int new_vsb) {
+    beginModelChange();
+
     for (int f = allFaces.nodes.length - 1; f >= 0; f--) {
       allFaces.setVisibility(f, new_vsb);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void reverseVisibilityFaces_Scene () {
+    beginModelChange();
+
     for (int f = allFaces.nodes.length - 1; f >= 0; f--) {
       int vsb = allFaces.getVisibility(f);
       int new_vsb = vsb;
@@ -1113,10 +1177,12 @@ class Modify3D {
       allFaces.setVisibility(f, new_vsb);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void changeVisibilityPolylines_Selection (int new_vsb) {
+    beginModelChange();
+
     if ((currentObjectCategory == ObjectCategory.GROUP) ||
         (currentObjectCategory == ObjectCategory.POLYLINE) ||
         (currentObjectCategory == ObjectCategory.VERTEX)) {
@@ -1130,18 +1196,22 @@ class Modify3D {
       }
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void changeVisibilityPolylines_Scene (int new_vsb) {
+    beginModelChange();
+
     for (int f = allPolylines.nodes.length - 1; f >= 0; f--) {
       allPolylines.setVisibility(f, new_vsb);
     }
 
-    model_changed();
+    endModelChange();
   }
 
   void reverseVisibilityPolylines_Scene () {
+    beginModelChange();
+
     for (int f = allPolylines.nodes.length - 1; f >= 0; f--) {
       int vsb = allPolylines.getVisibility(f);
       int new_vsb = vsb;
@@ -1152,16 +1222,24 @@ class Modify3D {
       allPolylines.setVisibility(f, new_vsb);
     }
 
-    model_changed();
+    endModelChange();
   }
 
+  // Composite, same reasoning as Delete3D.selection()'s own comment: the
+  // four calls below each already wrap their own beginModelChange()/
+  // endModelChange() pair - without this outer pair too, each would
+  // independently record its own step, turning one "Isolate" into four.
   void isolate_Selection () {
     if (!isPolymeshCategorySelected()) return;
+
+    beginModelChange();
 
     this.changeVisibilityFaces_Scene(0);
     this.changeVisibilityFaces_Selection(1);
 
     this.changeVisibilityPolylines_Scene(0);
     this.changeVisibilityPolylines_Selection(1);
+
+    endModelChange();
   }
 }

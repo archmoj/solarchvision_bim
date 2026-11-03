@@ -1705,7 +1705,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
 
           float[] d = computeMoveDelta(x1, y1, z1, x2, y2, z2);
 
-          // No separate model_changed() after, unlike the
+          // No separate endModelChange() after, unlike the
           // direct call this replaces: the "MOVE" command
           // already calls it itself. "move" is already in
           // bypassAllActionsFor (it's the literal motivating
@@ -1790,14 +1790,30 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
 
           if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
+            beginModelChange();
             pickOrAssignModel2DSeedMaterial(int(RxP[0]));
 
           } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
+            beginModelChange();
             pickOrAssignModel1DProperty(int(RxP[0]));
           }
 
-          model_changed();
+          // Scoped conservatively to just the MODEL2D/MODEL1D branch
+          // above (the only sub-step in this large function confirmed
+          // not to already handle its own recording) rather than
+          // wrapping handleWin3DClickAt() as a whole - several of the
+          // function's other branches (the face-flip/vertex-reorder
+          // code above, the "MOVE" command path elsewhere in this file)
+          // haven't been individually confirmed safe to nest under one
+          // outer pair yet, see this file's own comment near the "MOVE"
+          // command for the kind of redundant-call risk that needs
+          // checking first. This means an endModelChange() with no
+          // matching beginModelChange() still runs whenever NEITHER
+          // branch above fired (currentObjectCategory is something
+          // else entirely) - safe (see that function's own comment on
+          // the stray-call case), just not yet precise for that case.
+          endModelChange();
 
         }
       }

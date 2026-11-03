@@ -25,6 +25,13 @@ class GlobalFunctionsTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    // deleteAll() now calls beginModelChange()/endModelChange() and
+    // seedUndoHistory() around its own work (see globalFunctions.pde's
+    // own comment), each of which builds a full project snapshot -
+    // including Terrain.to_XML(), which needs this set up the same way
+    // every other test file touching that path already does (see e.g.
+    // SaveProjectTest.java's own setUp()).
+    app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
   }
 
   // ================= is_defined / is_undefined ====================================
@@ -101,7 +108,7 @@ class GlobalFunctionsTest {
     assertEquals(0, app.allGroups.num);
   }
 
-  // ================= model_added / model_changed / view_changed / ===================
+  // ================= model_added / beginModelChange / endModelChange / view_changed / ===================
   // ================= selection_changed / switch_category =============================
   // All plain flag updates - WIN3D.revise()/UI_toolBar.revise() just set a
   // boolean (see Sun3DTest.java's own class comment on the identical
@@ -143,7 +150,7 @@ class GlobalFunctionsTest {
     app.should_rebuildFaceGrid = false;
     app.WIN3D.update = false;
 
-    app.model_changed();
+    app.endModelChange();
 
     assertTrue(app.should_rebuildFaceGrid);
     assertTrue(app.WIN3D.update);
@@ -151,14 +158,14 @@ class GlobalFunctionsTest {
 
   @Test
   void modelChanged_alsoFlagsTheStickyShadingOverlayForRebuildWhileItIsShowing () {
-    // model_changed() always calls view_changed() at its own end (see
+    // endModelChange() always calls view_changed() at its own end (see
     // that test above) - this just confirms the shading-rebuild flag
     // rides along through that same funnel, not just a direct
     // view_changed() call.
     app.WIN3D.showShading = true;
     app.WIN3D.shadingNeedsRebuild = false;
 
-    app.model_changed();
+    app.endModelChange();
 
     assertTrue(app.WIN3D.shadingNeedsRebuild);
   }

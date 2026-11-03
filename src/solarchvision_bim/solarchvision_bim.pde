@@ -114,18 +114,6 @@ void draw () {
   UI_rollout.processHeldKey();
 
   if (!draw_initial_frames()) {
-    // undoRedo.pde's own frameStartSelectionSnapshot - see that field's
-    // comment for the full reasoning. Updated right here, before
-    // anything below that could itself trigger a model-changing edit
-    // this frame (runPendingScriptLines()/applyRolloutUpdate()'s own
-    // spinner-diff-driven edits), so it always reflects "whatever was
-    // selected as of entering this frame" - i.e. as of right after
-    // keyPressed()/mouseClicked()/etc. finished processing any input
-    // since the last frame (those run as their own callbacks, outside
-    // draw()'s own call stack, but always complete before the next
-    // draw() call begins).
-    frameStartSelectionSnapshot = Select3D.captureSelectionSnapshot();
-
     // Captured before draining: distinguishes "ran something this frame"
     // from "there was already nothing left to do", which the USER_AUTO
     // exit check below needs (pendingScriptLines is itself empty either
