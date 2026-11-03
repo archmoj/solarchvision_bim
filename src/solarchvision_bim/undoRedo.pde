@@ -161,6 +161,17 @@ void redo () {
   restoreProjectSnapshot(history.get(historyIndex));
 }
 
+// A restored snapshot's own selection state is internally consistent at
+// the moment it was captured, but a long tail of code elsewhere reads a
+// selection lazily (sometimes a whole frame later) and indexes straight
+// into the restored data with no bounds check - each one a genuinely
+// different call site, found one crash report at a time (faces.pde/
+// clone3D.pde/mouseClicked.pde/overlay3D.pde/select3D.pde's own fixes).
+// Select3D.clampSelectionsToCurrentData(), called below right after
+// parse_XML_variables(), closes that off at the source instead of
+// chasing further consumers - see its own comment for the full
+// reasoning.
+//
 // The lean counterpart to load_project(): runs the same from_XML()
 // dispatch (parse_XML_variables(), shared with Open/Fetch) plus only
 // the cheap, state-size-dependent refresh that has to happen whenever
@@ -187,6 +198,12 @@ void restoreProjectSnapshot (XML xml) {
     // navigation. The person's current view stays exactly where they
     // left it; see parse_XML_variables()'s own comment on this flag.
     parse_XML_variables(xml, false, false);
+
+    // See Select3D.clampSelectionsToCurrentData()'s own comment: drops
+    // any selected index that doesn't exist in what was just restored,
+    // before anything else below (or on a later frame) reads the
+    // selection against the new data.
+    Select3D.clampSelectionsToCurrentData();
 
     // Without this, WIN3D's retained-mode viewport cache would keep
     // rendering whatever it had built before this restore - from_XML()

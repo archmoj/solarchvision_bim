@@ -158,6 +158,56 @@ class Select3D {
     return txt;
   }
 
+  // Called once, right after undoRedo.pde's restoreProjectSnapshot()
+  // restores a historical snapshot, to discard any selected index that
+  // no longer exists in the just-restored data.
+  //
+  // A selection and the data it points into are captured together as
+  // part of the SAME snapshot, so in principle they always agree at
+  // capture time. But plenty of code that reads a selection does so
+  // lazily - calculate_BoundingBox() itself runs a whole frame after
+  // whatever changed it (see its own GROUP-branch fix), and the same is
+  // true for countless other call sites that index straight into
+  // allFaces/allPolylines/allModel1Ds/allModel2Ds/allSolids/allSections/
+  // allCameras/allPoints/Terrain/allGroups by a selection's own stored
+  // index with no bounds check at all (faces.pde/clone3D.pde/
+  // mouseClicked.pde/overlay3D.pde's own earlier fixes were each a
+  // genuinely different call site hitting this same underlying risk,
+  // one crash report at a time). Rather than keep chasing individual
+  // consumers, this clamps the SOURCE once, so every consumer
+  // downstream of a restore sees an already-consistent selection -
+  // silently dropping whatever's no longer there, the same way a good
+  // undo system should, rather than leaving a dangling reference for
+  // the next unguarded accessor to find.
+  //
+  // Scoped to restoreProjectSnapshot() only, not load_project() - a
+  // selection going stale relative to a fresh file's data isn't a
+  // scenario Open/Fetch creates the way jumping between historical
+  // snapshots does.
+  void clampSelectionsToCurrentData () {
+    this.faceSelection = clampIds(this.faceSelection, allFaces.nodes.length);
+    this.polylineSelection = clampIds(this.polylineSelection, allPolylines.nodes.length);
+    this.model1DSelection = clampIds(this.model1DSelection, allModel1Ds.num);
+    this.model2DSelection = clampIds(this.model2DSelection, allModel2Ds.num);
+    this.solidSelection = clampIds(this.solidSelection, allSolids.DEF.length);
+    this.sectionSelection = clampIds(this.sectionSelection, allSections.num);
+    this.cameraSelection = clampIds(this.cameraSelection, allCameras.num);
+    this.vertexSelection = clampIds(this.vertexSelection, allPoints.getLength());
+    this.softSelection = clampIds(this.softSelection, allPoints.getLength());
+    this.terrainVertexSelection = clampIds(this.terrainVertexSelection, Terrain.rowCount * Terrain.columnCount);
+    this.groupSelection = clampIds(this.groupSelection, allGroups.num);
+
+    selection_changed(); // recomputes the bounding box now, against the now-valid selection, rather than leaving it to whatever next reads it
+  }
+
+  int[] clampIds (int[] ids, int validLength) {
+    IntList kept = new IntList();
+    for (int i = 0; i < ids.length; i++) {
+      if ((ids[i] >= 0) && (ids[i] < validLength)) kept.append(ids[i]);
+    }
+    return kept.array();
+  }
+
   int[] idsFromXML (String txt) {
     if (txt.equals("")) return new int[0];
     String[] parts = split(txt, "|");
