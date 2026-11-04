@@ -1,11 +1,11 @@
 {
   "name": "solarchvision_bim",
-  "version": "2026-11-02-94b9e8c",
+  "version": "2026-11-04-4883689",
   "processingVersion": "4.5.2",
-  "commit": "94b9e8cb0bcb34bf49cfd55c8a36e7d245816408",
-  "commitShort": "94b9e8c",
+  "commit": "4883689a7897a07fcded51d69ee78609514b8b8f",
+  "commitShort": "4883689",
   "branch": "main",
   "dirty": true,
   "repository": "https://github.com/archmoj/solarchvision_bim",
-  "commitUrl": "https://github.com/archmoj/solarchvision_bim/commit/94b9e8cb0bcb34bf49cfd55c8a36e7d245816408"
+  "commitUrl": "https://github.com/archmoj/solarchvision_bim/commit/4883689a7897a07fcded51d69ee78609514b8b8f"
 }
