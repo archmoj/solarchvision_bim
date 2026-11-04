@@ -437,7 +437,7 @@ class Sections {
       }
     }
     {
-      XML parent = xml.addChild(this.CLASS_STAMP + "SolarImpacts");
+      XML parent = xml.addChild(this.CLASS_STAMP + "SolarImpact");
       int ni = 0, nj = 0, nk = 0;
       ni = this.SolarImpact.length;
       if (ni > 0) {
@@ -501,7 +501,7 @@ class Sections {
       }
     }
     {
-      XML parent = xml.getChild(this.CLASS_STAMP + "SolarImpacts");
+      XML parent = xml.getChild(this.CLASS_STAMP + "SolarImpact");
       int ni = XML_getInt(parent, "ni");
       int nj = XML_getInt(parent, "nj");
       int nk = XML_getInt(parent, "nk");
