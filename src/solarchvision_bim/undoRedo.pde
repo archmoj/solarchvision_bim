@@ -9,7 +9,7 @@
 // (camera orbit/pan/zoom, toggling what's displayed, switching tools) -
 // those don't call either function and don't record a step. Restoring a
 // step deliberately leaves the viewport alone too - a snapshot
-// (buildUndoSnapshot(), below) never includes WIN3D's own state at all,
+// (buildModelSnapshot(), below) never includes WIN3D's own state at all,
 // so there's nothing for restoreUndoSnapshot() to put back there even
 // to leave alone.
 //
@@ -34,7 +34,7 @@
 //   - frameStartSelectionSnapshot (a once-per-frame copy of Select3D's
 //     own state, patched into the entry about to be superseded) is
 //     gone too. beginUndoableEdit() now simply REPLACES
-//     modelHistory[modelHistoryIndex] with a fresh buildUndoSnapshot() of
+//     modelHistory[modelHistoryIndex] with a fresh buildModelSnapshot() of
 //     whatever is actually live right this instant, immediately before
 //     the edit that's about to start mutates anything - exact, not
 //     approximated from a frame boundary. Select3D's own
@@ -50,13 +50,13 @@
 // current with whatever's selected right up until that first edit
 // actually starts.
 //
-// Builds on buildUndoSnapshot()/restoreUndoSnapshot() (this file) - see
+// Builds on buildModelSnapshot()/restoreUndoSnapshot() (this file) - see
 // restoreProjectSnapshot()'s own comment for why that's deliberately
 // not load_project() or holdProject()/fetchProject(). Unlike
 // saveProject.pde's buildProjectSnapshot()/parseXmlVariables.pde's
 // parse_XML_variables() (the Save/Open/Hold/Fetch path), this file's
 // own pair is scoped to 3D-modeling content plus the current selection
-// (Select3D) only - see buildUndoSnapshot()'s own comment for exactly
+// (Select3D) only - see buildModelSnapshot()'s own comment for exactly
 // what that excludes and why.
 //
 // New/Open/Fetch now DO clear and reseed this modelHistory - resolved while
@@ -128,7 +128,7 @@ boolean isRestoringModelSnapshot = false;
 // live purely in memory and never touch disk, so Terrain.to_XML()'s own
 // texture-copying side effect (see that method's own comment) is
 // never wanted here.
-XML buildUndoSnapshot () {
+XML buildModelSnapshot () {
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
@@ -165,7 +165,7 @@ XML buildUndoSnapshot () {
 void seedUndoHistory () {
   if (modelHistory == null) modelHistory = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
   modelHistory.clear();
-  modelHistory.add(buildUndoSnapshot());
+  modelHistory.add(buildModelSnapshot());
   modelHistoryIndex = 0;
 }
 
@@ -201,7 +201,7 @@ void beginUndoableEdit () {
   // well after every such constructor has already run.
   if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 
-  modelHistory.set(modelHistoryIndex, buildUndoSnapshot());
+  modelHistory.set(modelHistoryIndex, buildModelSnapshot());
 }
 
 // Called from endModelChange() itself, only on the outermost (depth
@@ -217,7 +217,7 @@ void commitUndoableEdit () {
     modelHistory.remove(modelHistory.size() - 1);
   }
 
-  modelHistory.add(buildUndoSnapshot());
+  modelHistory.add(buildModelSnapshot());
   modelHistoryIndex = modelHistory.size() - 1;
 
   while (modelHistory.size() > MAX_UNDO_MODEL) {
@@ -246,7 +246,7 @@ void redoModelChange () {
   restoreProjectSnapshot(modelHistory.get(modelHistoryIndex));
 }
 
-// The from_XML() counterpart to buildUndoSnapshot() above - same
+// The from_XML() counterpart to buildModelSnapshot() above - same
 // eleven classes, same order (Groups after Faces/Polylines/Model1Ds/
 // Model2Ds, same as parseXmlVariables.pde's own dispatch and for the
 // same reason; Select3D last, since its own from_XML() just reads back
@@ -255,7 +255,7 @@ void redoModelChange () {
 // (saveProject.pde/parseXmlVariables.pde's Save/Open/Hold/Fetch
 // dispatch): that function also reads a "variable" child and several
 // other classes' own children (STATION, Earth3D, Sky3D, WORLD, ...)
-// that a buildUndoSnapshot() tree never has, and would throw reaching
+// that a buildModelSnapshot() tree never has, and would throw reaching
 // for them.
 void restoreUndoSnapshot (XML xml) {
 
