@@ -78,32 +78,32 @@ class UndoRedoTest {
   void seedUndoHistory_establishesASingleBaselineEntry () {
     seed();
 
-    assertEquals(1, app.history.size());
-    assertEquals(0, app.historyIndex);
+    assertEquals(1, app.modelHistory.size());
+    assertEquals(0, app.modelHistoryIndex);
   }
 
   @Test
   void seedUndoHistory_calledAgainResetsToANewSingleEntryBaseline () {
     seed();
     simulateEdit(); // a second entry
-    assertEquals(2, app.history.size());
+    assertEquals(2, app.modelHistory.size());
 
     seed(); // e.g. "New" or opening a different project, conceptually
 
-    assertEquals(1, app.history.size());
-    assertEquals(0, app.historyIndex);
+    assertEquals(1, app.modelHistory.size());
+    assertEquals(0, app.modelHistoryIndex);
   }
 
   // ================= beginUndoableEdit/commitUndoableEdit ================
 
   @Test
   void beginModelChange_beforeSeedUndoHistoryHasRun_recordsNothing () {
-    assertEquals(-1, app.historyIndex); // sanity check: seed() was never called
+    assertEquals(-1, app.modelHistoryIndex); // sanity check: seed() was never called
 
     simulateEdit();
 
-    assertEquals(0, app.history.size());
-    assertEquals(-1, app.historyIndex);
+    assertEquals(0, app.modelHistory.size());
+    assertEquals(-1, app.modelHistoryIndex);
   }
 
   @Test
@@ -112,8 +112,8 @@ class UndoRedoTest {
 
     simulateEdit();
 
-    assertEquals(2, app.history.size());
-    assertEquals(1, app.historyIndex);
+    assertEquals(2, app.modelHistory.size());
+    assertEquals(1, app.modelHistoryIndex);
   }
 
   @Test
@@ -127,8 +127,8 @@ class UndoRedoTest {
 
     simulateEdit();
 
-    assertEquals(1, app.history.size());
-    assertEquals(0, app.historyIndex);
+    assertEquals(1, app.modelHistory.size());
+    assertEquals(0, app.modelHistoryIndex);
   }
 
   @Test
@@ -136,14 +136,14 @@ class UndoRedoTest {
     seed();          // history[0]
     simulateEdit();  // history[1]
     simulateEdit();  // history[2]
-    assertEquals(3, app.history.size());
+    assertEquals(3, app.modelHistory.size());
 
     app.undoModelChange(); // historyIndex -> 1, history[2] still sitting there as a redo target
 
     simulateEdit(); // a fresh edit - history[2] (the old redo branch) must be gone, replaced by this new one
 
-    assertEquals(3, app.history.size());
-    assertEquals(2, app.historyIndex);
+    assertEquals(3, app.modelHistory.size());
+    assertEquals(2, app.modelHistoryIndex);
   }
 
   @Test
@@ -166,8 +166,8 @@ class UndoRedoTest {
     app.endModelChange();   // depth 2 -> 1
     app.endModelChange();   // depth 1 -> 0 - only this transition actually records
 
-    assertEquals(2, app.history.size(), "the whole nested sequence should record as exactly one step");
-    assertEquals(1, app.historyIndex);
+    assertEquals(2, app.modelHistory.size(), "the whole nested sequence should record as exactly one step");
+    assertEquals(1, app.modelHistoryIndex);
   }
 
   @Test
@@ -189,12 +189,12 @@ class UndoRedoTest {
 
     app.endModelChange(); // stray - no matching begin
     assertEquals(0, app.modelChangeDepth, "should clamp at 0, not go negative");
-    assertEquals(2, app.history.size(), "the stray call still closes out and records a step - that's expected, not what's under test here");
+    assertEquals(2, app.modelHistory.size(), "the stray call still closes out and records a step - that's expected, not what's under test here");
 
     simulateEdit(); // a normal, correctly paired edit afterward
 
-    assertEquals(3, app.history.size(), "the stray call shouldn't have broken this one recording normally");
-    assertEquals(2, app.historyIndex);
+    assertEquals(3, app.modelHistory.size(), "the stray call shouldn't have broken this one recording normally");
+    assertEquals(2, app.modelHistoryIndex);
   }
 
   @Test
@@ -205,8 +205,8 @@ class UndoRedoTest {
       simulateEdit();
     }
 
-    assertTrue(app.history.size() <= app.MAX_UNDO_STEPS + 1, "expected the list to be capped, was " + app.history.size());
-    assertEquals(app.history.size() - 1, app.historyIndex, "historyIndex should still point at the newest entry after trimming");
+    assertTrue(app.modelHistory.size() <= app.MAX_UNDO_STEPS + 1, "expected the list to be capped, was " + app.modelHistory.size());
+    assertEquals(app.modelHistory.size() - 1, app.modelHistoryIndex, "historyIndex should still point at the newest entry after trimming");
   }
 
   // ================= undo / redo =========================================
@@ -217,8 +217,8 @@ class UndoRedoTest {
 
     app.undoModelChange();
 
-    assertEquals(0, app.historyIndex);
-    assertEquals(1, app.history.size());
+    assertEquals(0, app.modelHistoryIndex);
+    assertEquals(1, app.modelHistory.size());
   }
 
   @Test
@@ -228,7 +228,7 @@ class UndoRedoTest {
 
     app.redoModelChange();
 
-    assertEquals(1, app.historyIndex);
+    assertEquals(1, app.modelHistoryIndex);
   }
 
   @Test
@@ -236,11 +236,11 @@ class UndoRedoTest {
     seed();
     simulateEdit();
     simulateEdit();
-    assertEquals(2, app.historyIndex);
+    assertEquals(2, app.modelHistoryIndex);
 
     app.undoModelChange();
 
-    assertEquals(1, app.historyIndex);
+    assertEquals(1, app.modelHistoryIndex);
   }
 
   @Test
@@ -249,11 +249,11 @@ class UndoRedoTest {
     simulateEdit();
     simulateEdit();
     app.undoModelChange();
-    assertEquals(1, app.historyIndex);
+    assertEquals(1, app.modelHistoryIndex);
 
     app.redoModelChange();
 
-    assertEquals(2, app.historyIndex);
+    assertEquals(2, app.modelHistoryIndex);
   }
 
   // ================= restoreProjectSnapshot: what it does and doesn't touch
@@ -268,11 +268,11 @@ class UndoRedoTest {
     // both fail.
     seed();
     simulateEdit();
-    int historySizeBeforeUndo = app.history.size();
+    int historySizeBeforeUndo = app.modelHistory.size();
 
     app.undoModelChange();
 
-    assertEquals(historySizeBeforeUndo, app.history.size(), "a restore must not append new history entries");
+    assertEquals(historySizeBeforeUndo, app.modelHistory.size(), "a restore must not append new history entries");
     assertFalse(app.isRestoringSnapshot, "the guard must be cleared again once the restore finishes");
   }
 
@@ -342,7 +342,7 @@ class UndoRedoTest {
 
     app.undoModelChange();
     app.undoModelChange();
-    assertEquals(0, app.historyIndex);
+    assertEquals(0, app.modelHistoryIndex);
     assertEquals(0, app.allFaces.nodes.length);
 
     app.redoModelChange();
@@ -350,7 +350,7 @@ class UndoRedoTest {
 
     app.redoModelChange();
     assertEquals(0, app.allFaces.nodes.length);
-    assertEquals(2, app.historyIndex);
+    assertEquals(2, app.modelHistoryIndex);
   }
 
   @Test
@@ -362,11 +362,11 @@ class UndoRedoTest {
     // wrapping, not a stand-in for it), not two.
     seed();                    // history[0]
     createOneFaceViaImport();  // history[1]
-    int sizeBeforeDelete = app.history.size();
+    int sizeBeforeDelete = app.modelHistory.size();
 
     deleteTheOneFace();
 
-    assertEquals(sizeBeforeDelete + 1, app.history.size(), "one delete, through Delete3D.selection(), should record exactly one new entry");
+    assertEquals(sizeBeforeDelete + 1, app.modelHistory.size(), "one delete, through Delete3D.selection(), should record exactly one new entry");
   }
 
   // ================= the previously-reported selection bug ===============
@@ -481,7 +481,7 @@ class UndoRedoTest {
     // exactly one step, not two.
     seed();
     createOneFaceViaImport();
-    int sizeBeforeMove = app.history.size();
+    int sizeBeforeMove = app.modelHistory.size();
 
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.faceSelection = new int[]{0};
@@ -491,7 +491,7 @@ class UndoRedoTest {
     app.react.applyPosValue.run(0, 10); // old=0, new=10 -> delta=10 along X
 
     assertEquals(xBefore + 10, app.allPoints.getX(0), 0.0001f, "setup check");
-    assertEquals(sizeBeforeMove + 1, app.history.size(), "one spinner-driven move should record exactly one new entry, not two");
+    assertEquals(sizeBeforeMove + 1, app.modelHistory.size(), "one spinner-driven move should record exactly one new entry, not two");
   }
 
   // ================= viewport3D.pde: this step's conversion ==============
@@ -506,7 +506,7 @@ class UndoRedoTest {
     // no longer calls it again itself for those three tools.
     seed();
     createOneFaceViaImport();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.faceSelection = new int[]{0};
@@ -517,7 +517,7 @@ class UndoRedoTest {
     app.WIN3D.incrementParameter(1); // one nudge, dx = 0.5 * 1 = 0.5
 
     assertEquals(xBefore + 0.5f, app.allPoints.getX(0), 0.0001f, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size(), "one keyboard nudge should record exactly one new entry, not two");
+    assertEquals(sizeBefore + 1, app.modelHistory.size(), "one keyboard nudge should record exactly one new entry, not two");
   }
 
   // ================= deleteAll()/load_project(): this step's fixes ======
@@ -532,7 +532,7 @@ class UndoRedoTest {
     // its own history entry.
     seed();
     createOneFaceViaImport(); // something to actually delete, so this isn't a no-op
-    int sizeBeforeDeleteAll = app.history.size();
+    int sizeBeforeDeleteAll = app.modelHistory.size();
 
     app.deleteAll();
 
@@ -540,8 +540,8 @@ class UndoRedoTest {
     // rather than asserting an exact size here (which seeding resets
     // outright), this confirms the seed left exactly the one fresh
     // baseline entry it always does, not nine-plus-whatever-came-before.
-    assertEquals(1, app.history.size(), "deleteAll() should reseed to a single fresh baseline, not leave nine spurious entries behind");
-    assertEquals(0, app.historyIndex);
+    assertEquals(1, app.modelHistory.size(), "deleteAll() should reseed to a single fresh baseline, not leave nine spurious entries behind");
+    assertEquals(0, app.modelHistoryIndex);
   }
 
   @Test
@@ -566,11 +566,11 @@ class UndoRedoTest {
     seed();
     createOneFaceViaImport();
     app.holdProject();
-    int sizeBeforeFetch = app.history.size();
+    int sizeBeforeFetch = app.modelHistory.size();
 
     app.fetchProject();
 
-    assertEquals(sizeBeforeFetch, app.history.size(), "fetching a project must not append spurious history entries via its own from_XML() cascade");
+    assertEquals(sizeBeforeFetch, app.modelHistory.size(), "fetching a project must not append spurious history entries via its own from_XML() cascade");
   }
 
   // ================= fileSelected.pde: this step's conversion ===========
@@ -587,7 +587,7 @@ class UndoRedoTest {
     // used elsewhere in this file (which calls import_objects_OBJ()
     // directly, bypassing this wrapper and its own beginModelChange()).
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
     assertEquals(0, app.allGroups.num, "setup check");
 
     Path objFile = Files.createTempFile("undo-redo-fileselected-test", ".obj");
@@ -604,7 +604,7 @@ class UndoRedoTest {
     // directly and only ever sees the second one) creates both.
     assertEquals(2, app.allGroups.num, "setup check");
     assertEquals(1, app.allFaces.nodes.length, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size(), "the import, including both of its own group creations, should record as exactly one step");
+    assertEquals(sizeBefore + 1, app.modelHistory.size(), "the import, including both of its own group creations, should record as exactly one step");
 
     app.undoModelChange();
 
@@ -663,11 +663,11 @@ class UndoRedoTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.Modify3D.isolate_Selection();
 
-    assertEquals(sizeBefore + 1, app.history.size(), "isolate should record exactly one step, not four");
+    assertEquals(sizeBefore + 1, app.modelHistory.size(), "isolate should record exactly one step, not four");
   }
 
   // ================= create3D.pde: this step's conversion ================
@@ -681,12 +681,12 @@ class UndoRedoTest {
     // top, all 28 have no early-return guard except add_Mesh) actually
     // makes a create action undoable.
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.Create3D.add_Box_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 3, 90);
 
     assertEquals(6, app.allFaces.nodes.length, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size());
+    assertEquals(sizeBefore + 1, app.modelHistory.size());
 
     app.undoModelChange();
 
@@ -710,12 +710,12 @@ class UndoRedoTest {
     app.build_allActions();
 
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.Create3D.add_DefaultModel(1); // the simplest of the eleven built-in default models
 
     assertTrue(app.allFaces.nodes.length > 0, "setup check: should have built something");
-    assertEquals(sizeBefore + 1, app.history.size(), "one default-model load should record exactly one step");
+    assertEquals(sizeBefore + 1, app.modelHistory.size(), "one default-model load should record exactly one step");
 
     app.undoModelChange();
 
@@ -735,12 +735,12 @@ class UndoRedoTest {
     app.build_allActions();
 
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.runScriptLine("Person m=0 x=0 y=0 z=0");
 
     assertEquals(1, app.allModel2Ds.num, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size());
+    assertEquals(sizeBefore + 1, app.modelHistory.size());
 
     app.undoModelChange();
 
@@ -764,13 +764,13 @@ class UndoRedoTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
 
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.runScriptLine("Delete faces lines");
 
     assertEquals(0, app.allFaces.nodes.length, "setup check");
     assertEquals(0, app.allPolylines.nodes.length, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size(), "one Delete command targeting two categories should record exactly one step");
+    assertEquals(sizeBefore + 1, app.modelHistory.size(), "one Delete command targeting two categories should record exactly one step");
   }
 
   // ================= importIfc.pde: this step's conversion ===============
@@ -811,12 +811,12 @@ class UndoRedoTest {
     );
 
     seed();
-    int sizeBefore = app.history.size();
+    int sizeBefore = app.modelHistory.size();
 
     app.import_objects_IFC(ifcFileTmp.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(1, app.allFaces.nodes.length, "setup check");
-    assertEquals(sizeBefore + 1, app.history.size());
+    assertEquals(sizeBefore + 1, app.modelHistory.size());
 
     app.undoModelChange();
 

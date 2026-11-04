@@ -13,8 +13,8 @@
 // so there's nothing for restoreUndoSnapshot() to put back there even
 // to leave alone.
 //
-// THE MODEL: a single chronological list, history[0..n], with
-// historyIndex marking which entry is the current live state - same
+// THE MODEL: a single chronological list, modelHistory[0..n], with
+// modelHistoryIndex marking which entry is the current live state - same
 // shape as the previous step, but what changed is WHEN each entry gets
 // written and by what. beginModelChange()/endModelChange() give a real
 // pre-edit boundary now (endModelChange()'s own comment covers why
@@ -34,7 +34,7 @@
 //   - frameStartSelectionSnapshot (a once-per-frame copy of Select3D's
 //     own state, patched into the entry about to be superseded) is
 //     gone too. beginUndoableEdit() now simply REPLACES
-//     history[historyIndex] with a fresh buildUndoSnapshot() of
+//     modelHistory[modelHistoryIndex] with a fresh buildUndoSnapshot() of
 //     whatever is actually live right this instant, immediately before
 //     the edit that's about to start mutates anything - exact, not
 //     approximated from a frame boundary. Select3D's own
@@ -42,7 +42,7 @@
 //     that existed only to support the old surgical per-field patch are
 //     gone with it; a plain whole-entry replacement needs no equivalent.
 //
-// history[0], seeded once by seedUndoHistory() (drawInitialFrames.pde)
+// modelHistory[0], seeded once by seedUndoHistory() (drawInitialFrames.pde)
 // right as the app finishes loading, is the one baseline entry that
 // isn't itself refreshed by a beginUndoableEdit() call (there's no
 // "edit before the first edit") - it's what makes the very first edit
@@ -59,31 +59,31 @@
 // (Select3D) only - see buildUndoSnapshot()'s own comment for exactly
 // what that excludes and why.
 //
-// New/Open/Fetch now DO clear and reseed this history - resolved while
+// New/Open/Fetch now DO clear and reseed this modelHistory - resolved while
 // fixing a more urgent, related bug in the same two places: as more
 // classes' makeEmpty() each gained their own complete beginModelChange()/
 // endModelChange() pair (see those classes' own comments), both
 // deleteAll() (globalFunctions.pde, "New") and load_project()
 // (loadProject.pde, "Open"/"Fetch") turned out to be calling several of
 // them in a row with no reentrancy guard around the whole sequence -
-// deleteAll() recording several spurious history entries for one "New"
+// deleteAll() recording several spurious modelHistory entries for one "New"
 // instead of one (now fixed by wrapping the whole sequence in its own
 // beginModelChange()/endModelChange() pair, same reasoning as
 // Delete3D.selection()'s own comment), and load_project() doing the same
 // via parse_XML_variables()'s own from_XML() cascade (now wrapped in
 // isRestoringSnapshot, the same guard restoreProjectSnapshot() below
 // already relied on, just newly needed by this second caller too). Once
-// both were already being touched for that reason, reseeding the history
-// right after each succeeds was the natural fix for the history
+// both were already being touched for that reason, reseeding the modelHistory
+// right after each succeeds was the natural fix for the modelHistory
 // correctness question this comment used to flag as open: a different
-// project's content, or a freshly emptied one, means the undo history
+// project's content, or a freshly emptied one, means the undo modelHistory
 // needs to start fresh from exactly that state, not keep referring to
 // whatever was open before it.
 
 final int MAX_UNDO_STEPS = 50; // bounds memory growth - each entry is a full scene-graph XML tree
 
-ArrayList<XML> history = new ArrayList<XML>();
-int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
+ArrayList<XML> modelHistory = new ArrayList<XML>();
+int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
 
 // Guards beginUndoableEdit()/commitUndoableEdit() against firing WHILE a
 // restore is already in progress - see restoreProjectSnapshot()'s own
@@ -96,7 +96,7 @@ int historyIndex = -1; // -1 until seedUndoHistory() runs once at startup
 // size before refilling it - so restoreUndoSnapshot() alone fires
 // several begin/end pairs per restore, each one operating on whatever
 // is STILL only half-restored at that exact point in the from_XML()
-// sequence, and stomping on historyIndex along the way, without this
+// sequence, and stomping on modelHistoryIndex along the way, without this
 // guard.
 boolean isRestoringSnapshot = false;
 
@@ -116,7 +116,7 @@ boolean isRestoringSnapshot = false;
 // SELECTION after an undo/redo, not just the right geometry, needs the
 // selection captured in the same snapshot as the geometry it refers to.
 // Serializing the rest on every single edit (previously via
-// buildProjectSnapshot()) was pure overhead a history of up to
+// buildProjectSnapshot()) was pure overhead a modelHistory of up to
 // MAX_UNDO_STEPS entries paid for repeatedly, and restoring it on every
 // undo/redo was reverting state (WORLD/STUDY settings, the active
 // camera/viewport, and so on) that undo/redo was never meant to touch
@@ -163,17 +163,17 @@ XML buildUndoSnapshot () {
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
 void seedUndoHistory () {
-  if (history == null) history = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
-  history.clear();
-  history.add(buildUndoSnapshot());
-  historyIndex = 0;
+  if (modelHistory == null) modelHistory = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
+  modelHistory.clear();
+  modelHistory.add(buildUndoSnapshot());
+  modelHistoryIndex = 0;
 }
 
 // Called from beginModelChange() itself, only on the outermost (depth
 // 0 -> 1) transition - see that function's own comment for why nesting
 // matters here. This is what makes undo land on the right SELECTION
 // (not just the right geometry) after a later edit: a pure selection
-// change (clicking a different face) never gets its own history step on
+// change (clicking a different face) never gets its own modelHistory step on
 // purpose, but replacing the CURRENT entry with a fresh snapshot right
 // here means whatever was selected right up until the moment an edit
 // actually starts is what that entry ends up holding - not whatever was
@@ -182,68 +182,68 @@ void beginUndoableEdit () {
   if (isRestoringSnapshot) return;
 
   // beginModelChange() can fire before this file's own field
-  // initializers above (history/historyIndex) have run at all:
+  // initializers above (modelHistory/modelHistoryIndex) have run at all:
   // Processing/Java initializes a class's fields in tab-concatenation
   // order, and several of the "all<Thing>" container classes (Faces,
   // Model1Ds, Model2Ds, Solids, ...) call makeEmpty() ->
   // beginModelChange()+endModelChange() from their OWN constructor -
   // which fires the moment the sketch's own `allFaces = new Faces();`-
   // style field initializer runs, during the sketch object's
-  // construction, possibly before history/historyIndex further up this
-  // same file have been assigned. At that point `history` is still null
+  // construction, possibly before modelHistory/modelHistoryIndex further up this
+  // same file have been assigned. At that point `modelHistory` is still null
   // (its own `= new ArrayList<XML>()` hasn't executed yet) and
-  // `historyIndex` is still Java's bare default int value of 0 (not yet
-  // its explicit `= -1` either) - so a `historyIndex < 0` check alone
+  // `modelHistoryIndex` is still Java's bare default int value of 0 (not yet
+  // its explicit `= -1` either) - so a `modelHistoryIndex < 0` check alone
   // can't tell "too early" apart from "ready", hence the null check
   // here instead. None of this is a real edit to record anyway - it's
   // empty-initialization boilerplate, long before setup() - the actual
   // baseline is seedUndoHistory(), called from drawInitialFrames.pde
   // well after every such constructor has already run.
-  if ((history == null) || (historyIndex < 0)) return;
+  if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 
-  history.set(historyIndex, buildUndoSnapshot());
+  modelHistory.set(modelHistoryIndex, buildUndoSnapshot());
 }
 
 // Called from endModelChange() itself, only on the outermost (depth
 // 1 -> 0) transition.
 void commitUndoableEdit () {
   if (isRestoringSnapshot) return;
-  if ((history == null) || (historyIndex < 0)) return;
+  if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 
   // Discard any redo branch sitting beyond the current position: a
   // fresh edit after one or more undos means that uncovered "future"
   // can never be reached again (the standard rule).
-  while (history.size() > historyIndex + 1) {
-    history.remove(history.size() - 1);
+  while (modelHistory.size() > modelHistoryIndex + 1) {
+    modelHistory.remove(modelHistory.size() - 1);
   }
 
-  history.add(buildUndoSnapshot());
-  historyIndex = history.size() - 1;
+  modelHistory.add(buildUndoSnapshot());
+  modelHistoryIndex = modelHistory.size() - 1;
 
-  while (history.size() > MAX_UNDO_STEPS) {
-    history.remove(0);
-    historyIndex -= 1;
+  while (modelHistory.size() > MAX_UNDO_STEPS) {
+    modelHistory.remove(0);
+    modelHistoryIndex -= 1;
   }
 }
 
 void undoModelChange () {
-  if (historyIndex <= 0) {
+  if (modelHistoryIndex <= 0) {
     displayDirective("Undo: no model change to undo.");
     return;
   }
 
-  historyIndex -= 1;
-  restoreProjectSnapshot(history.get(historyIndex));
+  modelHistoryIndex -= 1;
+  restoreProjectSnapshot(modelHistory.get(modelHistoryIndex));
 }
 
 void redoModelChange () {
-  if (historyIndex >= history.size() - 1) {
+  if (modelHistoryIndex >= modelHistory.size() - 1) {
     displayDirective("Redo: no model change to redo.");
     return;
   }
 
-  historyIndex += 1;
-  restoreProjectSnapshot(history.get(historyIndex));
+  modelHistoryIndex += 1;
+  restoreProjectSnapshot(modelHistory.get(modelHistoryIndex));
 }
 
 // The from_XML() counterpart to buildUndoSnapshot() above - same
