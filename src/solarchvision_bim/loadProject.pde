@@ -22,14 +22,14 @@ void load_project (String myFile) {
     // each now its own complete begin/end pair - see those classes' own
     // comments), the exact same cascade undoRedo.pde's
     // restoreProjectSnapshot() already guards against with
-    // isRestoringSnapshot - but this function is Open/Fetch's own
+    // isRestoringModelSnapshot - but this function is Open/Fetch's own
     // "restore everything from XML" path, not that one, and had no
     // equivalent guard: opening or fetching ANY project was recording
     // several spurious, partially-loaded undo-history entries, one per
     // class's own makeEmpty() call, exactly the kind of corruption
-    // isRestoringSnapshot exists to prevent - just via a different
+    // isRestoringModelSnapshot exists to prevent - just via a different
     // caller than the one it was first written for.
-    isRestoringSnapshot = true;
+    isRestoringModelSnapshot = true;
     try {
       try {
         parse_XML_variables(xml, false, true); // first try: loading without printing logs
@@ -41,7 +41,7 @@ void load_project (String myFile) {
         System.exit(1);
       }
     } finally {
-      isRestoringSnapshot = false;
+      isRestoringModelSnapshot = false;
     }
 
     // loading only weather data //

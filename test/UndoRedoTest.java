@@ -117,13 +117,13 @@ class UndoRedoTest {
   }
 
   @Test
-  void beginModelChange_whileIsRestoringSnapshotIsSet_recordsNothing () {
+  void beginModelChange_whileisRestoringModelSnapshotIsSet_recordsNothing () {
     // Exercises the reentrancy guard directly rather than only through
-    // a real restore - see isRestoringSnapshot's own comment on why
+    // a real restore - see isRestoringModelSnapshot's own comment on why
     // parse_XML_variables() needs this (several classes' from_XML()
     // calls beginModelChange()/endModelChange() by way of makeEmpty()).
     seed();
-    app.isRestoringSnapshot = true;
+    app.isRestoringModelSnapshot = true;
 
     simulateEdit();
 
@@ -263,7 +263,7 @@ class UndoRedoTest {
     // parse_XML_variables() reaches beginModelChange()/endModelChange()
     // close to nine times on its own (Faces/Model1Ds/Model2Ds/Solids/
     // Polylines/Points/Cameras/Sections/Groups' from_XML() ->
-    // makeEmpty()) - without isRestoringSnapshot, each of those would
+    // makeEmpty()) - without isRestoringModelSnapshot, each of those would
     // append its own spurious entry and the two asserts below would
     // both fail.
     seed();
@@ -273,7 +273,7 @@ class UndoRedoTest {
     app.undoModelChange();
 
     assertEquals(historySizeBeforeUndo, app.modelHistory.size(), "a restore must not append new history entries");
-    assertFalse(app.isRestoringSnapshot, "the guard must be cleared again once the restore finishes");
+    assertFalse(app.isRestoringModelSnapshot, "the guard must be cleared again once the restore finishes");
   }
 
   @Test
@@ -551,7 +551,7 @@ class UndoRedoTest {
     // same way restoreProjectSnapshot() does (see that function's own
     // comment) - parse_XML_variables()'s own from_XML() cascade, several
     // classes' makeEmpty() each firing independently. load_project() now
-    // wraps that part in isRestoringSnapshot too (previously only
+    // wraps that part in isRestoringModelSnapshot too (previously only
     // restoreProjectSnapshot() did), so opening or fetching a project no
     // longer records several spurious, partially-loaded history entries.
     //

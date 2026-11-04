@@ -71,7 +71,7 @@
 // beginModelChange()/endModelChange() pair, same reasoning as
 // Delete3D.selection()'s own comment), and load_project() doing the same
 // via parse_XML_variables()'s own from_XML() cascade (now wrapped in
-// isRestoringSnapshot, the same guard restoreProjectSnapshot() below
+// isRestoringModelSnapshot, the same guard restoreProjectSnapshot() below
 // already relied on, just newly needed by this second caller too). Once
 // both were already being touched for that reason, reseeding the modelHistory
 // right after each succeeds was the natural fix for the modelHistory
@@ -98,7 +98,7 @@ int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
 // is STILL only half-restored at that exact point in the from_XML()
 // sequence, and stomping on modelHistoryIndex along the way, without this
 // guard.
-boolean isRestoringSnapshot = false;
+boolean isRestoringModelSnapshot = false;
 
 // The undo/redo stack's own snapshot format - deliberately narrower
 // than buildProjectSnapshot() (saveProject.pde), which is Save/Hold/
@@ -179,7 +179,7 @@ void seedUndoHistory () {
 // actually starts is what that entry ends up holding - not whatever was
 // selected back when it was itself first recorded.
 void beginUndoableEdit () {
-  if (isRestoringSnapshot) return;
+  if (isRestoringModelSnapshot) return;
 
   // beginModelChange() can fire before this file's own field
   // initializers above (modelHistory/modelHistoryIndex) have run at all:
@@ -207,7 +207,7 @@ void beginUndoableEdit () {
 // Called from endModelChange() itself, only on the outermost (depth
 // 1 -> 0) transition.
 void commitUndoableEdit () {
-  if (isRestoringSnapshot) return;
+  if (isRestoringModelSnapshot) return;
   if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 
   // Discard any redo branch sitting beyond the current position: a
@@ -319,18 +319,18 @@ void restoreUndoSnapshot (XML xml) {
 // has its own dedicated refresh path (clampSelectionsToCurrentData()
 // below, same as it always has). invalidateWin3DRetainedCaches() below
 // is what makes the 3D viewport itself pick up the restored geometry.
-// Safe to call from undo()/redo() only because of isRestoringSnapshot
+// Safe to call from undo()/redo() only because of isRestoringModelSnapshot
 // below - see its own comment: restoreUndoSnapshot() does reach
 // beginModelChange()/endModelChange() repeatedly (via several classes'
 // from_XML() -> makeEmpty()), and without that guard each of those
 // would recursively record itself as a new step.
 void restoreProjectSnapshot (XML xml) {
-  // isRestoringSnapshot (set for the entire call, including every
+  // isRestoringModelSnapshot (set for the entire call, including every
   // from_XML() restoreUndoSnapshot() below reaches) is what makes this
   // safe to call at all - see that field's own comment. try/finally so
   // it can't get stuck "true" and silently disable all future undo/redo
   // recording if something throws partway through a restore.
-  isRestoringSnapshot = true;
+  isRestoringModelSnapshot = true;
   try {
     restoreUndoSnapshot(xml);
 
@@ -350,7 +350,7 @@ void restoreProjectSnapshot (XML xml) {
     // the view still showing the undone edit). Deliberately calling this
     // directly rather than endModelChange() itself - a restore isn't a
     // new edit to record, so it must not also go through
-    // commitUndoableEdit() (doubly so now, given isRestoringSnapshot
+    // commitUndoableEdit() (doubly so now, given isRestoringModelSnapshot
     // would block it anyway - this keeps the cache invalidation itself
     // unconditional regardless).
     invalidateWin3DRetainedCaches();
@@ -359,6 +359,6 @@ void restoreProjectSnapshot (XML xml) {
     VertexSolar_resize_array();
     GlobalSolar_resize_array();
   } finally {
-    isRestoringSnapshot = false;
+    isRestoringModelSnapshot = false;
   }
 }
