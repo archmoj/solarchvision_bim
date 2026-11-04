@@ -448,6 +448,15 @@ Includes commands such as:
 
 ------------------------------------------------------------------------
 
+### Undo and redo
+
+-   `Undo Model Change`
+-   `Redo Model Change`
+-   `Undo Viewport Change`
+-   `Redo Viewport Change`
+
+------------------------------------------------------------------------
+
 ## Spinner and toggle value commands
 
 Nearly every numeric or on/off spinner in the user interface has a

@@ -249,9 +249,9 @@ void keyPressed (KeyEvent e) {
           e.isControlDown() && !e.isAltDown()) {
         if (e.getKeyCode() == 90) { // 90 = Z
           if (e.isShiftDown()) {
-            // callAction("Undo Viewport");
+            // callAction("Undo Viewport Change");
           } else {
-            callAction("Undo");
+            callAction("Undo Model Change");
           }
           redraw();
           return;
@@ -259,9 +259,9 @@ void keyPressed (KeyEvent e) {
 
         if (e.getKeyCode() == 89) { // 89 = Y
           if (e.isShiftDown()) {
-            // callAction("Redo Viewport");
+            // callAction("Redo Viewport Change");
           } else {
-            callAction("Redo");
+            callAction("Redo Model Change");
           }
           redraw();
           return;

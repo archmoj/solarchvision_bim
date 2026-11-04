@@ -254,16 +254,16 @@ void build_allActions() {
     link("https://solarchvision.com/");
   });
 
-  // See undoRedo.pde: undo()/redo() are currently stubs - the Ctrl+Z /
-  // Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
+  // See undoRedo.pde: undoModelChange()/redoModelChange() are currently stubs
+  // the Ctrl+Z / Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
   // these two actions are step one (the trigger), wired ahead of the
   // storage layer itself.
-  putAction("Undo", () -> {
-    undo();
+  putAction("Undo Model Change", () -> {
+    undoModelChange();
   });
 
-  putAction("Redo", () -> {
-    redo();
+  putAction("Redo Model Change", () -> {
+    redoModelChange();
   });
 
   putAction("New", () -> {

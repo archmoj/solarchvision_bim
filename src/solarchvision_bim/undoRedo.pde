@@ -226,9 +226,9 @@ void commitUndoableEdit () {
   }
 }
 
-void undo () {
+void undoModelChange () {
   if (historyIndex <= 0) {
-    displayDirective("Undo: nothing to undo.");
+    displayDirective("Undo: no model change to undo.");
     return;
   }
 
@@ -236,9 +236,9 @@ void undo () {
   restoreProjectSnapshot(history.get(historyIndex));
 }
 
-void redo () {
+void redoModelChange () {
   if (historyIndex >= history.size() - 1) {
-    displayDirective("Redo: nothing to redo.");
+    displayDirective("Redo: no model change to redo.");
     return;
   }
 

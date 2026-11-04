@@ -225,6 +225,8 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, cancel viewport shading, or remove the most recently pinned hover point - whichever applies |
 | `Ctrl+Z` | Undo model change |
 | `Ctrl+Y` | Redo model change |
+| `Ctrl+Shift+Z` | Undo viewport change |
+| `Ctrl+Shift+Y` | Redo viewport change |
 | `a` / `A` | Switch between active and passive impact views in the 3D view |
 | `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
 | `d` / `D` | Change the impact-display day in the 3D view |

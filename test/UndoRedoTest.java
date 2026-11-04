@@ -138,7 +138,7 @@ class UndoRedoTest {
     simulateEdit();  // history[2]
     assertEquals(3, app.history.size());
 
-    app.undo(); // historyIndex -> 1, history[2] still sitting there as a redo target
+    app.undoModelChange(); // historyIndex -> 1, history[2] still sitting there as a redo target
 
     simulateEdit(); // a fresh edit - history[2] (the old redo branch) must be gone, replaced by this new one
 
@@ -215,7 +215,7 @@ class UndoRedoTest {
   void undo_atTheBaseline_doesNothing () {
     seed();
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.historyIndex);
     assertEquals(1, app.history.size());
@@ -226,7 +226,7 @@ class UndoRedoTest {
     seed();
     simulateEdit();
 
-    app.redo();
+    app.redoModelChange();
 
     assertEquals(1, app.historyIndex);
   }
@@ -238,7 +238,7 @@ class UndoRedoTest {
     simulateEdit();
     assertEquals(2, app.historyIndex);
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(1, app.historyIndex);
   }
@@ -248,10 +248,10 @@ class UndoRedoTest {
     seed();
     simulateEdit();
     simulateEdit();
-    app.undo();
+    app.undoModelChange();
     assertEquals(1, app.historyIndex);
 
-    app.redo();
+    app.redoModelChange();
 
     assertEquals(2, app.historyIndex);
   }
@@ -270,7 +270,7 @@ class UndoRedoTest {
     simulateEdit();
     int historySizeBeforeUndo = app.history.size();
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(historySizeBeforeUndo, app.history.size(), "a restore must not append new history entries");
     assertFalse(app.isRestoringSnapshot, "the guard must be cleared again once the restore finishes");
@@ -285,7 +285,7 @@ class UndoRedoTest {
 
     app.WIN3D.cameraX = 999; // the user navigates after that edit, not going through beginModelChange()/endModelChange()
 
-    app.undo(); // back to the baseline
+    app.undoModelChange(); // back to the baseline
 
     assertEquals(999f, app.WIN3D.cameraX, 0.0001f, "undo must leave the viewport exactly where the user left it");
   }
@@ -298,7 +298,7 @@ class UndoRedoTest {
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.faceSelection = new int[]{0}; // valid right now, against the one imported face
 
-    app.undo(); // back to the baseline - zero faces - without Select3D.clampSelectionsToCurrentData() this selection would now be stale
+    app.undoModelChange(); // back to the baseline - zero faces - without Select3D.clampSelectionsToCurrentData() this selection would now be stale
 
     assertEquals(0, app.Select3D.faceSelection.length);
   }
@@ -315,7 +315,7 @@ class UndoRedoTest {
     deleteTheOneFace();
     assertEquals(0, app.allFaces.nodes.length, "setup check");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(1, app.allFaces.nodes.length);
   }
@@ -326,10 +326,10 @@ class UndoRedoTest {
 
     createOneFaceViaImport();
     deleteTheOneFace();
-    app.undo();
+    app.undoModelChange();
     assertEquals(1, app.allFaces.nodes.length, "setup check");
 
-    app.redo();
+    app.redoModelChange();
 
     assertEquals(0, app.allFaces.nodes.length);
   }
@@ -340,15 +340,15 @@ class UndoRedoTest {
     createOneFaceViaImport();            // step 1: one face
     deleteTheOneFace();                  // step 2: no faces again
 
-    app.undo();
-    app.undo();
+    app.undoModelChange();
+    app.undoModelChange();
     assertEquals(0, app.historyIndex);
     assertEquals(0, app.allFaces.nodes.length);
 
-    app.redo();
+    app.redoModelChange();
     assertEquals(1, app.allFaces.nodes.length);
 
-    app.redo();
+    app.redoModelChange();
     assertEquals(0, app.allFaces.nodes.length);
     assertEquals(2, app.historyIndex);
   }
@@ -412,7 +412,7 @@ class UndoRedoTest {
     app.Delete3D.selection(); // deletes the (manually, correctly) selected middle face - its own beginModelChange() refreshes history[historyIndex] with faceSelection=[1] first
     assertEquals(2, app.allFaces.nodes.length, "setup check");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(3, app.allFaces.nodes.length, "setup check");
     assertArrayEquals(new int[]{1}, app.Select3D.faceSelection,
@@ -438,7 +438,7 @@ class UndoRedoTest {
     app.Move3D.selection(10, 0, 0);
     assertEquals(xBefore + 10, app.allPoints.getX(0), 0.0001f, "setup check");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(xBefore, app.allPoints.getX(0), 0.0001f);
   }
@@ -461,7 +461,7 @@ class UndoRedoTest {
     app.Scale3D.selection(0, 0, 0, 2, 2, 2);
     assertEquals(4f, app.allModel2Ds.getS(0), 0.0001f, "setup check");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(2f, app.allModel2Ds.getS(0), 0.0001f);
   }
@@ -606,7 +606,7 @@ class UndoRedoTest {
     assertEquals(1, app.allFaces.nodes.length, "setup check");
     assertEquals(sizeBefore + 1, app.history.size(), "the import, including both of its own group creations, should record as exactly one step");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.allGroups.num, "undo should remove both groups this import created too, not just the face");
     assertEquals(0, app.allFaces.nodes.length);
@@ -644,7 +644,7 @@ class UndoRedoTest {
 
     assertEquals(9, app.allFaces.nodes.length, "setup check"); // the (re-shaped) base face + 4 sides x 2 quads
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(1, app.allFaces.nodes.length, "undo should bring back the single original face");
   }
@@ -688,7 +688,7 @@ class UndoRedoTest {
     assertEquals(6, app.allFaces.nodes.length, "setup check");
     assertEquals(sizeBefore + 1, app.history.size());
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.allFaces.nodes.length);
   }
@@ -717,7 +717,7 @@ class UndoRedoTest {
     assertTrue(app.allFaces.nodes.length > 0, "setup check: should have built something");
     assertEquals(sizeBefore + 1, app.history.size(), "one default-model load should record exactly one step");
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.allFaces.nodes.length);
   }
@@ -742,7 +742,7 @@ class UndoRedoTest {
     assertEquals(1, app.allModel2Ds.num, "setup check");
     assertEquals(sizeBefore + 1, app.history.size());
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.allModel2Ds.num);
   }
@@ -818,7 +818,7 @@ class UndoRedoTest {
     assertEquals(1, app.allFaces.nodes.length, "setup check");
     assertEquals(sizeBefore + 1, app.history.size());
 
-    app.undo();
+    app.undoModelChange();
 
     assertEquals(0, app.allFaces.nodes.length);
   }
