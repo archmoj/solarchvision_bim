@@ -10,7 +10,7 @@
 // those don't call either function and don't record a step. Restoring a
 // step deliberately leaves the viewport alone too - a snapshot
 // (buildModelSnapshot(), below) never includes WIN3D's own state at all,
-// so there's nothing for restoreUndoSnapshot() to put back there even
+// so there's nothing for restoreModelSnapshot() to put back there even
 // to leave alone.
 //
 // THE MODEL: a single chronological list, modelHistory[0..n], with
@@ -50,7 +50,7 @@
 // current with whatever's selected right up until that first edit
 // actually starts.
 //
-// Builds on buildModelSnapshot()/restoreUndoSnapshot() (this file) - see
+// Builds on buildModelSnapshot()/restoreModelSnapshot() (this file) - see
 // restoreProjectSnapshot()'s own comment for why that's deliberately
 // not load_project() or holdProject()/fetchProject(). Unlike
 // saveProject.pde's buildProjectSnapshot()/parseXmlVariables.pde's
@@ -93,7 +93,7 @@ int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
 // endModelChange() at its own end (now preceded by its own
 // beginModelChange(), per this step's own conversion), and from_XML()
 // calls makeEmpty() as its first step to reset the class to the right
-// size before refilling it - so restoreUndoSnapshot() alone fires
+// size before refilling it - so restoreModelSnapshot() alone fires
 // several begin/end pairs per restore, each one operating on whatever
 // is STILL only half-restored at that exact point in the from_XML()
 // sequence, and stomping on modelHistoryIndex along the way, without this
@@ -120,7 +120,7 @@ boolean isRestoringModelSnapshot = false;
 // MAX_UNDO_MODEL entries paid for repeatedly, and restoring it on every
 // undo/redo was reverting state (WORLD/STUDY settings, the active
 // camera/viewport, and so on) that undo/redo was never meant to touch
-// in the first place - restoreUndoSnapshot() below leaves all of it
+// in the first place - restoreModelSnapshot() below leaves all of it
 // alone, exactly as live as it was right before the undo/redo.
 //
 // copyTexturesAlongside is always false here, same as every previous
@@ -257,7 +257,7 @@ void redoModelChange () {
 // other classes' own children (STATION, Earth3D, Sky3D, WORLD, ...)
 // that a buildModelSnapshot() tree never has, and would throw reaching
 // for them.
-void restoreUndoSnapshot (XML xml) {
+void restoreModelSnapshot (XML xml) {
 
   allPoints.from_XML(xml);
 
@@ -289,14 +289,14 @@ void restoreUndoSnapshot (XML xml) {
 // different call site, found one crash report at a time (faces.pde/
 // clone3D.pde/mouseClicked.pde/overlay3D.pde/select3D.pde's own fixes).
 // Select3D.clampSelectionsToCurrentData(), called below right after
-// restoreUndoSnapshot(), closes that off at the source instead of
+// restoreModelSnapshot(), closes that off at the source instead of
 // chasing further consumers - see its own comment for the full
-// reasoning. Select3D.from_XML() (part of restoreUndoSnapshot() above)
+// reasoning. Select3D.from_XML() (part of restoreModelSnapshot() above)
 // already puts back the selection exactly as it was captured alongside
 // that entry's geometry, so this clamp is what it always was: a
 // defensive pass, not the thing that decides what ends up selected.
 //
-// The lean counterpart to load_project(): runs restoreUndoSnapshot()
+// The lean counterpart to load_project(): runs restoreModelSnapshot()
 // above (undo/redo's own narrower from_XML() dispatch, not
 // parse_XML_variables()'s full one) plus only the cheap, state-size-
 // dependent refresh that has to happen whenever the scene graph's shape
@@ -320,19 +320,19 @@ void restoreUndoSnapshot (XML xml) {
 // below, same as it always has). invalidateWin3DRetainedCaches() below
 // is what makes the 3D viewport itself pick up the restored geometry.
 // Safe to call from undo()/redo() only because of isRestoringModelSnapshot
-// below - see its own comment: restoreUndoSnapshot() does reach
+// below - see its own comment: restoreModelSnapshot() does reach
 // beginModelChange()/endModelChange() repeatedly (via several classes'
 // from_XML() -> makeEmpty()), and without that guard each of those
 // would recursively record itself as a new step.
 void restoreProjectSnapshot (XML xml) {
   // isRestoringModelSnapshot (set for the entire call, including every
-  // from_XML() restoreUndoSnapshot() below reaches) is what makes this
+  // from_XML() restoreModelSnapshot() below reaches) is what makes this
   // safe to call at all - see that field's own comment. try/finally so
   // it can't get stuck "true" and silently disable all future undo/redo
   // recording if something throws partway through a restore.
   isRestoringModelSnapshot = true;
   try {
-    restoreUndoSnapshot(xml);
+    restoreModelSnapshot(xml);
 
     // See Select3D.clampSelectionsToCurrentData()'s own comment: drops
     // any selected index that doesn't exist in what was just restored,
