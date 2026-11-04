@@ -254,16 +254,16 @@ void build_allActions() {
     link("https://solarchvision.com/");
   });
 
-  // See undoRedo.pde: undoModelChange()/redoModelChange() are currently stubs
+  // See undoRedo.pde: undoModel3DChange()/redoModel3DChange() are currently stubs
   // the Ctrl+Z / Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
   // these two actions are step one (the trigger), wired ahead of the
   // storage layer itself.
   putAction("Undo Model Change", () -> {
-    undoModelChange();
+    undoModel3DChange();
   });
 
   putAction("Redo Model Change", () -> {
-    redoModelChange();
+    redoModel3DChange();
   });
 
   putAction("New", () -> {
@@ -1295,18 +1295,18 @@ void build_allActions() {
   });
 
   putAction("Begin New Group at Origin", () -> {
-    beginModelChange();
+    beginModel3DChange();
 
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    endModelChange();
+    endModel3DChange();
   });
 
   putAction("Begin New Group at Pivot", () -> {
-    beginModelChange();
+    beginModel3DChange();
 
     allGroups.beginNewGroup(
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0],
@@ -1323,7 +1323,7 @@ void build_allActions() {
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    endModelChange();
+    endModel3DChange();
   });
 
   putAction("Solid", () -> {
@@ -1735,19 +1735,19 @@ void build_allActions() {
   });
 
   putAction("TerrainMesh >> Group", () -> {
-    beginModelChange();
+    beginModel3DChange();
 
     Terrain.draw(TypeWindow.TerrainMesh);
 
-    endModelChange();
+    endModel3DChange();
   });
 
   putAction("TerrainGap >> Group", () -> {
-    beginModelChange();
+    beginModel3DChange();
 
     Terrain.draw(TypeWindow.LandGap);
 
-    endModelChange();
+    endModel3DChange();
   });
 
   putAction("Change Seed/Material", () -> {

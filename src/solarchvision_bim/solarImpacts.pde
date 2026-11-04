@@ -330,7 +330,7 @@ class SolarImpacts {
     this.win3DOverlay_currentCameraIndex       = WIN3D.currentCameraIndex;
   }
 
-  // endModelChange() bumps allFaces/allModel1Ds/Terrain's winCacheGeneration
+  // endModel3DChange() bumps allFaces/allModel1Ds/Terrain's winCacheGeneration
   // counters - exactly what win3DOverlay_dataFresh() above reads as its
   // "has the model changed" signal - for two different reasons: an actual
   // structural/material edit (which should invalidate this.Image[][]), and
@@ -339,7 +339,7 @@ class SolarImpacts {
   // built against the old one need rebuilding - nothing about the model's
   // actual geometry changed). win3DOverlay_dataFresh() can't tell those two
   // reasons apart from the counters alone, so update_frame_layout.pde calls
-  // this right after its own resize-triggered endModelChange() call, to
+  // this right after its own resize-triggered endModel3DChange() call, to
   // catch this recorded snapshot up to the new (but data-wise unchanged)
   // generation values - an actual edit elsewhere, which never calls this,
   // still invalidates freshness exactly as before.

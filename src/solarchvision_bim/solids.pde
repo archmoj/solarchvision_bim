@@ -14,7 +14,7 @@ class Solids {
   float[][] DEF;
 
   void makeEmpty (int n) {
-    beginModelChange();
+    beginModel3DChange();
 
     this.DEF = new float [n][13];
 
@@ -30,7 +30,7 @@ class Solids {
       Select3D.deselect_Solids();
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void updatePosition (int n, float a, float b, float c) {

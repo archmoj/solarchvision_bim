@@ -393,7 +393,7 @@ class Earth3D {
   // --- WIN3D retained-mode cache -------------------------------------------
   // This sphere is location-driven, not model-driven: nothing it renders
   // depends on allFaces/allModel1Ds/etc, so unlike faces.pde/model1Ds.pde
-  // this cache is deliberately NOT tied to endModelChange() - orbiting the
+  // this cache is deliberately NOT tied to endModel3DChange() - orbiting the
   // camera or editing the 3D model should never rebuild it, only the
   // station moving (or the handful of other things below) should. Every
   // one of those inputs is a cheap scalar (or, for the resolved texture

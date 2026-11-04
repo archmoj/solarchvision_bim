@@ -17,19 +17,19 @@ void load_project (String myFile) {
 
   if (continue_process) {
 
-    // parse_XML_variables() reaches beginModelChange()/endModelChange()
+    // parse_XML_variables() reaches beginModel3DChange()/endModel3DChange()
     // repeatedly on its own (several classes' from_XML() -> makeEmpty(),
     // each now its own complete begin/end pair - see those classes' own
     // comments), the exact same cascade undoRedo.pde's
     // restoreProjectSnapshot() already guards against with
-    // isRestoringModelSnapshot - but this function is Open/Fetch's own
+    // isRestoringModel3DSnapshot - but this function is Open/Fetch's own
     // "restore everything from XML" path, not that one, and had no
     // equivalent guard: opening or fetching ANY project was recording
     // several spurious, partially-loaded undo-history entries, one per
     // class's own makeEmpty() call, exactly the kind of corruption
-    // isRestoringModelSnapshot exists to prevent - just via a different
+    // isRestoringModel3DSnapshot exists to prevent - just via a different
     // caller than the one it was first written for.
-    isRestoringModelSnapshot = true;
+    isRestoringModel3DSnapshot = true;
     try {
       try {
         parse_XML_variables(xml, false, true); // first try: loading without printing logs
@@ -41,7 +41,7 @@ void load_project (String myFile) {
         System.exit(1);
       }
     } finally {
-      isRestoringModelSnapshot = false;
+      isRestoringModel3DSnapshot = false;
     }
 
     // loading only weather data //
@@ -91,7 +91,7 @@ void load_project (String myFile) {
     // this, pressing Ctrl+Z right after opening a different file could
     // try to restore a snapshot that belongs to the project that was
     // open before it.
-    seedModelHistory();
+    seedModel3DHistory();
   }
 
 }

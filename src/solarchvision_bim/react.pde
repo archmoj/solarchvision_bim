@@ -51,13 +51,13 @@ class react {
   // Move3D/Rotate3D/Scale3D.selection() unconditionally every frame would
   // still force a constant, needless redraw.
   //
-  // No trailing endModelChange() call here (there used to be one,
+  // No trailing endModel3DChange() call here (there used to be one,
   // redundant with whichever Move3D/Rotate3D/Scale3D sub-method the
   // selection() call below reaches - each of those already wraps its own
-  // beginModelChange()/endModelChange() pair, see that file's own
+  // beginModel3DChange()/endModel3DChange() pair, see that file's own
   // comments). Harmless when model_changed() had no state of its own to
   // double up on; with undo/redo history now tied to that same pairing,
-  // an extra unpaired endModelChange() here would record a second,
+  // an extra unpaired endModel3DChange() here would record a second,
   // spurious step for what's one spinner drag.
   OnChange applyPosValue = (o, n) -> {
     if (o == n) return;
@@ -137,11 +137,11 @@ class react {
   };
 
   // Unlike Move3D/Rotate3D/Scale3D's own selection() above, Terrain's
-  // update_textures()/update_mesh() don't call beginModelChange()/
-  // endModelChange() themselves - this is the only place that edit gets
+  // update_textures()/update_mesh() don't call beginModel3DChange()/
+  // endModel3DChange() themselves - this is the only place that edit gets
   // recorded, so it needs the normal begin/end pairing, not removing.
-  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; beginModelChange(); Terrain.update_textures(); endModelChange(); };
-  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; beginModelChange(); Terrain.update_mesh(); endModelChange(); };
+  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; beginModel3DChange(); Terrain.update_textures(); endModel3DChange(); };
+  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; beginModel3DChange(); Terrain.update_mesh(); endModel3DChange(); };
   OnChange applyCurrentCamera = (o, n) -> {
     if (o == n) return;
     WIN3D.apply_currentCameraIndex();

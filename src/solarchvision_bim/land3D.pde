@@ -88,7 +88,7 @@ class Terrain {
   // recomputeTextureOffsets() (texture list reloaded, or just re-panned
   // after the station moves - see its own comment for why the latter
   // matters here specifically now that texture positioning is part of
-  // what this cache renders), not by endModelChange(): nothing about this
+  // what this cache renders), not by endModel3DChange(): nothing about this
   // class's own geometry depends on allFaces/allModel1Ds/etc edits, only
   // on the terrain mesh/textures themselves actually changing.
   int winCacheGeneration = 0;

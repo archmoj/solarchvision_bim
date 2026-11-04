@@ -15,7 +15,7 @@ class Groups {
   float[][] Pivots;
 
   void makeEmpty (int n) {
-    beginModelChange();
+    beginModel3DChange();
 
     this.num = n;
     this.Model1Ds = new int [n][2];
@@ -29,7 +29,7 @@ class Groups {
       Select3D.deselect_Groups();
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
 

@@ -150,7 +150,7 @@ void ShadeViewport () {
   showWaitCursor();
 
   // Force a fresh build, rather than relying on should_rebuildFaceGrid
-  // (true only after endModelChange() - a geometry edit, never a camera
+  // (true only after endModel3DChange() - a geometry edit, never a camera
   // move): Model2Ds.addToFaceGrid()'s tree/person billboards are
   // camera-facing, computed from WIN3D's camera fields at build time, so
   // moving the camera between two bakes with no geometry edit in between
@@ -775,7 +775,7 @@ void ShadeViewport () {
     // This bake, whatever triggered it (an explicit "Shade Viewport"/
     // Space/Backspace request, or drawViewport3DLayers.pde's own auto-
     // rebuild below), reflects the current camera/model state as of right
-    // now, so whatever earlier view_changed()/endModelChange() call(s) set
+    // now, so whatever earlier view_changed()/endModel3DChange() call(s) set
     // this mid-bake are moot - clear it here rather than leaving draw
     // Viewport3DLayers.pde to immediately see it still set and redo the same
     // work again next frame for no reason.

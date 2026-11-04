@@ -32,7 +32,7 @@ class Scale3D {
   }
 
   void TerrainVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
       int f = Select3D.terrainVertexSelection[q];
@@ -46,11 +46,11 @@ class Scale3D {
       Terrain.Mesh[i][j][2] = P[2];
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void softSelection (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int q = 0; q < Select3D.softSelection.length; q++) {
       int f = Select3D.softSelection[q];
@@ -65,11 +65,11 @@ class Scale3D {
       allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int q = 0; q < Select3D.vertexSelection.length; q++) {
       int f = Select3D.vertexSelection[q];
@@ -80,11 +80,11 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Polylines (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
@@ -97,11 +97,11 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     int[] FaceVertices = Select3D.get_Face_Vertices();
 
@@ -114,11 +114,11 @@ class Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     boolean allSolids_updated = false;
 
@@ -134,11 +134,11 @@ class Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Sections (float sx, float sy) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
@@ -147,11 +147,11 @@ class Scale3D {
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    endModelChange();
+    endModel3DChange();
   }
 
   void Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     // swapping y and z vectors to match camera's local coordinate
     float tmp = sz;
@@ -172,11 +172,11 @@ class Scale3D {
       if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model1DSelection[o];
@@ -189,11 +189,11 @@ class Scale3D {
       allModel1Ds.magS(f, sz);
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int f = Select3D.model2DSelection[o];
@@ -208,11 +208,11 @@ class Scale3D {
       }
     }
 
-    endModelChange();
+    endModel3DChange();
   }
 
   void Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
-    beginModelChange();
+    beginModel3DChange();
 
     int[] PolymeshVertices = Select3D.get_Group_Vertices();
 
@@ -280,6 +280,6 @@ class Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    endModelChange();
+    endModel3DChange();
   }
 }

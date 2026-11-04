@@ -491,7 +491,7 @@ float[] gbxmlSiteLatLonDecimalDegrees (XML location) {
 // m == -1 "auto-cycle through 8 materials" convention (there, once per
 // imported IfcProduct; here, once per imported Surface).
 //
-// Unlike import_objects_IFC(), this does NOT call endModelChange() itself
+// Unlike import_objects_IFC(), this does NOT call endModel3DChange() itself
 // at the end - it adds faces straight into allFaces/allPoints the same
 // direct way import_objects_OBJ()/import_objects_GLB()/import_objects_
 // STL()/import_objects_DXF()/import_objects_PLY()/import_objects_DAE()
