@@ -14,14 +14,11 @@ void saveProject (String myFile) {
 // Builds the exact same XML tree saveProject() writes to disk, entirely
 // in memory - the one shared list of "everything that makes up a
 // project" that every full-state consumer goes through: file Save (via
-// saveProject() above), Hold/Fetch (via saveProject() too), and now the
-// undo/redo snapshot stack (undoRedo.pde, which calls this directly
-// with copyTexturesAlongside: false, never touching saveProject() or
-// disk at all). A class added to this one list is automatically
-// captured everywhere it's used - the alternative, a second
-// hand-duplicated "everything that matters" list specific to undo,
-// would drift out of sync with this one exactly the way Model2Ds' own
-// save format used to drift from its in-memory layout.
+// saveProject() above) and Hold/Fetch (via saveProject() too). The
+// undo/redo snapshot stack (undoRedo.pde) deliberately does NOT go
+// through this - it only ever needs the 3D-modeling content itself, a
+// narrower list that undoRedo.pde's own buildUndoSnapshot() keeps
+// separately; see that function's own comment for why.
 //
 // copyTexturesAlongside is passed straight through to Terrain.to_XML() -
 // see that method's own comment; every other class's to_XML() is pure
