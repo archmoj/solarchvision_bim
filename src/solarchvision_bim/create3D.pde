@@ -2640,14 +2640,4 @@ class Create3D {
 
     endModelChange();
   }
-
-  int maximum_default_models = 6;
-
-  void add_Model_Main () {
-
-    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-    addToLastGroup = false;
-  }
-
 }

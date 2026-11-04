@@ -172,18 +172,6 @@ class Create3DTest {
     assertEquals(0, app.allVertices.length);
   }
 
-  // ================= add_Model_Main ====================================
-
-  @Test
-  void addModelMain_startsANewGroupAndClearsAddToLastGroup () {
-    app.addToLastGroup = true;
-
-    app.Create3D.add_Model_Main();
-
-    assertEquals(1, app.allGroups.num);
-    assertFalse(app.addToLastGroup);
-  }
-
   // ================= add_House2_Core (simplest gable roof) =============
 
   @Test
