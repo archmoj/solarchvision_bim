@@ -201,11 +201,11 @@ class UndoRedoTest {
   void endModelChange_boundsHistoryToMaxUndoSteps () {
     seed();
 
-    for (int i = 0; i < app.MAX_UNDO_STEPS + 10; i++) {
+    for (int i = 0; i < app.MAX_UNDO_MODEL + 10; i++) {
       simulateEdit();
     }
 
-    assertTrue(app.modelHistory.size() <= app.MAX_UNDO_STEPS + 1, "expected the list to be capped, was " + app.modelHistory.size());
+    assertTrue(app.modelHistory.size() <= app.MAX_UNDO_MODEL + 1, "expected the list to be capped, was " + app.modelHistory.size());
     assertEquals(app.modelHistory.size() - 1, app.modelHistoryIndex, "historyIndex should still point at the newest entry after trimming");
   }
 

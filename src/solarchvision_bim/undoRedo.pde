@@ -80,7 +80,7 @@
 // needs to start fresh from exactly that state, not keep referring to
 // whatever was open before it.
 
-final int MAX_UNDO_STEPS = 50; // bounds memory growth - each entry is a full scene-graph XML tree
+final int MAX_UNDO_MODEL = 50; // bounds memory growth - each entry is a full scene-graph XML tree
 
 ArrayList<XML> modelHistory = new ArrayList<XML>();
 int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
@@ -117,7 +117,7 @@ boolean isRestoringSnapshot = false;
 // selection captured in the same snapshot as the geometry it refers to.
 // Serializing the rest on every single edit (previously via
 // buildProjectSnapshot()) was pure overhead a modelHistory of up to
-// MAX_UNDO_STEPS entries paid for repeatedly, and restoring it on every
+// MAX_UNDO_MODEL entries paid for repeatedly, and restoring it on every
 // undo/redo was reverting state (WORLD/STUDY settings, the active
 // camera/viewport, and so on) that undo/redo was never meant to touch
 // in the first place - restoreUndoSnapshot() below leaves all of it
@@ -220,7 +220,7 @@ void commitUndoableEdit () {
   modelHistory.add(buildUndoSnapshot());
   modelHistoryIndex = modelHistory.size() - 1;
 
-  while (modelHistory.size() > MAX_UNDO_STEPS) {
+  while (modelHistory.size() > MAX_UNDO_MODEL) {
     modelHistory.remove(0);
     modelHistoryIndex -= 1;
   }
