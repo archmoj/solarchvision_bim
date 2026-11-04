@@ -1817,13 +1817,13 @@ class ValueModifier {
     String command = "Terrain Load Textures";
     if (created == 0) {
       putValueAction(command,
-        () -> (Terrain.loadTextures ? 1f : 0f),
-        (v) -> { Terrain.loadTextures = (v >= 0.5f); },
+        () -> (Terrain.loadTexture ? 1f : 0f),
+        (v) -> { Terrain.loadTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.applyLandLoadTextures);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Terrain.loadTextures);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Terrain.loadTexture);
     }
     return out;
   }

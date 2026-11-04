@@ -160,7 +160,7 @@ class TerrainTest {
     app.Terrain.columnCount = 2;
     app.Terrain.Mesh = new float[][][]{{{1, 2, 3}, {4, 5, 6}}};
     app.Terrain.displayTessellation = 2;
-    app.Terrain.loadTextures = false;
+    app.Terrain.loadTexture = false;
     app.Terrain.loadMesh = false;
     app.Terrain.displaySurface = false;
     app.Terrain.displayPoints = true;
@@ -186,7 +186,7 @@ class TerrainTest {
     assertArrayEquals(new float[]{1, 2, 3}, fresh.Mesh[0][0], 0.001f);
     assertArrayEquals(new float[]{4, 5, 6}, fresh.Mesh[0][1], 0.001f);
     assertEquals(2, fresh.displayTessellation);
-    assertFalse(fresh.loadTextures);
+    assertFalse(fresh.loadTexture);
     assertFalse(fresh.loadMesh);
     assertFalse(fresh.displaySurface);
     assertTrue(fresh.displayPoints);

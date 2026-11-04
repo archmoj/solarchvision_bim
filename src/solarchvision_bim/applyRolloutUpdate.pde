@@ -38,7 +38,7 @@ void applyRolloutUpdate() {
   pre_WORLD_autoView = WORLD.autoView;
 
   pre_TerrainLoadMesh = Terrain.loadMesh;
-  pre_TerrainLoadTextures = Terrain.loadTextures;
+  pre_TerrainLoadTextures = Terrain.loadTexture;
 
   pre_allSolids_ColorScaleIndex = allSolids.colorScaleIndex;
   pre_allSolids_ColorScaleDirection = allSolids.colorScaleDirection;
@@ -189,7 +189,7 @@ void applyRolloutUpdate() {
 
   react.applyLandLoadMesh.run(pre_TerrainLoadMesh ? 1 : 0, Terrain.loadMesh ? 1 : 0);
 
-  react.applyLandLoadTextures.run(pre_TerrainLoadTextures ? 1 : 0, Terrain.loadTextures ? 1 : 0);
+  react.applyLandLoadTextures.run(pre_TerrainLoadTextures ? 1 : 0, Terrain.loadTexture ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_cameraDisplayFrustum ? 1 : 0, Select3D.cameraDisplayFrustum ? 1 : 0);
 

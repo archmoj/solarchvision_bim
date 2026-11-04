@@ -3,7 +3,7 @@ class Terrain {
   final static String CLASS_STAMP = "terrain";
 
   boolean loadMesh = true;
-  boolean loadTextures = false;
+  boolean loadTexture = false;
 
   boolean displaySurface = false;
   boolean displayPoints = false;
@@ -676,7 +676,7 @@ class Terrain {
       }
     }
 
-    this.loadTextures = true;
+    this.loadTexture = true;
     this.update_textures();
 
     showArrowCursor();
@@ -1434,7 +1434,7 @@ class Terrain {
       XML parent = xml.addChild(this.CLASS_STAMP);
 
       XML_setInt(parent, "displayTessellation", this.displayTessellation);
-      XML_setBoolean(parent, "loadTextures", this.loadTextures);
+      XML_setBoolean(parent, "loadTexture", this.loadTexture);
       XML_setBoolean(parent, "loadMesh", this.loadMesh);
       XML_setBoolean(parent, "displaySurface", this.displaySurface);
       XML_setBoolean(parent, "displayPoints", this.displayPoints);
@@ -1507,7 +1507,7 @@ class Terrain {
       XML parent = xml.getChild(this.CLASS_STAMP);
 
       this.displayTessellation = XML_getInt(parent, "displayTessellation");
-      this.loadTextures = XML_getBoolean(parent, "loadTextures");
+      this.loadTexture = XML_getBoolean(parent, "loadTexture");
       this.loadMesh = XML_getBoolean(parent, "loadMesh");
       this.displaySurface = XML_getBoolean(parent, "displaySurface");
       this.displayPoints = XML_getBoolean(parent, "displayPoints");

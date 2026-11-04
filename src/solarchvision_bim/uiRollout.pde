@@ -630,7 +630,7 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
 
-        Terrain.loadTextures = vm.TerrainLoadTextures(1);
+        Terrain.loadTexture = vm.TerrainLoadTextures(1);
         Terrain.loadMesh = vm.TerrainLoadMesh(1);
         Terrain.skipStart = vm.TerrainSkipStart(1);
         Terrain.skipEnd = vm.TerrainSkipEnd(1);
