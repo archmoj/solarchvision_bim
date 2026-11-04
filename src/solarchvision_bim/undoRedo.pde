@@ -80,7 +80,7 @@
 // needs to start fresh from exactly that state, not keep referring to
 // whatever was open before it.
 
-final int MAX_UNDO_MODEL = 50; // bounds memory growth - each entry is a full scene-graph XML tree
+final int MAX_UNDO_MODEL = 16; // bounds memory growth - each entry is a full scene-graph XML tree
 
 ArrayList<XML> modelHistory = new ArrayList<XML>();
 int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
