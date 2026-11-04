@@ -243,8 +243,7 @@ void keyPressed (KeyEvent e) {
       // and scoped to viewport navigation, not a fit for something meant
       // to work everywhere. Routed through callAction(), same as every
       // other keyboard-triggered command in this file, so Undo/Redo are
-      // also reachable from the command line and (if ever added) a menu
-      // item for free.
+      // also reachable from the command line
       if (!wasEditingSpinner && (typeUserCommand == 0) &&
           e.isControlDown() && !e.isAltDown()) {
         if (e.getKeyCode() == 90) { // 90 = Z
