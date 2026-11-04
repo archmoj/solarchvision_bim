@@ -21,7 +21,7 @@ void load_project (String myFile) {
     // repeatedly on its own (several classes' from_XML() -> makeEmpty(),
     // each now its own complete begin/end pair - see those classes' own
     // comments), the exact same cascade undoRedo.pde's
-    // restoreProjectSnapshot() already guards against with
+    // restoreProjectModel3DSnapshot() already guards against with
     // isRestoringModel3DSnapshot - but this function is Open/Fetch's own
     // "restore everything from XML" path, not that one, and had no
     // equivalent guard: opening or fetching ANY project was recording

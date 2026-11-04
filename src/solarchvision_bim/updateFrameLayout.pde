@@ -76,7 +76,7 @@ void update_frame_layout () {
     // just imprecise, since this runs on every resize/layout change.
     // invalidateWin3DRetainedCaches() is the one part that's still
     // genuinely needed (to update 3D caches: Faces, Model1Ds, Terrain),
-    // same as restoreProjectSnapshot() already calls it directly for
+    // same as restoreProjectModel3DSnapshot() already calls it directly for
     // the same "need the cache invalidation, not an edit" reason.
     invalidateWin3DRetainedCaches();
     view_changed(); // endModel3DChange() always called this too - kept so the shading-rebuild flag below still gets set the same way it always did

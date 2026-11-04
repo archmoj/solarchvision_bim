@@ -51,7 +51,7 @@
 // actually starts.
 //
 // Builds on buildModel3DSnapshot()/restoreModel3DSnapshot() (this file) - see
-// restoreProjectSnapshot()'s own comment for why that's deliberately
+// restoreProjectModel3DSnapshot()'s own comment for why that's deliberately
 // not load_project() or holdProject()/fetchProject(). Unlike
 // saveProject.pde's buildProjectSnapshot()/parseXmlVariables.pde's
 // parse_XML_variables() (the Save/Open/Hold/Fetch path), this file's
@@ -71,7 +71,7 @@
 // beginModel3DChange()/endModel3DChange() pair, same reasoning as
 // Delete3D.selection()'s own comment), and load_project() doing the same
 // via parse_XML_variables()'s own from_XML() cascade (now wrapped in
-// isRestoringModel3DSnapshot, the same guard restoreProjectSnapshot() below
+// isRestoringModel3DSnapshot, the same guard restoreProjectModel3DSnapshot() below
 // already relied on, just newly needed by this second caller too). Once
 // both were already being touched for that reason, reseeding the model3DHistory
 // right after each succeeds was the natural fix for the model3DHistory
@@ -86,7 +86,7 @@ ArrayList<XML> model3DHistory = new ArrayList<XML>();
 int model3DHistoryIndex = -1; // -1 until seedModel3DHistory() runs once at startup
 
 // Guards beginUndoableModel3DEdit()/commitUndoableModel3DEdit() against firing WHILE a
-// restore is already in progress - see restoreProjectSnapshot()'s own
+// restore is already in progress - see restoreProjectModel3DSnapshot()'s own
 // comment for why this is necessary, not just defensive: makeEmpty()
 // (Faces/Model1Ds/Model2Ds/Solids/Polylines/Points/Cameras/Sections/
 // Groups all follow the same pattern) unconditionally calls
@@ -233,7 +233,7 @@ void undoModel3DChange () {
   }
 
   model3DHistoryIndex -= 1;
-  restoreProjectSnapshot(model3DHistory.get(model3DHistoryIndex));
+  restoreProjectModel3DSnapshot(model3DHistory.get(model3DHistoryIndex));
 }
 
 void redoModel3DChange () {
@@ -243,7 +243,7 @@ void redoModel3DChange () {
   }
 
   model3DHistoryIndex += 1;
-  restoreProjectSnapshot(model3DHistory.get(model3DHistoryIndex));
+  restoreProjectModel3DSnapshot(model3DHistory.get(model3DHistoryIndex));
 }
 
 // The from_XML() counterpart to buildModel3DSnapshot() above - same
@@ -324,7 +324,7 @@ void restoreModel3DSnapshot (XML xml) {
 // beginModel3DChange()/endModel3DChange() repeatedly (via several classes'
 // from_XML() -> makeEmpty()), and without that guard each of those
 // would recursively record itself as a new step.
-void restoreProjectSnapshot (XML xml) {
+void restoreProjectModel3DSnapshot (XML xml) {
   // isRestoringModel3DSnapshot (set for the entire call, including every
   // from_XML() restoreModel3DSnapshot() below reaches) is what makes this
   // safe to call at all - see that field's own comment. try/finally so

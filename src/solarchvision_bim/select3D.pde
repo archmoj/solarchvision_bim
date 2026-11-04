@@ -158,7 +158,7 @@ class Select3D {
     return txt;
   }
 
-  // Called once, right after undoRedo.pde's restoreProjectSnapshot()
+  // Called once, right after undoRedo.pde's restoreProjectModel3DSnapshot()
   // restores a historical snapshot, to discard any selected index that
   // no longer exists in the just-restored data.
   //
@@ -180,7 +180,7 @@ class Select3D {
   // undo system should, rather than leaving a dangling reference for
   // the next unguarded accessor to find.
   //
-  // Scoped to restoreProjectSnapshot() only, not load_project() - a
+  // Scoped to restoreProjectModel3DSnapshot() only, not load_project() - a
   // selection going stale relative to a fresh file's data isn't a
   // scenario Open/Fetch creates the way jumping between historical
   // snapshots does.

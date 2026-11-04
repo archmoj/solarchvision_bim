@@ -87,7 +87,7 @@ boolean isBakingInProgress () {
 // Any structural/material edit invalidates the WIN3D retained-mode
 // caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D
 // retained-mode cache" blocks). Pulled out of endModel3DChange() into its
-// own function so undoRedo.pde's restoreProjectSnapshot() can call it
+// own function so undoRedo.pde's restoreProjectModel3DSnapshot() can call it
 // too, without going through the rest of endModel3DChange() (specifically
 // commitUndoableModel3DEdit() - a restore isn't a new edit to record, it's
 // replaying an old one). Without this, a plain view_changed() redraw

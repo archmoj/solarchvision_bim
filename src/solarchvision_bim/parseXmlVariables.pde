@@ -3,7 +3,7 @@
 // and shading-display settings (see viewport3D.pde's own to_XML()/
 // from_XML() for the exact field list). true for Open/Fetch (restoring
 // a project should bring back the view it was saved with), false for
-// undo/redo (see undoRedo.pde's own restoreProjectSnapshot() comment -
+// undo/redo (see undoRedo.pde's own restoreProjectModel3DSnapshot() comment -
 // undo/redo is scoped to 3D-modeling edits only; the person navigating
 // right now should stay looking wherever they're currently looking,
 // not get snapped back to wherever the camera happened to be at some
