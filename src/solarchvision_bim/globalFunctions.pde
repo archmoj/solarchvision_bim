@@ -112,7 +112,7 @@ void invalidateWin3DRetainedCaches () {
 // what lets a composite action like Delete3D.selection(), which calls
 // several of its own begin/end-wrapped sub-steps, record as ONE undo
 // step instead of one per sub-step).
-int modelChangeDepth = 0;
+int model3DChangeDepth = 0;
 
 // Called at the very start of any block that's about to structurally or
 // materially edit the model - every create/edit/move/delete/import site
@@ -123,7 +123,7 @@ int modelChangeDepth = 0;
 // guaranteed to run BEFORE the edit it's about to make - unlike
 // endModel3DChange() (always after, since model_changed() used to be the
 // only hook and could only ever fire post-edit). Nestable: calling this
-// while already inside another begin/end pair (modelChangeDepth > 0)
+// while already inside another begin/end pair (model3DChangeDepth > 0)
 // just increments the depth and does nothing else - only the OUTERMOST
 // (0 -> 1) transition actually touches the undo history, so a composite
 // function that wraps its own call to several already-wrapped sub-steps
@@ -134,10 +134,10 @@ int modelChangeDepth = 0;
 // inner calls alone, without that outer wrapping, would each still
 // start and finish their own step.
 void beginModel3DChange () {
-  if (modelChangeDepth == 0) {
+  if (model3DChangeDepth == 0) {
     beginUndoableModel3DEdit();
   }
-  modelChangeDepth++;
+  model3DChangeDepth++;
 }
 
 // Renamed from model_changed() - everything it already did (WIN3D cache
@@ -147,8 +147,8 @@ void beginModel3DChange () {
 // beginModel3DChange() instead - see its own comment on why a pre-edit
 // hook is what the history actually needed.
 void endModel3DChange () {
-  modelChangeDepth--;
-  if (modelChangeDepth < 0) modelChangeDepth = 0; // a stray call with no matching begin - don't let it go negative and throw off every later pairing
+  model3DChangeDepth--;
+  if (model3DChangeDepth < 0) model3DChangeDepth = 0; // a stray call with no matching begin - don't let it go negative and throw off every later pairing
 
   // This piggybacks on endModel3DChange() rather than adding a new hook,
   // since it's already called from every create/edit/move/delete/import
@@ -158,7 +158,7 @@ void endModel3DChange () {
   // Terrain.update_mesh()'s own full-reload bump).
   invalidateWin3DRetainedCaches();
 
-  if (modelChangeDepth == 0) {
+  if (model3DChangeDepth == 0) {
     commitUndoableModel3DEdit();
   }
 

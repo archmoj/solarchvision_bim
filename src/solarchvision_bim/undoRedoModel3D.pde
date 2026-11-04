@@ -25,7 +25,7 @@
 //   - frameCount-based coalescing ("did the last step happen in this
 //     same frame") is gone. beginUndoableModel3DEdit()/commitUndoableModel3DEdit()
 //     only fire on the OUTERMOST begin/end transition
-//     (modelChangeDepth 0->1 / 1->0 - see beginModel3DChange()'s own
+//     (model3DChangeDepth 0->1 / 1->0 - see beginModel3DChange()'s own
 //     comment), so a composite action like Delete3D.selection() (which
 //     now wraps its own several sub-steps, each already wrapped
 //     themselves, in one more begin/end pair around the whole thing)

@@ -16,7 +16,7 @@ import java.nio.file.Path;
 // No frameCount simulation anywhere in this file, unlike the previous
 // version - coalescing a composite action (several nested
 // beginModel3DChange()/endModel3DChange() pairs) into one history entry is
-// now a property of modelChangeDepth itself, not something that needs a
+// now a property of model3DChangeDepth itself, not something that needs a
 // stand-in for draw()'s own frame loop to exercise.
 class UndoRedoTest {
 
@@ -175,20 +175,20 @@ class UndoRedoTest {
     // See endModel3DChange()'s own comment: a call site that was only
     // mechanically renamed (model_changed() -> endModel3DChange()),
     // without yet getting its own beginModel3DChange(), must not
-    // permanently wedge modelChangeDepth for every later, properly
+    // permanently wedge model3DChangeDepth for every later, properly
     // paired edit in the same session. The stray call itself still
-    // records a step (modelChangeDepth genuinely does return to 0, and
+    // records a step (model3DChangeDepth genuinely does return to 0, and
     // commitUndoableEdit() can't tell "a real edit whose begin() got
     // missed" apart from "truly nothing happened" - this is the same
     // safe degradation to the old post-edit-only behavior that every
     // not-yet-converted call site elsewhere in the app currently gets) -
-    // what actually matters here is only that modelChangeDepth itself
+    // what actually matters here is only that model3DChangeDepth itself
     // comes back to a clean 0, not negative, so every LATER properly
     // paired edit keeps working normally afterward.
     seed();
 
     app.endModel3DChange(); // stray - no matching begin
-    assertEquals(0, app.modelChangeDepth, "should clamp at 0, not go negative");
+    assertEquals(0, app.model3DChangeDepth, "should clamp at 0, not go negative");
     assertEquals(2, app.model3DHistory.size(), "the stray call still closes out and records a step - that's expected, not what's under test here");
 
     simulateEdit(); // a normal, correctly paired edit afterward

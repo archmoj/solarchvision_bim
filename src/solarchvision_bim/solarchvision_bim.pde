@@ -250,7 +250,7 @@ void keyPressed (KeyEvent e) {
           if (e.isShiftDown()) {
             // callAction("Undo Viewport Change");
           } else {
-            callAction("Undo Model Change");
+            callAction("Undo Model3D Change");
           }
           redraw();
           return;
@@ -260,7 +260,7 @@ void keyPressed (KeyEvent e) {
           if (e.isShiftDown()) {
             // callAction("Redo Viewport Change");
           } else {
-            callAction("Redo Model Change");
+            callAction("Redo Model3D Change");
           }
           redraw();
           return;

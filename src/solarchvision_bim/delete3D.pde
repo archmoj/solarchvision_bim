@@ -145,7 +145,7 @@ class Delete3D {
   // runs BOTH faceSelection() and isolatedVertices_Selection(), which
   // used to mean two steps for what's one "Delete" to the person using
   // the app - see beginModel3DChange()'s own comment on nesting). With it,
-  // every sub-method's own begin/end pair runs nested (modelChangeDepth
+  // every sub-method's own begin/end pair runs nested (model3DChangeDepth
   // already > 0 by the time they're reached) and correctly becomes a
   // no-op as far as the undo history is concerned - only this outer
   // pair's own 0->1/1->0 transition actually records anything.

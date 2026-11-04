@@ -555,7 +555,7 @@ void _fileSelected_ImportIfc (File selectedFile) {
     // the whole import - so no extra endModel3DChange() call is needed
     // here. The beginModel3DChange() added above is still needed, though:
     // it's what makes import_objects_IFC()'s own trailing endModel3DChange()
-    // close out THIS function's own beginNewGroup() too (modelChangeDepth
+    // close out THIS function's own beginNewGroup() too (model3DChangeDepth
     // 1 -> 0, once import_objects_IFC() itself gets its own
     // beginModel3DChange() added later it'll nest instead, 2 -> 1, with no
     // change needed here) - without it, the group creation a few lines

@@ -258,11 +258,11 @@ void build_allActions() {
   // the Ctrl+Z / Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
   // these two actions are step one (the trigger), wired ahead of the
   // storage layer itself.
-  putAction("Undo Model Change", () -> {
+  putAction("Undo Model3D Change", () -> {
     undoModel3DChange();
   });
 
-  putAction("Redo Model Change", () -> {
+  putAction("Redo Model3D Change", () -> {
     redoModel3DChange();
   });
 

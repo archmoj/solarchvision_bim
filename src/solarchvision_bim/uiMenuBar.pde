@@ -94,8 +94,11 @@ class UI_menuBar {
     ,
     {
       "Tools",
-      "Undo Model Change",
-      "Redo Model Change",
+      "Undo Model3D Change",
+      "Redo Model3D Change",
+      ___divider___,
+      "Undo Viewport3D Change",
+      "Redo Viewport3D Change",
       ___divider___,
       "Save JPG Time Graph",
       "Save PDF Time Graph",
