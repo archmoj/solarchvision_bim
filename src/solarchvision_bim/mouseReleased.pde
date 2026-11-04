@@ -67,14 +67,14 @@ void finishWin3DSelection() {
   if (isRectSelectTask()) {
     performRectSelect();
   }
-  if (WIN3D.currentTool == UITASK.GetLength) {
+  if (User3D.currentTool == UITASK.GetLength) {
     performGetLengthMeasurement();
   }
 }
 
 boolean isRectSelectTask() {
-  return (WIN3D.currentTool == UITASK.RectSelect) ||
-         (WIN3D.currentTool > UITASK.Move);
+  return (User3D.currentTool == UITASK.RectSelect) ||
+         (User3D.currentTool > UITASK.Move);
 }
 
 void performRectSelect() {

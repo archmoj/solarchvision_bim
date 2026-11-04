@@ -7,13 +7,13 @@ class Drop3D {
     else if (currentObjectCategory == ObjectCategory.MODEL2D) this.Model2Ds();
   }
 
-  // Casts one ray from ray_start in ray_direction. WIN3D.toolParameterModifier selects
+  // Casts one ray from ray_start in ray_direction. User3D.toolParameterModifier selects
   // the target: 0 = Terrain, faceParam = allFaces, anything else = no hit.
   float[] castRay (float[] ray_start, float[] ray_direction, int faceParam) {
-    if (WIN3D.toolParameterModifier == 0) {
+    if (User3D.toolParameterModifier == 0) {
       return Terrain.intersect(ray_start, ray_direction);
     }
-    if (WIN3D.toolParameterModifier == faceParam) {
+    if (User3D.toolParameterModifier == faceParam) {
       return allFaces.intersect(ray_start, ray_direction);
     }
 

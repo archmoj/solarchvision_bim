@@ -513,7 +513,7 @@ class UndoRedoTest {
     app.Select3D.positionVectorIndex = 0; // X axis
     float xBefore = app.allPoints.getX(0);
 
-    app.WIN3D.currentTool = app.UITASK.Move;
+    app.User3D.currentTool = app.UITASK.Move;
     app.WIN3D.incrementParameter(1); // one nudge, dx = 0.5 * 1 = 0.5
 
     assertEquals(xBefore + 0.5f, app.allPoints.getX(0), 0.0001f, "setup check");

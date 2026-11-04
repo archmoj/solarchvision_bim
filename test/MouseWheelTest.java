@@ -278,7 +278,7 @@ class MouseWheelTest {
 
   @Test
   void handleTargetRollXYZWheel_rotatesXWhenOptionXorYIsZero () {
-    app.WIN3D.targetAxisIndex = 0;
+    app.User3D.targetAxisIndex = 0;
     app.WIN3D.rotationStep = 2;
     app.WIN3D.rotationX = 0;
     app.WIN3D.rotationZ = 5;
@@ -291,7 +291,7 @@ class MouseWheelTest {
 
   @Test
   void handleTargetRollXYZWheel_rotatesZWhenOptionXorYIsOne () {
-    app.WIN3D.targetAxisIndex = 1;
+    app.User3D.targetAxisIndex = 1;
     app.WIN3D.rotationStep = 2;
     app.WIN3D.rotationX = 5;
     app.WIN3D.rotationZ = 0;
@@ -350,8 +350,8 @@ class MouseWheelTest {
 
   @Test
   void handleTruckOrbitWheel_truckModeOptionXorYZeroAdjustsPositionXOnly () {
-    app.WIN3D.toolParameterModifier = 0; // Truck
-    app.WIN3D.targetAxisIndex = 0;
+    app.User3D.toolParameterModifier = 0; // Truck
+    app.User3D.targetAxisIndex = 0;
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
     app.WIN3D.positionX = 0;
@@ -365,8 +365,8 @@ class MouseWheelTest {
 
   @Test
   void handleTruckOrbitWheel_orbitModeOptionXorYOneAdjustsRotationZOnly () {
-    app.WIN3D.toolParameterModifier = 1; // Orbit
-    app.WIN3D.targetAxisIndex = 1;
+    app.User3D.toolParameterModifier = 1; // Orbit
+    app.User3D.targetAxisIndex = 1;
     app.WIN3D.rotationStep = 1;
     app.WIN3D.rotationX = 0;
     app.WIN3D.rotationZ = 0;
@@ -381,7 +381,7 @@ class MouseWheelTest {
 
   @Test
   void handleViewportWheel_zoomOrbitPanZoomsTheViewport () {
-    app.WIN3D.currentTool = app.UITASK.zoom_Orbit_Pan;
+    app.User3D.currentTool = app.UITASK.zoom_Orbit_Pan;
     app.WIN3D.projectionTypeIndex = 0;
     app.WIN3D.zoom = 10;
 
@@ -392,7 +392,7 @@ class MouseWheelTest {
 
   @Test
   void handleViewportWheel_panHeightAdjustsElevationNotZoomMultiplicatively () {
-    app.WIN3D.currentTool = app.UITASK.Pan_Height;
+    app.User3D.currentTool = app.UITASK.Pan_Height;
     app.WIN3D.zoom = 60;
 
     app.handleViewportWheel(1);
@@ -403,7 +403,7 @@ class MouseWheelTest {
 
   @Test
   void handleViewportWheel_modelSizeScalesObjects () {
-    app.WIN3D.currentTool = app.UITASK.ModelSize_Pan_TargetRoll;
+    app.User3D.currentTool = app.UITASK.ModelSize_Pan_TargetRoll;
     app.overallScale = 1;
 
     app.handleViewportWheel(1);

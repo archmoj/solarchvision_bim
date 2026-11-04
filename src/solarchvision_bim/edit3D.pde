@@ -27,20 +27,20 @@ class Edit3D {
 
   // Shared by Faces() and Groups() (for the faces owned by a group).
   void adjustFaceProperties (int f, int p) {
-    if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial(f, clamp(allFaces.getMaterial(f) + p, 0, 8));
-    else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, clamp(allFaces.getTessellation(f) + p, 0, 4));
-    else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer(f, clamp(allFaces.getLayer(f) + p, 0, 16));
-    else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility(f, clamp(allFaces.getVisibility(f) + p, 0, 2));
-    else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setWeight(f, clamp(allFaces.getWeight(f) + p, -20, 20));
+    if (User3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial(f, clamp(allFaces.getMaterial(f) + p, 0, 8));
+    else if (User3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, clamp(allFaces.getTessellation(f) + p, 0, 4));
+    else if (User3D.currentTool == UITASK.Layer)         allFaces.setLayer(f, clamp(allFaces.getLayer(f) + p, 0, 16));
+    else if (User3D.currentTool == UITASK.Visibility)    allFaces.setVisibility(f, clamp(allFaces.getVisibility(f) + p, 0, 2));
+    else if (User3D.currentTool == UITASK.Weight)        allFaces.setWeight(f, clamp(allFaces.getWeight(f) + p, -20, 20));
   }
 
   // Shared by Polylines() and Groups() (for the polylines owned by a group).
   void adjustPolylineProperties (int f, int p) {
-    if (WIN3D.currentTool == UITASK.Seed_Material) allPolylines.setMaterial(f, clamp(allPolylines.getMaterial(f) + p, 0, 8));
-    else if (WIN3D.currentTool == UITASK.Tessellation)  allPolylines.setTessellation(f, clamp(allPolylines.getTessellation(f) + p, 0, 4));
-    else if (WIN3D.currentTool == UITASK.Layer)         allPolylines.setLayer(f, clamp(allPolylines.getLayer(f) + p, 0, 16));
-    else if (WIN3D.currentTool == UITASK.Visibility)    allPolylines.setVisibility(f, clamp(allPolylines.getVisibility(f) + p, 0, 2));
-    else if (WIN3D.currentTool == UITASK.Weight)        allPolylines.setWeight(f, clamp(allPolylines.getWeight(f) + p, -20, 20));
+    if (User3D.currentTool == UITASK.Seed_Material) allPolylines.setMaterial(f, clamp(allPolylines.getMaterial(f) + p, 0, 8));
+    else if (User3D.currentTool == UITASK.Tessellation)  allPolylines.setTessellation(f, clamp(allPolylines.getTessellation(f) + p, 0, 4));
+    else if (User3D.currentTool == UITASK.Layer)         allPolylines.setLayer(f, clamp(allPolylines.getLayer(f) + p, 0, 16));
+    else if (User3D.currentTool == UITASK.Visibility)    allPolylines.setVisibility(f, clamp(allPolylines.getVisibility(f) + p, 0, 2));
+    else if (User3D.currentTool == UITASK.Weight)        allPolylines.setWeight(f, clamp(allPolylines.getWeight(f) + p, -20, 20));
   }
 
   void Faces (int p) {
@@ -79,11 +79,11 @@ class Edit3D {
     for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
       int OBJ_ID = Select3D.model1DSelection[o];
 
-      if (WIN3D.currentTool == UITASK.Seed_Material) {
+      if (User3D.currentTool == UITASK.Seed_Material) {
         allModel1Ds.setSeed(OBJ_ID, allModel1Ds.getSeed(OBJ_ID) + p);
       }
 
-      else if (WIN3D.currentTool == UITASK.DegreeMax) {
+      else if (User3D.currentTool == UITASK.DegreeMax) {
         int q = allModel1Ds.getDegreeMax(OBJ_ID) + p;
         if (q < 0) q = 12; // wraps, not a clamp
         if (q > 12) q = 0;
@@ -93,35 +93,35 @@ class Edit3D {
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.BranchTilt) {
+      else if (User3D.currentTool == UITASK.BranchTilt) {
         float q = allModel1Ds.getBranchTilt(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTilt(OBJ_ID, q);
         User3D.creatorModel1DBranchTilt = q;
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.BranchTwist) {
+      else if (User3D.currentTool == UITASK.BranchTwist) {
         float q = allModel1Ds.getBranchTwist(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTwist(OBJ_ID, q);
         User3D.creatorModel1DBranchTwist = q;
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.BranchRatio) {
+      else if (User3D.currentTool == UITASK.BranchRatio) {
         float q = clampF(allModel1Ds.getBranchRatio(OBJ_ID) + 0.02 * p, 0.1, 1.0);
         allModel1Ds.setBranchRatio(OBJ_ID, q);
         User3D.creatorModel1DBranchRatio = q;
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.TreeBase) {
+      else if (User3D.currentTool == UITASK.TreeBase) {
         float q = clampF(allModel1Ds.getTreeBase(OBJ_ID) + 0.02 * p, 0.0, 4.0);
         allModel1Ds.setTreeBase(OBJ_ID, q);
         User3D.creatorModel1DTreeBase = q;
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.TrunkSize) {
+      else if (User3D.currentTool == UITASK.TrunkSize) {
         float q = allModel1Ds.getTrunkSize(OBJ_ID) + 0.02 * p;
         if (q < 0) q = 0;
 
@@ -130,7 +130,7 @@ class Edit3D {
         UI_rollout.revise();
       }
 
-      else if (WIN3D.currentTool == UITASK.LeafSize) {
+      else if (User3D.currentTool == UITASK.LeafSize) {
         float q = allModel1Ds.getLeafSize(OBJ_ID) + 0.02 * p;
         if (q < 0) q = 0;
 
@@ -145,7 +145,7 @@ class Edit3D {
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int OBJ_ID = Select3D.model2DSelection[o];
 
-      if (WIN3D.currentTool != UITASK.Seed_Material) continue;
+      if (User3D.currentTool != UITASK.Seed_Material) continue;
 
       Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
       boolean mirror = allModel2Ds.Mirror[OBJ_ID];
@@ -167,7 +167,7 @@ class Edit3D {
     for (int o = Select3D.cameraSelection.length - 1; o >= 0; o--) {
       int f = Select3D.cameraSelection[o];
 
-      if (WIN3D.currentTool == UITASK.Seed_Material) {
+      if (User3D.currentTool == UITASK.Seed_Material) {
         int n = clamp(allCameras.get_type(f) + p, 0, 1);
         allCameras.set_type(f, n);
 
@@ -182,12 +182,12 @@ class Edit3D {
     for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
       int f = Select3D.sectionSelection[o];
 
-      if (WIN3D.currentTool == UITASK.Seed_Material) {
+      if (User3D.currentTool == UITASK.Seed_Material) {
         allSections.set_type(f, clamp(allSections.get_type(f) + p, 0, 3));
         allSolids_updated = true;
       }
 
-      else if (WIN3D.currentTool == UITASK.Tessellation) {
+      else if (User3D.currentTool == UITASK.Tessellation) {
         int n = allSections.get_res1(f);
         if (p > 0) n *= 2;
         else if (p < 0) n /= 2;
@@ -209,8 +209,8 @@ class Edit3D {
     for (int o = Select3D.solidSelection.length - 1; o >= 0; o--) {
       int f = Select3D.solidSelection[o];
 
-      boolean isPowerTask = (WIN3D.currentTool == UITASK.PowerX) || (WIN3D.currentTool == UITASK.PowerY) ||
-                            (WIN3D.currentTool == UITASK.PowerZ) || (WIN3D.currentTool == UITASK.PowerAll);
+      boolean isPowerTask = (User3D.currentTool == UITASK.PowerX) || (User3D.currentTool == UITASK.PowerY) ||
+                            (User3D.currentTool == UITASK.PowerZ) || (User3D.currentTool == UITASK.PowerAll);
       if (!isPowerTask) continue;
 
       float Solid_powX = allSolids.get_powX(f);
@@ -218,10 +218,10 @@ class Edit3D {
       float Solid_powZ = allSolids.get_powZ(f);
 
       float n = 2;
-      if (WIN3D.currentTool == UITASK.PowerX) n = Solid_powX;
-      else if (WIN3D.currentTool == UITASK.PowerY) n = Solid_powY;
-      else if (WIN3D.currentTool == UITASK.PowerZ) n = Solid_powZ;
-      else if (WIN3D.currentTool == UITASK.PowerAll) n = Solid_powX;
+      if (User3D.currentTool == UITASK.PowerX) n = Solid_powX;
+      else if (User3D.currentTool == UITASK.PowerY) n = Solid_powY;
+      else if (User3D.currentTool == UITASK.PowerZ) n = Solid_powZ;
+      else if (User3D.currentTool == UITASK.PowerAll) n = Solid_powX;
 
       if (p > 0) n *= 2;
       else if (p < 0) n /= 2;
@@ -229,10 +229,10 @@ class Edit3D {
       if (n > CubePower) n = StarPower; // wraps, not a clamp
       else if (n < StarPower) n = CubePower;
 
-      if (WIN3D.currentTool == UITASK.PowerX) Solid_powX = n;
-      else if (WIN3D.currentTool == UITASK.PowerY) Solid_powY = n;
-      else if (WIN3D.currentTool == UITASK.PowerZ) Solid_powZ = n;
-      else if (WIN3D.currentTool == UITASK.PowerAll) {
+      if (User3D.currentTool == UITASK.PowerX) Solid_powX = n;
+      else if (User3D.currentTool == UITASK.PowerY) Solid_powY = n;
+      else if (User3D.currentTool == UITASK.PowerZ) Solid_powZ = n;
+      else if (User3D.currentTool == UITASK.PowerAll) {
         Solid_powX = n;
         Solid_powY = n;
         Solid_powZ = n;

@@ -115,17 +115,17 @@ void handleWin3DWheel(float wheelValue) {
 
 
 void handleObjectEditWheel(float wheelValue, float x0, float y0, float z0) {
-  if (WIN3D.currentTool == UITASK.Rotate) {
+  if (User3D.currentTool == UITASK.Rotate) {
     handleRotateWheel(wheelValue, x0, y0, z0);
   }
-  if (WIN3D.currentTool == UITASK.Scale) {
+  if (User3D.currentTool == UITASK.Scale) {
     handleScaleWheel(wheelValue, x0, y0, z0);
   }
-  if (WIN3D.currentTool == UITASK.Move) {
+  if (User3D.currentTool == UITASK.Move) {
     handleMoveWheel(wheelValue);
   }
-  if (WIN3D.toolParameterModifier == 0) {
-    if (WIN3D.currentTool >= UITASK.Seed_Material) { // other properties
+  if (User3D.toolParameterModifier == 0) {
+    if (User3D.currentTool >= UITASK.Seed_Material) { // other properties
       handlePropertyEditWheel(wheelValue);
     }
   }
@@ -164,63 +164,63 @@ void handlePropertyEditWheel(float wheelValue) {
 
 
 void handleViewportWheel(float wheelValue) {
-  if ((WIN3D.currentTool == UITASK.zoom_Orbit_Pan) ||
-      (WIN3D.currentTool == UITASK.CameraRoll_Pan) ||
-      (WIN3D.currentTool == UITASK.TargetRoll_Pan) ||
-      (WIN3D.currentTool == UITASK.Pan_TargetRoll)) { // viewport:zoom
+  if ((User3D.currentTool == UITASK.zoom_Orbit_Pan) ||
+      (User3D.currentTool == UITASK.CameraRoll_Pan) ||
+      (User3D.currentTool == UITASK.TargetRoll_Pan) ||
+      (User3D.currentTool == UITASK.Pan_TargetRoll)) { // viewport:zoom
     zoomWin3DViewport(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.Pan_Height) { // viewport:elevation
+  if (User3D.currentTool == UITASK.Pan_Height) { // viewport:elevation
     adjustWin3DElevationWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
+  if (User3D.currentTool == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
     scaleObjectsWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.Truck_Orbit) { // viewport:different functions with wheel
+  if (User3D.currentTool == UITASK.Truck_Orbit) { // viewport:different functions with wheel
     handleTruckOrbitWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.SkydomeSize) { // viewport:different functions with wheel
-    if (WIN3D.toolParameterModifier == 0) { // SkydomeSize
+  if (User3D.currentTool == UITASK.SkydomeSize) { // viewport:different functions with wheel
+    if (User3D.toolParameterModifier == 0) { // SkydomeSize
       scaleSkydomeWheel(wheelValue);
     }
   }
 
-  if (WIN3D.currentTool == UITASK.AllModelSize) { // viewport:different functions with wheel
-    if (WIN3D.toolParameterModifier == 0) { // AllModelSize
+  if (User3D.currentTool == UITASK.AllModelSize) { // viewport:different functions with wheel
+    if (User3D.toolParameterModifier == 0) { // AllModelSize
       scaleAllModelWheel(wheelValue);
     }
   }
 
-  if (WIN3D.currentTool == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRollZ
+  if (User3D.currentTool == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRollZ
     handleTargetRollXYZWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRollZ
+  if (User3D.currentTool == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRollZ
     handleCameraRollXYZWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
+  if (User3D.currentTool == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
     moveWin3DTowardsSelection(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.PanX_TargetRoll) { // viewport:PanX
+  if (User3D.currentTool == UITASK.PanX_TargetRoll) { // viewport:PanX
     adjustPositionXWheel(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.PanY_TargetRoll) { // viewport:PanY
+  if (User3D.currentTool == UITASK.PanY_TargetRoll) { // viewport:PanY
     adjustPositionYWheel(wheelValue);
   }
 
-  if ((WIN3D.currentTool == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
-      (WIN3D.currentTool == UITASK.PickSelect)) { // viewport:DistMouseXY
+  if ((User3D.currentTool == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
+      (User3D.currentTool == UITASK.PickSelect)) { // viewport:DistMouseXY
     moveWin3DTowardsMouse(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) { // viewport:TerrainOrbit
+  if (User3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) { // viewport:TerrainOrbit
     moveWin3DTowardsMouse(wheelValue);
   }
 }
@@ -278,13 +278,13 @@ void adjustRotationZWheel(float wheelValue) {
 }
 
 void handleTruckOrbitWheel(float wheelValue) {
-  if (WIN3D.toolParameterModifier == 0) { // Truck
-    if (WIN3D.targetAxisIndex == 0) adjustPositionXWheel(wheelValue);
-    if (WIN3D.targetAxisIndex == 1) adjustPositionYWheel(wheelValue);
+  if (User3D.toolParameterModifier == 0) { // Truck
+    if (User3D.targetAxisIndex == 0) adjustPositionXWheel(wheelValue);
+    if (User3D.targetAxisIndex == 1) adjustPositionYWheel(wheelValue);
   }
 
-  if (WIN3D.toolParameterModifier == 1) { // Orbit
-    if (WIN3D.targetAxisIndex == 0) adjustRotationXWheel(wheelValue);
-    if (WIN3D.targetAxisIndex == 1) adjustRotationZWheel(wheelValue);
+  if (User3D.toolParameterModifier == 1) { // Orbit
+    if (User3D.targetAxisIndex == 0) adjustRotationXWheel(wheelValue);
+    if (User3D.targetAxisIndex == 1) adjustRotationZWheel(wheelValue);
   }
 }

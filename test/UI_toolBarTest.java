@@ -209,20 +209,20 @@ class UI_toolBarTest {
   void changeSeedMaterial_allFourSubOptions () {
     items("", "0");
     app.UI_toolBar.performAction("Change Seed/Material", 0, 1);
-    assertEquals(app.UITASK.Seed_Material, app.WIN3D.currentTool);
-    assertEquals(0, app.WIN3D.toolParameterModifier);
+    assertEquals(app.UITASK.Seed_Material, app.User3D.currentTool);
+    assertEquals(0, app.User3D.toolParameterModifier);
 
     items("", "1");
     app.UI_toolBar.performAction("Change Seed/Material", 0, 1);
-    assertEquals(1, app.WIN3D.toolParameterModifier);
+    assertEquals(1, app.User3D.toolParameterModifier);
 
     items("", "2");
     app.UI_toolBar.performAction("Change Seed/Material", 0, 1);
-    assertEquals(2, app.WIN3D.toolParameterModifier);
+    assertEquals(2, app.User3D.toolParameterModifier);
 
     items("", "3");
     app.UI_toolBar.performAction("Change Seed/Material", 0, 1);
-    assertEquals(3, app.WIN3D.toolParameterModifier);
+    assertEquals(3, app.User3D.toolParameterModifier);
   }
 
   @Test
@@ -230,7 +230,7 @@ class UI_toolBarTest {
     for (int n = 0; n <= 3; n++) {
       items("", String.valueOf(n));
       app.UI_toolBar.performAction("Change Tessellation", 0, 1);
-      assertEquals(n, app.WIN3D.toolParameterModifier);
+      assertEquals(n, app.User3D.toolParameterModifier);
     }
   }
 
@@ -239,7 +239,7 @@ class UI_toolBarTest {
     for (int n = 0; n <= 3; n++) {
       items("", String.valueOf(n));
       app.UI_toolBar.performAction("Change Layer", 0, 1);
-      assertEquals(n, app.WIN3D.toolParameterModifier);
+      assertEquals(n, app.User3D.toolParameterModifier);
     }
   }
 
@@ -248,7 +248,7 @@ class UI_toolBarTest {
     for (int n = 0; n <= 3; n++) {
       items("", String.valueOf(n));
       app.UI_toolBar.performAction("Change Visibility", 0, 1);
-      assertEquals(n, app.WIN3D.toolParameterModifier);
+      assertEquals(n, app.User3D.toolParameterModifier);
     }
   }
 
@@ -257,7 +257,7 @@ class UI_toolBarTest {
     for (int n = 0; n <= 3; n++) {
       items("", String.valueOf(n));
       app.UI_toolBar.performAction("Change Weight", 0, 1);
-      assertEquals(n, app.WIN3D.toolParameterModifier);
+      assertEquals(n, app.User3D.toolParameterModifier);
     }
   }
 
@@ -265,23 +265,23 @@ class UI_toolBarTest {
   void normal_allThreeSubOptions () {
     items("", "1");
     app.UI_toolBar.performAction("Normal", 0, 1);
-    assertEquals(1, app.WIN3D.toolParameterModifier);
+    assertEquals(1, app.User3D.toolParameterModifier);
 
     items("", "2");
     app.UI_toolBar.performAction("Normal", 0, 1);
-    assertEquals(2, app.WIN3D.toolParameterModifier);
+    assertEquals(2, app.User3D.toolParameterModifier);
 
     items("", "3");
     app.UI_toolBar.performAction("Normal", 0, 1);
-    assertEquals(3, app.WIN3D.toolParameterModifier);
+    assertEquals(3, app.User3D.toolParameterModifier);
   }
 
   @Test
   void firstVertex_reusesGetFirstVertexAction () {
     items("", "");
     app.UI_toolBar.performAction("First Vertex", 0, 1);
-    assertEquals(app.UITASK.FirstVertex, app.WIN3D.currentTool);
-    assertEquals(1, app.WIN3D.toolParameterModifier);
+    assertEquals(app.UITASK.FirstVertex, app.User3D.currentTool);
+    assertEquals(1, app.User3D.toolParameterModifier);
   }
 
   // ================= Power / Scale / Move / GetLength / Drop =============
@@ -289,13 +289,13 @@ class UI_toolBarTest {
   @Test
   void power_allFourAxes () {
     app.UI_toolBar.performAction("Power", 0, 1);
-    assertEquals(app.UITASK.PowerX, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PowerX, app.User3D.currentTool);
     app.UI_toolBar.performAction("Power", 0, 2);
-    assertEquals(app.UITASK.PowerY, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PowerY, app.User3D.currentTool);
     app.UI_toolBar.performAction("Power", 0, 3);
-    assertEquals(app.UITASK.PowerZ, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PowerZ, app.User3D.currentTool);
     app.UI_toolBar.performAction("Power", 0, 4);
-    assertEquals(app.UITASK.PowerAll, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PowerAll, app.User3D.currentTool);
   }
 
   @Test
@@ -331,19 +331,19 @@ class UI_toolBarTest {
   void getLength_allFiveSubOptions () {
     for (int n = 0; n <= 4; n++) {
       app.UI_toolBar.performAction("Get Length", 0, n + 1);
-      assertEquals(app.UITASK.GetLength, app.WIN3D.currentTool);
-      assertEquals(n, app.WIN3D.toolParameterModifier);
+      assertEquals(app.UITASK.GetLength, app.User3D.currentTool);
+      assertEquals(n, app.User3D.toolParameterModifier);
     }
   }
 
   @Test
   void drop_allThreeSubOptions () {
     app.UI_toolBar.performAction("Drop", 0, 1);
-    assertEquals(0, app.WIN3D.toolParameterModifier);
+    assertEquals(0, app.User3D.toolParameterModifier);
     app.UI_toolBar.performAction("Drop", 0, 2);
-    assertEquals(1, app.WIN3D.toolParameterModifier);
+    assertEquals(1, app.User3D.toolParameterModifier);
     app.UI_toolBar.performAction("Drop", 0, 3);
-    assertEquals(2, app.WIN3D.toolParameterModifier);
+    assertEquals(2, app.User3D.toolParameterModifier);
   }
 
   // ================= Rotate ("maintain Rotate behavior as is") ===========
@@ -379,7 +379,7 @@ class UI_toolBarTest {
   @Test
   void pickSelect_allThreeSubOptions () {
     app.UI_toolBar.performAction("Pick Select", 0, 1);
-    assertEquals(app.UITASK.PickSelect, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PickSelect, app.User3D.currentTool);
     assertEquals(0, app.addNewSelectionToPreviousSelection);
     app.UI_toolBar.performAction("Pick Select", 0, 2);
     assertEquals(1, app.addNewSelectionToPreviousSelection);
@@ -388,7 +388,7 @@ class UI_toolBarTest {
   @Test
   void windowSelect_reachesRectSelectTool () {
     app.UI_toolBar.performAction("Window Select", 0, 1);
-    assertEquals(app.UITASK.RectSelect, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.RectSelect, app.User3D.currentTool);
   }
 
   @Test
@@ -410,15 +410,15 @@ class UI_toolBarTest {
   @Test
   void terrainOrbit_reusesTerrainOrbitAction () {
     app.UI_toolBar.performAction("Terrain Orbit", 0, 1);
-    assertEquals(app.UITASK.TerrainOrbit_Pan_TargetRollZ, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.TerrainOrbit_Pan_TargetRollZ, app.User3D.currentTool);
   }
 
   @Test
   void orbit_allThreeSubOptions () {
     app.UI_toolBar.performAction("Orbit", 0, 1);
-    assertEquals(app.UITASK.zoom_Orbit_Pan, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.zoom_Orbit_Pan, app.User3D.currentTool);
     app.UI_toolBar.performAction("Orbit", 0, 2);
-    assertEquals(app.UITASK.Truck_Orbit, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.Truck_Orbit, app.User3D.currentTool);
   }
 
   @Test
@@ -426,29 +426,29 @@ class UI_toolBarTest {
     // TruckZ->Truck(0), TruckX->Truck(1), TruckY->Truck(2) - not a
     // simple sequential index-to-name mapping, verified precisely.
     app.UI_toolBar.performAction("Truck", 0, 1); // j-1=0 -> TruckZ
-    assertEquals(app.UITASK.zoom_Orbit_Pan, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.zoom_Orbit_Pan, app.User3D.currentTool);
 
     app.UI_toolBar.performAction("Truck", 0, 2); // j-1=1 -> TruckX
-    assertEquals(app.UITASK.Truck_Orbit, app.WIN3D.currentTool);
-    assertEquals(0, app.WIN3D.targetAxisIndex);
+    assertEquals(app.UITASK.Truck_Orbit, app.User3D.currentTool);
+    assertEquals(0, app.User3D.targetAxisIndex);
 
     app.UI_toolBar.performAction("Truck", 0, 3); // j-1=2 -> TruckY
-    assertEquals(app.UITASK.Truck_Orbit, app.WIN3D.currentTool);
-    assertEquals(1, app.WIN3D.targetAxisIndex);
+    assertEquals(app.UITASK.Truck_Orbit, app.User3D.currentTool);
+    assertEquals(1, app.User3D.targetAxisIndex);
   }
 
   @Test
   void distZ_forwardsToTruckZ_matchingTheOriginalsOwnComment () {
     app.UI_toolBar.performAction("Dist Z", 0, 1);
-    assertEquals(app.UITASK.zoom_Orbit_Pan, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.zoom_Orbit_Pan, app.User3D.currentTool);
   }
 
   @Test
   void pan_allThreeSubOptions () {
     app.UI_toolBar.performAction("Pan", 0, 1);
-    assertEquals(app.UITASK.Pan_TargetRoll, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.Pan_TargetRoll, app.User3D.currentTool);
     app.UI_toolBar.performAction("Pan", 0, 2);
-    assertEquals(app.UITASK.PanX_TargetRoll, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.PanX_TargetRoll, app.User3D.currentTool);
   }
 
   @Test
@@ -459,28 +459,28 @@ class UI_toolBarTest {
     // still happen.
     app.UI_toolBar.Items = new String[][]{{"0"}};
     app.UI_toolBar.performAction("Zoom", 0, 1);
-    assertEquals(app.UITASK.Pan_Height, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.Pan_Height, app.User3D.currentTool);
     assertEquals("1", app.UI_toolBar.Items[0][0]);
   }
 
   @Test
   void cameraDistance_distXY_reuseExistingActions () {
     app.UI_toolBar.performAction("Camera Distance", 0, 1);
-    assertEquals(app.UITASK.CameraDistance_TargetRollXY_TargetRollZ, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.CameraDistance_TargetRollXY_TargetRollZ, app.User3D.currentTool);
 
     app.UI_toolBar.performAction("Dist XY", 0, 1);
-    assertEquals(app.UITASK.DistMouseXY_TargetRollXY_TargetRollZ, app.WIN3D.currentTool);
+    assertEquals(app.UITASK.DistMouseXY_TargetRollXY_TargetRollZ, app.User3D.currentTool);
   }
 
   @Test
   void orbitStyleTriples_cameraRollAndTargetRoll () {
     app.UI_toolBar.performAction("Camera Roll", 0, 2); // j-1=1 -> CameraRollZ
-    assertEquals(app.UITASK.CameraRollXY_CameraRollZ, app.WIN3D.currentTool);
-    assertEquals(0, app.WIN3D.toolParameterModifier);
+    assertEquals(app.UITASK.CameraRollXY_CameraRollZ, app.User3D.currentTool);
+    assertEquals(0, app.User3D.toolParameterModifier);
 
     app.UI_toolBar.performAction("Target Roll", 0, 2); // j-1=1 -> TargetRollZ
-    assertEquals(app.UITASK.TargetRollXY_TargetRollZ, app.WIN3D.currentTool);
-    assertEquals(0, app.WIN3D.toolParameterModifier);
+    assertEquals(app.UITASK.TargetRollXY_TargetRollZ, app.User3D.currentTool);
+    assertEquals(0, app.User3D.toolParameterModifier);
   }
 
   @Test

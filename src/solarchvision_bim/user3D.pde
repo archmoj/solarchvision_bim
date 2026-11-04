@@ -64,6 +64,10 @@ class User3D {
   boolean exporterDoubleSided = true;
   int exporterColorScaleResolution = 256;
 
+  int currentTool = UITASK.zoom_Orbit_Pan;
+  int targetAxisIndex = 0; // 0-1
+  int toolParameterModifier = 0; //to modify objects with several parameters e.g. allModel1Ds
+
   public void to_XML (XML xml) {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
@@ -119,6 +123,9 @@ class User3D {
     XML_setBoolean(parent, "exporterDoubleSided", this.exporterDoubleSided);
     XML_setInt(parent, "exporterColorScaleResolution", this.exporterColorScaleResolution);
 
+    XML_setInt(parent, "currentTool", this.currentTool);
+    XML_setInt(parent, "targetAxisIndex", this.targetAxisIndex);
+    XML_setInt(parent, "toolParameterModifier", this.toolParameterModifier);
   }
 
 
@@ -180,6 +187,9 @@ class User3D {
     this.exporterDoubleSided = XML_getBoolean(parent, "exporterDoubleSided");
     this.exporterColorScaleResolution = XML_getInt(parent, "exporterColorScaleResolution");
 
+    this.currentTool = XML_getInt(parent, "currentTool");
+    this.targetAxisIndex = XML_getInt(parent, "targetAxisIndex");
+    this.toolParameterModifier = XML_getInt(parent, "toolParameterModifier");
   }
 
 

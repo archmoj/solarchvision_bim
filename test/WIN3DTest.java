@@ -303,7 +303,7 @@ class WIN3DTest {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.rotationVectorIndex = 2; // Z axis
 
-    app.WIN3D.currentTool = app.UITASK.Rotate;
+    app.User3D.currentTool = app.UITASK.Rotate;
     app.WIN3D.handleShiftedArrowKeys(app.UP); // +5 degrees around Z, per the source
 
     // A 5deg rotation around Z should move the point off the X axis.
@@ -318,7 +318,7 @@ class WIN3DTest {
     app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
 
-    app.WIN3D.currentTool = app.UITASK.Move;
+    app.User3D.currentTool = app.UITASK.Move;
     app.WIN3D.handleShiftedArrowKeys(app.UP); // +0.5 along Z only
 
     assertEquals(0f, app.allVertices[0][0], 0.0001f);
@@ -784,9 +784,6 @@ class WIN3DTest {
     app.WIN3D.zoom = 60;
     app.WIN3D.projectionTypeIndex = 0;
     app.WIN3D.shadingMode = 2;
-    app.WIN3D.currentTool = 1;
-    app.WIN3D.targetAxisIndex = 1;
-    app.WIN3D.toolParameterModifier = 1;
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -802,7 +799,6 @@ class WIN3DTest {
     assertEquals(60f, fresh.zoom, 0.0001f);
     assertEquals(0, fresh.projectionTypeIndex);
     assertEquals(2, fresh.shadingMode);
-    assertEquals(1, fresh.currentTool);
     assertEquals(app.Impact_PASSIVE, fresh.impactTypeIndex);
   }
 
@@ -869,7 +865,7 @@ class WIN3DTest {
     app.WIN3D.navKeyAlt = false;
     app.WIN3D.navKeyShift = true;
     app.WIN3D.navKeyCode = app.UP;
-    app.WIN3D.currentTool = app.UITASK.Move;
+    app.User3D.currentTool = app.UITASK.Move;
 
     app.WIN3D.dispatchNavKey(); // -> handleShiftedArrowKeys -> Move3D.selection
 

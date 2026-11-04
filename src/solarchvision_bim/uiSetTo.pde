@@ -2,7 +2,7 @@ void UI_setTo_Create_Nothing () {
 
   CreateObject = CREATE.Nothing;
 
-  WIN3D.currentTool = UITASK.Create;
+  User3D.currentTool = UITASK.Create;
 
   UI_rollout.revise();
 }
@@ -245,7 +245,7 @@ void UI_setTo_Create_Cushion () {
 
 
 void UI_setTo_Modify_Move (int n) {
-  WIN3D.currentTool = UITASK.Move;
+  User3D.currentTool = UITASK.Move;
 
   Select3D.positionVectorIndex = n;
 
@@ -253,7 +253,7 @@ void UI_setTo_Modify_Move (int n) {
 }
 
 void UI_setTo_Modify_Scale (int n) {
-  WIN3D.currentTool = UITASK.Scale;
+  User3D.currentTool = UITASK.Scale;
 
   Select3D.scaleVectorIndex = n;
 
@@ -262,7 +262,7 @@ void UI_setTo_Modify_Scale (int n) {
 
 
 void UI_setTo_Modify_Rotate (int n) {
-  WIN3D.currentTool = UITASK.Rotate;
+  User3D.currentTool = UITASK.Rotate;
 
   Select3D.rotationVectorIndex = n;
 
@@ -270,114 +270,114 @@ void UI_setTo_Modify_Rotate (int n) {
 }
 
 void UI_setTo_Modify_Seed (int n) {
-  WIN3D.currentTool = UITASK.Seed_Material;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Seed_Material;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Tessellation (int n) {
-  WIN3D.currentTool = UITASK.Tessellation;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Tessellation;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Layer (int n) {
-  WIN3D.currentTool = UITASK.Layer;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Layer;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Visibility (int n) {
-  WIN3D.currentTool = UITASK.Visibility;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Visibility;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Weight (int n) {
-  WIN3D.currentTool = UITASK.Weight;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Weight;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_DegreeMax (int n) {
-  WIN3D.currentTool = UITASK.DegreeMax;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.DegreeMax;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchTilt (int n) {
-  WIN3D.currentTool = UITASK.BranchTilt;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.BranchTilt;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchTwist (int n) {
-  WIN3D.currentTool = UITASK.BranchTwist;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.BranchTwist;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchRatio (int n) {
-  WIN3D.currentTool = UITASK.BranchRatio;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.BranchRatio;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_TreeBase (int n) {
-  WIN3D.currentTool = UITASK.TreeBase;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.TreeBase;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 
 void UI_setTo_Modify_TrunkSize (int n) {
-  WIN3D.currentTool = UITASK.TrunkSize;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.TrunkSize;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_LeafSize (int n) {
-  WIN3D.currentTool = UITASK.LeafSize;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.LeafSize;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Model1DsProps (int n) {
-  WIN3D.currentTool = UITASK.Model1DsProps;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Model1DsProps;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Pivot (int n) {
-  WIN3D.currentTool = UITASK.Pivot;
-  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
+  User3D.currentTool = UITASK.Pivot;
+  User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Normal (int n) {
-  WIN3D.currentTool = UITASK.Normal;
-  WIN3D.toolParameterModifier = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot
+  User3D.currentTool = UITASK.Normal;
+  User3D.toolParameterModifier = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_FirstVertex (int n) {
-  WIN3D.currentTool = UITASK.FirstVertex;
-  WIN3D.toolParameterModifier = n; // 1:default
+  User3D.currentTool = UITASK.FirstVertex;
+  User3D.toolParameterModifier = n; // 1:default
 
   UI_rollout.revise();
 }
@@ -386,30 +386,30 @@ void UI_setTo_Modify_FirstVertex (int n) {
 
 
 void UI_setTo_Modify_Drop (int n) {
-  WIN3D.currentTool = UITASK.Drop;
+  User3D.currentTool = UITASK.Drop;
 
-  WIN3D.toolParameterModifier = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
+  User3D.toolParameterModifier = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
 
   UI_rollout.revise();
 }
 
 
 void UI_setTo_Modify_GetLength (int n) {
-  WIN3D.currentTool = UITASK.GetLength;
+  User3D.currentTool = UITASK.GetLength;
 
-  WIN3D.toolParameterModifier = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane)
+  User3D.toolParameterModifier = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane)
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Power (int n) {
 
-  if (n == 0) WIN3D.currentTool = UITASK.PowerX; // x
-  if (n == 1) WIN3D.currentTool = UITASK.PowerY; // y
-  if (n == 2) WIN3D.currentTool = UITASK.PowerZ; // z
-  if (n == 3) WIN3D.currentTool = UITASK.PowerAll; // xyz
+  if (n == 0) User3D.currentTool = UITASK.PowerX; // x
+  if (n == 1) User3D.currentTool = UITASK.PowerY; // y
+  if (n == 2) User3D.currentTool = UITASK.PowerZ; // z
+  if (n == 3) User3D.currentTool = UITASK.PowerAll; // xyz
 
-  WIN3D.toolParameterModifier = 0; // 0:change
+  User3D.toolParameterModifier = 0; // 0:change
 
   UI_rollout.revise();
 }
@@ -433,7 +433,7 @@ void UI_setTo_View_ProjectionType (int n) {
 
 void UI_setTo_View_PickSelect (int n) {
 
-  WIN3D.currentTool = UITASK.PickSelect;
+  User3D.currentTool = UITASK.PickSelect;
 
   addNewSelectionToPreviousSelection = 0;
 
@@ -449,7 +449,7 @@ void UI_setTo_View_PickSelect (int n) {
 }
 
 void UI_setTo_View_WindowSelect (int n) {
-  WIN3D.currentTool = UITASK.RectSelect;
+  User3D.currentTool = UITASK.RectSelect;
 
   addNewSelectionToPreviousSelection = 0;
 
@@ -495,19 +495,19 @@ void UI_setTo_View_PivotZ (int n) {
 void UI_setTo_View_Truck (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.zoom_Orbit_Pan;
+    User3D.currentTool = UITASK.zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D.currentTool = UITASK.Truck_Orbit;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 0;
+    User3D.currentTool = UITASK.Truck_Orbit;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.currentTool = UITASK.Truck_Orbit;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 1;
+    User3D.currentTool = UITASK.Truck_Orbit;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -517,7 +517,7 @@ void UI_setTo_View_Truck (int n) {
 void UI_setTo_View_DistMouseXY (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
+    User3D.currentTool = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
   }
 
   UI_rollout.revise();
@@ -528,7 +528,7 @@ void UI_setTo_View_DistMouseXY (int n) {
 void UI_setTo_View_CameraDistance (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
+    User3D.currentTool = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
   }
 
   UI_rollout.revise();
@@ -539,19 +539,19 @@ void UI_setTo_View_CameraDistance (int n) {
 void UI_setTo_View_CameraRoll (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.CameraRoll_Pan;
+    User3D.currentTool = UITASK.CameraRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 0;
+    User3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 1;
+    User3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -562,19 +562,19 @@ void UI_setTo_View_CameraRoll (int n) {
 void UI_setTo_View_TargetRoll (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.TargetRoll_Pan;
+    User3D.currentTool = UITASK.TargetRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 0;
+    User3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
-    WIN3D.toolParameterModifier = 0;
-    WIN3D.targetAxisIndex = 1;
+    User3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
+    User3D.toolParameterModifier = 0;
+    User3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -584,19 +584,19 @@ void UI_setTo_View_TargetRoll (int n) {
 void UI_setTo_View_Orbit (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.zoom_Orbit_Pan;
+    User3D.currentTool = UITASK.zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D.currentTool = UITASK.Truck_Orbit;
-    WIN3D.toolParameterModifier = 1;
-    WIN3D.targetAxisIndex = 0;
+    User3D.currentTool = UITASK.Truck_Orbit;
+    User3D.toolParameterModifier = 1;
+    User3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.currentTool = UITASK.Truck_Orbit;
-    WIN3D.toolParameterModifier = 1;
-    WIN3D.targetAxisIndex = 1;
+    User3D.currentTool = UITASK.Truck_Orbit;
+    User3D.toolParameterModifier = 1;
+    User3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -606,7 +606,7 @@ void UI_setTo_View_Orbit (int n) {
 
 void UI_setTo_View_TerrainOrbit (int n) {
 
-  WIN3D.currentTool = UITASK.TerrainOrbit_Pan_TargetRollZ;
+  User3D.currentTool = UITASK.TerrainOrbit_Pan_TargetRollZ;
 
   UI_rollout.revise();
 }
@@ -630,7 +630,7 @@ void UI_setTo_View_LookAtSelection (int n) {
 
 void UI_setTo_View_LookAtDirection (int n) {
 
-  WIN3D.currentTool = UITASK.LookAtDirection;
+  User3D.currentTool = UITASK.LookAtDirection;
 
   UI_rollout.revise();
 }
@@ -658,15 +658,15 @@ void UI_setTo_View_LookAtOrigin (int n) {
 void UI_setTo_View_Pan (int n) {
 
   if (n == 0) {
-    WIN3D.currentTool = UITASK.Pan_TargetRoll;
+    User3D.currentTool = UITASK.Pan_TargetRoll;
   }
 
   if (n == 1) {
-    WIN3D.currentTool = UITASK.PanX_TargetRoll;
+    User3D.currentTool = UITASK.PanX_TargetRoll;
   }
 
   if (n == 2) {
-    WIN3D.currentTool = UITASK.PanY_TargetRoll;
+    User3D.currentTool = UITASK.PanY_TargetRoll;
   }
 
 
@@ -674,7 +674,7 @@ void UI_setTo_View_Pan (int n) {
 }
 
 void UI_setTo_View_ZOOM (int n) {
-  WIN3D.currentTool = UITASK.Pan_Height;
+  User3D.currentTool = UITASK.Pan_Height;
 
   UI_rollout.revise();
 
@@ -687,7 +687,7 @@ void UI_setTo_View_ZOOM (int n) {
 
 void UI_setTo_View_3DModelSize () {
 
-  WIN3D.currentTool = UITASK.ModelSize_Pan_TargetRoll;
+  User3D.currentTool = UITASK.ModelSize_Pan_TargetRoll;
 
   UI_rollout.revise();
 
@@ -696,7 +696,7 @@ void UI_setTo_View_3DModelSize () {
 
 void UI_setTo_View_SkydomeSize () {
 
-  WIN3D.currentTool = UITASK.SkydomeSize;
+  User3D.currentTool = UITASK.SkydomeSize;
 
   UI_rollout.revise();
 
@@ -705,7 +705,7 @@ void UI_setTo_View_SkydomeSize () {
 
 void UI_setTo_View_AllModelSize () {
 
-  WIN3D.currentTool = UITASK.AllModelSize;
+  User3D.currentTool = UITASK.AllModelSize;
 
   UI_rollout.revise();
 

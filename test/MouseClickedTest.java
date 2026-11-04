@@ -386,7 +386,7 @@ class MouseClickedTest {
   void flipFaceOrientation_reversesWhenTaskModifyParameterIsAlwaysFlip () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
-    app.WIN3D.toolParameterModifier = 1; // always flip
+    app.User3D.toolParameterModifier = 1; // always flip
 
     app.flipFaceOrientationIfNeeded(0);
 
@@ -397,7 +397,7 @@ class MouseClickedTest {
   void flipFaceOrientation_isANoOpForATriangleWithTwoOrFewerNodes () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}};
     app.allFaces.nodes = new int[][]{{0, 1}};
-    app.WIN3D.toolParameterModifier = 1;
+    app.User3D.toolParameterModifier = 1;
 
     app.flipFaceOrientationIfNeeded(0);
 
@@ -416,12 +416,12 @@ class MouseClickedTest {
     }; // pivot at (0,0,1), directly above the triangle
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
-    app.WIN3D.toolParameterModifier = 2;
+    app.User3D.toolParameterModifier = 2;
     app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{2, 1, 0}, app.allFaces.nodes[0]); // flipped
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}}; // reset
-    app.WIN3D.toolParameterModifier = 3;
+    app.User3D.toolParameterModifier = 3;
     app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]); // unchanged
   }
@@ -1036,8 +1036,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_isANoOpWhenTheCurrentTaskIsntOneOfTheFiveProperties () {
-    app.WIN3D.currentTool = app.UITASK.Move; // not one of the five
-    app.WIN3D.toolParameterModifier = 1;
+    app.User3D.currentTool = app.UITASK.Move; // not one of the five
+    app.User3D.toolParameterModifier = 1;
     app.allFaces.options = new int[][]{{9, 9, 9, 9, 9, 9}};
     app.User3D.creatorMaterial = -1;
 
@@ -1048,8 +1048,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_pickReadsTheClickedFacesValueIntoTheMatchingDefault () {
-    app.WIN3D.currentTool = app.UITASK.Seed_Material;
-    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.User3D.currentTool = app.UITASK.Seed_Material;
+    app.User3D.toolParameterModifier = 1; // Pick
     app.allFaces.options = new int[][]{{42, 0, 0, 0, 0, 0}};
 
     app.pickOrAssignFaceProperty(0);
@@ -1059,8 +1059,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_assignSubWritesTheDefaultOntoJustTheClickedFace () {
-    app.WIN3D.currentTool = app.UITASK.Weight;
-    app.WIN3D.toolParameterModifier = 2; // Assign(sub)
+    app.User3D.currentTool = app.UITASK.Weight;
+    app.User3D.toolParameterModifier = 2; // Assign(sub)
     app.User3D.creatorWeight = 7;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
@@ -1072,8 +1072,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_assignAllWritesTheDefaultOntoEveryFaceInTheClickedFacesGroup () {
-    app.WIN3D.currentTool = app.UITASK.Layer;
-    app.WIN3D.toolParameterModifier = 3; // Assign(all)
+    app.User3D.currentTool = app.UITASK.Layer;
+    app.User3D.toolParameterModifier = 3; // Assign(all)
     app.User3D.creatorLayer = 5;
     app.allFaces.options = new int[][]{
       {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
@@ -1096,8 +1096,8 @@ class MouseClickedTest {
     // verbatim rather than fixing: unlike Pick and Assign(sub) just
     // above it, Assign(all)'s Weight case writes via allFaces.setClose,
     // not setWeight.
-    app.WIN3D.currentTool = app.UITASK.Weight;
-    app.WIN3D.toolParameterModifier = 3; // Assign(all)
+    app.User3D.currentTool = app.UITASK.Weight;
+    app.User3D.toolParameterModifier = 3; // Assign(all)
     app.User3D.creatorWeight = 3;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.allGroups.makeEmpty(0);
@@ -1115,8 +1115,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_isANoOpWhenTheCurrentTaskIsntSeedMaterial () {
-    app.WIN3D.currentTool = app.UITASK.Move;
-    app.WIN3D.toolParameterModifier = 1;
+    app.User3D.currentTool = app.UITASK.Move;
+    app.User3D.toolParameterModifier = 1;
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
     app.allModel2Ds.FileIndex = new int[]{5};
     app.allModel2Ds.Mirror = new boolean[]{false};
@@ -1129,8 +1129,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_pickOfAPersonReadsItsLocalIndexIntoCreatePersonType () {
-    app.WIN3D.currentTool = app.UITASK.Seed_Material;
-    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.User3D.currentTool = app.UITASK.Seed_Material;
+    app.User3D.toolParameterModifier = 1; // Pick
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
     app.allModel2Ds.FileIndex = new int[]{3};
 
@@ -1141,8 +1141,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_pickOfATreeReadsItsLocalIndexIntoCreatePlantType () {
-    app.WIN3D.currentTool = app.UITASK.Seed_Material;
-    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.User3D.currentTool = app.UITASK.Seed_Material;
+    app.User3D.toolParameterModifier = 1; // Pick
     // No more peopleFileCount-relative offset to work out by hand - a
     // tree instance's own FileIndex already IS its local plant type.
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
@@ -1155,8 +1155,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_assignWritesTheCurrentTypePreservingTheInstancesOwnMirror () {
-    app.WIN3D.currentTool = app.UITASK.Seed_Material;
-    app.WIN3D.toolParameterModifier = 2; // Assign
+    app.User3D.currentTool = app.UITASK.Seed_Material;
+    app.User3D.toolParameterModifier = 2; // Assign
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
     app.allModel2Ds.FileIndex = new int[]{8};
     app.allModel2Ds.Mirror = new boolean[]{true}; // a flipped tree instance
@@ -1170,8 +1170,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_assignAllIsTreatedTheSameAsAssignSub () {
-    app.WIN3D.currentTool = app.UITASK.Seed_Material;
-    app.WIN3D.toolParameterModifier = 3; // Assign(all) - no group distinction for MODEL2D
+    app.User3D.currentTool = app.UITASK.Seed_Material;
+    app.User3D.toolParameterModifier = 3; // Assign(all) - no group distinction for MODEL2D
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.PEOPLE_KIND};
     app.allModel2Ds.FileIndex = new int[]{2};
     app.allModel2Ds.Mirror = new boolean[]{false};
@@ -1186,8 +1186,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_pickOfASingleTaskReadsOnlyThatOneField () {
-    app.WIN3D.toolParameterModifier = 1; // Pick
-    app.WIN3D.currentTool = app.UITASK.BranchTilt;
+    app.User3D.toolParameterModifier = 1; // Pick
+    app.User3D.currentTool = app.UITASK.BranchTilt;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // create one instance to pick from
     app.allModel1Ds.setBranchTilt(0, 12.5f);
@@ -1202,8 +1202,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_assignOfASingleTaskWritesOnlyThatOneField () {
-    app.WIN3D.toolParameterModifier = 2; // Assign
-    app.WIN3D.currentTool = app.UITASK.TrunkSize;
+    app.User3D.toolParameterModifier = 2; // Assign
+    app.User3D.currentTool = app.UITASK.TrunkSize;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.User3D.creatorModel1DTrunkSize = 6.25f;
@@ -1215,8 +1215,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_model1DsPropsPicksAllThreeCoveredFieldsAtOnce () {
-    app.WIN3D.toolParameterModifier = 1; // Pick
-    app.WIN3D.currentTool = app.UITASK.Model1DsProps;
+    app.User3D.toolParameterModifier = 1; // Pick
+    app.User3D.currentTool = app.UITASK.Model1DsProps;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.allModel1Ds.setDegreeMax(0, 4);
@@ -1232,8 +1232,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_isANoOpWhenModifyParameterIsZero () {
-    app.WIN3D.toolParameterModifier = 0; // neither Pick nor Assign
-    app.WIN3D.currentTool = app.UITASK.BranchTwist;
+    app.User3D.toolParameterModifier = 0; // neither Pick nor Assign
+    app.User3D.currentTool = app.UITASK.BranchTwist;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.allModel1Ds.setBranchTwist(0, 9);
@@ -1656,7 +1656,7 @@ class MouseClickedTest {
     app.WIN3D.cameraY = 0;
     app.WIN3D.cameraZ = 10;
     app.overallScale = 1;
-    app.WIN3D.currentTool = app.UITASK.LookAtDirection;
+    app.User3D.currentTool = app.UITASK.LookAtDirection;
     app.mouseButton = app.RIGHT; // deliberately opposite of LEFT, to confirm restoration below
 
     String hint = app.runScriptLine("LeftClick x=40 y=25");
@@ -1679,7 +1679,7 @@ class MouseClickedTest {
     app.WIN3D.cameraY = 0;
     app.WIN3D.cameraZ = 10;
     app.overallScale = 1;
-    app.WIN3D.currentTool = app.UITASK.LookAtDirection;
+    app.User3D.currentTool = app.UITASK.LookAtDirection;
     app.mouseButton = app.LEFT; // deliberately opposite of RIGHT, to confirm restoration below
 
     String hint = app.runScriptLine("RightClick x=-30 y=15");

@@ -73,7 +73,7 @@ class MouseDraggedTest {
     app.mouseY = 100;
     app.dragging_started = 0;
 
-    app.WIN3D.currentTool = app.UITASK.Pan_TargetRoll;
+    app.User3D.currentTool = app.UITASK.Pan_TargetRoll;
     app.mouseButton = app.LEFT; // -> panBothAxes(dx, dy)
     app.WIN3D.positionStep = 1;
     float beforeX = app.WIN3D.positionX;
@@ -137,7 +137,7 @@ class MouseDraggedTest {
 
   @Test
   void dispatchWin3DTaskDrag_panTargetRollLeftClickPansBothAxes () {
-    app.WIN3D.currentTool = app.UITASK.Pan_TargetRoll;
+    app.User3D.currentTool = app.UITASK.Pan_TargetRoll;
     app.mouseButton = app.LEFT;
     app.WIN3D.positionStep = 2;
     app.WIN3D.positionX = 0;
@@ -151,7 +151,7 @@ class MouseDraggedTest {
 
   @Test
   void dispatchWin3DTaskDrag_panXTargetRollLeftClickPansOnlyX () {
-    app.WIN3D.currentTool = app.UITASK.PanX_TargetRoll;
+    app.User3D.currentTool = app.UITASK.PanX_TargetRoll;
     app.mouseButton = app.LEFT;
     app.WIN3D.positionStep = 1;
     app.WIN3D.positionX = 0;
@@ -165,7 +165,7 @@ class MouseDraggedTest {
 
   @Test
   void dispatchWin3DTaskDrag_zoomOrbitPanRightClickPansInsteadOfOrbiting () {
-    app.WIN3D.currentTool = app.UITASK.zoom_Orbit_Pan;
+    app.User3D.currentTool = app.UITASK.zoom_Orbit_Pan;
     app.mouseButton = app.RIGHT;
     app.WIN3D.positionStep = 1;
     app.WIN3D.positionX = 0;
@@ -183,11 +183,11 @@ class MouseDraggedTest {
     // Per the original's combined conditions: LEFT+OptionXorY==1 (or
     // RIGHT+OptionXorY==0) does rollZ-only; the opposite pairing does
     // rollX-only.
-    app.WIN3D.currentTool = app.UITASK.TargetRollXY_TargetRollZ;
+    app.User3D.currentTool = app.UITASK.TargetRollXY_TargetRollZ;
     app.WIN3D.rotationStep = 1;
 
     app.mouseButton = app.LEFT;
-    app.WIN3D.targetAxisIndex = 1;
+    app.User3D.targetAxisIndex = 1;
     app.WIN3D.rotationZ = 0;
     app.WIN3D.rotationX = 0;
 
@@ -318,8 +318,8 @@ class MouseDraggedTest {
 
   @Test
   void handleTruckOrbitTask_truckModeOptionXorYZeroPansXOnLeftClick () {
-    app.WIN3D.toolParameterModifier = 0; // Truck
-    app.WIN3D.targetAxisIndex = 0;
+    app.User3D.toolParameterModifier = 0; // Truck
+    app.User3D.targetAxisIndex = 0;
     app.mouseButton = app.LEFT;
     app.WIN3D.positionStep = 1;
     app.WIN3D.positionX = 0;
@@ -333,8 +333,8 @@ class MouseDraggedTest {
 
   @Test
   void handleTruckOrbitTask_orbitModeOptionXorYZeroOrbitsXOnLeftClick () {
-    app.WIN3D.toolParameterModifier = 1; // Orbit
-    app.WIN3D.targetAxisIndex = 0;
+    app.User3D.toolParameterModifier = 1; // Orbit
+    app.User3D.targetAxisIndex = 0;
     app.mouseButton = app.LEFT;
     app.WIN3D.rotationStep = 1;
     app.WIN3D.rotationX = 0;

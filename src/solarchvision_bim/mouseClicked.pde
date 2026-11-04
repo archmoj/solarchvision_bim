@@ -92,7 +92,7 @@ void convertAndSwitch(Runnable convert, int newCategory) {
 // handling for a clicked FACE (also reached via GROUP/POLYLINE, which
 // resolve to a face index the same way): for whichever of the five
 // per-face properties (Seed_Material/Tessellation/Layer/Visibility/
-// Weight) WIN3D.currentTool currently is, either reads face f's
+// Weight) User3D.currentTool currently is, either reads face f's
 // current value into the matching User3D.default_* (Pick,
 // toolParameterModifier==1), writes User3D.default_* onto face f alone
 // (Assign(sub), ==2), or writes it onto every face in f's group
@@ -104,27 +104,27 @@ void convertAndSwitch(Runnable convert, int newCategory) {
 // Assign(sub) cases just above it - kept as-is since this refactor
 // changes structure, not behavior.
 void pickOrAssignFaceProperty (int f) {
-  if ((WIN3D.currentTool != UITASK.Seed_Material) &&
-      (WIN3D.currentTool != UITASK.Tessellation) &&
-      (WIN3D.currentTool != UITASK.Layer) &&
-      (WIN3D.currentTool != UITASK.Visibility) &&
-      (WIN3D.currentTool != UITASK.Weight)) return;
+  if ((User3D.currentTool != UITASK.Seed_Material) &&
+      (User3D.currentTool != UITASK.Tessellation) &&
+      (User3D.currentTool != UITASK.Layer) &&
+      (User3D.currentTool != UITASK.Visibility) &&
+      (User3D.currentTool != UITASK.Weight)) return;
 
-  if (WIN3D.toolParameterModifier == 1) { // Pick
-    if (WIN3D.currentTool == UITASK.Seed_Material) User3D.creatorMaterial     = allFaces.getMaterial(f);
-    else if (WIN3D.currentTool == UITASK.Tessellation)  User3D.creatorTessellation = allFaces.getTessellation(f);
-    else if (WIN3D.currentTool == UITASK.Layer)         User3D.creatorLayer        = allFaces.getLayer(f);
-    else if (WIN3D.currentTool == UITASK.Visibility)    User3D.creatorVisibility   = allFaces.getVisibility(f);
-    else if (WIN3D.currentTool == UITASK.Weight)        User3D.creatorWeight       = allFaces.getWeight(f);
+  if (User3D.toolParameterModifier == 1) { // Pick
+    if (User3D.currentTool == UITASK.Seed_Material) User3D.creatorMaterial     = allFaces.getMaterial(f);
+    else if (User3D.currentTool == UITASK.Tessellation)  User3D.creatorTessellation = allFaces.getTessellation(f);
+    else if (User3D.currentTool == UITASK.Layer)         User3D.creatorLayer        = allFaces.getLayer(f);
+    else if (User3D.currentTool == UITASK.Visibility)    User3D.creatorVisibility   = allFaces.getVisibility(f);
+    else if (User3D.currentTool == UITASK.Weight)        User3D.creatorWeight       = allFaces.getWeight(f);
   }
-  if (WIN3D.toolParameterModifier == 2) { // Assign(sub)
-    if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.creatorMaterial);
-    else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.creatorTessellation);
-    else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (f, User3D.creatorLayer);
-    else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.creatorVisibility);
-    else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setWeight      (f, User3D.creatorWeight);
+  if (User3D.toolParameterModifier == 2) { // Assign(sub)
+    if (User3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.creatorMaterial);
+    else if (User3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.creatorTessellation);
+    else if (User3D.currentTool == UITASK.Layer)         allFaces.setLayer       (f, User3D.creatorLayer);
+    else if (User3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.creatorVisibility);
+    else if (User3D.currentTool == UITASK.Weight)        allFaces.setWeight      (f, User3D.creatorWeight);
   }
-  if (WIN3D.toolParameterModifier == 3) { // Assign(all)
+  if (User3D.toolParameterModifier == 3) { // Assign(all)
     int OBJ_ID = allGroups.findGroupContainingFace(f);
 
     // "&& (q < allFaces.options.length)" - a group's own stored
@@ -139,11 +139,11 @@ void pickOrAssignFaceProperty (int f) {
     // that only populates options, since that's all this function reads
     // or writes, is exactly the gap nodes.length would wrongly flag).
     for (int q = allGroups.getStart_Face(OBJ_ID); (q <= allGroups.getStop_Face(OBJ_ID)) && (q < allFaces.options.length); q++) {
-      if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.creatorMaterial);
-      else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.creatorTessellation);
-      else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.creatorLayer);
-      else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.creatorVisibility);
-      else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setClose       (q, User3D.creatorWeight);
+      if (User3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.creatorMaterial);
+      else if (User3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.creatorTessellation);
+      else if (User3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.creatorLayer);
+      else if (User3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.creatorVisibility);
+      else if (User3D.currentTool == UITASK.Weight)        allFaces.setClose       (q, User3D.creatorWeight);
     }
   }
 }
@@ -159,11 +159,11 @@ void pickOrAssignFaceProperty (int f) {
 // createPlantTypeIndex/createPersonTypeIndex back onto that instance's
 // FileIndex, carrying its own Mirror flag forward unchanged.
 void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
-  if (WIN3D.currentTool != UITASK.Seed_Material) return;
+  if (User3D.currentTool != UITASK.Seed_Material) return;
 
   Model2DKind kind = allModel2Ds.Kind[OBJ_ID];
 
-  if (WIN3D.toolParameterModifier == 1) { // Pick
+  if (User3D.toolParameterModifier == 1) { // Pick
     if (kind.isTree()) { // case: trees
       User3D.creatorPlantTypeIndex = allModel2Ds.FileIndex[OBJ_ID];
     }
@@ -171,7 +171,7 @@ void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
       User3D.creatorPersonTypeIndex = allModel2Ds.FileIndex[OBJ_ID];
     }
   }
-  if ((WIN3D.toolParameterModifier == 2) || (WIN3D.toolParameterModifier == 3)) { // Assign
+  if ((User3D.toolParameterModifier == 2) || (User3D.toolParameterModifier == 3)) { // Assign
     if (kind.isTree()) { // case: trees
       allModel2Ds.FileIndex[OBJ_ID] = User3D.creatorPlantTypeIndex;
     }
@@ -186,37 +186,37 @@ void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
 // Pulled out of mouseClicked()'s handling for a clicked MODEL1D
 // instance: for whichever of the seven per-tree properties
 // (DegreeMax/BranchTilt/BranchTwist/BranchRatio/TreeBase/TrunkSize/
-// LeafSize) WIN3D.currentTool currently is - or all of them at once,
+// LeafSize) User3D.currentTool currently is - or all of them at once,
 // for UITASK.Model1DsProps - either reads OBJ_ID's current value(s)
 // into the matching User3D.creatorModel1D* (Pick,
 // toolParameterModifier==1) or writes the matching User3D.creator_
 // Model1D_* value(s) back onto OBJ_ID (Assign, ==2).
 void pickOrAssignModel1DProperty (int OBJ_ID) {
-  if (WIN3D.toolParameterModifier == 1) { // Pick
-    if (WIN3D.currentTool == UITASK.DegreeMax) User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchTilt) User3D.creatorModel1DBranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchTwist) User3D.creatorModel1DBranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchRatio) User3D.creatorModel1DBranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.TreeBase) User3D.creatorModel1DTreeBase = allModel1Ds.getTreeBase(OBJ_ID);
+  if (User3D.toolParameterModifier == 1) { // Pick
+    if (User3D.currentTool == UITASK.DegreeMax) User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+    else if (User3D.currentTool == UITASK.BranchTilt) User3D.creatorModel1DBranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
+    else if (User3D.currentTool == UITASK.BranchTwist) User3D.creatorModel1DBranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
+    else if (User3D.currentTool == UITASK.BranchRatio) User3D.creatorModel1DBranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
+    else if (User3D.currentTool == UITASK.TreeBase) User3D.creatorModel1DTreeBase = allModel1Ds.getTreeBase(OBJ_ID);
 
-    else if (WIN3D.currentTool == UITASK.TrunkSize) User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.LeafSize) User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.Model1DsProps) { // all properties
+    else if (User3D.currentTool == UITASK.TrunkSize) User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
+    else if (User3D.currentTool == UITASK.LeafSize) User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+    else if (User3D.currentTool == UITASK.Model1DsProps) { // all properties
       User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
       User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
       User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
     }
   }
-  if (WIN3D.toolParameterModifier == 2) { // Assign
-    if (WIN3D.currentTool == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
-    else if (WIN3D.currentTool == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.creatorModel1DBranchTilt);
-    else if (WIN3D.currentTool == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.creatorModel1DBranchTwist);
-    else if (WIN3D.currentTool == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.creatorModel1DBranchRatio);
-    else if (WIN3D.currentTool == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.creatorModel1DTreeBase);
+  if (User3D.toolParameterModifier == 2) { // Assign
+    if (User3D.currentTool == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
+    else if (User3D.currentTool == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.creatorModel1DBranchTilt);
+    else if (User3D.currentTool == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.creatorModel1DBranchTwist);
+    else if (User3D.currentTool == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.creatorModel1DBranchRatio);
+    else if (User3D.currentTool == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.creatorModel1DTreeBase);
 
-    else if (WIN3D.currentTool == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
-    else if (WIN3D.currentTool == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
-    else if (WIN3D.currentTool == UITASK.Model1DsProps) { // all properties
+    else if (User3D.currentTool == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
+    else if (User3D.currentTool == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
+    else if (User3D.currentTool == UITASK.Model1DsProps) { // all properties
       allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
       allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
       allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
@@ -770,7 +770,7 @@ void flipFaceOrientationIfNeeded (int f) {
   }
 
   int flip_face = 0;
-  if (WIN3D.toolParameterModifier == 1) flip_face = 1;
+  if (User3D.toolParameterModifier == 1) flip_face = 1;
   else {
     PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);
     PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
@@ -787,10 +787,10 @@ void flipFaceOrientationIfNeeded (int f) {
 
     float V = PG.dot(GAxGB);
 
-    if (WIN3D.toolParameterModifier == 2) {
+    if (User3D.toolParameterModifier == 2) {
       if (V > 0) flip_face = 1;
     }
-    if (WIN3D.toolParameterModifier == 3) {
+    if (User3D.toolParameterModifier == 3) {
       if (V < 0) flip_face = 1;
     }
   }
@@ -1639,7 +1639,7 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
 
 void handleWin3DClickAt(float Image_X, float Image_Y) {
 
-  if (WIN3D.currentTool == UITASK.LookAtDirection) { // viewport:LookAtDirection
+  if (User3D.currentTool == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
     WIN3D.look_3DViewport_towards_Direction(Image_X, Image_Y);
 
@@ -1657,8 +1657,8 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
       RxP = Terrain.intersect(ray_start, ray_direction);
     } else if (mouseButton == LEFT) {
 
-      if ((WIN3D.currentTool == UITASK.Create) ||
-          (WIN3D.currentTool == UITASK.Move)) {
+      if ((User3D.currentTool == UITASK.Create) ||
+          (User3D.currentTool == UITASK.Move)) {
 
           RxP = snap_Faces(allFaces.intersect(ray_start, ray_direction));
 
@@ -1682,13 +1682,13 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
       }
     }
 
-    if ((WIN3D.currentTool != UITASK.Create) && (WIN3D.currentTool != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
+    if ((User3D.currentTool != UITASK.Create) && (User3D.currentTool != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
 
       Select3D.selectPick(RxP);
     }
 
     else if (RxP[0] >= 0) {
-      if (WIN3D.currentTool == UITASK.Move) { // move
+      if (User3D.currentTool == UITASK.Move) { // move
 
         float[] origin = getMoveOriginPoint();
         float x1 = origin[0];
@@ -1718,7 +1718,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
 
       if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
 
-        if ((WIN3D.toolParameterModifier != 0) && (WIN3D.currentTool >= UITASK.Seed_Material)) { // Pick/Assign properties
+        if ((User3D.toolParameterModifier != 0) && (User3D.currentTool >= UITASK.Seed_Material)) { // Pick/Assign properties
 
           if ((currentObjectCategory == ObjectCategory.GROUP) ||
               (currentObjectCategory == ObjectCategory.FACE) || (currentObjectCategory == ObjectCategory.POLYLINE)) {
@@ -1727,11 +1727,11 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
 
             pickOrAssignFaceProperty(f);
 
-            if (WIN3D.currentTool == UITASK.Pivot) {
-              if (WIN3D.toolParameterModifier == 1) { // Pick
+            if (User3D.currentTool == UITASK.Pivot) {
+              if (User3D.toolParameterModifier == 1) { // Pick
                 //?????????????????????????????????????????????????
               }
-              if (WIN3D.toolParameterModifier == 2) { // Assign
+              if (User3D.toolParameterModifier == 2) { // Assign
                 int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                 float[] P = Select3D.getPivot();
@@ -1744,7 +1744,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               }
             }
 
-            if (WIN3D.currentTool == UITASK.Normal) { //Normal
+            if (User3D.currentTool == UITASK.Normal) { //Normal
 
               if (currentObjectCategory == ObjectCategory.FACE) {
 
@@ -1766,7 +1766,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               }
             }
 
-            if (WIN3D.currentTool == UITASK.FirstVertex) { //FirstVertex
+            if (User3D.currentTool == UITASK.FirstVertex) { //FirstVertex
 
               if (currentObjectCategory == ObjectCategory.FACE) {
 
@@ -1818,7 +1818,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
         }
       }
 
-      if (WIN3D.currentTool == UITASK.Create) { // create
+      if (User3D.currentTool == UITASK.Create) { // create
 
         int keep_number_of_allGroups = allGroups.num;
         int keep_number_of_allModel2Ds = allModel2Ds.num;

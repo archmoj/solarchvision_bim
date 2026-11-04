@@ -48,10 +48,6 @@ class WIN3D {
 
   int currentCameraIndex = 0; // 0 = Free Viewport | etc.= Saved Viewport
 
-  int currentTool = UITASK.zoom_Orbit_Pan;
-  int targetAxisIndex = 0; // 0-1
-  int toolParameterModifier = 0; //to modify objects with several parameters e.g. allModel1Ds
-
   int shadingMode = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
 
   int impactTypeIndex = Impact_ACTIVE;
@@ -1146,13 +1142,13 @@ class WIN3D {
     float y0 = P[1];
     float z0 = P[2];
 
-    if (this.currentTool == UITASK.Rotate) {
+    if (User3D.currentTool == UITASK.Rotate) {
       float r = 5.0 * direction;
       int the_Vector = Select3D.rotationVectorIndex;
       Rotate3D.selection(x0, y0, z0, r, the_Vector);
     }
 
-    if (this.currentTool == UITASK.Scale) {
+    if (User3D.currentTool == UITASK.Scale) {
       float s = pow(2.0, 0.25);
       if (direction < 0) s = 1.0 / s;
 
@@ -1165,7 +1161,7 @@ class WIN3D {
       Scale3D.selection(x0, y0, z0, sx, sy, sz);
     }
 
-    if (this.currentTool == UITASK.Move) {
+    if (User3D.currentTool == UITASK.Move) {
       float d = 0.5 * direction;
       float dx = d, dy = d, dz = d;
 
@@ -1177,8 +1173,8 @@ class WIN3D {
       Move3D.selection(dx, dy, dz);
     }
 
-    if (this.toolParameterModifier == 0) {
-      if (this.currentTool >= UITASK.Seed_Material) {
+    if (User3D.toolParameterModifier == 0) {
+      if (User3D.currentTool >= UITASK.Seed_Material) {
         int p = direction;
         beginScene3DChange();
         Edit3D.selection(p);
@@ -1213,10 +1209,6 @@ class WIN3D {
     XML_setInt(parent, "projectionTypeIndex", this.projectionTypeIndex);
     XML_setInt(parent, "shadingMode", this.shadingMode);
 
-    XML_setInt(parent, "currentTool", this.currentTool);
-    XML_setInt(parent, "targetAxisIndex", this.targetAxisIndex);
-    XML_setInt(parent, "toolParameterModifier", this.toolParameterModifier);
-
     XML_setInt(parent, "impactTypeIndex", this.impactTypeIndex);
   }
 
@@ -1245,10 +1237,6 @@ class WIN3D {
     this.zoom = XML_getFloat(parent, "zoom");
     this.projectionTypeIndex = XML_getInt(parent, "projectionTypeIndex");
     this.shadingMode = XML_getInt(parent, "shadingMode");
-
-    this.currentTool = XML_getInt(parent, "currentTool");
-    this.targetAxisIndex = XML_getInt(parent, "targetAxisIndex");
-    this.toolParameterModifier = XML_getInt(parent, "toolParameterModifier");
 
     this.impactTypeIndex = XML_getInt(parent, "impactTypeIndex");
   }

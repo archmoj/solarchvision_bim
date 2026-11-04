@@ -83,74 +83,74 @@ void handleWorldDrag() {
 }
 
 void dispatchWin3DTaskDrag(float dx, float dy) {
-  if (WIN3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) {
+  if (User3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) {
     if (mouseButton == LEFT) rotateCameraAroundLand(dx);   // CameraTerrainOrbit
     if (mouseButton == RIGHT) panBothAxes(dx, dy);          // Pan
   }
 
-  if (WIN3D.currentTool == UITASK.PanX_TargetRoll) {
+  if (User3D.currentTool == UITASK.PanX_TargetRoll) {
     if (mouseButton == LEFT) panXAxis(dx);
     if (mouseButton == RIGHT) panYAxis(dy);
   }
 
-  if (WIN3D.currentTool == UITASK.PanY_TargetRoll) {
+  if (User3D.currentTool == UITASK.PanY_TargetRoll) {
     if (mouseButton == LEFT) panYAxis(dy);
     if (mouseButton == RIGHT) panXAxis(dx);
   }
 
-  if ((WIN3D.currentTool == UITASK.Pan_TargetRoll) ||
-      (WIN3D.currentTool == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
-      (WIN3D.currentTool == UITASK.PickSelect)) {
+  if ((User3D.currentTool == UITASK.Pan_TargetRoll) ||
+      (User3D.currentTool == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
+      (User3D.currentTool == UITASK.PickSelect)) {
     if (mouseButton == LEFT) panBothAxes(dx, dy);
     if (mouseButton == RIGHT) rotateTargetXY(dx, dy);       // TargetRoll
   }
 
-  if ((WIN3D.currentTool == UITASK.CameraRoll_Pan) ||
-      (WIN3D.currentTool == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) {
+  if ((User3D.currentTool == UITASK.CameraRoll_Pan) ||
+      (User3D.currentTool == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) {
     if (mouseButton == LEFT) rotateCameraBoth(dx, dy);      // CameraRoll (XY + Z together)
     if (mouseButton == RIGHT) panBothAxes(dx, dy);          // Pan
   }
 
-  if (WIN3D.currentTool == UITASK.CameraRollXY_CameraRollZ) {
+  if (User3D.currentTool == UITASK.CameraRollXY_CameraRollZ) {
     if (mouseButton == LEFT) rotateCameraXY(dx);
     if (mouseButton == RIGHT) rotateCameraZ(dy);
   }
 
-  if (WIN3D.currentTool == UITASK.TargetRoll_Pan) {
+  if (User3D.currentTool == UITASK.TargetRoll_Pan) {
     if (mouseButton == LEFT) rotateTargetXY(dx, dy);        // TargetRoll
     if (mouseButton == RIGHT) panBothAxes(dx, dy);          // Pan
   }
 
-  if (WIN3D.currentTool == UITASK.TargetRollXY_TargetRollZ) {
+  if (User3D.currentTool == UITASK.TargetRollXY_TargetRollZ) {
     // Which axis moves depends on both the button held and
     // targetAxisIndex, per the original's combined conditions.
-    boolean doTargetRollXY = (mouseButton == LEFT && WIN3D.targetAxisIndex == 1) ||
-                              (mouseButton == RIGHT && WIN3D.targetAxisIndex == 0);
-    boolean doTargetRollZ = (mouseButton == LEFT && WIN3D.targetAxisIndex == 0) ||
-                             (mouseButton == RIGHT && WIN3D.targetAxisIndex == 1);
+    boolean doTargetRollXY = (mouseButton == LEFT && User3D.targetAxisIndex == 1) ||
+                              (mouseButton == RIGHT && User3D.targetAxisIndex == 0);
+    boolean doTargetRollZ = (mouseButton == LEFT && User3D.targetAxisIndex == 0) ||
+                             (mouseButton == RIGHT && User3D.targetAxisIndex == 1);
 
     if (doTargetRollXY) rotateTargetZOnly(dx); // named "TargetRollXY" in the original UI task
     if (doTargetRollZ) rotateTargetXOnly(dy);  // named "TargetRollZ" in the original UI task
   }
 
-  if ((WIN3D.currentTool == UITASK.zoom_Orbit_Pan) ||
-      (WIN3D.currentTool == UITASK.SkydomeSize) ||
-      (WIN3D.currentTool == UITASK.AllModelSize)) {
+  if ((User3D.currentTool == UITASK.zoom_Orbit_Pan) ||
+      (User3D.currentTool == UITASK.SkydomeSize) ||
+      (User3D.currentTool == UITASK.AllModelSize)) {
     if (mouseButton == LEFT) orbitCamera(dx, dy);
     if (mouseButton == RIGHT) panBothAxes(dx, dy);
   }
 
-  if (WIN3D.currentTool == UITASK.Pan_Height) {
+  if (User3D.currentTool == UITASK.Pan_Height) {
     if (mouseButton == LEFT) panYAxis(dy);   // move Y
     if (mouseButton == RIGHT) panXAxis(dx);  // move X
   }
 
-  if (WIN3D.currentTool == UITASK.ModelSize_Pan_TargetRoll) {
+  if (User3D.currentTool == UITASK.ModelSize_Pan_TargetRoll) {
     if (mouseButton == LEFT) panBothAxes(dx, dy);
     if (mouseButton == RIGHT) rotateTargetXY(dx, dy);
   }
 
-  if (WIN3D.currentTool == UITASK.Truck_Orbit) {
+  if (User3D.currentTool == UITASK.Truck_Orbit) {
     handleTruckOrbitTask(dx, dy);
   }
 }
@@ -221,23 +221,23 @@ void orbitZOnly(float dx) {
 }
 
 void handleTruckOrbitTask(float dx, float dy) {
-  if (WIN3D.toolParameterModifier == 0) { // Truck (pan)
-    if (WIN3D.targetAxisIndex == 0) {
+  if (User3D.toolParameterModifier == 0) { // Truck (pan)
+    if (User3D.targetAxisIndex == 0) {
       if (mouseButton == LEFT) panXAxis(dx);
       if (mouseButton == RIGHT) panYAxis(dy);
     }
-    if (WIN3D.targetAxisIndex == 1) {
+    if (User3D.targetAxisIndex == 1) {
       if (mouseButton == RIGHT) panXAxis(dx);
       if (mouseButton == LEFT) panYAxis(dy);
     }
   }
 
-  if (WIN3D.toolParameterModifier == 1) { // Orbit
-    if (WIN3D.targetAxisIndex == 0) {
+  if (User3D.toolParameterModifier == 1) { // Orbit
+    if (User3D.targetAxisIndex == 0) {
       if (mouseButton == LEFT) orbitXOnly(dy);
       if (mouseButton == RIGHT) orbitZOnly(dx);
     }
-    if (WIN3D.targetAxisIndex == 1) {
+    if (User3D.targetAxisIndex == 1) {
       if (mouseButton == RIGHT) orbitXOnly(dy);
       if (mouseButton == LEFT) orbitZOnly(dx);
     }

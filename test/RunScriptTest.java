@@ -303,13 +303,13 @@ class RunScriptTest {
   @Test
   void move_withArguments_actuallyMovesRatherThanJustSwitchingTheTool () {
     app.build_allActions();
-    app.WIN3D.currentTool = -1;
+    app.User3D.currentTool = -1;
     app.WIN3D.update = false;
 
     String hint = app.runScriptLine("MOVE dx:5 dy:3 dz:1");
 
     assertEquals("", hint);
-    assertEquals(-1, app.WIN3D.currentTool, "must not just switch the move tool");
+    assertEquals(-1, app.User3D.currentTool, "must not just switch the move tool");
     assertTrue(app.WIN3D.update, "view_changed() should fire for a real move");
   }
 

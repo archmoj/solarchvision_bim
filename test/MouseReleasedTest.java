@@ -60,25 +60,25 @@ class MouseReleasedTest {
 
   @Test
   void isRectSelectTask_trueForRectSelectItself () {
-    app.WIN3D.currentTool = app.UITASK.RectSelect;
+    app.User3D.currentTool = app.UITASK.RectSelect;
     assertTrue(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_trueForAnyModifyTaskAfterMove () {
-    app.WIN3D.currentTool = app.UITASK.Scale; // comes right after Move
+    app.User3D.currentTool = app.UITASK.Scale; // comes right after Move
     assertTrue(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_falseForMoveItself () {
-    app.WIN3D.currentTool = app.UITASK.Move;
+    app.User3D.currentTool = app.UITASK.Move;
     assertFalse(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_falseForPickSelect () {
-    app.WIN3D.currentTool = app.UITASK.PickSelect; // before Move, not RectSelect
+    app.User3D.currentTool = app.UITASK.PickSelect; // before Move, not RectSelect
     assertFalse(app.isRectSelectTask());
   }
 
@@ -194,7 +194,7 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterZeroSetsCreateLengthToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.toolParameterModifier = 0;
+    app.User3D.toolParameterModifier = 0;
     app.User3D.creatorLength = -1;
 
     app.performGetLengthMeasurement();
@@ -206,7 +206,7 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterOneSetsCreateWidthToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.toolParameterModifier = 1;
+    app.User3D.toolParameterModifier = 1;
     app.User3D.creatorWidth = -1;
 
     app.performGetLengthMeasurement();
@@ -217,7 +217,7 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterTwoSetsCreateHeightToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.toolParameterModifier = 2;
+    app.User3D.toolParameterModifier = 2;
     app.User3D.creatorHeight = -1;
 
     app.performGetLengthMeasurement();
@@ -228,7 +228,7 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterThreeSetsAllThreeAxisAlignedComponents () {
     setUpOrthographicClickMapping();
-    app.WIN3D.toolParameterModifier = 3;
+    app.User3D.toolParameterModifier = 3;
     app.User3D.creatorLength = -1;
     app.User3D.creatorWidth = -1;
     app.User3D.creatorHeight = -1;
@@ -244,7 +244,7 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterFourSetsOnlyLengthAndWidthLeavingHeightAlone () {
     setUpOrthographicClickMapping();
-    app.WIN3D.toolParameterModifier = 4;
+    app.User3D.toolParameterModifier = 4;
     app.User3D.creatorLength = -1;
     app.User3D.creatorWidth = -1;
     app.User3D.creatorHeight = 999;

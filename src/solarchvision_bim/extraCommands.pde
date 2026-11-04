@@ -730,18 +730,18 @@ String __$SCALEALLMODEL__ (String[] parts) {
     return hint;
 }
 
-// Which of rotationX/rotationZ moves depends on WIN3D.targetAxisIndex,
+// Which of rotationX/rotationZ moves depends on User3D.targetAxisIndex,
 // read internally - same as WHEELSCENARIO above, this is state the
 // command reads itself rather than something a caller passes in.
 String __$TARGETROLLXYZ__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
     float wheelValue = float(parts[1]);
-    if (WIN3D.targetAxisIndex == 0) {
+    if (User3D.targetAxisIndex == 0) {
         WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
         WIN3D.reverseTransform_3DViewport();
     }
-    if (WIN3D.targetAxisIndex == 1) {
+    if (User3D.targetAxisIndex == 1) {
         WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
         WIN3D.reverseTransform_3DViewport();
     }
@@ -757,10 +757,10 @@ String __$CAMERAROLLXYZ__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
     float wheelValue = float(parts[1]);
-    if (WIN3D.targetAxisIndex == 0) {
+    if (User3D.targetAxisIndex == 0) {
         WIN3D.rotateZ_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
     }
-    if (WIN3D.targetAxisIndex == 1) {
+    if (User3D.targetAxisIndex == 1) {
         WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
     }
     view_changed();
@@ -1031,7 +1031,7 @@ String __SELECT__ (String[] parts) {
 // local rather than being recomputed inside a command). This command
 // picks up from there: the straightDist/dxRot/dyRot/dzRot math and
 // which of User3D.creatorLength/Width/Height actually gets written
-// depends on WIN3D.toolParameterModifier, read internally the same
+// depends on User3D.toolParameterModifier, read internally the same
 // way +SCENARIO/+TARGETROLLXYZ read their own dispatch state above.
 String __GETLENGTH__ (String[] parts) {
     String hint = "";
@@ -1054,7 +1054,7 @@ String __GETLENGTH__ (String[] parts) {
 
     float straightDist = dist(x1, y1, z1, x2, y2, z2);
 
-    switch (WIN3D.toolParameterModifier) {
+    switch (User3D.toolParameterModifier) {
         case 0:
         User3D.creatorLength = straightDist;
         break;

@@ -582,7 +582,7 @@ class WIN3DActionsTest {
     app.Select3D.vertexSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.rotationVectorIndex = 2; // Z axis
-    app.WIN3D.currentTool = app.UITASK.Rotate;
+    app.User3D.currentTool = app.UITASK.Rotate;
 
     String hint = app.runScriptLine("Increase Tool Parameter");
 
@@ -597,7 +597,7 @@ class WIN3DActionsTest {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
-    app.WIN3D.currentTool = app.UITASK.Move;
+    app.User3D.currentTool = app.UITASK.Move;
 
     String hint = app.runScriptLine("Decrease Tool Parameter");
 
