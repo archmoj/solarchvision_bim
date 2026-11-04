@@ -106,6 +106,14 @@ void load_project (String myFile) {
     // start fresh from exactly that state as well - see
     // undoRedoStation.pde's own comment on seedStationHistory().
     seedStationHistory();
+
+    // Same reasoning, STUDY's (Viewport2D's) own side:
+    // parse_XML_variables() above already replaced STUDY wholesale too
+    // (via its own STUDY.from_XML() call), so the Viewport2D undo
+    // history needs to start fresh from exactly that state as well -
+    // see undoRedoViewport2D.pde's own comment on
+    // seedViewport2DHistory().
+    seedViewport2DHistory();
   }
 
 }

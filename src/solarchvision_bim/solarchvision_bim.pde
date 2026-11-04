@@ -145,6 +145,20 @@ void draw () {
     // by the time it's checked here.
     trackStationChange();
 
+    // Viewport2D's (STUDY's) own undo/redo recording - same once-per-
+    // frame polling, same reasoning, same placement as
+    // trackStationChange() just above; see undoRedoViewport2D.pde's own
+    // header comment. STUDY's own GUI spinner-drag path (uiRollout.pde's
+    // own `STUDY.endDay = vm.endDay(1);` and its many siblings) only
+    // actually reaches STUDY from inside applyRolloutUpdate() itself,
+    // so this frame's change, if any, is already live on STUDY by the
+    // time it's checked here. Reads STUDY only (STUDY.to_XML()) - it
+    // doesn't touch the rebuild flags regenerate_desired_bakings() below
+    // reads, so it's safe to run before that call despite this
+    // comment's own ordering concern, which is about STUDY.draw()
+    // itself, not about reading STUDY's own current field values.
+    trackViewport2DChange();
+
     // Must run before STUDY.draw(): STUDY's own plotImpact_global() calls
     // GlobalSolar_resize_array() whenever GlobalSolar_rebuild_array is set
     // (just to keep the array's dimensions right for plotting), and that

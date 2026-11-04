@@ -221,6 +221,11 @@ boolean draw_initial_frames () {
     // STATION's own baseline, same moment and same reasoning again -
     // see undoRedoStation.pde's own comment on seedStationHistory().
     seedStationHistory();
+
+    // STUDY's (Viewport2D's) own baseline, same moment and same
+    // reasoning again - see undoRedoViewport2D.pde's own comment on
+    // seedViewport2DHistory().
+    seedViewport2DHistory();
   } else {
     return false;
   }

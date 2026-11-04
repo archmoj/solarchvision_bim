@@ -290,6 +290,19 @@ void build_allActions() {
     redoStationChange();
   });
 
+  // Menu-only (Tools menu, uiMenuBar.pde's own Items array) -
+  // undoRedoViewport2D.pde's own history, a fourth one independent of
+  // the three above: these move STUDY (the 2D/time-series viewport's
+  // own settings) back and forth and never touch the model, WIN3D or
+  // STATION.
+  putAction("Undo Viewport2D Change", () -> {
+    undoViewport2DChange();
+  });
+
+  putAction("Redo Viewport2D Change", () -> {
+    redoViewport2DChange();
+  });
+
   putAction("New", () -> {
     /////////////////////////////
     holdProject();
