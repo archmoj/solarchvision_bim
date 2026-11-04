@@ -99,6 +99,13 @@ void load_project (String myFile) {
     // start fresh from exactly that state too - see
     // undoRedoViewport3D.pde's own comment on seedViewport3DHistory().
     seedViewport3DHistory();
+
+    // Same reasoning, STATION's own side: parse_XML_variables() above
+    // already replaced STATION wholesale too (via its own
+    // STATION.from_XML() call), so the station undo history needs to
+    // start fresh from exactly that state as well - see
+    // undoRedoStation.pde's own comment on seedStationHistory().
+    seedStationHistory();
   }
 
 }

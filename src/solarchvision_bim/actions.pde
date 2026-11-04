@@ -278,6 +278,18 @@ void build_allActions() {
     redoViewport3DChange();
   });
 
+  // Menu-only for now (Tools menu, uiMenuBar.pde's own Items array) -
+  // undoRedoStation.pde's own history, a third one independent of the
+  // two above: these move STATION (location/climate-station data) back
+  // and forth and never touch the model or the viewport.
+  putAction("Undo Station Change", () -> {
+    undoStationChange();
+  });
+
+  putAction("Redo Station Change", () -> {
+    redoStationChange();
+  });
+
   putAction("New", () -> {
     /////////////////////////////
     holdProject();

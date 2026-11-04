@@ -133,6 +133,18 @@ void draw () {
 
     applyRolloutUpdate();
 
+    // STATION's own undo/redo recording - same once-per-frame polling,
+    // same reasoning; see undoRedoStation.pde's own header comment.
+    // Placed after, not alongside, trackViewport3DChange() above:
+    // STATION's own GUI spinner-drag path (react.pde's own
+    // applyLocationChange, "Location Latitude"/"Location Longitude")
+    // only actually reaches STATION from inside applyRolloutUpdate()
+    // itself, unlike WIN3D's own camera moves - so this frame's change,
+    // if any, from either that path or runPendingScriptLines()'s own
+    // SETLAT/SETLON/... commands further up, is already live on STATION
+    // by the time it's checked here.
+    trackStationChange();
+
     // Must run before STUDY.draw(): STUDY's own plotImpact_global() calls
     // GlobalSolar_resize_array() whenever GlobalSolar_rebuild_array is set
     // (just to keep the array's dimensions right for plotting), and that

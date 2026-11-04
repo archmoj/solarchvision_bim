@@ -217,6 +217,10 @@ boolean draw_initial_frames () {
     // seedScene3DHistory() just above - see undoRedoViewport3D.pde's
     // own comment on seedViewport3DHistory().
     seedViewport3DHistory();
+
+    // STATION's own baseline, same moment and same reasoning again -
+    // see undoRedoStation.pde's own comment on seedStationHistory().
+    seedStationHistory();
   } else {
     return false;
   }
