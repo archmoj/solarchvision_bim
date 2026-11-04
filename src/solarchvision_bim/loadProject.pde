@@ -91,7 +91,7 @@ void load_project (String myFile) {
     // this, pressing Ctrl+Z right after opening a different file could
     // try to restore a snapshot that belongs to the project that was
     // open before it.
-    seedUndoHistory();
+    seedModelHistory();
   }
 
 }

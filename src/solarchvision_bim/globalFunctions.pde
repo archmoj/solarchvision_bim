@@ -58,7 +58,7 @@ void deleteAll () {
   // same question) - "New" means a genuinely fresh project, so the undo
   // history should start fresh from exactly this emptied-out state, not
   // keep referring to whatever was open before it.
-  seedUndoHistory();
+  seedModelHistory();
 }
 
 void model_added () {

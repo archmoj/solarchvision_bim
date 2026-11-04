@@ -26,7 +26,7 @@ class GlobalFunctionsTest {
   void setUp () {
     app = new solarchvision_bim();
     // deleteAll() now calls beginModelChange()/endModelChange() and
-    // seedUndoHistory() around its own work (see globalFunctions.pde's
+    // seedModelHistory() around its own work (see globalFunctions.pde's
     // own comment), each of which builds a full project snapshot -
     // including Terrain.to_XML(), which needs this set up the same way
     // every other test file touching that path already does (see e.g.

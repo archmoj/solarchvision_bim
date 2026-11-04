@@ -42,7 +42,7 @@
 //     that existed only to support the old surgical per-field patch are
 //     gone with it; a plain whole-entry replacement needs no equivalent.
 //
-// modelHistory[0], seeded once by seedUndoHistory() (drawInitialFrames.pde)
+// modelHistory[0], seeded once by seedModelHistory() (drawInitialFrames.pde)
 // right as the app finishes loading, is the one baseline entry that
 // isn't itself refreshed by a beginUndoableEdit() call (there's no
 // "edit before the first edit") - it's what makes the very first edit
@@ -83,7 +83,7 @@
 final int MAX_UNDO_MODEL = 16; // bounds memory growth - each entry is a full scene-graph XML tree
 
 ArrayList<XML> modelHistory = new ArrayList<XML>();
-int modelHistoryIndex = -1; // -1 until seedUndoHistory() runs once at startup
+int modelHistoryIndex = -1; // -1 until seedModelHistory() runs once at startup
 
 // Guards beginUndoableEdit()/commitUndoableEdit() against firing WHILE a
 // restore is already in progress - see restoreProjectSnapshot()'s own
@@ -162,7 +162,7 @@ XML buildModelSnapshot () {
 // The one baseline entry that isn't "state after an edit" - see this
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
-void seedUndoHistory () {
+void seedModelHistory () {
   if (modelHistory == null) modelHistory = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
   modelHistory.clear();
   modelHistory.add(buildModelSnapshot());
@@ -197,7 +197,7 @@ void beginUndoableEdit () {
   // can't tell "too early" apart from "ready", hence the null check
   // here instead. None of this is a real edit to record anyway - it's
   // empty-initialization boilerplate, long before setup() - the actual
-  // baseline is seedUndoHistory(), called from drawInitialFrames.pde
+  // baseline is seedModelHistory(), called from drawInitialFrames.pde
   // well after every such constructor has already run.
   if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 

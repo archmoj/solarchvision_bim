@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-// Covers undoRedo.pde: seedUndoHistory()/beginUndoableEdit()/
+// Covers undoRedo.pde: seedModelHistory()/beginUndoableEdit()/
 // commitUndoableEdit() (hooked into beginModelChange()/endModelChange()),
 // undo()/redo(), and restoreProjectSnapshot()'s own behavior (viewport
 // left alone, no recursive recording, selection clamped to the restored
@@ -33,11 +33,11 @@ class UndoRedoTest {
 
   // A bare `new solarchvision_bim()` never runs drawInitialFrames.pde's
   // frame-22 branch (that's gated on the real Processing draw loop), so
-  // seedUndoHistory() - the one thing that actually establishes the
+  // seedModelHistory() - the one thing that actually establishes the
   // baseline - needs calling explicitly here, same as any other
   // startup-only step the other test files already work around.
   private void seed () {
-    app.seedUndoHistory();
+    app.seedModelHistory();
   }
 
   // A minimal "one edit happened" pair for tests that only care about
@@ -72,10 +72,10 @@ class UndoRedoTest {
     app.Delete3D.selection(); // wraps its own several sub-steps in beginModelChange()/endModelChange() now - see delete3D.pde's own comment
   }
 
-  // ================= seedUndoHistory ====================================
+  // ================= seedModelHistory ====================================
 
   @Test
-  void seedUndoHistory_establishesASingleBaselineEntry () {
+  void seedModelHistory_establishesASingleBaselineEntry () {
     seed();
 
     assertEquals(1, app.modelHistory.size());
@@ -83,7 +83,7 @@ class UndoRedoTest {
   }
 
   @Test
-  void seedUndoHistory_calledAgainResetsToANewSingleEntryBaseline () {
+  void seedModelHistory_calledAgainResetsToANewSingleEntryBaseline () {
     seed();
     simulateEdit(); // a second entry
     assertEquals(2, app.modelHistory.size());
@@ -97,7 +97,7 @@ class UndoRedoTest {
   // ================= beginUndoableEdit/commitUndoableEdit ================
 
   @Test
-  void beginModelChange_beforeSeedUndoHistoryHasRun_recordsNothing () {
+  void beginModelChange_beforeseedModelHistoryHasRun_recordsNothing () {
     assertEquals(-1, app.modelHistoryIndex); // sanity check: seed() was never called
 
     simulateEdit();
@@ -561,7 +561,7 @@ class UndoRedoTest {
     // see FileSelectedTest.java's and SaveProjectTest.java's own notes),
     // which fires AFTER parse_XML_variables() has already fully run - so
     // this test still exercises the actual fix, even though it can't
-    // reach load_project()'s own seedUndoHistory() call at the very end
+    // reach load_project()'s own seedModelHistory() call at the very end
     // (same reasoning as SaveProjectTest.java's own fetchProject test).
     seed();
     createOneFaceViaImport();

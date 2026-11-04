@@ -211,7 +211,7 @@ boolean draw_initial_frames () {
     // everything else above has finished loading and just before the
     // app starts accepting input, is the one clean "nothing has been
     // edited yet" moment to capture it.
-    seedUndoHistory();
+    seedModelHistory();
   } else {
     return false;
   }
