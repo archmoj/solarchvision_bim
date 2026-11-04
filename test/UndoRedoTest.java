@@ -845,4 +845,130 @@ class UndoRedoTest {
 
     assertArrayEquals(new int[]{0, 2}, app.Select3D.groupSelection);
   }
+
+  // ================= buildScene3DSnapshot: structural sharing ("the diff") ===
+  //
+  // Covers buildOrReuseSubtree()'s own behavior: each scene3DHistory entry
+  // is eleven subtree references, not eleven private copies, and an edit
+  // touching only one or two of the eleven classes should leave every
+  // other class's own field pointing at the EXACT SAME object the
+  // previous entry already used, not a fresh duplicate - this is what
+  // makes a big model's own Faces/Points/Model1Ds subtree get stored
+  // once across however many steps never touch that class, rather than
+  // once per step regardless. assertSame()/assertNotSame() (object
+  // identity, not just equal content) is what actually exercises the
+  // sharing - two separately-built but equal-content XML trees would
+  // pass an assertEquals()-based check without the memory savings this
+  // is actually supposed to confirm.
+
+  @Test
+  void anEditTouchingOnlyOneClass_reusesEveryOtherClassesSubtreeUnchanged () throws IOException {
+    seed();
+    createOneFaceViaImport(); // history[1]: one face, nothing else yet
+
+    app.beginScene3DChange();
+    app.allCameras.create(0, 0, 10, 1, 0, 0, 0, 0, 1, 0); // touches ONLY Cameras
+    app.endScene3DChange(); // history[2]
+
+    solarchvision_bim.Scene3DSnapshot before = app.scene3DHistory.get(1);
+    solarchvision_bim.Scene3DSnapshot after  = app.scene3DHistory.get(2);
+
+    assertSame(before.points, after.points, "Points didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.polylines, after.polylines, "Polylines didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.faces, after.faces, "Faces didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.solids, after.solids, "Solids didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.sections, after.sections, "Sections didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.model1Ds, after.model1Ds, "Model1Ds didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.model2Ds, after.model2Ds, "Model2Ds didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.groups, after.groups, "Groups didn't change - should be the same shared object, not a duplicate");
+    assertSame(before.terrain, after.terrain, "Terrain didn't change - should be the same shared object, not a duplicate");
+
+    assertNotSame(before.cameras, after.cameras, "Cameras DID change - this step must get its own fresh subtree");
+  }
+
+  @Test
+  void anEditWithNoRealChange_stillSharesEverySubtreeIncludingSelect3D () {
+    // beginUndoableScene3DEdit() always refreshes the CURRENT entry with
+    // a fresh buildScene3DSnapshot() right before an edit starts (see
+    // that function's own comment) - if that live snapshot genuinely
+    // matches what's already stored (nothing was selected differently
+    // either), every one of the eleven fields, Select3D included,
+    // should come back as the exact same object already sitting there,
+    // not merely equal content.
+    seed();
+    solarchvision_bim.Scene3DSnapshot beforeRefresh = app.scene3DHistory.get(0);
+
+    app.beginUndoableScene3DEdit(); // nothing changed since seed() - the baseline is still exactly what's live
+
+    solarchvision_bim.Scene3DSnapshot afterRefresh = app.scene3DHistory.get(0);
+
+    assertSame(beforeRefresh.points, afterRefresh.points);
+    assertSame(beforeRefresh.polylines, afterRefresh.polylines);
+    assertSame(beforeRefresh.faces, afterRefresh.faces);
+    assertSame(beforeRefresh.cameras, afterRefresh.cameras);
+    assertSame(beforeRefresh.solids, afterRefresh.solids);
+    assertSame(beforeRefresh.sections, afterRefresh.sections);
+    assertSame(beforeRefresh.model1Ds, afterRefresh.model1Ds);
+    assertSame(beforeRefresh.model2Ds, afterRefresh.model2Ds);
+    assertSame(beforeRefresh.groups, afterRefresh.groups);
+    assertSame(beforeRefresh.terrain, afterRefresh.terrain);
+    assertSame(beforeRefresh.select3D, afterRefresh.select3D);
+  }
+
+  @Test
+  void aSelectionOnlyChange_reusesEveryClassExceptSelect3D () throws IOException {
+    // The selection changing, on its own, is exactly the case
+    // beginUndoableScene3DEdit()'s own comment describes refreshing the
+    // current entry for - Select3D's own field must differ (that's the
+    // whole point), but nothing about the actual geometry changed, so
+    // every other field should still be shared with the entry this one
+    // refresh is overwriting in place.
+    seed();
+    createOneFaceViaImport(); // history[1]: one face - import_objects_OBJ() doesn't itself select anything, so faceSelection is still empty here
+
+    solarchvision_bim.Scene3DSnapshot beforeReselect = app.scene3DHistory.get(1);
+
+    app.Select3D.faceSelection = new int[]{0}; // a pure selection change - no beginScene3DChange()/endScene3DChange() pair
+    app.beginUndoableScene3DEdit(); // the next edit's own begin() is what actually captures this - simulated directly here, same as this file's own beginScene3DChange_... tests do
+
+    solarchvision_bim.Scene3DSnapshot afterReselect = app.scene3DHistory.get(1);
+
+    assertSame(beforeReselect.points, afterReselect.points);
+    assertSame(beforeReselect.faces, afterReselect.faces);
+    assertSame(beforeReselect.cameras, afterReselect.cameras);
+    assertSame(beforeReselect.terrain, afterReselect.terrain);
+    assertNotSame(beforeReselect.select3D, afterReselect.select3D, "the selection DID change - Select3D's own field must be a fresh subtree");
+  }
+
+  @Test
+  void undoRedo_stillWorksCorrectlyWhenSubtreesAreSharedAcrossEntries () throws IOException {
+    // The actual behavior all the structural sharing above must never
+    // break: undo/redo has to land on the exactly right content
+    // regardless of which fields happen to be shared object references
+    // behind the scenes - restoreScene3DSnapshot() (undoRedoScene3D.pde)
+    // only ever reads from whatever it's handed, so reading the same
+    // shared object twice (once for each of two entries that happen to
+    // share it) must produce the same correct result both times.
+    seed();
+    createOneFaceViaImport(); // history[1]: one face
+
+    int camerasBefore = app.allCameras.num; // Cameras() seeds one default camera of its own (add_first(), called from its own constructor) - this test only cares about the ONE MORE this step itself adds
+
+    app.beginScene3DChange();
+    app.allCameras.create(0, 0, 10, 1, 0, 0, 0, 0, 1, 0); // history[2]: same one face (shared Faces subtree), plus one more camera
+    app.endScene3DChange();
+
+    assertEquals(1, app.allFaces.nodes.length, "setup check");
+    assertEquals(camerasBefore + 1, app.allCameras.num, "setup check");
+
+    app.undoScene3DChange(); // back to history[1]
+
+    assertEquals(1, app.allFaces.nodes.length, "the face should still be there - its subtree was only ever shared, not lost");
+    assertEquals(camerasBefore, app.allCameras.num, "this step's own extra camera shouldn't exist yet at this point in history");
+
+    app.redoScene3DChange(); // forward to history[2] again
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(camerasBefore + 1, app.allCameras.num);
+  }
 }

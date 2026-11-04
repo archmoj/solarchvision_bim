@@ -59,6 +59,32 @@
 // (Select3D) only - see buildScene3DSnapshot()'s own comment for exactly
 // what that excludes and why.
 //
+// STORAGE: each scene3DHistory entry (a Scene3DSnapshot, below) is NOT
+// its own private copy of the whole scene graph - it's eleven object
+// references, one per class buildScene3DSnapshot() covers, and
+// buildOrReuseSubtree() (below) hands back the SAME subtree object
+// already sitting in the entry this one is superseding for every class
+// whose state didn't actually change since then, instead of building
+// (and paying memory for) a fresh duplicate. A composite model can have
+// enormous Faces/Points/Model1Ds subtrees; a typical edit (move one
+// face, add one camera, change a material) touches at most one or two
+// of the eleven classes below, so under this scheme MAX_UNDO_MODEL3D
+// steps of such edits cost roughly "one full scene graph plus a
+// handful of small per-edit deltas", not up to sixteen full copies of
+// it. Nothing has to be reconstructed by applying a chain of patches to
+// get back to an old state, either - every entry, shared subtrees and
+// all, is still a complete, directly restorable snapshot on its own;
+// what's shared is only the underlying storage, never the restore
+// logic (restoreScene3DSnapshot() below has no idea, and doesn't need
+// to, whether any given subtree it's handed is unique to this entry or
+// also referenced by several others). The trade-off this doesn't cover:
+// an edit that touches most of the eleven classes every time (Terrain's
+// own update_mesh(), or a full reimport) still pays close to the old
+// per-entry cost - buildOrReuseSubtree()'s own XML.toString() diff
+// still only compares like-for-like within one class at a time, there's
+// no attempt at a field-level or vertex-level patch within a single
+// class's own subtree.
+//
 // New/Open/Fetch now DO clear and reseed this scene3DHistory - resolved while
 // fixing a more urgent, related bug in the same two places: as more
 // classes' makeEmpty() each gained their own complete beginScene3DChange()/
@@ -80,9 +106,45 @@
 // needs to start fresh from exactly that state, not keep referring to
 // whatever was open before it.
 
-final int MAX_UNDO_MODEL3D = 16; // bounds memory growth - each entry is a full scene-graph XML tree
+final int MAX_UNDO_MODEL3D = 16; // bounds memory growth - see this file's own header comment on STORAGE for why each entry no longer means "one more full scene-graph XML tree" the way this bound used to imply
 
-ArrayList<XML> scene3DHistory = new ArrayList<XML>();
+// One class's own to_XML(XML) (or, for Terrain, the equivalent
+// this file always calls with copyTexturesAlongside=false - see
+// buildScene3DSnapshot()'s own comment) - just enough of a shape for
+// buildOrReuseSubtree() below to call any of the eleven without
+// needing its own per-class special case. allPoints::to_XML,
+// allFaces::to_XML, Select3D::to_XML, etc. all already match this
+// directly as method references; Terrain's own two-argument form is
+// wrapped in a one-line lambda at its own call site instead.
+interface Scene3DSubtreeWriter {
+  void to_XML (XML xml);
+}
+
+// One scene3DHistory entry - eleven small wrapper roots, one per class
+// buildScene3DSnapshot() below covers (each holding that one class's
+// own child or children, straight from its own to_XML() - see
+// buildOrReuseSubtree()'s own comment on why a whole wrapper, not just
+// one child, is what's kept), in the same order restoreScene3DSnapshot()
+// reads them back in. See this file's own header comment on STORAGE: a
+// field here is not necessarily THIS entry's own object -
+// buildOrReuseSubtree() may well have pointed it at the exact same XML
+// object an earlier entry's own field already points to, whenever that
+// class's state hadn't changed since.
+class Scene3DSnapshot {
+  XML points;
+  XML polylines;
+  XML faces;
+  XML cameras;
+  XML solids;
+  XML sections;
+  XML model1Ds;
+  XML model2Ds;
+  XML groups;
+  XML terrain;
+  XML select3D;
+}
+
+ArrayList<Scene3DSnapshot> scene3DHistory = new ArrayList<Scene3DSnapshot>();
 int scene3DHistoryIndex = -1; // -1 until seedScene3DHistory() runs once at startup
 
 // Guards beginUndoableScene3DEdit()/commitUndoableScene3DEdit() against firing WHILE a
@@ -128,42 +190,74 @@ boolean isRestoringScene3DSnapshot = false;
 // live purely in memory and never touch disk, so Terrain.to_XML()'s own
 // texture-copying side effect (see that method's own comment) is
 // never wanted here.
-XML buildScene3DSnapshot () {
+//
+// "previous" is whatever entry this snapshot is about to supersede -
+// scene3DHistory[scene3DHistoryIndex] at the moment this runs, for both of
+// this function's own callers (beginUndoableScene3DEdit() is about to
+// overwrite that exact entry; commitUndoableScene3DEdit() is about to
+// append a new one right after it) - or null when there's nothing yet
+// to diff against (seedScene3DHistory(), the first call of a session:
+// scene3DHistory has already been cleared by the time it calls this, so
+// the bounds check below finds no entry at scene3DHistoryIndex and every
+// subtree below is built fresh, same as it always was pre-diffing).
+// Reading scene3DHistory/scene3DHistoryIndex here rather than taking
+// "previous" as a parameter keeps every existing call site
+// (seedScene3DHistory()/beginUndoableScene3DEdit()/commitUndoableScene3DEdit(), all
+// three below) unchanged - buildScene3DSnapshot() still takes no
+// arguments.
+XML buildOrReuseSubtree (Scene3DSubtreeWriter writer, XML previous) {
+  // "wrapper" itself - not one particular child plucked out of it - is
+  // what gets kept below: most of the eleven classes' own to_XML() adds
+  // exactly one child here (under their own CLASS_STAMP name), but
+  // Sections and Terrain each add more than one sibling at this same
+  // level (Sections: its own CLASS_STAMP, plus "...SolidImpact" and
+  // "...SolarImpact"; Terrain: its own CLASS_STAMP, plus "...Texture") -
+  // from_XML() for both needs every one of those back, not just the
+  // first. Keeping the whole wrapper means buildOrReuseSubtree() needs
+  // no per-class knowledge of how many children any given writer adds,
+  // and restoreScene3DSnapshot() below can hand a stored field straight
+  // to the matching class's own from_XML() exactly as xml used to be
+  // passed before snapshots existed per-class at all - that "xml" was
+  // always just the parent carrying this one class's own named
+  // child(ren) among many others; a wrapper carrying only this class's
+  // own child(ren) is the same shape, one level up.
+  XML wrapper = new XML("wrapper");
+  writer.to_XML(wrapper);
 
-  XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  if ((previous != null) && previous.toString().equals(wrapper.toString())) {
+    return previous; // unchanged since the entry this is superseding - share that object instead of paying for a duplicate; see this file's own header comment on STORAGE
+  }
+  return wrapper;
+}
 
-  xml.setName("solarchvisionV" + version);
+Scene3DSnapshot buildScene3DSnapshot () {
 
-  allPoints.to_XML(xml);
+  Scene3DSnapshot previous = ((scene3DHistory != null) && (scene3DHistoryIndex >= 0) && (scene3DHistoryIndex < scene3DHistory.size()))
+    ? scene3DHistory.get(scene3DHistoryIndex)
+    : null;
 
-  allPolylines.to_XML(xml);
+  Scene3DSnapshot snapshot = new Scene3DSnapshot();
 
-  allFaces.to_XML(xml);
+  snapshot.points    = buildOrReuseSubtree(allPoints::to_XML,    (previous == null) ? null : previous.points);
+  snapshot.polylines = buildOrReuseSubtree(allPolylines::to_XML, (previous == null) ? null : previous.polylines);
+  snapshot.faces     = buildOrReuseSubtree(allFaces::to_XML,     (previous == null) ? null : previous.faces);
+  snapshot.cameras   = buildOrReuseSubtree(allCameras::to_XML,   (previous == null) ? null : previous.cameras);
+  snapshot.solids    = buildOrReuseSubtree(allSolids::to_XML,    (previous == null) ? null : previous.solids);
+  snapshot.sections  = buildOrReuseSubtree(allSections::to_XML,  (previous == null) ? null : previous.sections);
+  snapshot.model1Ds  = buildOrReuseSubtree(allModel1Ds::to_XML,  (previous == null) ? null : previous.model1Ds);
+  snapshot.model2Ds  = buildOrReuseSubtree(allModel2Ds::to_XML,  (previous == null) ? null : previous.model2Ds);
+  snapshot.groups    = buildOrReuseSubtree(allGroups::to_XML,    (previous == null) ? null : previous.groups);
+  snapshot.terrain   = buildOrReuseSubtree((xml) -> Terrain.to_XML(xml, false), (previous == null) ? null : previous.terrain);
+  snapshot.select3D  = buildOrReuseSubtree(Select3D::to_XML,     (previous == null) ? null : previous.select3D);
 
-  allCameras.to_XML(xml);
-
-  allSolids.to_XML(xml);
-
-  allSections.to_XML(xml);
-
-  allModel1Ds.to_XML(xml);
-
-  allModel2Ds.to_XML(xml);
-
-  allGroups.to_XML(xml);
-
-  Terrain.to_XML(xml, false);
-
-  Select3D.to_XML(xml);
-
-  return xml;
+  return snapshot;
 }
 
 // The one baseline entry that isn't "state after an edit" - see this
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
 void seedScene3DHistory () {
-  if (scene3DHistory == null) scene3DHistory = new ArrayList<XML>(); // see beginUndoableScene3DEdit()'s own comment on why this can't be assumed
+  if (scene3DHistory == null) scene3DHistory = new ArrayList<Scene3DSnapshot>(); // see beginUndoableScene3DEdit()'s own comment on why this can't be assumed
   scene3DHistory.clear();
   scene3DHistory.add(buildScene3DSnapshot());
   scene3DHistoryIndex = 0;
@@ -191,7 +285,7 @@ void beginUndoableScene3DEdit () {
   // style field initializer runs, during the sketch object's
   // construction, possibly before scene3DHistory/scene3DHistoryIndex further up this
   // same file have been assigned. At that point `scene3DHistory` is still null
-  // (its own `= new ArrayList<XML>()` hasn't executed yet) and
+  // (its own `= new ArrayList<Scene3DSnapshot>()` hasn't executed yet) and
   // `scene3DHistoryIndex` is still Java's bare default int value of 0 (not yet
   // its explicit `= -1` either) - so a `scene3DHistoryIndex < 0` check alone
   // can't tell "too early" apart from "ready", hence the null check
@@ -257,29 +351,43 @@ void redoScene3DChange () {
 // other classes' own children (STATION, Earth3D, Sky3D, WORLD, ...)
 // that a buildScene3DSnapshot() tree never has, and would throw reaching
 // for them.
-void restoreScene3DSnapshot (XML xml) {
+//
+// Each class's own from_XML(XML) expects to be handed the PARENT it can
+// call xml.getChild(this.CLASS_STAMP) (and, for Sections/Terrain, its
+// other sibling children too) on - not any one child by itself - which
+// is exactly the shape each Scene3DSnapshot field already is: a
+// wrapper carrying only this one class's own child(ren), built by
+// buildOrReuseSubtree() above and possibly shared with several other
+// scene3DHistory entries (see this file's own header comment on
+// STORAGE). So each field is handed to its matching class's own
+// from_XML() directly below, with no rewrapping needed - from_XML()
+// only ever reads from what it's given, never mutates it, so handing
+// out the same shared wrapper to from_XML() calls across several
+// different restores over time is exactly as safe as it would be to
+// read it just once.
+void restoreScene3DSnapshot (Scene3DSnapshot snapshot) {
 
-  allPoints.from_XML(xml);
+  allPoints.from_XML(snapshot.points);
 
-  allPolylines.from_XML(xml);
+  allPolylines.from_XML(snapshot.polylines);
 
-  allFaces.from_XML(xml);
+  allFaces.from_XML(snapshot.faces);
 
-  allCameras.from_XML(xml);
+  allCameras.from_XML(snapshot.cameras);
 
-  allSolids.from_XML(xml);
+  allSolids.from_XML(snapshot.solids);
 
-  allSections.from_XML(xml);
+  allSections.from_XML(snapshot.sections);
 
-  allModel1Ds.from_XML(xml);
+  allModel1Ds.from_XML(snapshot.model1Ds);
 
-  allModel2Ds.from_XML(xml);
+  allModel2Ds.from_XML(snapshot.model2Ds);
 
-  allGroups.from_XML(xml); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
+  allGroups.from_XML(snapshot.groups); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
 
-  Terrain.from_XML(xml);
+  Terrain.from_XML(snapshot.terrain);
 
-  Select3D.from_XML(xml);
+  Select3D.from_XML(snapshot.select3D);
 }
 
 // A restored snapshot's own selection state is internally consistent at
@@ -324,7 +432,7 @@ void restoreScene3DSnapshot (XML xml) {
 // beginScene3DChange()/endScene3DChange() repeatedly (via several classes'
 // from_XML() -> makeEmpty()), and without that guard each of those
 // would recursively record itself as a new step.
-void restoreProjectScene3DSnapshot (XML xml) {
+void restoreProjectScene3DSnapshot (Scene3DSnapshot snapshot) {
   // isRestoringScene3DSnapshot (set for the entire call, including every
   // from_XML() restoreScene3DSnapshot() below reaches) is what makes this
   // safe to call at all - see that field's own comment. try/finally so
@@ -332,7 +440,7 @@ void restoreProjectScene3DSnapshot (XML xml) {
   // recording if something throws partway through a restore.
   isRestoringScene3DSnapshot = true;
   try {
-    restoreScene3DSnapshot(xml);
+    restoreScene3DSnapshot(snapshot);
 
     // See Select3D.clampSelectionsToCurrentData()'s own comment: drops
     // any selected index that doesn't exist in what was just restored,
