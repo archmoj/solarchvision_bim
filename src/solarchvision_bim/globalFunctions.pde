@@ -89,7 +89,7 @@ boolean isBakingInProgress () {
 // retained-mode cache" blocks). Pulled out of endModelChange() into its
 // own function so undoRedo.pde's restoreProjectSnapshot() can call it
 // too, without going through the rest of endModelChange() (specifically
-// commitUndoableEdit() - a restore isn't a new edit to record, it's
+// commitUndoableModelEdit() - a restore isn't a new edit to record, it's
 // replaying an old one). Without this, a plain view_changed() redraw
 // after writing new face/model1D/terrain data straight into those
 // classes' own arrays (which is exactly what parse_XML_variables()'s
@@ -119,7 +119,7 @@ int modelChangeDepth = 0;
 // for Faces/Model1Ds/Model2Ds/Solids/Polylines/Points/Cameras/Sections/
 // Groups/Terrain's mesh, paired with a matching endModelChange() (below)
 // at that same block's end. This is the undo/redo pipeline's own hook
-// now (undoRedo.pde's beginUndoableEdit()), specifically because it's
+// now (undoRedo.pde's beginUndoableModelEdit()), specifically because it's
 // guaranteed to run BEFORE the edit it's about to make - unlike
 // endModelChange() (always after, since model_changed() used to be the
 // only hook and could only ever fire post-edit). Nestable: calling this
@@ -135,7 +135,7 @@ int modelChangeDepth = 0;
 // start and finish their own step.
 void beginModelChange () {
   if (modelChangeDepth == 0) {
-    beginUndoableEdit();
+    beginUndoableModelEdit();
   }
   modelChangeDepth++;
 }
@@ -159,7 +159,7 @@ void endModelChange () {
   invalidateWin3DRetainedCaches();
 
   if (modelChangeDepth == 0) {
-    commitUndoableEdit();
+    commitUndoableModelEdit();
   }
 
   view_changed();

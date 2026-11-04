@@ -23,7 +23,7 @@
 // without one:
 //
 //   - frameCount-based coalescing ("did the last step happen in this
-//     same frame") is gone. beginUndoableEdit()/commitUndoableEdit()
+//     same frame") is gone. beginUndoableModelEdit()/commitUndoableModelEdit()
 //     only fire on the OUTERMOST begin/end transition
 //     (modelChangeDepth 0->1 / 1->0 - see beginModelChange()'s own
 //     comment), so a composite action like Delete3D.selection() (which
@@ -33,7 +33,7 @@
 //
 //   - frameStartSelectionSnapshot (a once-per-frame copy of Select3D's
 //     own state, patched into the entry about to be superseded) is
-//     gone too. beginUndoableEdit() now simply REPLACES
+//     gone too. beginUndoableModelEdit() now simply REPLACES
 //     modelHistory[modelHistoryIndex] with a fresh buildModelSnapshot() of
 //     whatever is actually live right this instant, immediately before
 //     the edit that's about to start mutates anything - exact, not
@@ -44,9 +44,9 @@
 //
 // modelHistory[0], seeded once by seedModelHistory() (drawInitialFrames.pde)
 // right as the app finishes loading, is the one baseline entry that
-// isn't itself refreshed by a beginUndoableEdit() call (there's no
+// isn't itself refreshed by a beginUndoableModelEdit() call (there's no
 // "edit before the first edit") - it's what makes the very first edit
-// of a session undoable at all, and beginUndoableEdit() still keeps it
+// of a session undoable at all, and beginUndoableModelEdit() still keeps it
 // current with whatever's selected right up until that first edit
 // actually starts.
 //
@@ -85,7 +85,7 @@ final int MAX_UNDO_MODEL = 16; // bounds memory growth - each entry is a full sc
 ArrayList<XML> modelHistory = new ArrayList<XML>();
 int modelHistoryIndex = -1; // -1 until seedModelHistory() runs once at startup
 
-// Guards beginUndoableEdit()/commitUndoableEdit() against firing WHILE a
+// Guards beginUndoableModelEdit()/commitUndoableModelEdit() against firing WHILE a
 // restore is already in progress - see restoreProjectSnapshot()'s own
 // comment for why this is necessary, not just defensive: makeEmpty()
 // (Faces/Model1Ds/Model2Ds/Solids/Polylines/Points/Cameras/Sections/
@@ -111,7 +111,7 @@ boolean isRestoringModelSnapshot = false;
 // Model1Ds/Model2Ds/Groups/Terrain's mesh - so those are the only
 // classes whose state a model-change undo/redo step can ever need to
 // recreate. Select3D is the one addition to that list: it's not itself
-// touched by beginModelChange()/endModelChange(), but beginUndoableEdit()'s
+// touched by beginModelChange()/endModelChange(), but beginUndoableModelEdit()'s
 // own comment is why it still belongs here - landing on the right
 // SELECTION after an undo/redo, not just the right geometry, needs the
 // selection captured in the same snapshot as the geometry it refers to.
@@ -163,7 +163,7 @@ XML buildModelSnapshot () {
 // file's own header comment. Called once, from drawInitialFrames.pde,
 // right before the app starts accepting input.
 void seedModelHistory () {
-  if (modelHistory == null) modelHistory = new ArrayList<XML>(); // see beginUndoableEdit()'s own comment on why this can't be assumed
+  if (modelHistory == null) modelHistory = new ArrayList<XML>(); // see beginUndoableModelEdit()'s own comment on why this can't be assumed
   modelHistory.clear();
   modelHistory.add(buildModelSnapshot());
   modelHistoryIndex = 0;
@@ -178,7 +178,7 @@ void seedModelHistory () {
 // here means whatever was selected right up until the moment an edit
 // actually starts is what that entry ends up holding - not whatever was
 // selected back when it was itself first recorded.
-void beginUndoableEdit () {
+void beginUndoableModelEdit () {
   if (isRestoringModelSnapshot) return;
 
   // beginModelChange() can fire before this file's own field
@@ -206,7 +206,7 @@ void beginUndoableEdit () {
 
 // Called from endModelChange() itself, only on the outermost (depth
 // 1 -> 0) transition.
-void commitUndoableEdit () {
+void commitUndoableModelEdit () {
   if (isRestoringModelSnapshot) return;
   if ((modelHistory == null) || (modelHistoryIndex < 0)) return;
 
@@ -350,7 +350,7 @@ void restoreProjectSnapshot (XML xml) {
     // the view still showing the undone edit). Deliberately calling this
     // directly rather than endModelChange() itself - a restore isn't a
     // new edit to record, so it must not also go through
-    // commitUndoableEdit() (doubly so now, given isRestoringModelSnapshot
+    // commitUndoableModelEdit() (doubly so now, given isRestoringModelSnapshot
     // would block it anyway - this keeps the cache invalidation itself
     // unconditional regardless).
     invalidateWin3DRetainedCaches();
