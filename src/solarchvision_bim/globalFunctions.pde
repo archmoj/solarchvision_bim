@@ -59,6 +59,10 @@ void deleteAll () {
   // history should start fresh from exactly this emptied-out state, not
   // keep referring to whatever was open before it.
   seedScene3DHistory();
+
+  // Same reasoning, Viewport3D's own side - see
+  // undoRedoViewport3D.pde's own comment on seedViewport3DHistory().
+  seedViewport3DHistory();
 }
 
 void model_added () {

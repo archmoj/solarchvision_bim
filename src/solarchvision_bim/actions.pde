@@ -254,16 +254,28 @@ void build_allActions() {
     link("https://solarchvision.com/");
   });
 
-  // See undoRedo.pde: undoScene3DChange()/redoScene3DChange() are currently stubs
-  // the Ctrl+Z / Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
-  // these two actions are step one (the trigger), wired ahead of the
-  // storage layer itself.
+  // Ctrl+Z / Ctrl+Y (solarchvision_bim.pde's keyPressed()) route here,
+  // same as every other keyboard-triggered command, so Undo/Redo are
+  // also reachable from the command line.
   putAction("Undo Scene3D Change", () -> {
     undoScene3DChange();
   });
 
   putAction("Redo Scene3D Change", () -> {
     redoScene3DChange();
+  });
+
+  // Ctrl+Shift+Z / Ctrl+Shift+Y - Viewport3D's own undo/redo
+  // (undoRedoViewport3D.pde), a separate history from the two above:
+  // these move WIN3D's camera/view back and forth and never touch the
+  // model, the same way the two above move the model and never touch
+  // WIN3D.
+  putAction("Undo Viewport3D Change", () -> {
+    undoViewport3DChange();
+  });
+
+  putAction("Redo Viewport3D Change", () -> {
+    redoViewport3DChange();
   });
 
   putAction("New", () -> {

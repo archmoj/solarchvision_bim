@@ -92,6 +92,13 @@ void load_project (String myFile) {
     // try to restore a snapshot that belongs to the project that was
     // open before it.
     seedScene3DHistory();
+
+    // Same reasoning, Viewport3D's own side: Open/Fetch also swaps in a
+    // whole different (or freshly reset) camera/view, via WORLD.autoView/
+    // FindGoodViewport() above, so the viewport undo history needs to
+    // start fresh from exactly that state too - see
+    // undoRedoViewport3D.pde's own comment on seedViewport3DHistory().
+    seedViewport3DHistory();
   }
 
 }

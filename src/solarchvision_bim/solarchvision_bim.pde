@@ -122,6 +122,15 @@ void draw () {
     runPendingScriptLines();
     stepAfterInitialization++;
 
+    // Viewport3D's own undo/redo recording - polled once per frame
+    // rather than hooked to a begin/end pair; see undoRedoViewport3D.pde's
+    // own header comment for why. Run after runPendingScriptLines()
+    // (which is how held-drag/scroll camera moves actually reach WIN3D,
+    // via mouseDragged.pde/mouseWheel.pde's own +PanView/+TurnView/...
+    // script lines) so this frame's change, if any, is already live on
+    // WIN3D by the time it's checked.
+    trackViewport3DChange();
+
     applyRolloutUpdate();
 
     // Must run before STUDY.draw(): STUDY's own plotImpact_global() calls
@@ -232,7 +241,10 @@ void keyPressed (KeyEvent e) {
 
       boolean wasEditingSpinner = UI_rollout.isEditingSpinner();
 
-      // Global Undo/Redo - Ctrl+Z / Ctrl+Y. Checked here, before
+      // Global Undo/Redo - Ctrl+Z / Ctrl+Y for the model (Scene3D),
+      // Ctrl+Shift+Z / Ctrl+Shift+Y for the camera/view (Viewport3D) -
+      // two independent histories, see undoRedoViewport3D.pde's own
+      // header comment for why they never overlap. Checked here, before
       // the typeUserCommand/wasEditingSpinner dispatch below, so it only
       // ever fires while the person isn't actively typing a console
       // command or editing a spinner's value (same context
@@ -248,7 +260,7 @@ void keyPressed (KeyEvent e) {
           e.isControlDown() && !e.isAltDown()) {
         if (e.getKeyCode() == 90) { // 90 = Z
           if (e.isShiftDown()) {
-            // callAction("Undo Viewport Change");
+            callAction("Undo Viewport3D Change");
           } else {
             callAction("Undo Scene3D Change");
           }
@@ -258,7 +270,7 @@ void keyPressed (KeyEvent e) {
 
         if (e.getKeyCode() == 89) { // 89 = Y
           if (e.isShiftDown()) {
-            // callAction("Redo Viewport Change");
+            callAction("Redo Viewport3D Change");
           } else {
             callAction("Redo Scene3D Change");
           }

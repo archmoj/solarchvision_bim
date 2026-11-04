@@ -212,6 +212,11 @@ boolean draw_initial_frames () {
     // app starts accepting input, is the one clean "nothing has been
     // edited yet" moment to capture it.
     seedScene3DHistory();
+
+    // Viewport3D's own baseline, same moment and same reasoning as
+    // seedScene3DHistory() just above - see undoRedoViewport3D.pde's
+    // own comment on seedViewport3DHistory().
+    seedViewport3DHistory();
   } else {
     return false;
   }
