@@ -241,7 +241,7 @@ void calculate_GlobalSolar_array () {
   STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
   // Global-solar shading colors just changed without going through
-  // endModel3DChange() - invalidate the WIN3D retained-mode face cache so the
+  // endScene3DChange() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
   if (allFaces != null) {
     // Same reasoning as calculateVertexSolarArray.pde's own identical

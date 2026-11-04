@@ -62,7 +62,7 @@ void draw_WIN3D_layers () {
   // back off. dismissShading() (shadeViewport3D.pde) is the only place that
   // does that, from Esc.
   if (WIN3D.showShading) {
-    // view_changed()/endModel3DChange() (global_functions.pde) set this
+    // view_changed()/endScene3DChange() (global_functions.pde) set this
     // whenever the camera moved or the model was edited while this
     // overlay was already showing - re-bake right here, once per such
     // frame, before drawing, so the overlay tracks the live camera/model

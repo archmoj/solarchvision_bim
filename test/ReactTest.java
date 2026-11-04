@@ -222,7 +222,7 @@ class ReactTest {
   }
 
   @Test
-  void applyLandLoadMesh_rebuildsTheMeshAndFlagsTheModel3DChanged_whenChanged () {
+  void applyLandLoadMesh_rebuildsTheMeshAndFlagsTheScene3DChanged_whenChanged () {
     // Terrain.update_mesh() falls back to a flat mesh if it can't load real
     // topography files (there are none in a test environment), so this is
     // safe to run for real rather than mocking it.
@@ -240,7 +240,7 @@ class ReactTest {
   }
 
   @Test
-  void applyLandLoadTextures_flagsTheModel3DChanged_whenChanged () {
+  void applyLandLoadTextures_flagsTheScene3DChanged_whenChanged () {
     app.should_rebuildFaceGrid = false;
     app.react.applyLandLoadTextures.run(0, 1);
     assertTrue(app.should_rebuildFaceGrid);

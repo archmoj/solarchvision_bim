@@ -641,9 +641,9 @@ String __$EDITSELECTION__ (String[] parts) {
     if (parts.length > 1) {
     float wheelValue = float(parts[1]);
     int pEdit = int(-wheelValue);
-    beginModel3DChange();
+    beginScene3DChange();
     Edit3D.selection(pEdit);
-    endModel3DChange();
+    endScene3DChange();
     }
     else {
     hint = "+EditSelection ?";
@@ -923,14 +923,14 @@ String __SCALE__ (String[] parts) {
 // Composite, same reasoning as Delete3D.selection()'s own comment: a
 // single "Delete" command can target several categories at once (e.g.
 // "Delete faces lines"), each already its own self-contained
-// beginModel3DChange()/endModel3DChange() pair (deleteAll(), the various
+// beginScene3DChange()/endScene3DChange() pair (deleteAll(), the various
 // makeEmpty() calls, Delete3D.isolatedVertices_Selection()/selection())
 // - without this outer pair too, each target in the same command would
 // independently record its own step.
 String __DELETE__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
-    beginModel3DChange();
+    beginScene3DChange();
     for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
             if (low_case.equals("all")) deleteAll();
@@ -945,7 +945,7 @@ String __DELETE__ (String[] parts) {
         else if (low_case.equals("vertices")) Delete3D.isolatedVertices_Selection();
         else if (low_case.equals("selection")) Delete3D.selection();
     }
-    endModel3DChange();
+    endScene3DChange();
     }
     else {
     hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
@@ -955,7 +955,7 @@ String __DELETE__ (String[] parts) {
 
 // Composite, same reasoning as __DELETE__'s own comment just above: n
 // repetitions of clone (+ optional move/rotate), each already its own
-// self-contained beginModel3DChange()/endModel3DChange() pair (Clone3D.
+// self-contained beginScene3DChange()/endScene3DChange() pair (Clone3D.
 // selection()'s own sub-methods, Move3D.selection(), Rotate3D.
 // selection()) - without this outer pair too, each repetition would
 // independently record its own step, turning one "Copy n=5 ..." into
@@ -972,7 +972,7 @@ String __COPY__ (String[] parts) {
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
 
-    beginModel3DChange();
+    beginScene3DChange();
 
     for (int q = 0; q < n; q++) {
         Clone3D.selection(true);
@@ -982,7 +982,7 @@ String __COPY__ (String[] parts) {
         if (rz != 0) Rotate3D.selection(0, 0, 0, rz, 2);
     }
 
-    endModel3DChange();
+    endScene3DChange();
     }
     else {
     hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
@@ -1219,10 +1219,10 @@ String __PERSON__ (String[] parts) {
     float x = getF(p, "x", 0);
     float y = getF(p, "y", 0);
     float z = getF(p, "z", 0);
-    beginModel3DChange();
+    beginScene3DChange();
     allModel2Ds.create(t, m, x, y, z, 2.5);
     // Was view_changed() - a plain redraw signal, not the structural-edit
-    // one. __TREE2__ right below calls endModel3DChange() for the exact
+    // one. __TREE2__ right below calls endScene3DChange() for the exact
     // same kind of create() call; this one never did, so a person added
     // this way (the click-to-create "Person" command - mouseClicked.pde's
     // CREATE.Person case runs exactly this) never bumped the WIN3D
@@ -1231,7 +1231,7 @@ String __PERSON__ (String[] parts) {
     // the kind of thing this WOULD have broken) and, now, never recorded
     // an undo step either - the actual bug behind "add a person, undo
     // doesn't remove it": no history entry existed to undo back to.
-    endModel3DChange();
+    endScene3DChange();
     }
     else {
     hint = "Person m=? x=? y=? z=?";
@@ -1251,9 +1251,9 @@ String __TREE2__ (String[] parts) {
     float z = getF(p, "z", 0);
     float h = getF(p, "h", 10.0);
     if (h != 0) {
-        beginModel3DChange();
+        beginScene3DChange();
         allModel2Ds.create(t, m, x, y, z, h);
-        endModel3DChange();
+        endScene3DChange();
     }
     }
     else {
@@ -1303,9 +1303,9 @@ String __TREE1__ (String[] parts) {
         }
     }
     if (h != 0) {
-        beginModel3DChange();
+        beginScene3DChange();
         allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, trunk, leaf);
-        endModel3DChange();
+        endScene3DChange();
     }
     }
     else {
@@ -2094,9 +2094,9 @@ String __SOLID__ (String[] parts) {
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
     if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {
-        beginModel3DChange();
+        beginScene3DChange();
         allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-        endModel3DChange();
+        endScene3DChange();
     }
     }
     else {

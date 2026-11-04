@@ -254,16 +254,16 @@ void build_allActions() {
     link("https://solarchvision.com/");
   });
 
-  // See undoRedo.pde: undoModel3DChange()/redoModel3DChange() are currently stubs
+  // See undoRedo.pde: undoScene3DChange()/redoScene3DChange() are currently stubs
   // the Ctrl+Z / Ctrl+Y shortcut (solarchvision_bim.pde's keyPressed()) and
   // these two actions are step one (the trigger), wired ahead of the
   // storage layer itself.
-  putAction("Undo Model3D Change", () -> {
-    undoModel3DChange();
+  putAction("Undo Scene3D Change", () -> {
+    undoScene3DChange();
   });
 
-  putAction("Redo Model3D Change", () -> {
-    redoModel3DChange();
+  putAction("Redo Scene3D Change", () -> {
+    redoScene3DChange();
   });
 
   putAction("New", () -> {
@@ -1295,18 +1295,18 @@ void build_allActions() {
   });
 
   putAction("Begin New Group at Origin", () -> {
-    beginModel3DChange();
+    beginScene3DChange();
 
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    endModel3DChange();
+    endScene3DChange();
   });
 
   putAction("Begin New Group at Pivot", () -> {
-    beginModel3DChange();
+    beginScene3DChange();
 
     allGroups.beginNewGroup(
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0],
@@ -1323,7 +1323,7 @@ void build_allActions() {
     Select3D.groupSelection = new int [1];
     Select3D.groupSelection[0] = allGroups.num - 1;
 
-    endModel3DChange();
+    endScene3DChange();
   });
 
   putAction("Solid", () -> {
@@ -1735,19 +1735,19 @@ void build_allActions() {
   });
 
   putAction("TerrainMesh >> Group", () -> {
-    beginModel3DChange();
+    beginScene3DChange();
 
     Terrain.draw(TypeWindow.TerrainMesh);
 
-    endModel3DChange();
+    endScene3DChange();
   });
 
   putAction("TerrainGap >> Group", () -> {
-    beginModel3DChange();
+    beginScene3DChange();
 
     Terrain.draw(TypeWindow.LandGap);
 
-    endModel3DChange();
+    endScene3DChange();
   });
 
   putAction("Change Seed/Material", () -> {

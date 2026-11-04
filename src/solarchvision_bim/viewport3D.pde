@@ -1134,10 +1134,10 @@ class WIN3D {
   // Keyboard-nudge equivalent of react.pde's applyRotValue/applyScaleValue/
   // applyPosValue - same reasoning applies to the first three blocks below:
   // Rotate3D/Scale3D/Move3D.selection() already wrap their own
-  // beginModel3DChange()/endModel3DChange() pair internally (see those files'
+  // beginScene3DChange()/endScene3DChange() pair internally (see those files'
   // own comments), so no separate call here - doing so would double-record
   // one nudge as two undo steps. Edit3D.selection() below is different:
-  // edit3D.pde never calls beginModel3DChange()/endModel3DChange() itself, so
+  // edit3D.pde never calls beginScene3DChange()/endScene3DChange() itself, so
   // this is the only place that edit gets recorded - standard begin/end
   // pairing, not removal.
   void incrementParameter (int direction) {
@@ -1180,9 +1180,9 @@ class WIN3D {
     if (this.toolParameterModifier == 0) {
       if (this.currentTool >= UITASK.Seed_Material) {
         int p = direction;
-        beginModel3DChange();
+        beginScene3DChange();
         Edit3D.selection(p);
-        endModel3DChange();
+        endScene3DChange();
       }
     }
   }
@@ -1282,7 +1282,7 @@ class WIN3D {
   // solarchvision_bim.pde) explicitly turns it back off.
   boolean showShading = false;
 
-  // Set by view_changed() (global_functions.pde - endModel3DChange() always
+  // Set by view_changed() (global_functions.pde - endScene3DChange() always
   // funnels into it too, so a model edit sets this the same way a camera
   // move does) whenever showShading is already true, meaning the Shade_
   // RGBA this overlay is still showing was baked from a camera/model

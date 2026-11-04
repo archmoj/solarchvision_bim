@@ -3,7 +3,7 @@ class Create3D {
   final static String CLASS_STAMP = "create3D";
 
   void add_Octahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -132,12 +132,12 @@ class Create3D {
     model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_House3_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -261,12 +261,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_House2_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -390,12 +390,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_House1_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -548,13 +548,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_Box_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -629,7 +629,7 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
@@ -646,7 +646,7 @@ class Create3D {
   // has, which the Mesh3 calls never had either - a degenerate call no
   // longer creates zero-area triangles.
   void add_Pyramid_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -702,12 +702,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_Box_Corners (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 != x2) || (y1 != y2) || (z1 != z2)) {
@@ -780,12 +780,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_H_shade (int m, int tes, int lyr, int vsb, int wgt, int clz, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((d > 0) && (w > 0)) {
@@ -835,12 +835,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_V_shade (int m, int tes, int lyr, int vsb, int wgt, int clz, float x0, float y0, float z0, float h, float d, float t, float t0) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((d > 0) && (h > 0)) {
@@ -886,13 +886,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_Mesh2 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x3, float y3, float z3) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 != x3) || (y1 != y3) || (z1 != z3)) {
@@ -939,12 +939,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_Mesh3 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 != x2) || (y1 != y2) || (z1 != z2)) {
@@ -975,13 +975,13 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_Mesh4 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
@@ -1024,13 +1024,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_Mesh5 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
@@ -1078,12 +1078,12 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
   void add_Mesh6 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5, float x6, float y6, float z6) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((x1 == x2) && (y1 == y2) && (z1 == z2)) {
@@ -1136,7 +1136,7 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
@@ -1144,7 +1144,7 @@ class Create3D {
 
     if (points.length < 3) return;
 
-    beginModel3DChange();
+    beginScene3DChange();
 
     current_Material = m;
     current_Tessellation = tes;
@@ -1161,13 +1161,13 @@ class Create3D {
 
     allFaces.create(newFace_nodes);
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
 
   void add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((r > 0) && (h > 0) && (n > 2)) {
@@ -1191,13 +1191,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_PolygonMesh (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int n, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((r > 0) && (n > 2)) {
@@ -1221,13 +1221,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_PolygonExtrude (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if ((r > 0) && (h > 0) && (n > 2)) {
@@ -1280,7 +1280,7 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
@@ -1289,7 +1289,7 @@ class Create3D {
 
 
   void add_Icosahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     if (r > 0) {
@@ -1363,13 +1363,13 @@ class Create3D {
       model_added();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
 
   void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     current_Material = m;
@@ -1494,13 +1494,13 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
 
   void add_CrystalSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int tessellation, int isSky, float t) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     current_Material = m;
@@ -1622,14 +1622,14 @@ class Create3D {
       // Nothing. In this case we should add temp object outside this function. See SuperSphere
     }
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
 
 
   void add_SuperSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int tessellation, float t) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     current_Material = m;
@@ -1673,13 +1673,13 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
 
   void add_SuperCylinder (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     current_Material = m;
@@ -1750,12 +1750,12 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
   void add_Cone (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     current_Material = m;
@@ -1794,7 +1794,7 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
-    endModel3DChange();
+    endScene3DChange();
     model_added();
   }
 
@@ -2048,7 +2048,7 @@ class Create3D {
 
 
   void add_onTerrain (int people_or_trees) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     //randomSeed(0);
@@ -2286,11 +2286,11 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
   void add_onPolar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     for (int i = 0; i < n; i++) {
@@ -2316,11 +2316,11 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
   void add_onPlane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     for (int i = 0; i < n; i++) {
@@ -2354,11 +2354,11 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
   void add_onMesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
-    beginModel3DChange();
+    beginScene3DChange();
 
 
     float x0 = 0.5 * (x1 + x2);
@@ -2395,7 +2395,7 @@ class Create3D {
       }
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 
@@ -2426,7 +2426,7 @@ class Create3D {
   // the undo history to a single fresh baseline of its own - so this
   // composite's own step is the first real edit on top of that baseline.
   void add_DefaultModel (int n) {
-    beginModel3DChange();
+    beginScene3DChange();
 
     find_which_bakings_to_regenerate();
 
@@ -2638,6 +2638,6 @@ class Create3D {
 
     Select3D.deselectAll();
 
-    endModel3DChange();
+    endScene3DChange();
   }
 }

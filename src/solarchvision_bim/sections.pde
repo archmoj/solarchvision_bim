@@ -13,7 +13,7 @@ class Sections {
   int[][] i_data = new int[0][3];
 
   void makeEmpty (int n) {
-    beginModel3DChange();
+    beginScene3DChange();
 
     this.f_data = new float[n][6];
     this.i_data = new int[n][3];
@@ -24,7 +24,7 @@ class Sections {
     if (Select3D != null) {
       Select3D.deselect_Sections();
     }
-    endModel3DChange();
+    endScene3DChange();
   }
 
   void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {

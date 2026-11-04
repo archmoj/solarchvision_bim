@@ -13,7 +13,7 @@ class Cameras {
   int num;
 
   void makeEmpty (int n) {
-    beginModel3DChange();
+    beginScene3DChange();
 
     this.num = n;
     this.options = new float [n][9];
@@ -25,7 +25,7 @@ class Cameras {
       Select3D.deselect_Cameras();
     }
 
-    endModel3DChange();
+    endScene3DChange();
   }
 
 

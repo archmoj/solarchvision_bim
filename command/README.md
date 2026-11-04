@@ -450,8 +450,8 @@ Includes commands such as:
 
 ### Undo and redo
 
--   `Undo Model3D Change`
--   `Redo Model3D Change`
+-   `Undo Scene3D Change`
+-   `Redo Scene3D Change`
 -   `Undo Viewport3D Change`
 -   `Redo Viewport3D Change`
 
