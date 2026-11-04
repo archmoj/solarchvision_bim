@@ -1,6 +1,6 @@
 class Points {
 
-  final static String CLASS_STAMP = "point";
+  final static String CLASS_STAMP = "vertex";
 
   Points () { // constructor
     makeEmpty(0);
