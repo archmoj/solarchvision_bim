@@ -232,7 +232,7 @@ void keyPressed (KeyEvent e) {
 
       boolean wasEditingSpinner = UI_rollout.isEditingSpinner();
 
-      // Global Undo/Redo - Ctrl+Z / Ctrl+Shift+Z. Checked here, before
+      // Global Undo/Redo - Ctrl+Z / Ctrl+Y. Checked here, before
       // the typeUserCommand/wasEditingSpinner dispatch below, so it only
       // ever fires while the person isn't actively typing a console
       // command or editing a spinner's value (same context
@@ -246,14 +246,26 @@ void keyPressed (KeyEvent e) {
       // also reachable from the command line and (if ever added) a menu
       // item for free.
       if (!wasEditingSpinner && (typeUserCommand == 0) &&
-          e.isControlDown() && !e.isAltDown() && (e.getKeyCode() == 90)) { // 90 = Z
-        if (e.isShiftDown()) {
-          callAction("Redo");
-        } else {
-          callAction("Undo");
+          e.isControlDown() && !e.isAltDown()) {
+        if (e.getKeyCode() == 90) { // 90 = Z
+          if (e.isShiftDown()) {
+            // callAction("Undo Viewport");
+          } else {
+            callAction("Undo");
+          }
+          redraw();
+          return;
         }
-        redraw();
-        return;
+
+        if (e.getKeyCode() == 89) { // 89 = Y
+          if (e.isShiftDown()) {
+            // callAction("Redo Viewport");
+          } else {
+            callAction("Redo");
+          }
+          redraw();
+          return;
+        }
       }
 
       // Whether THIS keypress is the one that's about to reach

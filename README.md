@@ -221,8 +221,10 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 
 | Shortcut | Action |
 | --- | --- |
-| `TAB` | Show or hide the command bar |
-| `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, or remove the most recently pinned hover point - whichever applies |
+| `TAB` | Show or hide the command bar, next spinner edit when in-progress |
+| `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, cancel viewport shading, or remove the most recently pinned hover point - whichever applies |
+| `Ctrl+Z` | Undo model change |
+| `Ctrl+Y` | Redo model change |
 | `a` / `A` | Switch between active and passive impact views in the 3D view |
 | `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
 | `d` / `D` | Change the impact-display day in the 3D view |
