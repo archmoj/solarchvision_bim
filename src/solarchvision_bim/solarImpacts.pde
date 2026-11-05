@@ -589,10 +589,19 @@ class SolarImpacts {
       String camera2DTextureFile = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "2Ds_Camera" + nf(cameraIndex, 2) + ".png";
       PImage Model2DsTexture = new File(camera2DTextureFile).exists() ? loadImage(camera2DTextureFile) : null;
 
+      // Same null-safe loading as Model2DsTexture just above: a missing
+      // PNG here (project moved/copied without its shadings folder, bake
+      // never run for this camera, project opened on a machine that never
+      // baked it, ...) is left as a null PImage rather than handed to
+      // loadImage() as-is, which would print its own "file is missing"
+      // warning and STILL leave diffuseShadings[SHD] null - the actual
+      // crash this avoids happens later, at the RAD_TYPE==1 accumulation
+      // dispatch below, which now skips any pass backed by a null image
+      // instead of calling .get() on one.
       PImage[] diffuseShadings = new PImage[2];
       for (int SHD = 0; SHD <= 1; SHD++) {
         String diffuseFileName = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "DIF_" + STR_SHD[SHD] + "_Camera" + nf(cameraIndex, 2) + ".png";
-        diffuseShadings[SHD] = loadImage(diffuseFileName);
+        diffuseShadings[SHD] = new File(diffuseFileName).exists() ? loadImage(diffuseFileName) : null;
       }
 
       float values_R_dir;
@@ -747,10 +756,28 @@ class SolarImpacts {
                           File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
 
                           long calcImpact_loadImageT0 = millis();
-                          Shadings[SHD] = loadImage(File_Name);
+                          Shadings[SHD] = new File(File_Name).exists() ? loadImage(File_Name) : null;
                           calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                         }
                       }
+
+                      // Whichever branch above set it, Shadings[0]/[1] can
+                      // each be null: a bake for this exact camera/day/
+                      // hour (direct) or this camera (diffuse) that was
+                      // never run, or that existed when this project was
+                      // saved but isn't there anymore (moved/copied
+                      // project missing its shadings folder, as seen when
+                      // opening a project saved elsewhere - see this
+                      // function's own history). The accumulation loop
+                      // below unconditionally calls .get() on both, so
+                      // dispatching it against a null image would throw a
+                      // NullPointerException from inside a worker thread
+                      // instead of just leaving this one pass's data out -
+                      // skip the whole pass instead, the same way the
+                      // avg == null branch above already leaves this
+                      // hour's values out when there's no scenario data to
+                      // average.
+                      if (Shadings[0] == null || Shadings[1] == null) continue;
 
                       // Independent per pixel - each np reads only this
                       // pass's own RAD_VALUE/EFF_VALUE (locals, captured
