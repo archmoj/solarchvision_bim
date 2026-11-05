@@ -180,9 +180,24 @@ void ShadeViewport () {
   int RES1 = round(WIN3D.dX * quality);
   int RES2 = round(WIN3D.dY * quality);
 
-  Shade_RGBA = createImage(RES1, RES2, ARGB);
-  Shade_RGBA.loadPixels();
-
+  // shadeBuffer is the only thing pass 1/pass 2 below ever write into -
+  // Shade_RGBA itself (a shared global) is built fresh, as a purely local
+  // PImage, right next to the arraycopy that actually fills it, further
+  // down. Building it here instead, this early, used to mean the
+  // arraycopy's destination was whatever Shade_RGBA happened to point to
+  // by the time this function reached it minutes later - itself, as long
+  // as nothing else touched the global in between, but a *different*
+  // (differently-sized) image whenever a second ShadeViewport() call
+  // managed to run its own createImage() against the same global before
+  // this call's own pass 1/pass 2 finished (observed from users on
+  // Windows as ArrayIndexOutOfBoundsException: arraycopy: last
+  // destination index ... out of bounds - this call's own shadeBuffer,
+  // sized off this call's own RES1/RES2, copied into a Shade_RGBA some
+  // other, since-finished call had already swapped in at a different
+  // size). Deferring both the allocation and the publish to right around
+  // the copy itself (below) means this call's destination can only ever
+  // be sized off this call's own RES1/RES2, no matter what any
+  // concurrently-running call does to the shared field in the meantime.
   int[] shadeBuffer = new int[RES1 * RES2];
 
   // Maps an offset in RES1/RES2 pixel space back to the click-space
@@ -740,10 +755,28 @@ void ShadeViewport () {
   // shutdown() above only stops new tasks from being submitted - both
   // awaitAll() calls above are what actually guarantee every chunk's
   // writes into shadeBuffer are done and visible here). This is the only
-  // point in this whole function that touches Shade_RGBA.pixels[].
-  System.arraycopy(shadeBuffer, 0, Shade_RGBA.pixels, 0, shadeBuffer.length);
+  // point in this whole function that builds or touches Shade_RGBA.
+  //
+  // freshShadeRGBA is a plain local variable, reachable from nowhere else
+  // until the Shade_RGBA = freshShadeRGBA assignment just below - unlike
+  // the shared Shade_RGBA global itself, nothing outside this call can
+  // swap it out for a differently-sized image behind this call's back, so
+  // it's guaranteed to still be exactly the RES1 x RES2 image createImage()
+  // made it as, right here, whatever any other concurrently-running
+  // ShadeViewport() call is doing to the shared global at the same time
+  // (see shadeBuffer's own comment above for the failure this replaced).
+  // Only the final reference assignment is visible to the rest of the
+  // sketch, and only after this call's own copy has already landed safely
+  // in freshShadeRGBA's own private pixels array - so a concurrently-
+  // running call can still end up "winning" (whichever finishes last ends
+  // up as the Shade_RGBA actually shown), but neither call's own copy can
+  // ever fail with a size mismatch again.
+  PImage freshShadeRGBA = createImage(RES1, RES2, ARGB);
+  freshShadeRGBA.loadPixels();
+  System.arraycopy(shadeBuffer, 0, freshShadeRGBA.pixels, 0, shadeBuffer.length);
+  freshShadeRGBA.updatePixels();
 
-  Shade_RGBA.updatePixels();
+  Shade_RGBA = freshShadeRGBA;
 
   if (noShadeOnlyVisible2DTextures) {
     Shade_RGBA.save(camera2DTexture);
