@@ -136,170 +136,182 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
   println("Importing LAS. Please wait...");
   showWaitCursor();
 
-  if (m == -1) current_Material = 0;
-  else current_Material = m;
-
-  current_Tessellation = tes;
-  current_Layer = lyr;
-  current_Visibility = vsb;
-  current_Weight = wgt;
-  current_Closed = clz;
-
-  las_cx = cx; las_cy = cy; las_cz = cz;
-  las_sx = sx; las_sy = sy; las_sz = sz;
-
-  importedObjectName = OPESYS.getFilenameFromPath(FileName);
-
-  if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-  byte[] raw = loadBytes(FileName);
-  if ((raw == null) || (raw.length == 0)) {
-    println("\nLAS import: could not read '" + FileName + "'");
-    showArrowCursor();
-    return;
-  }
-
-  LasHeader header = lasParseHeader(raw);
-  if (header == null) {
-    println("\nLAS import: '" + FileName + "' doesn't look like a valid LAS file (missing the 'LASF' file signature, or shorter than a LAS header)");
-    showArrowCursor();
-    return;
-  }
-
-  if (header.isCompressed) {
-    println("\nLAS import: '" + FileName + "' is LASzip-compressed (a .laz file, or a .las file saved with LAZ compression) - this version only reads plain, uncompressed LAS point data (see this file's own header comment for why) - re-export it as uncompressed LAS first");
-    showArrowCursor();
-    return;
-  }
-
-  if (header.pointDataRecordLength < 12) {
-    println("\nLAS import: '" + FileName + "' declares a point record length of only " + header.pointDataRecordLength + " byte(s) - too short to even hold X/Y/Z, so this doesn't look like a valid LAS file");
-    showArrowCursor();
-    return;
-  }
-
-  // A truncated/corrupted file's own declared point count is never
-  // trusted past what the file itself actually holds - same reasoning
-  // as plyImportBinary()'s own bounds-checked skipBytes (importPly.pde).
-  long availableBytes = raw.length - header.offsetToPointData;
-  long countThatFits = (availableBytes >= 0) ? (availableBytes / header.pointDataRecordLength) : 0;
-  // Plain conditional rather than min(): Processing's own min() isn't
-  // overloaded for "long", and widening either argument to fit one of
-  // its overloads (float/double) risks losing precision on a genuinely
-  // huge count - not a concern this version needs to accept at all.
-  long pointCount = (header.numberOfPointRecords < countThatFits) ? header.numberOfPointRecords : countThatFits;
-
-  // Reported against header.numberOfPointRecords BEFORE lasImportMax
-  // Points (below) can shrink pointCount any further - this message is
-  // specifically about the FILE not holding what it claims to, never
-  // about lasImportMaxPoints' own deliberate, unrelated limit (that one
-  // gets its own, separate message just below).
-  if (pointCount < header.numberOfPointRecords) {
-    println("\nLAS import: '" + FileName + "' is shorter than its own header's point count claims - only reading the " + pointCount + " point(s) that actually fit");
-  }
-
-  // See lasImportMaxPoints's own comment above for what this is and
-  // where it comes from - applied AFTER the file-truncation check just
-  // above (never past what the file genuinely holds either way), so the
-  // two messages never read as the same thing: one says "the file
-  // itself doesn't have what it claims", this one says "deliberately
-  // only reading part of what it has".
-  if ((lasImportMaxPoints > 0) && (pointCount > lasImportMaxPoints)) {
-    println("\nLAS import: lasImportMaxPoints is set - only reading the first " + lasImportMaxPoints + " of " + pointCount + " point(s) this file actually holds (testing option; see lasShowImportOptionsDialog()'s own checkbox, or IMPORT.LAS's own optional 3rd argument)");
-    pointCount = lasImportMaxPoints;
-  }
-
-  lasPointsImported = 0;
-  lasFacesImported = 0;
-
-  progressBarHeader();
-
-  ProgressWindow lasProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing LAS") : null;
-  if (lasProgressWindow != null) lasProgressWindow.setVisible(true);
-
-  // Every point's own allPoints index (lasPointIndex[k]) and final,
-  // already-transformed (x, y) (lasFinalX[k]/lasFinalY[k]), kept
-  // alongside each other in file order - lasMeshPointCloud() (below)
-  // hands the (x, y) arrays straight to meshPointCloud_delaunayXY()
-  // (meshPointCloud.pde) and then translates ITS OWN plain 0..
-  // pointCount-1 indices back into real allPoints indices via
-  // lasPointIndex - the same "collect a global-index table while
-  // importing, resolve through it afterward" shape plyImportAscii()'s/
-  // plyImportBinary()'s own vertexGlobalIndex (importPly.pde) already
-  // uses for face corners.
-  int[] lasPointIndex = new int[(int) pointCount];
-  float[] lasFinalX = new float[(int) pointCount];
-  float[] lasFinalY = new float[(int) pointCount];
-
-  float printedProgress = 0;
-
+  // Everything below runs inside this one try/finally so showArrowCursor()
+  // (in the finally, right at the bottom of this function) ALWAYS runs
+  // before this function returns - on every early "this file is no
+  // good" return below, AND if anything further down (reading a
+  // corrupted point record, or lasMeshPointCloud()'s own call into
+  // meshPointCloud.pde) throws - rather than only on the ordinary,
+  // nothing-went-wrong path. Without this, any such exception would
+  // leave showArrowCursor() unreached and the wait cursor stuck forever
+  // (not just for however long the operation that threw actually took) -
+  // a real bug this shape fixes, on top of just making a slow import
+  // easier to tell apart from a genuinely stuck one (see lasMesh
+  // PointCloud()'s own progress reporting, below, for that part).
   try {
-    int pos = header.offsetToPointData;
-    for (int k = 0; k < pointCount; k++) {
 
-      if (control != USER_AUTO) {
-        float Progress = 100 * k / (float) pointCount;
-        int delta = (int) floor(Progress - printedProgress);
-        if (delta >= 1) {
-          StringBuilder barBuffer = new StringBuilder();
-          for (int c = 0; c < delta; c++) barBuffer.append('█');
-          print(barBuffer.toString());
-          printedProgress = floor(Progress);
-          if (lasProgressWindow != null) lasProgressWindow.updateFraction(Progress / 100.0f);
-        }
-      }
+    if (m == -1) current_Material = 0;
+    else current_Material = m;
 
-      // Raw X/Y/Z are plain signed 32-bit integers, always scaled
-      // (header.scaleX/Y/Z) and offset (header.offsetX/Y/Z) into the
-      // file's own real-world coordinates by this exact two-step
-      // formula - true for every point data format alike (0-10 - see
-      // this file's own header comment for why only these first 12
-      // bytes of each record are ever read here). binReadU32LE()
-      // (importGlb.pde) returns the exact 32-bit bit pattern read,
-      // which is already the correct signed value here - X/Y/Z are
-      // commonly negative (relative to the header's own offsetX/Y/Z).
-      double realX = header.offsetX + header.scaleX * binReadU32LE(raw, pos);
-      double realY = header.offsetY + header.scaleY * binReadU32LE(raw, pos + 4);
-      double realZ = header.offsetZ + header.scaleZ * binReadU32LE(raw, pos + 8);
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;
+    current_Closed = clz;
 
-      int pointIndex = lasCreatePoint((float) realX, (float) realY, (float) realZ);
+    las_cx = cx; las_cy = cy; las_cz = cz;
+    las_sx = sx; las_sy = sy; las_sz = sz;
 
-      lasPointIndex[k] = pointIndex;
-      // Always the app's own (finalX, finalY) - i.e. allPoints' own
-      // getX()/getY() - regardless of importSwapAxisYZ: that flag's
-      // whole job is to make the app's own Z axis consistently "up"
-      // either way (see lasCreatePoint()'s own comment just below), so
-      // (finalX, finalY) is always the app's own horizontal plane, and
-      // triangulating it always means meshing the file's real ground/
-      // horizontal surface - never a vertical cross-section of it.
-      lasFinalX[k] = allPoints.getX(pointIndex);
-      lasFinalY[k] = allPoints.getY(pointIndex);
+    importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
-      lasPointsImported += 1;
+    if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-      pos += header.pointDataRecordLength;
+    byte[] raw = loadBytes(FileName);
+    if ((raw == null) || (raw.length == 0)) {
+      println("\nLAS import: could not read '" + FileName + "'");
+      return;
     }
+
+    LasHeader header = lasParseHeader(raw);
+    if (header == null) {
+      println("\nLAS import: '" + FileName + "' doesn't look like a valid LAS file (missing the 'LASF' file signature, or shorter than a LAS header)");
+      return;
+    }
+
+    if (header.isCompressed) {
+      println("\nLAS import: '" + FileName + "' is LASzip-compressed (a .laz file, or a .las file saved with LAZ compression) - this version only reads plain, uncompressed LAS point data (see this file's own header comment for why) - re-export it as uncompressed LAS first");
+      return;
+    }
+
+    if (header.pointDataRecordLength < 12) {
+      println("\nLAS import: '" + FileName + "' declares a point record length of only " + header.pointDataRecordLength + " byte(s) - too short to even hold X/Y/Z, so this doesn't look like a valid LAS file");
+      return;
+    }
+
+    // A truncated/corrupted file's own declared point count is never
+    // trusted past what the file itself actually holds - same reasoning
+    // as plyImportBinary()'s own bounds-checked skipBytes (importPly.pde).
+    long availableBytes = raw.length - header.offsetToPointData;
+    long countThatFits = (availableBytes >= 0) ? (availableBytes / header.pointDataRecordLength) : 0;
+    // Plain conditional rather than min(): Processing's own min() isn't
+    // overloaded for "long", and widening either argument to fit one of
+    // its overloads (float/double) risks losing precision on a genuinely
+    // huge count - not a concern this version needs to accept at all.
+    long pointCount = (header.numberOfPointRecords < countThatFits) ? header.numberOfPointRecords : countThatFits;
+
+    // Reported against header.numberOfPointRecords BEFORE lasImportMax
+    // Points (below) can shrink pointCount any further - this message is
+    // specifically about the FILE not holding what it claims to, never
+    // about lasImportMaxPoints' own deliberate, unrelated limit (that one
+    // gets its own, separate message just below).
+    if (pointCount < header.numberOfPointRecords) {
+      println("\nLAS import: '" + FileName + "' is shorter than its own header's point count claims - only reading the " + pointCount + " point(s) that actually fit");
+    }
+
+    // See lasImportMaxPoints's own comment above for what this is and
+    // where it comes from - applied AFTER the file-truncation check just
+    // above (never past what the file genuinely holds either way), so the
+    // two messages never read as the same thing: one says "the file
+    // itself doesn't have what it claims", this one says "deliberately
+    // only reading part of what it has".
+    if ((lasImportMaxPoints > 0) && (pointCount > lasImportMaxPoints)) {
+      println("\nLAS import: lasImportMaxPoints is set - only reading the first " + lasImportMaxPoints + " of " + pointCount + " point(s) this file actually holds (testing option; see lasShowImportOptionsDialog()'s own checkbox, or IMPORT.LAS's own optional 3rd argument)");
+      pointCount = lasImportMaxPoints;
+    }
+
+    lasPointsImported = 0;
+    lasFacesImported = 0;
+
+    progressBarHeader();
+
+    ProgressWindow lasProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing LAS") : null;
+    if (lasProgressWindow != null) lasProgressWindow.setVisible(true);
+
+    // Every point's own allPoints index (lasPointIndex[k]) and final,
+    // already-transformed (x, y) (lasFinalX[k]/lasFinalY[k]), kept
+    // alongside each other in file order - lasMeshPointCloud() (below)
+    // hands the (x, y) arrays straight to meshPointCloud_delaunayXY()
+    // (meshPointCloud.pde) and then translates ITS OWN plain 0..
+    // pointCount-1 indices back into real allPoints indices via
+    // lasPointIndex - the same "collect a global-index table while
+    // importing, resolve through it afterward" shape plyImportAscii()'s/
+    // plyImportBinary()'s own vertexGlobalIndex (importPly.pde) already
+    // uses for face corners.
+    int[] lasPointIndex = new int[(int) pointCount];
+    float[] lasFinalX = new float[(int) pointCount];
+    float[] lasFinalY = new float[(int) pointCount];
+
+    float printedProgress = 0;
+
+    try {
+      int pos = header.offsetToPointData;
+      for (int k = 0; k < pointCount; k++) {
+
+        if (control != USER_AUTO) {
+          float Progress = 100 * k / (float) pointCount;
+          int delta = (int) floor(Progress - printedProgress);
+          if (delta >= 1) {
+            StringBuilder barBuffer = new StringBuilder();
+            for (int c = 0; c < delta; c++) barBuffer.append('█');
+            print(barBuffer.toString());
+            printedProgress = floor(Progress);
+            if (lasProgressWindow != null) lasProgressWindow.updateFraction(Progress / 100.0f);
+          }
+        }
+
+        // Raw X/Y/Z are plain signed 32-bit integers, always scaled
+        // (header.scaleX/Y/Z) and offset (header.offsetX/Y/Z) into the
+        // file's own real-world coordinates by this exact two-step
+        // formula - true for every point data format alike (0-10 - see
+        // this file's own header comment for why only these first 12
+        // bytes of each record are ever read here). binReadU32LE()
+        // (importGlb.pde) returns the exact 32-bit bit pattern read,
+        // which is already the correct signed value here - X/Y/Z are
+        // commonly negative (relative to the header's own offsetX/Y/Z).
+        double realX = header.offsetX + header.scaleX * binReadU32LE(raw, pos);
+        double realY = header.offsetY + header.scaleY * binReadU32LE(raw, pos + 4);
+        double realZ = header.offsetZ + header.scaleZ * binReadU32LE(raw, pos + 8);
+
+        int pointIndex = lasCreatePoint((float) realX, (float) realY, (float) realZ);
+
+        lasPointIndex[k] = pointIndex;
+        // Always the app's own (finalX, finalY) - i.e. allPoints' own
+        // getX()/getY() - regardless of importSwapAxisYZ: that flag's
+        // whole job is to make the app's own Z axis consistently "up"
+        // either way (see lasCreatePoint()'s own comment just below), so
+        // (finalX, finalY) is always the app's own horizontal plane, and
+        // triangulating it always means meshing the file's real ground/
+        // horizontal surface - never a vertical cross-section of it.
+        lasFinalX[k] = allPoints.getX(pointIndex);
+        lasFinalY[k] = allPoints.getY(pointIndex);
+
+        lasPointsImported += 1;
+
+        pos += header.pointDataRecordLength;
+      }
+    } finally {
+      if (lasProgressWindow != null) lasProgressWindow.dispose();
+    }
+
+    int remaining = (int) floor(100 - printedProgress);
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < remaining; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    println();
+
+    if (lasImportMeshPointCloud) {
+      lasMeshPointCloud(lasPointIndex, lasFinalX, lasFinalY);
+    }
+
+    if (lasPointsImported == 0) {
+      println("\nLAS import: no points were imported");
+    } else if (lasImportMeshPointCloud && (lasFacesImported == 0)) {
+      println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see meshPointCloud.pde's own meshPointCloud_delaunayXY() for when it returns no triangles (too few points, or over its own MESH_POINT_CLOUD_MAX_POINTS cap)");
+    }
+
   } finally {
-    if (lasProgressWindow != null) lasProgressWindow.dispose();
+    showArrowCursor();
   }
-
-  int remaining = (int) floor(100 - printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
-  println();
-
-  if (lasImportMeshPointCloud) {
-    lasMeshPointCloud(lasPointIndex, lasFinalX, lasFinalY);
-  }
-
-  if (lasPointsImported == 0) {
-    println("\nLAS import: no points were imported");
-  } else if (lasImportMeshPointCloud && (lasFacesImported == 0)) {
-    println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see meshPointCloud.pde's own meshPointCloud_delaunayXY() for when it returns no triangles (too few points, or over its own MESH_POINT_CLOUD_MAX_POINTS cap)");
-  }
-
-  showArrowCursor();
 }
 
 // One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
@@ -320,6 +332,37 @@ int lasCreatePoint (float x, float y, float z) {
   return allPoints.create(finalX, finalY, finalZ);
 }
 
+// A MeshPointCloudProgressListener (meshPointCloud.pde) that throttles
+// and reports progress the exact same way the point-reading loop in
+// import_objects_LAS() above already does (a console '█' bar, at most
+// once per whole-percent step, plus an optional ProgressWindow) - a
+// small class (holding its own printedProgress) rather than a lambda
+// specifically so that per-call state has somewhere plain to live,
+// matching the shape MeshTriangle/LasHeader (this file's own, and
+// meshPointCloud.pde's own) already use for the same reason.
+class LasMeshProgressReporter implements MeshPointCloudProgressListener {
+  ProgressWindow window; // nullable - see import_objects_LAS()'s own "showImportProgress && canShowProgressWindow()" check for when this is null
+  float printedProgress = 0;
+
+  LasMeshProgressReporter (ProgressWindow window) {
+    this.window = window;
+  }
+
+  void onPointInserted (int pointsInserted, int totalPoints) {
+    if (control == USER_AUTO) return;
+
+    float Progress = 100 * pointsInserted / (float) totalPoints;
+    int delta = (int) floor(Progress - printedProgress);
+    if (delta >= 1) {
+      StringBuilder barBuffer = new StringBuilder();
+      for (int c = 0; c < delta; c++) barBuffer.append('█');
+      print(barBuffer.toString());
+      printedProgress = floor(Progress);
+      if (window != null) window.updateFraction(Progress / 100.0f);
+    }
+  }
+}
+
 // Hands this import's own points to meshPointCloud_delaunayXY()
 // (meshPointCloud.pde) and turns every triangle it returns into one
 // app-native face - the one place this file ever touches meshPointCloud.
@@ -331,7 +374,44 @@ int lasCreatePoint (float x, float y, float z) {
 // own header comment on that), so there is only ever the one cloud to
 // mesh.
 void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
-  ArrayList<int[]> triangles = meshPointCloud_delaunayXY(finalX, finalY);
+
+  int totalPoints = finalX.length;
+
+  // meshPointCloud_delaunayXY() itself returns instantly (no real work,
+  // nothing to show progress on) for either of these - too few points,
+  // or over its own MESH_POINT_CLOUD_MAX_POINTS cap (which also prints
+  // its own message) - so this skips straight to calling it with no
+  // progress phase at all, rather than showing a "Meshing..." message/
+  // ProgressWindow around a call that's about to do nothing.
+  if ((totalPoints < 3) || (totalPoints > MESH_POINT_CLOUD_MAX_POINTS)) {
+    ArrayList<int[]> triangles = meshPointCloud_delaunayXY(finalX, finalY, null);
+    for (int[] tri : triangles) {
+      allFaces.create(new int[]{ pointIndex[tri[0]], pointIndex[tri[1]], pointIndex[tri[2]] });
+      lasFacesImported += 1;
+    }
+    return;
+  }
+
+  println("\nMeshing the point cloud into a surface. Please wait...");
+  progressBarHeader();
+
+  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Meshing LAS point cloud") : null;
+  if (meshProgressWindow != null) meshProgressWindow.setVisible(true);
+
+  LasMeshProgressReporter reporter = new LasMeshProgressReporter(meshProgressWindow);
+
+  ArrayList<int[]> triangles;
+  try {
+    triangles = meshPointCloud_delaunayXY(finalX, finalY, reporter);
+  } finally {
+    if (meshProgressWindow != null) meshProgressWindow.dispose();
+  }
+
+  int remaining = (int) floor(100 - reporter.printedProgress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
 
   for (int[] tri : triangles) {
     allFaces.create(new int[]{ pointIndex[tri[0]], pointIndex[tri[1]], pointIndex[tri[2]] });

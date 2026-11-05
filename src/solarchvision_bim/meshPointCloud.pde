@@ -35,6 +35,10 @@
 // well before a true large-scale point cloud's own size. MESH_POINT_
 // CLOUD_MAX_POINTS (below) is a deliberate, honest cap on top of that -
 // see its own comment for why, and for what a caller sees once it's hit.
+// meshPointCloud_delaunayXY()'s own optional MeshPointCloudProgressListener
+// parameter (also below) exists specifically so a caller's UI can show
+// real progress through however long this actually takes, rather than
+// looking indistinguishable from a genuine hang for that whole stretch.
 
 // A cloud larger than this is skipped entirely (not triangulated at
 // all - a caller falls back to importing loose points only, see e.g.
@@ -46,6 +50,29 @@
 // lower it if it's still too slow on real files, or raise it once a
 // real need shows up.
 final int MESH_POINT_CLOUD_MAX_POINTS = 50000;
+
+// Lets a caller of meshPointCloud_delaunayXY() (below) show real
+// progress through a triangulation that - see this file's own header
+// comment on performance - can take a genuinely long time, rather than
+// the caller's own UI looking stuck for that whole stretch with nothing
+// to tell a person watching it apart from an actual hang. Deliberately
+// just this one callback, with no reference to console printing,
+// ProgressWindow, or anything else app-specific - same "ignorant of
+// everything app-specific" reasoning as this file's own header comment
+// gives for not touching allPoints/allFaces/current_Material/... -  a
+// caller (e.g. importLas.pde's own LasMeshProgressReporter) decides
+// entirely for itself how (or whether) to actually show this.
+interface MeshPointCloudProgressListener {
+  // Called once per real point actually inserted into the triangulation
+  // (see meshPointCloud_delaunayXY()'s own main loop) - never for the 3
+  // super-triangle points, and never at all for a call that returns
+  // before starting (too few points, or over MESH_POINT_CLOUD_MAX_POINTS -
+  // both already have their own, separate "nothing to report progress
+  // on" meaning, so a caller never sees e.g. onPointInserted(0, 0)).
+  // pointsInserted counts up from 1 to totalPoints (== xs.length/
+  // ys.length, the same n meshPointCloud_delaunayXY() was called with).
+  void onPointInserted (int pointsInserted, int totalPoints);
+}
 
 // One triangle, mid-construction, as 3 indices into whatever point
 // array meshPointCloud_delaunayXY() was called with - the super-
@@ -80,7 +107,11 @@ class MeshTriangle {
 // an error, since a caller treating "no triangles" as "fall back to
 // loose points" is exactly the sensible, non-fatal response to all of
 // them alike.
-ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys) {
+//
+// progress (nullable - pass null for no progress reporting at all) gets
+// one onPointInserted() call per real point inserted - see MeshPoint
+// CloudProgressListener's own comment above for exactly when/how often.
+ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointCloudProgressListener progress) {
 
   ArrayList<int[]> result = new ArrayList<int[]>();
 
@@ -130,6 +161,7 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys) {
 
   for (int p = 0; p < n; p++) {
     meshInsertPoint(triangles, px, py, p);
+    if (progress != null) progress.onPointInserted(p + 1, n);
   }
 
   for (MeshTriangle t : triangles) {
