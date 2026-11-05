@@ -196,6 +196,13 @@ void draw_WIN3D_layers () {
     // "what's on disk for this camera/location", not which impact type is
     // currently selected.
     if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
+      // Same SceneName prefix preBakeViewport3D.pde actually saved this
+      // camera's FaceEdges PNG under - see viewport2D.pde's plotImpact_
+      // urban() for the full explanation (same gap, same fix). Set here
+      // too, rather than relying on plotImpact_urban() having already run
+      // earlier in this frame (or a previous one) and left SceneName set
+      // correctly: faceEdgesOverlay_load() can be reached on its own.
+      SceneName = "Viewport_" + Viewport_Stamp();
       PImage faceEdges = faceEdgesOverlay_load();
       if (faceEdges != null) {
         image(faceEdges, fit[0], fit[1], fit[2], fit[3]);
