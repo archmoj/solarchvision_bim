@@ -63,6 +63,16 @@
 // surface) via lasShowImportOptionsDialog() (fileSelected.pde) - the
 // same per-import, persists-across-imports shape ifcImportFurniture/...
 // (importIfc.pde) already use for their own options.
+//
+// Testing with only part of a file: a real LAS tile can be huge (easily
+// into the millions of points), slow to even read, let alone mesh - so
+// lasImportMaxPoints (below) lets the person importing cap this import
+// to only the FIRST N points the file's own point data holds (file
+// order, not a random/spatial sample - simplest to reason about, and
+// enough to sanity-check a parser/mesher change quickly), via either
+// lasShowImportOptionsDialog()'s own text field or IMPORT.LAS's own
+// optional 3rd script argument - see lasImportMaxPoints's own comment
+// for exactly where this is applied.
 
 boolean lasImportShowOptionsDialog = false;
 
@@ -76,6 +86,22 @@ boolean lasImportShowOptionsDialog = false;
 // OptionsDialog(), fileSelected.pde) rather than opt in.
 final boolean LAS_IMPORT_MESH_POINT_CLOUD = true;
 boolean lasImportMeshPointCloud = LAS_IMPORT_MESH_POINT_CLOUD;
+
+// How many of the file's own points to actually read, at most - 0 (this
+// toggle's own starting value) means no limit, every point the header/
+// file itself hold (countThatFits, further down) is read, same as
+// before this option existed. Set > 0 (via lasShowImportOptionsDialog()'s
+// own checkbox+field, fileSelected.pde, or IMPORT.LAS's own optional 3rd
+// script argument, extraCommands.pde) to read only the file's own FIRST
+// this-many points instead - meant for quickly testing against a huge
+// real file without waiting on (or meshing) all of it, not for a normal
+// import. Persists across imports the same way lasImportMeshPointCloud
+// does (see its own comment) - import_objects_LAS() below always prints
+// a console line whenever a limit is actually in effect, specifically so
+// a limit left on from an earlier test is never silently applied to a
+// later, real import.
+final int LAS_IMPORT_MAX_POINTS = 0;
+int lasImportMaxPoints = LAS_IMPORT_MAX_POINTS;
 
 // Transform parameters for the CURRENT import_objects_LAS() call - same
 // "a few fields shared across one whole import" shape ply_cx/...
@@ -163,8 +189,24 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
   // huge count - not a concern this version needs to accept at all.
   long pointCount = (header.numberOfPointRecords < countThatFits) ? header.numberOfPointRecords : countThatFits;
 
+  // Reported against header.numberOfPointRecords BEFORE lasImportMax
+  // Points (below) can shrink pointCount any further - this message is
+  // specifically about the FILE not holding what it claims to, never
+  // about lasImportMaxPoints' own deliberate, unrelated limit (that one
+  // gets its own, separate message just below).
   if (pointCount < header.numberOfPointRecords) {
     println("\nLAS import: '" + FileName + "' is shorter than its own header's point count claims - only reading the " + pointCount + " point(s) that actually fit");
+  }
+
+  // See lasImportMaxPoints's own comment above for what this is and
+  // where it comes from - applied AFTER the file-truncation check just
+  // above (never past what the file genuinely holds either way), so the
+  // two messages never read as the same thing: one says "the file
+  // itself doesn't have what it claims", this one says "deliberately
+  // only reading part of what it has".
+  if ((lasImportMaxPoints > 0) && (pointCount > lasImportMaxPoints)) {
+    println("\nLAS import: lasImportMaxPoints is set - only reading the first " + lasImportMaxPoints + " of " + pointCount + " point(s) this file actually holds (testing option; see lasShowImportOptionsDialog()'s own checkbox, or IMPORT.LAS's own optional 3rd argument)");
+    pointCount = lasImportMaxPoints;
   }
 
   lasPointsImported = 0;

@@ -206,9 +206,26 @@ boolean lasShowImportOptionsDialog () {
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
 
+  // lasImportMaxPoints (importLas.pde) - see its own comment for what
+  // this is for. limitBox starts checked iff a limit is already active
+  // (carried over from an earlier import in this same session);
+  // limitField always starts holding SOME usable positive number (the
+  // current limit if one's active, else a reasonable default a person
+  // testing would likely want) so just ticking limitBox back on, with
+  // no further typing, is already enough to re-apply a sensible limit.
+  javax.swing.JCheckBox limitBox = new javax.swing.JCheckBox("Limit to only the first", lasImportMaxPoints > 0);
+  javax.swing.JTextField limitField = new javax.swing.JTextField((lasImportMaxPoints > 0) ? str(lasImportMaxPoints) : "10000", 8);
+  javax.swing.JLabel limitLabel = new javax.swing.JLabel("points (for testing)");
+
+  javax.swing.JPanel limitPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  limitPanel.add(limitBox);
+  limitPanel.add(limitField);
+  limitPanel.add(limitLabel);
+
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(meshBox);
+  panel.add(limitPanel);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "LAS import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -220,6 +237,25 @@ boolean lasShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   lasImportMeshPointCloud = meshBox.isSelected();
+
+  if (limitBox.isSelected()) {
+    // A blank/non-numeric field with the checkbox still ticked is
+    // treated as "no limit" (0), same as leaving the checkbox
+    // unchecked - never a dialog-breaking exception from a stray
+    // keystroke, matching the rest of this app's own "a bad value
+    // quietly falls back rather than crashing" tolerance (e.g.
+    // plySizeOf()'s own -1-for-unrecognized return, importPly.pde).
+    int parsedLimit = 0;
+    try {
+      parsedLimit = Integer.parseInt(limitField.getText().trim());
+    }
+    catch (NumberFormatException e) {
+      parsedLimit = 0;
+    }
+    lasImportMaxPoints = (parsedLimit > 0) ? parsedLimit : 0;
+  } else {
+    lasImportMaxPoints = 0;
+  }
 
   return true;
 }
