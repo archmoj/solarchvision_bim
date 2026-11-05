@@ -72,6 +72,7 @@ class UI_menuBar {
       "Import gbXML",
       "Import GLB",
       "Import IFC",
+      "Import LAS",
       "Import OBJ",
       "Import PLY",
       "Import STL",

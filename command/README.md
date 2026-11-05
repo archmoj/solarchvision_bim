@@ -61,6 +61,10 @@ This page has two parts:
 -   `IMPORT.DXF`: Imports a `.dxf` file
 -   `IMPORT.GLB`: Imports a `.glb` file
 -   `IMPORT.PLY`: Imports a `.ply` file
+-   `IMPORT.LAS`: Imports a `.las` point-cloud file; the resulting
+    points are meshed into a surface by default (no script-level
+    toggle yet for this - use the menu's own "Import LAS" options
+    dialog to turn it off for a given import)
 -   `IMPORT.STL`: Imports a `.stl` file
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)

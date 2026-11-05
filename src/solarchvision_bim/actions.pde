@@ -363,6 +363,10 @@ void build_allActions() {
     selectFile_ImportPly();
   });
 
+  putAction("Import LAS", () -> {
+    selectFile_ImportLas();
+  });
+
   putAction("Import DAE", () -> {
     selectFile_ImportDae();
   });

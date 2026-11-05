@@ -187,6 +187,51 @@ void selectFile_ImportGbxml () {
   selectInput("Select gbXML file to import:", "_fileSelected_ImportGbxml", new File(Folder_Import + "/_.xml"));
 }
 
+// Lets the person importing check/uncheck lasImportMeshPointCloud (see
+// importLas.pde's own LAS_IMPORT_MESH_POINT_CLOUD/lasImportMeshPointCloud -
+// same "a constant for the starting value, a variable for what's
+// actually checked at import time" shape IFC_IMPORT_FURNITURE/
+// ifcImportFurniture already use), alongside the same Y/Z-swap checkbox
+// axisSwapShowImportOptionsDialog() above already offers OBJ/GLB/STL/
+// DXF/PLY/DAE - LAS needs its own dialog (not that shared one) purely
+// because it has this one extra option beside the swap checkbox, the
+// same reason ifcShowImportOptionsDialog()'s/gbxmlShowImportOptionsDialog()'s
+// own dialogs just above are each their own function instead of reusing
+// it. Called from import_objects_LAS() itself (importLas.pde), not
+// from here - same reasoning, and the same "a cancelled dialog must
+// never half-apply a choice" behavior, as ifcShowImportOptionsDialog()'s
+// own comment above.
+boolean lasShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
+  javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(swapAxisBox);
+  panel.add(meshBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "LAS import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where they were unless this dialog's own OK button is
+  // actually pressed - a cancelled dialog must never half-apply a
+  // choice.
+  importSwapAxisYZ = swapAxisBox.isSelected();
+  lasImportMeshPointCloud = meshBox.isSelected();
+
+  return true;
+}
+
+void selectFile_ImportLas () {
+  // Arms lasImportShowOptionsDialog (importLas.pde) the same
+  // way selectFile_ImportIfc() above arms ifcImportShowOptionsDialog for
+  // its own options.
+  lasImportShowOptionsDialog = true;
+  selectInput("Select LAS file to import:", "_fileSelected_ImportLas", new File(Folder_Import + "/_.las"));
+}
+
 void selectFile_RunScript () {
   selectInput("Select SVS file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.svs"));
 }
@@ -607,6 +652,54 @@ void _fileSelected_ImportGbxml (File selectedFile) {
     // import_objects_DAE()'s own calls just above this one's siblings -
     // import_objects_GBXML() adds faces straight into allFaces without
     // ever calling endScene3DChange() itself.
+    endScene3DChange();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportLas (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportObj()'s/_fileSelected_
+    // ImportGlb()'s/_fileSelected_ImportStl()'s/_fileSelected_
+    // ImportDxf()'s/_fileSelected_ImportPly()'s/_fileSelected_
+    // ImportDae()'s/_fileSelected_ImportGbxml()'s own identical lines
+    // above: cancelling the native file chooser itself never reaches
+    // import_objects_LAS(), which is otherwise what consumes
+    // lasImportShowOptionsDialog - without this, it would stay armed
+    // and pop the options dialog up on the next import_objects_LAS()
+    // call regardless of how that one was started.
+    lasImportShowOptionsDialog = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+    beginScene3DChange();
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_LAS(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_OBJ()'s/import_objects_GLB()'s/
+    // import_objects_STL()'s/import_objects_DXF()'s/import_objects_PLY()'s/
+    // import_objects_DAE()'s/import_objects_GBXML()'s own calls just
+    // above this one's siblings - import_objects_LAS() adds points/
+    // faces straight into allPoints/allFaces without ever calling
+    // endScene3DChange() itself.
     endScene3DChange();
 
     int number_of_allGroups_after = allGroups.num;

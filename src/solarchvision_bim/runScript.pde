@@ -261,6 +261,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "IMPORT.DXF": return  __IMPORT_DXF__(parts);
     case "IMPORT.GLB": return  __IMPORT_GLB__(parts);
     case "IMPORT.IFC": return  __IMPORT_IFC__(parts);
+    case "IMPORT.LAS": return  __IMPORT_LAS__(parts);
     case "IMPORT.OBJ": return  __IMPORT_OBJ__(parts);
     case "IMPORT.PLY": return  __IMPORT_PLY__(parts);
     case "IMPORT.STL": return  __IMPORT_STL__(parts);

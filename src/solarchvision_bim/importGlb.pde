@@ -532,9 +532,10 @@ int[] glbReadIndexAccessor (JSONObject json, byte[] bin, int accessorIndex) {
 // headers, and every accessor's own packed data) is little-endian per
 // spec, regardless of the platform this importer runs on. Generic enough
 // (just byte-offset math, nothing GLB-specific) that importStl.
-// pde's own binary-STL path reuses these directly rather than
-// duplicating the same bit-twiddling - binary STL's own triangle count
-// and per-vertex floats are little-endian too.
+// pde's own binary-STL path and importLas.pde's own LAS header/point-
+// record reading reuse these directly rather than duplicating the same
+// bit-twiddling - binary STL's own triangle count and per-vertex floats,
+// and LAS's own header/point fields, are little-endian too.
 int binReadU32LE (byte[] b, int off) {
   return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8) | ((b[off + 2] & 0xFF) << 16) | ((b[off + 3] & 0xFF) << 24);
 }
@@ -545,4 +546,22 @@ int binReadU16LE (byte[] b, int off) {
 
 float binReadFloatLE (byte[] b, int off) {
   return Float.intBitsToFloat(binReadU32LE(b, off));
+}
+
+// Same bit-exact-assembly idea as binReadU32LE() above, just 8 bytes
+// instead of 4 - added for importLas.pde's own LAS 1.4 64-bit point
+// count (a real value this far past 0 never comes close to Long.
+// MAX_VALUE, so "long" is correct whether a given file's own 64-bit
+// field is meant as signed or unsigned).
+long binReadLongLE (byte[] b, int off) {
+  long v = 0;
+  for (int i = 0; i < 8; i++) v |= ((long) (b[off + i] & 0xFF)) << (8 * i);
+  return v;
+}
+
+// Same idea again, for a LAS header's own double-precision fields
+// (scale/offset/bounding-box) - every one of those is IEEE-754 float64,
+// little-endian, per the LAS spec.
+double binReadDoubleLE (byte[] b, int off) {
+  return Double.longBitsToDouble(binReadLongLE(b, off));
 }

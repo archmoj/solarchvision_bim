@@ -126,6 +126,13 @@ String __IMPORT_PLY__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_LAS__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportLas(new File(parts[1]));
+    else selectFile_ImportLas();
+    return hint;
+}
+
 String __IMPORT_DAE__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_ImportDae(new File(parts[1]));
