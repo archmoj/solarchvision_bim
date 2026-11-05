@@ -68,8 +68,7 @@ and imagery that this project didn't create but depends on throughout. See
 and under what terms; this is the human version of that list: thank you to
 
 - The **[Processing Foundation](https://processingfoundation.org/)** —
-  Ben Fry, Casey Reas, and the Processing community — for the platform
-  this entire project is written in and built on top of.
+  [Ben Fry](https://www.linkedin.com/in/ben-fry-24a19495/), Casey Reas, [Daniel Shiffman](https://www.linkedin.com/in/danielshiffman/), [Moon Davé](https://www.linkedin.com/in/softmoonworld/), Charlotte McElwain, [Xin Xin](https://www.linkedin.com/in/xinemata/), and the Processing community — for the platform this entire project is writte]n in and built on top of.
 
 - **[Climate.OneBuilding.Org](https://climate.onebuilding.org/)**, created
   and maintained by [Linda Lawrie](https://www.linkedin.com/in/linda-lawrie-6265b370/) and [Dru Crawley](https://www.linkedin.com/in/drucrawley/)
