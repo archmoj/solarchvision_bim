@@ -36,22 +36,25 @@ void settings () {
   } else { // case of USER_GUI without SCREEN arg
     fullScreen(P2D);
   }
-}
 
-void setup () {
   // Since Processing 4.4.3, pixelDensity() defaults to matching the
   // display's own density (2 on a Retina/Windows-HiDPI screen) instead of
   // always 1 - this sketch predates that change and, like most pre-4.4.3
   // code, assumes 1 everywhere: every pixel-array allocation sized off
-  // width/height or WIN3D.dX/dY (pixel_W/pixel_H just below, shadeBuffer/
+  // width/height or WIN3D.dX/dY (pixel_W/pixel_H in setup(), shadeBuffer/
   // Shade_RGBA in shadeViewport3D.pde, ...) only comes out correct, and
   // only stays the single consistent size those arrays need to be copied
-  // into each other safely, at density 1. Pinned explicitly, as the very
-  // first statement, so nothing below - starting with MessageSize's own
-  // "height / 60.0" a few lines down - ever runs against a density this
-  // code was never written to handle.
+  // into each other safely, at density 1. Has to go here, after size()/
+  // fullScreen() above (whichever branch ran), rather than in setup():
+  // this sketch already declares its own settings(), and a pixelDensity()
+  // call left inside setup() instead makes Processing's preprocessor
+  // synthesize a *second* settings() to hold it - colliding with this one
+  // ("Duplicate method settings()") rather than actually running early
+  // enough to matter.
   pixelDensity(1);
+}
 
+void setup () {
   if(userPointSize > 0) {
     MessageSize = userPointSize * 96 / 72.0;
   } else {
