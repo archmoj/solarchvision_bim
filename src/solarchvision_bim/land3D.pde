@@ -1568,7 +1568,8 @@ class Terrain {
 
           if (!this.Textures_path[i].equals("")) {
             println("Loading texture:", this.Textures_path[i]);
-            this.Textures_map[i] = loadImage(Folder_Project + "/" + this.Textures_path[i]);
+            PImage loaded = loadImage(Folder_Project + "/" + this.Textures_path[i]);
+            if (loaded != null) this.Textures_map[i] = loaded;
           }
         }
       }

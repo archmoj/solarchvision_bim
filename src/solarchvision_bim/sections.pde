@@ -495,9 +495,20 @@ class Sections {
       for (int i = 0; i < ni; i++) {
         String TEXTURE_path = XML_getContent(children[i]);
         this.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
-        println("Loading texture(" + i + "):", TEXTURE_path);
-        this.SolidImpact[i] = loadImage(TEXTURE_path);
-        println("loaded!");
+        if (!TEXTURE_path.equals("")) {
+          println("Loading texture(" + i + "):", TEXTURE_path);
+          // Only overwrites the placeholder above when loadImage() actually
+          // returns something - a missing/moved/deleted cached preview PNG
+          // (same risk as solarImpacts.pde's own shading PNGs - a project
+          // opened somewhere its cache folder isn't, or a cache file since
+          // cleaned up) used to silently clobber that placeholder with null
+          // instead, which this.draw()'s WIN3D.graphics.texture(this.
+          // SolidImpact[f]) a bit further down throws a
+          // NullPointerException on the moment this section is drawn.
+          PImage loaded = loadImage(TEXTURE_path);
+          if (loaded != null) this.SolidImpact[i] = loaded;
+          println("loaded!");
+        }
       }
     }
     {
@@ -512,9 +523,13 @@ class Sections {
           for (int k = 0; k < nk; k++) {
             String TEXTURE_path = XML_getContent(children[(i * nj + j) * nk + k]);
             this.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
-            println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
-            this.SolarImpact[i][j][k] = loadImage(TEXTURE_path);
-            println("loaded!");
+            if (!TEXTURE_path.equals("")) {
+              println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
+              // See SolidImpact's own loop above for why this check matters.
+              PImage loaded = loadImage(TEXTURE_path);
+              if (loaded != null) this.SolarImpact[i][j][k] = loaded;
+              println("loaded!");
+            }
           }
         }
       }
