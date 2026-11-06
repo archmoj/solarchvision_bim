@@ -95,6 +95,15 @@ class ExportObjectsLASTest {
     // survives - within 0.001's own default scale (exportLas.pde's own
     // "Scale/offset" comment), never exact float equality, since LAS
     // itself only ever stores a scaled integer.
+    //
+    // import_objects_LAS() now deliberately centers around the header's
+    // own offset rather than reapplying it (see importLas.pde's own
+    // "Centered by default" header comment), and exportLas() writes that
+    // offset as this project's own bounding-box minimum (exportLas.pde's
+    // own "Scale/offset" comment) - so what comes back out isn't the
+    // original coordinate, it's that coordinate relative to the
+    // exported set's own minimum on each axis. minX/minY/minZ below are
+    // exactly exportLas()'s own offsetX/Y/Z for these 3 points.
     app.allPoints.create(1.5f, -2.25f, 100.125f);
     app.allPoints.create(0, 0, 0);
     app.allPoints.create(-10, 20, -30);
@@ -109,14 +118,16 @@ class ExportObjectsLASTest {
 
     reader.import_objects_LAS(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
+    float minX = -10, minY = -2.25f, minZ = -30; // the 3 points' own bounding-box minimum on each axis - see this test's own comment above
+
     assertEquals(3, reader.allPoints.getLength());
-    assertEquals(1.5f, reader.allPoints.getX(0), 0.001f);
-    assertEquals(-2.25f, reader.allPoints.getY(0), 0.001f);
-    assertEquals(100.125f, reader.allPoints.getZ(0), 0.001f);
-    assertEquals(0f, reader.allPoints.getX(1), 0.001f);
-    assertEquals(-10f, reader.allPoints.getX(2), 0.001f);
-    assertEquals(20f, reader.allPoints.getY(2), 0.001f);
-    assertEquals(-30f, reader.allPoints.getZ(2), 0.001f);
+    assertEquals(1.5f - minX, reader.allPoints.getX(0), 0.001f);
+    assertEquals(-2.25f - minY, reader.allPoints.getY(0), 0.001f);
+    assertEquals(100.125f - minZ, reader.allPoints.getZ(0), 0.001f);
+    assertEquals(0f - minX, reader.allPoints.getX(1), 0.001f);
+    assertEquals(-10f - minX, reader.allPoints.getX(2), 0.001f);
+    assertEquals(20f - minY, reader.allPoints.getY(2), 0.001f);
+    assertEquals(-30f - minZ, reader.allPoints.getZ(2), 0.001f);
   }
 
   @Test

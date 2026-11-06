@@ -152,6 +152,29 @@ class ImportObjectsLASTest {
   }
 
   @Test
+  void importObjectsLAS_ignoresTheHeaderOffset_centeringAroundOrigin () throws IOException {
+    // A real-world LAS file's own header.offsetX/Y/Z is typically a
+    // large absolute coordinate (a UTM easting/northing, say) -
+    // import_objects_LAS() deliberately drops it rather than adding it
+    // back in (see importLas.pde's own "Centered by default" header
+    // comment), so the imported point lands at just scale * raw (its
+    // position relative to that offset), not offset + scale * raw (its
+    // absolute real-world one).
+    byte[] data = lasFile(new double[][]{ {500123.456, 4512345.789, 123.456} }, 0, 20, 0.001, 500000, 4500000, 0, false);
+    Path f = lasBinaryFile("las-centering-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPoints.getLength());
+    // 500123.456 - 500000 = 123.456; 4512345.789 - 4500000 = 12345.789;
+    // 123.456 - 0 = 123.456 (unchanged, since offsetZ here is already 0).
+    assertEquals(123.456f, app.allPoints.getX(0), 0.01f);
+    assertEquals(12345.789f, app.allPoints.getY(0), 0.01f);
+    assertEquals(123.456f, app.allPoints.getZ(0), 0.01f);
+  }
+
+  @Test
   void importObjectsLAS_widerPointDataFormat_stillReadsXYZCorrectly () throws IOException {
     // Simulates point data format 3 (34 bytes/record: X/Y/Z + GPS time +
     // RGB, none of which this test bothers to fill in) - import_objects_

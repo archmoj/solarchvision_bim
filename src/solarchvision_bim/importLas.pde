@@ -35,9 +35,11 @@
 // needs" scope importPly.pde's own vertex-property handling already
 // documents: every LAS point data record format (0 through 10, legacy
 // and LAS-1.4-extended alike) starts with the same 3 fields - X, Y, Z,
-// each a plain signed 32-bit integer, always scaled and offset by the
-// header's own scaleX/Y/Z + offsetX/Y/Z into real-world coordinates -
-// and this importer reads only those first 12 bytes of every record,
+// each a plain signed 32-bit integer, which LAS's own spec always
+// scales (header.scaleX/Y/Z) and offsets (header.offsetX/Y/Z) into real-
+// world coordinates - though this importer only ever applies the scale,
+// not the offset (see this file's own "Centered by default" comment for
+// why) - and reads only those first 12 bytes of every record,
 // then advances to the next one by the header's own declared "Point
 // Data Record Length" field, whatever else that record format packs in
 // after them (intensity, classification, return number, scan angle, GPS
@@ -73,6 +75,31 @@
 // lasShowImportOptionsDialog()'s own text field or IMPORT.LAS's own
 // optional 3rd script argument - see lasImportMaxPoints's own comment
 // for exactly where this is applied.
+//
+// Centered by default: a real-world LAS file's own header.offsetX/Y/Z
+// (lasParseHeader(), below) is normally a large absolute coordinate -
+// a UTM easting/northing, say, in the hundreds of thousands to low
+// millions - chosen by whatever tool wrote the file so that scaleX/Y/Z
+// * the point data's own raw integers stay in a small, file-LOCAL range
+// relative to it. This importer drops that absolute offset entirely
+// (every point's own localX/Y/Z, in the main read loop below, is just
+// scaleX/Y/Z * the raw integer - see that comment's own) rather than
+// adding it back in, so the imported cloud lands centered on roughly
+// (0, 0, 0) - near this app's own scene origin, and everything else it
+// already holds - by default, not out at the file's own real-world
+// coordinate. allVertices (points.pde) is a 32-bit float array, not a
+// double one, so this isn't just convenience: a float has roughly 7
+// significant decimal digits, which a raw UTM-scale coordinate like
+// 4,512,345.678 already exhausts before even reaching the sub-meter
+// precision real LAS scale factors (commonly 0.001) are meant to
+// preserve - keeping every point's own magnitude small (its file-local
+// extent only, not its absolute position on Earth) is what actually
+// keeps that precision intact. The file's own absolute location is NOT
+// preserved anywhere by this - printed to the console once per import
+// instead (see import_objects_LAS()'s own println near the end), so a
+// person who genuinely needs it (aligning several separate tiles to
+// each other, say) at least has it to work from, even though nothing
+// in this version re-applies it automatically.
 
 boolean lasImportShowOptionsDialog = false;
 
@@ -219,6 +246,19 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
       pointCount = lasImportMaxPoints;
     }
 
+    // See this file's own header comment ("Centered by default") for
+    // why header.offsetX/Y/Z is dropped rather than applied - printed
+    // here (once, regardless of how many points this ends up reading)
+    // so the file's own real-world location is still on record
+    // somewhere, for the one person who actually needs it, even though
+    // nothing in this version re-applies it automatically. Skipped
+    // entirely for a (0, 0, 0) header offset (a file that was already
+    // local/centered to begin with) - nothing was actually dropped,
+    // so there's nothing worth telling anyone about.
+    if ((pointCount > 0) && ((header.offsetX != 0) || (header.offsetY != 0) || (header.offsetZ != 0))) {
+      println("\nLAS import: centered around (0, 0, 0) - the file's own real-world offset (" + header.offsetX + ", " + header.offsetY + ", " + header.offsetZ + ") was not applied");
+    }
+
     lasPointsImported = 0;
     lasFacesImported = 0;
 
@@ -259,20 +299,24 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
           }
         }
 
-        // Raw X/Y/Z are plain signed 32-bit integers, always scaled
-        // (header.scaleX/Y/Z) and offset (header.offsetX/Y/Z) into the
-        // file's own real-world coordinates by this exact two-step
-        // formula - true for every point data format alike (0-10 - see
-        // this file's own header comment for why only these first 12
-        // bytes of each record are ever read here). binReadU32LE()
-        // (importGlb.pde) returns the exact 32-bit bit pattern read,
-        // which is already the correct signed value here - X/Y/Z are
-        // commonly negative (relative to the header's own offsetX/Y/Z).
-        double realX = header.offsetX + header.scaleX * binReadU32LE(raw, pos);
-        double realY = header.offsetY + header.scaleY * binReadU32LE(raw, pos + 4);
-        double realZ = header.offsetZ + header.scaleZ * binReadU32LE(raw, pos + 8);
+        // Raw X/Y/Z are plain signed 32-bit integers, always scaled by
+        // header.scaleX/Y/Z - true for every point data format alike
+        // (0-10 - see this file's own header comment for why only these
+        // first 12 bytes of each record are ever read here).
+        // binReadU32LE() (importGlb.pde) returns the exact 32-bit bit
+        // pattern read, which is already the correct signed value here -
+        // X/Y/Z are commonly negative (relative to the header's own
+        // offsetX/Y/Z). Deliberately NOT adding header.offsetX/Y/Z back
+        // in - see this file's own header comment ("Centered by
+        // default") for why: this is the file's own local coordinate,
+        // relative to that offset, not its absolute real-world one, and
+        // that's exactly what keeps the imported cloud centered near
+        // this app's own scene origin by default.
+        double localX = header.scaleX * binReadU32LE(raw, pos);
+        double localY = header.scaleY * binReadU32LE(raw, pos + 4);
+        double localZ = header.scaleZ * binReadU32LE(raw, pos + 8);
 
-        int pointIndex = lasCreatePoint((float) realX, (float) realY, (float) realZ);
+        int pointIndex = lasCreatePoint((float) localX, (float) localY, (float) localZ);
 
         lasPointIndex[k] = pointIndex;
         // Always the app's own (finalX, finalY) - i.e. allPoints' own
