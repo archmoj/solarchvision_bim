@@ -47,7 +47,7 @@ class MeshPointCloudTest {
 
   @Test
   void meshPointCloud_overTheMaxPointsCap_returnsEmptyListWithoutThrowing () {
-    int n = app.MESH_POINT_CLOUD_MAX_POINTS + 1;
+    int n = app.MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS + 1;
     float[] xs = new float[n];
     float[] ys = new float[n];
     for (int i = 0; i < n; i++) { xs[i] = i; ys[i] = i % 7; } // content doesn't matter - this is rejected on count alone, before any point is ever looked at

@@ -56,15 +56,18 @@
 // group, same reasoning as binary STL's/PLY's own single-group handling.
 //
 // Meshing: by default, this importer hands its own just-imported points
-// straight to meshPointCloud_delaunayXY() (meshPointCloud.pde) and turns
+// straight to meshPointCloud_gridXY() (meshPointCloudGrid.pde) and turns
 // the triangles it returns into real app-native faces - see that file's
 // own header comment for exactly what kind of surface this does (and
 // doesn't) produce, and lasMeshPointCloud() below for how its plain
-// index-array result gets turned into allFaces entries. lasImportMesh
-// PointCloud lets the person importing turn this off (points only, no
-// surface) via lasShowImportOptionsDialog() (fileSelected.pde) - the
-// same per-import, persists-across-imports shape ifcImportFurniture/...
-// (importIfc.pde) already use for their own options.
+// index-array result gets turned into allFaces entries, and for how
+// lasImportUseDelaunayMeshing picks meshPointCloud_delaunayXY()
+// (meshPointCloud.pde, the slower, exact alternative) instead when set.
+// lasImportMeshPointCloud lets the person importing turn meshing off
+// entirely (points only, no surface, neither algorithm run at all) via
+// lasShowImportOptionsDialog() (fileSelected.pde) - the same per-import,
+// persists-across-imports shape ifcImportFurniture/... (importIfc.pde)
+// already use for their own options.
 //
 // Testing with only part of a file: a real LAS tile can be huge (easily
 // into the millions of points), slow to even read, let alone mesh - so
@@ -113,6 +116,19 @@ boolean lasImportShowOptionsDialog = false;
 // OptionsDialog(), fileSelected.pde) rather than opt in.
 final boolean LAS_IMPORT_MESH_POINT_CLOUD = true;
 boolean lasImportMeshPointCloud = LAS_IMPORT_MESH_POINT_CLOUD;
+
+// Which of the two algorithms meshPointCloud.pde/meshPointCloudGrid.pde
+// offer actually does the meshing above, when lasImportMeshPointCloud
+// is on - false (this toggle's own starting value) means meshPointCloud_
+// gridXY() (meshPointCloudGrid.pde), true means meshPointCloud_
+// delaunayXY() (meshPointCloud.pde) - see lasMeshPointCloud()'s own
+// comment, below, for exactly where this is read. Off (grid) by
+// default: see meshPointCloudGrid.pde's own header comment for why it's
+// the faster choice and what it gives up to get there - Delaunay stays
+// available as the exact, slower alternative (lasShowImportOptionsDialog(),
+// fileSelected.pde) for whoever specifically wants it.
+final boolean LAS_IMPORT_USE_DELAUNAY_MESHING = false;
+boolean lasImportUseDelaunayMeshing = LAS_IMPORT_USE_DELAUNAY_MESHING;
 
 // How many of the file's own points to actually read, at most - 0 (this
 // toggle's own starting value) means no limit, every point the header/
@@ -350,7 +366,8 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     if (lasPointsImported == 0) {
       println("\nLAS import: no points were imported");
     } else if (lasImportMeshPointCloud && (lasFacesImported == 0)) {
-      println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see meshPointCloud.pde's own meshPointCloud_delaunayXY() for when it returns no triangles (too few points, or over its own MESH_POINT_CLOUD_MAX_POINTS cap)");
+      String meshingFunctionName = lasImportUseDelaunayMeshing ? "meshPointCloud.pde's own meshPointCloud_delaunayXY()" : "meshPointCloudGrid.pde's own meshPointCloud_gridXY()";
+      println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see " + meshingFunctionName + " for when it returns no triangles (too few points, over its own point cap, or - grid algorithm only - every 2x2 block of grid cells ended up with at least one empty corner)");
     }
 
   } finally {
@@ -376,14 +393,16 @@ int lasCreatePoint (float x, float y, float z) {
   return allPoints.create(finalX, finalY, finalZ);
 }
 
-// A MeshPointCloudProgressListener (meshPointCloud.pde) that throttles
-// and reports progress the exact same way the point-reading loop in
-// import_objects_LAS() above already does (a console '█' bar, at most
-// once per whole-percent step, plus an optional ProgressWindow) - a
-// small class (holding its own printedProgress) rather than a lambda
-// specifically so that per-call state has somewhere plain to live,
-// matching the shape MeshTriangle/LasHeader (this file's own, and
-// meshPointCloud.pde's own) already use for the same reason.
+// A MeshPointCloudProgressListener (meshPointCloud.pde, shared by both
+// meshPointCloud_delaunayXY() there and meshPointCloud_gridXY() in
+// meshPointCloudGrid.pde) that throttles and reports progress the exact
+// same way the point-reading loop in import_objects_LAS() above already
+// does (a console '█' bar, at most once per whole-percent step, plus an
+// optional ProgressWindow) - a small class (holding its own
+// printedProgress) rather than a lambda specifically so that per-call
+// state has somewhere plain to live, matching the shape MeshTriangle/
+// LasHeader (this file's own, and meshPointCloud.pde's own) already use
+// for the same reason.
 class LasMeshProgressReporter implements MeshPointCloudProgressListener {
   ProgressWindow window; // nullable - see import_objects_LAS()'s own "showImportProgress && canShowProgressWindow()" check for when this is null
   float printedProgress = 0;
@@ -407,28 +426,42 @@ class LasMeshProgressReporter implements MeshPointCloudProgressListener {
   }
 }
 
-// Hands this import's own points to meshPointCloud_delaunayXY()
-// (meshPointCloud.pde) and turns every triangle it returns into one
-// app-native face - the one place this file ever touches meshPointCloud.
-// pde, which otherwise knows nothing about allPoints/allFaces/current_
-// Material/... at all (see that file's own header comment for why it's
-// kept that way). Always called with this WHOLE import's own points at
-// once (never per-group/per-return/...) - a LAS file has no natural
-// sub-object boundary of its own at all (same reasoning as this file's
-// own header comment on that), so there is only ever the one cloud to
-// mesh.
+// Hands this import's own points to whichever of meshPointCloud_gridXY()
+// (meshPointCloudGrid.pde, the default) or meshPointCloud_delaunayXY()
+// (meshPointCloud.pde, when lasImportUseDelaunayMeshing is on) and turns
+// every triangle it returns into one app-native face - the one place
+// this file ever touches either, both of which otherwise know nothing
+// about allPoints/allFaces/current_Material/... at all (see each one's
+// own header comment for why they're kept that way). Always called with
+// this WHOLE import's own points at once (never per-group/per-return/
+// ...) - a LAS file has no natural sub-object boundary of its own at
+// all (same reasoning as this file's own header comment on that), so
+// there is only ever the one cloud to mesh.
 void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
 
   int totalPoints = finalX.length;
 
-  // meshPointCloud_delaunayXY() itself returns instantly (no real work,
-  // nothing to show progress on) for either of these - too few points,
-  // or over its own MESH_POINT_CLOUD_MAX_POINTS cap (which also prints
-  // its own message) - so this skips straight to calling it with no
-  // progress phase at all, rather than showing a "Meshing..." message/
-  // ProgressWindow around a call that's about to do nothing.
-  if ((totalPoints < 3) || (totalPoints > MESH_POINT_CLOUD_MAX_POINTS)) {
-    ArrayList<int[]> triangles = meshPointCloud_delaunayXY(finalX, finalY, null);
+  // The 2 algorithms' own minimum point count (meshPointCloud_
+  // delaunayXY() needs 3, meshPointCloud_gridXY() needs 4 - see each
+  // one's own comment for why) and point cap (MESH_POINT_CLOUD_
+  // DELAUNAY_MAX_POINTS, meshPointCloud.pde, vs MESH_POINT_CLOUD_
+  // GRID_MAX_POINTS, meshPointCloudGrid.pde - see that file's own
+  // comment for why it's so much higher) differ, so which one applies
+  // here depends on lasImportUseDelaunayMeshing the same way the actual
+  // meshing call, a few lines down, does.
+  int minPointsNeeded = lasImportUseDelaunayMeshing ? 3 : 4;
+  int maxPointsAllowed = lasImportUseDelaunayMeshing ? MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS : MESH_POINT_CLOUD_GRID_MAX_POINTS;
+
+  // Either algorithm returns instantly (no real work, nothing to show
+  // progress on) once its own point count falls outside what it accepts
+  // (which also prints its own message) - so this skips straight to
+  // calling it with no progress phase at all, rather than showing a
+  // "Meshing..." message/ProgressWindow around a call that's about to
+  // do nothing.
+  if ((totalPoints < minPointsNeeded) || (totalPoints > maxPointsAllowed)) {
+    ArrayList<int[]> triangles = lasImportUseDelaunayMeshing
+      ? meshPointCloud_delaunayXY(finalX, finalY, null)
+      : meshPointCloud_gridXY(finalX, finalY, null);
     for (int[] tri : triangles) {
       allFaces.create(new int[]{ pointIndex[tri[0]], pointIndex[tri[1]], pointIndex[tri[2]] });
       lasFacesImported += 1;
@@ -446,7 +479,9 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
 
   ArrayList<int[]> triangles;
   try {
-    triangles = meshPointCloud_delaunayXY(finalX, finalY, reporter);
+    triangles = lasImportUseDelaunayMeshing
+      ? meshPointCloud_delaunayXY(finalX, finalY, reporter)
+      : meshPointCloud_gridXY(finalX, finalY, reporter);
   } finally {
     if (meshProgressWindow != null) meshProgressWindow.dispose();
   }

@@ -206,6 +206,23 @@ boolean lasShowImportOptionsDialog () {
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
 
+  // lasImportUseDelaunayMeshing (importLas.pde) - see its own comment
+  // for what this picks between. A mutually-exclusive pair of radio
+  // buttons (not 2 independent checkboxes, and not reusing meshBox's
+  // own checkbox shape) specifically because this is a genuine CHOICE
+  // between 2 algorithms, not an independent on/off toggle the way
+  // meshBox/limitBox are each their own.
+  javax.swing.JRadioButton gridAlgorithmBox = new javax.swing.JRadioButton("Grid (fast, default)", !lasImportUseDelaunayMeshing);
+  javax.swing.JRadioButton delaunayAlgorithmBox = new javax.swing.JRadioButton("Delaunay (exact, slower)", lasImportUseDelaunayMeshing);
+  javax.swing.ButtonGroup algorithmGroup = new javax.swing.ButtonGroup();
+  algorithmGroup.add(gridAlgorithmBox);
+  algorithmGroup.add(delaunayAlgorithmBox);
+
+  javax.swing.JPanel algorithmPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  algorithmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Meshing algorithm"));
+  algorithmPanel.add(gridAlgorithmBox);
+  algorithmPanel.add(delaunayAlgorithmBox);
+
   // lasImportMaxPoints (importLas.pde) - see its own comment for what
   // this is for. limitBox starts checked iff a limit is already active
   // (carried over from an earlier import in this same session);
@@ -225,6 +242,7 @@ boolean lasShowImportOptionsDialog () {
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(meshBox);
+  panel.add(algorithmPanel);
   panel.add(limitPanel);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
@@ -237,6 +255,7 @@ boolean lasShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   lasImportMeshPointCloud = meshBox.isSelected();
+  lasImportUseDelaunayMeshing = delaunayAlgorithmBox.isSelected();
 
   if (limitBox.isSelected()) {
     // A blank/non-numeric field with the checkbox still ticked is

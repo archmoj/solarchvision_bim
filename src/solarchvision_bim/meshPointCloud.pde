@@ -1,6 +1,14 @@
 // Minimal, dependency-free 2.5D Delaunay triangulation of a point
-// cloud - the default "mesh the points into a surface" step every
-// point-cloud importer this app has (currently just importLas.pde) uses.
+// cloud - the SECOND of the two "mesh the points into a surface"
+// algorithms this app has, alongside meshPointCloudGrid.pde's own
+// meshPointCloud_gridXY() (the default, faster one - see that file's
+// own header comment for why a second algorithm exists at all, and
+// exactly what trading this one for it gives up). A caller picks
+// between them - see e.g. importLas.pde's own lasMeshPointCloud() -
+// specifically BECAUSE this one still triangulates with literally every
+// point, rather than one representative per grid cell: slower (see this
+// file's own "Performance" comment), but the exact Delaunay
+// triangulation of the real input, not an approximation of it.
 // Kept in its own file, and deliberately ignorant of allPoints/allFaces/
 // current_Material/... (everything app-specific) so any future point-
 // cloud format (E57, XYZ/PTS, PCD, ...) can reuse this exact algorithm
@@ -58,7 +66,7 @@
 // why insertion order matters at all, given the final triangulation
 // RESULT never depends on it.
 //
-// MESH_POINT_CLOUD_MAX_POINTS (below) is a deliberate, honest cap on
+// MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS (below) is a deliberate, honest cap on
 // top of all of this - see its own comment for why, and for what a
 // caller sees once it's hit. meshPointCloud_delaunayXY()'s own optional
 // MeshPointCloudProgressListener parameter (also below) exists
@@ -75,13 +83,15 @@
 // external-library triangulator (not tuned against real timings) -
 // lower it if it's still too slow on real files, or raise it once a
 // real need shows up.
-final int MESH_POINT_CLOUD_MAX_POINTS = 50000;
+final int MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS = 50000;
 
-// Lets a caller of meshPointCloud_delaunayXY() (below) show real
-// progress through a triangulation that - see this file's own header
-// comment on performance - can take a genuinely long time, rather than
-// the caller's own UI looking stuck for that whole stretch with nothing
-// to tell a person watching it apart from an actual hang. Deliberately
+// Lets a caller of meshPointCloud_delaunayXY() (below) OR
+// meshPointCloud_gridXY() (meshPointCloudGrid.pde - defined here, not
+// there, since both algorithms share this one interface) show real
+// progress through a run that - see each file's own "Performance"/
+// header comment - can take a genuinely long time, rather than the
+// caller's own UI looking stuck for that whole stretch with nothing to
+// tell a person watching it apart from an actual hang. Deliberately
 // just this one callback, with no reference to console printing,
 // ProgressWindow, or anything else app-specific - same "ignorant of
 // everything app-specific" reasoning as this file's own header comment
@@ -89,14 +99,21 @@ final int MESH_POINT_CLOUD_MAX_POINTS = 50000;
 // caller (e.g. importLas.pde's own LasMeshProgressReporter) decides
 // entirely for itself how (or whether) to actually show this.
 interface MeshPointCloudProgressListener {
-  // Called once per real point actually inserted into the triangulation
-  // (see meshPointCloud_delaunayXY()'s own main loop) - never for the 3
-  // super-triangle points, and never at all for a call that returns
-  // before starting (too few points, or over MESH_POINT_CLOUD_MAX_POINTS -
-  // both already have their own, separate "nothing to report progress
-  // on" meaning, so a caller never sees e.g. onPointInserted(0, 0)).
-  // pointsInserted counts up from 1 to totalPoints (== xs.length/
-  // ys.length, the same n meshPointCloud_delaunayXY() was called with).
+  // Called periodically while an algorithm processes the n real points
+  // it was given - roughly, though not necessarily exactly, once per
+  // point: meshPointCloud_delaunayXY() calls this once per point
+  // actually inserted into its own triangulation, while meshPointCloud_
+  // gridXY() calls it once per point binned onto its own grid (a
+  // different operation, since that algorithm only ever keeps ONE
+  // representative point per grid cell - see that function's own
+  // comment) - never for the 3 super-triangle points Delaunay's own
+  // algorithm uses internally, and never at all for a call that returns
+  // before starting (too few points, or over whichever algorithm's own
+  // point cap - both already have their own, separate "nothing to
+  // report progress on" meaning, so a caller never sees e.g.
+  // onPointInserted(0, 0)). pointsInserted counts up from 1 to
+  // totalPoints (== xs.length/ys.length, the same n the algorithm was
+  // called with).
   void onPointInserted (int pointsInserted, int totalPoints);
 }
 
@@ -120,7 +137,7 @@ class MeshTriangle {
 // i in 0..xs.length-1 (xs/ys must be the same length), by the standard
 // Bowyer-Watson incremental algorithm - see this file's own header
 // comment for what "2.5D" means for a caller using the result as a
-// surface, and for MESH_POINT_CLOUD_MAX_POINTS's own cap.
+// surface, and for MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS's own cap.
 //
 // Returns each triangle as one int[3] of indices into the SAME xs/ys
 // arrays passed in (0-based, in the caller's own order) - never indices
@@ -128,7 +145,7 @@ class MeshTriangle {
 // lasMeshPointCloud(), importLas.pde) maps each one through its own
 // point-index table itself. Returns an empty list (never null) for
 // fewer than 3 points, a length mismatch between xs/ys, or a point
-// count over MESH_POINT_CLOUD_MAX_POINTS (see that constant's own
+// count over MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS (see that constant's own
 // comment) - every one of those is "nothing to triangulate" rather than
 // an error, since a caller treating "no triangles" as "fall back to
 // loose points" is exactly the sensible, non-fatal response to all of
@@ -142,8 +159,8 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointClo
   ArrayList<int[]> result = new ArrayList<int[]>();
 
   int n = xs.length;
-  if (n > MESH_POINT_CLOUD_MAX_POINTS) {
-    println("\nPoint cloud meshing: " + n + " points is over this version's own " + MESH_POINT_CLOUD_MAX_POINTS + "-point cap - skipped (the points themselves were still imported, just not meshed into a surface)");
+  if (n > MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS) {
+    println("\nPoint cloud meshing: " + n + " points is over this version's own " + MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS + "-point cap - skipped (the points themselves were still imported, just not meshed into a surface)");
     return result;
   }
   if ((n < 3) || (ys.length != n)) return result; // too few points (or a caller bug pairing mismatched arrays) - nothing a triangle could ever be built from
@@ -340,7 +357,7 @@ void meshInsertPoint (ArrayList<MeshTriangle> triangles, float[] px, float[] py,
 
 // One direction-agnostic edge key, packing its own 2 (always
 // non-negative, well under 32 bits even at this file's own
-// MESH_POINT_CLOUD_MAX_POINTS cap) vertex indices into a single long -
+// MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS cap) vertex indices into a single long -
 // (a, b) and (b, a) are the same shared edge between two adjacent
 // triangles, which always store it with opposite winding from each
 // other, so this always orders them (min index first) before packing,
