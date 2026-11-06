@@ -72,15 +72,20 @@
 // per-import, persists-across-imports shape ifcImportFurniture/...
 // (importIfc.pde) already use for their own options.
 //
-// Testing with only part of a file: a real LAS tile can be huge (easily
-// into the millions of points), slow to even read, let alone mesh - so
-// lasImportMaxPoints (below) lets the person importing cap this import
-// to only the FIRST N points the file's own point data holds (file
-// order, not a random/spatial sample - simplest to reason about, and
-// enough to sanity-check a parser/mesher change quickly), via either
-// lasShowImportOptionsDialog()'s own text field or IMPORT.LAS's own
-// optional 3rd script argument - see lasImportMaxPoints's own comment
-// for exactly where this is applied.
+// Point range: a real LAS tile can be huge (easily into the millions of
+// points), slow to even read, let alone mesh - so lasImportMinPointIndex/
+// MaxPointIndex (below) let the person importing narrow this import down
+// to only point indices [min, max) the file's own point data holds (file
+// order, not a random/spatial sample - simplest to reason about), via
+// lasShowImportOptionsDialog()'s own 2 checkbox+field rows (fileSelected.
+// pde, which also shows the file's own real point count alongside them)
+// or IMPORT.LAS's own optional 3rd script argument (maxPointIndex only -
+// see extraCommands.pde's own __IMPORT_LAS__() for why just that one).
+// min is inclusive, max is EXCLUSIVE - the same half-open [min, max)
+// shape a loop's own index range already has - specifically so "the
+// whole file" is exactly (0, totalPoints) with no off-by-one: max
+// defaults (in the dialog, unchecked) to the file's own real point
+// count, not count - 1, and still means "every point" when left there.
 //
 // Centered by default: a real-world LAS file's own header.offsetX/Y/Z
 // (lasParseHeader(), below) is normally a large absolute coordinate -
@@ -159,31 +164,31 @@ final int LAS_MESH_ALGORITHM_DELAUNAY = 1;
 final int LAS_MESH_ALGORITHM_BOX_GRID = 2;
 int lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_GRID;
 
-// How many of the file's own points to actually read, at most - 0 (this
-// toggle's own starting value) means no limit, every point the header/
-// file itself hold (countThatFits, further down) is read, same as
-// before this option existed. Set > 0 (via lasShowImportOptionsDialog()'s
-// own checkbox+field, fileSelected.pde, or IMPORT.LAS's own optional 3rd
-// script argument, extraCommands.pde) to read only the file's own FIRST
-// this-many points instead - meant for quickly testing against a huge
-// real file without waiting on (or meshing) all of it, not for a normal
-// import. Persists across imports the same way lasImportMeshPointCloud
-// does (see its own comment) - import_objects_LAS() below always prints
-// a console line whenever a limit is actually in effect, specifically so
-// a limit left on from an earlier test is never silently applied to a
-// later, real import.
-final int LAS_IMPORT_MAX_POINTS = 0;
-int lasImportMaxPoints = LAS_IMPORT_MAX_POINTS;
+// Point-index range - see this file's own "Point range" header comment
+// for exactly what these mean (half-open [min, max), min inclusive, max
+// exclusive) and where they're checked. null (every one of these own
+// starting value) means no bound on that side at all - via Java's own
+// null rather than a sentinel number, since 0 is itself a perfectly
+// real index (the very first point) a person might actually want as an
+// explicit lower bound, so it can't double as "unset" the way it could
+// for a plain count. Integer, not Float: an index is always a whole
+// number, and - unlike a coordinate - needs to stay exact even once a
+// real file's own point count climbs well past float32's own exact-
+// integer ceiling (~16.7 million). Persist across imports the same way
+// every other LAS import option already does - import_objects_LAS()
+// below always prints a console line whenever either bound actually
+// narrows what gets read, specifically so a bound left on from an
+// earlier test is never silently applied to a later, real import.
+Integer lasImportMinPointIndex = null;
+Integer lasImportMaxPointIndex = null;
 
 // Region-of-interest bounds - see this file's own "Region of interest"
 // header comment for exactly what these mean and where they're checked.
 // null (every one of these own starting value) means no bound on that
-// side at all, same meaning as lasImportMaxPoints' own 0 just above,
-// just via Java's own null rather than a sentinel number, since 0 is
-// itself a perfectly real coordinate a person might actually want to
-// filter by (unlike a point count, which 0 could never meaningfully
-// mean as a real limit). Persist across imports the same way every
-// other LAS import option already does.
+// side at all, same reasoning as lasImportMinPointIndex's/MaxPointIndex's
+// own null default just above, just for a coordinate instead of an
+// index. Persist across imports the same way every other LAS import
+// option already does.
 Float lasImportMinX = null;
 Float lasImportMaxX = null;
 Float lasImportMinY = null;
@@ -266,8 +271,29 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     return;
   }
 
+  // A truncated/corrupted file's own declared point count is never
+  // trusted past what the file itself actually holds - same reasoning
+  // as plyImportBinary()'s own bounds-checked skipBytes (importPly.pde).
+  // Computed here (before the dialog, if one is even shown) rather than
+  // after it, specifically so lasShowImportOptionsDialog() (just below)
+  // can show the file's own real, already-clamped point count alongside
+  // its own point-range fields - this IS the real number of points this
+  // import will actually read, not just the header's own unverified
+  // claim.
+  long availableBytes = raw.length - header.offsetToPointData;
+  long countThatFits = (availableBytes >= 0) ? (availableBytes / header.pointDataRecordLength) : 0;
+  // Plain conditional rather than min(): Processing's own min() isn't
+  // overloaded for "long", and widening either argument to fit one of
+  // its overloads (float/double) risks losing precision on a genuinely
+  // huge count - not a concern this version needs to accept at all.
+  long pointCount = (header.numberOfPointRecords < countThatFits) ? header.numberOfPointRecords : countThatFits;
+
+  if (pointCount < header.numberOfPointRecords) {
+    println("\nLAS import: '" + FileName + "' is shorter than its own header's point count claims - only reading the " + pointCount + " point(s) that actually fit");
+  }
+
   if (showDialog) {
-    if (!lasShowImportOptionsDialog(header)) return;
+    if (!lasShowImportOptionsDialog(header, (int) pointCount)) return;
   }
 
   println("Importing LAS. Please wait...");
@@ -302,37 +328,6 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-    // A truncated/corrupted file's own declared point count is never
-    // trusted past what the file itself actually holds - same reasoning
-    // as plyImportBinary()'s own bounds-checked skipBytes (importPly.pde).
-    long availableBytes = raw.length - header.offsetToPointData;
-    long countThatFits = (availableBytes >= 0) ? (availableBytes / header.pointDataRecordLength) : 0;
-    // Plain conditional rather than min(): Processing's own min() isn't
-    // overloaded for "long", and widening either argument to fit one of
-    // its overloads (float/double) risks losing precision on a genuinely
-    // huge count - not a concern this version needs to accept at all.
-    long pointCount = (header.numberOfPointRecords < countThatFits) ? header.numberOfPointRecords : countThatFits;
-
-    // Reported against header.numberOfPointRecords BEFORE lasImportMax
-    // Points (below) can shrink pointCount any further - this message is
-    // specifically about the FILE not holding what it claims to, never
-    // about lasImportMaxPoints' own deliberate, unrelated limit (that one
-    // gets its own, separate message just below).
-    if (pointCount < header.numberOfPointRecords) {
-      println("\nLAS import: '" + FileName + "' is shorter than its own header's point count claims - only reading the " + pointCount + " point(s) that actually fit");
-    }
-
-    // See lasImportMaxPoints's own comment above for what this is and
-    // where it comes from - applied AFTER the file-truncation check just
-    // above (never past what the file genuinely holds either way), so the
-    // two messages never read as the same thing: one says "the file
-    // itself doesn't have what it claims", this one says "deliberately
-    // only reading part of what it has".
-    if ((lasImportMaxPoints > 0) && (pointCount > lasImportMaxPoints)) {
-      println("\nLAS import: lasImportMaxPoints is set - only reading the first " + lasImportMaxPoints + " of " + pointCount + " point(s) this file actually holds (testing option; see lasShowImportOptionsDialog()'s own checkbox, or IMPORT.LAS's own optional 3rd argument)");
-      pointCount = lasImportMaxPoints;
-    }
 
     // See this file's own header comment ("Centered by default") for
     // why header.offsetX/Y/Z is dropped rather than applied - printed
@@ -399,6 +394,21 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     boolean checkMinZ = (lasImportMinZ != null); float boundMinZ = checkMinZ ? lasImportMinZ : 0;
     boolean checkMaxZ = (lasImportMaxZ != null); float boundMaxZ = checkMaxZ ? lasImportMaxZ : 0;
 
+    // Same hoisting reasoning as checkMinX/.../boundMaxZ above, for
+    // lasImportMinPointIndex/MaxPointIndex (this file's own "Point
+    // range" header comment) - min is inclusive, max is EXCLUSIVE (see
+    // that same comment for why), checked against k itself (the
+    // record's own plain ordinal in the file, 0-based) rather than
+    // anything decoded from its bytes at all - the cheapest possible
+    // check, done first in the loop below, before any byte is even
+    // read for a record this would skip anyway.
+    boolean checkMinIndex = (lasImportMinPointIndex != null); int boundMinIndex = checkMinIndex ? lasImportMinPointIndex : 0;
+    boolean checkMaxIndex = (lasImportMaxPointIndex != null); int boundMaxIndex = checkMaxIndex ? lasImportMaxPointIndex : 0;
+
+    if ((checkMinIndex || checkMaxIndex) && (pointCount > 0)) {
+      println("\nLAS import: point range is set - only reading index [" + (checkMinIndex ? boundMinIndex : 0) + ", " + (checkMaxIndex ? boundMaxIndex : pointCount) + ") of this file's own " + pointCount + " point(s) (testing option; see lasShowImportOptionsDialog()'s own fields, or IMPORT.LAS's own optional 3rd argument)");
+    }
+
     float printedProgress = 0;
 
     try {
@@ -415,6 +425,19 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
             printedProgress = floor(Progress);
             if (lasProgressWindow != null) lasProgressWindow.updateFraction(Progress / 100.0f);
           }
+        }
+
+        // Point-index range - checked first, before anything else in
+        // this loop, since it costs nothing (no byte decoding at all,
+        // just comparing k itself) and can skip a record the rest of
+        // this loop body would otherwise decode X/Y/Z from for no
+        // reason - see this file's own "Point range" header comment for
+        // what these bounds mean. pos still has to advance past this
+        // record even when skipped, same reasoning as the region-of-
+        // interest filter further down has for its own "continue"s.
+        if ((checkMinIndex && (k < boundMinIndex)) || (checkMaxIndex && (k >= boundMaxIndex))) {
+          pos += header.pointDataRecordLength;
+          continue;
         }
 
         // Raw X/Y/Z are plain signed 32-bit integers, always scaled by

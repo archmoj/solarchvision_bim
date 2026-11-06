@@ -225,20 +225,50 @@ class ImportObjectsLASTest {
     assertEquals(0, app.allFaces.nodes.length);
   }
 
-  // ================= testing-limit option (lasImportMaxPoints) ===========================
+  // ================= testing option: point-index range ===========================
 
   @Test
-  void importObjectsLAS_maxPointsOption_limitsToTheFilesOwnFirstNPoints () throws IOException {
+  void importObjectsLAS_maxPointIndexOption_limitsToTheFilesOwnFirstNPoints () throws IOException {
     byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0} });
-    Path f = lasBinaryFile("las-max-points-test", data);
+    Path f = lasBinaryFile("las-max-point-index-test", data);
 
     app.lasImportMeshPointCloud = false;
-    app.lasImportMaxPoints = 2;
+    app.lasImportMaxPointIndex = 2; // half-open [0, 2) - the file's own first 2 points, same as before this option's own range/rename
     app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(2, app.allPoints.getLength());
     assertEquals(0f, app.allPoints.getX(0), 0.001f);
     assertEquals(1f, app.allPoints.getX(1), 0.001f, "should be the file's own FIRST 2 points, in file order");
+  }
+
+  @Test
+  void importObjectsLAS_minPointIndexOption_skipsThatManyFromTheStart () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0} });
+    Path f = lasBinaryFile("las-min-point-index-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinPointIndex = 3; // inclusive - skips indices 0, 1, 2
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength());
+    assertEquals(3f, app.allPoints.getX(0), 0.001f);
+    assertEquals(4f, app.allPoints.getX(1), 0.001f);
+  }
+
+  @Test
+  void importObjectsLAS_minAndMaxPointIndexTogether_readOnlyThatHalfOpenRange () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0} });
+    Path f = lasBinaryFile("las-point-index-range-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinPointIndex = 1;
+    app.lasImportMaxPointIndex = 4; // [1, 4) - indices 1, 2, 3; index 4 excluded
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, app.allPoints.getLength());
+    assertEquals(1f, app.allPoints.getX(0), 0.001f);
+    assertEquals(2f, app.allPoints.getX(1), 0.001f);
+    assertEquals(3f, app.allPoints.getX(2), 0.001f);
   }
 
   // ================= malformed/unsupported files ============================================

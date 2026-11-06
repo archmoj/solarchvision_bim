@@ -129,25 +129,27 @@ String __IMPORT_PLY__ (String[] parts) {
 String __IMPORT_LAS__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
-      // Optional 3rd argument: IMPORT.LAS path maxPoints - sets
-      // lasImportMaxPoints (importLas.pde) before the import itself
-      // runs, the same "deliberately only the file's own first N
-      // points, for testing" limit lasShowImportOptionsDialog()'s own
-      // checkbox+field (fileSelected.pde) sets interactively. A plain
-      // positional argument (parts[2]), not parseParams()'s own
+      // Optional 3rd argument: IMPORT.LAS path maxPointIndex - sets
+      // lasImportMaxPointIndex (importLas.pde) before the import itself
+      // runs, the same half-open "read index [0, maxPointIndex)"
+      // narrowing lasShowImportOptionsDialog()'s own max-point-index
+      // field (fileSelected.pde) sets interactively, for testing against
+      // a huge file without waiting on all of it. Just the max, not a
+      // min too - a 4th positional argument would work the same way,
+      // left out here to keep this command's own argument list short;
+      // the dialog's own min field still covers that case interactively.
+      // A plain positional argument (parts[2]), not parseParams()'s own
       // key:value style other commands use elsewhere in this file -
-      // parts[1] here is a file PATH, which on Windows already
-      // contains its own ':' (e.g. "C:\..."), so key:value parsing
-      // would risk misreading the path itself.
+      // parts[1] here is a file PATH, which on Windows already contains
+      // its own ':' (e.g. "C:\..."), so key:value parsing would risk
+      // misreading the path itself.
       if (parts.length > 2) {
-        int parsedLimit = 0;
         try {
-          parsedLimit = Integer.parseInt(parts[2].trim());
+          lasImportMaxPointIndex = Integer.parseInt(parts[2].trim());
         }
         catch (NumberFormatException e) {
-          parsedLimit = 0;
+          lasImportMaxPointIndex = null;
         }
-        lasImportMaxPoints = (parsedLimit > 0) ? parsedLimit : 0;
       }
       _fileSelected_ImportLas(new File(parts[1]));
     }

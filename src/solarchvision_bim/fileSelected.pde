@@ -233,13 +233,49 @@ class LasBoundsField {
   // field holds a real number, null (no bound) otherwise - a blank or
   // non-numeric field left checked is treated the same as leaving the
   // checkbox unchecked, never a dialog-breaking exception from a stray
-  // keystroke, the same "a bad value quietly falls back rather than
-  // crashing" tolerance limitField's own identical parsing (just below)
-  // already uses.
+  // keystroke, matching the rest of this app's own "a bad value quietly
+  // falls back rather than crashing" tolerance (e.g. plySizeOf()'s own
+  // -1-for-unrecognized return, importPly.pde).
   Float resolvedValue () {
     if (!box.isSelected()) return null;
     try {
       return Float.parseFloat(field.getText().trim());
+    }
+    catch (NumberFormatException e) {
+      return null;
+    }
+  }
+}
+
+// The same shape as LasBoundsField just above, for an Integer bound
+// instead of a Float one - lasShowImportOptionsDialog()'s own 2-row
+// "Point range" section, below, backs lasImportMinPointIndex/
+// MaxPointIndex (importLas.pde) with this instead of LasBoundsField
+// itself specifically because a point INDEX needs to stay an exact
+// whole number (see that file's own "Point range" header comment for
+// why Integer, not Float) - a separate, parallel class rather than
+// somehow sharing one, since Java generics can't parameterize over
+// int/Integer vs float/Float with real primitive fields the way a
+// class written out twice, this plainly, can.
+class LasIndexBoundsField {
+  javax.swing.JCheckBox box;
+  javax.swing.JTextField field;
+
+  // Same fallbackValue reasoning as LasBoundsField's own identical
+  // parameter - what the field shows (box left unchecked) when nothing
+  // is persisted yet.
+  LasIndexBoundsField (String label, Integer currentValue, int fallbackValue) {
+    box = new javax.swing.JCheckBox(label, currentValue != null);
+    field = new javax.swing.JTextField((currentValue != null) ? str(currentValue) : str(fallbackValue), 10);
+  }
+
+  // Same "a bad value quietly falls back to no bound at all, never a
+  // dialog-breaking exception from a stray keystroke" tolerance as
+  // LasBoundsField's own identical method.
+  Integer resolvedValue () {
+    if (!box.isSelected()) return null;
+    try {
+      return Integer.parseInt(field.getText().trim());
     }
     catch (NumberFormatException e) {
       return null;
@@ -254,8 +290,12 @@ class LasBoundsField {
 // actually checked against - see importLas.pde's own "Region of
 // interest" header comment) rather than a meaningless "0" - see
 // import_objects_LAS()'s own restructuring (importLas.pde) for why the
-// header is parsed before this dialog is ever shown now.
-boolean lasShowImportOptionsDialog (LasHeader header) {
+// header is parsed before this dialog is ever shown now. totalPoints is
+// that same restructuring's other product: the file's own real,
+// already-clamped point count (import_objects_LAS()'s own pointCount,
+// computed before this dialog is shown), used the same way below for
+// the point-range fields' own default values.
+boolean lasShowImportOptionsDialog (LasHeader header, int totalPoints) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
@@ -264,8 +304,9 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   // what this picks between. A mutually-exclusive group of radio
   // buttons (not independent checkboxes, and not reusing meshBox's own
   // checkbox shape) specifically because this is a genuine CHOICE among
-  // 3 algorithms, not an independent on/off toggle the way meshBox/
-  // limitBox are each their own.
+  // 3 algorithms, not an independent on/off toggle the way meshBox and
+  // every point-range/region-of-interest checkbox below are each their
+  // own.
   javax.swing.JRadioButton gridAlgorithmBox = new javax.swing.JRadioButton("Grid (fast, default)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_GRID);
   javax.swing.JRadioButton delaunayAlgorithmBox = new javax.swing.JRadioButton("Delaunay (exact, slower)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_DELAUNAY);
   javax.swing.JRadioButton boxGridAlgorithmBox = new javax.swing.JRadioButton("Box grid (stepped boxes, not a smooth surface)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_BOX_GRID);
@@ -280,21 +321,32 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   algorithmPanel.add(delaunayAlgorithmBox);
   algorithmPanel.add(boxGridAlgorithmBox);
 
-  // lasImportMaxPoints (importLas.pde) - see its own comment for what
-  // this is for. limitBox starts checked iff a limit is already active
-  // (carried over from an earlier import in this same session);
-  // limitField always starts holding SOME usable positive number (the
-  // current limit if one's active, else a reasonable default a person
-  // testing would likely want) so just ticking limitBox back on, with
-  // no further typing, is already enough to re-apply a sensible limit.
-  javax.swing.JCheckBox limitBox = new javax.swing.JCheckBox("Limit to only the first", lasImportMaxPoints > 0);
-  javax.swing.JTextField limitField = new javax.swing.JTextField((lasImportMaxPoints > 0) ? str(lasImportMaxPoints) : "10000", 8);
-  javax.swing.JLabel limitLabel = new javax.swing.JLabel("points (for testing)");
+  // lasImportMinPointIndex/MaxPointIndex (importLas.pde) - see that
+  // file's own "Point range" header comment for exactly what these mean
+  // (half-open [min, max), min inclusive, max exclusive). totalPoints
+  // (this dialog's own parameter, above) is shown as a plain label so
+  // the person narrowing the range down actually knows what they're
+  // narrowing it FROM, and is minField's own fallback for max (minField's
+  // own is always 0) - so "the whole file" needs no typing at all, just
+  // ticking a box.
+  javax.swing.JLabel totalPointsLabel = new javax.swing.JLabel(totalPoints + " point(s) available in this file");
 
-  javax.swing.JPanel limitPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
-  limitPanel.add(limitBox);
-  limitPanel.add(limitField);
-  limitPanel.add(limitLabel);
+  LasIndexBoundsField minPointField = new LasIndexBoundsField("Min point index", lasImportMinPointIndex, 0);
+  LasIndexBoundsField maxPointField = new LasIndexBoundsField("Max point index (exclusive)", lasImportMaxPointIndex, totalPoints);
+
+  javax.swing.JPanel minPointRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  minPointRow.add(minPointField.box);
+  minPointRow.add(minPointField.field);
+
+  javax.swing.JPanel maxPointRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  maxPointRow.add(maxPointField.box);
+  maxPointRow.add(maxPointField.field);
+
+  javax.swing.JPanel pointRangePanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  pointRangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Point range (optional, for testing)"));
+  pointRangePanel.add(totalPointsLabel);
+  pointRangePanel.add(minPointRow);
+  pointRangePanel.add(maxPointRow);
 
   // lasImportMinX/MaxX/MinY/MaxY/MinZ/MaxZ (importLas.pde) - see that
   // file's own "Region of interest" header comment for exactly what
@@ -329,7 +381,7 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   panel.add(swapAxisBox);
   panel.add(meshBox);
   panel.add(algorithmPanel);
-  panel.add(limitPanel);
+  panel.add(pointRangePanel);
   panel.add(regionPanel);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
@@ -346,24 +398,8 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   else if (boxGridAlgorithmBox.isSelected()) lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_BOX_GRID;
   else lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_GRID;
 
-  if (limitBox.isSelected()) {
-    // A blank/non-numeric field with the checkbox still ticked is
-    // treated as "no limit" (0), same as leaving the checkbox
-    // unchecked - never a dialog-breaking exception from a stray
-    // keystroke, matching the rest of this app's own "a bad value
-    // quietly falls back rather than crashing" tolerance (e.g.
-    // plySizeOf()'s own -1-for-unrecognized return, importPly.pde).
-    int parsedLimit = 0;
-    try {
-      parsedLimit = Integer.parseInt(limitField.getText().trim());
-    }
-    catch (NumberFormatException e) {
-      parsedLimit = 0;
-    }
-    lasImportMaxPoints = (parsedLimit > 0) ? parsedLimit : 0;
-  } else {
-    lasImportMaxPoints = 0;
-  }
+  lasImportMinPointIndex = minPointField.resolvedValue();
+  lasImportMaxPointIndex = maxPointField.resolvedValue();
 
   lasImportMinX = minXField.resolvedValue();
   lasImportMaxX = maxXField.resolvedValue();

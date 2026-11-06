@@ -64,12 +64,14 @@ This page has two parts:
 -   `IMPORT.LAS`: Imports a `.las` point-cloud file; the resulting
     points are meshed into a surface by default (no script-level
     toggle yet for this - use the menu's own "Import LAS" options
-    dialog to turn it off for a given import). Takes an optional 3rd
-    argument, `IMPORT.LAS path maxPoints`, to read only the file's own
-    first `maxPoints` points instead of the whole file - meant for
-    quickly testing against a large file, same limit the options
-    dialog's own "Limit to only the first ... points" field sets
-    interactively
+    dialog to turn it off, or to pick a different meshing algorithm,
+    for a given import). Takes an optional 3rd argument,
+    `IMPORT.LAS path maxPointIndex`, to read only point indices
+    `[0, maxPointIndex)` instead of the whole file - meant for quickly
+    testing against a large file, same half-open range the options
+    dialog's own "Point range" fields set interactively (which also
+    let a minimum index be set, not just a maximum - not available as
+    a script argument yet)
 -   `IMPORT.STL`: Imports a `.stl` file
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
