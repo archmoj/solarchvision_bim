@@ -76,6 +76,8 @@ This page has two parts:
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at
     different days (multiple files)
 -   `EXPORT.OBJ`: Exports the scene in `.obj` format
+-   `EXPORT.LAS`: Exports every point currently in the scene as a
+    `.las` point cloud (geometry only - position data, nothing else)
 -   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
 -   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing

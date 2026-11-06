@@ -187,6 +187,12 @@ String __EXPORT_OBJ__ (String[] parts) {
     return hint;
 }
 
+String __EXPORT_LAS__ (String[] parts) {
+    String hint = "";
+    exportLas("");
+    return hint;
+}
+
 String __EXPORT_RAD__ (String[] parts) {
     String hint = "";
     exportRadiance();

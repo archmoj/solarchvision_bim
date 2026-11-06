@@ -387,6 +387,10 @@ void build_allActions() {
     exportObj("");
   });
 
+  putAction("Export 3D > LAS", () -> {
+    exportLas("");
+  });
+
   putAction("Export 3D > HTML", () -> {
     exportHtml();
   });

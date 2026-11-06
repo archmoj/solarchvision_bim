@@ -89,6 +89,7 @@ class UI_menuBar {
       "Export 3D > OBJ",
       "Export 3D > OBJ (date-series)",
       "Export 3D > OBJ (time-series)",
+      "Export 3D > LAS",
       ___divider___,
       "Quit"
     }
