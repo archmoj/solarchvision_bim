@@ -203,16 +203,65 @@ class LasHeader {
   long numberOfPointRecords;
   double scaleX, scaleY, scaleZ;
   double offsetX, offsetY, offsetZ;
+  // The file's own declared overall bounding box - a required field in
+  // every valid LAS header (unlike everything else in this class, never
+  // used to read a single point's own geometry - this importer trusts
+  // each point's own raw X/Y/Z regardless of whether it falls inside
+  // what the header claims). The ONE use this importer has for it:
+  // lasShowImportOptionsDialog()'s (fileSelected.pde) own region-of-
+  // interest fields default to these, in LOCAL coordinates (minX -
+  // offsetX, same as every point's own localX - see this file's own
+  // "Centered by default" comment), so a person narrowing the import
+  // down starts from the file's own real extent instead of a
+  // meaningless "0".
+  double minX, maxX, minY, maxY, minZ, maxZ;
 }
 
 void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
-  // Same shape as import_objects_PLY()'s/import_objects_STL()'s own
-  // identical blocks - see either one's own comment, or ifcImportShow
-  // OptionsDialog's (importIfc.pde), for why this sits here rather
-  // than earlier, and what a cancelled dialog does.
-  if (lasImportShowOptionsDialog) {
-    lasImportShowOptionsDialog = false;
-    if (!lasShowImportOptionsDialog()) return;
+
+  // Consumed here, once, regardless of what happens below - a one-shot
+  // "show the dialog on the NEXT call" flag, same as before (see either
+  // import_objects_PLY()'s/import_objects_STL()'s own identical blocks,
+  // or ifcImportShowOptionsDialog's, importIfc.pde) - just read into a
+  // local up front now, rather than consumed at the point the dialog is
+  // actually shown further down, because the header needs parsing
+  // FIRST (see lasShowImportOptionsDialog()'s own new header parameter,
+  // fileSelected.pde, for why: its own region-of-interest fields now
+  // default to the file's own real bounding box, which obviously isn't
+  // known yet before the file itself has even been opened).
+  boolean showDialog = lasImportShowOptionsDialog;
+  lasImportShowOptionsDialog = false;
+
+  // Opened and the header parsed/validated BEFORE the dialog (if shown
+  // at all) and before showWaitCursor() - deliberately outside the try/
+  // finally below, the same reasoning as this same block's own earlier
+  // position (before showWaitCursor()) already had: the cursor is never
+  // set to WAIT this early, so there's nothing yet to restore if any of
+  // this throws.
+  byte[] raw = loadBytes(FileName);
+  if ((raw == null) || (raw.length == 0)) {
+    println("\nLAS import: could not read '" + FileName + "'");
+    return;
+  }
+
+  LasHeader header = lasParseHeader(raw);
+  if (header == null) {
+    println("\nLAS import: '" + FileName + "' doesn't look like a valid LAS file (missing the 'LASF' file signature, or shorter than a LAS header)");
+    return;
+  }
+
+  if (header.isCompressed) {
+    println("\nLAS import: '" + FileName + "' is LASzip-compressed (a .laz file, or a .las file saved with LAZ compression) - this version only reads plain, uncompressed LAS point data (see this file's own header comment for why) - re-export it as uncompressed LAS first");
+    return;
+  }
+
+  if (header.pointDataRecordLength < 12) {
+    println("\nLAS import: '" + FileName + "' declares a point record length of only " + header.pointDataRecordLength + " byte(s) - too short to even hold X/Y/Z, so this doesn't look like a valid LAS file");
+    return;
+  }
+
+  if (showDialog) {
+    if (!lasShowImportOptionsDialog(header)) return;
   }
 
   println("Importing LAS. Please wait...");
@@ -247,28 +296,6 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-    byte[] raw = loadBytes(FileName);
-    if ((raw == null) || (raw.length == 0)) {
-      println("\nLAS import: could not read '" + FileName + "'");
-      return;
-    }
-
-    LasHeader header = lasParseHeader(raw);
-    if (header == null) {
-      println("\nLAS import: '" + FileName + "' doesn't look like a valid LAS file (missing the 'LASF' file signature, or shorter than a LAS header)");
-      return;
-    }
-
-    if (header.isCompressed) {
-      println("\nLAS import: '" + FileName + "' is LASzip-compressed (a .laz file, or a .las file saved with LAZ compression) - this version only reads plain, uncompressed LAS point data (see this file's own header comment for why) - re-export it as uncompressed LAS first");
-      return;
-    }
-
-    if (header.pointDataRecordLength < 12) {
-      println("\nLAS import: '" + FileName + "' declares a point record length of only " + header.pointDataRecordLength + " byte(s) - too short to even hold X/Y/Z, so this doesn't look like a valid LAS file");
-      return;
-    }
 
     // A truncated/corrupted file's own declared point count is never
     // trusted past what the file itself actually holds - same reasoning
@@ -642,6 +669,13 @@ LasHeader lasParseHeader (byte[] raw) {
   h.offsetX = binReadDoubleLE(raw, 155);
   h.offsetY = binReadDoubleLE(raw, 163);
   h.offsetZ = binReadDoubleLE(raw, 171);
+
+  h.maxX = binReadDoubleLE(raw, 179);
+  h.minX = binReadDoubleLE(raw, 187);
+  h.maxY = binReadDoubleLE(raw, 195);
+  h.minY = binReadDoubleLE(raw, 203);
+  h.maxZ = binReadDoubleLE(raw, 211);
+  h.minZ = binReadDoubleLE(raw, 219);
 
   return h;
 }

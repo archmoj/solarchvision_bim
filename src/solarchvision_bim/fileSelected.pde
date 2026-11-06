@@ -218,9 +218,15 @@ class LasBoundsField {
   javax.swing.JCheckBox box;
   javax.swing.JTextField field;
 
-  LasBoundsField (String label, Float currentValue) {
+  // fallbackValue is what the field itself shows (box left UNCHECKED
+  // either way) when currentValue is null - i.e. no value persisted
+  // from an earlier import yet - so the field never starts out on a
+  // meaningless "0" unless that's genuinely what the caller wants shown
+  // (see lasShowImportOptionsDialog()'s own use of this, below, where
+  // fallbackValue is always the file's own real bounding box).
+  LasBoundsField (String label, Float currentValue, float fallbackValue) {
     box = new javax.swing.JCheckBox(label, currentValue != null);
-    field = new javax.swing.JTextField((currentValue != null) ? str(currentValue) : "0", 8);
+    field = new javax.swing.JTextField((currentValue != null) ? str(currentValue) : str(fallbackValue), 8);
   }
 
   // The field's own typed value if the checkbox is checked and the
@@ -241,7 +247,15 @@ class LasBoundsField {
   }
 }
 
-boolean lasShowImportOptionsDialog () {
+// header is the file's own, already-parsed LasHeader (importLas.pde) -
+// passed in specifically so the region-of-interest fields below can
+// default to the file's own real bounding box (header.minX/maxX/.../
+// maxZ, converted to the same LOCAL coordinate space those fields are
+// actually checked against - see importLas.pde's own "Region of
+// interest" header comment) rather than a meaningless "0" - see
+// import_objects_LAS()'s own restructuring (importLas.pde) for why the
+// header is parsed before this dialog is ever shown now.
+boolean lasShowImportOptionsDialog (LasHeader header) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
@@ -285,13 +299,19 @@ boolean lasShowImportOptionsDialog () {
   // subset of the 6 can be set - each is fully independent of the
   // other 5, so e.g. only a MinX with nothing else is a perfectly
   // normal, supported choice ("everything from here on," with no upper
-  // bound on X and no bound on Y/Z at all).
-  LasBoundsField minXField = new LasBoundsField("Min X", lasImportMinX);
-  LasBoundsField maxXField = new LasBoundsField("Max X", lasImportMaxX);
-  LasBoundsField minYField = new LasBoundsField("Min Y", lasImportMinY);
-  LasBoundsField maxYField = new LasBoundsField("Max Y", lasImportMaxY);
-  LasBoundsField minZField = new LasBoundsField("Min Z", lasImportMinZ);
-  LasBoundsField maxZField = new LasBoundsField("Max Z", lasImportMaxZ);
+  // bound on X and no bound on Y/Z at all). Each field's own fallback
+  // (shown, box left unchecked, whenever nothing's persisted from an
+  // earlier import yet) is the file's OWN real bounding box - header.
+  // minX/.../maxZ - converted to the same local (offset-dropped)
+  // coordinate space those bounds are actually checked against, so a
+  // person narrowing the import down starts from the file's own real
+  // extent instead of a meaningless "0".
+  LasBoundsField minXField = new LasBoundsField("Min X", lasImportMinX, (float) (header.minX - header.offsetX));
+  LasBoundsField maxXField = new LasBoundsField("Max X", lasImportMaxX, (float) (header.maxX - header.offsetX));
+  LasBoundsField minYField = new LasBoundsField("Min Y", lasImportMinY, (float) (header.minY - header.offsetY));
+  LasBoundsField maxYField = new LasBoundsField("Max Y", lasImportMaxY, (float) (header.maxY - header.offsetY));
+  LasBoundsField minZField = new LasBoundsField("Min Z", lasImportMinZ, (float) (header.minZ - header.offsetZ));
+  LasBoundsField maxZField = new LasBoundsField("Max Z", lasImportMaxZ, (float) (header.maxZ - header.offsetZ));
 
   javax.swing.JPanel regionPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 2));
   regionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Region of interest (optional)"));
