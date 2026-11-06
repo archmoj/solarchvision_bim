@@ -409,14 +409,48 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
       println("\nLAS import: point range is set - only reading index [" + (checkMinIndex ? boundMinIndex : 0) + ", " + (checkMaxIndex ? boundMaxIndex : pointCount) + ") of this file's own " + pointCount + " point(s) (testing option; see lasShowImportOptionsDialog()'s own fields, or IMPORT.LAS's own optional 3rd argument)");
     }
 
+    // The progress bar below is reported against THIS range, not plain
+    // k/pointCount - skipping a record outside [min, max) costs almost
+    // nothing (no byte decoding happens for one at all, see the "break"/
+    // "continue" in the loop below), so with a narrow range near the end
+    // of a large file, k/pointCount would sit at whatever percentage the
+    // range's own START happens to land at (90% for the last 10% of a
+    // file, say) for virtually the entire, near-instant skip phase
+    // before real reading even begins, then visibly jump straight there
+    // instead of counting up from 0 the way the rest of an import does.
+    // Clamped into [0, pointCount] in case either bound is set past the
+    // file's own real point count.
+    int effectiveStart = checkMinIndex ? boundMinIndex : 0;
+    if (effectiveStart < 0) effectiveStart = 0;
+    if (effectiveStart > pointCount) effectiveStart = (int) pointCount;
+    int effectiveEnd = checkMaxIndex ? boundMaxIndex : (int) pointCount;
+    if (effectiveEnd > pointCount) effectiveEnd = (int) pointCount;
+    if (effectiveEnd < effectiveStart) effectiveEnd = effectiveStart;
+    int effectiveTotal = max(1, effectiveEnd - effectiveStart); // never 0 - avoids a divide-by-zero for an empty/inverted range; the bar just never advances in that case, which is correct, since nothing real gets read either
+
     float printedProgress = 0;
 
     try {
       int pos = header.offsetToPointData;
       for (int k = 0; k < pointCount; k++) {
 
+        // Past the max bound (if any): every further k would only ever
+        // hit the same check again, so there's nothing left this import
+        // could still read - stop scanning the file entirely here,
+        // rather than still walking pos through every remaining record
+        // (even a skipped one still costs a comparison and an addition
+        // per record) all the way out to pointCount for no reason. This
+        // is also exactly why the progress bar below never needs to
+        // handle k >= effectiveEnd at all - that k is never reached.
+        if (checkMaxIndex && (k >= boundMaxIndex)) break;
+
         if (control != USER_AUTO) {
-          float Progress = 100 * k / (float) pointCount;
+          // max(0, ...): for k < effectiveStart (still in the skipped-
+          // before-min phase), this stays pinned at exactly 0 rather
+          // than going negative - the bar simply doesn't move at all
+          // until real reading begins, matching how near-instant that
+          // whole skip phase actually is.
+          float Progress = 100 * max(0, k - effectiveStart) / (float) effectiveTotal;
           int delta = (int) floor(Progress - printedProgress);
           if (delta >= 1) {
             StringBuilder barBuffer = new StringBuilder();
@@ -427,15 +461,16 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
           }
         }
 
-        // Point-index range - checked first, before anything else in
-        // this loop, since it costs nothing (no byte decoding at all,
-        // just comparing k itself) and can skip a record the rest of
-        // this loop body would otherwise decode X/Y/Z from for no
-        // reason - see this file's own "Point range" header comment for
-        // what these bounds mean. pos still has to advance past this
-        // record even when skipped, same reasoning as the region-of-
-        // interest filter further down has for its own "continue"s.
-        if ((checkMinIndex && (k < boundMinIndex)) || (checkMaxIndex && (k >= boundMaxIndex))) {
+        // Point-index range (min side only - the max side is the
+        // "break" above) - checked before anything else that follows,
+        // since it costs nothing (no byte decoding at all, just
+        // comparing k itself) and can skip a record the rest of this
+        // loop body would otherwise decode X/Y/Z from for no reason -
+        // see this file's own "Point range" header comment for what
+        // these bounds mean. pos still has to advance past this record
+        // even when skipped, same reasoning as the region-of-interest
+        // filter further down has for its own "continue"s.
+        if (checkMinIndex && (k < boundMinIndex)) {
           pos += header.pointDataRecordLength;
           continue;
         }
