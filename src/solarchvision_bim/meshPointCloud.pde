@@ -47,6 +47,17 @@
 // O(n^2) scan above (ArrayList.removeAll() checking every remaining
 // triangle's own membership in the just-found bad list, and an edge-by-
 // edge O(E^2) pairwise comparison for the boundary search).
+// meshSpatialSortOrder() (below) softens that remaining O(n^2)-ish cost
+// a bit further, without actually fixing its own shape: it chooses a
+// spatially-coherent order to insert the n real points in (instead of
+// just the caller's own array order), which - for real-world point
+// clouds, rarely already spatially coherent on their own - meaningfully
+// cuts how many triangles that circumcircle scan ends up touching per
+// point, on average, even though it doesn't change what the scan itself
+// costs per triangle it does touch. See that function's own comment for
+// why insertion order matters at all, given the final triangulation
+// RESULT never depends on it.
+//
 // MESH_POINT_CLOUD_MAX_POINTS (below) is a deliberate, honest cap on
 // top of all of this - see its own comment for why, and for what a
 // caller sees once it's hit. meshPointCloud_delaunayXY()'s own optional
@@ -174,9 +185,15 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointClo
   ArrayList<MeshTriangle> triangles = new ArrayList<MeshTriangle>();
   triangles.add(meshMakeTriangle(px, py, n, n + 1, n + 2));
 
-  for (int p = 0; p < n; p++) {
-    meshInsertPoint(triangles, px, py, p);
-    if (progress != null) progress.onPointInserted(p + 1, n);
+  // See meshSpatialSortOrder()'s own comment for why insertion order -
+  // despite never changing the final RESULT - is still worth choosing
+  // deliberately rather than just going 0, 1, 2, ... n-1 (a LAS file's
+  // own scan-line order, for the one caller this currently has).
+  int[] insertOrder = meshSpatialSortOrder(xs, ys, n, minX, maxX, minY, maxY);
+
+  for (int oi = 0; oi < n; oi++) {
+    meshInsertPoint(triangles, px, py, insertOrder[oi]);
+    if (progress != null) progress.onPointInserted(oi + 1, n);
   }
 
   for (MeshTriangle t : triangles) {
@@ -186,6 +203,81 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointClo
   }
 
   return result;
+}
+
+// Computes a spatially-coherent visiting order for inserting the n real
+// points (xs[0..n-1], ys[0..n-1]) into the Bowyer-Watson triangulation
+// above, instead of just 0, 1, 2, ... n-1 (a LAS file's own scan-line
+// order, for the one caller this currently has) - Delaunay
+// triangulation's own RESULT doesn't depend on insertion order at all
+// (the same final set of triangles comes out regardless, barring tie-
+// breaking on genuinely degenerate input), but how much work meshInsert
+// Point()'s own un-accelerated circumcircle scan has to do along the
+// way does: that scan still tests every triangle CURRENTLY in the
+// triangulation (see this file's own header comment, "Performance," for
+// why), and consecutive insertions build up more triangles near each
+// other - and so touch fewer of them per new point, on average - when
+// consecutive POINTS are near each other in space, rather than
+// scattered across the whole cloud the way file order usually is. This
+// doesn't fix that scan's own O(n^2)-ish shape (a real spatial index,
+// not just a better insertion order, would be needed for that - see
+// this file's own header comment again), but meaningfully cuts how much
+// of it actually gets paid for real-world point clouds, which (unlike a
+// LAS file's own scan order) are rarely already spatially coherent.
+//
+// A plain grid, visited in "boustrophedon" (row by row, alternating
+// left-to-right/right-to-left each row, the way an ox plows a field)
+// order: simple to get right, and good enough for this - a true space-
+// filling curve (e.g. Hilbert) packs slightly better at the row-to-row
+// seam, but isn't worth the real extra complexity (bit-interleaving a
+// 2D index) for what would still only be a constant-factor improvement
+// on top of this.
+int[] meshSpatialSortOrder (float[] xs, float[] ys, int n, float minX, float maxX, float minY, float maxY) {
+
+  // Roughly 1 point per cell on average - a coarser grid (fewer, bigger
+  // cells) packs more points into each cell (whose own internal order
+  // stays arbitrary, so less benefit from sorting at all); a finer one
+  // has more empty/near-empty cells to walk past for no benefit either
+  // way. Neither extreme breaks correctness - only how much this
+  // actually helps.
+  int gridSize = max(1, (int) Math.ceil(Math.sqrt((double) n)));
+
+  float spanX = maxX - minX, spanY = maxY - minY;
+  float cellWidth  = (spanX > 0) ? (spanX / gridSize) : 1; // every point sharing the same X (or Y) - cellWidth/Height would otherwise be 0, and dividing by it below undefined
+  float cellHeight = (spanY > 0) ? (spanY / gridSize) : 1;
+
+  ArrayList<ArrayList<Integer>> cells = new ArrayList<ArrayList<Integer>>(gridSize * gridSize);
+  for (int c = 0; c < gridSize * gridSize; c++) cells.add(new ArrayList<Integer>());
+
+  for (int i = 0; i < n; i++) {
+    int cellX = (int) ((xs[i] - minX) / cellWidth);
+    int cellY = (int) ((ys[i] - minY) / cellHeight);
+    // The point(s) exactly at maxX/maxY (and, in principle, any float
+    // rounding at an earlier cell boundary) would otherwise compute a
+    // cell index 1 past this grid's own last row/column - clamped into
+    // range rather than ever indexing cells out of bounds.
+    if (cellX >= gridSize) cellX = gridSize - 1;
+    if (cellY >= gridSize) cellY = gridSize - 1;
+    if (cellX < 0) cellX = 0;
+    if (cellY < 0) cellY = 0;
+
+    cells.get(cellY * gridSize + cellX).add(i);
+  }
+
+  int[] order = new int[n];
+  int oi = 0;
+  for (int row = 0; row < gridSize; row++) {
+    boolean leftToRight = (row % 2) == 0; // the "boustrophedon" turn - see this function's own header comment
+    for (int col = 0; col < gridSize; col++) {
+      int cellX = leftToRight ? col : (gridSize - 1 - col);
+      for (int pointIndex : cells.get(row * gridSize + cellX)) {
+        order[oi] = pointIndex;
+        oi += 1;
+      }
+    }
+  }
+
+  return order;
 }
 
 // One point's own insertion into the triangulation so far - the
