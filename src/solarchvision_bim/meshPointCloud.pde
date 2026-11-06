@@ -31,14 +31,29 @@
 // with NO spatial index (a k-d tree/grid) behind the "which triangles
 // does this new point's circumcircle contain" search in
 // meshInsertPoint() below - every triangle currently in the
-// triangulation is re-tested against every new point, so this degrades
-// well before a true large-scale point cloud's own size. MESH_POINT_
-// CLOUD_MAX_POINTS (below) is a deliberate, honest cap on top of that -
-// see its own comment for why, and for what a caller sees once it's hit.
-// meshPointCloud_delaunayXY()'s own optional MeshPointCloudProgressListener
-// parameter (also below) exists specifically so a caller's UI can show
-// real progress through however long this actually takes, rather than
-// looking indistinguishable from a genuine hang for that whole stretch.
+// triangulation is re-tested against every new point, so this still
+// degrades well before a true large-scale point cloud's own size (this
+// is the real, remaining O(n^2)-ish cost - fixing it means adding real
+// triangle adjacency and walking from a recently-touched triangle
+// instead of scanning all of them, a bigger change left for later).
+// What meshInsertPoint() does once it HAS found those bad triangles is
+// no longer part of that cost, though: both removing them from
+// triangles and finding the resulting hole's own boundary edges are
+// now each a single O(T)/O(E) pass (a HashMap keyed by each edge's own
+// canonical (min, max) vertex-index pair for the boundary search, and
+// an Iterator.remove() single pass for the removal) - earlier versions
+// of this file did both in ways that, while never changing the actual
+// RESULT, cost meaningfully more than they needed to on top of the
+// O(n^2) scan above (ArrayList.removeAll() checking every remaining
+// triangle's own membership in the just-found bad list, and an edge-by-
+// edge O(E^2) pairwise comparison for the boundary search).
+// MESH_POINT_CLOUD_MAX_POINTS (below) is a deliberate, honest cap on
+// top of all of this - see its own comment for why, and for what a
+// caller sees once it's hit. meshPointCloud_delaunayXY()'s own optional
+// MeshPointCloudProgressListener parameter (also below) exists
+// specifically so a caller's UI can show real progress through however
+// long this actually takes, rather than looking indistinguishable from
+// a genuine hang for that whole stretch.
 
 // A cloud larger than this is skipped entirely (not triangulated at
 // all - a caller falls back to importing loose points only, see e.g.
@@ -181,48 +196,82 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointClo
 // boundary edges (an edge that belonged to exactly one bad triangle,
 // not two - the two bad triangles sharing an interior edge of the hole
 // both get removed, so only the hole's real outer boundary survives the
-// "drop any edge shared by two bad triangles" filtering below).
+// "toggle" step meshToggleEdge() does, below).
+//
+// The circumcircle scan just below (which triangle in triangles is
+// "bad") is still the one real O(n^2)-ish cost here - see this file's
+// own header comment ("Performance") for why, and for what fixing that
+// would actually take. Everything AFTER that - removing the bad
+// triangles via Iterator.remove() and finding the hole's own boundary
+// via meshToggleEdge() - is a single O(T)/O(E) pass each, regardless
+// of how that scan was done.
 void meshInsertPoint (ArrayList<MeshTriangle> triangles, float[] px, float[] py, int p) {
 
+  // Finds AND removes every bad triangle in the same single pass, via
+  // the list's own Iterator.remove() - never ArrayList.removeAll(),
+  // whose own "is this element in the list I was given" check costs a
+  // full scan of ITS OWN argument per element of triangles, turning one
+  // O(T) removal into an O(T x badTriangles.size()) one for no reason
+  // the result needs (see this file's own header comment).
   ArrayList<MeshTriangle> badTriangles = new ArrayList<MeshTriangle>();
-  for (MeshTriangle t : triangles) {
+  java.util.Iterator<MeshTriangle> it = triangles.iterator();
+  while (it.hasNext()) {
+    MeshTriangle t = it.next();
     float ddx = px[p] - t.cx, ddy = py[p] - t.cy;
-    if ((ddx * ddx + ddy * ddy) < t.cRadiusSquared) badTriangles.add(t);
-  }
-
-  // Every edge of every bad triangle, each initially assumed to be on
-  // the hole's own boundary - an edge shared by two bad triangles (the
-  // hole's own interior) is found and dropped (both copies) just below,
-  // leaving only the hole's real boundary.
-  ArrayList<int[]> edges = new ArrayList<int[]>();
-  for (MeshTriangle t : badTriangles) {
-    edges.add(new int[]{ t.a, t.b });
-    edges.add(new int[]{ t.b, t.c });
-    edges.add(new int[]{ t.c, t.a });
-  }
-
-  ArrayList<int[]> boundary = new ArrayList<int[]>();
-  for (int i = 0; i < edges.size(); i++) {
-    boolean shared = false;
-    for (int j = 0; j < edges.size(); j++) {
-      if (i == j) continue;
-      if (meshSameEdge(edges.get(i), edges.get(j))) { shared = true; break; }
+    if ((ddx * ddx + ddy * ddy) < t.cRadiusSquared) {
+      badTriangles.add(t);
+      it.remove();
     }
-    if (!shared) boundary.add(edges.get(i));
   }
 
-  triangles.removeAll(badTriangles);
+  // The hole's own boundary - every edge of every bad triangle, kept in
+  // one HashMap<Long, int[]> keyed by meshEdgeKey() (below)'s own
+  // direction-agnostic (min vertex, max vertex) encoding of that edge,
+  // via meshToggleEdge(): a boundary edge (belonging to exactly one bad
+  // triangle) is inserted once and stays; an interior edge (shared by
+  // two adjacent bad triangles, each walking it in the opposite
+  // direction from the other) gets inserted once then immediately
+  // removed again by its own second, opposite-winding occurrence -
+  // O(1) (amortized) per edge, O(E) total, rather than every edge
+  // compared pairwise against every other edge.
+  HashMap<Long, int[]> boundaryEdges = new HashMap<Long, int[]>();
+  for (MeshTriangle t : badTriangles) {
+    meshToggleEdge(boundaryEdges, t.a, t.b);
+    meshToggleEdge(boundaryEdges, t.b, t.c);
+    meshToggleEdge(boundaryEdges, t.c, t.a);
+  }
 
-  for (int[] e : boundary) {
+  for (int[] e : boundaryEdges.values()) {
     triangles.add(meshMakeTriangle(px, py, e[0], e[1], p));
   }
 }
 
-// Same edge, in either direction - (a,b) and (b,a) are the same shared
-// edge between two adjacent triangles, which always store it with
-// opposite winding from each other.
-boolean meshSameEdge (int[] e1, int[] e2) {
-  return ((e1[0] == e2[0]) && (e1[1] == e2[1])) || ((e1[0] == e2[1]) && (e1[1] == e2[0]));
+// One direction-agnostic edge key, packing its own 2 (always
+// non-negative, well under 32 bits even at this file's own
+// MESH_POINT_CLOUD_MAX_POINTS cap) vertex indices into a single long -
+// (a, b) and (b, a) are the same shared edge between two adjacent
+// triangles, which always store it with opposite winding from each
+// other, so this always orders them (min index first) before packing,
+// specifically so both directions hash identically.
+long meshEdgeKey (int a, int b) {
+  int lo = min(a, b), hi = max(a, b);
+  return (((long) lo) << 32) | (hi & 0xFFFFFFFFL);
+}
+
+// Inserts edge (a, b) into boundaryEdges the first time its own key is
+// seen, and removes it again the second time (see meshInsertPoint()'s
+// own comment for why that's exactly the "boundary edges only" result
+// this needs) - preserves (a, b)'s own original winding direction (not
+// the (lo, hi) order meshEdgeKey() hashes by) in the stored int[], since
+// meshMakeTriangle() (called on this map's own final values) needs a
+// real, consistently-wound edge to build a correctly-oriented new
+// triangle from, and a boundary edge is only ever inserted the once, so
+// whichever of the (at most 2) bad triangles that edge belonged to
+// recorded it first is already the only direction that ever mattered.
+void meshToggleEdge (HashMap<Long, int[]> boundaryEdges, int a, int b) {
+  long key = meshEdgeKey(a, b);
+  if (boundaryEdges.containsKey(key)) boundaryEdges.remove(key);
+  else boundaryEdges.put(key, new int[]{ a, b });
 }
 
 // Builds one MeshTriangle from 3 point indices, computing and caching
