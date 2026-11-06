@@ -13,7 +13,9 @@ import java.nio.file.Path;
 // across the rest of the scene the way exportObj() needs (see
 // ExportObjectsOBJTest.java's own comment on that) - so this is directly
 // callable from a bare instance with just the same Folder_Export3D setup
-// that file's own setUp() already needs, no Terrain.Mesh seeding.
+// that file's own setUp() already needs, no Terrain.Mesh seeding. allPoints'
+// own index 0 is exported like any other point - see exportLas.pde's own
+// "Scope" comment.
 //
 // Test-side byte reading uses plain java.nio.ByteBuffer (LITTLE_ENDIAN)
 // rather than hand-rolled readers, unlike this app's own production code
@@ -115,6 +117,41 @@ class ExportObjectsLASTest {
     assertEquals(-10f, reader.allPoints.getX(2), 0.001f);
     assertEquals(20f, reader.allPoints.getY(2), 0.001f);
     assertEquals(-30f, reader.allPoints.getZ(2), 0.001f);
+  }
+
+  @Test
+  void exportLas_exportATriangle_thenImportIt_roundTripsItsVertices () throws IOException {
+    // Real face geometry (not just loose points) exported to LAS and
+    // read back. LAS itself has no face/topology concept at all (see
+    // exportLas.pde's own "Scope" comment) - only geometry, point by
+    // point - so only the triangle's own 3 vertex POSITIONS are expected
+    // to survive the round trip, not a reconstructed face connecting
+    // them (import_objects_LAS() would only rebuild a face at all if
+    // lasImportMeshPointCloud triangulated these 3 points back into one,
+    // which this test deliberately turns off to isolate point-reading,
+    // the same way the round-trip test just above does).
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(10, 0, 0);
+    int p2 = app.allPoints.create(0, 10, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+
+    app.exportLas("_triangle");
+    Path exported = Path.of(app.Folder_Export3D, app.ProjectName + "_triangle.las");
+
+    solarchvision_bim reader = new solarchvision_bim();
+    reader.BaseFolder = app.BaseFolder;
+    reader.sketchPath();
+    reader.lasImportMeshPointCloud = false;
+
+    reader.import_objects_LAS(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, reader.allPoints.getLength());
+    assertEquals(0f, reader.allPoints.getX(0), 0.001f);
+    assertEquals(0f, reader.allPoints.getY(0), 0.001f);
+    assertEquals(10f, reader.allPoints.getX(1), 0.001f);
+    assertEquals(0f, reader.allPoints.getY(1), 0.001f);
+    assertEquals(0f, reader.allPoints.getX(2), 0.001f);
+    assertEquals(10f, reader.allPoints.getY(2), 0.001f);
   }
 
   @Test

@@ -16,7 +16,11 @@
 // "this point is still really part of something" bookkeeping to filter
 // by - exporting exactly what that existing display feature already
 // treats as "the project's whole point cloud" is the one interpretation
-// that needs no new bookkeeping invented just for this.
+// that needs no new bookkeeping invented just for this. Index 0 is a
+// real point like any other and is exported like any other - an earlier
+// version of this file skipped it, on the mistaken assumption that
+// Points.makeEmpty() (points.pde) left it as a non-geometry placeholder;
+// it doesn't.
 //
 // Binary writing: this file's own binWriteU16LE()/binWriteU32LE()/
 // binWriteLongLE()/binWriteDoubleLE() are the write-side mirror of
