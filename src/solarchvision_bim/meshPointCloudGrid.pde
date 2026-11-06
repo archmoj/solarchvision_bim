@@ -37,11 +37,16 @@
 // that loss is usually small, and the resulting grid resolution stays
 // close to the cloud's own real point spacing; for a sparse or very
 // unevenly-sampled cloud it can lose real detail Delaunay wouldn't have.
-// A cell with NO point at all also just leaves its own 2x2
+// A cell with NO point of its own first tries borrowing its nearest
+// already-occupied neighbor's own representative (meshPointCloud_
+// gridXY()'s own fill pass, below, within MESH_POINT_CLOUD_GRID_FILL_
+// RADIUS cells) before being treated as empty - only a cell with no
+// occupied neighbor even within that radius leaves its own 2x2
 // neighborhood untriangulated (a hole), rather than Delaunay's own
 // "connect whatever's nearest regardless of gaps" behavior - correct
 // for genuinely missing data, but means a sparse cloud's own edges can
-// come out visibly more ragged here than under Delaunay.
+// still come out visibly more ragged here than under Delaunay, even
+// with that fill pass in place.
 
 // Far more generous than meshPointCloud_delaunayXY()'s own MESH_POINT_
 // CLOUD_MAX_POINTS (meshPointCloud.pde, 50000) specifically because this
@@ -79,6 +84,20 @@ final int MESH_POINT_CLOUD_GRID_MAX_POINTS = 2000000;
 // in the data itself, not this effect) still correctly comes out as a
 // hole either way - see this file's own header comment on that.
 final float MESH_POINT_CLOUD_GRID_TARGET_POINTS_PER_CELL = 4;
+
+// How many cells outward a still-empty cell (even after the target
+// ratio above) will look for a neighbor to borrow a representative
+// point from, before meshPointCloud_gridXY() (below) gives up and
+// leaves it genuinely empty - see that function's own fill-pass comment
+// for the full reasoning. 3 is deliberately small: by the time a gap is
+// this many cells wide, the nearest real point is far enough from this
+// cell's own area that "borrowing" it would start to look more like
+// inventing geometry than smoothing over noise - at that point, this is
+// almost certainly a real gap in the data, not an artifact of how the
+// grid happened to land on it, and is correctly left as a hole instead
+// (see this file's own header comment, "What this gives up," on that
+// distinction).
+final int MESH_POINT_CLOUD_GRID_FILL_RADIUS = 3;
 
 // Builds a grid-based 2.5D mesh of the points (xs[i], ys[i]) for i in
 // 0..xs.length-1 - see this file's own header comment for exactly what
@@ -196,6 +215,89 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
     // MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
     // for why its own doc is written broadly enough to cover both.
     if (progress != null) progress.onPointInserted(i + 1, n);
+  }
+
+  // Still-empty cells, after the binning pass above: MESH_POINT_CLOUD_
+  // GRID_TARGET_POINTS_PER_CELL already cuts the empty-cell rate down
+  // to roughly 2% for a genuinely even (Poisson-like) point
+  // distribution - but a real point cloud rarely IS perfectly even
+  // (scan-line gaps, edge effects, genuinely uneven local density), so
+  // some cells still come up with literally nothing landing in their
+  // own rectangle even at that target. Rather than leave every one of
+  // those as an immediate hole, each still-empty cell looks outward
+  // (up to MESH_POINT_CLOUD_GRID_FILL_RADIUS cells, ring by ring) for
+  // the CLOSEST already-occupied neighbor and borrows its own
+  // representative point - safe to do, since one point already being
+  // shared as a corner of several adjacent quads is completely normal
+  // mesh topology (every interior grid vertex is already shared by up
+  // to 4 quads around it); this just extends that sharing one cell
+  // further for a cell that would otherwise have nothing of its own.
+  // The real, honest tradeoff: a borrowed point can pull that one
+  // corner of a quad noticeably off from where an actual point would
+  // have been, visibly distorting that one quad - bounded by how far
+  // the fill radius allows borrowing from, but never eliminated
+  // entirely. A cell with no occupied neighbor even within that radius
+  // is left genuinely empty - correctly treated as a real gap in the
+  // data, not papered over.
+  //
+  // filledFrom is a SEPARATE array, not a direct mutation of
+  // cellPointIndex while this loop runs, specifically so every fill
+  // decision below is made from the ORIGINAL (pre-fill) grid - a cell
+  // filled by borrowing is never itself treated as a "real" neighbor
+  // for another still-empty cell later in this same pass, which would
+  // let fills cascade (and distort) further than the fill radius was
+  // ever meant to reach, and would make the result depend on which
+  // order cells happened to be visited in.
+  int[][] filledFrom = new int[gridCols][gridRows];
+  for (int cx = 0; cx < gridCols; cx++) {
+    for (int cy = 0; cy < gridRows; cy++) {
+      filledFrom[cx][cy] = -1;
+    }
+  }
+
+  for (int cx = 0; cx < gridCols; cx++) {
+    for (int cy = 0; cy < gridRows; cy++) {
+      if (cellPointIndex[cx][cy] >= 0) continue; // already has its own representative - nothing to fill
+
+      float cellCenterX = minX + (cx + 0.5f) * cellWidth;
+      float cellCenterY = minY + (cy + 0.5f) * cellHeight;
+
+      int bestPoint = -1;
+      float bestDistSq = Float.MAX_VALUE;
+
+      for (int radius = 1; (radius <= MESH_POINT_CLOUD_GRID_FILL_RADIUS) && (bestPoint < 0); radius++) {
+        // Only the ring of cells EXACTLY radius cells away (Chebyshev
+        // distance) - the inner rings were already fully searched (and
+        // found nothing) on an earlier pass through this same radius
+        // loop, so re-checking them here would be wasted work.
+        for (int dx = -radius; dx <= radius; dx++) {
+          for (int dy = -radius; dy <= radius; dy++) {
+            if (max(abs(dx), abs(dy)) != radius) continue;
+
+            int nx = cx + dx, ny = cy + dy;
+            if ((nx < 0) || (nx >= gridCols) || (ny < 0) || (ny >= gridRows)) continue;
+
+            int candidate = cellPointIndex[nx][ny]; // the ORIGINAL grid - never filledFrom, see this whole block's own comment above
+            if (candidate < 0) continue;
+
+            float ddx = xs[candidate] - cellCenterX, ddy = ys[candidate] - cellCenterY;
+            float distSq = ddx * ddx + ddy * ddy;
+            if (distSq < bestDistSq) {
+              bestDistSq = distSq;
+              bestPoint = candidate;
+            }
+          }
+        }
+      }
+
+      filledFrom[cx][cy] = bestPoint; // still -1 (a genuine hole) if nothing was found within the fill radius
+    }
+  }
+
+  for (int cx = 0; cx < gridCols; cx++) {
+    for (int cy = 0; cy < gridRows; cy++) {
+      if (filledFrom[cx][cy] >= 0) cellPointIndex[cx][cy] = filledFrom[cx][cy];
+    }
   }
 
   // ONE quad face (4 indices, not 2 triangles) per 2x2 block of cells
