@@ -56,6 +56,30 @@
 // need shows up.
 final int MESH_POINT_CLOUD_GRID_MAX_POINTS = 2000000;
 
+// How many points, ON AVERAGE, each grid cell (meshPointCloud_gridXY(),
+// below) aims to hold - NOT 1, even though "1 point per cell" is the
+// simplest reading of "about one point per cell" this algorithm's own
+// sizing is going for. The reason: even a genuinely, perfectly evenly-
+// sampled point cloud still lands roughly Poisson-distributed across a
+// grid sized that way, and a Poisson distribution with mean 1 still
+// puts about e^-1 (~37%) of cells at ZERO points, by chance alone - and
+// since the quad-emitting loop (below) needs ALL 4 of a block's own
+// corner cells occupied, those lone empty cells compound into roughly
+// (1 - 0.37)^4, only about 16% of quads actually surviving, even for
+// dense, well-behaved input: a real, visible "most of the cells never
+// got created" gap, not a sign of genuinely sparse data. Aiming for
+// MESH_POINT_CLOUD_GRID_TARGET_POINTS_PER_CELL points per cell instead
+// (used in meshPointCloud_gridXY()'s own grid-sizing math, below) pushes
+// a single empty cell's own chance down near e^-4 (~2%), and a whole
+// quad's own survival chance up near 93% - the real, deliberate
+// trade-off being roughly half this version's earlier linear grid
+// resolution (sqrt(4) fewer cells per axis), in exchange for actually
+// covering most of an evenly-sampled cloud instead of leaving it
+// riddled with artificial holes. A genuinely sparse region (a real gap
+// in the data itself, not this effect) still correctly comes out as a
+// hole either way - see this file's own header comment on that.
+final float MESH_POINT_CLOUD_GRID_TARGET_POINTS_PER_CELL = 4;
+
 // Builds a grid-based 2.5D mesh of the points (xs[i], ys[i]) for i in
 // 0..xs.length-1 - see this file's own header comment for exactly what
 // that means and gives up relative to meshPointCloud_delaunayXY()
@@ -102,14 +126,23 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
   // A grid sized so its own cells are roughly square (matching the
   // point cloud's own real aspect ratio, not stretched to fit a naive
   // N x N grid onto a non-square bounding box) and its own total cell
-  // count is roughly n - about 1 point per cell on average, the same
-  // target meshSpatialSortOrder() (meshPointCloud.pde) already uses for
-  // its own, unrelated reason. Solving cellWidth == cellHeight (spanX /
-  // gridCols == spanY / gridRows) together with gridCols * gridRows == n
-  // gives exactly this pair.
+  // count is roughly n / MESH_POINT_CLOUD_GRID_TARGET_POINTS_PER_CELL -
+  // see that constant's own comment for why this is deliberately NOT
+  // just n (1 point per cell). Solving cellWidth == cellHeight (spanX /
+  // gridCols == spanY / gridRows) together with gridCols * gridRows ==
+  // targetCellCount gives exactly this pair.
+  // Floored at 2 (not 1) on each axis: a grid narrower than 2x2 cells
+  // can never contain even a single 2x2 block for the quad-emitting
+  // loop (below) to use at all, regardless of how many points actually
+  // landed in it - a small, clean point set (this function's own
+  // minimum is n == 4) would otherwise always produce nothing at all,
+  // which this floor avoids without changing anything about the real
+  // target above for any n large enough that targetCellCount already
+  // clears 2 on its own.
   float aspect = spanX / spanY;
-  int gridCols = max(1, round(sqrt(n * aspect)));
-  int gridRows = max(1, round(sqrt(n / aspect)));
+  float targetCellCount = n / MESH_POINT_CLOUD_GRID_TARGET_POINTS_PER_CELL;
+  int gridCols = max(2, round(sqrt(targetCellCount * aspect)));
+  int gridRows = max(2, round(sqrt(targetCellCount / aspect)));
 
   float cellWidth = spanX / gridCols;
   float cellHeight = spanY / gridRows;
