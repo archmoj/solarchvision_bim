@@ -197,13 +197,20 @@ class ImportObjectsLASTest {
 
   @Test
   void importObjectsLAS_meshesThePointCloudByDefault () throws IOException {
+    // The default meshing algorithm is the grid one (meshPointCloud_
+    // gridXY(), meshPointCloudGrid.pde) - for these 4 points (the
+    // corners of a unit square, each landing in its own grid cell), that
+    // produces exactly 1 quad face, not 2 triangles the way the
+    // Delaunay algorithm would - see meshPointCloud_gridXY()'s own
+    // comment for why a single quad is what it emits.
     byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0} });
     Path f = lasBinaryFile("las-mesh-default-test", data);
 
     app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(4, app.allPoints.getLength());
-    assertTrue(app.allFaces.nodes.length >= 2, "4 coplanar points forming a square should triangulate into at least 2 triangles");
+    assertEquals(1, app.allFaces.nodes.length, "4 coplanar points forming a square should mesh into exactly 1 quad face by default");
+    assertEquals(4, app.allFaces.nodes[0].length, "the default grid algorithm emits a single quad (4 vertices), not 2 triangles");
   }
 
   @Test

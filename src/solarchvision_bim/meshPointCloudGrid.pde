@@ -19,11 +19,12 @@
 // giving up something Delaunay keeps - using literally every point - in
 // exchange for a real O(n) algorithm: bin the points onto a plain,
 // regular XY grid (one representative point per cell, picked by
-// proximity to that cell's own center) and triangulate the grid itself
-// (each fully-occupied 2x2 block of cells becomes 2 triangles) - no
-// circumcircle, no incremental rebuilding, a single pass over the
-// points to bin them plus a single pass over the grid to triangulate
-// it.
+// proximity to that cell's own center) and mesh the grid itself (each
+// fully-occupied 2x2 block of cells becomes a single quad face - see
+// the quad-emitting loop, below, for why a single quad rather than 2
+// triangles) - no circumcircle, no incremental rebuilding, a single
+// pass over the points to bin them plus a single pass over the grid to
+// mesh it.
 //
 // What this gives up, relative to Delaunay: a cell with more than one
 // point only ever keeps ONE of them (the one closest to that cell's own
@@ -58,11 +59,14 @@ final int MESH_POINT_CLOUD_GRID_MAX_POINTS = 2000000;
 // Builds a grid-based 2.5D mesh of the points (xs[i], ys[i]) for i in
 // 0..xs.length-1 - see this file's own header comment for exactly what
 // that means and gives up relative to meshPointCloud_delaunayXY()
-// (meshPointCloud.pde). Same return/parameter shape as that function
-// (an ArrayList of int[3] index triples into the SAME xs/ys arrays,
-// progress nullable) specifically so a caller can switch between the
-// two - see e.g. importLas.pde's own lasMeshPointCloud() - without
-// touching anything else about how the result gets used.
+// (meshPointCloud.pde). Same PARAMETER shape as that function (progress
+// nullable, same xs/ys), and the same "an ArrayList of int[] index
+// arrays into the SAME xs/ys arrays" RETURN shape - but, unlike that
+// function's own always-3-long triangles, each of THESE is always a
+// 4-long quad (see the quad-emitting loop, below) - a caller mapping
+// over the result (e.g. importLas.pde's own lasMeshPointCloud()) just
+// needs to handle a face of whatever length it actually gets, not
+// assume 3, to stay interchangeable with either algorithm.
 //
 // Returns an empty list (never null) for fewer than 4 points (even a
 // single fully-occupied 2x2 block of grid cells - the smallest possible
@@ -161,15 +165,21 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
     if (progress != null) progress.onPointInserted(i + 1, n);
   }
 
-  // One quad (2 triangles) per 2x2 block of cells that are ALL 4
-  // occupied - a block with any empty corner is simply skipped (a hole
-  // left in the mesh, see this file's own header comment on why), not
-  // filled in some other way. The diagonal split direction (always
-  // (col, row)-(col+1, row+1), never the other way) is a fixed,
-  // arbitrary choice - alternating it per quad (a common refinement,
-  // sometimes called "criss-cross" triangulation) can look slightly
-  // better on some terrain, but isn't worth the real extra complexity
-  // for this version.
+  // ONE quad face (4 indices, not 2 triangles) per 2x2 block of cells
+  // that are ALL 4 occupied - allFaces.create() (faces.pde) already
+  // accepts a face of any vertex count (the same way Create3D's own
+  // add_Mesh4() already hands it exactly 4 indices for a single quad
+  // face, rather than splitting into 2 triangles itself - see that
+  // function, create3D.pde), so there's no need for this algorithm to
+  // pick a diagonal and split at all: a flat quad has no diagonal-choice
+  // ambiguity (unlike a near-circular Delaunay tie) to begin with, and
+  // 1 face instead of 2 is simply less data for the exact same shape.
+  // p00, p10, p11, p01 - in that order - walk the quad's own boundary
+  // once around (right along the bottom edge, up the right edge, left
+  // along the top edge, closing back down the left edge), the winding
+  // order a face's own vertex list needs to be in. A block with any
+  // empty corner is simply skipped (a hole left in the mesh, see this
+  // file's own header comment on why), not filled in some other way.
   for (int col = 0; col < gridCols - 1; col++) {
     for (int row = 0; row < gridRows - 1; row++) {
       int p00 = cellPointIndex[col][row];
@@ -179,8 +189,7 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
 
       if ((p00 < 0) || (p10 < 0) || (p01 < 0) || (p11 < 0)) continue; // a hole - see this function's own comment above
 
-      result.add(new int[]{ p00, p10, p11 });
-      result.add(new int[]{ p00, p11, p01 });
+      result.add(new int[]{ p00, p10, p11, p01 });
     }
   }
 

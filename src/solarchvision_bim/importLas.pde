@@ -429,10 +429,12 @@ class LasMeshProgressReporter implements MeshPointCloudProgressListener {
 // Hands this import's own points to whichever of meshPointCloud_gridXY()
 // (meshPointCloudGrid.pde, the default) or meshPointCloud_delaunayXY()
 // (meshPointCloud.pde, when lasImportUseDelaunayMeshing is on) and turns
-// every triangle it returns into one app-native face - the one place
-// this file ever touches either, both of which otherwise know nothing
-// about allPoints/allFaces/current_Material/... at all (see each one's
-// own header comment for why they're kept that way). Always called with
+// every face it returns - always a triangle from the Delaunay algorithm,
+// always a quad from the grid one, see lasCreateFace()'s own comment
+// below - into one real allFaces entry - the one place this file ever
+// touches either algorithm, both of which otherwise know nothing about
+// allPoints/allFaces/current_Material/... at all (see each one's own
+// header comment for why they're kept that way). Always called with
 // this WHOLE import's own points at once (never per-group/per-return/
 // ...) - a LAS file has no natural sub-object boundary of its own at
 // all (same reasoning as this file's own header comment on that), so
@@ -459,12 +461,11 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
   // "Meshing..." message/ProgressWindow around a call that's about to
   // do nothing.
   if ((totalPoints < minPointsNeeded) || (totalPoints > maxPointsAllowed)) {
-    ArrayList<int[]> triangles = lasImportUseDelaunayMeshing
+    ArrayList<int[]> faces = lasImportUseDelaunayMeshing
       ? meshPointCloud_delaunayXY(finalX, finalY, null)
       : meshPointCloud_gridXY(finalX, finalY, null);
-    for (int[] tri : triangles) {
-      allFaces.create(new int[]{ pointIndex[tri[0]], pointIndex[tri[1]], pointIndex[tri[2]] });
-      lasFacesImported += 1;
+    for (int[] face : faces) {
+      lasCreateFace(pointIndex, face);
     }
     return;
   }
@@ -477,9 +478,9 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
 
   LasMeshProgressReporter reporter = new LasMeshProgressReporter(meshProgressWindow);
 
-  ArrayList<int[]> triangles;
+  ArrayList<int[]> faces;
   try {
-    triangles = lasImportUseDelaunayMeshing
+    faces = lasImportUseDelaunayMeshing
       ? meshPointCloud_delaunayXY(finalX, finalY, reporter)
       : meshPointCloud_gridXY(finalX, finalY, reporter);
   } finally {
@@ -492,10 +493,27 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
   print(barBuffer.toString());
   println();
 
-  for (int[] tri : triangles) {
-    allFaces.create(new int[]{ pointIndex[tri[0]], pointIndex[tri[1]], pointIndex[tri[2]] });
-    lasFacesImported += 1;
+  for (int[] face : faces) {
+    lasCreateFace(pointIndex, face);
   }
+}
+
+// Turns one meshPointCloud_delaunayXY()/meshPointCloud_gridXY() result
+// entry - one face's own vertex indices into finalX/finalY (always
+// 3-long for the Delaunay algorithm, always 4-long for the grid one -
+// see meshPointCloud_gridXY()'s own comment, meshPointCloudGrid.pde,
+// for why that one's different) - into one real allFaces entry, mapping
+// each index through pointIndex (lasPointIndex, import_objects_LAS()'s
+// own local-to-allPoints index table) the same way regardless of how
+// many vertices the face actually has - allFaces.create() (faces.pde)
+// already accepts a face of any vertex count, the same way Create3D's
+// own add_Mesh4()/add_Mesh5() (create3D.pde) already hand it a single
+// 4- or 5-long face rather than splitting into triangles themselves.
+void lasCreateFace (int[] pointIndex, int[] localIndices) {
+  int[] faceNodes = new int[localIndices.length];
+  for (int k = 0; k < localIndices.length; k++) faceNodes[k] = pointIndex[localIndices[k]];
+  allFaces.create(faceNodes);
+  lasFacesImported += 1;
 }
 
 // Scans raw for a valid LAS Public Header Block and reads exactly the
