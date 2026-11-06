@@ -57,17 +57,20 @@
 //
 // Meshing: by default, this importer hands its own just-imported points
 // straight to meshPointCloud_gridXY() (meshPointCloudGrid.pde) and turns
-// the triangles it returns into real app-native faces - see that file's
-// own header comment for exactly what kind of surface this does (and
+// the quads it returns into real app-native faces - see that file's own
+// header comment for exactly what kind of surface this does (and
 // doesn't) produce, and lasMeshPointCloud() below for how its plain
 // index-array result gets turned into allFaces entries, and for how
-// lasImportUseDelaunayMeshing picks meshPointCloud_delaunayXY()
-// (meshPointCloud.pde, the slower, exact alternative) instead when set.
-// lasImportMeshPointCloud lets the person importing turn meshing off
-// entirely (points only, no surface, neither algorithm run at all) via
-// lasShowImportOptionsDialog() (fileSelected.pde) - the same per-import,
-// persists-across-imports shape ifcImportFurniture/... (importIfc.pde)
-// already use for their own options.
+// lasImportMeshAlgorithm picks one of 2 alternatives instead when set:
+// meshPointCloud_delaunayXY() (meshPointCloud.pde - the slower, exact
+// alternative) or meshPointCloud_boxGridXY() (meshPointCloudBoxGrid.
+// pde - a stepped, bar-chart-like "grid of boxes" instead of a smooth
+// surface, built very differently - see lasCreateBoxGridFaces(), below,
+// for how). lasImportMeshPointCloud lets the person importing turn
+// meshing off entirely (points only, no surface, no algorithm run at
+// all) via lasShowImportOptionsDialog() (fileSelected.pde) - the same
+// per-import, persists-across-imports shape ifcImportFurniture/...
+// (importIfc.pde) already use for their own options.
 //
 // Testing with only part of a file: a real LAS tile can be huge (easily
 // into the millions of points), slow to even read, let alone mesh - so
@@ -140,18 +143,21 @@ boolean lasImportShowOptionsDialog = false;
 final boolean LAS_IMPORT_MESH_POINT_CLOUD = true;
 boolean lasImportMeshPointCloud = LAS_IMPORT_MESH_POINT_CLOUD;
 
-// Which of the two algorithms meshPointCloud.pde/meshPointCloudGrid.pde
-// offer actually does the meshing above, when lasImportMeshPointCloud
-// is on - false (this toggle's own starting value) means meshPointCloud_
-// gridXY() (meshPointCloudGrid.pde), true means meshPointCloud_
-// delaunayXY() (meshPointCloud.pde) - see lasMeshPointCloud()'s own
-// comment, below, for exactly where this is read. Off (grid) by
+// Which of the 3 algorithms meshPointCloud.pde/meshPointCloudGrid.pde/
+// meshPointCloudBoxGrid.pde offer actually does the meshing above, when
+// lasImportMeshPointCloud is on - see lasMeshPointCloud()'s own comment,
+// below, for exactly where this is read. Plain int constants rather
+// than a Java enum, matching this app's own existing style for a small,
+// fixed set of named choices (e.g. TypeWindow's own WIN3D/OBJ3D/...).
+// LAS_MESH_ALGORITHM_GRID (this toggle's own starting value) by
 // default: see meshPointCloudGrid.pde's own header comment for why it's
-// the faster choice and what it gives up to get there - Delaunay stays
-// available as the exact, slower alternative (lasShowImportOptionsDialog(),
-// fileSelected.pde) for whoever specifically wants it.
-final boolean LAS_IMPORT_USE_DELAUNAY_MESHING = false;
-boolean lasImportUseDelaunayMeshing = LAS_IMPORT_USE_DELAUNAY_MESHING;
+// the faster choice and what it gives up to get there - the other 2
+// stay available as alternatives (lasShowImportOptionsDialog(),
+// fileSelected.pde) for whoever specifically wants one of them instead.
+final int LAS_MESH_ALGORITHM_GRID = 0;
+final int LAS_MESH_ALGORITHM_DELAUNAY = 1;
+final int LAS_MESH_ALGORITHM_BOX_GRID = 2;
+int lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_GRID;
 
 // How many of the file's own points to actually read, at most - 0 (this
 // toggle's own starting value) means no limit, every point the header/
@@ -350,10 +356,12 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     if (lasProgressWindow != null) lasProgressWindow.setVisible(true);
 
     // Every KEPT point's own allPoints index (lasPointIndex[...]) and
-    // final, already-transformed (x, y) (lasFinalX[...]/lasFinalY[...]),
-    // kept alongside each other in file order - lasMeshPointCloud()
-    // (below) hands the (x, y) arrays straight to whichever meshing
-    // algorithm is in use and then translates ITS OWN plain local
+    // final, already-transformed (x, y, z) (lasFinalX[...]/lasFinalY
+    // [...]/lasFinalZ[...]), kept alongside each other in file order -
+    // lasMeshPointCloud() (below) hands these straight to whichever
+    // meshing algorithm is in use (the grid and Delaunay algorithms
+    // only ever need x/y - see lasFinalZ's own comment just below for
+    // why it exists at all) and then translates ITS OWN plain local
     // indices back into real allPoints indices via lasPointIndex - the
     // same "collect a global-index table while importing, resolve
     // through it afterward" shape plyImportAscii()'s/plyImportBinary()'s
@@ -366,6 +374,15 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     int[] lasPointIndex = new int[(int) pointCount];
     float[] lasFinalX = new float[(int) pointCount];
     float[] lasFinalY = new float[(int) pointCount];
+    // The box-grid algorithm (meshPointCloud_boxGridXY(),
+    // meshPointCloudBoxGrid.pde) is the one consumer of this - unlike
+    // the grid/Delaunay algorithms (which only ever triangulate the
+    // app's own horizontal (x, y) plane, carrying z through purely via
+    // each result index's own allPoints lookup), a box's own flat TOP
+    // needs an actual height value up front, before any allPoints
+    // index even exists for it - see meshPointCloud_boxGridXY()'s own
+    // header comment.
+    float[] lasFinalZ = new float[(int) pointCount];
     int keptCount = 0;
 
     // Hoisted out of the per-point loop below, once per import rather
@@ -458,6 +475,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
         // horizontal surface - never a vertical cross-section of it.
         lasFinalX[keptCount] = allPoints.getX(pointIndex);
         lasFinalY[keptCount] = allPoints.getY(pointIndex);
+        lasFinalZ[keptCount] = allPoints.getZ(pointIndex);
         keptCount += 1;
 
         lasPointsImported += 1;
@@ -473,6 +491,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     lasPointIndex = Arrays.copyOf(lasPointIndex, keptCount);
     lasFinalX = Arrays.copyOf(lasFinalX, keptCount);
     lasFinalY = Arrays.copyOf(lasFinalY, keptCount);
+    lasFinalZ = Arrays.copyOf(lasFinalZ, keptCount);
 
     // See this file's own "Region of interest" header comment for what
     // this is - reported whenever at least one of the 6 bounds is
@@ -492,14 +511,17 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     println();
 
     if (lasImportMeshPointCloud) {
-      lasMeshPointCloud(lasPointIndex, lasFinalX, lasFinalY);
+      lasMeshPointCloud(lasPointIndex, lasFinalX, lasFinalY, lasFinalZ);
     }
 
     if (lasPointsImported == 0) {
       println("\nLAS import: no points were imported");
     } else if (lasImportMeshPointCloud && (lasFacesImported == 0)) {
-      String meshingFunctionName = lasImportUseDelaunayMeshing ? "meshPointCloud.pde's own meshPointCloud_delaunayXY()" : "meshPointCloudGrid.pde's own meshPointCloud_gridXY()";
-      println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see " + meshingFunctionName + " for when it returns no triangles (too few points, over its own point cap, or - grid algorithm only - every 2x2 block of grid cells ended up with at least one empty corner)");
+      String meshingFunctionName;
+      if (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_DELAUNAY) meshingFunctionName = "meshPointCloud.pde's own meshPointCloud_delaunayXY()";
+      else if (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_BOX_GRID) meshingFunctionName = "meshPointCloudBoxGrid.pde's own meshPointCloud_boxGridXY()";
+      else meshingFunctionName = "meshPointCloudGrid.pde's own meshPointCloud_gridXY()";
+      println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see " + meshingFunctionName + " for when it returns nothing (too few points, over its own point cap, or every cell/block ended up empty even after its own fill pass)");
     }
 
   } finally {
@@ -558,22 +580,33 @@ class LasMeshProgressReporter implements MeshPointCloudProgressListener {
   }
 }
 
-// Hands this import's own points to whichever of meshPointCloud_gridXY()
-// (meshPointCloudGrid.pde, the default) or meshPointCloud_delaunayXY()
-// (meshPointCloud.pde, when lasImportUseDelaunayMeshing is on) and turns
-// every face it returns - always a triangle from the Delaunay algorithm,
-// always a quad from the grid one, see lasCreateFace()'s own comment
-// below - into one real allFaces entry - the one place this file ever
-// touches either algorithm, both of which otherwise know nothing about
-// allPoints/allFaces/current_Material/... at all (see each one's own
-// header comment for why they're kept that way). Always called with
-// this WHOLE import's own points at once (never per-group/per-return/
-// ...) - a LAS file has no natural sub-object boundary of its own at
-// all (same reasoning as this file's own header comment on that), so
-// there is only ever the one cloud to mesh.
-void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
+// Hands this import's own points to whichever of the 3 algorithms
+// lasImportMeshAlgorithm selects. The box-grid algorithm (meshPoint
+// Cloud_boxGridXY(), meshPointCloudBoxGrid.pde) branches off immediately
+// into its own dedicated lasMeshPointCloudBoxGrid() (below), since it
+// builds its own geometry directly (synthesized box corners, not real
+// point indices) rather than returning index-arrays into finalX/finalY
+// the way the other 2 do - see meshPointCloud_boxGridXY()'s own header
+// comment for why. For the grid/Delaunay algorithms, every face
+// returned - always a triangle from Delaunay, always a quad from the
+// grid one, see lasCreateFace()'s own comment below - becomes one real
+// allFaces entry here, the one place this file ever touches either,
+// both of which otherwise know nothing about allPoints/allFaces/
+// current_Material/... at all (see each one's own header comment for
+// why they're kept that way). Always called with this WHOLE import's
+// own points at once (never per-group/per-return/...) - a LAS file has
+// no natural sub-object boundary of its own at all (same reasoning as
+// this file's own header comment on that), so there is only ever the
+// one cloud to mesh.
+void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY, float[] finalZ) {
+
+  if (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_BOX_GRID) {
+    lasMeshPointCloudBoxGrid(finalX, finalY, finalZ);
+    return;
+  }
 
   int totalPoints = finalX.length;
+  boolean useDelaunay = (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_DELAUNAY);
 
   // The 2 algorithms' own minimum point count (meshPointCloud_
   // delaunayXY() needs 3, meshPointCloud_gridXY() needs 4 - see each
@@ -581,10 +614,10 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
   // DELAUNAY_MAX_POINTS, meshPointCloud.pde, vs MESH_POINT_CLOUD_
   // GRID_MAX_POINTS, meshPointCloudGrid.pde - see that file's own
   // comment for why it's so much higher) differ, so which one applies
-  // here depends on lasImportUseDelaunayMeshing the same way the actual
+  // here depends on lasImportMeshAlgorithm the same way the actual
   // meshing call, a few lines down, does.
-  int minPointsNeeded = lasImportUseDelaunayMeshing ? 3 : 4;
-  int maxPointsAllowed = lasImportUseDelaunayMeshing ? MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS : MESH_POINT_CLOUD_GRID_MAX_POINTS;
+  int minPointsNeeded = useDelaunay ? 3 : 4;
+  int maxPointsAllowed = useDelaunay ? MESH_POINT_CLOUD_DELAUNAY_MAX_POINTS : MESH_POINT_CLOUD_GRID_MAX_POINTS;
 
   // Either algorithm returns instantly (no real work, nothing to show
   // progress on) once its own point count falls outside what it accepts
@@ -593,7 +626,7 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
   // "Meshing..." message/ProgressWindow around a call that's about to
   // do nothing.
   if ((totalPoints < minPointsNeeded) || (totalPoints > maxPointsAllowed)) {
-    ArrayList<int[]> faces = lasImportUseDelaunayMeshing
+    ArrayList<int[]> faces = useDelaunay
       ? meshPointCloud_delaunayXY(finalX, finalY, null)
       : meshPointCloud_gridXY(finalX, finalY, null);
     for (int[] face : faces) {
@@ -612,7 +645,7 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
 
   ArrayList<int[]> faces;
   try {
-    faces = lasImportUseDelaunayMeshing
+    faces = useDelaunay
       ? meshPointCloud_delaunayXY(finalX, finalY, reporter)
       : meshPointCloud_gridXY(finalX, finalY, reporter);
   } finally {
@@ -628,6 +661,132 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY) {
   for (int[] face : faces) {
     lasCreateFace(pointIndex, face);
   }
+}
+
+// The box-grid algorithm's own version of lasMeshPointCloud() just
+// above - mirrors its own progress-reporting shape (console bar,
+// optional ProgressWindow, LasMeshProgressReporter reused as-is since
+// MeshPointCloudProgressListener is shared across all 3 algorithms -
+// see that interface's own comment, meshPointCloud.pde), but calls
+// meshPointCloud_boxGridXY() (meshPointCloudBoxGrid.pde) instead and
+// hands its own BoxGridCell results to lasCreateBoxGridFaces() (below)
+// rather than lasCreateFace() - that function builds real geometry
+// directly, not index-arrays into finalX/finalY/finalZ, so there's no
+// pointIndex table to thread through here at all.
+void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
+
+  int totalPoints = finalX.length;
+
+  if ((totalPoints < 1) || (totalPoints > MESH_POINT_CLOUD_GRID_MAX_POINTS)) {
+    ArrayList<BoxGridCell> cells = meshPointCloud_boxGridXY(finalX, finalY, finalZ, null);
+    lasCreateBoxGridFaces(cells);
+    return;
+  }
+
+  println("\nMeshing the point cloud into a surface. Please wait...");
+  progressBarHeader();
+
+  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Meshing LAS point cloud") : null;
+  if (meshProgressWindow != null) meshProgressWindow.setVisible(true);
+
+  LasMeshProgressReporter reporter = new LasMeshProgressReporter(meshProgressWindow);
+
+  ArrayList<BoxGridCell> cells;
+  try {
+    cells = meshPointCloud_boxGridXY(finalX, finalY, finalZ, reporter);
+  } finally {
+    if (meshProgressWindow != null) meshProgressWindow.dispose();
+  }
+
+  int remaining = (int) floor(100 - reporter.printedProgress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
+
+  lasCreateBoxGridFaces(cells);
+}
+
+// Turns every BoxGridCell meshPointCloud_boxGridXY() (meshPointCloud
+// BoxGrid.pde) returned into a real box: 1 flat top face plus 4 vertical
+// side faces, each built via lasCreateMesh2Face() (below). All of a
+// cell's own 4 sides go down to the SAME baseZ - the lowest topZ among
+// every cell in this result - a deliberately simple choice (a shared
+// "ground" level every box's own sides reach down to, like a bar chart)
+// rather than each box's own sides stopping at its own neighbors' own,
+// generally different heights, which would need knowing which cells are
+// actually adjacent and would leave a gap wherever a cell has no
+// neighbor on some side at all (e.g. the whole mesh's own outer edge) -
+// a shared base avoids both of those for a real, if simpler, trade-off:
+// every box's side walls are visible all the way down to that one base
+// level, not just the single "step" between its own height and a
+// neighbor's.
+void lasCreateBoxGridFaces (ArrayList<BoxGridCell> cells) {
+  if (cells.isEmpty()) return;
+
+  float baseZ = cells.get(0).topZ;
+  for (BoxGridCell cell : cells) {
+    if (cell.topZ < baseZ) baseZ = cell.topZ;
+  }
+
+  for (BoxGridCell cell : cells) {
+    // Top.
+    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.maxX, cell.maxY, cell.topZ);
+    // The 4 vertical sides, down to the shared baseZ above - each pair
+    // of corners here shares exactly one of X/Y already (by construction,
+    // a cell's own 2 opposite edges), which is exactly what
+    // lasCreateMesh2Face() needs to build an axis-aligned rectangle from
+    // them.
+    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.maxX, cell.minY, baseZ);
+    lasCreateMesh2Face(cell.minX, cell.maxY, cell.topZ, cell.maxX, cell.maxY, baseZ);
+    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.minX, cell.maxY, baseZ);
+    lasCreateMesh2Face(cell.maxX, cell.minY, cell.topZ, cell.maxX, cell.maxY, baseZ);
+  }
+}
+
+// One "Mesh2"-shaped face (this app's own name - Create3D's own add_
+// Mesh2(), create3D.pde - for an axis-aligned rectangle built from just
+// 2 diagonal corners, with the other 2 corners computed so one of X/Y/Z
+// stays constant across all 4) via DIRECT allPoints.create()/allFaces.
+// create() calls - the exact same corner-deduction add_Mesh2() itself
+// uses, just called this way rather than through that higher-level
+// function: add_Mesh2() also wraps itself in its own beginScene3DChange()/
+// endScene3DChange() pair (a real undo-history snapshot on every call
+// that isn't already nested inside an outer one) and calls model_added()
+// every time, neither of which this importer's own tight per-face loops
+// anywhere else ever pay either (lasCreateFace(), below, calls allFaces.
+// create() directly for the exact same reason) - calling it up to 5
+// times per box, for potentially thousands of boxes (lasCreateBoxGrid
+// Faces(), above), would make THAT overhead, not the actual geometry
+// work, the real cost of this algorithm.
+//
+// Silently does nothing for a degenerate (zero-area) rectangle - the 2
+// given corners being identical on every axis - the same guard add_
+// Mesh2() itself already has.
+void lasCreateMesh2Face (float x1, float y1, float z1, float x3, float y3, float z3) {
+  if ((x1 == x3) && (y1 == y3) && (z1 == z3)) return;
+
+  float x2 = x3, y2 = y3, z2 = z3;
+  float x4 = x1, y4 = y1, z4 = z1;
+
+  if (z1 == z3) {
+    y2 = y1;
+    y4 = y3;
+  } else if (y1 == y3) {
+    x2 = x1;
+    x4 = x3;
+  } else if (x1 == x3) {
+    z2 = z1;
+    z4 = z3;
+  }
+
+  int v1 = allPoints.create(x1, y1, z1);
+  int v2 = allPoints.create(x2, y2, z2);
+  int v3 = allPoints.create(x3, y3, z3);
+  int v4 = allPoints.create(x4, y4, z4);
+
+  allFaces.create(new int[]{ v1, v2, v3, v4 });
+  lasFacesImported += 1;
 }
 
 // Turns one meshPointCloud_delaunayXY()/meshPointCloud_gridXY() result

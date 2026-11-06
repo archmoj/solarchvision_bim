@@ -260,22 +260,25 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
 
-  // lasImportUseDelaunayMeshing (importLas.pde) - see its own comment
-  // for what this picks between. A mutually-exclusive pair of radio
-  // buttons (not 2 independent checkboxes, and not reusing meshBox's
-  // own checkbox shape) specifically because this is a genuine CHOICE
-  // between 2 algorithms, not an independent on/off toggle the way
-  // meshBox/limitBox are each their own.
-  javax.swing.JRadioButton gridAlgorithmBox = new javax.swing.JRadioButton("Grid (fast, default)", !lasImportUseDelaunayMeshing);
-  javax.swing.JRadioButton delaunayAlgorithmBox = new javax.swing.JRadioButton("Delaunay (exact, slower)", lasImportUseDelaunayMeshing);
+  // lasImportMeshAlgorithm (importLas.pde) - see its own comment for
+  // what this picks between. A mutually-exclusive group of radio
+  // buttons (not independent checkboxes, and not reusing meshBox's own
+  // checkbox shape) specifically because this is a genuine CHOICE among
+  // 3 algorithms, not an independent on/off toggle the way meshBox/
+  // limitBox are each their own.
+  javax.swing.JRadioButton gridAlgorithmBox = new javax.swing.JRadioButton("Grid (fast, default)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_GRID);
+  javax.swing.JRadioButton delaunayAlgorithmBox = new javax.swing.JRadioButton("Delaunay (exact, slower)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_DELAUNAY);
+  javax.swing.JRadioButton boxGridAlgorithmBox = new javax.swing.JRadioButton("Box grid (stepped boxes, not a smooth surface)", lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_BOX_GRID);
   javax.swing.ButtonGroup algorithmGroup = new javax.swing.ButtonGroup();
   algorithmGroup.add(gridAlgorithmBox);
   algorithmGroup.add(delaunayAlgorithmBox);
+  algorithmGroup.add(boxGridAlgorithmBox);
 
   javax.swing.JPanel algorithmPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   algorithmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Meshing algorithm"));
   algorithmPanel.add(gridAlgorithmBox);
   algorithmPanel.add(delaunayAlgorithmBox);
+  algorithmPanel.add(boxGridAlgorithmBox);
 
   // lasImportMaxPoints (importLas.pde) - see its own comment for what
   // this is for. limitBox starts checked iff a limit is already active
@@ -339,7 +342,9 @@ boolean lasShowImportOptionsDialog (LasHeader header) {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   lasImportMeshPointCloud = meshBox.isSelected();
-  lasImportUseDelaunayMeshing = delaunayAlgorithmBox.isSelected();
+  if (delaunayAlgorithmBox.isSelected()) lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_DELAUNAY;
+  else if (boxGridAlgorithmBox.isSelected()) lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_BOX_GRID;
+  else lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_GRID;
 
   if (limitBox.isSelected()) {
     // A blank/non-numeric field with the checkbox still ticked is
