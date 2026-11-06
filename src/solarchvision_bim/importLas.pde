@@ -368,6 +368,20 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     float[] lasFinalY = new float[(int) pointCount];
     int keptCount = 0;
 
+    // Hoisted out of the per-point loop below, once per import rather
+    // than up to 6 times per point - avoids repeatedly re-checking
+    // "is this bound even set" (a null check plus a Float-to-float
+    // unboxing, each of lasImportMinX/.../MaxZ, every single point)
+    // inside what can be a very hot loop on a real file. Pure
+    // bookkeeping - changes nothing about which points pass or fail,
+    // only how cheaply that gets decided.
+    boolean checkMinX = (lasImportMinX != null); float boundMinX = checkMinX ? lasImportMinX : 0;
+    boolean checkMaxX = (lasImportMaxX != null); float boundMaxX = checkMaxX ? lasImportMaxX : 0;
+    boolean checkMinY = (lasImportMinY != null); float boundMinY = checkMinY ? lasImportMinY : 0;
+    boolean checkMaxY = (lasImportMaxY != null); float boundMaxY = checkMaxY ? lasImportMaxY : 0;
+    boolean checkMinZ = (lasImportMinZ != null); float boundMinZ = checkMinZ ? lasImportMinZ : 0;
+    boolean checkMaxZ = (lasImportMaxZ != null); float boundMaxZ = checkMaxZ ? lasImportMaxZ : 0;
+
     float printedProgress = 0;
 
     try {
@@ -399,29 +413,38 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
         // relative to that offset, not its absolute real-world one, and
         // that's exactly what keeps the imported cloud centered near
         // this app's own scene origin by default.
-        double localX = header.scaleX * binReadU32LE(raw, pos);
-        double localY = header.scaleY * binReadU32LE(raw, pos + 4);
-        double localZ = header.scaleZ * binReadU32LE(raw, pos + 8);
-
-        // Advanced here, unconditionally, BEFORE the region-of-interest
-        // check below can ever "continue" past the rest of this loop's
-        // own body - a filtered-out record must still be skipped OVER
-        // in the file, or every following record would be read from the
+        //
+        // recordStart is kept separately from pos specifically so pos
+        // itself can advance to the NEXT record right away, below,
+        // before the region-of-interest checks that follow each of
+        // X/Y/Z can ever "continue" past the rest of this loop's own
+        // body - a filtered-out record must still be skipped OVER in
+        // the file, or every following record would be read from the
         // wrong byte position for the rest of this import.
+        int recordStart = pos;
         pos += header.pointDataRecordLength;
 
-        // Region of interest - see this file's own header comment
-        // ("Region of interest") for exactly what these bounds mean and
-        // why they're checked against localX/Y/Z specifically. A point
-        // outside any bound that's actually set (non-null) is skipped
-        // entirely: never passed to lasCreatePoint(), never becomes a
-        // real allPoints entry, never counted in lasPointsImported.
-        if ((lasImportMinX != null) && (localX < lasImportMinX)) continue;
-        if ((lasImportMaxX != null) && (localX > lasImportMaxX)) continue;
-        if ((lasImportMinY != null) && (localY < lasImportMinY)) continue;
-        if ((lasImportMaxY != null) && (localY > lasImportMaxY)) continue;
-        if ((lasImportMinZ != null) && (localZ < lasImportMinZ)) continue;
-        if ((lasImportMaxZ != null) && (localZ > lasImportMaxZ)) continue;
+        // X, then its own region-of-interest check, before Y is ever
+        // decoded at all - and the same for Y before Z - rather than
+        // decoding all 3 of X/Y/Z up front and only checking bounds
+        // after: for a real region-of-interest filter (which typically
+        // rejects most of a file's own points), a point that already
+        // fails on X alone never pays for decoding Y or Z at all. See
+        // this file's own "Region of interest" header comment for what
+        // these bounds mean; checkMinX/.../boundMaxZ (above) are this
+        // same check, just with the "is this bound even set" part
+        // already resolved once per import rather than per point.
+        double localX = header.scaleX * binReadU32LE(raw, recordStart);
+        if (checkMinX && (localX < boundMinX)) continue;
+        if (checkMaxX && (localX > boundMaxX)) continue;
+
+        double localY = header.scaleY * binReadU32LE(raw, recordStart + 4);
+        if (checkMinY && (localY < boundMinY)) continue;
+        if (checkMaxY && (localY > boundMaxY)) continue;
+
+        double localZ = header.scaleZ * binReadU32LE(raw, recordStart + 8);
+        if (checkMinZ && (localZ < boundMinZ)) continue;
+        if (checkMaxZ && (localZ > boundMaxZ)) continue;
 
         int pointIndex = lasCreatePoint((float) localX, (float) localY, (float) localZ);
 
