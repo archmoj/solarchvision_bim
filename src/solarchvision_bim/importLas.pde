@@ -103,6 +103,29 @@
 // person who genuinely needs it (aligning several separate tiles to
 // each other, say) at least has it to work from, even though nothing
 // in this version re-applies it automatically.
+//
+// Region of interest: lasImportMinX/MaxX/MinY/MaxY/MinZ/MaxZ (below)
+// each independently either hold a real bound or are null ("no bound on
+// this side at all") - the person importing can set anywhere from none
+// of the 6 to all 6, via lasShowImportOptionsDialog()'s own 6 checkbox+
+// field rows (fileSelected.pde). A point outside any bound that IS set
+// is skipped entirely - never passed to lasCreatePoint() at all, so it
+// never becomes a real allPoints entry, is never counted in
+// lasPointsImported, and costs nothing further (no meshing, no
+// progress-bar time) once skipped - see the main read loop's own
+// comment, below, for exactly where this check sits. These bounds are
+// checked against localX/Y/Z (the main read loop's own, below) - the
+// file's own LOCAL coordinate, after "Centered by default" (above) has
+// already dropped header.offsetX/Y/Z, but BEFORE las_cx/cy/cz/sx/sy/sz
+// or importSwapAxisYZ (lasCreatePoint(), below) place/reorient the
+// result in the scene - a deliberate choice, not the only one that
+// could have been made: filtering in this one fixed space, rather than
+// the file's own real-world one or the app's own final scene one, means
+// the SAME 3 numbers mean the same thing regardless of how a given
+// import happens to be placed or axis-swapped, at the cost of a person
+// who actually wants to filter by real-world (UTM, say) coordinates
+// needing to account for the dropped offset themselves (see "Centered
+// by default," above, for where that offset is printed).
 
 boolean lasImportShowOptionsDialog = false;
 
@@ -145,6 +168,22 @@ boolean lasImportUseDelaunayMeshing = LAS_IMPORT_USE_DELAUNAY_MESHING;
 // later, real import.
 final int LAS_IMPORT_MAX_POINTS = 0;
 int lasImportMaxPoints = LAS_IMPORT_MAX_POINTS;
+
+// Region-of-interest bounds - see this file's own "Region of interest"
+// header comment for exactly what these mean and where they're checked.
+// null (every one of these own starting value) means no bound on that
+// side at all, same meaning as lasImportMaxPoints' own 0 just above,
+// just via Java's own null rather than a sentinel number, since 0 is
+// itself a perfectly real coordinate a person might actually want to
+// filter by (unlike a point count, which 0 could never meaningfully
+// mean as a real limit). Persist across imports the same way every
+// other LAS import option already does.
+Float lasImportMinX = null;
+Float lasImportMaxX = null;
+Float lasImportMinY = null;
+Float lasImportMaxY = null;
+Float lasImportMinZ = null;
+Float lasImportMaxZ = null;
 
 // Transform parameters for the CURRENT import_objects_LAS() call - same
 // "a few fields shared across one whole import" shape ply_cx/...
@@ -283,19 +322,24 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     ProgressWindow lasProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing LAS") : null;
     if (lasProgressWindow != null) lasProgressWindow.setVisible(true);
 
-    // Every point's own allPoints index (lasPointIndex[k]) and final,
-    // already-transformed (x, y) (lasFinalX[k]/lasFinalY[k]), kept
-    // alongside each other in file order - lasMeshPointCloud() (below)
-    // hands the (x, y) arrays straight to meshPointCloud_delaunayXY()
-    // (meshPointCloud.pde) and then translates ITS OWN plain 0..
-    // pointCount-1 indices back into real allPoints indices via
-    // lasPointIndex - the same "collect a global-index table while
-    // importing, resolve through it afterward" shape plyImportAscii()'s/
-    // plyImportBinary()'s own vertexGlobalIndex (importPly.pde) already
-    // uses for face corners.
+    // Every KEPT point's own allPoints index (lasPointIndex[...]) and
+    // final, already-transformed (x, y) (lasFinalX[...]/lasFinalY[...]),
+    // kept alongside each other in file order - lasMeshPointCloud()
+    // (below) hands the (x, y) arrays straight to whichever meshing
+    // algorithm is in use and then translates ITS OWN plain local
+    // indices back into real allPoints indices via lasPointIndex - the
+    // same "collect a global-index table while importing, resolve
+    // through it afterward" shape plyImportAscii()'s/plyImportBinary()'s
+    // own vertexGlobalIndex (importPly.pde) already uses for face
+    // corners. Sized at pointCount (the most this could ever hold - one
+    // slot per record the file itself declares, before any region-of-
+    // interest filtering below might skip some of them) and trimmed
+    // down to keptCount - the real, possibly smaller, number of points
+    // actually kept - right after the read loop, via Arrays.copyOf().
     int[] lasPointIndex = new int[(int) pointCount];
     float[] lasFinalX = new float[(int) pointCount];
     float[] lasFinalY = new float[(int) pointCount];
+    int keptCount = 0;
 
     float printedProgress = 0;
 
@@ -332,9 +376,29 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
         double localY = header.scaleY * binReadU32LE(raw, pos + 4);
         double localZ = header.scaleZ * binReadU32LE(raw, pos + 8);
 
+        // Advanced here, unconditionally, BEFORE the region-of-interest
+        // check below can ever "continue" past the rest of this loop's
+        // own body - a filtered-out record must still be skipped OVER
+        // in the file, or every following record would be read from the
+        // wrong byte position for the rest of this import.
+        pos += header.pointDataRecordLength;
+
+        // Region of interest - see this file's own header comment
+        // ("Region of interest") for exactly what these bounds mean and
+        // why they're checked against localX/Y/Z specifically. A point
+        // outside any bound that's actually set (non-null) is skipped
+        // entirely: never passed to lasCreatePoint(), never becomes a
+        // real allPoints entry, never counted in lasPointsImported.
+        if ((lasImportMinX != null) && (localX < lasImportMinX)) continue;
+        if ((lasImportMaxX != null) && (localX > lasImportMaxX)) continue;
+        if ((lasImportMinY != null) && (localY < lasImportMinY)) continue;
+        if ((lasImportMaxY != null) && (localY > lasImportMaxY)) continue;
+        if ((lasImportMinZ != null) && (localZ < lasImportMinZ)) continue;
+        if ((lasImportMaxZ != null) && (localZ > lasImportMaxZ)) continue;
+
         int pointIndex = lasCreatePoint((float) localX, (float) localY, (float) localZ);
 
-        lasPointIndex[k] = pointIndex;
+        lasPointIndex[keptCount] = pointIndex;
         // Always the app's own (finalX, finalY) - i.e. allPoints' own
         // getX()/getY() - regardless of importSwapAxisYZ: that flag's
         // whole job is to make the app's own Z axis consistently "up"
@@ -342,15 +406,33 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
         // (finalX, finalY) is always the app's own horizontal plane, and
         // triangulating it always means meshing the file's real ground/
         // horizontal surface - never a vertical cross-section of it.
-        lasFinalX[k] = allPoints.getX(pointIndex);
-        lasFinalY[k] = allPoints.getY(pointIndex);
+        lasFinalX[keptCount] = allPoints.getX(pointIndex);
+        lasFinalY[keptCount] = allPoints.getY(pointIndex);
+        keptCount += 1;
 
         lasPointsImported += 1;
-
-        pos += header.pointDataRecordLength;
       }
     } finally {
       if (lasProgressWindow != null) lasProgressWindow.dispose();
+    }
+
+    // Trimmed down to the real, kept count - see lasPointIndex's own
+    // comment above for why these were sized at pointCount to begin
+    // with. A no-op slice (same length back out) when no region-of-
+    // interest bound actually removed anything.
+    lasPointIndex = Arrays.copyOf(lasPointIndex, keptCount);
+    lasFinalX = Arrays.copyOf(lasFinalX, keptCount);
+    lasFinalY = Arrays.copyOf(lasFinalY, keptCount);
+
+    // See this file's own "Region of interest" header comment for what
+    // this is - reported whenever at least one of the 6 bounds is
+    // actually set AND it actually removed at least 1 point, so a
+    // bound left on from an earlier import (these persist the same way
+    // every other LAS import option does) is never silently applied to
+    // a later one without at least a console line to notice it by.
+    boolean regionOfInterestActive = (lasImportMinX != null) || (lasImportMaxX != null) || (lasImportMinY != null) || (lasImportMaxY != null) || (lasImportMinZ != null) || (lasImportMaxZ != null);
+    if (regionOfInterestActive && (keptCount < pointCount)) {
+      println("\nLAS import: region-of-interest filter kept " + keptCount + " of " + pointCount + " point(s) read");
     }
 
     int remaining = (int) floor(100 - printedProgress);

@@ -201,6 +201,46 @@ void selectFile_ImportGbxml () {
 // from here - same reasoning, and the same "a cancelled dialog must
 // never half-apply a choice" behavior, as ifcShowImportOptionsDialog()'s
 // own comment above.
+
+// One "[ ] Min X [_____]" style checkbox+field row for lasShowImport
+// OptionsDialog()'s own 6-row "Region of interest" section, below -
+// backs lasImportMinX/MaxX/MinY/MaxY/MinZ/MaxZ (importLas.pde), each of
+// which is a nullable Float (null = no bound on that side - see that
+// file's own "Region of interest" header comment). A small class (not
+// 6 one-off inline blocks, and not a 2-element Object[] a caller would
+// need to cast back out of) specifically because these 6 rows are
+// otherwise identical apart from their own label/current value, and
+// resolvedValue() below needs real field access, not just construction -
+// matches the shape LasMeshProgressReporter/MeshTriangle/LasHeader
+// (importLas.pde's own, and meshPointCloud.pde's own) already use for
+// the same reason.
+class LasBoundsField {
+  javax.swing.JCheckBox box;
+  javax.swing.JTextField field;
+
+  LasBoundsField (String label, Float currentValue) {
+    box = new javax.swing.JCheckBox(label, currentValue != null);
+    field = new javax.swing.JTextField((currentValue != null) ? str(currentValue) : "0", 8);
+  }
+
+  // The field's own typed value if the checkbox is checked and the
+  // field holds a real number, null (no bound) otherwise - a blank or
+  // non-numeric field left checked is treated the same as leaving the
+  // checkbox unchecked, never a dialog-breaking exception from a stray
+  // keystroke, the same "a bad value quietly falls back rather than
+  // crashing" tolerance limitField's own identical parsing (just below)
+  // already uses.
+  Float resolvedValue () {
+    if (!box.isSelected()) return null;
+    try {
+      return Float.parseFloat(field.getText().trim());
+    }
+    catch (NumberFormatException e) {
+      return null;
+    }
+  }
+}
+
 boolean lasShowImportOptionsDialog () {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
@@ -239,11 +279,35 @@ boolean lasShowImportOptionsDialog () {
   limitPanel.add(limitField);
   limitPanel.add(limitLabel);
 
+  // lasImportMinX/MaxX/MinY/MaxY/MinZ/MaxZ (importLas.pde) - see that
+  // file's own "Region of interest" header comment for exactly what
+  // these mean and the coordinate space they're checked against. Any
+  // subset of the 6 can be set - each is fully independent of the
+  // other 5, so e.g. only a MinX with nothing else is a perfectly
+  // normal, supported choice ("everything from here on," with no upper
+  // bound on X and no bound on Y/Z at all).
+  LasBoundsField minXField = new LasBoundsField("Min X", lasImportMinX);
+  LasBoundsField maxXField = new LasBoundsField("Max X", lasImportMaxX);
+  LasBoundsField minYField = new LasBoundsField("Min Y", lasImportMinY);
+  LasBoundsField maxYField = new LasBoundsField("Max Y", lasImportMaxY);
+  LasBoundsField minZField = new LasBoundsField("Min Z", lasImportMinZ);
+  LasBoundsField maxZField = new LasBoundsField("Max Z", lasImportMaxZ);
+
+  javax.swing.JPanel regionPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 2));
+  regionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Region of interest (optional)"));
+  regionPanel.add(minXField.box); regionPanel.add(minXField.field);
+  regionPanel.add(maxXField.box); regionPanel.add(maxXField.field);
+  regionPanel.add(minYField.box); regionPanel.add(minYField.field);
+  regionPanel.add(maxYField.box); regionPanel.add(maxYField.field);
+  regionPanel.add(minZField.box); regionPanel.add(minZField.field);
+  regionPanel.add(maxZField.box); regionPanel.add(maxZField.field);
+
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(meshBox);
   panel.add(algorithmPanel);
   panel.add(limitPanel);
+  panel.add(regionPanel);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "LAS import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -275,6 +339,13 @@ boolean lasShowImportOptionsDialog () {
   } else {
     lasImportMaxPoints = 0;
   }
+
+  lasImportMinX = minXField.resolvedValue();
+  lasImportMaxX = maxXField.resolvedValue();
+  lasImportMinY = minYField.resolvedValue();
+  lasImportMaxY = maxYField.resolvedValue();
+  lasImportMinZ = minZField.resolvedValue();
+  lasImportMaxZ = maxZField.resolvedValue();
 
   return true;
 }
