@@ -1034,7 +1034,7 @@ class UI_menuBar {
   // Runs the action of the currently selected menu item.
   // Shared by mouse click (mouseClicked.pde) and the Enter key.
   //
-  // See isBakingInProgress()'s own comment (globalFunctions.pde) for
+  // See isInProgress()'s own comment (globalFunctions.pde) for
   // why this guards against more than just a "bake" now - this is the
   // one place EVERY menu item's own action actually runs (including
   // "New"/"Open"/an import/export/anything that creates or deletes
@@ -1044,7 +1044,7 @@ class UI_menuBar {
   // LAS() is mutating allPoints/allFaces/allGroups on that other
   // thread - a real data race, not just confusing double-actions.
   void runSelectedItem () {
-    if (isBakingInProgress()) return;
+    if (isInProgress()) return;
     if (this.selected_parent == -1) return;
     if (this.selected_child == 0) return;
 

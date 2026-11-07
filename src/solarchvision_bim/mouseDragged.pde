@@ -2,7 +2,7 @@ void mouseDragged() {
   // See mouseClicked()'s own identical guard for why - the same real
   // data race applies to a drag (moving/resizing geometry, among
   // everything else this function can do) as to a click.
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
   if (frameCount <= Last_initializationStep) return;
   if (control != USER_GUI) return;
 

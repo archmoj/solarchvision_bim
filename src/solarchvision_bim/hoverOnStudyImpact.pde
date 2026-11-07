@@ -101,7 +101,7 @@ boolean studyHover_wasShownLastFrame = false;
 // clear out into its own function, called once up front regardless of
 // where any point lands, removes that coupling entirely.
 void clearStudyHover () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (!STUDY.include) return;
 
@@ -127,7 +127,7 @@ void clearStudyHover () {
 // clearStudyHover()'s job, not this function's - called once, up front,
 // by drawAllHovers(), before the first of this pass's calls here.
 void place_STUDY_hover (int xMouse, int yMouse) {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (!STUDY.include) return;
 

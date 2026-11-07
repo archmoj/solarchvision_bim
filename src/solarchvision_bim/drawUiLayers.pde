@@ -1,5 +1,5 @@
 void draw_UI_layers () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if(updateBars) {
     updateBars = false;

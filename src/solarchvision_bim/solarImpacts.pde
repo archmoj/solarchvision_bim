@@ -5,7 +5,7 @@ class SolarImpacts {
   // volatile: same reasoning as shadeViewport3D.pde's own isShadingViewport,
   // which this mirrors - set true/false around calculate_Impact_
   // CurrentPreBaked()'s own parallel work below, read from draw()/
-  // keyPressed()/keyReleased() (via isBakingInProgress(), global_
+  // keyPressed()/keyReleased() (via isInProgress(), global_
   // functions.pde) on whatever thread runs those, not necessarily the one
   // that called calculate_Impact_CurrentPreBaked(). Added proactively,
   // not after the fact this time - see shadeViewport3D.pde's own isShading

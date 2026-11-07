@@ -163,7 +163,7 @@ final int worldStationHoverMaxNames = 8;
 // drawAllHovers() (hover.pde), before any of this pass's hover points are
 // resolved.
 void clearWorldHover () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (!WORLD.include) return;
 
@@ -187,7 +187,7 @@ void clearWorldHover () {
 // particular frame. Clearing any box left over from the previous pass is
 // clearWorldHover()'s job, not this function's.
 void place_WORLD_hover (int xMouse, int yMouse) {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (!WORLD.include) return;
 

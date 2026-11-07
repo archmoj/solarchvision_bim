@@ -61,14 +61,14 @@ boolean studyLayers_wasShownLastFrame = false;
 // making that second call a no-op.
 //
 // Called from solarchvision_bim.pde's own main draw loop, inside the same
-// "!isBakingInProgress()" block draw_WIN3D_layers()/drawAllHovers() are,
+// "!isInProgress()" block draw_WIN3D_layers()/drawAllHovers() are,
 // and before drawAllHovers() specifically - so the restore above (if a
 // fresh capture is needed) happens before this function's own highlight
 // is drawn, and that highlight itself ends up under the actual hover
 // boxes drawAllHovers() draws afterward - below the hover layer, never on
 // top of it, matching the original request.
 void draw_STUDY_layers () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
   if (!STUDY.include) return;
   if (UI_menuBar.selected_parent != -1) return;
 

@@ -122,7 +122,7 @@ int InitializationStep = 0;
 int stepAfterInitialization = 0;
 
 void draw () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   // pendingGotoLatLon (globalFunctions.pde) - an importer's own queued
   // "navigate here" request (IFC/gbXML/LAS, so far - the 3 formats with
@@ -132,7 +132,7 @@ void draw () {
   // (update_station(), what this actually calls into by way of
   // __SETLATLON__(), isn't safe to run on an importer's own thread).
   // Safe to read/clear here unsynchronized despite being set from
-  // another thread: it's volatile, and by the time isBakingInProgress()
+  // another thread: it's volatile, and by the time isInProgress()
   // above has already let this frame proceed, isImportingInProgress
   // (part of that same check) is already false, so whichever import set
   // this has already fully finished and returned - there's no
@@ -231,7 +231,7 @@ void draw () {
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {
-        if (!isBakingInProgress()) {
+        if (!isInProgress()) {
           draw_WIN3D_layers();
           draw_STUDY_layers();
           drawAllHovers();
@@ -272,7 +272,7 @@ void draw () {
 }
 
 void keyPressed (KeyEvent e) {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (frameCount > Last_initializationStep) {
 
@@ -436,7 +436,7 @@ void keyPressed (KeyEvent e) {
 }
 
 void keyReleased () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   WIN3D.keyReleased();
   UI_menuBar.keyReleased();

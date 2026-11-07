@@ -96,7 +96,7 @@ volatile boolean should_rebuildFaceGrid = true;
 // worker thread is touching right now" hazard this function already
 // exists to guard against, just from a file-import thread instead of a
 // bake's own worker pool.
-boolean isBakingInProgress () {
+boolean isInProgress () {
   return isShadingViewport || allSolarImpacts.isCalculatingImpact || isImportingInProgress;
 }
 
@@ -104,7 +104,7 @@ boolean isBakingInProgress () {
 // _DXF()/_IFC()/_GBXML()/_GLB()/_DAE()/_LAS(), one at a time - imports
 // aren't reentrant, nothing starts a second one while the first is
 // still running) is actively running, on its own selectInput()-callback
-// thread - see isBakingInProgress()'s own comment, just above, for why
+// thread - see isInProgress()'s own comment, just above, for why
 // that matters. Set true right alongside each importer's own
 // showWaitCursor() call, and false alongside every one of its own
 // showArrowCursor() calls (an importer with more than one - an early

@@ -6,7 +6,7 @@ void mouseMoved () {
   // UI_menuBar's own selection state that a concurrent import has no
   // business racing against either - same guard, for consistency with
   // every other interaction entry point.
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
 
   if (frameCount > Last_initializationStep) {
 

@@ -3,7 +3,7 @@ float[] WIN3D_layers_fit = null;
 boolean showSolarImpactOverlay = false;
 
 void draw_WIN3D_layers () {
-  if (isBakingInProgress()) return;
+  if (isInProgress()) return;
   if (!WIN3D.include) return;
   if (UI_menuBar.selected_parent != -1) return;
 
