@@ -531,8 +531,17 @@ class ImportObjectsLASTest {
   // detection function directly sidesteps that entirely while still
   // covering the actual logic these tests care about.
 
-  private LasHeader headerWithBounds (double minX, double maxX, double minY, double maxY) {
-    LasHeader h = app.new LasHeader();
+  // LasHeader (importLas.pde) is a non-static inner class of solarchvision_bim
+  // (unlike MeshPointCloudProgressListener, an interface - implicitly
+  // static regardless of where it's declared, so that one needs no
+  // qualification at all) - every bare reference to its own TYPE from
+  // out here has to be written solarchvision_bim.LasHeader; only the
+  // "new LasHeader()" after app.new itself stays a plain, unqualified
+  // name, since a qualified class instance creation expression's own
+  // class name is always resolved relative to the instance before the
+  // ".new" (app, here), per Java's own qualified-new syntax rules.
+  private solarchvision_bim.LasHeader headerWithBounds (double minX, double maxX, double minY, double maxY) {
+    solarchvision_bim.LasHeader h = app.new LasHeader();
     h.minX = minX;
     h.maxX = maxX;
     h.minY = minY;
@@ -544,7 +553,7 @@ class ImportObjectsLASTest {
   void lasHeaderLatLonDecimalDegrees_plainGeographicDegrees_returnsTheBoundingBoxCenter () {
     // A file whose own X/Y already happen to be plain longitude/latitude -
     // center is (10, 20) longitude/(30, 40) latitude -> (15, 35).
-    LasHeader header = headerWithBounds(10, 20, 30, 40);
+    solarchvision_bim.LasHeader header = headerWithBounds(10, 20, 30, 40);
 
     float[] latLon = app.lasHeaderLatLonDecimalDegrees(header);
 
@@ -559,14 +568,14 @@ class ImportObjectsLASTest {
     // thousands to millions) - this importer has no map-projection
     // engine, so this must correctly report "no usable location" rather
     // than misreading a projected coordinate as if it were degrees.
-    LasHeader header = headerWithBounds(500000, 500500, 4500000, 4500500);
+    solarchvision_bim.LasHeader header = headerWithBounds(500000, 500500, 4500000, 4500500);
 
     assertNull(app.lasHeaderLatLonDecimalDegrees(header));
   }
 
   @Test
   void lasHeaderLatLonDecimalDegrees_onlyLongitudeOutOfRange_returnsNull () {
-    LasHeader header = headerWithBounds(170, 200, 10, 20); // X center = 185, past the +-180 range; Y center = 15, well within +-90
+    solarchvision_bim.LasHeader header = headerWithBounds(170, 200, 10, 20); // X center = 185, past the +-180 range; Y center = 15, well within +-90
     assertNull(app.lasHeaderLatLonDecimalDegrees(header));
   }
 

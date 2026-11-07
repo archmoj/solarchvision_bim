@@ -8,6 +8,13 @@ import java.util.ArrayList;
 // (see MeshPointCloudTest.java's/MeshPointCloudGridTest.java's own
 // comments), directly testable from a bare, never-setup()'d instance
 // with no file I/O at all.
+//
+// BoxGridCell (meshPointCloudBoxGrid.pde) is a non-static inner class
+// of solarchvision_bim (unlike MeshPointCloudProgressListener, an
+// interface - implicitly static regardless of where it's declared, so
+// that one needs no qualification at all) - every reference to its own
+// TYPE below is written out as solarchvision_bim.BoxGridCell for
+// exactly that reason.
 class MeshPointCloudBoxGridTest {
 
   private solarchvision_bim app;
@@ -21,7 +28,7 @@ class MeshPointCloudBoxGridTest {
 
   @Test
   void meshPointCloudBoxGrid_emptyInput_returnsEmptyList () {
-    ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(new float[0], new float[0], new float[0], null);
+    ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(new float[0], new float[0], new float[0], null);
     assertNotNull(result);
     assertEquals(0, result.size());
   }
@@ -29,7 +36,7 @@ class MeshPointCloudBoxGridTest {
   @Test
   void meshPointCloudBoxGrid_mismatchedArrayLengths_returnsEmptyListWithoutThrowing () {
     assertDoesNotThrow(() -> {
-      ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(new float[]{ 0, 1 }, new float[]{ 0, 1 }, new float[]{ 0 }, null);
+      ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(new float[]{ 0, 1 }, new float[]{ 0, 1 }, new float[]{ 0 }, null);
       assertEquals(0, result.size());
     });
   }
@@ -43,7 +50,7 @@ class MeshPointCloudBoxGridTest {
     for (int i = 0; i < n; i++) { xs[i] = i; ys[i] = i % 7; zs[i] = 0; }
 
     assertDoesNotThrow(() -> {
-      ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
+      ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
       assertEquals(0, result.size());
     });
   }
@@ -67,7 +74,7 @@ class MeshPointCloudBoxGridTest {
     float[] ys = { 0.2f, 0.3f, 1.4f, 1.1f };
     float[] zs = { 5, 5, 5, 5 };
 
-    ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
+    ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
 
     assertEquals(4, result.size());
 
@@ -75,7 +82,7 @@ class MeshPointCloudBoxGridTest {
     float height = result.get(0).maxY - result.get(0).minY;
     assertTrue(width > 0);
     assertTrue(height > 0);
-    for (BoxGridCell cell : result) {
+    for (solarchvision_bim.BoxGridCell cell : result) {
       assertEquals(width, cell.maxX - cell.minX, 0.0001f, "every cell should share the same width - the grid's own, not the points' own spacing");
       assertEquals(height, cell.maxY - cell.minY, 0.0001f, "every cell should share the same height");
     }
@@ -97,10 +104,10 @@ class MeshPointCloudBoxGridTest {
     float[] ys = { 5 };
     float[] zs = { 42 };
 
-    ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
+    ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
 
     assertEquals(4, result.size());
-    for (BoxGridCell cell : result) {
+    for (solarchvision_bim.BoxGridCell cell : result) {
       assertEquals(42f, cell.topZ, 0.001f, "every cell, including the 3 filled ones, should borrow the one real point's own Z");
     }
   }
@@ -134,7 +141,7 @@ class MeshPointCloudBoxGridTest {
     float[] zs = new float[zsList.size()];
     for (int i = 0; i < xs.length; i++) { xs[i] = xsList.get(i); ys[i] = ysList.get(i); zs[i] = zsList.get(i); }
 
-    ArrayList<BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
+    ArrayList<solarchvision_bim.BoxGridCell> result = app.meshPointCloud_boxGridXY(xs, ys, zs, null);
 
     assertEquals(9, result.size(), "all 9 of a 3x3 grid's own cells should have a box once the center one is filled");
   }
