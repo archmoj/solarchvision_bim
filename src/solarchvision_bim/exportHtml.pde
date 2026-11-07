@@ -2,6 +2,12 @@ PrintWriter htmlOutput;
 
 void exportHtml () {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end.
+  isFileOperationInProgress = true;
+
   String fileBasename = ProjectName;
 
   String htmlFilename = Folder_Export3D + "/" + fileBasename + ".html";
@@ -183,4 +189,5 @@ void exportHtml () {
 
   println("\nFile created:" + htmlFilename);
 
+  isFileOperationInProgress = false;
 }

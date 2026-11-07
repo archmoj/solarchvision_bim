@@ -443,23 +443,40 @@ void update_project_info (File selectedFile) {
 
 void _fileSelected_New (File selectedFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement, cleared at each of this function's own 2
+  // exit points below, same convention every importer's own
+  // isImportingInProgress already follows.
+  isFileOperationInProgress = true;
+
   String Filename = "";
 
   if (selectedFile == null) {
+    isFileOperationInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
     println("\nNew project:", Filename);
 
     update_project_info(selectedFile);
+
+    isFileOperationInProgress = false;
   }
 }
 
 void _fileSelected_Open (File selectedFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement, cleared at each of this function's own 2
+  // exit points below. load_project() (loadProject.pde) also sets/
+  // clears this same flag around its own work, which nests harmlessly -
+  // see that comment for why.
+  isFileOperationInProgress = true;
+
   String Filename = "";
 
   if (selectedFile == null) {
+    isFileOperationInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
@@ -472,14 +489,24 @@ void _fileSelected_Open (File selectedFile) {
     update_project_info(selectedFile);
 
     loop();
+
+    isFileOperationInProgress = false;
   }
 }
 
 void _fileSelected_SaveAs (File selectedFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement, cleared at each of this function's own 2
+  // exit points below. saveProject() (saveProject.pde) also sets/
+  // clears this same flag around its own work, which nests harmlessly -
+  // see that comment for why.
+  isFileOperationInProgress = true;
+
   String Filename = "";
 
   if (selectedFile == null) {
+    isFileOperationInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
@@ -488,6 +515,8 @@ void _fileSelected_SaveAs (File selectedFile) {
     update_project_info(selectedFile);
 
     saveProject(Filename);
+
+    isFileOperationInProgress = false;
   }
 }
 

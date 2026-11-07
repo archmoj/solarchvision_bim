@@ -96,8 +96,20 @@ volatile boolean should_rebuildFaceGrid = true;
 // worker thread is touching right now" hazard this function already
 // exists to guard against, just from a file-import thread instead of a
 // bake's own worker pool.
+// isFileOperationInProgress (below) belongs here for the same reason
+// isImportingInProgress does - New/Open/Save As all resolve on
+// selectInput()'s/selectOutput()'s own callback thread too (the exact
+// same hazard class, just load_project()/saveProject()/update_
+// project_info() mutating shared state instead of an importer doing
+// it), and Save/Hold/Fetch/Export, though they run synchronously on
+// the main thread, still go through runSelectedItem() (uiMenuBar.pde)
+// - its own comment already claims this chokepoint covers "New"/
+// "Open"/"an import/export/anything that creates or deletes geometry",
+// so it needs an actual flag backing that claim for these the same way
+// isImportingInProgress backs it for imports, not just for the async
+// ones.
 boolean isInProgress () {
-  return isShadingViewport || allSolarImpacts.isCalculatingImpact || isImportingInProgress;
+  return isShadingViewport || allSolarImpacts.isCalculatingImpact || isImportingInProgress || isFileOperationInProgress;
 }
 
 // True for as long as ANY importer (import_objects_OBJ()/_PLY()/_STL()/
@@ -119,6 +131,33 @@ boolean isInProgress () {
 // no guarantee of ever seeing that write promptly (or, under the Java
 // Memory Model, strictly speaking, at all).
 volatile boolean isImportingInProgress = false;
+
+// True for as long as New/Open/Save/Save As/Hold/Fetch/any "Export"
+// action (actions.pde) is actively running - set and cleared entirely
+// inside whichever function actually does that one's real work
+// (load_project()/saveProject()/exportObj()/etc. - loadProject.pde/
+// saveProject.pde/exportObj.pde/exportLas.pde/exportHtml.pde/
+// exportRad.pde/exportScr.pde - and _fileSelected_New()/_fileSelected_
+// Open()/_fileSelected_SaveAs(), fileSelected.pde, for New/Open/Save
+// As specifically, since those three only actually touch anything once
+// selectInput()'s/selectOutput()'s own callback - on its own thread,
+// same as isImportingInProgress's own comment above - resolves, not
+// when the menu action that opened the dialog first runs), rather than
+// at each menu action's own call site in actions.pde: that keeps every
+// one of these working the same way regardless of how it's reached (a
+// menu click, the Enter key via UI_menuBar.runSelectedItem(), or a
+// console/script command - extraCommands.pde calls _fileSelected_New()/
+// _fileSelected_Open()/_fileSelected_SaveAs()/saveProject() directly,
+// bypassing actions.pde entirely), the same reasoning each importer's
+// own isImportingInProgress = true already follows. Saving and loading
+// nest harmlessly here (Save As's own _fileSelected_SaveAs() calls
+// saveProject(), which also sets/clears this; Open's own
+// _fileSelected_Open() likewise calls load_project()) - both still end
+// up false once the outer call returns, the same "setting an already-
+// false boolean false again is a harmless no-op" reasoning
+// isImportingInProgress's own comment above gives. volatile for the
+// exact same reason isImportingInProgress is.
+volatile boolean isFileOperationInProgress = false;
 
 // A lat/lon an importer has computed but not yet ACTED on - set at the
 // very end of whichever import_objects_X() actually found one (so far:

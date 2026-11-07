@@ -1,5 +1,14 @@
 void saveProject (String myFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end. Covers every caller the same way: the "Save"
+  // action, holdProject() ("Hold", and "New"'s own pre-clear backup),
+  // _fileSelected_SaveAs() ("Save As"), and extraCommands.pde's own
+  // console "save" command.
+  isFileOperationInProgress = true;
+
   myFile = myFile.replace(char(92), '/');
 
   save_folder = myFile.substring(0, myFile.lastIndexOf("/"));
@@ -9,6 +18,8 @@ void saveProject (String myFile) {
   saveXML(xml, myFile);
 
   println("End of saving XML:", myFile);
+
+  isFileOperationInProgress = false;
 }
 
 // Builds the exact same XML tree saveProject() writes to disk, entirely

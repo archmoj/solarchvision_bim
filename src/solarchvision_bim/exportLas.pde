@@ -57,6 +57,12 @@
 
 void exportLas (String suffix) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end.
+  isFileOperationInProgress = true;
+
   String fileBasename = ProjectName + suffix;
   String lasFilename = Folder_Export3D + "/" + fileBasename + ".las";
 
@@ -158,6 +164,8 @@ void exportLas (String suffix) {
   saveBytes(lasFilename, out);
 
   println("\nFile created:" + lasFilename + " (" + pointCount + " point(s))");
+
+  isFileOperationInProgress = false;
 }
 
 // See this file's own header comment ("Scale/offset") for what this is

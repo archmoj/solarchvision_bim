@@ -1,5 +1,14 @@
 void load_project (String myFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement; this function has no early-return exit
+  // points (continue_process == false just skips the big if-block
+  // below rather than returning), so this is cleared once, at this
+  // function's own end. Covers every caller the same way:
+  // _fileSelected_Open() ("Open"), fetchProject() ("Fetch"), and
+  // extraCommands.pde's own console "open" command.
+  isFileOperationInProgress = true;
+
   myFile = myFile.replace(char(92), '/');
 
 
@@ -116,4 +125,5 @@ void load_project (String myFile) {
     seedViewport2DHistory();
   }
 
+  isFileOperationInProgress = false;
 }

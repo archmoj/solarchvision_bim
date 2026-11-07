@@ -1,5 +1,11 @@
 void exportObj (String suffix) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end.
+  isFileOperationInProgress = true;
+
   String fileBasename = ProjectName + suffix;
 
   String objFilename = Folder_Export3D + "/" + fileBasename + ".obj";
@@ -74,4 +80,6 @@ void exportObj (String suffix) {
   objOutput.close();
 
   println("\nFile created:" + objFilename);
+
+  isFileOperationInProgress = false;
 }

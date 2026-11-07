@@ -1,5 +1,11 @@
 void exportAutocadScript () {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end.
+  isFileOperationInProgress = true;
+
   String fileBasename = ProjectName;
 
   String scrFilename = Folder_Export3D + "/" + fileBasename + ".scr";
@@ -56,4 +62,6 @@ void exportAutocadScript () {
   println("End of scripting lines and meshes.");
 
   println("File created:" + scrFilename);
+
+  isFileOperationInProgress = false;
 }

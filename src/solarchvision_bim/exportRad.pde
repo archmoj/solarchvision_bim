@@ -2,6 +2,12 @@ PrintWriter radOutput;
 
 void exportRadiance () {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - bare statement (this function has only the one exit
+  // point below, so nothing further to guard); cleared at this
+  // function's own end.
+  isFileOperationInProgress = true;
+
   String fileBasename = ProjectName;
 
   String radFilename = Folder_Export3D + "/" + fileBasename + ".rad";
@@ -84,5 +90,5 @@ void exportRadiance () {
   batOutput.flush();
   batOutput.close();
 
-
+  isFileOperationInProgress = false;
 }
