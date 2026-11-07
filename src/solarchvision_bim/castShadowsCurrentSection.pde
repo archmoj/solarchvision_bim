@@ -1,8 +1,20 @@
-void castShadows_CurrentSection () {
+// sectionIndex/sectionCount - this section's own 1-based position among
+// however many render_Shadows_selectedSections() (solarImpacts.pde) is
+// baking in this one batch, and the batch's own total count - purely
+// for the console print/ProgressWindow title just below: nothing in the
+// actual bake (file names, geometry, Shades_scaleX/Y, etc.) depends on
+// either. A single section baked on its own (sectionCount == 1, the
+// common case - most "Prebake Selected Sections" runs select just one)
+// gets the plain "the current section"/"Section" wording, same as
+// before this parameter existed, rather than a redundant "section 1 of
+// 1"/"Section 1/1" nobody needs.
+void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
 
   showWaitCursor();
 
-  println("\nBaking shadows for the current section. Please wait...");
+  String sectionProgressLabel = (sectionCount > 1) ? ("section " + sectionIndex + " of " + sectionCount) : "the current section";
+
+  println("\nBaking shadows for " + sectionProgressLabel + ". Please wait...");
 
   SceneName = "Section_" + Section_Stamp();
 
@@ -66,7 +78,16 @@ void castShadows_CurrentSection () {
   // finally, alongside this function's own sectionType/R restore below,
   // so a mid-bake exception still leaves both cleaned up rather than the
   // window stuck on screen and allSolarImpacts left mid-rotation.
-  ProgressWindow sectionBakeProgressWindow = (showSectionBakeProgress && canShowProgressWindow()) ? new ProgressWindow("Baking Section") : null;
+  // Titled with this same section's own "Section" (one selected) or
+  // "Section 2 of 5" (several selected) label the console print above
+  // already uses, capitalized to match every other ProgressWindow's own
+  // title ("Prebaking", "Skin Potential") - render_Shadows_
+  // selectedSections() (solarImpacts.pde) calls this once per selected
+  // section, each with its own fresh window, so without this every one
+  // of them would show the exact same plain "Baking Section" title with
+  // no way to tell which section currently has focus.
+  String sectionProgressWindowTitle = "Baking " + ((sectionCount > 1) ? ("Section " + sectionIndex + "/" + sectionCount) : "Section");
+  ProgressWindow sectionBakeProgressWindow = (showSectionBakeProgress && canShowProgressWindow()) ? new ProgressWindow(sectionProgressWindowTitle) : null;
   if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.setVisible(true);
 
   try {

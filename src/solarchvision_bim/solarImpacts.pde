@@ -1109,7 +1109,14 @@ class SolarImpacts {
 
   void render_Shadows_selectedSections () {
 
-    for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
+    // This batch's own total count, for castShadows_CurrentSection()'s
+    // own "Section X of N" console/ProgressWindow label (castShadows
+    // CurrentSection.pde) - Select3D.sectionSelection itself doesn't
+    // change size over the loop below, so this is read once here rather
+    // than re-reading .length every iteration.
+    int sectionCount = Select3D.sectionSelection.length;
+
+    for (int o = sectionCount - 1; o >= 0; o--) {
 
       int f = Select3D.sectionSelection[o];
 
@@ -1126,7 +1133,15 @@ class SolarImpacts {
 
       SceneName = "Section_" + Section_Stamp();
 
-      castShadows_CurrentSection();
+      // o counts DOWN from sectionCount - 1 to 0 as this loop progresses
+      // (this.sectionType/RES1/.../V already use it that way, above), so
+      // sectionCount - o counts UP from 1 to sectionCount instead - this
+      // section's own position in THIS batch, which is what a person
+      // watching the bake run actually wants to see ("Section 2 of 5"),
+      // not allSections' own index for it (f) or Select3D.
+      // sectionSelection's own position for it (o), neither of which
+      // they'd recognize as "which one of the ones I selected is this".
+      castShadows_CurrentSection(sectionCount - o, sectionCount);
     }
 
     this.displayImage = true;
