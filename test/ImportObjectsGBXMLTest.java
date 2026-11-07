@@ -541,8 +541,15 @@ class ImportObjectsGBXMLTest {
     assertEquals(43.6425f, app.gbxmlImportGotoLatLon[0], 0.0001f, "latitude");
     assertEquals(-79.3869f, app.gbxmlImportGotoLatLon[1], 0.0001f, "longitude");
 
-    // __SETLATLON__ should actually have been called with it.
-    assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
+    // The actual move is deferred to draw() (solarchvision_bim.pde), not
+    // performed synchronously here - see pendingGotoLatLon's own comment
+    // (globalFunctions.pde) for why (update_station(), what __SETLATLON__()
+    // calls, isn't safe to run on an importer's own thread). This confirms
+    // the request was actually QUEUED for draw() to pick up, without
+    // calling update_station() here - unsafe in this bare, never-setup()'d
+    // test instance.
+    assertNotNull(app.pendingGotoLatLon, "the navigation request should have been queued for draw() to perform");
+    assertEquals(43.6425f, app.pendingGotoLatLon[0], 0.0001f, "queued latitude");
   }
 
   @Test

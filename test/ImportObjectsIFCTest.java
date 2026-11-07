@@ -1479,9 +1479,16 @@ class ImportObjectsIFCTest {
     assertEquals(43.6425f, app.ifcImportGotoLatLon[0], 0.0001f, "latitude");
     assertEquals(-79.3869f, app.ifcImportGotoLatLon[1], 0.0001f, "longitude");
 
-    // __SETLATLON__ should actually have been called with it.
-    assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
-    assertEquals(-79.3869f, app.STATION.getLongitude(), 0.0001f);
+    // The actual move is deferred to draw() (solarchvision_bim.pde), not
+    // performed synchronously here - see pendingGotoLatLon's own comment
+    // (globalFunctions.pde) for why (update_station(), what __SETLATLON__()
+    // calls, isn't safe to run on an importer's own thread). This confirms
+    // the request was actually QUEUED for draw() to pick up, without
+    // calling update_station() here - unsafe in this bare, never-setup()'d
+    // test instance.
+    assertNotNull(app.pendingGotoLatLon, "the navigation request should have been queued for draw() to perform");
+    assertEquals(43.6425f, app.pendingGotoLatLon[0], 0.0001f, "queued latitude");
+    assertEquals(-79.3869f, app.pendingGotoLatLon[1], 0.0001f, "queued longitude");
   }
 
   @Test
@@ -1507,8 +1514,12 @@ class ImportObjectsIFCTest {
     assertNotNull(app.ifcImportGotoLatLon);
     assertEquals(49.0956f, app.ifcImportGotoLatLon[0], 0.0001f, "latitude");
     assertEquals(8.4337f, app.ifcImportGotoLatLon[1], 0.0001f, "longitude");
-    assertEquals(49.0956f, app.STATION.getLatitude(), 0.0001f);
-    assertEquals(8.4337f, app.STATION.getLongitude(), 0.0001f);
+    // See the sibling test above (ifcSitesRefLatLon) for why this checks
+    // pendingGotoLatLon rather than app.STATION directly - the actual
+    // move is deferred to draw(), not performed synchronously here.
+    assertNotNull(app.pendingGotoLatLon);
+    assertEquals(49.0956f, app.pendingGotoLatLon[0], 0.0001f, "queued latitude");
+    assertEquals(8.4337f, app.pendingGotoLatLon[1], 0.0001f, "queued longitude");
   }
 
   @Test
@@ -1599,8 +1610,12 @@ class ImportObjectsIFCTest {
     assertNotNull(app.ifcImportGotoLatLon, "no RefLatitude/RefLongitude, but an IfcMapConversion with plain geographic Eastings/Northings should still be usable");
     assertEquals(43.6425f, app.ifcImportGotoLatLon[0], 0.0001f, "Northings is latitude");
     assertEquals(-79.387f, app.ifcImportGotoLatLon[1], 0.0001f, "Eastings is longitude");
-    assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
-    assertEquals(-79.387f, app.STATION.getLongitude(), 0.0001f);
+    // See importObjectsIFC_gotoLatLon_navigatesTheStationToIfcSitesRefLatLon's
+    // own comment for why this checks pendingGotoLatLon rather than
+    // app.STATION directly.
+    assertNotNull(app.pendingGotoLatLon);
+    assertEquals(43.6425f, app.pendingGotoLatLon[0], 0.0001f, "queued latitude");
+    assertEquals(-79.387f, app.pendingGotoLatLon[1], 0.0001f, "queued longitude");
   }
 
   @Test

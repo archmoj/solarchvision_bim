@@ -277,7 +277,14 @@ class ImportObjectsLASTest {
     app.lasImportMeshAlgorithm = app.LAS_MESH_ALGORITHM_BOX_GRID;
     app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(4, app.allPoints.getLength());
+    // 4 original points (the main read loop's own) + 20 x 4 = 80 more -
+    // lasCreateMesh2Face() always creates 4 brand-new points per face, by
+    // design (a box's own corners are synthesized grid-aligned
+    // coordinates, never deduplicated against each other or against the
+    // original scattered points - see that function's own comment,
+    // importLas.pde) - so allPoints is NOT just the 4 original points
+    // once box-grid meshing has run.
+    assertEquals(84, app.allPoints.getLength(), "4 original + 20 faces x 4 new corner points each");
     assertEquals(20, app.allFaces.nodes.length, "4 cells x (1 top + 4 sides) = 20 faces");
     for (int[] face : app.allFaces.nodes) {
       assertEquals(4, face.length, "every box-grid face (top or side) should be a quad");
