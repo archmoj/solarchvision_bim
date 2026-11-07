@@ -321,6 +321,40 @@ class Faces {
     return(this.nodes.length - 1);
   }
 
+  // Same result as calling create() once per row of newFacesNodes, in
+  // order (including the SAME current_Material/Tessellation/Layer/
+  // Visibility/Weight/Closed snapshot taken for every one of them, and
+  // the same allGroups.Faces[...][1] update at the end, just computed
+  // once against the batch's own final this.nodes.length instead of
+  // once per face) - but with a single concat() each for this.options/
+  // this.nodes for the WHOLE batch, instead of one pair of concat()
+  // calls per face - see Points.createBatch()'s own comment (points.
+  // pde) for why that difference matters: importLas.pde's own box-grid
+  // meshing (lasCreateBoxGridFaces()) creates many thousands of faces
+  // in one pass, and concat()-per-face costs roughly the SQUARE of the
+  // final face count there, not something close to linear in it.
+  // Returns each new face's own real index, in the same order as
+  // newFacesNodes, the same way a loop of plain create() calls would
+  // have.
+  int[] createBatch (int[][] newFacesNodes) {
+    int n = newFacesNodes.length;
+
+    int[][] newOptions = new int[n][6];
+    for (int i = 0; i < n; i++) {
+      newOptions[i] = new int[]{ current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+    }
+    this.options = (int[][]) concat(this.options, newOptions);
+
+    this.nodes = (int[][]) concat(this.nodes, newFacesNodes);
+
+    if (allGroups.num > 0) allGroups.Faces[allGroups.num - 1][1] = this.nodes.length - 1;
+
+    int[] indices = new int[n];
+    int startIndex = this.nodes.length - n;
+    for (int i = 0; i < n; i++) indices[i] = startIndex + i;
+    return indices;
+  }
+
 
 
 

@@ -850,7 +850,7 @@ void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
 
 // Turns every BoxGridCell meshPointCloud_boxGridXY() (meshPointCloud
 // BoxGrid.pde) returned into a real box: 1 flat top face plus 4 vertical
-// side faces, each built via lasCreateMesh2Face() (below). All of a
+// side faces, each built via lasAddMesh2Face() (below). All of a
 // cell's own 4 sides go down to the SAME baseZ - the lowest topZ among
 // every cell in this result - a deliberately simple choice (a shared
 // "ground" level every box's own sides reach down to, like a bar chart)
@@ -862,6 +862,29 @@ void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
 // every box's side walls are visible all the way down to that one base
 // level, not just the single "step" between its own height and a
 // neighbor's.
+// Every one of this call's own new points/faces is collected into
+// newVertices/newFaceLocalIndices below FIRST, and only actually created
+// (allPoints.createBatch()/allFaces.createBatch(), points.pde/faces.pde)
+// in ONE single batch each, right at the end - never one allPoints.
+// create()/allFaces.create() call per point/face the way an earlier
+// version of this function did. That distinction matters far more than
+// it looks like it should: concat() (what create() itself uses) copies
+// the WHOLE existing array just to append one more row, so calling it
+// once per point/face in a tight loop costs roughly the SQUARE of the
+// final count, not something close to linear in it - box-grid's own
+// geometry is the one case in this importer where that actually bites:
+// every cell creates its own 5 faces x 4 brand-new, never-deduplicated
+// points (20 points per cell - see lasAddMesh2Face()'s own comment for
+// why), so even a moderate LAS file's own point count very quickly
+// produces hundreds of thousands of individual points/faces. A real LAS
+// import that comfortably handled 10,000 points could still take
+// drastically, visibly longer - not just 10x longer - at 100,000 points,
+// stuck for a long stretch inside this one function, the cursor and the
+// rest of the UI along with it (isImportingInProgress, globalFunctions.
+// pde, is still correctly true the whole time this runs - it's not
+// hung, just that quadratic-cost slow). The 2 batch calls below keep
+// this the same roughly-linear cost every other point/face-creating
+// path in this app already has.
 void lasCreateBoxGridFaces (ArrayList<BoxGridCell> cells) {
   if (cells.isEmpty()) return;
 
@@ -870,41 +893,58 @@ void lasCreateBoxGridFaces (ArrayList<BoxGridCell> cells) {
     if (cell.topZ < baseZ) baseZ = cell.topZ;
   }
 
+  ArrayList<float[]> newVertices = new ArrayList<float[]>();
+  // Each entry is one face's own 4 LOCAL indices into newVertices (not
+  // real allPoints indices yet - those only exist once allPoints.
+  // createBatch(), below, actually creates them) - resolved into real
+  // indices, and only then handed to allFaces.createBatch(), right
+  // after that batch point-create runs.
+  ArrayList<int[]> newFaceLocalIndices = new ArrayList<int[]>();
+
   for (BoxGridCell cell : cells) {
     // Top.
-    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.maxX, cell.maxY, cell.topZ);
+    lasAddMesh2Face(newVertices, newFaceLocalIndices, cell.minX, cell.minY, cell.topZ, cell.maxX, cell.maxY, cell.topZ);
     // The 4 vertical sides, down to the shared baseZ above - each pair
     // of corners here shares exactly one of X/Y already (by construction,
     // a cell's own 2 opposite edges), which is exactly what
-    // lasCreateMesh2Face() needs to build an axis-aligned rectangle from
+    // lasAddMesh2Face() needs to build an axis-aligned rectangle from
     // them.
-    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.maxX, cell.minY, baseZ);
-    lasCreateMesh2Face(cell.minX, cell.maxY, cell.topZ, cell.maxX, cell.maxY, baseZ);
-    lasCreateMesh2Face(cell.minX, cell.minY, cell.topZ, cell.minX, cell.maxY, baseZ);
-    lasCreateMesh2Face(cell.maxX, cell.minY, cell.topZ, cell.maxX, cell.maxY, baseZ);
+    lasAddMesh2Face(newVertices, newFaceLocalIndices, cell.minX, cell.minY, cell.topZ, cell.maxX, cell.minY, baseZ);
+    lasAddMesh2Face(newVertices, newFaceLocalIndices, cell.minX, cell.maxY, cell.topZ, cell.maxX, cell.maxY, baseZ);
+    lasAddMesh2Face(newVertices, newFaceLocalIndices, cell.minX, cell.minY, cell.topZ, cell.minX, cell.maxY, baseZ);
+    lasAddMesh2Face(newVertices, newFaceLocalIndices, cell.maxX, cell.minY, cell.topZ, cell.maxX, cell.maxY, baseZ);
   }
+
+  if (newVertices.isEmpty()) return; // every face this cell list could have produced was degenerate (zero-area) - nothing to create
+
+  int[] realIndices = allPoints.createBatch(newVertices.toArray(new float[0][]));
+
+  int[][] newFaces = new int[newFaceLocalIndices.size()][];
+  for (int i = 0; i < newFaces.length; i++) {
+    int[] local = newFaceLocalIndices.get(i);
+    newFaces[i] = new int[]{ realIndices[local[0]], realIndices[local[1]], realIndices[local[2]], realIndices[local[3]] };
+  }
+  allFaces.createBatch(newFaces);
+  lasFacesImported += newFaces.length;
 }
 
 // One "Mesh2"-shaped face (this app's own name - Create3D's own add_
 // Mesh2(), create3D.pde - for an axis-aligned rectangle built from just
 // 2 diagonal corners, with the other 2 corners computed so one of X/Y/Z
-// stays constant across all 4) via DIRECT allPoints.create()/allFaces.
-// create() calls - the exact same corner-deduction add_Mesh2() itself
-// uses, just called this way rather than through that higher-level
-// function: add_Mesh2() also wraps itself in its own beginScene3DChange()/
-// endScene3DChange() pair (a real undo-history snapshot on every call
-// that isn't already nested inside an outer one) and calls model_added()
-// every time, neither of which this importer's own tight per-face loops
-// anywhere else ever pay either (lasCreateFace(), below, calls allFaces.
-// create() directly for the exact same reason) - calling it up to 5
-// times per box, for potentially thousands of boxes (lasCreateBoxGrid
-// Faces(), above), would make THAT overhead, not the actual geometry
-// work, the real cost of this algorithm.
+// stays constant across all 4) worth of geometry - computed here, but
+// only APPENDED to vertices/faceLocalIndices, never actually created
+// (allPoints.create()/allFaces.create(), let alone the still-heavier
+// Create3D.add_Mesh2() itself, which also wraps itself in its own
+// beginScene3DChange()/endScene3DChange() pair and calls model_added()
+// on every call) - see lasCreateBoxGridFaces()'s own comment, above, for
+// why batching every one of a whole box-grid mesh's own points/faces
+// into 2 single calls, instead of creating each one as it's computed,
+// is the real point of splitting this into its own function at all now.
 //
-// Silently does nothing for a degenerate (zero-area) rectangle - the 2
+// Silently adds nothing for a degenerate (zero-area) rectangle - the 2
 // given corners being identical on every axis - the same guard add_
 // Mesh2() itself already has.
-void lasCreateMesh2Face (float x1, float y1, float z1, float x3, float y3, float z3) {
+void lasAddMesh2Face (ArrayList<float[]> vertices, ArrayList<int[]> faceLocalIndices, float x1, float y1, float z1, float x3, float y3, float z3) {
   if ((x1 == x3) && (y1 == y3) && (z1 == z3)) return;
 
   float x2 = x3, y2 = y3, z2 = z3;
@@ -921,13 +961,13 @@ void lasCreateMesh2Face (float x1, float y1, float z1, float x3, float y3, float
     z4 = z3;
   }
 
-  int v1 = allPoints.create(x1, y1, z1);
-  int v2 = allPoints.create(x2, y2, z2);
-  int v3 = allPoints.create(x3, y3, z3);
-  int v4 = allPoints.create(x4, y4, z4);
+  int base = vertices.size();
+  vertices.add(new float[]{ x1, y1, z1 });
+  vertices.add(new float[]{ x2, y2, z2 });
+  vertices.add(new float[]{ x3, y3, z3 });
+  vertices.add(new float[]{ x4, y4, z4 });
 
-  allFaces.create(new int[]{ v1, v2, v3, v4 });
-  lasFacesImported += 1;
+  faceLocalIndices.add(new int[]{ base, base + 1, base + 2, base + 3 });
 }
 
 // Turns one meshPointCloud_delaunayXY()/meshPointCloud_gridXY() result

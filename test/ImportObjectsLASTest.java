@@ -267,7 +267,7 @@ class ImportObjectsLASTest {
     // triangle, and never one shared face spanning more than 1 cell the
     // way the default grid algorithm's own quad does. All 4 points share
     // z = 0 here, so every "side wall" is geometrically flat (topZ ==
-    // baseZ) rather than a real vertical wall - lasCreateMesh2Face()
+    // baseZ) rather than a real vertical wall - lasAddMesh2Face()
     // still creates one anyway (its own degenerate guard only catches 2
     // corners that are the exact same point, not merely coplanar), so
     // the face COUNT this test actually checks is unaffected either way.
@@ -278,7 +278,7 @@ class ImportObjectsLASTest {
     app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     // 4 original points (the main read loop's own) + 20 x 4 = 80 more -
-    // lasCreateMesh2Face() always creates 4 brand-new points per face, by
+    // lasAddMesh2Face() always creates 4 brand-new points per face, by
     // design (a box's own corners are synthesized grid-aligned
     // coordinates, never deduplicated against each other or against the
     // original scattered points - see that function's own comment,

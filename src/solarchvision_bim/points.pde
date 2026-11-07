@@ -86,6 +86,32 @@ class Points {
     return(this.getLength() - 1);
   }
 
+  // Same result as calling create() once per row of newVertices, in
+  // order, but with a single concat() for the WHOLE batch instead of
+  // one per point - added for importLas.pde's own box-grid meshing
+  // (lasCreateBoxGridFaces()), which creates many thousands of brand-
+  // new points (never reusing/deduplicating any of them - see that
+  // function's own comment) in one pass: concat() copies the WHOLE
+  // existing array just to append one more row, so calling create() in
+  // a tight loop costs roughly the SQUARE of the final point count, not
+  // something close to linear in it - fine for a handful of points, but
+  // the real reason a box-grid import that comfortably handles 10,000
+  // points can still take drastically, visibly longer (not just 10x
+  // longer) at 100,000. One concat() for the whole batch instead keeps
+  // this the same roughly-linear cost every other point-creating path
+  // in this app already has. Returns each new point's own real index,
+  // in the same order as newVertices, the same way a loop of plain
+  // create() calls would have.
+  int[] createBatch (float[][] newVertices) {
+    int startIndex = this.getLength();
+
+    allVertices = (float[][]) concat(allVertices, newVertices);
+
+    int[] indices = new int[newVertices.length];
+    for (int i = 0; i < newVertices.length; i++) indices[i] = startIndex + i;
+    return indices;
+  }
+
 
 
 
