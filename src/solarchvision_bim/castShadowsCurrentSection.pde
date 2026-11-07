@@ -2,6 +2,8 @@ void castShadows_CurrentSection () {
 
   showWaitCursor();
 
+  println("\nBaking shadows for the current section. Please wait...");
+
   SceneName = "Section_" + Section_Stamp();
 
   String ScenePathPrefix = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
@@ -36,125 +38,202 @@ void castShadows_CurrentSection () {
     sinR = funcs.sin_ang(-allSolarImpacts.R);
   }
 
-  {
-    int RAD_TYPE = 0;
+  // Total frames this one call will render, so the console bar/
+  // ProgressWindow below can show real percent-through-the-whole-call
+  // progress, not just per-phase: the Direct loop's own 24 DATE_ANGLEs
+  // (0..345 step 15) x 17 HOUR_ANGLEs (4..20) x 2 SHD values below, plus
+  // the Diffuse loop's own 2 SHD values x DiffuseVectors.length sky
+  // patches - each renderShadowFrame() call, in either loop, is this
+  // function's own one real, comparably-sized unit of work (a
+  // TREES_graphics render, a SHADOW_graphics render, and up to 3 PNG/
+  // JPG saves), so counting those calls rather than, say, DATE_ANGLE
+  // steps gives a bar that actually advances at a steady rate.
+  int totalDateAngles = 360 / 15;
+  int totalHourAngles = 20 - 4 + 1;
+  int totalFrames = (totalDateAngles * totalHourAngles * 2) + (2 * DiffuseVectors.length);
+  int framesDone = 0;
+  float printed_Progress = 0;
+  StringBuilder barBuffer = new StringBuilder();
 
-    for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+  progressBarHeader();
 
-      //for (int i = 0; i < 24; i++) {
-      for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not needed out of this period.
+  // showSectionBakeProgress (globalVariables.pde's own comment) -
+  // ProgressWindow (preBakeViewport3D.pde), updated inline alongside the
+  // console bar's own delta >= 1 throttle just below, same shape as
+  // import_objects_OBJ()'s own (importObj.pde) - this loop, like that
+  // one, is plain single-threaded iteration on the calling thread
+  // itself, with no concurrent futures to wait on. Wrapped in try/
+  // finally, alongside this function's own sectionType/R restore below,
+  // so a mid-bake exception still leaves both cleaned up rather than the
+  // window stuck on screen and allSolarImpacts left mid-rotation.
+  ProgressWindow sectionBakeProgressWindow = (showSectionBakeProgress && canShowProgressWindow()) ? new ProgressWindow("Baking Section") : null;
+  if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.setVisible(true);
 
-        float HOUR_ANGLE = i;
-        float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-        SunR_Rotated = SunR;
-        int SunR_Rotated_check = 3;
+  try {
+    {
+      int RAD_TYPE = 0;
 
-        if (rotate) {
-          float a = SunR_Rotated[1];
-          float b = -SunR_Rotated[2];
-          float c = SunR_Rotated[3];
+      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
 
-          SunR_Rotated[1] = a * cosR - b * sinR;
-          SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sinR + b * cosR;
+        //for (int i = 0; i < 24; i++) {
+        for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not needed out of this period.
 
-          SunR_Rotated_check = 2;
-        }
+          float HOUR_ANGLE = i;
+          float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+          SunR_Rotated = SunR;
+          int SunR_Rotated_check = 3;
 
-        for (int SHD = 0; SHD <= 1; SHD++) {
+          if (rotate) {
+            float a = SunR_Rotated[1];
+            float b = -SunR_Rotated[2];
+            float c = SunR_Rotated[3];
 
-          String File_Name = ScenePathPrefix;
+            SunR_Rotated[1] = a * cosR - b * sinR;
+            SunR_Rotated[2] = c;
+            SunR_Rotated[3] = a * sinR + b * cosR;
 
-          File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+            SunR_Rotated_check = 2;
+          }
 
-          File_Name += "_Camera00";
+          for (int SHD = 0; SHD <= 1; SHD++) {
 
-          renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name, ".png");
+            String File_Name = ScenePathPrefix;
+
+            File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+
+            File_Name += "_Camera00";
+
+            renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name, ".png");
+
+            framesDone++;
+            if (control != USER_AUTO) {
+              float Progress = 100.0 * framesDone / totalFrames;
+              int delta = (int) floor(Progress - printed_Progress);
+              if (delta >= 1) {
+                barBuffer.setLength(0);
+                for (int c = 0; c < delta; c++) {
+                  barBuffer.append('█');
+                }
+                print(barBuffer.toString()); // one print() call instead of `delta` calls
+                printed_Progress = floor(Progress);
+                if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.updateFraction(Progress / 100.0f);
+              }
+            }
+          }
         }
       }
     }
-  }
 
 
-  {
-    int RAD_TYPE = 1;
+    {
+      int RAD_TYPE = 1;
 
-    PGraphics DIFFUSE_graphics = createGraphics(RES1, RES2, P2D);
+      PGraphics DIFFUSE_graphics = createGraphics(RES1, RES2, P2D);
 
-    for (int SHD = 0; SHD <= 1; SHD++) {
+      for (int SHD = 0; SHD <= 1; SHD++) {
 
-      String File_Name = ScenePathPrefix;
+        String File_Name = ScenePathPrefix;
 
-      File_Name += "DIF_" + STR_SHD[SHD];
+        File_Name += "DIF_" + STR_SHD[SHD];
 
-      PImage[] shadowFrames = new PImage[DiffuseVectors.length];
+        PImage[] shadowFrames = new PImage[DiffuseVectors.length];
 
-      for (int i = 0; i < DiffuseVectors.length; i++) {
+        for (int i = 0; i < DiffuseVectors.length; i++) {
 
-        float[] SunR= {
-          0, DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
-        };
+          float[] SunR= {
+            0, DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
+          };
 
-        SunR_Rotated = SunR;
-        int SunR_Rotated_check = 3;
+          SunR_Rotated = SunR;
+          int SunR_Rotated_check = 3;
 
-        if (rotate) {
-          float a = SunR_Rotated[1];
-          float b = -SunR_Rotated[2];
-          float c = SunR_Rotated[3];
+          if (rotate) {
+            float a = SunR_Rotated[1];
+            float b = -SunR_Rotated[2];
+            float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * cosR - b * sinR;
-          SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sinR + b * cosR;
+            SunR_Rotated[1] = a * cosR - b * sinR;
+            SunR_Rotated[2] = c;
+            SunR_Rotated[3] = a * sinR + b * cosR;
 
-          SunR_Rotated_check = 2;
+            SunR_Rotated_check = 2;
+          }
+
+
+
+          renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
+
+          shadowFrames[i] = SHADOW_graphics.get();
+
+          framesDone++;
+          if (control != USER_AUTO) {
+            float Progress = 100.0 * framesDone / totalFrames;
+            int delta = (int) floor(Progress - printed_Progress);
+            if (delta >= 1) {
+              barBuffer.setLength(0);
+              for (int c = 0; c < delta; c++) {
+                barBuffer.append('█');
+              }
+              print(barBuffer.toString()); // one print() call instead of `delta` calls
+              printed_Progress = floor(Progress);
+              if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.updateFraction(Progress / 100.0f);
+            }
+          }
         }
 
 
 
-        renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
+        DIFFUSE_graphics.beginDraw();
 
-        shadowFrames[i] = SHADOW_graphics.get();
+        DIFFUSE_graphics.blendMode(REPLACE);
+
+        DIFFUSE_graphics.fill(0);
+        DIFFUSE_graphics.stroke(0);
+        DIFFUSE_graphics.strokeWeight(0);
+        DIFFUSE_graphics.rectMode(CORNER);
+        DIFFUSE_graphics.rect(0, 0, RES1, RES2);
+
+        float tintAlpha = 255 / (0.5 * DiffuseVectors.length);
+
+        for (int i = 0; i < DiffuseVectors.length; i++) {
+
+          PImage img = shadowFrames[i];
+
+          DIFFUSE_graphics.blendMode(ADD);
+
+          DIFFUSE_graphics.tint(255, tintAlpha);
+
+          DIFFUSE_graphics.image(img, 0, 0, RES1, RES2);
+
+          DIFFUSE_graphics.noTint();
+        }
+
+        DIFFUSE_graphics.endDraw();
+
+        File_Name += "_Camera00.png";
+
+        DIFFUSE_graphics.save(File_Name);
+        println("\n" + File_Name);
       }
-
-
-
-      DIFFUSE_graphics.beginDraw();
-
-      DIFFUSE_graphics.blendMode(REPLACE);
-
-      DIFFUSE_graphics.fill(0);
-      DIFFUSE_graphics.stroke(0);
-      DIFFUSE_graphics.strokeWeight(0);
-      DIFFUSE_graphics.rectMode(CORNER);
-      DIFFUSE_graphics.rect(0, 0, RES1, RES2);
-
-      float tintAlpha = 255 / (0.5 * DiffuseVectors.length);
-
-      for (int i = 0; i < DiffuseVectors.length; i++) {
-
-        PImage img = shadowFrames[i];
-
-        DIFFUSE_graphics.blendMode(ADD);
-
-        DIFFUSE_graphics.tint(255, tintAlpha);
-
-        DIFFUSE_graphics.image(img, 0, 0, RES1, RES2);
-
-        DIFFUSE_graphics.noTint();
-      }
-
-      DIFFUSE_graphics.endDraw();
-
-      File_Name += "_Camera00.png";
-
-      DIFFUSE_graphics.save(File_Name);
-      println("\n" + File_Name);
     }
+  } finally {
+    if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.dispose();
+
+    allSolarImpacts.sectionType = keep_allSolarImpacts_sectionType;
+    allSolarImpacts.R = keep_allSolarImpacts_rotation;
   }
 
-  allSolarImpacts.sectionType = keep_allSolarImpacts_sectionType;
-  allSolarImpacts.R = keep_allSolarImpacts_rotation;
+  // Tops the console bar up to exactly 100 characters even if rounding
+  // across totalFrames's own many small per-frame deltas left it a
+  // character or two short - same wrap-up shape as import_objects_OBJ()'s
+  // own identical lines (importObj.pde).
+  int remaining = (int) floor(100 - printed_Progress);
+  barBuffer.setLength(0);
+  for (int c = 0; c < remaining; c++) {
+    barBuffer.append('█');
+  }
+  print(barBuffer.toString());
+  println();
 
   showArrowCursor();
 }

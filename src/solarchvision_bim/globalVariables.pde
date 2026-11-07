@@ -119,6 +119,18 @@ boolean showCalcImpactProgress = true;
 // pass - see that file's own comment).
 boolean showImportProgress = true;
 
+// Same idea again, for castShadows_CurrentSection() (castShadowsCurrent
+// Section.pde) - "Prebake Selected Sections" (actions.pde). Plain
+// single-threaded iteration on the calling thread itself, same shape as
+// import_objects_OBJ()'s own (importObj.pde) above: one console bar/
+// ProgressWindow spanning both of that function's own phases (the
+// Direct loop's own 24 DATE_ANGLEs x 17 HOUR_ANGLEs x 2 SHD values, then
+// the Diffuse loop's own 2 SHD values x DiffuseVectors.length sky
+// patches), not a separate one per phase, since each phase's own
+// renderShadowFrame() call is that function's one real, comparably-
+// sized unit of work either way.
+boolean showSectionBakeProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;
