@@ -89,6 +89,13 @@ and under what terms; this is the human version of that list: thank you to
 - **Dezignus** ("Stanislav"/"Stanly") for the free people-silhouette
   vector pack this project's scale figures are drawn from.
 
+- **Dr. Martin Isenburg** for his work — LAS,
+LASzip, and the LAStools suite he created underlie this project's own
+LAS point-cloud import and export, and much of the wider LiDAR/point-
+cloud world besides. See
+[rapidlasso.de](https://rapidlasso.de/), the company he founded, for
+more on that work and its continuation.
+
 - **[NASA](https://www.nasa.gov/)** and **NASA's Scientific Visualization
   Studio** for the Earth, Moon, and Sun imagery.
 
