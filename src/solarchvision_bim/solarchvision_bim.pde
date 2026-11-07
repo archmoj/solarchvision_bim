@@ -124,6 +124,27 @@ int stepAfterInitialization = 0;
 void draw () {
   if (isBakingInProgress()) return;
 
+  // pendingGotoLatLon (globalFunctions.pde) - an importer's own queued
+  // "navigate here" request (IFC/gbXML/LAS, so far - the 3 formats with
+  // their own "navigate to the file's own location" option), picked up
+  // and actually performed HERE, on the main thread, rather than by the
+  // importer itself - see that variable's own comment for why
+  // (update_station(), what this actually calls into by way of
+  // __SETLATLON__(), isn't safe to run on an importer's own thread).
+  // Safe to read/clear here unsynchronized despite being set from
+  // another thread: it's volatile, and by the time isBakingInProgress()
+  // above has already let this frame proceed, isImportingInProgress
+  // (part of that same check) is already false, so whichever import set
+  // this has already fully finished and returned - there's no
+  // concurrent writer left to race against.
+  if (pendingGotoLatLon != null) {
+    float[] gotoLatLon = pendingGotoLatLon;
+    pendingGotoLatLon = null;
+    println();
+    println("Now navigating to latitude " + gotoLatLon[0] + ", longitude " + gotoLatLon[1] + "...");
+    __SETLATLON__(new String[] { "SETLATLON", "" + gotoLatLon[0], "" + gotoLatLon[1] });
+  }
+
   WIN3D.processHeldKey();
   UI_menuBar.processHeldKey();
   UI_consoleBar.processHeldKey();

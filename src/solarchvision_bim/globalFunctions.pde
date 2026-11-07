@@ -85,24 +85,62 @@ volatile boolean should_rebuildFaceGrid = true;
 // bake that spawns its own worker threads over shared state should add
 // its own flag here too, rather than inventing a new guard pattern.
 //
-// isImportingInProgress (importLas.pde) belongs here for the exact same
-// reason, even though an import isn't a "bake" in the usual sense of
-// this function's own name: selectInput()'s own callback (so
-// import_objects_LAS(), which that callback calls) runs on its own
-// thread, separate from the main Processing animation thread that
-// draw()/mouseClicked()/mouseDragged()/mouseMoved()/keyPressed()/
-// UI_menuBar.runSelectedItem() all run on - so a LAS import actively
-// writing into allPoints/allFaces/allGroups is exactly the same "shared
-// state a worker thread is touching right now" hazard this function
-// already exists to guard against, just from a file-import thread
-// instead of a bake's own worker pool. Only LAS import sets this flag
-// so far (importLas.pde's own import_objects_LAS()) - every other
-// importer (OBJ, PLY, STL, DXF, IFC, gbXML, GLB, DAE) goes through the
-// exact same selectInput()-callback-on-its-own-thread shape and has the
-// same real risk, just not yet wired up to this flag.
+// isImportingInProgress (below) belongs here for the exact same reason,
+// even though an import isn't a "bake" in the usual sense of this
+// function's own name: selectInput()'s own callback (so whichever
+// import_objects_X() that callback calls) runs on its own thread,
+// separate from the main Processing animation thread that draw()/
+// mouseClicked()/mouseDragged()/mouseMoved()/keyPressed()/UI_menuBar.
+// runSelectedItem() all run on - so any importer actively writing into
+// allPoints/allFaces/allGroups is exactly the same "shared state a
+// worker thread is touching right now" hazard this function already
+// exists to guard against, just from a file-import thread instead of a
+// bake's own worker pool.
 boolean isBakingInProgress () {
   return isShadingViewport || allSolarImpacts.isCalculatingImpact || isImportingInProgress;
 }
+
+// True for as long as ANY importer (import_objects_OBJ()/_PLY()/_STL()/
+// _DXF()/_IFC()/_GBXML()/_GLB()/_DAE()/_LAS(), one at a time - imports
+// aren't reentrant, nothing starts a second one while the first is
+// still running) is actively running, on its own selectInput()-callback
+// thread - see isBakingInProgress()'s own comment, just above, for why
+// that matters. Set true right alongside each importer's own
+// showWaitCursor() call, and false alongside every one of its own
+// showArrowCursor() calls (an importer with more than one - an early
+// return on a bad/empty file, say - clears it at EACH of them, which is
+// safe: setting an already-false boolean false again is a harmless
+// no-op, the same reasoning a "fail loudly is fine, fail silently
+// isn't" guard would give for erring toward clearing it too often rather
+// than too rarely). volatile for the same reason isShadingViewport/
+// allSolarImpacts.isCalculatingImpact (shadeViewport3D.pde/
+// solarImpacts.pde) already are: written on one thread, read on
+// another, and a plain (non-volatile) boolean gives the reading thread
+// no guarantee of ever seeing that write promptly (or, under the Java
+// Memory Model, strictly speaking, at all).
+volatile boolean isImportingInProgress = false;
+
+// A lat/lon an importer has computed but not yet ACTED on - set at the
+// very end of whichever import_objects_X() actually found one (so far:
+// import_objects_IFC()/_GBXML()/_LAS() - the 3 formats with their own
+// "navigate to the file's own location" option) and consumed
+// (__SETLATLON__() actually called, and this cleared back to null) by
+// draw() itself (solarchvision_bim.pde), on the main thread, the next
+// time it runs. Deliberately NOT called directly from an importer the
+// way it naively could be (and, before this, briefly was, for IFC/
+// GBXML/LAS alike): __SETLATLON__() calls update_station(), which calls
+// WORLD.FindGoodViewport() (updateStation.pde) - very likely real
+// network I/O (fetching imagery for the new location) - and running
+// that synchronously, on an importer's OWN thread, meant a slow or hung
+// network call left that import's own try/finally (which clears
+// isImportingInProgress and restores the cursor) unable to run until
+// the call finally returned, if it ever did - the whole UI stuck, not
+// just the station. Queuing the request here instead, and letting
+// draw() perform it once the import that queued it has already fully
+// finished and returned control, means a slow/stuck network fetch only
+// ever delays the STATION's own move, never the import itself or the
+// rest of the UI.
+volatile float[] pendingGotoLatLon = null;
 
 // Any structural/material edit invalidates the WIN3D retained-mode
 // caches (see faces.pde's / model1Ds.pde's / land3D.pde's "WIN3D

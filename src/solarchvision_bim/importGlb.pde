@@ -84,6 +84,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing GLB. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 8 exit points below
 
   glb_cycleMaterial = (m == -1);
   if (m == -1) current_Material = 0;
@@ -103,6 +104,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   byte[] raw = loadBytes(FileName);
   if ((raw == null) || (raw.length < 12)) {
     println("\nGLB import: could not read '" + FileName + "' (file missing, unreadable, or too short to be a .glb)");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -112,6 +114,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   // minor revision wrote the file), total length (uint32 LE).
   if (!((raw[0] == 'g') && (raw[1] == 'l') && (raw[2] == 'T') && (raw[3] == 'F'))) {
     println("\nGLB import: '" + FileName + "' is not a .glb file (missing the 'glTF' magic bytes)");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -148,6 +151,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   if (jsonText == null) {
     println("\nGLB import: no JSON chunk found in '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -159,6 +163,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
     println("\nGLB import: could not parse the JSON chunk (" + e.getMessage() + ")");
   }
   if (json == null) {
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -173,6 +178,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
     for (int i = 0; i < required.size(); i++) {
       if (required.getString(i).equals("KHR_draco_mesh_compression")) {
         println("\nGLB import: '" + FileName + "' requires Draco mesh compression (KHR_draco_mesh_compression), which this importer does not support yet - import cancelled.");
+        isImportingInProgress = false;
         showArrowCursor();
         return;
       }
@@ -181,6 +187,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   if (!json.hasKey("nodes") || !json.hasKey("scenes")) {
     println("\nGLB import: no scene/node data found in '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -189,6 +196,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   int sceneIndex = json.hasKey("scene") ? json.getInt("scene") : 0;
   if ((sceneIndex < 0) || (sceneIndex >= scenes.size())) {
     println("\nGLB import: no valid default scene found in '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -223,6 +231,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   print(barBuffer.toString());
   println();
 
+  isImportingInProgress = false;
   showArrowCursor();
 }
 
@@ -534,8 +543,8 @@ int[] glbReadIndexAccessor (JSONObject json, byte[] bin, int accessorIndex) {
 // (just byte-offset math, nothing GLB-specific) that importStl.
 // pde's own binary-STL path and importLas.pde's own LAS header/point-
 // record reading reuse these directly rather than duplicating the same
-// bit-twiddling - binary STL's own triangle count and per-vertex floats,
-// and LAS's own header/point fields, are little-endian too.
+// bit-twiddling - binary STL's own triangle count and per-vertex
+// floats, and LAS's own header/point fields, are little-endian too.
 int binReadU32LE (byte[] b, int off) {
   return (b[off] & 0xFF) | ((b[off + 1] & 0xFF) << 8) | ((b[off + 2] & 0xFF) << 16) | ((b[off + 3] & 0xFF) << 24);
 }

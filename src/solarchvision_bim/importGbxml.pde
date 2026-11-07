@@ -511,6 +511,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
 
   println("Importing gbXML. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, not wrapped in try/finally (this function's own single internal try/catch is just for loadXML()'s own parse errors, not a reason to restructure the rest); cleared at each of this function's own 2 exit points below
 
   progressBarHeader();
 
@@ -541,6 +542,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   }
   if (root == null) {
     println("\ngbXML import: could not read '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -696,10 +698,16 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   // file gives no usable Latitude/Longitude.
   gbxmlImportGotoLatLon = gbxmlImportRelocate ? gbxmlSiteLatLonDecimalDegrees(location) : null;
   if (gbxmlImportGotoLatLon != null) {
-    println();
-    println("Now navigating to latitude " + gbxmlImportGotoLatLon[0] + ", longitude " + gbxmlImportGotoLatLon[1] + "...");
-    __SETLATLON__(new String[] { "SETLATLON", "" + gbxmlImportGotoLatLon[0], "" + gbxmlImportGotoLatLon[1] });
+    // Queued, not called directly - see pendingGotoLatLon's own comment
+    // (globalFunctions.pde) for why: update_station() (what
+    // __SETLATLON__() actually calls) isn't safe to run synchronously
+    // on this thread. draw() (solarchvision_bim.pde) picks this up and
+    // prints its own "Now navigating to..." message once it actually
+    // performs the move.
+    pendingGotoLatLon = gbxmlImportGotoLatLon;
+    redraw(); // make sure draw() actually runs again soon to pick this up, in case the app isn't already looping every frame on its own
   }
 
+  isImportingInProgress = false;
   showArrowCursor();
 }

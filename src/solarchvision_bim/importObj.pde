@@ -24,6 +24,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing OBJ. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement (this function has only the one exit point below, so nothing further to guard); cleared alongside showArrowCursor() at this function's own end
 
   if (m == -1) current_Material = 0;
   else current_Material = m;
@@ -126,5 +127,6 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   print(barBuffer.toString());
   println();
 
+  isImportingInProgress = false;
   showArrowCursor();
 }

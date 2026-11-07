@@ -2728,6 +2728,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing IFC. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, not wrapped in try/finally, matching this function's own existing convention (see importProgressWindow's own comment, below, for why); cleared alongside showArrowCursor() at this function's own end
 
   progressBarHeader();
 
@@ -3127,11 +3128,17 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // IFC_IMPORT_NORTH's own rotation a no-op.
   ifcImportGotoLatLon = ifcImportRelocate ? ifcSiteLatLonDecimalDegrees(ents) : null;
   if (ifcImportGotoLatLon != null) {
-    println();
-    println("Now navigating to latitude " + ifcImportGotoLatLon[0] + ", longitude " + ifcImportGotoLatLon[1] + "...");
-    __SETLATLON__(new String[] { "SETLATLON", "" + ifcImportGotoLatLon[0], "" + ifcImportGotoLatLon[1] });
+    // Queued, not called directly - see pendingGotoLatLon's own comment
+    // (globalFunctions.pde) for why: update_station() (what
+    // __SETLATLON__() actually calls) isn't safe to run synchronously
+    // on this thread. draw() (solarchvision_bim.pde) picks this up and
+    // prints its own "Now navigating to..." message once it actually
+    // performs the move.
+    pendingGotoLatLon = ifcImportGotoLatLon;
+    redraw(); // make sure draw() actually runs again soon to pick this up, in case the app isn't already looping every frame on its own
   }
 
   if (importProgressWindow != null) importProgressWindow.dispose();
+  isImportingInProgress = false;
   showArrowCursor();
 }

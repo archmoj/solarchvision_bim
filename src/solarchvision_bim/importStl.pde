@@ -55,6 +55,7 @@ void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing STL. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 2 exit points below
 
   stlCycleMaterial = (m == -1);
   if (m == -1) current_Material = 0;
@@ -74,6 +75,7 @@ void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int 
   byte[] raw = loadBytes(FileName);
   if ((raw == null) || (raw.length == 0)) {
     println("\nSTL import: could not read '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -93,6 +95,7 @@ void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int 
     stlImportAscii(FileName);
   }
 
+  isImportingInProgress = false;
   showArrowCursor();
 }
 

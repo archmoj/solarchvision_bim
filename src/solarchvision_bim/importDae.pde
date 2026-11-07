@@ -81,6 +81,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing DAE. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 4 exit points below
 
   daeCycleMaterial = (m == -1);
   if (m == -1) current_Material = 0;
@@ -105,6 +106,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   }
   if (collada == null) {
     println("\nDAE import: could not read '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -112,6 +114,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   XML libraryVisualScenes = collada.getChild("library_visual_scenes");
   if (libraryVisualScenes == null) {
     println("\nDAE import: no library_visual_scenes found in '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -136,6 +139,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   }
   if (visualScene == null) {
     println("\nDAE import: no visual scene found in '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -180,6 +184,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   print(barBuffer.toString());
   println();
 
+  isImportingInProgress = false;
   showArrowCursor();
 }
 

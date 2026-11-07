@@ -92,6 +92,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing PLY. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 3 exit points below
 
   if (m == -1) current_Material = 0;
   else current_Material = m;
@@ -112,6 +113,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   byte[] raw = loadBytes(FileName);
   if ((raw == null) || (raw.length == 0)) {
     println("\nPLY import: could not read '" + FileName + "'");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -119,6 +121,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   int dataStartByteOffset = plyParseHeader(raw);
   if (dataStartByteOffset < 0) {
     println("\nPLY import: '" + FileName + "' doesn't look like a valid PLY file (missing the 'ply' magic line or 'end_header')");
+    isImportingInProgress = false;
     showArrowCursor();
     return;
   }
@@ -159,6 +162,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   print(barBuffer.toString());
   println();
 
+  isImportingInProgress = false;
   showArrowCursor();
 }
 

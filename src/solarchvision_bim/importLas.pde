@@ -237,9 +237,14 @@ boolean lasImportRelocate = LAS_IMPORT_GOTO_LATLON;
 // longitude} in decimal degrees - or null, whenever lasImportRelocate
 // was off or the file gave no usable location at all. The same "last
 // result, not just a live toggle" shape importIfc.pde's own
-// ifcImportGotoLatLon already has, for the same reason: somewhere to
-// actually check what, if anything, the most recent import's own
-// navigation did.
+// ifcImportGotoLatLon/importGbxml.pde's own gbxmlImportGotoLatLon
+// already have, for the same reason: somewhere to actually check what,
+// if anything, the most recent import's own navigation did. Set
+// synchronously, on import_objects_LAS()'s own thread, right alongside
+// queuing pendingGotoLatLon (globalFunctions.pde) - computing this is
+// cheap, pure header math, nothing worth deferring; only the real
+// navigation itself (__SETLATLON__(), by way of pendingGotoLatLon) is -
+// see that variable's own comment for the full reasoning.
 float[] lasImportGotoLatLon = null;
 
 // Transform parameters for the CURRENT import_objects_LAS() call - same
@@ -249,29 +254,6 @@ float las_cx, las_cy, las_cz, las_sx, las_sy, las_sz;
 
 int lasPointsImported = 0;
 int lasFacesImported = 0;
-
-// True for the whole time import_objects_LAS() is actively writing into
-// allPoints/allFaces/allGroups - see isBakingInProgress()'s own comment
-// (globalFunctions.pde) for why this matters: selectInput()'s own
-// callback (which calls import_objects_LAS()) runs on its own thread,
-// separate from the main Processing thread draw()/mouseClicked()/
-// mouseDragged()/mouseMoved()/keyPressed()/UI_menuBar.runSelectedItem()
-// all run on - so without this, a person could add/edit geometry (or
-// trigger a menu action that does) via the main thread WHILE this
-// thread is concurrently mutating those exact same shared arrays, a
-// genuine data race (lost updates, a corrupted array, or worse), not
-// just a cosmetic "the UI looks interactive while busy" issue. volatile
-// for the same reason isShadingViewport/allSolarImpacts.
-// isCalculatingImpact (shadeViewport3D.pde/solarImpacts.pde) already
-// are: written on one thread, read on another, and a plain (non-
-// volatile) boolean gives the reading thread no guarantee of ever
-// seeing that write promptly (or, under the Java Memory Model, strictly
-// speaking, at all). Set true/cleared false around import_objects_LAS()'s
-// own try/finally (never just before/after it), so it's reliably
-// cleared again even if something inside throws - the exact same
-// reasoning that try/finally already exists for showWaitCursor()/
-// showArrowCursor() (see that block's own comment).
-volatile boolean isImportingInProgress = false;
 
 // One LAS Public Header Block's worth of fields this importer actually
 // uses - see this file's own header comment for why only these.
@@ -367,7 +349,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing LAS. Please wait...");
   showWaitCursor();
-  isImportingInProgress = true; // see this flag's own comment, above, for why - set only here, AFTER the options dialog (above) has already resolved, never before it: that dialog never touches allPoints/allFaces/allGroups itself, so there's nothing yet worth guarding against while it's open; cleared in the same finally as showArrowCursor() below
+  isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - set only here, AFTER the options dialog (above) has already resolved, never before it: that dialog never touches allPoints/allFaces/allGroups itself, so there's nothing yet worth guarding against while it's open; cleared in the same finally as showArrowCursor() below
 
   // Everything below runs inside this one try/finally so showArrowCursor()
   // (in the finally, right at the bottom of this function) ALWAYS runs
@@ -672,9 +654,14 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     // keep.
     lasImportGotoLatLon = lasImportRelocate ? lasHeaderLatLonDecimalDegrees(header) : null;
     if (lasImportGotoLatLon != null) {
-      println();
-      println("Now navigating to latitude " + lasImportGotoLatLon[0] + ", longitude " + lasImportGotoLatLon[1] + "...");
-      __SETLATLON__(new String[] { "SETLATLON", "" + lasImportGotoLatLon[0], "" + lasImportGotoLatLon[1] });
+      // Queued, not called directly - see pendingGotoLatLon's own
+      // comment (globalFunctions.pde) for why: update_station() (what
+      // __SETLATLON__() actually calls) isn't safe to run
+      // synchronously on this thread. draw() (solarchvision_bim.pde)
+      // picks this up and prints its own "Now navigating to..."
+      // message once it actually performs the move.
+      pendingGotoLatLon = lasImportGotoLatLon;
+      redraw(); // make sure draw() actually runs again soon to pick this up, in case the app isn't already looping every frame on its own
     }
 
   } finally {
