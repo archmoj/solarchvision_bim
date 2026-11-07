@@ -130,21 +130,7 @@ class UI_menuBar {
       "Add 1D-Trees on Land",
       ___divider___,
       "Clone Selection (Identical)",
-      "Clone Selection (Variation)",
-      ___divider___,
-      "Delete Selection",
-      "Delete Scene Empty Groups",
-      "Delete Scene Isolated Vertices",
-      "Delete Selection Isolated Vertices",
-      "Delete All Model1Ds",
-      "Delete All Model2Ds",
-      "Delete All Groups",
-      "Delete All Solids",
-      "Delete All Sections",
-      "Delete All Cameras",
-      "Delete All Faces",
-      "Delete All Polylines",
-      "Delete All"
+      "Clone Selection (Variation)"
     }
     ,
     {
@@ -603,6 +589,23 @@ class UI_menuBar {
       "Change TreeBase",
       "Change TrunkSize",
       "Change LeafSize"
+    }
+    ,
+    {
+      "3D-delete",
+      "Delete Selection",
+      "Delete Scene Empty Groups",
+      "Delete Scene Isolated Vertices",
+      "Delete Selection Isolated Vertices",
+      "Delete All Model1Ds",
+      "Delete All Model2Ds",
+      "Delete All Groups",
+      "Delete All Solids",
+      "Delete All Sections",
+      "Delete All Cameras",
+      "Delete All Faces",
+      "Delete All Polylines",
+      "Delete All"
     }
   };
   }
