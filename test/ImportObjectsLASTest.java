@@ -239,6 +239,149 @@ class ImportObjectsLASTest {
     assertEquals(0, app.allFaces.nodes.length);
   }
 
+  // ================= meshing algorithm selection (lasImportMeshAlgorithm) ===========================
+
+  @Test
+  void importObjectsLAS_delaunayAlgorithm_producesTrianglesNotQuads () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0} });
+    Path f = lasBinaryFile("las-algorithm-delaunay-test", data);
+
+    app.lasImportMeshAlgorithm = app.LAS_MESH_ALGORITHM_DELAUNAY;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(4, app.allPoints.getLength());
+    assertTrue(app.allFaces.nodes.length >= 2, "a unit square should triangulate into at least 2 triangles under Delaunay");
+    for (int[] face : app.allFaces.nodes) {
+      assertEquals(3, face.length, "every Delaunay face should be a triangle, never a quad");
+    }
+  }
+
+  @Test
+  void importObjectsLAS_boxGridAlgorithm_producesOneQuadFacePerCell_fiveFacesForASingleCell () throws IOException {
+    // 4 points, each landing in its own distinct cell of the minimum 2x2
+    // grid (same reasoning as importObjectsLAS_meshesThePointCloudByDefault's
+    // own identical setup) - the box-grid algorithm gives each of those
+    // 4 cells its own independent box: 1 flat top + 4 vertical sides
+    // (lasCreateBoxGridFaces(), importLas.pde), so 4 cells x 5 faces = 20
+    // faces total, every single one a quad (4 vertices) - never a
+    // triangle, and never one shared face spanning more than 1 cell the
+    // way the default grid algorithm's own quad does. All 4 points share
+    // z = 0 here, so every "side wall" is geometrically flat (topZ ==
+    // baseZ) rather than a real vertical wall - lasCreateMesh2Face()
+    // still creates one anyway (its own degenerate guard only catches 2
+    // corners that are the exact same point, not merely coplanar), so
+    // the face COUNT this test actually checks is unaffected either way.
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0} });
+    Path f = lasBinaryFile("las-algorithm-boxgrid-test", data);
+
+    app.lasImportMeshAlgorithm = app.LAS_MESH_ALGORITHM_BOX_GRID;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(4, app.allPoints.getLength());
+    assertEquals(20, app.allFaces.nodes.length, "4 cells x (1 top + 4 sides) = 20 faces");
+    for (int[] face : app.allFaces.nodes) {
+      assertEquals(4, face.length, "every box-grid face (top or side) should be a quad");
+    }
+  }
+
+  // ================= region of interest (X/Y/Z bounds) ===========================
+
+  @Test
+  void importObjectsLAS_minX_excludesPointsBelowIt () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0} });
+    Path f = lasBinaryFile("las-roi-minx-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinX = 1.5f;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength(), "only x=2 and x=3 should pass");
+    assertEquals(2f, app.allPoints.getX(0), 0.001f);
+    assertEquals(3f, app.allPoints.getX(1), 0.001f);
+  }
+
+  @Test
+  void importObjectsLAS_maxX_excludesPointsAboveIt () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0} });
+    Path f = lasBinaryFile("las-roi-maxx-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMaxX = 1.5f;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength(), "only x=0 and x=1 should pass");
+    assertEquals(0f, app.allPoints.getX(0), 0.001f);
+    assertEquals(1f, app.allPoints.getX(1), 0.001f);
+  }
+
+  @Test
+  void importObjectsLAS_minYAndMaxY_keepOnlyThatBand () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {0, 1, 0}, {0, 2, 0}, {0, 3, 0}, {0, 4, 0} });
+    Path f = lasBinaryFile("las-roi-y-band-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinY = 1.5f;
+    app.lasImportMaxY = 3.5f;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength(), "only y=2 and y=3 should fall in [1.5, 3.5]");
+    assertEquals(2f, app.allPoints.getY(0), 0.001f);
+    assertEquals(3f, app.allPoints.getY(1), 0.001f);
+  }
+
+  @Test
+  void importObjectsLAS_minZAndMaxZ_keepOnlyThatBand () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {0, 0, 10}, {0, 0, 20}, {0, 0, 30} });
+    Path f = lasBinaryFile("las-roi-z-band-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinZ = 5f;
+    app.lasImportMaxZ = 25f;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength());
+    assertEquals(10f, app.allPoints.getZ(0), 0.001f);
+    assertEquals(20f, app.allPoints.getZ(1), 0.001f);
+  }
+
+  @Test
+  void importObjectsLAS_allSixBoundsTogether_onlyPointsInsideTheWholeBox () throws IOException {
+    byte[] data = lasFile(new double[][]{
+      {5, 5, 5},   // inside every bound - should survive
+      {0, 5, 5},   // x too low
+      {5, 0, 5},   // y too low
+      {5, 5, 0},   // z too low
+      {5, 5, 5}    // a second point inside every bound - should also survive
+    });
+    Path f = lasBinaryFile("las-roi-all-six-test", data);
+
+    app.lasImportMeshPointCloud = false;
+    app.lasImportMinX = 1f; app.lasImportMaxX = 9f;
+    app.lasImportMinY = 1f; app.lasImportMaxY = 9f;
+    app.lasImportMinZ = 1f; app.lasImportMaxZ = 9f;
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPoints.getLength(), "only the 2 points with every one of x/y/z inside [1, 9] should survive");
+    for (int i = 0; i < app.allPoints.getLength(); i++) {
+      assertEquals(5f, app.allPoints.getX(i), 0.001f);
+      assertEquals(5f, app.allPoints.getY(i), 0.001f);
+      assertEquals(5f, app.allPoints.getZ(i), 0.001f);
+    }
+  }
+
+  @Test
+  void importObjectsLAS_regionOfInterestExcludesEveryPoint_doesNotThrow () throws IOException {
+    byte[] data = lasFile(new double[][]{ {0, 0, 0}, {1, 1, 1} });
+    Path f = lasBinaryFile("las-roi-excludes-all-test", data);
+
+    app.lasImportMinX = 1000f; // nothing in this file is anywhere close
+    assertDoesNotThrow(() -> {
+      app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+    });
+
+    assertEquals(0, app.allPoints.getLength());
+  }
+
   // ================= testing option: point-index range ===========================
 
   @Test
