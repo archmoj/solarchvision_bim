@@ -1,12 +1,22 @@
 void selectFile_New () {
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - set here too, not just inside _fileSelected_New() itself,
+  // so the UI is disabled for the native dialog's own open/pick/cancel
+  // window as well, not only once it has already resolved; whichever
+  // branch _fileSelected_New() takes clears it again.
+  isFileOperationInProgress = true;
   selectInput("Specify project name:", "_fileSelected_New", new File(Folder_Project + "/_.xml"));
 }
 
 void selectFile_Open () {
+  // Same reasoning as selectFile_New()'s own identical line above.
+  isFileOperationInProgress = true;
   selectInput("Select a file to open:", "_fileSelected_Open", new File(Folder_Project + "/_.xml"));
 }
 
 void selectFile_SaveAs () {
+  // Same reasoning as selectFile_New()'s own identical line above.
+  isFileOperationInProgress = true;
   selectOutput("Select a file to write to:", "_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
 }
 
@@ -15,36 +25,54 @@ void selectFile_ImportObj () {
   // way selectFile_ImportIfc() below arms ifcImportShowOptionsDialog for
   // its own five options.
   objImportShowOptionsDialog = true;
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too, not just inside import_objects_OBJ() itself, so
+  // the UI is disabled for the native dialog's own open/pick/cancel
+  // window as well, not only once a file has already been picked and
+  // import_objects_OBJ() has actually started; _fileSelected_ImportObj()
+  // clears it again on every outcome (a file picked or the dialog
+  // cancelled).
+  isImportingInProgress = true;
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
 void selectFile_ImportGlb () {
   // Arms glbImportShowOptionsDialog (importGlb.pde) the same way.
   glbImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
   selectInput("Select GLB file to import:", "_fileSelected_ImportGlb", new File(Folder_Import + "/_.glb"));
 }
 
 void selectFile_ImportStl () {
   // Arms stlImportShowOptionsDialog (importStl.pde) the same way.
   stlImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
   selectInput("Select STL file to import:", "_fileSelected_ImportStl", new File(Folder_Import + "/_.stl"));
 }
 
 void selectFile_ImportDxf () {
   // Arms dxfImportShowOptionsDialog (importDxf.pde) the same way.
   dxfImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
   selectInput("Select DXF file to import:", "_fileSelected_ImportDxf", new File(Folder_Import + "/_.dxf"));
 }
 
 void selectFile_ImportPly () {
   // Arms plyImportShowOptionsDialog (importPly.pde) the same way.
   plyImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
   selectInput("Select PLY file to import:", "_fileSelected_ImportPly", new File(Folder_Import + "/_.ply"));
 }
 
 void selectFile_ImportDae () {
   // Arms daeImportShowOptionsDialog (importDae.pde) the same way.
   daeImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
   selectInput("Select DAE file to import:", "_fileSelected_ImportDae", new File(Folder_Import + "/_.dae"));
 }
 
@@ -148,6 +176,9 @@ void selectFile_ImportIfc () {
   // options dialog shows once the file this picks is actually about to
   // be imported, not here - see that variable's own comment for why.
   ifcImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line
+  // (fileSelected.pde, above selectFile_ImportGlb()).
+  isImportingInProgress = true;
   selectInput("Select IFC file to import:", "_fileSelected_ImportIfc", new File(Folder_Import + "/_.ifc"));
 }
 
@@ -184,6 +215,9 @@ void selectFile_ImportGbxml () {
   // same way selectFile_ImportIfc() above arms ifcImportShowOptionsDialog
   // for its own options.
   gbxmlImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line
+  // (fileSelected.pde, above selectFile_ImportGlb()).
+  isImportingInProgress = true;
   selectInput("Select gbXML file to import:", "_fileSelected_ImportGbxml", new File(Folder_Import + "/_.xml"));
 }
 
@@ -422,10 +456,19 @@ void selectFile_ImportLas () {
   // way selectFile_ImportIfc() above arms ifcImportShowOptionsDialog for
   // its own options.
   lasImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line
+  // (fileSelected.pde, above selectFile_ImportGlb()).
+  isImportingInProgress = true;
   selectInput("Select LAS file to import:", "_fileSelected_ImportLas", new File(Folder_Import + "/_.las"));
 }
 
 void selectFile_RunScript () {
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - set here too, not just inside _fileSelected_RunScript()
+  // itself, so the UI is disabled for the native dialog's own open/
+  // pick/cancel window as well; _fileSelected_RunScript() clears it
+  // again on every outcome.
+  isFileOperationInProgress = true;
   selectInput("Select SVS file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.svs"));
 }
 
@@ -522,6 +565,14 @@ void _fileSelected_SaveAs (File selectedFile) {
 
 void _fileSelected_ImportObj (File selectedFile) {
 
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportObj(), above),
+  // since extraCommands.pde's own console IMPORT_OBJ command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportObj() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
+
   String Filename = "";
 
   if (selectedFile == null) {
@@ -532,6 +583,7 @@ void _fileSelected_ImportObj (File selectedFile) {
     // pop the options dialog up on the next import_objects_OBJ() call
     // regardless of how that one was started.
     objImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -564,10 +616,20 @@ void _fileSelected_ImportObj (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportGlb (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportGlb(), above),
+  // since extraCommands.pde's own console IMPORT_GLB command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportGlb() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -580,6 +642,7 @@ void _fileSelected_ImportGlb (File selectedFile) {
     // on the next import_objects_GLB() call regardless of how that one
     // was started.
     glbImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -607,10 +670,20 @@ void _fileSelected_ImportGlb (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportStl (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportStl(), above),
+  // since extraCommands.pde's own console IMPORT_STL command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportStl() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -623,6 +696,7 @@ void _fileSelected_ImportStl (File selectedFile) {
     // armed and pop the options dialog up on the next
     // import_objects_STL() call regardless of how that one was started.
     stlImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -651,10 +725,20 @@ void _fileSelected_ImportStl (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportDxf (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportDxf(), above),
+  // since extraCommands.pde's own console IMPORT_DXF command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportDxf() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -668,6 +752,7 @@ void _fileSelected_ImportDxf (File selectedFile) {
     // on the next import_objects_DXF() call regardless of how that one
     // was started.
     dxfImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -696,10 +781,20 @@ void _fileSelected_ImportDxf (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportPly (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportPly(), above),
+  // since extraCommands.pde's own console IMPORT_PLY command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportPly() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -713,6 +808,7 @@ void _fileSelected_ImportPly (File selectedFile) {
     // armed and pop the options dialog up on the next
     // import_objects_PLY() call regardless of how that one was started.
     plyImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -741,10 +837,20 @@ void _fileSelected_ImportPly (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportDae (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportDae(), above),
+  // since extraCommands.pde's own console IMPORT_DAE command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportDae() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -759,6 +865,7 @@ void _fileSelected_ImportDae (File selectedFile) {
     // on the next import_objects_DAE() call regardless of how that one
     // was started.
     daeImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -788,10 +895,20 @@ void _fileSelected_ImportDae (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportIfc (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportIfc(), above),
+  // since extraCommands.pde's own console IMPORT_IFC command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportIfc() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -804,6 +921,7 @@ void _fileSelected_ImportIfc (File selectedFile) {
     // was started, including a later non-interactive one (a script's
     // own IMPORT_IFC command with a path already given).
     ifcImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -837,10 +955,20 @@ void _fileSelected_ImportIfc (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportGbxml (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportGbxml(), above),
+  // since extraCommands.pde's own console IMPORT_GBXML command can
+  // reach this function directly, with a path already given, bypassing
+  // selectFile_ImportGbxml() and its own dialog entirely. Cleared at
+  // each of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -855,6 +983,7 @@ void _fileSelected_ImportGbxml (File selectedFile) {
     // next import_objects_GBXML() call regardless of how that one was
     // started.
     gbxmlImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -884,10 +1013,20 @@ void _fileSelected_ImportGbxml (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_ImportLas (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportLas(), above),
+  // since extraCommands.pde's own console IMPORT_LAS command can reach
+  // this function directly, with a path already given, bypassing
+  // selectFile_ImportLas() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
 
   String Filename = "";
 
@@ -902,6 +1041,7 @@ void _fileSelected_ImportLas (File selectedFile) {
     // and pop the options dialog up on the next import_objects_LAS()
     // call regardless of how that one was started.
     lasImportShowOptionsDialog = false;
+    isImportingInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
     beginScene3DChange();
@@ -932,20 +1072,33 @@ void _fileSelected_ImportLas (File selectedFile) {
     }
 
     switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
   }
 }
 
 void _fileSelected_RunScript (File selectedFile) {
 
+  // See isFileOperationInProgress's own comment (globalFunctions.pde)
+  // for why - set here too (not just in selectFile_RunScript(), above),
+  // since extraCommands.pde's own console RUN command can reach this
+  // function directly, with a path already given, bypassing
+  // selectFile_RunScript() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isFileOperationInProgress = true;
+
   String Filename = "";
 
   if (selectedFile == null) {
+    isFileOperationInProgress = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 
     println("\nExecuting:", Filename);
 
     runScriptFile(Filename);
+
+    isFileOperationInProgress = false;
   }
 }
 

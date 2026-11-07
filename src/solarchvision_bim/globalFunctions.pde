@@ -117,46 +117,72 @@ boolean isInProgress () {
 // aren't reentrant, nothing starts a second one while the first is
 // still running) is actively running, on its own selectInput()-callback
 // thread - see isInProgress()'s own comment, just above, for why
-// that matters. Set true right alongside each importer's own
-// showWaitCursor() call, and false alongside every one of its own
-// showArrowCursor() calls (an importer with more than one - an early
-// return on a bad/empty file, say - clears it at EACH of them, which is
-// safe: setting an already-false boolean false again is a harmless
-// no-op, the same reasoning a "fail loudly is fine, fail silently
-// isn't" guard would give for erring toward clearing it too often rather
-// than too rarely). volatile for the same reason isShadingViewport/
-// allSolarImpacts.isCalculatingImpact (shadeViewport3D.pde/
-// solarImpacts.pde) already are: written on one thread, read on
-// another, and a plain (non-volatile) boolean gives the reading thread
-// no guarantee of ever seeing that write promptly (or, under the Java
-// Memory Model, strictly speaking, at all).
+// that matters. Also set true for the native file chooser's own open/
+// pick/cancel window that comes BEFORE that - each selectFile_ImportX()
+// (fileSelected.pde) sets this right before its own selectInput() call,
+// not just the importer that only starts once a file has actually been
+// picked, so the UI stays disabled for the whole gesture, not just the
+// part of it that happens to touch allPoints/allFaces/allGroups. Set
+// true again, redundantly but harmlessly, at the top of each
+// _fileSelected_ImportX() callback itself too (fileSelected.pde) - that
+// covers a console/script command (extraCommands.pde) that calls one of
+// those directly, with a path already given, bypassing selectFile_
+// ImportX() and its own dialog entirely. Cleared on BOTH of a dialog's
+// own outcomes - a file picked or the dialog cancelled, each
+// _fileSelected_ImportX()'s own two branches - not just alongside each
+// importer's own showArrowCursor() calls the way it used to be before
+// the dialog's own window was covered too (an importer with more than
+// one of those - an early return on a bad/empty file, say - still
+// clears it at EACH of them, which is safe: setting an already-false
+// boolean false again is a harmless no-op, the same reasoning a "fail
+// loudly is fine, fail silently isn't" guard would give for erring
+// toward clearing it too often rather than too rarely). volatile for
+// the same reason isShadingViewport/allSolarImpacts.isCalculatingImpact
+// (shadeViewport3D.pde/solarImpacts.pde) already are: written on one
+// thread, read on another, and a plain (non-volatile) boolean gives the
+// reading thread no guarantee of ever seeing that write promptly (or,
+// under the Java Memory Model, strictly speaking, at all).
 volatile boolean isImportingInProgress = false;
 
-// True for as long as New/Open/Save/Save As/Hold/Fetch/any "Export"
-// action (actions.pde) is actively running - set and cleared entirely
-// inside whichever function actually does that one's real work
-// (load_project()/saveProject()/exportObj()/etc. - loadProject.pde/
-// saveProject.pde/exportObj.pde/exportLas.pde/exportHtml.pde/
-// exportRad.pde/exportScr.pde - and _fileSelected_New()/_fileSelected_
-// Open()/_fileSelected_SaveAs(), fileSelected.pde, for New/Open/Save
-// As specifically, since those three only actually touch anything once
-// selectInput()'s/selectOutput()'s own callback - on its own thread,
-// same as isImportingInProgress's own comment above - resolves, not
-// when the menu action that opened the dialog first runs), rather than
-// at each menu action's own call site in actions.pde: that keeps every
-// one of these working the same way regardless of how it's reached (a
-// menu click, the Enter key via UI_menuBar.runSelectedItem(), or a
-// console/script command - extraCommands.pde calls _fileSelected_New()/
-// _fileSelected_Open()/_fileSelected_SaveAs()/saveProject() directly,
-// bypassing actions.pde entirely), the same reasoning each importer's
-// own isImportingInProgress = true already follows. Saving and loading
-// nest harmlessly here (Save As's own _fileSelected_SaveAs() calls
-// saveProject(), which also sets/clears this; Open's own
-// _fileSelected_Open() likewise calls load_project()) - both still end
-// up false once the outer call returns, the same "setting an already-
-// false boolean false again is a harmless no-op" reasoning
-// isImportingInProgress's own comment above gives. volatile for the
-// exact same reason isImportingInProgress is.
+// True for as long as New/Open/Save/Save As/Hold/Fetch/Import Commands/
+// any "Export" action (actions.pde) is actively running - set and
+// cleared entirely inside whichever function actually does that one's
+// real work (load_project()/saveProject()/exportObj()/etc. -
+// loadProject.pde/saveProject.pde/exportObj.pde/exportLas.pde/
+// exportHtml.pde/exportRad.pde/exportScr.pde - and _fileSelected_New()/
+// _fileSelected_Open()/_fileSelected_SaveAs()/_fileSelected_RunScript(),
+// fileSelected.pde, for New/Open/Save As/Import Commands specifically),
+// rather than at each menu action's own call site in actions.pde: that
+// keeps every one of these working the same way regardless of how it's
+// reached (a menu click, the Enter key via UI_menuBar.runSelectedItem(),
+// or a console/script command - extraCommands.pde calls
+// _fileSelected_New()/_fileSelected_Open()/_fileSelected_SaveAs()/
+// saveProject() directly, bypassing actions.pde entirely), the same
+// reasoning each importer's own isImportingInProgress = true already
+// follows.
+//
+// New/Open/Save As/Import Commands specifically are also set true a
+// second, earlier time: selectFile_New()/selectFile_Open()/
+// selectFile_SaveAs()/selectFile_RunScript() (fileSelected.pde) each
+// set this right before their own selectInput()/selectOutput() call,
+// not just _fileSelected_New()/_fileSelected_Open()/_fileSelected_
+// SaveAs()/_fileSelected_RunScript() once that resolves - those four
+// only actually touch anything once selectInput()'s/selectOutput()'s
+// own callback (on its own thread, same as isImportingInProgress's own
+// comment above) resolves, so without this the UI would stay fully
+// interactive for the native file chooser's own open/pick/cancel
+// window, exactly the gap isImportingInProgress's own comment above
+// describes closing for imports. Cleared on BOTH of a dialog's own
+// outcomes (a file picked or the dialog cancelled) in each callback,
+// the same as isImportingInProgress's own two-branch clearing.
+//
+// Saving and loading nest harmlessly here (Save As's own
+// _fileSelected_SaveAs() calls saveProject(), which also sets/clears
+// this; Open's own _fileSelected_Open() likewise calls load_project()) -
+// both still end up false once the outer call returns, the same
+// "setting an already-false boolean false again is a harmless no-op"
+// reasoning isImportingInProgress's own comment above gives. volatile
+// for the exact same reason isImportingInProgress is.
 volatile boolean isFileOperationInProgress = false;
 
 // A lat/lon an importer has computed but not yet ACTED on - set at the
