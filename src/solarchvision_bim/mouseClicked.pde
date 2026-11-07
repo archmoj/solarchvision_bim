@@ -2124,6 +2124,15 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
 
 void mouseClicked () {
 
+  // See isBakingInProgress()'s own comment (globalFunctions.pde) for
+  // why this guards against more than just a "bake" now - a LAS import
+  // running on selectInput()'s own callback thread is actively writing
+  // into allPoints/allFaces/allGroups the whole time, and a click here
+  // (adding/editing geometry, among everything else this function can
+  // do) runs on the MAIN thread concurrently with that - a real data
+  // race, not just a UI nicety.
+  if (isBakingInProgress()) return;
+
   if (frameCount > Last_initializationStep) {
 
     if (control == USER_GUI) {

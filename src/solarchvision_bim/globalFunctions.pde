@@ -84,8 +84,24 @@ volatile boolean should_rebuildFaceGrid = true;
 // proactively alongside its own parallelization instead. Any future
 // bake that spawns its own worker threads over shared state should add
 // its own flag here too, rather than inventing a new guard pattern.
+//
+// isImportingInProgress (importLas.pde) belongs here for the exact same
+// reason, even though an import isn't a "bake" in the usual sense of
+// this function's own name: selectInput()'s own callback (so
+// import_objects_LAS(), which that callback calls) runs on its own
+// thread, separate from the main Processing animation thread that
+// draw()/mouseClicked()/mouseDragged()/mouseMoved()/keyPressed()/
+// UI_menuBar.runSelectedItem() all run on - so a LAS import actively
+// writing into allPoints/allFaces/allGroups is exactly the same "shared
+// state a worker thread is touching right now" hazard this function
+// already exists to guard against, just from a file-import thread
+// instead of a bake's own worker pool. Only LAS import sets this flag
+// so far (importLas.pde's own import_objects_LAS()) - every other
+// importer (OBJ, PLY, STL, DXF, IFC, gbXML, GLB, DAE) goes through the
+// exact same selectInput()-callback-on-its-own-thread shape and has the
+// same real risk, just not yet wired up to this flag.
 boolean isBakingInProgress () {
-  return isShadingViewport || allSolarImpacts.isCalculatingImpact;
+  return isShadingViewport || allSolarImpacts.isCalculatingImpact || isImportingInProgress;
 }
 
 // Any structural/material edit invalidates the WIN3D retained-mode

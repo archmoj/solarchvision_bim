@@ -250,6 +250,29 @@ float las_cx, las_cy, las_cz, las_sx, las_sy, las_sz;
 int lasPointsImported = 0;
 int lasFacesImported = 0;
 
+// True for the whole time import_objects_LAS() is actively writing into
+// allPoints/allFaces/allGroups - see isBakingInProgress()'s own comment
+// (globalFunctions.pde) for why this matters: selectInput()'s own
+// callback (which calls import_objects_LAS()) runs on its own thread,
+// separate from the main Processing thread draw()/mouseClicked()/
+// mouseDragged()/mouseMoved()/keyPressed()/UI_menuBar.runSelectedItem()
+// all run on - so without this, a person could add/edit geometry (or
+// trigger a menu action that does) via the main thread WHILE this
+// thread is concurrently mutating those exact same shared arrays, a
+// genuine data race (lost updates, a corrupted array, or worse), not
+// just a cosmetic "the UI looks interactive while busy" issue. volatile
+// for the same reason isShadingViewport/allSolarImpacts.
+// isCalculatingImpact (shadeViewport3D.pde/solarImpacts.pde) already
+// are: written on one thread, read on another, and a plain (non-
+// volatile) boolean gives the reading thread no guarantee of ever
+// seeing that write promptly (or, under the Java Memory Model, strictly
+// speaking, at all). Set true/cleared false around import_objects_LAS()'s
+// own try/finally (never just before/after it), so it's reliably
+// cleared again even if something inside throws - the exact same
+// reasoning that try/finally already exists for showWaitCursor()/
+// showArrowCursor() (see that block's own comment).
+volatile boolean isImportingInProgress = false;
+
 // One LAS Public Header Block's worth of fields this importer actually
 // uses - see this file's own header comment for why only these.
 class LasHeader {
@@ -344,6 +367,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing LAS. Please wait...");
   showWaitCursor();
+  isImportingInProgress = true; // see this flag's own comment, above, for why - set only here, AFTER the options dialog (above) has already resolved, never before it: that dialog never touches allPoints/allFaces/allGroups itself, so there's nothing yet worth guarding against while it's open; cleared in the same finally as showArrowCursor() below
 
   // Everything below runs inside this one try/finally so showArrowCursor()
   // (in the finally, right at the bottom of this function) ALWAYS runs
@@ -356,7 +380,12 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
   // (not just for however long the operation that threw actually took) -
   // a real bug this shape fixes, on top of just making a slow import
   // easier to tell apart from a genuinely stuck one (see lasMesh
-  // PointCloud()'s own progress reporting, below, for that part).
+  // PointCloud()'s own progress reporting, below, for that part). The
+  // exact same reasoning is why isImportingInProgress (above) is also
+  // only ever cleared in this same finally, below - never just "at the
+  // end," which an exception could skip past the same way it could
+  // skip past a plain showArrowCursor() call with nothing guaranteeing
+  // it still runs.
   try {
 
     if (m == -1) current_Material = 0;
@@ -649,6 +678,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     }
 
   } finally {
+    isImportingInProgress = false;
     showArrowCursor();
   }
 }
