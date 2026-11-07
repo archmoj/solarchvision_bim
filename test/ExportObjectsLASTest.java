@@ -115,6 +115,7 @@ class ExportObjectsLASTest {
     reader.BaseFolder = app.BaseFolder;
     reader.sketchPath();
     reader.lasImportMeshPointCloud = false; // isolate point-reading for this test
+    reader.lasImportRelocate = false; // same reasoning as app.lasImportRelocate in setUp() - avoid update_station() in a bare, never-setup()'d instance
 
     reader.import_objects_LAS(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
@@ -153,6 +154,7 @@ class ExportObjectsLASTest {
     reader.BaseFolder = app.BaseFolder;
     reader.sketchPath();
     reader.lasImportMeshPointCloud = false;
+    reader.lasImportRelocate = false; // same reasoning as app.lasImportRelocate in setUp() - avoid update_station() in a bare, never-setup()'d instance
 
     reader.import_objects_LAS(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
@@ -187,6 +189,7 @@ class ExportObjectsLASTest {
     reader.BaseFolder = app.BaseFolder;
     reader.sketchPath();
     reader.lasImportMeshPointCloud = false;
+    reader.lasImportRelocate = false; // same reasoning as app.lasImportRelocate in setUp() - avoid update_station() in a bare, never-setup()'d instance
 
     reader.import_objects_LAS(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 

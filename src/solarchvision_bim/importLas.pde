@@ -134,6 +134,20 @@
 // who actually wants to filter by real-world (UTM, say) coordinates
 // needing to account for the dropped offset themselves (see "Centered
 // by default," above, for where that offset is printed).
+//
+// Navigate to the file's own location: lasImportRelocate (below) lets
+// this import, once finished, move the app's own "station" (sun
+// position, solar yield, satellite/terrain imagery, ... - see that
+// toggle's own comment for the full reasoning) to wherever the file's
+// own header says it is - the same "Navigate to the file's own location
+// (latitude/longitude)" checkbox importIfc.pde already offers. Unlike
+// IFC, which has a real schema-defined RefLatitude/RefLongitude field
+// to read, LAS has no such field at all and this importer has no map-
+// projection engine to derive one from a true projected CRS either -
+// see lasHeaderLatLonDecimalDegrees()'s own comment, further down, for
+// exactly what this can (a file whose X/Y already happen to be plain
+// geographic degrees) and can't (the overwhelmingly common case of a
+// real, UTM-or-similar-projected LAS file) actually recognize.
 
 boolean lasImportShowOptionsDialog = false;
 
@@ -195,6 +209,38 @@ Float lasImportMinY = null;
 Float lasImportMaxY = null;
 Float lasImportMinZ = null;
 Float lasImportMaxZ = null;
+
+// Whether to navigate the app's own "station" (STATION.latitude/
+// longitude - see station.pde) to wherever the file's own bounding box
+// looks like it is, once loading finishes - on by default, the same
+// reasoning IFC's own IFC_IMPORT_GOTO_LATLON (importIfc.pde) already
+// gives for why this matters: most of what this app computes (sun
+// position, solar yield, the satellite/terrain imagery WORLD.
+// FindGoodViewport() picks, ...) depends on the station's own lat/lon,
+// so an import that leaves it wherever it happened to be before -
+// typically nowhere near the file's own location - silently makes all
+// of that wrong for the model that was just loaded. See lasHeaderLatLon
+// DecimalDegrees()'s own comment, below, for exactly where the lat/lon
+// comes from, and for why - unlike IFC - this only ever recognizes one
+// narrow case: most real LAS files simply have no usable location this
+// importer can determine at all, and are left with the station
+// untouched, same as IFC's own toggle already is for a file with no
+// usable IfcSite/IfcMapConversion.
+//
+// Just this toggle's own starting value - see lasImportMeshPointCloud's
+// own comment for why, and lasImportRelocate below for what's actually
+// checked at import time.
+final boolean LAS_IMPORT_GOTO_LATLON = true;
+boolean lasImportRelocate = LAS_IMPORT_GOTO_LATLON;
+
+// Where the most recent import navigated the station to, as {latitude,
+// longitude} in decimal degrees - or null, whenever lasImportRelocate
+// was off or the file gave no usable location at all. The same "last
+// result, not just a live toggle" shape importIfc.pde's own
+// ifcImportGotoLatLon already has, for the same reason: somewhere to
+// actually check what, if anything, the most recent import's own
+// navigation did.
+float[] lasImportGotoLatLon = null;
 
 // Transform parameters for the CURRENT import_objects_LAS() call - same
 // "a few fields shared across one whole import" shape ply_cx/...
@@ -582,6 +628,26 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
       println("\nLAS import: " + lasPointsImported + " point(s) were imported but not meshed into a surface - see " + meshingFunctionName + " for when it returns nothing (too few points, over its own point cap, or every cell/block ended up empty even after its own fill pass)");
     }
 
+    // Last step of a LAS import, after everything else above - the same
+    // relative position importIfc.pde's own identical step takes at the
+    // end of import_objects_IFC() - see LAS_IMPORT_GOTO_LATLON's own
+    // comment for why this runs at all, and lasHeaderLatLonDecimalDegrees()'s
+    // own comment for exactly where the lat/lon comes from (and the real
+    // limits on when it's available at all). Left alone - the station
+    // stays wherever it already was - whenever the file gives no usable
+    // location, same as IFC's own identical toggle already does for a
+    // file with no usable IfcSite/IfcMapConversion. Runs regardless of
+    // lasPointsImported/keptCount - this is about the FILE's own
+    // location (the header's own declared bounding box), not about
+    // which points a point-range/region-of-interest filter happened to
+    // keep.
+    lasImportGotoLatLon = lasImportRelocate ? lasHeaderLatLonDecimalDegrees(header) : null;
+    if (lasImportGotoLatLon != null) {
+      println();
+      println("Now navigating to latitude " + lasImportGotoLatLon[0] + ", longitude " + lasImportGotoLatLon[1] + "...");
+      __SETLATLON__(new String[] { "SETLATLON", "" + lasImportGotoLatLon[0], "" + lasImportGotoLatLon[1] });
+    }
+
   } finally {
     showArrowCursor();
   }
@@ -918,6 +984,56 @@ LasHeader lasParseHeader (byte[] raw) {
   h.minZ = binReadDoubleLE(raw, 219);
 
   return h;
+}
+
+// Where LAS_IMPORT_GOTO_LATLON (see its own comment) navigates the
+// station to, as {latitude, longitude} in decimal degrees - or null
+// when the file gives no usable location at all. Unlike importIfc.pde's
+// own ifcSiteLatLonDecimalDegrees() (which has IfcSite's own
+// RefLatitude/RefLongitude, a DIRECT geographic field defined right in
+// the IFC schema, to try first), LAS has no such field anywhere in its
+// own Public Header Block - the one place a real LAS file's own
+// coordinate reference system would actually be described is a
+// Variable Length Record (a GeoKeyDirectoryTag VLR with GeoTIFF-style
+// keys, or an OGC WKT VLR in newer files), and this importer never
+// reads a LAS file's own VLRs at all (see this file's own header
+// comment, "Point data," for why) - so there's no CRS information
+// available here, let alone a map-projection engine (this app has none
+// at all - see ifcSiteLatLonDecimalDegrees()'s own comment, importIfc.
+// pde) to turn a true projected easting/northing (a UTM coordinate,
+// say - the overwhelmingly common case for real-world surveyed/LiDAR
+// LAS data) into an actual latitude/longitude.
+//
+// So this only ever recognizes the one case a real file sometimes still
+// is: its own X/Y are ALREADY plain geographic degrees, stored as a LAS
+// file's usual X/Y the same way any other coordinate would be (rare
+// among genuinely surveyed data, but not unheard of for small synthetic/
+// test datasets or an already-reprojected export) - detected the same
+// way ifcSiteLatLonDecimalDegrees()'s own IfcMapConversion fallback
+// already is: only when the file's own bounding box CENTER looks like
+// real degrees (|X| <= 180, |Y| <= 90) rather than a projected CRS's
+// own metres (a UTM easting/northing is typically in the hundreds of
+// thousands). header.minX/maxX/minY/maxY are this header's own raw,
+// absolute values - NEVER the "centered"/local coordinates every actual
+// imported POINT gets (see this file's own "Centered by default"
+// comment) - centering would already have thrown this exact signal
+// away, by design, long before this function ever saw it. X maps to
+// longitude and Y to latitude, the same mapping ifcSiteLatLonDecimalDegrees()'s
+// own Eastings/Northings fallback already uses for the same reason (X/
+// Easting is the "horizontal" axis in both a geographic and a projected
+// CRS alike). Rounded to 4 decimal places (roughly 11m at the equator),
+// the same precision ifcSiteLatLonDecimalDegrees() already settles for -
+// this is only ever meant to get the station to the right part of the
+// world, not survey-grade accuracy.
+float[] lasHeaderLatLonDecimalDegrees (LasHeader header) {
+  float centerX = (float) ((header.minX + header.maxX) / 2);
+  float centerY = (float) ((header.minY + header.maxY) / 2);
+
+  if ((abs(centerX) <= 180) && (abs(centerY) <= 90)) {
+    return new float[] { round(centerY * 10000) / 10000.0f, round(centerX * 10000) / 10000.0f };
+  }
+
+  return null;
 }
 
 // lasShowImportOptionsDialog() itself - the dialog import_objects_LAS()

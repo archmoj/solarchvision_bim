@@ -299,6 +299,10 @@ boolean lasShowImportOptionsDialog (LasHeader header, int totalPoints) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox meshBox = new javax.swing.JCheckBox("Mesh the point cloud into a surface", lasImportMeshPointCloud);
+  // lasImportRelocate (importLas.pde) - see its own comment for what
+  // this does and its real limits. Same checkbox text importIfc.pde's
+  // own identical option already uses.
+  javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", lasImportRelocate);
 
   // lasImportMeshAlgorithm (importLas.pde) - see its own comment for
   // what this picks between. A mutually-exclusive group of radio
@@ -380,6 +384,7 @@ boolean lasShowImportOptionsDialog (LasHeader header, int totalPoints) {
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(meshBox);
+  panel.add(relocateBox);
   panel.add(algorithmPanel);
   panel.add(pointRangePanel);
   panel.add(regionPanel);
@@ -394,6 +399,7 @@ boolean lasShowImportOptionsDialog (LasHeader header, int totalPoints) {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   lasImportMeshPointCloud = meshBox.isSelected();
+  lasImportRelocate = relocateBox.isSelected();
   if (delaunayAlgorithmBox.isSelected()) lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_DELAUNAY;
   else if (boxGridAlgorithmBox.isSelected()) lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_BOX_GRID;
   else lasImportMeshAlgorithm = LAS_MESH_ALGORITHM_GRID;

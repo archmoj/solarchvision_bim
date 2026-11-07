@@ -39,6 +39,20 @@ class ImportObjectsLASTest {
     // app.locateBaseFolder().
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
+
+    // lasImportRelocate defaults ON, and every test file below's own
+    // header bounding box (never set by lasFile(), see that method's own
+    // comment) reads as (0, 0) - which passes lasHeaderLatLonDecimalDegrees()'s
+    // own "looks like real degrees" check - so without this, EVERY
+    // test below would call all the way through to update_station()
+    // (importLas.pde's own call site), a real scene/viewport/terrain
+    // update that depends on WORLD/STUDY/WIN3D/Terrain state a bare,
+    // never-setup()'d instance like app never initializes at all. Off
+    // here, for every test; see importObjectsLAS_lasHeaderLatLonDecimalDegrees_...
+    // (below) for direct, safe tests of the actual detection LOGIC,
+    // which call that one pure function straight, never through a real
+    // import at all, specifically to stay well clear of update_station().
+    app.lasImportRelocate = false;
   }
 
   private Path lasBinaryFile (String name, byte[] body) throws IOException {
@@ -363,5 +377,69 @@ class ImportObjectsLASTest {
     assertDoesNotThrow(() -> {
       app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
     });
+  }
+
+  // ================= lasHeaderLatLonDecimalDegrees() ===========================
+  // Tested directly, with a hand-built LasHeader, NEVER through a real
+  // import_objects_LAS() call - see setUp()'s own comment for why going
+  // through a full import (lasImportRelocate = true) would call all the
+  // way through to update_station(), which isn't safe to run against a
+  // bare, never-setup()'d instance like app at all. Calling the pure
+  // detection function directly sidesteps that entirely while still
+  // covering the actual logic these tests care about.
+
+  private LasHeader headerWithBounds (double minX, double maxX, double minY, double maxY) {
+    LasHeader h = app.new LasHeader();
+    h.minX = minX;
+    h.maxX = maxX;
+    h.minY = minY;
+    h.maxY = maxY;
+    return h;
+  }
+
+  @Test
+  void lasHeaderLatLonDecimalDegrees_plainGeographicDegrees_returnsTheBoundingBoxCenter () {
+    // A file whose own X/Y already happen to be plain longitude/latitude -
+    // center is (10, 20) longitude/(30, 40) latitude -> (15, 35).
+    LasHeader header = headerWithBounds(10, 20, 30, 40);
+
+    float[] latLon = app.lasHeaderLatLonDecimalDegrees(header);
+
+    assertNotNull(latLon);
+    assertEquals(35f, latLon[0], 0.001f, "latitude should be the Y center");
+    assertEquals(15f, latLon[1], 0.001f, "longitude should be the X center");
+  }
+
+  @Test
+  void lasHeaderLatLonDecimalDegrees_projectedUtmStyleCoordinates_returnsNull () {
+    // A realistic UTM easting/northing bounding box (meters, hundreds of
+    // thousands to millions) - this importer has no map-projection
+    // engine, so this must correctly report "no usable location" rather
+    // than misreading a projected coordinate as if it were degrees.
+    LasHeader header = headerWithBounds(500000, 500500, 4500000, 4500500);
+
+    assertNull(app.lasHeaderLatLonDecimalDegrees(header));
+  }
+
+  @Test
+  void lasHeaderLatLonDecimalDegrees_onlyLongitudeOutOfRange_returnsNull () {
+    LasHeader header = headerWithBounds(170, 200, 10, 20); // X center = 185, past the +-180 range; Y center = 15, well within +-90
+    assertNull(app.lasHeaderLatLonDecimalDegrees(header));
+  }
+
+  @Test
+  void importObjectsLAS_relocateOff_neverSetsGotoLatLon () throws IOException {
+    // The toggle itself, confirmed through a real import - safe here
+    // specifically because setUp() already leaves lasImportRelocate
+    // false, so this never reaches update_station() at all; it's
+    // checking that staying off is really a no-op, not that turning it
+    // on works (the 3 tests above already cover the real logic that
+    // would run if it were on).
+    byte[] data = lasFile(new double[][]{ {0, 0, 0} });
+    Path f = lasBinaryFile("las-relocate-off-test", data);
+
+    app.import_objects_LAS(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNull(app.lasImportGotoLatLon);
   }
 }
