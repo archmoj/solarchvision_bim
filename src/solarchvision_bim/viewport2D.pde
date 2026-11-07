@@ -2614,6 +2614,14 @@ class STUDY {
 
       allSolarImpacts.calculate_Impact_CurrentPreBaked();
 
+      // This call (unlike calculate_Impact_selectedSections()'s own call
+      // to the exact same function, below) just repainted this.Image[][]
+      // for the live camera/viewport, under the "Viewport_" SceneName set
+      // immediately above - see win3DOverlay_imageIsFromViewport's own
+      // comment (solarImpacts.pde) for what drawViewport3DLayers.pde does
+      // with this.
+      allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
+
       int RES1 = allSolarImpacts.RES1;
       int RES2 = allSolarImpacts.RES2;
 

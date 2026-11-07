@@ -64,6 +64,34 @@ class SolarImpacts {
 
   boolean record_IMG = false;
 
+  // Whether this.Image[][]'s current contents were last (re)painted for
+  // the live camera/viewport (viewport2D.pde's plotImpact_urban(), the
+  // only other caller of calculate_Impact_CurrentPreBaked() below)
+  // rather than for one of allSections' own cross-sections
+  // (calculate_Impact_selectedSections() further down, which calls that
+  // exact same shared function once per selected section - overwriting
+  // this.Image[][] with that section's own geometry each time, not the
+  // camera's - and leaves it holding whichever section it processed
+  // last). calculate_Impact_CurrentPreBaked() itself has no reason to
+  // know which of its two callers is driving it, so this is set true by
+  // plotImpact_urban() right after its own call, and forced back false
+  // by calculate_Impact_selectedSections() right before its loop starts
+  // overwriting this.Image[][] with section data instead.
+  //
+  // drawViewport3DLayers.pde reads this to decide whether
+  // cameraFaceEdgesTexture - a mask baked for, and only meaningful
+  // against, the live camera's own perspective (shadeViewport3D.pde's
+  // own comment on that field) - still makes sense to overlay on top of
+  // whatever this.Image[][] is currently showing: with the camera
+  // happening to still match its last recorded snapshot (win3DOverlay_
+  // cameraMatches() below) and the data otherwise "fresh" (win3DOverlay_
+  // dataFresh() below, which has no idea whether a section loop is what
+  // actually produced it), the overlay can still be shown from a stale
+  // leftover section image - this flag is what keeps the camera's own
+  // face-edges mask from being drawn on top of THAT, where it would
+  // describe a different geometry/perspective entirely.
+  boolean win3DOverlay_imageIsFromViewport = false;
+
   // --- WIN3D overlay freshness --------------------------------------------
   // this.Image[][] only ever gets repainted by calculate_Impact_CurrentPreBaked()
   // below, which reads the model's baked Direct/Diffuse PNGs (tied to
@@ -1153,6 +1181,14 @@ class SolarImpacts {
 
 
   void calculate_Impact_selectedSections () {
+
+    // About to overwrite this.Image[][] with each selected section's own
+    // geometry in turn (not the camera's) - see win3DOverlay_
+    // imageIsFromViewport's own comment just above for why this needs
+    // clearing here, before the loop below ever calls calculate_Impact_
+    // CurrentPreBaked() for the first section, rather than left for
+    // whatever it was already set to.
+    this.win3DOverlay_imageIsFromViewport = false;
 
     for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
 

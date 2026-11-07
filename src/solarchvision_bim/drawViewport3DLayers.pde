@@ -194,8 +194,15 @@ void draw_WIN3D_layers () {
     // topmost layer. Passive only - gated here rather than inside
     // faceEdgesOverlay_load() itself, so that function stays purely about
     // "what's on disk for this camera/location", not which impact type is
-    // currently selected.
-    if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
+    // currently selected. Also gated on win3DOverlay_imageIsFromViewport
+    // (solarImpacts.pde): img above can still be a stale leftover from
+    // allSolarImpacts.calculate_Impact_selectedSections() (one of
+    // allSections' own cross-sections, not the camera) if the live
+    // camera still happens to match its last recorded snapshot - the
+    // camera's own face-edges mask describes neither that section's
+    // geometry nor its perspective, so it has no business being drawn on
+    // top of it; it belongs only with the camera/viewport's own overlay.
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE && allSolarImpacts.win3DOverlay_imageIsFromViewport) {
       // Same SceneName prefix preBakeViewport3D.pde actually saved this
       // camera's FaceEdges PNG under - see viewport2D.pde's plotImpact_
       // urban() for the full explanation (same gap, same fix). Set here
