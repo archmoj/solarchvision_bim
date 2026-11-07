@@ -745,6 +745,33 @@ class SolarImpacts {
                       float EFF_VALUE = (RAD_TYPE == 0) ? values_E_dir : values_E_dif;
 
                       PImage[] Shadings;
+
+                      // castShadows_CurrentSection.pde's own per-SHD "_2D.jpg"
+                      // masks ("Prebake Selected Sections") - TREES_graphics's
+                      // own render of just the 2D tree/person billboards'
+                      // shadow silhouette, saved right alongside each Direct
+                      // frame (renderShadowFrame()'s own TREES_graphics.save()
+                      // call) but, until now, never loaded back by this
+                      // function: white (255) means no tree at this pixel for
+                      // this sun angle/SHD, anything darker is canopy cover
+                      // that should attenuate that pixel's own shading value
+                      // below, the same way it already attenuates
+                      // SHADOW_graphics's own in-memory composite at bake
+                      // time - this is a second, independent read of the
+                      // same signal, not a replacement for that one.
+                      // Loaded only for RAD_TYPE == 0 (Direct) here, at the
+                      // same per-DATE_ANGLE/HOUR/SHD cadence as Shadings
+                      // itself: Diffuse has no single per-pass file of its
+                      // own to match against (DiffuseVectors.length separate
+                      // "_2D.jpg" masks per SHD, one per sky patch, not one
+                      // per day/hour - its own trees contribution is already
+                      // folded into diffuseShadings itself, via
+                      // DIFFUSE_graphics's own composite at bake time), so
+                      // Trees2D is left null-filled for RAD_TYPE == 1 and
+                      // simply has no effect below, same as a missing/never-
+                      // baked file would.
+                      PImage[] Trees2D = new PImage[2];
+
                       if (RAD_TYPE == 1) {
                         Shadings = diffuseShadings;
                       } else {
@@ -753,10 +780,11 @@ class SolarImpacts {
 
                           String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
                           File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-                          File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
+                          File_Name += "_Camera" + nf(cameraIndex, 2);
 
                           long calcImpact_loadImageT0 = millis();
-                          Shadings[SHD] = new File(File_Name).exists() ? loadImage(File_Name) : null;
+                          Shadings[SHD] = new File(File_Name + ".png").exists() ? loadImage(File_Name + ".png") : null;
+                          Trees2D[SHD] = new File(File_Name + "_2D.jpg").exists() ? loadImage(File_Name + "_2D.jpg") : null;
                           calcImpact_loadImageMillis += millis() - calcImpact_loadImageT0;
                         }
                       }
@@ -817,6 +845,7 @@ class SolarImpacts {
                       final float calcImpact_RAD_VALUE = RAD_VALUE;
                       final float calcImpact_EFF_VALUE = EFF_VALUE;
                       final PImage[] calcImpact_Shadings = Shadings;
+                      final PImage[] calcImpact_Trees2D = Trees2D;
                       final float[][][][] calcImpact_Matrix_ARGB = Matrix_ARGB;
                       final int calcImpact_RES1 = RES1;
 
@@ -845,6 +874,25 @@ class SolarImpacts {
                             //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
                             float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;
                             float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
+
+                            // 2D trees (castShadows_CurrentSection.pde's own
+                            // "_2D.jpg" masks) - white (255, the untouched
+                            // background TREES_graphics.rect() fills every
+                            // frame with) means no canopy at this pixel for
+                            // this SHD, so the multiply below is a no-op;
+                            // anything darker is tree shadow, scaled the same
+                            // 0..1 fraction as COL_V0/COL_V1 themselves.
+                            // calcImpact_Trees2D[SHD] is null whenever there's
+                            // no matching bake for it (RAD_TYPE == 1, or a
+                            // Direct frame baked before this mask existed) -
+                            // left as a no-op multiply by 1, same null-safety
+                            // as calcImpact_Shadings itself.
+                            if (calcImpact_Trees2D[0] != null) {
+                              COL_V0 *= (calcImpact_Trees2D[0].get(Image_X, Image_Y) >> 8 & 0xFF) / 255.0;
+                            }
+                            if (calcImpact_Trees2D[1] != null) {
+                              COL_V1 *= (calcImpact_Trees2D[1].get(Image_X, Image_Y) >> 8 & 0xFF) / 255.0;
+                            }
 
                             float COL_Alpha = (COL1 >> 24 & 0xFF);
 
