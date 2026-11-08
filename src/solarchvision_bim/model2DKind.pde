@@ -101,6 +101,19 @@ abstract class Model2DKind {
     if ((localIndex < 1) || (localIndex > this.fileCount)) return "";
     return this.Filenames[localIndex - 1];
   }
+
+  // Safe accessor for ImageRatios[n] (that file's width / height) -
+  // returns 1 (square) instead of throwing when ImageRatios hasn't been
+  // populated yet (loadImages() not called - e.g. a unit test building a
+  // kind by hand) or n is outside its current bounds. Every caller that
+  // used to read ImageRatios[n] directly now goes through this instead,
+  // so "ratio unknown" and "square image" are treated the same way
+  // everywhere - exactly the assumption this replaces was hard-coding
+  // for trees before Model2Ds learned to use the real ratio for them too.
+  float imageRatio (int n) {
+    if ((this.ImageRatios == null) || (n < 0) || (n >= this.ImageRatios.length)) return 1;
+    return this.ImageRatios[n];
+  }
 }
 
 Model2DKind PEOPLE_KIND = new Model2DKind ("PEOPLE") {

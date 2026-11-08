@@ -204,6 +204,48 @@ class Model2Ds {
     }
   }
 
+  // --- Shared billboard sizing / canopy-cap math ------------------------
+  //
+  // `s` (Model2Ds.XYZS[*][3], read via getS()) is always the instance's
+  // real-world HEIGHT - that meaning doesn't change here. rh (half-height)
+  // stays 0.5*s, same as before and independent of the image's own aspect
+  // ratio; every quad's vertical extent (2*rh) is still just the tree's
+  // or person's own size `s`.
+  //
+  // rw (half-width) is the one thing that used to differ by caller: draw()
+  // already multiplied rh by ImageRatios[n] to get the right *rendered*
+  // width for both people and trees, but addToFaceGrid() and
+  // castShadows() each kept their own older copy that assumed a tree's
+  // image was square (rw == rh) and only used ImageRatios[n] for a
+  // person. halfWidthFromHalfHeight() is that one multiplication, now
+  // shared by all three, so a tree's shading quads, its shadow mask and
+  // its WIN3D billboard all agree on the same half-width for the same
+  // image - no more square-only special case for trees.
+  float halfWidthFromHalfHeight (float rh, float imageRatio) {
+    return rh * imageRatio;
+  }
+
+  // Where the flat tree "canopy cap" plane sits, as a fraction of the
+  // tree's own full height (2*rh) above its base - replaces the
+  // unconditional `ratio = 0.5` constant addToFaceGrid(), draw() and
+  // castShadows() each used to hard-code for this (see addToFaceGrid()'s
+  // own "canopy cap" comment below for what the cap itself represents).
+  //
+  // The cap's footprint is a square whose side is the tree's own width
+  // (2*rw = 2*rh*imageRatio - see halfWidthFromHalfHeight() above and
+  // addToFaceGrid()'s two-wing canopy-cap comment for why). For a square
+  // image (imageRatio 1) the formula below comes out to the previous
+  // constant, 0.5. For a narrower image - say imageRatio 0.5, i.e. width
+  // = 0.5 * height, like a tall narrow conifer - it comes out higher,
+  // 0.75: fraction = 1 - imageRatio / 2. A wider image (imageRatio > 1)
+  // sits correspondingly lower. constrain() keeps an extreme aspect
+  // ratio from pushing the cap below the tree's base (fraction < 0,
+  // imageRatio > 2) or above its own top (fraction > 1, imageRatio < 0,
+  // which can't happen, but keeps the formula honest either way).
+  float canopyCapHeightFraction (float imageRatio) {
+    return constrain(1.0 - imageRatio / 2.0, 0.0, 1.0);
+  }
+
 
   // Called by buildFaceGrid() (isIntersectedFaces.pde) to feed trees into
   // the raycasting grid used for shading, the same way allFaces.
@@ -258,10 +300,13 @@ class Model2Ds {
   // here, not which compass direction angles[0] happens to point at any
   // given moment.
   //
-  // The 2D tree images are square - draw() above only applies ImageRatios
-  // (width != height) for the billboard's *rendered* aspect, but a tree's
-  // rh (half-height) and rw (half-width) are otherwise equal - so all
-  // quads here share the same width and height: the tree's own size `s`.
+  // A tree's image no longer has to be square: rh (half-height) and rw
+  // (half-width) are computed the same way draw()'s own billboard already
+  // does - see halfWidthFromHalfHeight() above - so a narrow or wide
+  // image's shading quads keep its real proportions instead of being
+  // stretched into a square the tree's own size `s`. Only rh (the tree's
+  // real-world height) is shared by every quad below; rw now varies per
+  // image via its ImageRatios entry.
   void addToFaceGrid () {
 
     if (!this.displayAll) return; // hidden entirely - keep hasShadingContribution() above honest
@@ -278,7 +323,8 @@ class Model2Ds {
       float z = this.getZ(f);
       float s = this.getS(f);
 
-      float rh = 0.5 * s; // half-height; half-width too for trees (square images) - people use ImageRatios below instead
+      float rh = 0.5 * s; // half-height - real-world height, independent of the image's aspect ratio
+      float rw = this.halfWidthFromHalfHeight(rh, kind.imageRatio(n)); // half-width - follows the image's own aspect ratio, same formula draw() uses for its billboard
       PImage tex = kind.Images[n];
       int texW = tex.width;
       int texH = tex.height;
@@ -297,11 +343,9 @@ class Model2Ds {
       if (!isTree) {
         // A person: exactly one camera-facing quad, full height, no cap,
         // no extra angles - see showPeopleInShade's own comment above.
-        // rw uses ImageRatios[n] (unlike the tree case below, which
-        // assumes a square image) since a person's image generally isn't
-        // square - same as draw()'s own rw = rh * ImageRatios[n].
-        float rw = rh * kind.ImageRatios[n];
-
+        // rw (computed above via halfWidthFromHalfHeight()) already
+        // follows this person's own ImageRatios entry, same as draw()'s
+        // own billboard.
         float dx = rw * cos(t0);
         float dy = rw * sin(t0);
 
@@ -347,8 +391,8 @@ class Model2Ds {
       for (int a = 0; a < angles.length; a++) {
         float t = angles[a];
 
-        float dx = rh * cos(t);
-        float dy = rh * sin(t);
+        float dx = rw * cos(t);
+        float dy = rw * sin(t);
 
         float x1 = x - dx, y1 = y - dy;
         float x2 = x + dx, y2 = y + dy;
@@ -366,7 +410,7 @@ class Model2Ds {
         entireFaceAlphaTexture.add(tex);
         entireFaceCastsShadow.add(true); // a tree - shades others normally
 
-        float widthLen = 2 * rh;
+        float widthLen = 2 * rw;
         float widthDirX = (widthLen > FLOAT_tiny) ? (x2 - x1) / widthLen : 1;
         float widthDirY = (widthLen > FLOAT_tiny) ? (y2 - y1) / widthLen : 0;
         // Full image height in play here (bottom row at heightFrac=0, top
@@ -383,12 +427,21 @@ class Model2Ds {
       // them (testFaceHit()'s own parallel-ray check rejects it outright)
       // and would otherwise pass clean through the tree. Mirrors the
       // WIN3D "horizontal mask" quads in draw() above (same x1/x2/x3/x4
-      // and z + 2*rh*ratio math, same ratio=0.5), built off t0 - the same
-      // camera-facing orientation as the first vertical quad above,
-      // rather than a fixed direction - so they sit flush against that
-      // quad's own base edge instead of an arbitrary other one. The two
-      // wings (back_front = -1, +1) sit on opposite sides of the x1-x2
-      // edge and together tile into one full s x s square footprint.
+      // and z + 2*rh*ratio math, same canopyCapHeightFraction() call),
+      // built off t0 - the same camera-facing orientation as the first
+      // vertical quad above, rather than a fixed direction - so they sit
+      // flush against that quad's own base edge instead of an arbitrary
+      // other one. The two wings (back_front = -1, +1) sit on opposite
+      // sides of the x1-x2 edge and together tile into one full square
+      // footprint whose side is the tree's own WIDTH (2*rw), not
+      // necessarily its height `s` any more - see halfWidthFromHalfHeight()
+      // for how rw now follows the image's own aspect ratio instead of
+      // always equalling rh.
+      //
+      // ratio (from canopyCapHeightFraction()) also decides how high that
+      // footprint sits: 0.5 - the tree's own mid-height - for a square
+      // image, higher for a narrower one (and lower for a wider one) -
+      // see canopyCapHeightFraction()'s own comment.
       //
       // Only the texture's top half is sampled (vPixelNear = texH*ratio
       // down to vPixelFar = 0, i.e. the top-half row range) rather than
@@ -399,19 +452,19 @@ class Model2Ds {
       // which has nothing to do with where the trunk pixels actually sit
       // in the image.
       if (kind.hasCanopyCap()) {
-        float ratio = 0.5;
+        float ratio = this.canopyCapHeightFraction(kind.imageRatio(n));
         float capZ = z + 2 * rh * ratio;
 
-        float capDX = rh * cos(t0);
-        float capDY = rh * sin(t0);
+        float capDX = rw * cos(t0);
+        float capDY = rw * sin(t0);
         float capX1 = x - capDX, capY1 = y - capDY; // t0, matching the first vertical quad above
         float capX2 = x + capDX, capY2 = y + capDY;
 
         for (int back_front = -1; back_front <= 1; back_front += 2) {
 
           float rot = back_front * HALF_PI + t0;
-          float wdx = rh * cos(rot);
-          float wdy = rh * sin(rot);
+          float wdx = rw * cos(rot);
+          float wdy = rw * sin(rot);
 
           float capX3 = capX2 + wdx, capY3 = capY2 + wdy;
           float capX4 = capX1 + wdx, capY4 = capY1 + wdy;
@@ -427,10 +480,10 @@ class Model2Ds {
           entireFaceAlphaTexture.add(tex);
           entireFaceCastsShadow.add(true); // a tree's canopy cap - shades others normally
 
-          float capWidthLen = 2 * rh; // capX1 -> capX2
+          float capWidthLen = 2 * rw; // capX1 -> capX2
           float capWidthDirX = (capWidthLen > FLOAT_tiny) ? (capX2 - capX1) / capWidthLen : 1;
           float capWidthDirY = (capWidthLen > FLOAT_tiny) ? (capY2 - capY1) / capWidthLen : 0;
-          float capHeightLen = rh; // capX1/capX2 -> capX4/capX3 (the wing's own reach)
+          float capHeightLen = rw; // capX1/capX2 -> capX4/capX3 (the wing's own reach)
           float capHeightDirX = (capHeightLen > FLOAT_tiny) ? wdx / capHeightLen : 0;
           float capHeightDirY = (capHeightLen > FLOAT_tiny) ? wdy / capHeightLen : 0;
 
@@ -622,7 +675,7 @@ class Model2Ds {
           float z = this.getZ(f) * overallScale;
 
           float rh = this.getS(f) * 0.5 * overallScale;
-          float rw = rh * kind.ImageRatios[n];
+          float rw = this.halfWidthFromHalfHeight(rh, kind.imageRatio(n));
 
           float t = PI + WIN3D.rotationZ * PI / 180.0;
           if (WIN3D.projectionTypeIndex == 1) t = atan2(y - WIN3D.cameraY, x - WIN3D.cameraX) + 0.5 * PI;
@@ -803,7 +856,7 @@ class Model2Ds {
 
                 if (kind.isTree()) { // case: trees
 
-                  float ratio = 0.5;
+                  float ratio = this.canopyCapHeightFraction(kind.imageRatio(n));
 
                   float rot = back_front * PI / 2 + t;
 
@@ -1124,7 +1177,8 @@ class Model2Ds {
       int w = kind.Images[n].width;
       int h = kind.Images[n].height;
 
-      float r = this.getS(f) * 0.5;
+      float rh = this.getS(f) * 0.5; // half-height - real-world height, independent of the image's aspect ratio
+      float rw = this.halfWidthFromHalfHeight(rh, kind.imageRatio(n)); // half-width - follows the image's own aspect ratio, same as addToFaceGrid()/draw()
 
       float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
 
@@ -1133,7 +1187,9 @@ class Model2Ds {
       // Was "if (r > 2.5)" - a size heuristic standing in for "is this a
       // tree", since trees are normally bigger than people. kind.isTree()
       // is the real check now, so a tiny tree or an oversized person no
-      // longer gets the wrong shadow-mask treatment.
+      // longer gets the wrong shadow-mask treatment. (That old `r` is
+      // rh above - rw didn't exist yet, since this method still assumed
+      // every tree image was square.)
       if (kind.isTree()) {
 
         float x = this.getX(f);
@@ -1165,18 +1221,18 @@ class Model2Ds {
             0, 0, 0, 0
           };
 
-          TX[0] = x - r * cos(t);
-          TY[0] = y - r * sin(t);
+          TX[0] = x - rw * cos(t);
+          TY[0] = y - rw * sin(t);
           TZ[0] = z;
-          TX[1] = x + r * cos(t);
-          TY[1] = y + r * sin(t);
+          TX[1] = x + rw * cos(t);
+          TY[1] = y + rw * sin(t);
           TZ[1] = z;
-          TX[2] = x + r * cos(t);
-          TY[2] = y + r * sin(t);
-          TZ[2] = z + 2 * r;
-          TX[3] = x - r * cos(t);
-          TY[3] = y - r * sin(t);
-          TZ[3] = z + 2 * r;
+          TX[2] = x + rw * cos(t);
+          TY[2] = y + rw * sin(t);
+          TZ[2] = z + 2 * rh;
+          TX[3] = x - rw * cos(t);
+          TY[3] = y - rw * sin(t);
+          TZ[3] = z + 2 * rh;
 
           TU[0] = 0;
           TV[0] = h;
@@ -1254,7 +1310,7 @@ class Model2Ds {
         }
 
         { // Horizontal mask
-          float ratio = 0.5; // put the mask at half of the height of the tree
+          float ratio = this.canopyCapHeightFraction(kind.imageRatio(n)); // see that method's own comment - 0.5 (the tree's mid-height) for a square image, higher for a narrower one
 
           for (int back_front = -1; back_front <= 1; back_front += 2) {
 
@@ -1280,18 +1336,18 @@ class Model2Ds {
               0, 0, 0, 0
             };
 
-            TX[0] = x - r * cos(t);
-            TY[0] = y - r * sin(t);
-            TZ[0] = z + 2 * r * ratio;
-            TX[1] = x + r * cos(t);
-            TY[1] = y + r * sin(t);
-            TZ[1] = z + 2 * r * ratio;
-            TX[2] = x + r * cos(t) + r * cos(rot);
-            TY[2] = y + r * sin(t) + r * sin(rot);
-            TZ[2] = z + 2 * r * ratio;
-            TX[3] = x - r * cos(t) + r * cos(rot);
-            TY[3] = y - r * sin(t) + r * sin(rot);
-            TZ[3] = z + 2 * r * ratio;
+            TX[0] = x - rw * cos(t);
+            TY[0] = y - rw * sin(t);
+            TZ[0] = z + 2 * rh * ratio;
+            TX[1] = x + rw * cos(t);
+            TY[1] = y + rw * sin(t);
+            TZ[1] = z + 2 * rh * ratio;
+            TX[2] = x + rw * cos(t) + rw * cos(rot);
+            TY[2] = y + rw * sin(t) + rw * sin(rot);
+            TZ[2] = z + 2 * rh * ratio;
+            TX[3] = x - rw * cos(t) + rw * cos(rot);
+            TY[3] = y - rw * sin(t) + rw * sin(rot);
+            TZ[3] = z + 2 * rh * ratio;
 
             TU[0] = 0;
             TV[0] = h * ratio;
@@ -1303,7 +1359,7 @@ class Model2Ds {
             TV[3] = 0;
 
             if (allSolarImpacts.sectionType == 1) {
-              if (z + 2 * r * ratio > allSolarImpacts.Z) {
+              if (z + 2 * rh * ratio > allSolarImpacts.Z) {
 
                 for (int q = 0; q < 4; q++) {
 
