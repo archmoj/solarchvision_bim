@@ -74,7 +74,7 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("DXF import options")) return;
   }
 
-  println("Importing DXF. Please wait...");
+  println("\nImporting DXF. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement (this function has only the one exit point below, so nothing further to guard); cleared alongside showArrowCursor() at this function's own end
 
@@ -121,7 +121,7 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
 
   progressBarHeader();
 
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing DXF") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting DXF") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   try {

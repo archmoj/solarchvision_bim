@@ -79,7 +79,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("DAE import options")) return;
   }
 
-  println("Importing DAE. Please wait...");
+  println("\nImporting DAE. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 4 exit points below
 
@@ -161,7 +161,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   dae_printedProgress = 0;
   daeFacesImported = 0;
 
-  dae_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing DAE") : null;
+  dae_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting DAE") : null;
   if (dae_progressWindow != null) dae_progressWindow.setVisible(true);
 
   try {

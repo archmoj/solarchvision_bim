@@ -22,7 +22,7 @@ void update_climateTypicalYear () {
 
     File dir = new File(the_source);
     if (dir.isFile()) load_climateTypicalYear(the_source);
-    else println("FILE NOT FOUND:", the_source);
+    else println("\nFILE NOT FOUND:", the_source);
 
     WORLD.climateTypicalYearDisplayAll = 1;
     WORLD.climateTypicalYearDisplayNear = true;

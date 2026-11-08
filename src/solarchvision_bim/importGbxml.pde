@@ -509,7 +509,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
     if (!gbxmlShowImportOptionsDialog()) return;
   }
 
-  println("Importing gbXML. Please wait...");
+  println("\nImporting gbXML. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, not wrapped in try/finally (this function's own single internal try/catch is just for loadXML()'s own parse errors, not a reason to restructure the rest); cleared at each of this function's own 2 exit points below
 
@@ -577,7 +577,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   StringBuilder barBuffer = new StringBuilder();
   float totalSurfaces = max(surfaces.size(), 1);
 
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing gbXML") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting gbXML") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   for (int s = 0; s < surfaces.size(); s++) {

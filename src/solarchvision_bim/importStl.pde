@@ -53,7 +53,7 @@ void import_objects_STL (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("STL import options")) return;
   }
 
-  println("Importing STL. Please wait...");
+  println("\nImporting STL. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 2 exit points below
 
@@ -120,7 +120,7 @@ int stlCreatePoint (float x, float y, float z) {
 void stlImportBinary (byte[] raw) {
   int triangleCount = binReadU32LE(raw, 80);
 
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing STL") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting STL") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   // No "solid"/"endsolid" boundary of its own in binary STL - the whole
@@ -179,7 +179,7 @@ void stlImportAscii (String FileName) {
   float printed_Progress = 0;
   StringBuilder barBuffer = new StringBuilder();
 
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing STL") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting STL") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   // Up to 3 vertices (x,y,z each) for the facet currently being read,

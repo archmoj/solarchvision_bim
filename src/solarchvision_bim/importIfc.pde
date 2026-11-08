@@ -2726,7 +2726,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   beginScene3DChange();
 
-  println("Importing IFC. Please wait...");
+  println("\nImporting IFC. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, not wrapped in try/finally, matching this function's own existing convention (see importProgressWindow's own comment, below, for why); cleared alongside showArrowCursor() at this function's own end
 
@@ -2808,7 +2808,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // several hundred lines of further product-processing code follow
   // these two loops before the function actually finishes, too much to
   // safely re-indent under a try block for this.
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing IFC") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting IFC") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   int f = -1;

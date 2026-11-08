@@ -317,7 +317,7 @@ class Terrain {
     }
 
     if (using_default_mesh) {
-      println("Using default flat mesh:");
+      println("\nUsing default flat mesh:");
       this.flat_mesh();
     }
 

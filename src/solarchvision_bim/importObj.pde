@@ -22,7 +22,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("OBJ import options")) return;
   }
 
-  println("Importing OBJ. Please wait...");
+  println("\nImporting OBJ. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement (this function has only the one exit point below, so nothing further to guard); cleared alongside showArrowCursor() at this function's own end
 
@@ -58,7 +58,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   // unlike solarImpacts.pde's own calculate_Impact_CurrentPreBaked(),
   // which left its own cleanup as a bare statement instead for exactly
   // that reason).
-  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing OBJ") : null;
+  ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting OBJ") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   try {

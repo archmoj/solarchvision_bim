@@ -311,7 +311,7 @@ class Tropo3D {
   }
 
   void recolorCloudLayer (String target) {
-    println("image processing cloud layer");
+    println("\nImage processing cloud layer");
     PImage img = loadImage(target);
     img.loadPixels();
 
@@ -334,7 +334,7 @@ class Tropo3D {
   }
 
   void recolorSatelliteVisibility (String target) {
-    println("image processing cloud layer");
+    println("\nImage processing cloud layer");
     PImage img = loadImage(target);
     img.loadPixels();
 

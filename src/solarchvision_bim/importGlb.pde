@@ -82,7 +82,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("GLB import options")) return;
   }
 
-  println("Importing GLB. Please wait...");
+  println("\nImporting GLB. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 8 exit points below
 
@@ -212,7 +212,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 
   // Same showImportProgress/ProgressWindow pattern importObj.pde
   // already uses - see that file's own comment on it.
-  glb_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing GLB") : null;
+  glb_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting GLB") : null;
   if (glb_progressWindow != null) glb_progressWindow.setVisible(true);
 
   try {

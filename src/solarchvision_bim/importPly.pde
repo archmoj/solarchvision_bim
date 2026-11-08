@@ -90,7 +90,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!axisSwapShowImportOptionsDialog("PLY import options")) return;
   }
 
-  println("Importing PLY. Please wait...");
+  println("\nImporting PLY. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - bare statement, cleared at each of this function's own 3 exit points below
 
@@ -134,7 +134,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
 
   progressBarHeader();
 
-  ply_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing PLY") : null;
+  ply_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting PLY") : null;
   if (ply_progressWindow != null) ply_progressWindow.setVisible(true);
 
   try {

@@ -347,7 +347,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!lasShowImportOptionsDialog(header, (int) pointCount)) return;
   }
 
-  println("Importing LAS. Please wait...");
+  println("\nImporting LAS. Please wait...");
   showWaitCursor();
   isImportingInProgress = true; // see this flag's own comment (globalFunctions.pde) for why - set only here, AFTER the options dialog (above) has already resolved, never before it: that dialog never touches allPoints/allFaces/allGroups itself, so there's nothing yet worth guarding against while it's open; cleared in the same finally as showArrowCursor() below
 
@@ -404,7 +404,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
 
     progressBarHeader();
 
-    ProgressWindow lasProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Importing LAS") : null;
+    ProgressWindow lasProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting LAS") : null;
     if (lasProgressWindow != null) lasProgressWindow.setVisible(true);
 
     // Every KEPT point's own allPoints index (lasPointIndex[...]) and
