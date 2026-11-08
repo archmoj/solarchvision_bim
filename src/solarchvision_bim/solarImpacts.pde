@@ -1218,6 +1218,8 @@ class SolarImpacts {
         }
       }
     }
+
+    STUDY.revise();
   }
 
 
