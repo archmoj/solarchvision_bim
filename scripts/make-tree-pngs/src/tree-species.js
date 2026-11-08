@@ -572,6 +572,86 @@ export const TREE_SPECIES = {
       },
     },
   },
+
+  Poplar: {
+    options: {
+      // Lombardy-poplar fastigiate habit: branches rise almost parallel to
+      // the trunk instead of spreading, giving a tall, narrow, columnar
+      // crown rather than a rounded one.
+      type: 'deciduous',
+      bark: {
+        type: 'oak',
+        tint: [0xcfc7a8, 0xb8ae8a],
+        textureScale: { x: 1, y: [7, 10] },
+      },
+      branch: {
+        levels: 3,
+        angle: { 1: [10, 18], 2: [12, 20], 3: [14, 22] },
+        children: { 0: [10, 14], 1: [5, 7], 2: [3, 5] },
+        length: { 0: [36, 46], 1: [26, 34], 2: [14, 20], 3: [5, 8] },
+        radius: { 0: [1.6, 2.1], 1: [0.4, 0.55], 2: [0.35, 0.48], 3: [0.5, 0.65] },
+        start: { 1: [0.2, 0.3], 2: [0.08, 0.15], 3: [0, 0.05] },
+        taper: { 0: [0.68, 0.8], 1: [0.4, 0.52] },
+        gnarliness: { 0: [-0.03, 0.05], 1: [0.02, 0.1] },
+        twist: { 0: [-0.1, 0.1], 1: [0, 0.1] },
+      },
+      leaves: {
+        type: 'oak',
+        billboard: 'double',
+        angle: [18, 28],
+        count: [10, 14],
+        start: [0.08, 0.16],
+        size: [2.6, 3.4],
+        sizeVariance: 0.6,
+        tint: [0xcdd86a, 0xa9c24a],
+        alphaTest: 0.5,
+      },
+    },
+  },
+
+  Palm: {
+    options: {
+      // Single straight, uniform-diameter trunk topped by a tuft of large
+      // fronds. ez-tree has no native frond geometry, so the fronds are
+      // approximated as an oversized "leaf" cluster bunched at the very
+      // top of the trunk.
+      //
+      // NOTE: `type: 'evergreen'` forces every branch's radius to taper
+      // linearly to a point along its length, ignoring `taper` entirely
+      // -- fine for a conifer, wrong for a palm. Only `type: 'deciduous'`
+      // honors the `taper` option, so Palm uses that with a single trunk
+      // level (`levels: 0`) and no child branches; the fronds are instead
+      // generated directly on the trunk's own tip via `leaves.start`.
+      type: 'deciduous',
+      bark: {
+        type: 'pine',
+        tint: [0xab8b64, 0x8f7250],
+        textureScale: { x: [0.4, 0.6], y: [0.5, 0.8] },
+      },
+      branch: {
+        levels: 0,
+        length: { 0: [46 * 1.3, 58 * 1.3] },
+        radius: { 0: [0.78, 1.05] },
+        // Near-zero taper so the trunk keeps a constant diameter top to
+        // bottom instead of narrowing to a point.
+        taper: { 0: 0.02 },
+        // Dead straight, vertical trunk -- no lean, bend, or twist.
+        gnarliness: { 0: 0 },
+        twist: { 0: 0 },
+      },
+      leaves: {
+        type: 'pine',
+        billboard: 'double',
+        angle: [55, 78],
+        count: [14, 20],
+        start: [0.85, 0.95],
+        size: [13, 18],
+        sizeVariance: 0.3,
+        tint: [0x6f9e5a, 0x4f8a45],
+        alphaTest: 0.5,
+      },
+    },
+  },
 };
 
 export const SPECIES_NAMES = Object.keys(TREE_SPECIES);
