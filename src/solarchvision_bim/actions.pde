@@ -304,15 +304,7 @@ void build_allActions() {
   });
 
   putAction("New", () -> {
-    /////////////////////////////
-    holdProject();
-    /////////////////////////////
-
     selectFile_New();
-
-    deleteAll();
-
-    //update_station(-1);
   });
 
   putAction("Save", () -> {

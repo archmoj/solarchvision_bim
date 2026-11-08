@@ -501,6 +501,8 @@ void _fileSelected_New (File selectedFile) {
 
     println("\nNew project:", Filename);
 
+    deleteAll();
+
     update_project_info(selectedFile);
 
     isFileOperationInProgress = false;
