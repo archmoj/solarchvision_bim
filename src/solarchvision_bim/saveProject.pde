@@ -43,6 +43,8 @@ XML buildProjectSnapshot (boolean copyTexturesAlongside) {
   {
     XML parent = xml.addChild("variable");
 
+    XML_setString(parent, "sceneName", SceneName);
+
     XML_setInt(parent, "currentObjectCategory", currentObjectCategory);
 
     XML_setFloat(parent, "globalAlbedo", globalAlbedo);

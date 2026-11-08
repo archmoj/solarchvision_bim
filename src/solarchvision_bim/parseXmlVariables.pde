@@ -17,6 +17,8 @@ void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport
 
   XML parent = xml.getChild("variable");
 
+  SceneName = XML_getString(parent, "sceneName");
+
   currentObjectCategory = XML_getInt(parent, "currentObjectCategory"); // see note above - confirm separately
 
   globalAlbedo = XML_getFloat(parent, "globalAlbedo");
