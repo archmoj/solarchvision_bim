@@ -29,6 +29,10 @@ class UndoRedoTest {
     app.BaseFolder = Files.createTempDirectory("solarchvision-bim-undoredo-test").toString();
     app.sketchPath(); // see SaveProjectTest.java's own comment on why this is needed before any loadImage()/loadStrings()/createInput()
     app.update_project_folders();
+    // fetchProject_doesNotCorruptHistoryViaLoadProjectsOwnFromXmlCascade()
+    // below goes through load_project(), which runs update_station(1..4)
+    // - see SaveProjectTest.java's own comment on why this is needed too.
+    app.update_input_folders();
   }
 
   // A bare `new solarchvision_bim()` never runs drawInitialFrames.pde's

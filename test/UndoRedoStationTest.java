@@ -24,8 +24,22 @@ class UndoRedoStationTest {
   private solarchvision_bim app;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
+    // undoStationChange()/redoStationChange() go through
+    // restoreProjectStationSnapshot(), which calls update_station(-1) -
+    // that reaches update_climateTypicalYear() (among the other
+    // Folder_climate*/Folder_ensemble* loaders), which reads
+    // Folder_climateTypicalYear. That field is only ever set inside
+    // update_input_folders() (updateFolders.pde) - never by BaseFolder
+    // alone - so without calling it here too, Folder_climateTypicalYear
+    // stays null and the file lookup logs a bogus "null/<filename>.epw"
+    // path instead of a real (if still missing, in this temp dir) one.
+    // See Earth3DTest.java's own comment on why this is
+    // app.BaseFolder = ... rather than app.locateBaseFolder().
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
+    app.update_input_folders(); // Folder_climateTypicalYear/Folder_climateEngineering/... are null until this runs
   }
 
   // A bare `new solarchvision_bim()` never runs drawInitialFrames.pde's

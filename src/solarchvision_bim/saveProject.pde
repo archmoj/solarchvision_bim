@@ -183,6 +183,24 @@ void fetchProject () {
 
   String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 
+  // HoldStamp defaults to "" (globalVariables.pde) until holdProject()
+  // first runs, so a Fetch with no prior Hold - same as any Fetch whose
+  // held file has since been moved/deleted - points at a file that
+  // simply isn't there yet. Checking that up front, rather than letting
+  // load_project() -> loadXML() discover it, avoids handing an empty/
+  // missing file to the XML parser: Processing's own loadXML() already
+  // logs a "file is missing or inaccessible" warning straight to the
+  // console for that case, and the SAX parser then throws its own
+  // "Content is not allowed in prolog" on top trying to parse nothing -
+  // both are harmless (the catch below has always handled it the same
+  // way), but they're pure console noise for an entirely expected case.
+  // This keeps that exact same fallback behavior (same message, no
+  // throw) without ever reaching loadXML() in the first place.
+  if (!new File(myFile).isFile()) {
+    println("Cannot find the hold file:", myFile);
+    return;
+  }
+
   try {
     load_project(myFile);
   }

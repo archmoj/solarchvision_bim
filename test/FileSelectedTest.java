@@ -50,6 +50,19 @@ class FileSelectedTest {
     // by hand against a real save/load round trip before settling on this -
     // see fileSelectedOpen_restoresGeometry... below, which depends on it.
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
+    // _fileSelected_Open() goes through update_project_info() ->
+    // update_project_folders() and then load_project() ->
+    // update_station(1..4) - same gap as SaveProjectTest.java/
+    // UndoRedoTest.java's own identical comment: update_project_folders()
+    // only derives Folder_Project's own children, never
+    // Folder_climateTypicalYear/Folder_climateEngineering/.../
+    // Folder_ensembleObservation - those come only from
+    // update_input_folders() (updateFolders.pde), which production code
+    // only ever calls once, at real startup (setup()), separately from
+    // whatever project gets opened afterward. Without calling it here
+    // too, update_climateTypicalYear() (etc.) sees a null folder and
+    // logs a bogus "null/<filename>" path instead of a real one.
+    app.update_input_folders();
   }
 
   // ================= _getSelectedFile ========================================
