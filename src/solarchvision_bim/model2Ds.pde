@@ -246,6 +246,29 @@ class Model2Ds {
     return constrain(1.0 - imageRatio / 2.0, 0.0, 1.0);
   }
 
+  // How much of the texture's own vertical extent (measured down from
+  // its top row) the canopy cap samples - addToFaceGrid()'s own "canopy
+  // cap" comment explains the two wings this gets used for, each
+  // capWidthLen x capHeightLen = (2*rw) x rw. Previously every caller
+  // just reused the same `ratio` as canopyCapHeightFraction() above for
+  // this too (fine only because both happened to be the hardcoded 0.5),
+  // which stretched or squashed the cropped region to fit a fixed half
+  // of the image regardless of its actual shape. This keeps that crop's
+  // own pixel aspect ratio matched to the wing's physical width:height
+  // (2:1) instead - a narrower image reaches the wing's width in fewer
+  // of its own rows, so fewer rows are sampled; a wider one needs more.
+  // fraction = imageRatio / 2, constrained to [0, 1] (a wing can never
+  // sample more than the whole image, texH*1).
+  //
+  // This comes out to exactly 1 - canopyCapHeightFraction(imageRatio)
+  // (both fall out of the same underlying relationship), but is kept as
+  // its own function rather than inlined as "1 - ratio" at each call
+  // site, so each caller states outright which of the two quantities -
+  // a world-space position or a texture crop - it actually means.
+  float canopyCapTextureFraction (float imageRatio) {
+    return constrain(imageRatio / 2.0, 0.0, 1.0);
+  }
+
 
   // Called by buildFaceGrid() (isIntersectedFaces.pde) to feed trees into
   // the raycasting grid used for shading, the same way allFaces.
@@ -443,16 +466,20 @@ class Model2Ds {
       // image, higher for a narrower one (and lower for a wider one) -
       // see canopyCapHeightFraction()'s own comment.
       //
-      // Only the texture's top half is sampled (vPixelNear = texH*ratio
-      // down to vPixelFar = 0, i.e. the top-half row range) rather than
-      // the full height used by the vertical quads above: the bottom half
-      // of a tree texture is trunk, and a trunk cross-section doesn't
-      // belong in a flat overhead cap - that would read as the canopy
-      // being solid near the trunk and only thinning out near its edge,
-      // which has nothing to do with where the trunk pixels actually sit
-      // in the image.
+      // Only the texture's own top portion is sampled (vPixelNear =
+      // texH*texRatio down to vPixelFar = 0, i.e. the top row range sized
+      // by canopyCapTextureFraction() above) rather than the full height
+      // used by the vertical quads above: the lower part of a tree
+      // texture is trunk, and a trunk cross-section doesn't belong in a
+      // flat overhead cap - that would read as the canopy being solid
+      // near the trunk and only thinning out near its edge, which has
+      // nothing to do with where the trunk pixels actually sit in the
+      // image. texRatio (not ratio) sizes this crop specifically so it
+      // keeps the image's own aspect ratio once stretched across the
+      // wing - see canopyCapTextureFraction()'s own comment.
       if (kind.hasCanopyCap()) {
         float ratio = this.canopyCapHeightFraction(kind.imageRatio(n));
+        float texRatio = this.canopyCapTextureFraction(kind.imageRatio(n)); // how much of the texture's own height the cap samples - see that method's own comment for why this differs from `ratio` above
         float capZ = z + 2 * rh * ratio;
 
         float capDX = rw * cos(t0);
@@ -488,7 +515,7 @@ class Model2Ds {
           float capHeightDirY = (capHeightLen > FLOAT_tiny) ? wdy / capHeightLen : 0;
 
           entireFaceUVBasis.add(new float[] {
-            capX1, capY1, capZ, capWidthDirX, capWidthDirY, capWidthLen, capHeightDirX, capHeightDirY, 0, capHeightLen, texH * ratio, 0
+            capX1, capY1, capZ, capWidthDirX, capWidthDirY, capWidthLen, capHeightDirX, capHeightDirY, 0, capHeightLen, texH * texRatio, 0
           });
         }
       }
@@ -857,6 +884,7 @@ class Model2Ds {
                 if (kind.isTree()) { // case: trees
 
                   float ratio = this.canopyCapHeightFraction(kind.imageRatio(n));
+                  float texRatio = this.canopyCapTextureFraction(kind.imageRatio(n)); // how much of the texture's own height the cap samples - see that method's own comment for why this differs from `ratio` above
 
                   float rot = back_front * PI / 2 + t;
 
@@ -882,8 +910,8 @@ class Model2Ds {
                       WIN3D.graphics.stroke(255, 255, 255, 0);
                       WIN3D.graphics.fill(255, 255, 255, 0);
 
-                      WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * ratio);
-                      WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * ratio);
+                      WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * texRatio);
+                      WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * texRatio);
                       WIN3D.graphics.vertex(x3 * WIN3D.scale, -y3 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, 0);
                       WIN3D.graphics.vertex(x4 * WIN3D.scale, -y4 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, 0);
 
@@ -904,8 +932,8 @@ class Model2Ds {
 
                     if (_turn == 2) {
 
-                      OBJprintVtexture(1, 1 - ratio, 0);
-                      OBJprintVtexture(0, 1 - ratio, 0);
+                      OBJprintVtexture(1, 1 - texRatio, 0);
+                      OBJprintVtexture(0, 1 - texRatio, 0);
                       OBJprintVtexture(0, 1, 0);
                       OBJprintVtexture(1, 1, 0);
                     }
@@ -955,9 +983,9 @@ class Model2Ds {
 
                     htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
 
-                    HTMLprintVtexture(1, 1 - ratio);
+                    HTMLprintVtexture(1, 1 - texRatio);
                     htmlOutput.print (",");
-                    HTMLprintVtexture(0, 1 - ratio);
+                    HTMLprintVtexture(0, 1 - texRatio);
                     htmlOutput.print (",");
                     HTMLprintVtexture(0, 1);
                     htmlOutput.print (",");
@@ -973,13 +1001,13 @@ class Model2Ds {
                   this.Vertices[nv + 0][1] = y1 / overallScale;
                   this.Vertices[nv + 0][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 0][3] = 0;
-                  this.Vertices[nv + 0][4] = ratio;
+                  this.Vertices[nv + 0][4] = texRatio;
 
                   this.Vertices[nv + 1][0] = x2 / overallScale;
                   this.Vertices[nv + 1][1] = y2 / overallScale;
                   this.Vertices[nv + 1][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 1][3] = 1;
-                  this.Vertices[nv + 1][4] = ratio;
+                  this.Vertices[nv + 1][4] = texRatio;
 
                   this.Vertices[nv + 2][0] = x3 / overallScale;
                   this.Vertices[nv + 2][1] = y3 / overallScale;
@@ -1311,6 +1339,7 @@ class Model2Ds {
 
         { // Horizontal mask
           float ratio = this.canopyCapHeightFraction(kind.imageRatio(n)); // see that method's own comment - 0.5 (the tree's mid-height) for a square image, higher for a narrower one
+          float texRatio = this.canopyCapTextureFraction(kind.imageRatio(n)); // how much of the texture's own height the mask samples - see that method's own comment for why this differs from `ratio` above
 
           for (int back_front = -1; back_front <= 1; back_front += 2) {
 
@@ -1350,9 +1379,9 @@ class Model2Ds {
             TZ[3] = z + 2 * rh * ratio;
 
             TU[0] = 0;
-            TV[0] = h * ratio;
+            TV[0] = h * texRatio;
             TU[1] = w;
-            TV[1] = h * ratio;
+            TV[1] = h * texRatio;
             TU[2] = w;
             TV[2] = 0;
             TU[3] = 0;
