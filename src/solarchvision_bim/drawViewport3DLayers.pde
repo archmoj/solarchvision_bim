@@ -203,13 +203,6 @@ void draw_WIN3D_layers () {
     // geometry nor its perspective, so it has no business being drawn on
     // top of it; it belongs only with the camera/viewport's own overlay.
     if (WIN3D.impactTypeIndex == Impact_PASSIVE && allSolarImpacts.win3DOverlay_imageIsFromViewport) {
-      // Same SceneName prefix preBakeViewport3D.pde actually saved this
-      // camera's FaceEdges PNG under - see viewport2D.pde's plotImpact_
-      // urban() for the full explanation (same gap, same fix). Set here
-      // too, rather than relying on plotImpact_urban() having already run
-      // earlier in this frame (or a previous one) and left SceneName set
-      // correctly: faceEdgesOverlay_load() can be reached on its own.
-      SceneName = "Viewport_" + Viewport_Stamp();
       PImage faceEdges = faceEdgesOverlay_load();
       if (faceEdges != null) {
         image(faceEdges, fit[0], fit[1], fit[2], fit[3]);
