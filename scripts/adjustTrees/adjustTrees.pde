@@ -1,4 +1,4 @@
-String IMAGE_directory = "../../input/images/trees_raw/";
+String IMAGE_directory = "/home/solarch/org/solarchvision_bim/input/images/trees_raw/";
 String[] IMAGE_Files = getfiles(IMAGE_directory);
 
 int _frame = 0;
@@ -25,21 +25,27 @@ void draw() {
       PImage Image_RGBA = loadImage(IMAGE_directory + "/" + IMAGE_Files[i]);
       int w = Image_RGBA.width;
       int h = Image_RGBA.height;
-      float p = 0.0; 
+      float v = 0.0; 
+      float u = 0.25;
       {
-        p = 0.05;
-        PImage CROP_RGBA = Image_RGBA.get(floor(w * p),floor(h * p * 2),floor(w * (1 - 2 * p)),floor(h * (1 - 2 * p)));
+        v = 0.0;
+        PImage CROP_RGBA = Image_RGBA.get(floor(w * u),floor(h * 2 * v),floor(w * (1 - 2 * u)),floor(h * (1 - 2 * v)));
         CROP_RGBA.save(IMAGE_directory + "/CROP/" + _Filename + "_A" + _Extention);
       }
       {
-        p = 0.075;
-        PImage CROP_RGBA = Image_RGBA.get(floor(w * p),floor(h * p * 2),floor(w * (1 - 2 * p)),floor(h * (1 - 2 * p)));
+        v = 0.05;
+        PImage CROP_RGBA = Image_RGBA.get(floor(w * u),floor(h * 2 * v),floor(w * (1 - 2 * u)),floor(h * (1 - 2 * v)));
         CROP_RGBA.save(IMAGE_directory + "/CROP/" + _Filename + "_B" + _Extention);
       }
       {
-        p = 0.1;
-        PImage CROP_RGBA = Image_RGBA.get(floor(w * p),floor(h * p * 2),floor(w * (1 - 2 * p)),floor(h * (1 - 2 * p)));
+        v = 0.075;
+        PImage CROP_RGBA = Image_RGBA.get(floor(w * u),floor(h * 2 * v),floor(w * (1 - 2 * u)),floor(h * (1 - 2 * v)));
         CROP_RGBA.save(IMAGE_directory + "/CROP/" + _Filename + "_C" + _Extention);
+      }
+      {
+        v = 0.1;
+        PImage CROP_RGBA = Image_RGBA.get(floor(w * u),floor(h * 2 * v),floor(w * (1 - 2 * u)),floor(h * (1 - 2 * v)));
+        CROP_RGBA.save(IMAGE_directory + "/CROP/" + _Filename + "_D" + _Extention);
       }
 
 
