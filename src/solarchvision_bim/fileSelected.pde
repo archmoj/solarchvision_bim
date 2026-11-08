@@ -5,7 +5,15 @@ void selectFile_New () {
   // window as well, not only once it has already resolved; whichever
   // branch _fileSelected_New() takes clears it again.
   isFileOperationInProgress = true;
-  selectInput("Specify project name:", "_fileSelected_New", new File(Folder_Project + "/_.xml"));
+  // selectOutput(), not selectInput(): this prompts for the NEW
+  // project's own name/location (see the dialog's own "Specify project
+  // name:" prompt, and _fileSelected_New() below, which never reads the
+  // picked file - it only takes its name/folder, same as
+  // selectFile_SaveAs()'s own selectOutput() call just below). An open-
+  // style selectInput() dialog only lets picking an already-existing
+  // file/folder, with no field to type a new name into - exactly the
+  // capability this needs.
+  selectOutput("Specify project name:", "_fileSelected_New", new File(Folder_Project + "/_.xml"));
 }
 
 void selectFile_Open () {
