@@ -2595,23 +2595,6 @@ class STUDY {
   void plotImpact_urban (int start_k, int end_k, float sx_Plot) {
 
     if (this.updateImpactGraph) {
-
-      // preBakeViewport3D.pde sets this same SceneName (SceneName =
-      // "Viewport_" + Viewport_Stamp();) before it saves this camera's
-      // DIF_/direct-hour/2Ds/FaceEdges PNGs under Folder_Shadings/
-      // NearLatitude_Stamp()/SceneName+<file>. calculate_Impact_
-      // CurrentPreBaked() below reads those same paths back, so it needs
-      // the exact same prefix set here, right before calling it - unlike
-      // calculate_Impact_selectedSections() (solarImpacts.pde), which
-      // already sets its own SceneName = "Section_" + Section_Stamp()
-      // immediately before its own call to this same shared function,
-      // nothing previously set SceneName before this call site, so it was
-      // reading with whatever SceneName last happened to be (typically
-      // "", since that's its declared default and nothing else sets it
-      // for the camera/viewport path) - never the baked files' actual
-      // "Viewport_" prefix.
-      SceneName = "Viewport_" + Viewport_Stamp();
-
       allSolarImpacts.calculate_Impact_CurrentPreBaked();
 
       // This call (unlike calculate_Impact_selectedSections()'s own call
