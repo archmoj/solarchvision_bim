@@ -25,7 +25,7 @@
 // as the earlier attempt should have been before being taken on faith.
 //
 // Floats free on screen rather than pinned to any particular Processing
-// UI element (uiRollout.pde's own SOLARCHVISION render button, say) - a
+// UI element (uiRollout.pde's own SOLARCHVISION render viewport button, say) - a
 // separate OS window has no reliable way to know any Processing-drawn
 // element's exact on-screen position (especially relative to Processing's
 // own window, which this doesn't query), so centering on the default

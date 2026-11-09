@@ -464,4 +464,123 @@ class UI_rolloutTest {
 
     assertEquals(java.util.Arrays.asList("prebake", "unshade", "passive"), calledOrder);
   }
+
+  // ================= renderSectionsButtonBounds / handleRenderSectionsButtonClick ====
+  // ================= (the "SOLARCHVISION render sections" button) ====================
+  // Same drawRenderButton()/handleRenderButtonClick() split and reasoning
+  // as that section's own header comment above - only the geometry
+  // (renderSectionsButtonBounds()) and the pure click logic
+  // (handleRenderSectionsButtonClick()) are covered here.
+
+  @Test
+  void renderSectionsButtonBounds_isStackedDirectlyAboveTheViewportButton () {
+    setExplicitRolloutBounds();
+
+    float[] viewportButton = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderSectionsButtonBounds();
+
+    assertEquals(viewportButton[0], b[0], 0.01f); // x1 - same width as the viewport button
+    assertEquals(viewportButton[1], b[1], 0.01f); // x2
+    assertEquals(viewportButton[2] - 5f, b[3], 0.01f); // y2 - same 5 * view_S margin above the viewport button's own y1
+    assertEquals(viewportButton[2] - 5f - 25f, b[2], 0.01f); // y1 - same 25 * view_S height
+  }
+
+  @Test
+  void handleRenderSectionsButtonClick_outsideTheButton_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    boolean[] ran = {false};
+    app.allActions.put("prebake selected sections", (args) -> ran[0] = true);
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderSectionsButtonBounds();
+    int clickedX = (int) (b[0] - 100); // well to the left of the button
+
+    int[] originalSelection = new int[]{5, 7};
+    app.Select3D.sectionSelection = originalSelection;
+    app.X_clicked = clickedX;
+    app.Y_clicked = (int) b[2];
+
+    app.UI_rollout.handleRenderSectionsButtonClick();
+
+    assertFalse(ran[0]);
+    assertEquals(clickedX, app.X_clicked); // click NOT consumed
+    assertSame(originalSelection, app.Select3D.sectionSelection); // left completely untouched
+  }
+
+  @Test
+  void handleRenderSectionsButtonClick_whileEditingASpinner_doesNothing () {
+    app.allActions = new java.util.HashMap<>();
+    boolean[] ran = {false};
+    app.allActions.put("prebake selected sections", (args) -> ran[0] = true);
+    app.UI_rollout.editActive = true;
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderSectionsButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderSectionsButtonClick();
+
+    assertFalse(ran[0]);
+  }
+
+  @Test
+  void handleRenderSectionsButtonClick_insideTheButton_bakesAndProcessesEverySection_thenRestoresSelection_active () {
+    app.allActions = new java.util.HashMap<>();
+    java.util.List<String> calledOrder = new java.util.ArrayList<>();
+    // Captures Select3D.sectionSelection at the moment each action runs -
+    // this is the real proof "every section" was actually in effect for
+    // both calls, not just that they ran in the right order.
+    java.util.List<int[]> selectionDuringCall = new java.util.ArrayList<>();
+    app.allActions.put("prebake selected sections", (args) -> {
+      calledOrder.add("prebake");
+      selectionDuringCall.add(app.Select3D.sectionSelection.clone());
+    });
+    app.allActions.put("process active impact on selected sections", (args) -> {
+      calledOrder.add("active");
+      selectionDuringCall.add(app.Select3D.sectionSelection.clone());
+    });
+    app.allActions.put("process passive impact on selected sections", (args) -> calledOrder.add("passive"));
+
+    app.STUDY.impactTypeIndex = app.Impact_ACTIVE;
+    app.allSections.num = 3;
+    int[] originalSelection = new int[]{1}; // deliberately NOT "every section" - what proves the restore below actually happened
+    app.Select3D.sectionSelection = originalSelection;
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderSectionsButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderSectionsButtonClick();
+
+    assertEquals(java.util.Arrays.asList("prebake", "active"), calledOrder);
+    assertArrayEquals(new int[]{0, 1, 2}, selectionDuringCall.get(0), "every section (0..num-1), not just whatever was selected before");
+    assertArrayEquals(new int[]{0, 1, 2}, selectionDuringCall.get(1));
+    assertSame(originalSelection, app.Select3D.sectionSelection); // put back exactly as it was, same array reference
+    assertEquals(-1, app.X_clicked); // click consumed, same as the viewport button's own identical reasoning
+    assertEquals(-1, app.Y_clicked);
+  }
+
+  @Test
+  void handleRenderSectionsButtonClick_insideTheButton_usesPassiveWhenStudyIsPassive () {
+    app.allActions = new java.util.HashMap<>();
+    java.util.List<String> calledOrder = new java.util.ArrayList<>();
+    app.allActions.put("prebake selected sections", (args) -> calledOrder.add("prebake"));
+    app.allActions.put("process active impact on selected sections", (args) -> calledOrder.add("active"));
+    app.allActions.put("process passive impact on selected sections", (args) -> calledOrder.add("passive"));
+
+    app.STUDY.impactTypeIndex = app.Impact_PASSIVE;
+    app.allSections.num = 2;
+    app.Select3D.sectionSelection = new int[0];
+
+    setExplicitRolloutBounds();
+    float[] b = app.UI_rollout.renderSectionsButtonBounds();
+    app.X_clicked = (int) (0.5f * (b[0] + b[1]));
+    app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
+
+    app.UI_rollout.handleRenderSectionsButtonClick();
+
+    assertEquals(java.util.Arrays.asList("prebake", "passive"), calledOrder);
+  }
 }

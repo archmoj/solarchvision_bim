@@ -848,7 +848,8 @@ class UI_rollout {
     }
 
     if (this.include) {
-      this.drawRenderButton();
+      this.drawRenderSectionsButton();
+      this.drawRenderViewportButton();
 
       if (isInside(X_clicked, Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY)) {
         X_clicked = -1;
@@ -861,15 +862,16 @@ class UI_rollout {
     }
   }
 
-  // "SOLARCHVISION render": one persistent button pinned to the bottom of
-  // the rollout panel (this.cY + this.dY, bottom-anchored so it stays put
-  // regardless of how much content the current parent/child page above
-  // it has), drawn and click-checked on every page rather than being
-  // part of any one PARENT_*/CHILD_* branch above - a one-click "prep and
-  // show the render" shortcut, not a per-page setting.
+  // "SOLARCHVISION render viewport": one persistent button pinned to the
+  // bottom of the rollout panel (this.cY + this.dY, bottom-anchored so it
+  // stays put regardless of how much content the current parent/child
+  // page above it has), drawn and click-checked on every page rather
+  // than being part of any one PARENT_*/CHILD_* branch above - a
+  // one-click "prep and show the render" shortcut, not a per-page
+  // setting.
   //
   // renderButtonBounds()/handleRenderButtonClick() are split out of
-  // drawRenderButton() itself, rather than inlined together the way the
+  // drawRenderViewportButton() itself, rather than inlined together the way the
   // tab-selector loop earlier in draw() mixes its own hit-testing and
   // drawing - this way the click logic (the part actually worth testing)
   // stays free of any rect()/fill()/text() graphics calls, directly
@@ -909,7 +911,7 @@ class UI_rollout {
     Y_clicked = -1;
   }
 
-  void drawRenderButton () {
+  void drawRenderViewportButton () {
     this.handleRenderButtonClick();
 
     float[] b = renderButtonBounds();
@@ -923,7 +925,78 @@ class UI_rollout {
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(14 * this.view_S);
-    text("SOLARCHVISION render", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
+    text("SOLARCHVISION render viewport", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
+  }
+
+  // "SOLARCHVISION render sections": a second persistent button, stacked
+  // directly above "SOLARCHVISION render viewport" (same pinned-to-the-
+  // bottom reasoning as that button's own comment above, just offset up
+  // by its own height plus the same 5 * view_S margin that button uses
+  // against the panel's own bottom edge) - a one-click "bake and process
+  // every section" shortcut, regardless of whatever subset (if any) of
+  // allSections is actually selected right now.
+  //
+  // render_Shadows_selectedSections()/calculate_Impact_selectedSections()
+  // (solarImpacts.pde) both read Select3D.sectionSelection directly -
+  // not currentObjectCategory, not any other selection-category's own
+  // array - so this only ever needs to swap that one array out for
+  // "every section" and back again, exactly the "select all sections and
+  // then restore selection after" approach, just without the
+  // selectAllOfCategory()/switch_category() side effect of also flipping
+  // currentObjectCategory (and, with it, which tool/category is
+  // highlighted) for what's meant to be a one-shot, scope-contained
+  // "render everything" action rather than a lasting selection change.
+  float[] renderSectionsButtonBounds () {
+    float[] viewportButton = renderButtonBounds();
+    float x1 = viewportButton[0];
+    float x2 = viewportButton[1];
+    float y2 = viewportButton[2] - 5 * this.view_S; // same margin renderButtonBounds() itself uses against cY + dY, just stacked against that button's own y1 instead
+    float y1 = y2 - 25 * this.view_S;
+    return new float[]{x1, x2, y1, y2};
+  }
+
+  void handleRenderSectionsButtonClick () {
+    if (this.editActive) return;
+
+    float[] b = renderSectionsButtonBounds();
+    if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) return;
+
+    // Swap in "every section", run the bake + impact pass, then put the
+    // real selection back exactly as it was - same array reference, so
+    // restoring it is just reassigning the field back, no copying needed.
+    int[] previousSectionSelection = Select3D.sectionSelection;
+    Select3D.sectionSelection = Select3D.rangeIds(allSections.num);
+
+    callAction("Prebake Selected Sections");
+    // Same Active/Passive branch reasoning as handleRenderButtonClick()'s
+    // own identical choice just above, for Sections' own pair of actions
+    // instead of Skin Potential's.
+    callAction(STUDY.impactTypeIndex == Impact_ACTIVE ? "Process Active Impact on Selected Sections" : "Process Passive Impact on Selected Sections");
+
+    Select3D.sectionSelection = previousSectionSelection;
+    selection_changed(); // same cleanup selectAll()/deselectAll() themselves end with - keeps the bounding box/cached selection state in sync with the now-restored selection, not whatever it was left at mid-bake with every section selected
+
+    // Consumes its own click, same as handleRenderButtonClick()'s own
+    // identical reasoning above.
+    X_clicked = -1;
+    Y_clicked = -1;
+  }
+
+  void drawRenderSectionsButton () {
+    this.handleRenderSectionsButtonClick();
+
+    float[] b = renderSectionsButtonBounds();
+
+    strokeWeight(2);
+    stroke(0);
+    fill(255, 204, 0); // same bold amber/gold as drawRenderViewportButton() - consistent, deliberately-stands-out styling for both one-click render shortcuts
+    rect(b[0], b[2], b[1] - b[0], b[3] - b[2]);
+    strokeWeight(0);
+
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(14 * this.view_S);
+    text("SOLARCHVISION render sections", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
   }
 
   boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v) {
