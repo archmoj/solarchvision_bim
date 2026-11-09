@@ -965,28 +965,9 @@ class UI_rollout {
     // right now (if anything) is completely unaffected by this click.
     int[] everySection = Select3D.rangeIds(allSections.num);
 
-    // Can't go through callAction("Prebake Selected Sections")/
-    // callAction("Process Active/Passive Impact on Selected Sections")
-    // the way handleRenderButtonClick() does for its own actions just
-    // above - those are plain Runnables (putAction's no-args overload,
-    // actions.pde), with no way to hand them this button's own
-    // everySection instead of whatever they'd read from
-    // Select3D.sectionSelection themselves. So this calls the same
-    // underlying functions those actions call directly, passing
-    // everySection straight through - echoAction() reproduces the same
-    // "[Action]: ..." console lines calling them through the action
-    // registry would otherwise have printed, so this still reads the
-    // same in the log.
-    echoAction("Prebake Selected Sections");
     allSolarImpacts.render_ShadowsOnSections(everySection);
 
-    // Same Active/Passive branch reasoning as handleRenderButtonClick()'s
-    // own identical choice just above, for Sections' own pair of actions
-    // instead of Skin Potential's - see "Process Active/Passive Impact
-    // on Selected Sections" (actions.pde) for the same impactGraphIndex
-    // assignment this mirrors.
     boolean active = STUDY.impactTypeIndex == Impact_ACTIVE;
-    echoAction(active ? "Process Active Impact on Selected Sections" : "Process Passive Impact on Selected Sections");
     STUDY.impactGraphIndex = active ? impactGraphIndex_URBAN_ACTIVE : impactGraphIndex_URBAN_PASSIVE;
     allSolarImpacts.calculate_ImpactOnSections(everySection);
 
