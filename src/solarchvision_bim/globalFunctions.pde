@@ -288,6 +288,18 @@ void endScene3DChange () {
   view_changed();
 }
 
+void reviseAll () {
+  // only when we need to redraw these due to gl context lost
+  WORLD.revise();
+  WIN3D.revise();
+  STUDY.revise();
+  UI_rollout.revise();
+  UI_menuBar.revise();
+  UI_toolBar.revise();
+  UI_caseBar.revise();
+  UI_consoleBar.revise();
+}
+
 void view_changed () {
   WIN3D.revise();
 

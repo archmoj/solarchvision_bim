@@ -2075,15 +2075,7 @@ class STUDY {
     if (prev_ImageScale != this.ImageScale) {
       prev_ImageScale = this.ImageScale;
 
-      // we need to redraw these due to gl context lost
-      WORLD.revise();
-      WIN3D.revise();
-      this.revise();
-      UI_rollout.revise();
-      UI_menuBar.revise();
-      UI_toolBar.revise();
-      UI_caseBar.revise();
-      UI_consoleBar.revise();
+      reviseAll();
     }
   }
 

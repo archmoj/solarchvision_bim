@@ -693,7 +693,6 @@ void build_allActions() {
     ensembleForecastShouldLoad = true;
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    view_changed();
     WIN3D.revise();
     STUDY.revise();
     UI_rollout.revise();
