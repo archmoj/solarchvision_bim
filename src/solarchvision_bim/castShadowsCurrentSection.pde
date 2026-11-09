@@ -1,5 +1,5 @@
 // sectionIndex/sectionCount - this section's own 1-based position among
-// however many render_Shadows_selectedSections() (solarImpacts.pde) is
+// however many render_ShadowsOnSections() (solarImpacts.pde) is
 // baking in this one batch, and the batch's own total count - purely
 // for the console print/ProgressWindow title just below: nothing in the
 // actual bake (file names, geometry, Shades_scaleX/Y, etc.) depends on

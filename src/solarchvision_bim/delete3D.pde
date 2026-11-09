@@ -489,7 +489,7 @@ class Delete3D {
     allGroups.Pivots = removeIndices(allGroups.Pivots, ids);
     allGroups.num -= ids.length;
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
     endScene3DChange();
   }
 

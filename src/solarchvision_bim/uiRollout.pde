@@ -936,7 +936,7 @@ class UI_rollout {
   // every section" shortcut, regardless of whatever subset (if any) of
   // allSections is actually selected right now.
   //
-  // render_Shadows_selectedSections()/calculate_Impact_selectedSections()
+  // render_ShadowsOnSections()/calculate_ImpactOnSections()
   // (solarImpacts.pde) both now take their section ids as an explicit
   // argument, rather than always reading Select3D.sectionSelection
   // directly - so this just builds "every section" (Select3D.
@@ -978,7 +978,7 @@ class UI_rollout {
     // registry would otherwise have printed, so this still reads the
     // same in the log.
     echoAction("Prebake Selected Sections");
-    allSolarImpacts.render_Shadows_selectedSections(everySection);
+    allSolarImpacts.render_ShadowsOnSections(everySection);
 
     // Same Active/Passive branch reasoning as handleRenderButtonClick()'s
     // own identical choice just above, for Sections' own pair of actions
@@ -988,7 +988,7 @@ class UI_rollout {
     boolean active = STUDY.impactTypeIndex == Impact_ACTIVE;
     echoAction(active ? "Process Active Impact on Selected Sections" : "Process Passive Impact on Selected Sections");
     STUDY.impactGraphIndex = active ? impactGraphIndex_URBAN_ACTIVE : impactGraphIndex_URBAN_PASSIVE;
-    allSolarImpacts.calculate_Impact_selectedSections(everySection);
+    allSolarImpacts.calculate_ImpactOnSections(everySection);
 
     view_changed();
 

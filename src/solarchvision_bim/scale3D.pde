@@ -132,7 +132,7 @@ class Scale3D {
       allSolids_updated = true;
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }
@@ -146,7 +146,7 @@ class Scale3D {
       allSections.setV(f, allSections.getV(f) * sy);
     }
 
-    allSolidImpacts.calculate_Impact_selectedSections();
+    allSolidImpacts.calculate_ImpactOnSections();
     endScene3DChange();
   }
 
@@ -278,7 +278,7 @@ class Scale3D {
       }
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }

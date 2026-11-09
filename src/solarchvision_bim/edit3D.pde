@@ -200,7 +200,7 @@ class Edit3D {
       }
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
   }
 
   void Solids (int p) {
@@ -242,6 +242,6 @@ class Edit3D {
       allSolids_updated = true;
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
   }
 }

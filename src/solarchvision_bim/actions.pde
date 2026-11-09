@@ -421,11 +421,11 @@ void build_allActions() {
   putAction("Sun Path (Passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
-    // render_Shadows_selectedSections() now takes its sections as an
+    // render_ShadowsOnSections() now takes its sections as an
     // explicit argument (solarImpacts.pde's own comment on why) - this
     // caller means "whatever's currently selected", same as always, so
     // it just passes Select3D.sectionSelection straight through.
-    allSolarImpacts.render_Shadows_selectedSections(Select3D.sectionSelection);
+    allSolarImpacts.render_ShadowsOnSections(Select3D.sectionSelection);
 
     view_changed();
   });
@@ -433,7 +433,7 @@ void build_allActions() {
   putAction("Process Active Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
     // Same reasoning as "Prebake Selected Sections" just above.
-    allSolarImpacts.calculate_Impact_selectedSections(Select3D.sectionSelection);
+    allSolarImpacts.calculate_ImpactOnSections(Select3D.sectionSelection);
 
     view_changed();
   });
@@ -441,13 +441,13 @@ void build_allActions() {
   putAction("Process Passive Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
     // Same reasoning as "Prebake Selected Sections" just above.
-    allSolarImpacts.calculate_Impact_selectedSections(Select3D.sectionSelection);
+    allSolarImpacts.calculate_ImpactOnSections(Select3D.sectionSelection);
 
     view_changed();
   });
 
   putAction("Process Solid Impact on Selected Sections", () -> {
-    allSolidImpacts.calculate_Impact_selectedSections();
+    allSolidImpacts.calculate_ImpactOnSections();
 
     view_changed();
   });
@@ -2607,7 +2607,7 @@ void build_allActions() {
     putAction("3D-model " + nf(modelIndex, 0), () -> {
       deleteAll();
       Create3D.add_DefaultModel(modelIndex);
-      allSolidImpacts.calculate_Impact_selectedSections();
+      allSolidImpacts.calculate_ImpactOnSections();
       UI_rollout.revise();
       WIN3D.revise();
     });

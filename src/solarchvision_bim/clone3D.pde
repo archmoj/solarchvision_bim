@@ -321,7 +321,7 @@ class Clone3D {
     Select3D.deselect_Groups();
     Select3D.groupSelection = appendRange(Select3D.groupSelection, numberOfGroupsBefore, allGroups.num);
 
-    if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
+    if (SOLID_added != 0) allSolidImpacts.calculate_ImpactOnSections();
     selection_changed();
     endScene3DChange();
   }

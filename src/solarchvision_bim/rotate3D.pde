@@ -140,7 +140,7 @@ class Rotate3D {
       allSolids_updated = true;
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }
@@ -153,7 +153,7 @@ class Rotate3D {
       allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
     }
 
-    allSolidImpacts.calculate_Impact_selectedSections();
+    allSolidImpacts.calculate_ImpactOnSections();
     endScene3DChange();
   }
 
@@ -282,7 +282,7 @@ class Rotate3D {
       }
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }

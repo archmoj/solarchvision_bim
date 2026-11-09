@@ -68,14 +68,14 @@ class SolarImpacts {
   // the live camera/viewport (viewport2D.pde's plotImpact_urban(), the
   // only other caller of calculate_Impact_CurrentPreBaked() below)
   // rather than for one of allSections' own cross-sections
-  // (calculate_Impact_selectedSections() further down, which calls that
+  // (calculate_ImpactOnSections() further down, which calls that
   // exact same shared function once per selected section - overwriting
   // this.Image[][] with that section's own geometry each time, not the
   // camera's - and leaves it holding whichever section it processed
   // last). calculate_Impact_CurrentPreBaked() itself has no reason to
   // know which of its two callers is driving it, so this is set true by
   // plotImpact_urban() right after its own call, and forced back false
-  // by calculate_Impact_selectedSections() right before its loop starts
+  // by calculate_ImpactOnSections() right before its loop starts
   // overwriting this.Image[][] with section data instead.
   //
   // drawViewport3DLayers.pde reads this to decide whether
@@ -1146,7 +1146,7 @@ class SolarImpacts {
   // currently selected" keeps that behavior unchanged by simply passing
   // Select3D.sectionSelection itself (see actions.pde's own "Prebake
   // Selected Sections").
-  void render_Shadows_selectedSections (int[] sections) {
+  void render_ShadowsOnSections (int[] sections) {
 
     // This batch's own total count, for castShadows_CurrentSection()'s
     // own "Section X of N" console/ProgressWindow label (castShadows
@@ -1191,10 +1191,10 @@ class SolarImpacts {
 
 
 
-  // sections: same reasoning as render_Shadows_selectedSections()'s own
+  // sections: same reasoning as render_ShadowsOnSections()'s own
   // identical parameter just above - the section ids to process, rather
   // than always reading Select3D.sectionSelection directly.
-  void calculate_Impact_selectedSections (int[] sections) {
+  void calculate_ImpactOnSections (int[] sections) {
 
     // About to overwrite this.Image[][] with each selected section's own
     // geometry in turn (not the camera's) - see win3DOverlay_

@@ -196,7 +196,7 @@ void draw_WIN3D_layers () {
     // "what's on disk for this camera/location", not which impact type is
     // currently selected. Also gated on win3DOverlay_imageIsFromViewport
     // (solarImpacts.pde): img above can still be a stale leftover from
-    // allSolarImpacts.calculate_Impact_selectedSections() (one of
+    // allSolarImpacts.calculate_ImpactOnSections() (one of
     // allSections' own cross-sections, not the camera) if the live
     // camera still happens to match its last recorded snapshot - the
     // camera's own face-edges mask describes neither that section's

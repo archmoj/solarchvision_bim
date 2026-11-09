@@ -143,7 +143,7 @@ class SolidImpacts {
   }
 
 
-  void calculate_Impact_selectedSections () {
+  void calculate_ImpactOnSections () {
 
     for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
 

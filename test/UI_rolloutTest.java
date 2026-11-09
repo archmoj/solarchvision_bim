@@ -485,7 +485,7 @@ class UI_rolloutTest {
     assertEquals(viewportButton[2] - 5f - 25f, b[2], 0.01f); // y1 - same 25 * view_S height
   }
 
-  // render_Shadows_selectedSections()/calculate_Impact_selectedSections()
+  // render_ShadowsOnSections()/calculate_ImpactOnSections()
   // (solarImpacts.pde) now take their section ids as a plain int[]
   // argument rather than being reached through the action registry, so
   // (unlike handleRenderButtonClick()'s own tests above) there's no

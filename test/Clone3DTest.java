@@ -287,7 +287,7 @@ class Clone3DTest {
   // ================= Sections (batch) =================================
   //
   // Unlike Move3D/Scale3D/Rotate3D's Sections() functions, this one does
-  // NOT call allSolidImpacts.calculate_Impact_selectedSections() at all -
+  // NOT call allSolidImpacts.calculate_ImpactOnSections() at all -
   // it only creates new section rows - so it's fully safe to test here,
   // no skip needed.
 

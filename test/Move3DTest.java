@@ -163,7 +163,7 @@ class Move3DTest {
     app.allSolids.DEF[1][0] = 5;
     app.Select3D.solidSelection = new int[]{1};
     // Select3D.sectionSelection is left empty - allSolidImpacts.
-    // calculate_Impact_selectedSections()'s own loop is keyed off that
+    // calculate_ImpactOnSections()'s own loop is keyed off that
     // array, so leaving it empty makes the mandatory call a safe no-op
     // regardless of what was actually moved here.
 

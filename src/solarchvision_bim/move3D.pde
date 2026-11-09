@@ -132,7 +132,7 @@ class Move3D {
       allSolids_updated = true;
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }
@@ -145,7 +145,7 @@ class Move3D {
       allSections.move(f, dx, dy, dz);
     }
 
-    allSolidImpacts.calculate_Impact_selectedSections();
+    allSolidImpacts.calculate_ImpactOnSections();
     endScene3DChange();
   }
 
@@ -205,7 +205,7 @@ class Move3D {
       }
     }
 
-    if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
 
     endScene3DChange();
   }

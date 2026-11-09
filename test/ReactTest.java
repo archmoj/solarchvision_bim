@@ -154,7 +154,7 @@ class ReactTest {
 
   @Test
   void recalcImpact_revisesTheView_whenChanged () {
-    // No sections are selected by default, so calculate_Impact_selectedSections()
+    // No sections are selected by default, so calculate_ImpactOnSections()
     // is a genuine no-op loop here - safe to run for real rather than mocking it.
     app.WIN3D.update = false;
     app.react.recalcImpact.run(3, 4);

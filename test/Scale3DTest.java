@@ -128,7 +128,7 @@ class Scale3DTest {
 
     app.Select3D.solidSelection = new int[]{0};
     // sectionSelection left empty - same reasoning as Move3DTest's Solids
-    // test: it makes the mandatory calculate_Impact_selectedSections()
+    // test: it makes the mandatory calculate_ImpactOnSections()
     // call a safe no-op regardless of what was actually scaled here.
 
     app.Scale3D.Solids(1, 0, 0, 2, 3, 4);

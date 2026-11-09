@@ -86,7 +86,7 @@ class SolidImpactsTest {
       app.allSolidImpacts.get_Impact_atXYZ(2, 0, 0), 0.0001f);
   }
 
-  // ================= calculate_Impact_selectedSections =====================
+  // ================= calculate_ImpactOnSections =====================
 
   @Test
   void calculateImpactSelectedSections_isANoOpWhenNothingIsSelected () {
@@ -94,7 +94,7 @@ class SolidImpactsTest {
     // If this reached calculate_Impact_CurrentSection() it would throw
     // on cursor() - reaching the end of this call without an exception
     // IS the assertion here.
-    app.allSolidImpacts.calculate_Impact_selectedSections();
+    app.allSolidImpacts.calculate_ImpactOnSections();
   }
 
   // ================= to_XML / from_XML round trip ==========================

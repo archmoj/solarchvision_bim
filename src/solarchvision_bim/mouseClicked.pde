@@ -2083,7 +2083,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               allSolidImpacts.RES1 = sp.RES1;
               allSolidImpacts.RES2 = sp.RES2;
 
-              allSolidImpacts.calculate_Impact_selectedSections();
+              allSolidImpacts.calculate_ImpactOnSections();
 
               allSolarImpacts.sectionType = sp.Type;
             }

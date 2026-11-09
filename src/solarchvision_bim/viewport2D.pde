@@ -2597,7 +2597,7 @@ class STUDY {
     if (this.updateImpactGraph) {
       allSolarImpacts.calculate_Impact_CurrentPreBaked();
 
-      // This call (unlike calculate_Impact_selectedSections()'s own call
+      // This call (unlike calculate_ImpactOnSections()'s own call
       // to the exact same function, below) just repainted this.Image[][]
       // for the live camera/viewport, under the "Viewport_" SceneName set
       // immediately above - see win3DOverlay_imageIsFromViewport's own

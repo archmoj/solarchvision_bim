@@ -29,11 +29,11 @@ class SolarImpactsTest {
     assertFalse(app.allSolarImpacts.rebuild_Image_array);
   }
 
-  // ================= calculate_Impact_selectedSections ===================
+  // ================= calculate_ImpactOnSections ===================
 
   @Test
   void calculateImpactSelectedSections_isANoOpWhenNothingIsSelected () {
-    // calculate_Impact_selectedSections() now takes its section ids as
+    // calculate_ImpactOnSections() now takes its section ids as
     // an explicit argument (so a caller can process "every section"
     // without having to first overwrite Select3D.sectionSelection to get
     // there - see uiRollout.pde's own "SOLARCHVISION render sections"
@@ -44,7 +44,7 @@ class SolarImpactsTest {
     // If this reached calculate_Impact_CurrentPreBaked() it would throw
     // on cursor()/loadImage() - reaching the end of this call without an
     // exception IS the assertion here.
-    app.allSolarImpacts.calculate_Impact_selectedSections(app.Select3D.sectionSelection);
+    app.allSolarImpacts.calculate_ImpactOnSections(app.Select3D.sectionSelection);
   }
 
   @Test
@@ -54,7 +54,7 @@ class SolarImpactsTest {
     // selection that would throw if read instead of the empty array
     // actually passed in.
     app.Select3D.sectionSelection = new int[]{0};
-    assertDoesNotThrow(() -> app.allSolarImpacts.calculate_Impact_selectedSections(new int[]{}));
+    assertDoesNotThrow(() -> app.allSolarImpacts.calculate_ImpactOnSections(new int[]{}));
   }
 
   // ================= to_XML / from_XML round trip ========================
