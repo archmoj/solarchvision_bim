@@ -421,21 +421,27 @@ void build_allActions() {
   putAction("Sun Path (Passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
-    allSolarImpacts.render_Shadows_selectedSections();
+    // render_Shadows_selectedSections() now takes its sections as an
+    // explicit argument (solarImpacts.pde's own comment on why) - this
+    // caller means "whatever's currently selected", same as always, so
+    // it just passes Select3D.sectionSelection straight through.
+    allSolarImpacts.render_Shadows_selectedSections(Select3D.sectionSelection);
 
     view_changed();
   });
 
   putAction("Process Active Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
-    allSolarImpacts.calculate_Impact_selectedSections();
+    // Same reasoning as "Prebake Selected Sections" just above.
+    allSolarImpacts.calculate_Impact_selectedSections(Select3D.sectionSelection);
 
     view_changed();
   });
 
   putAction("Process Passive Impact on Selected Sections", () -> {
     STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
-    allSolarImpacts.calculate_Impact_selectedSections();
+    // Same reasoning as "Prebake Selected Sections" just above.
+    allSolarImpacts.calculate_Impact_selectedSections(Select3D.sectionSelection);
 
     view_changed();
   });

@@ -937,15 +937,14 @@ class UI_rollout {
   // allSections is actually selected right now.
   //
   // render_Shadows_selectedSections()/calculate_Impact_selectedSections()
-  // (solarImpacts.pde) both read Select3D.sectionSelection directly -
-  // not currentObjectCategory, not any other selection-category's own
-  // array - so this only ever needs to swap that one array out for
-  // "every section" and back again, exactly the "select all sections and
-  // then restore selection after" approach, just without the
-  // selectAllOfCategory()/switch_category() side effect of also flipping
-  // currentObjectCategory (and, with it, which tool/category is
-  // highlighted) for what's meant to be a one-shot, scope-contained
-  // "render everything" action rather than a lasting selection change.
+  // (solarImpacts.pde) both now take their section ids as an explicit
+  // argument, rather than always reading Select3D.sectionSelection
+  // directly - so this just builds "every section" (Select3D.
+  // rangeIds(allSections.num)) and passes it straight in, with no need
+  // to touch the real selection (Select3D.sectionSelection), let alone
+  // selectAllOfCategory()/switch_category() and its currentObjectCategory
+  // side effect, at all. A genuine one-shot, scope-contained "render
+  // everything" action, not a selection change of any kind.
   float[] renderSectionsButtonBounds () {
     float[] viewportButton = renderButtonBounds();
     float x1 = viewportButton[0];
@@ -961,20 +960,37 @@ class UI_rollout {
     float[] b = renderSectionsButtonBounds();
     if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) return;
 
-    // Swap in "every section", run the bake + impact pass, then put the
-    // real selection back exactly as it was - same array reference, so
-    // restoring it is just reassigning the field back, no copying needed.
-    int[] previousSectionSelection = Select3D.sectionSelection;
-    Select3D.sectionSelection = Select3D.rangeIds(allSections.num);
+    // Every section, built directly - Select3D.sectionSelection itself
+    // is never read or written here, so whatever's actually selected
+    // right now (if anything) is completely unaffected by this click.
+    int[] everySection = Select3D.rangeIds(allSections.num);
 
-    callAction("Prebake Selected Sections");
+    // Can't go through callAction("Prebake Selected Sections")/
+    // callAction("Process Active/Passive Impact on Selected Sections")
+    // the way handleRenderButtonClick() does for its own actions just
+    // above - those are plain Runnables (putAction's no-args overload,
+    // actions.pde), with no way to hand them this button's own
+    // everySection instead of whatever they'd read from
+    // Select3D.sectionSelection themselves. So this calls the same
+    // underlying functions those actions call directly, passing
+    // everySection straight through - echoAction() reproduces the same
+    // "[Action]: ..." console lines calling them through the action
+    // registry would otherwise have printed, so this still reads the
+    // same in the log.
+    echoAction("Prebake Selected Sections");
+    allSolarImpacts.render_Shadows_selectedSections(everySection);
+
     // Same Active/Passive branch reasoning as handleRenderButtonClick()'s
     // own identical choice just above, for Sections' own pair of actions
-    // instead of Skin Potential's.
-    callAction(STUDY.impactTypeIndex == Impact_ACTIVE ? "Process Active Impact on Selected Sections" : "Process Passive Impact on Selected Sections");
+    // instead of Skin Potential's - see "Process Active/Passive Impact
+    // on Selected Sections" (actions.pde) for the same impactGraphIndex
+    // assignment this mirrors.
+    boolean active = STUDY.impactTypeIndex == Impact_ACTIVE;
+    echoAction(active ? "Process Active Impact on Selected Sections" : "Process Passive Impact on Selected Sections");
+    STUDY.impactGraphIndex = active ? impactGraphIndex_URBAN_ACTIVE : impactGraphIndex_URBAN_PASSIVE;
+    allSolarImpacts.calculate_Impact_selectedSections(everySection);
 
-    Select3D.sectionSelection = previousSectionSelection;
-    selection_changed(); // same cleanup selectAll()/deselectAll() themselves end with - keeps the bounding box/cached selection state in sync with the now-restored selection, not whatever it was left at mid-bake with every section selected
+    view_changed();
 
     // Consumes its own click, same as handleRenderButtonClick()'s own
     // identical reasoning above.

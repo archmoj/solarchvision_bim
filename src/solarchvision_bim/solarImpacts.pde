@@ -1135,18 +1135,29 @@ class SolarImpacts {
 
 
 
-  void render_Shadows_selectedSections () {
+  // sections: the section ids (allSections' own indices) to bake, same
+  // ids Select3D.sectionSelection itself would hold - an explicit
+  // parameter rather than reading Select3D.sectionSelection directly, so
+  // a caller that wants "every section" (uiRollout.pde's own
+  // "SOLARCHVISION render sections" button, say) can just pass
+  // Select3D.rangeIds(allSections.num) straight in, without having to
+  // first overwrite the real selection to get it there and restore it
+  // again afterward. Every existing caller that does mean "whatever's
+  // currently selected" keeps that behavior unchanged by simply passing
+  // Select3D.sectionSelection itself (see actions.pde's own "Prebake
+  // Selected Sections").
+  void render_Shadows_selectedSections (int[] sections) {
 
     // This batch's own total count, for castShadows_CurrentSection()'s
     // own "Section X of N" console/ProgressWindow label (castShadows
-    // CurrentSection.pde) - Select3D.sectionSelection itself doesn't
-    // change size over the loop below, so this is read once here rather
-    // than re-reading .length every iteration.
-    int sectionCount = Select3D.sectionSelection.length;
+    // CurrentSection.pde) - sections itself doesn't change size over the
+    // loop below, so this is read once here rather than re-reading
+    // .length every iteration.
+    int sectionCount = sections.length;
 
     for (int o = sectionCount - 1; o >= 0; o--) {
 
-      int f = Select3D.sectionSelection[o];
+      int f = sections[o];
 
       this.sectionType = allSections.get_type(f);
       this.RES1 = allSections.get_res1(f);
@@ -1166,9 +1177,9 @@ class SolarImpacts {
       // sectionCount - o counts UP from 1 to sectionCount instead - this
       // section's own position in THIS batch, which is what a person
       // watching the bake run actually wants to see ("Section 2 of 5"),
-      // not allSections' own index for it (f) or Select3D.
-      // sectionSelection's own position for it (o), neither of which
-      // they'd recognize as "which one of the ones I selected is this".
+      // not allSections' own index for it (f) or sections' own position
+      // for it (o), neither of which they'd recognize as "which one of
+      // the ones I selected is this".
       castShadows_CurrentSection(sectionCount - o, sectionCount);
     }
 
@@ -1180,7 +1191,10 @@ class SolarImpacts {
 
 
 
-  void calculate_Impact_selectedSections () {
+  // sections: same reasoning as render_Shadows_selectedSections()'s own
+  // identical parameter just above - the section ids to process, rather
+  // than always reading Select3D.sectionSelection directly.
+  void calculate_Impact_selectedSections (int[] sections) {
 
     // About to overwrite this.Image[][] with each selected section's own
     // geometry in turn (not the camera's) - see win3DOverlay_
@@ -1190,9 +1204,9 @@ class SolarImpacts {
     // whatever it was already set to.
     this.win3DOverlay_imageIsFromViewport = false;
 
-    for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
+    for (int o = sections.length - 1; o >= 0; o--) {
 
-      int f = Select3D.sectionSelection[o];
+      int f = sections[o];
 
       this.sectionType = allSections.get_type(f);
       this.RES1        = allSections.get_res1(f);

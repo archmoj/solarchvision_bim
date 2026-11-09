@@ -33,11 +33,28 @@ class SolarImpactsTest {
 
   @Test
   void calculateImpactSelectedSections_isANoOpWhenNothingIsSelected () {
+    // calculate_Impact_selectedSections() now takes its section ids as
+    // an explicit argument (so a caller can process "every section"
+    // without having to first overwrite Select3D.sectionSelection to get
+    // there - see uiRollout.pde's own "SOLARCHVISION render sections"
+    // button) - this still passes Select3D.sectionSelection itself, the
+    // same as every other existing caller (actions.pde's own "Process
+    // Active/Passive Impact on Selected Sections") does.
     app.Select3D.sectionSelection = new int[]{};
     // If this reached calculate_Impact_CurrentPreBaked() it would throw
     // on cursor()/loadImage() - reaching the end of this call without an
     // exception IS the assertion here.
-    app.allSolarImpacts.calculate_Impact_selectedSections();
+    app.allSolarImpacts.calculate_Impact_selectedSections(app.Select3D.sectionSelection);
+  }
+
+  @Test
+  void calculateImpactSelectedSections_isANoOpWhenPassedAnEmptyArray_evenWithARealSelectionSetElsewhere () {
+    // Proves the function actually uses its own argument, not
+    // Select3D.sectionSelection, by giving it a real (non-empty)
+    // selection that would throw if read instead of the empty array
+    // actually passed in.
+    app.Select3D.sectionSelection = new int[]{0};
+    assertDoesNotThrow(() -> app.allSolarImpacts.calculate_Impact_selectedSections(new int[]{}));
   }
 
   // ================= to_XML / from_XML round trip ========================
