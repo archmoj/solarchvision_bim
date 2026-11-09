@@ -343,12 +343,12 @@ class UI_rolloutTest {
     assertEquals("a", app.UI_rollout.editText); // untouched, never read past the end
   }
 
-  // ================= renderButtonBounds / handleRenderButtonClick =========
+  // ================= renderViewportButtonBounds / handleRenderViewportButtonClick =========
   // ================= (the "SOLARCHVISION render" button) ===================
   // drawRenderButton() itself (rect()/fill()/text()) isn't covered here,
   // same reasoning as this class's other draw()-touching methods (top-of-
   // file comment) - what's covered is the pure geometry
-  // (renderButtonBounds()) and the click logic (handleRenderButtonClick()),
+  // (renderViewportButtonBounds()) and the click logic (handleRenderViewportButtonClick()),
   // which calls no graphics functions at all, by design (drawRenderButton()'s
   // own comment on why they're split).
 
@@ -357,7 +357,7 @@ class UI_rolloutTest {
   // bare `new solarchvision_bim()` test instance - only setup() computes
   // them for real. Left at their own field-initializer defaults, dY in
   // particular (2 * pixel_H) collapses to 0, which doesn't make
-  // renderButtonBounds() degenerate on its own (y1 still ends up < y2),
+  // renderViewportButtonBounds() degenerate on its own (y1 still ends up < y2),
   // but isInside() (global_functions.pde) uses strict `<`, not `<=`, so
   // any other similarly-zeroed combination can silently produce a
   // bounds box no click position computed from those same zeroed values
@@ -373,10 +373,10 @@ class UI_rolloutTest {
   }
 
   @Test
-  void renderButtonBounds_isPinnedToTheBottomOfThePanel () {
+  void renderViewportButtonBounds_isPinnedToTheBottomOfThePanel () {
     setExplicitRolloutBounds();
 
-    float[] b = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderViewportButtonBounds();
 
     assertEquals(105f, b[0], 0.01f); // x1
     assertEquals(395f, b[1], 0.01f); // x2
@@ -385,42 +385,42 @@ class UI_rolloutTest {
   }
 
   @Test
-  void handleRenderButtonClick_outsideTheButton_doesNothing () {
+  void handleRenderViewportButtonClick_outsideTheButton_doesNothing () {
     app.allActions = new java.util.HashMap<>();
     boolean[] ran = {false};
     app.allActions.put("prebake viewport", (args) -> ran[0] = true);
 
     setExplicitRolloutBounds();
-    float[] b = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderViewportButtonBounds();
     int clickedX = (int) (b[0] - 100); // well to the left of the button
     app.X_clicked = clickedX;
     app.Y_clicked = (int) b[2];
 
-    app.UI_rollout.handleRenderButtonClick();
+    app.UI_rollout.handleRenderViewportButtonClick();
 
     assertFalse(ran[0]);
     assertEquals(clickedX, app.X_clicked); // click NOT consumed
   }
 
   @Test
-  void handleRenderButtonClick_whileEditingASpinner_doesNothing () {
+  void handleRenderViewportButtonClick_whileEditingASpinner_doesNothing () {
     app.allActions = new java.util.HashMap<>();
     boolean[] ran = {false};
     app.allActions.put("prebake viewport", (args) -> ran[0] = true);
     app.UI_rollout.editActive = true;
 
     setExplicitRolloutBounds();
-    float[] b = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderViewportButtonBounds();
     app.X_clicked = (int) (0.5f * (b[0] + b[1]));
     app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
 
-    app.UI_rollout.handleRenderButtonClick();
+    app.UI_rollout.handleRenderViewportButtonClick();
 
     assertFalse(ran[0]);
   }
 
   @Test
-  void handleRenderButtonClick_insideTheButton_skipsUnshadeWhenShadingIsOff_andUsesSkinPotentialActive () {
+  void handleRenderViewportButtonClick_insideTheButton_skipsUnshadeWhenShadingIsOff_andUsesSkinPotentialActive () {
     app.allActions = new java.util.HashMap<>();
     java.util.List<String> calledOrder = new java.util.ArrayList<>();
     app.allActions.put("prebake viewport", (args) -> calledOrder.add("prebake"));
@@ -432,11 +432,11 @@ class UI_rolloutTest {
     app.STUDY.impactTypeIndex = app.Impact_ACTIVE;
 
     setExplicitRolloutBounds();
-    float[] b = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderViewportButtonBounds();
     app.X_clicked = (int) (0.5f * (b[0] + b[1]));
     app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
 
-    app.UI_rollout.handleRenderButtonClick();
+    app.UI_rollout.handleRenderViewportButtonClick();
 
     assertEquals(java.util.Arrays.asList("prebake", "active"), calledOrder);
     assertEquals(-1, app.X_clicked); // click consumed, same as the generic rollout catch-all
@@ -444,7 +444,7 @@ class UI_rolloutTest {
   }
 
   @Test
-  void handleRenderButtonClick_alsoUnshadesWhenShadingIsOn_andUsesSkinPotentialPassive () {
+  void handleRenderViewportButtonClick_alsoUnshadesWhenShadingIsOn_andUsesSkinPotentialPassive () {
     app.allActions = new java.util.HashMap<>();
     java.util.List<String> calledOrder = new java.util.ArrayList<>();
     app.allActions.put("prebake viewport", (args) -> calledOrder.add("prebake"));
@@ -456,18 +456,18 @@ class UI_rolloutTest {
     app.STUDY.impactTypeIndex = app.Impact_PASSIVE;
 
     setExplicitRolloutBounds();
-    float[] b = app.UI_rollout.renderButtonBounds();
+    float[] b = app.UI_rollout.renderViewportButtonBounds();
     app.X_clicked = (int) (0.5f * (b[0] + b[1]));
     app.Y_clicked = (int) (0.5f * (b[2] + b[3]));
 
-    app.UI_rollout.handleRenderButtonClick();
+    app.UI_rollout.handleRenderViewportButtonClick();
 
     assertEquals(java.util.Arrays.asList("prebake", "unshade", "passive"), calledOrder);
   }
 
   // ================= renderSectionsButtonBounds / handleRenderSectionsButtonClick ====
   // ================= (the "SOLARCHVISION all sections" button) ====================
-  // Same drawRenderButton()/handleRenderButtonClick() split and reasoning
+  // Same drawRenderButton()/handleRenderViewportButtonClick() split and reasoning
   // as that section's own header comment above - only the geometry
   // (renderSectionsButtonBounds()) and the pure click logic
   // (handleRenderSectionsButtonClick()) are covered here.
@@ -476,7 +476,7 @@ class UI_rolloutTest {
   void renderSectionsButtonBounds_isStackedDirectlyAboveTheViewportButton () {
     setExplicitRolloutBounds();
 
-    float[] viewportButton = app.UI_rollout.renderButtonBounds();
+    float[] viewportButton = app.UI_rollout.renderViewportButtonBounds();
     float[] b = app.UI_rollout.renderSectionsButtonBounds();
 
     assertEquals(viewportButton[0], b[0], 0.01f); // x1 - same width as the viewport button
@@ -488,7 +488,7 @@ class UI_rolloutTest {
   // render_ShadowsOnSections()/calculate_ImpactOnSections()
   // (solarImpacts.pde) now take their section ids as a plain int[]
   // argument rather than being reached through the action registry, so
-  // (unlike handleRenderButtonClick()'s own tests above) there's no
+  // (unlike handleRenderViewportButtonClick()'s own tests above) there's no
   // allActions map to install spies into here - instead these call the
   // real functions directly, the same way the handler itself does.
   // allSections.num is kept at 0 in the "inside the button" tests below

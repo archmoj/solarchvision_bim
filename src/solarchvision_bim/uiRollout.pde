@@ -870,14 +870,14 @@ class UI_rollout {
   // one-click "prep and show the render" shortcut, not a per-page
   // setting.
   //
-  // renderButtonBounds()/handleRenderButtonClick() are split out of
+  // renderViewportButtonBounds()/handleRenderViewportButtonClick() are split out of
   // drawRenderViewportButton() itself, rather than inlined together the way the
   // tab-selector loop earlier in draw() mixes its own hit-testing and
   // drawing - this way the click logic (the part actually worth testing)
   // stays free of any rect()/fill()/text() graphics calls, directly
   // callable headless, the same separation uiCaseBar.pde's own
   // handleImpactControlsClicks()/renderImpactControlsGrid() already keep.
-  float[] renderButtonBounds () {
+  float[] renderViewportButtonBounds () {
     float x1 = this.cX + 5 * this.view_S;
     float x2 = this.cX + this.dX - 5 * this.view_S;
     float y2 = this.cY + this.dY - 5 * this.view_S;
@@ -885,10 +885,10 @@ class UI_rollout {
     return new float[]{x1, x2, y1, y2};
   }
 
-  void handleRenderButtonClick () {
+  void handleRenderViewportButtonClick () {
     if (this.editActive) return;
 
-    float[] b = renderButtonBounds();
+    float[] b = renderViewportButtonBounds();
     if (!isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) return;
 
     // Bake first (so the viewport has something fresh to show)...
@@ -912,9 +912,9 @@ class UI_rollout {
   }
 
   void drawRenderViewportButton () {
-    this.handleRenderButtonClick();
+    this.handleRenderViewportButtonClick();
 
-    float[] b = renderButtonBounds();
+    float[] b = renderViewportButtonBounds();
 
     strokeWeight(2);
     stroke(0);
@@ -946,10 +946,10 @@ class UI_rollout {
   // side effect, at all. A genuine one-shot, scope-contained "render
   // everything" action, not a selection change of any kind.
   float[] renderSectionsButtonBounds () {
-    float[] viewportButton = renderButtonBounds();
+    float[] viewportButton = renderViewportButtonBounds();
     float x1 = viewportButton[0];
     float x2 = viewportButton[1];
-    float y2 = viewportButton[2] - 5 * this.view_S; // same margin renderButtonBounds() itself uses against cY + dY, just stacked against that button's own y1 instead
+    float y2 = viewportButton[2] - 5 * this.view_S; // same margin renderViewportButtonBounds() itself uses against cY + dY, just stacked against that button's own y1 instead
     float y1 = y2 - 25 * this.view_S;
     return new float[]{x1, x2, y1, y2};
   }
@@ -973,7 +973,7 @@ class UI_rollout {
 
     reviseAll();
 
-    // Consumes its own click, same as handleRenderButtonClick()'s own
+    // Consumes its own click, same as handleRenderViewportButtonClick()'s own
     // identical reasoning above.
     X_clicked = -1;
     Y_clicked = -1;
