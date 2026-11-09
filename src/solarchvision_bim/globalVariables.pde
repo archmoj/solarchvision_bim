@@ -84,7 +84,7 @@ float globalAlbedo = 0; // 0-100
 float celestialMagnification = 16.0; // <<<<<<<<<<
 
 // Whether preBakeViewport() (preBakeViewport3D.pde) draws and presents a
-// progress bar above the "SOLARCHVISION render viewport" button (uiRollout.pde)
+// progress bar above the "SOLARCHVISION current viewport" button (uiRollout.pde)
 // while it bakes, instead of leaving the screen frozen for the whole
 // bake the way it otherwise would - see awaitAllWithProgress()'s own
 // comment for why a bake this synchronous needs a manual mid-call

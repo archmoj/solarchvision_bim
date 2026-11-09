@@ -36,7 +36,7 @@ class SolarImpactsTest {
     // calculate_ImpactOnSections() now takes its section ids as
     // an explicit argument (so a caller can process "every section"
     // without having to first overwrite Select3D.sectionSelection to get
-    // there - see uiRollout.pde's own "SOLARCHVISION render sections"
+    // there - see uiRollout.pde's own "SOLARCHVISION all sections"
     // button) - this still passes Select3D.sectionSelection itself, the
     // same as every other existing caller (actions.pde's own "Process
     // Active/Passive Impact on Selected Sections") does.

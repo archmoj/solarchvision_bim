@@ -1139,7 +1139,7 @@ class SolarImpacts {
   // ids Select3D.sectionSelection itself would hold - an explicit
   // parameter rather than reading Select3D.sectionSelection directly, so
   // a caller that wants "every section" (uiRollout.pde's own
-  // "SOLARCHVISION render sections" button, say) can just pass
+  // "SOLARCHVISION all sections" button, say) can just pass
   // Select3D.rangeIds(allSections.num) straight in, without having to
   // first overwrite the real selection to get it there and restore it
   // again afterward. Every existing caller that does mean "whatever's

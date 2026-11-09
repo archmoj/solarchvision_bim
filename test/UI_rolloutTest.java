@@ -466,7 +466,7 @@ class UI_rolloutTest {
   }
 
   // ================= renderSectionsButtonBounds / handleRenderSectionsButtonClick ====
-  // ================= (the "SOLARCHVISION render sections" button) ====================
+  // ================= (the "SOLARCHVISION all sections" button) ====================
   // Same drawRenderButton()/handleRenderButtonClick() split and reasoning
   // as that section's own header comment above - only the geometry
   // (renderSectionsButtonBounds()) and the pure click logic

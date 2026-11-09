@@ -862,7 +862,7 @@ class UI_rollout {
     }
   }
 
-  // "SOLARCHVISION render viewport": one persistent button pinned to the
+  // "SOLARCHVISION current viewport": one persistent button pinned to the
   // bottom of the rollout panel (this.cY + this.dY, bottom-anchored so it
   // stays put regardless of how much content the current parent/child
   // page above it has), drawn and click-checked on every page rather
@@ -925,11 +925,11 @@ class UI_rollout {
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(14 * this.view_S);
-    text("SOLARCHVISION render viewport", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
+    text("SOLARCHVISION current viewport", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
   }
 
-  // "SOLARCHVISION render sections": a second persistent button, stacked
-  // directly above "SOLARCHVISION render viewport" (same pinned-to-the-
+  // "SOLARCHVISION all sections": a second persistent button, stacked
+  // directly above "SOLARCHVISION current viewport" (same pinned-to-the-
   // bottom reasoning as that button's own comment above, just offset up
   // by its own height plus the same 5 * view_S margin that button uses
   // against the panel's own bottom edge) - a one-click "bake and process
@@ -986,14 +986,14 @@ class UI_rollout {
 
     strokeWeight(2);
     stroke(0);
-    fill(255, 204, 0); // same bold amber/gold as drawRenderViewportButton() - consistent, deliberately-stands-out styling for both one-click render shortcuts
+    fill(191);
     rect(b[0], b[2], b[1] - b[0], b[3] - b[2]);
     strokeWeight(0);
 
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(14 * this.view_S);
-    text("SOLARCHVISION render sections", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
+    text("SOLARCHVISION all sections", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
   }
 
   boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v) {
