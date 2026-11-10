@@ -100,7 +100,7 @@ String Section_Stamp () {
 
   String s = "";
 
-  s += "t" + nf(allSolidImpacts.sectionType, 0);
+  s += "t" + nf(allSolarImpacts.sectionType, 0);
   s += "u" + nf(allSolarImpacts.X, 0, 3);
   s += "v" + nf(allSolarImpacts.Y, 0, 3);
   s += "w" + nf(allSolarImpacts.Z, 0, 3);
