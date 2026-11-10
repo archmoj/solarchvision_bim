@@ -550,6 +550,10 @@ CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
 // be created at all.
 class SectionParams {
   float X, Y, Z, R, U, V;
+  // Only meaningful for a type-0 (arbitrary) section - this function
+  // always derives Type 1/2/3 (see its own comment below), so these stay
+  // 0 (R alone, "rotX", is what every case here actually sets).
+  float RotY = 0, RotZ = 0;
   int Type, RES1, RES2;
   boolean createNew = false;
 }
@@ -697,7 +701,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
       PVector GAxGB = AG.cross(BG);
 
-      float[][] ImageVertex = allSections.getCorners(sp.Type, sp.X, sp.Y, sp.Z, sp.R, sp.U, sp.V, sp.RES1, sp.RES2);
+      float[][] ImageVertex = allSections.getCorners(sp.Type, sp.X, sp.Y, sp.Z, sp.R, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];

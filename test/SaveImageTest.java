@@ -69,12 +69,12 @@ class SaveImageTest {
     app.allSolarImpacts.Z = 30;
     app.allSolarImpacts.R = 45;
 
-    assertEquals("t2u10p000v20p000w30p000r45p000", app.Section_Stamp());
+    assertEquals("t2u10p000v20p000w30p000r45p000ry0p000rz0p000", app.Section_Stamp());
   }
 
   @Test
   void sectionStamp_onABareDefaultScene_isAllZerosAtType0 () {
-    assertEquals("t0u0p000v0p000w0p000r0p000", app.Section_Stamp());
+    assertEquals("t0u0p000v0p000w0p000r0p000ry0p000rz0p000", app.Section_Stamp());
   }
 
   @Test
@@ -82,7 +82,22 @@ class SaveImageTest {
     app.allSolarImpacts.X = -1.5f;
     app.allSolarImpacts.R = -90;
 
-    assertEquals("t0un1p500v0p000w0p000rn90p000", app.Section_Stamp());
+    assertEquals("t0un1p500v0p000w0p000rn90p000ry0p000rz0p000", app.Section_Stamp());
+  }
+
+  @Test
+  void sectionStamp_includesRotYAndRotZ_forAType0ArbitrarySection () {
+    // Regression coverage for the arbitrary (type 0) section feature:
+    // without this, two type-0 sections at the same X/Y/Z/R but a
+    // different rotY/rotZ would collide onto the same SceneName, the
+    // exact bug this whole test file exists to guard against for the
+    // sectionType digit itself.
+    app.allSolarImpacts.sectionType = 0;
+    app.allSolarImpacts.R = 10;
+    app.allSolarImpacts.rotY = 20;
+    app.allSolarImpacts.rotZ = -30;
+
+    assertEquals("t0u0p000v0p000w0p000r10p000ry20p000rzn30p000", app.Section_Stamp());
   }
 
   @Test
@@ -97,7 +112,7 @@ class SaveImageTest {
     app.allSolarImpacts.sectionType = 3;
     app.allSolidImpacts.sectionType = 1; // deliberately different and untouched
 
-    assertEquals("t3u0p000v0p000w0p000r0p000", app.Section_Stamp(),
+    assertEquals("t3u0p000v0p000w0p000r0p000ry0p000rz0p000", app.Section_Stamp(),
         "the 't' digit must track allSolarImpacts.sectionType, not allSolidImpacts.sectionType");
   }
 
@@ -119,7 +134,7 @@ class SaveImageTest {
     app.allSolidImpacts.Z[2] = 999;
     app.allSolidImpacts.R[2] = 999;
 
-    assertEquals("t1u5p000v6p000w7p000r8p000", app.Section_Stamp());
+    assertEquals("t1u5p000v6p000w7p000r8p000ry0p000rz0p000", app.Section_Stamp());
   }
 
   @Test

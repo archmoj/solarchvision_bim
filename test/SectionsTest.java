@@ -18,7 +18,7 @@ class SectionsTest {
     app.allSections.makeEmpty(2);
     assertEquals(2, app.allSections.num);
     assertEquals(2, app.allSections.f_data.length);
-    assertEquals(6, app.allSections.f_data[0].length);
+    assertEquals(8, app.allSections.f_data[0].length); // X,Y,Z,R,U,V,rotY,rotZ
     assertEquals(2, app.allSections.i_data.length);
     assertEquals(2, app.allSections.SolidImpact.length);
     assertEquals(2, app.allSections.SolarImpact.length);
@@ -51,7 +51,7 @@ class SectionsTest {
 
   @Test
   void gettersAndSetters_roundTripEveryColumn () {
-    app.allSections.f_data = new float[][]{new float[6]};
+    app.allSections.f_data = new float[][]{new float[8]};
     app.allSections.i_data = new int[][]{new int[3]};
 
     app.allSections.setX(0, 1);
@@ -60,22 +60,46 @@ class SectionsTest {
     app.allSections.setR(0, 4);
     app.allSections.setU(0, 5);
     app.allSections.setV(0, 6);
+    app.allSections.setRotY(0, 7);
+    app.allSections.setRotZ(0, 8);
     app.allSections.set_type(0, 1);
     app.allSections.set_res1(0, 8);
     app.allSections.set_res2(0, 9);
 
     assertEquals(1f, app.allSections.getX(0), 0.0001f);
     assertEquals(6f, app.allSections.getV(0), 0.0001f);
+    assertEquals(7f, app.allSections.getRotY(0), 0.0001f);
+    assertEquals(8f, app.allSections.getRotZ(0), 0.0001f);
     assertEquals(1, app.allSections.get_type(0));
     assertEquals(8, app.allSections.get_res1(0));
     assertEquals(9, app.allSections.get_res2(0));
+  }
+
+  // ================= RotateX / RotateY / RotateZ ========================
+  // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
+  // accumulation. RotateX shares R with types 1/2/3 (see f_data's own
+  // comment, sections.pde); RotateY/RotateZ are new columns, meaningful
+  // only for a type-0 (arbitrary) section.
+
+  @Test
+  void rotateXYZ_eachAccumulateIntoTheirOwnColumnOnly () {
+    app.allSections.f_data = new float[][]{new float[8]};
+
+    app.allSections.RotateX(0, 10);
+    app.allSections.RotateY(0, 20);
+    app.allSections.RotateZ(0, 30);
+    app.allSections.RotateX(0, 5);
+
+    assertEquals(15f, app.allSections.getR(0), 0.0001f);    // RotateX == R
+    assertEquals(20f, app.allSections.getRotY(0), 0.0001f);
+    assertEquals(30f, app.allSections.getRotZ(0), 0.0001f);
   }
 
   // ================= move =============================================
 
   @Test
   void move_addsTheOffsetToPositionOnly () {
-    app.allSections.f_data = new float[][]{{1, 1, 1, 45, 2, 3}};
+    app.allSections.f_data = new float[][]{{1, 1, 1, 45, 2, 3, 0, 0}};
     app.allSections.move(0, 1, 2, 3);
     assertEquals(2f, app.allSections.getX(0), 0.0001f);
     assertEquals(3f, app.allSections.getY(0), 0.0001f);
@@ -156,7 +180,7 @@ class SectionsTest {
 
   @Test
   void resizeSolarImpactArray_rebuildsToMatchTheCurrentSectionCount () {
-    app.allSections.f_data = new float[][]{new float[6]};
+    app.allSections.f_data = new float[][]{new float[8]};
     app.allSections.i_data = new int[][]{new int[3]};
     app.allSections.num = 1;
 
@@ -177,7 +201,7 @@ class SectionsTest {
     // at zero iterations and avoids the real PImage.save()/loadImage()
     // calls they'd otherwise make - there's no way to exercise those
     // safely against a hand-built scene with no real files on disk.
-    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 2, 3}};
+    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 2, 3, 15, 25}};
     app.allSections.i_data = new int[][]{{1, 4, 4}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[0];
@@ -193,8 +217,37 @@ class SectionsTest {
     assertEquals(1, fresh.num);
     assertEquals(10f, fresh.getX(0), 0.0001f);
     assertEquals(45f, fresh.getR(0), 0.0001f);
+    assertEquals(15f, fresh.getRotY(0), 0.0001f);
+    assertEquals(25f, fresh.getRotZ(0), 0.0001f);
     assertEquals(1, fresh.get_type(0));
     assertEquals(4, fresh.get_res1(0));
     assertFalse(fresh.displayAll);
+  }
+
+  @Test
+  void fromXML_defaultsRotYAndRotZToZero_forARecordSavedBeforeTheyExisted () {
+    // Forward-compat: a record with only the original 9 comma-separated
+    // fields (no rotY/rotZ) must still load, rather than throwing.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild("section");
+    parent.setInt("ni", 1);
+    processing.data.XML item = parent.addChild("item");
+    item.setInt("id", 0);
+    item.setContent("10,20,30,45,2,3,1,4,4"); // no trailing rotY/rotZ
+    parent.setString("displayAll", "true");
+    // from_XML() also reads 2 more sibling children for the SolidImpact/
+    // SolarImpact texture arrays - empty-but-present, so it doesn't NPE
+    // the way the lone "section" child above would on its own.
+    root.addChild("sectionSolidImpact").setInt("ni", 0);
+    processing.data.XML solarChild = root.addChild("sectionSolarImpact");
+    solarChild.setInt("ni", 0);
+    solarChild.setInt("nj", 0);
+    solarChild.setInt("nk", 0);
+
+    solarchvision_bim.Sections fresh = app.new Sections();
+    fresh.from_XML(root);
+
+    assertEquals(0f, fresh.getRotY(0), 0.0001f);
+    assertEquals(0f, fresh.getRotZ(0), 0.0001f);
   }
 }

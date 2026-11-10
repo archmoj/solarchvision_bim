@@ -1290,6 +1290,13 @@ class Terrain {
   }
 
   void castLandSubFaceShadow (float[][] subFace) {
+    // See faces.pde's own castShadows() for why this is allSolarImpacts.Z
+    // directly for types 1/2/3 but needs converting for a type-0
+    // (arbitrary) section.
+    float depthOffset = (allSolarImpacts.sectionType == 0)
+      ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
+      : allSolarImpacts.Z;
+
     for (int s = 0; s < subFace.length; s++) {
       if (allSolarImpacts.sectionType == 2) {
         float a = subFace[s][0];
@@ -1299,6 +1306,12 @@ class Terrain {
         subFace[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
         subFace[s][1] = c;
         subFace[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+      } else if (allSolarImpacts.sectionType == 0) {
+        float[] local = arbitrarySection_rotateWorldToLocal(subFace[s][0], subFace[s][1], subFace[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+
+        subFace[s][0] = local[0];
+        subFace[s][1] = local[1];
+        subFace[s][2] = local[2];
       }
       // sectionType == 3: no rotation, kept as in the original
     }
@@ -1306,7 +1319,7 @@ class Terrain {
     SHADOW_graphics.beginShape();
 
     for (int s = 0; s < subFace.length; s++) {
-      float z = subFace[s][2] - allSolarImpacts.Z;
+      float z = subFace[s][2] - depthOffset;
       float x = subFace[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
       float y = subFace[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
 
@@ -1318,8 +1331,8 @@ class Terrain {
         }
         SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
       } else {
-        castLandShadowClippedEdge(subFace, s, (s + subFace.length - 1) % subFace.length, x, y, z);
-        castLandShadowClippedEdge(subFace, s, (s + 1) % subFace.length, x, y, z);
+        castLandShadowClippedEdge(subFace, s, (s + subFace.length - 1) % subFace.length, x, y, z, depthOffset);
+        castLandShadowClippedEdge(subFace, s, (s + 1) % subFace.length, x, y, z, depthOffset);
       }
     }
 
@@ -1328,8 +1341,8 @@ class Terrain {
 
   // When the current vertex is below the horizon (z < 0) but its neighbor is above it,
   // clip the shadow edge at the horizon and emit that clipped point instead.
-  void castLandShadowClippedEdge (float[][] subFace, int s, int s_neighbor, float x, float y, float z) {
-    float z_n = subFace[s_neighbor][2] - allSolarImpacts.Z;
+  void castLandShadowClippedEdge (float[][] subFace, int s, int s_neighbor, float x, float y, float z, float depthOffset) {
+    float z_n = subFace[s_neighbor][2] - depthOffset;
     float x_n = subFace[s_neighbor][0] - z_n * SunR_Rotated[1] / SunR_Rotated[3];
     float y_n = subFace[s_neighbor][1] - z_n * SunR_Rotated[2] / SunR_Rotated[3];
 

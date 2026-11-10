@@ -54,6 +54,11 @@ class SolarImpacts {
   float X = 0;
   float Z = 0;
   float R = 0; // North is up by default
+  // Only meaningful for sectionType 0 (arbitrary - see arbitrarySection.pde);
+  // R above doubles as that type's "rotX", same convention as allSections'
+  // own per-section data (sections.pde).
+  float rotY = 0;
+  float rotZ = 0;
   float U = 500; // i.e. 500 = 500m
   float V = 500; // i.e. 500 = 500m
 
@@ -501,7 +506,14 @@ class SolarImpacts {
       this.resize_Image_array();
     }
 
-    if (this.sectionType != 0) {
+    {
+      // Type 0 used to mean "off"/nothing configured, which this guard
+      // existed to skip - it's now the arbitrary-orientation type instead
+      // (see arbitrarySection.pde), so every type, including 0, computes.
+      // preBakeViewport3D.pde's own "allSolarImpacts.sectionType = 1" line
+      // (forcing this guard open for the viewport-preview path, which
+      // doesn't use section geometry/type at all) is now unnecessary but
+      // harmless, and is left as-is.
 
       this.isCalculatingImpact = true;
 
@@ -1167,6 +1179,8 @@ class SolarImpacts {
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
       this.R = allSections.getR(f);
+      this.rotY = allSections.getRotY(f);
+      this.rotZ = allSections.getRotZ(f);
       this.U = allSections.getU(f);
       this.V = allSections.getV(f);
 
@@ -1216,6 +1230,8 @@ class SolarImpacts {
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
       this.R = allSections.getR(f);
+      this.rotY = allSections.getRotY(f);
+      this.rotZ = allSections.getRotZ(f);
       this.U = allSections.getU(f);
       this.V = allSections.getV(f);
 
@@ -1247,6 +1263,8 @@ class SolarImpacts {
     XML_setFloat(parent, "y", this.Y);
     XML_setFloat(parent, "z", this.Z);
     XML_setFloat(parent, "r", this.R);
+    XML_setFloat(parent, "rotY", this.rotY);
+    XML_setFloat(parent, "rotZ", this.rotZ);
     XML_setFloat(parent, "u", this.U);
     XML_setFloat(parent, "v", this.V);
 
@@ -1267,6 +1285,8 @@ class SolarImpacts {
     this.Y = XML_getFloat(parent, "y");
     this.Z = XML_getFloat(parent, "z");
     this.R = XML_getFloat(parent, "r");
+    this.rotY = XML_getFloat(parent, "rotY");
+    this.rotZ = XML_getFloat(parent, "rotZ");
     this.U = XML_getFloat(parent, "u");
     this.V = XML_getFloat(parent, "v");
 

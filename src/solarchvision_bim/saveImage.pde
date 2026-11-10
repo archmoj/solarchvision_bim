@@ -75,7 +75,10 @@ String MAKE_MainName () {
 
 String getFilename_SolidImpact () {
 
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  // ry/rz only vary the filename for sectionType 0 (arbitrary - see
+  // arbitrarySection.pde); both are always 0 for types 1/2/3, so this
+  // changes nothing about their existing filenames.
+  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "ry" + nf(int(funcs.roundTo(allSolidImpacts.rotY[allSolidImpacts.sectionType], 1)), 3) + "rz" + nf(int(funcs.roundTo(allSolidImpacts.rotZ[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
@@ -105,6 +108,8 @@ String Section_Stamp () {
   s += "v" + nf(allSolarImpacts.Y, 0, 3);
   s += "w" + nf(allSolarImpacts.Z, 0, 3);
   s += "r" + nf(allSolarImpacts.R, 0, 3);
+  s += "ry" + nf(allSolarImpacts.rotY, 0, 3);
+  s += "rz" + nf(allSolarImpacts.rotZ, 0, 3);
 
   s = s.replace('.', 'p');
   s = s.replace('-', 'n');

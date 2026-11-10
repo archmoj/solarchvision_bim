@@ -1271,6 +1271,13 @@ class Model2Ds {
           TU[3] = 0;
           TV[3] = 0;
 
+          // See faces.pde's own castShadows() for why this is allSolarImpacts.Z
+          // directly for types 1/2/3 but needs converting for a type-0
+          // (arbitrary) section.
+          float depthOffset = (allSolarImpacts.sectionType == 0)
+            ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
+            : allSolarImpacts.Z;
+
           if (allSolarImpacts.sectionType == 2) {
             {
               for (int q = 0; q < 4; q++) {
@@ -1293,11 +1300,19 @@ class Model2Ds {
               z = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
             }
           } else if (allSolarImpacts.sectionType == 3) {
+          } else if (allSolarImpacts.sectionType == 0) {
+            for (int q = 0; q < 4; q++) {
+              float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+
+              TX[q] = local[0];
+              TY[q] = local[1];
+              TZ[q] = local[2];
+            }
           }
 
-          if ((TZ[0] < allSolarImpacts.Z) && (allSolarImpacts.Z < TZ[2])) {
+          if ((TZ[0] < depthOffset) && (depthOffset < TZ[2])) {
 
-            float ratio = (allSolarImpacts.Z - TZ[0]) / (TZ[2] - TZ[0]);
+            float ratio = (depthOffset - TZ[0]) / (TZ[2] - TZ[0]);
 
             TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
             TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);
@@ -1314,11 +1329,11 @@ class Model2Ds {
             }
           }
 
-          if (TZ[2] > allSolarImpacts.Z) {
+          if (TZ[2] > depthOffset) {
 
             for (int q = 0; q < 4; q++) {
 
-              TZ[q] = TZ[q] - allSolarImpacts.Z;
+              TZ[q] = TZ[q] - depthOffset;
               TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
               TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);
 

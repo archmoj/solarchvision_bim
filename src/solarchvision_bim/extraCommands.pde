@@ -2177,18 +2177,24 @@ String __SECTION__ (String[] parts) {
     float y = getF(p, "y", 0);
     float z = getF(p, "z", 0);
     float r = getF(p, "r", 0);
+    // ry/rz: only meaningful for t=0 (arbitrary - see arbitrarySection.pde);
+    // r alone doubles as that type's "rotX", same as everywhere else.
+    float ry = getF(p, "ry", 0);
+    float rz = getF(p, "rz", 0);
     float u = getF(p, "u", 20);
     float v = getF(p, "v", 20);
     int t = getI(p, "t", 1);
     int i = getI(p, "i", 200);
     int j = getI(p, "j", 200);
-    if ((t > 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {
-        allSections.create(x, y, z, r, u, v, t, i, j);
+    // t=0 used to mean "off"/no section (rejected here); it's now the
+    // arbitrary-orientation type instead, so t>=0 is accepted.
+    if ((t >= 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {
+        allSections.create(x, y, z, r, u, v, t, i, j, ry, rz);
         view_changed();
     }
     }
     else {
-    hint = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
+    hint = "Section x=? y=? z=? r=? ry=? rz=? u=? v=? t=? i=? j=?";
     UI_setTo_Create_Section();
     }
     return hint;

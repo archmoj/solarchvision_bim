@@ -21,7 +21,7 @@ class Rotate3D {
     else if (currentObjectCategory == ObjectCategory.MODEL2D)    this.Model2Ds(x0, y0, z0, r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.SOLID)      this.Solids(x0, y0, z0, r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.CAMERA)     this.Cameras(x0, y0, z0, r, the_Vector);
-    else if (currentObjectCategory == ObjectCategory.SECTION)    this.Sections(r);
+    else if (currentObjectCategory == ObjectCategory.SECTION)    this.Sections(r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.GROUP)      this.Groups(r, the_Vector);
   }
 
@@ -145,12 +145,28 @@ class Rotate3D {
     endScene3DChange();
   }
 
-  void Sections (float r) {
+  // the_Vector (0:X 1:Y 2:Z, same convention as rotateAroundVector() above)
+  // only matters for a type-0 (arbitrary) section - see arbitrarySection.pde.
+  // Types 1/2/3 keep rotating through their one single R angle regardless
+  // of which axis handle was dragged, exactly as before this parameter
+  // existed - that's the whole reason those types only ever had one
+  // rotation angle to begin with, so there's nothing for the_Vector to
+  // pick between for them.
+  void Sections (float r, int the_Vector) {
     beginScene3DChange();
+
+    float degrees = r * 180.0 / PI;
 
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
-      allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
+
+      if (allSections.get_type(f) == 0) {
+        if (the_Vector == 0)      allSections.RotateX(f, degrees);
+        else if (the_Vector == 1) allSections.RotateY(f, degrees);
+        else if (the_Vector == 2) allSections.RotateZ(f, degrees);
+      } else {
+        allSections.setR(f, allSections.getR(f) + degrees);
+      }
     }
 
     allSolidImpacts.calculate_ImpactOnSections();

@@ -23,6 +23,17 @@ class SolidImpacts {
     0, 0, 0, 0
   };
 
+  // Only meaningful at index 0 (sectionType 0, arbitrary - see
+  // arbitrarySection.pde); R[0] above doubles as that type's "rotX",
+  // exactly as it does for allSections' own per-section data
+  // (sections.pde). Indices 1-3 stay 0, unused by types 1/2/3.
+  float[] rotY = {
+    0, 0, 0, 0
+  };
+  float[] rotZ = {
+    0, 0, 0, 0
+  };
+
   float[] U = {
     100, 100, 100, 100
   }; // i.e. 100m
@@ -157,6 +168,8 @@ class SolidImpacts {
       this.Y[this.sectionType] = allSections.getY(f);
       this.Z[this.sectionType] = allSections.getZ(f);
       this.R[this.sectionType] = allSections.getR(f);
+      this.rotY[this.sectionType] = allSections.getRotY(f);
+      this.rotZ[this.sectionType] = allSections.getRotZ(f);
       this.U[this.sectionType] = allSections.getU(f);
       this.V[this.sectionType] = allSections.getV(f);
 
@@ -439,7 +452,10 @@ class SolidImpacts {
 
   void calculate_Impact_CurrentSection () {
 
-    if (this.sectionType != 0) {
+    {
+      // Type 0 used to mean "off"/nothing configured, which this guard
+      // existed to skip - it's now the arbitrary-orientation type instead
+      // (see arbitrarySection.pde), so every type, including 0, computes.
 
       showWaitCursor();
 
@@ -484,6 +500,8 @@ class SolidImpacts {
       float Section_Y = this.Y[this.sectionType];
       float Section_Z = this.Z[this.sectionType];
       float Section_R = this.R[this.sectionType];
+      float Section_RotY = this.rotY[this.sectionType];
+      float Section_RotZ = this.rotZ[this.sectionType];
       float Section_U = this.U[this.sectionType];
       float Section_V = this.V[this.sectionType];
 
@@ -491,7 +509,7 @@ class SolidImpacts {
       int Section_RES1 = this.RES1;
       int Section_RES2 = this.RES2;
 
-      float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
+      float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -1264,6 +1282,30 @@ class SolidImpacts {
     }
 
     {
+      XML child = xml.addChild(this.CLASS_STAMP + "RotY");
+      int ni = this.rotY.length;
+      XML_setInt(child, "ni", ni);
+      String txt = "";
+      for (int i = 0; i < ni; i++) {
+        txt += nf(this.rotY[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
+      }
+      XML_setContent(child, txt);
+    }
+
+    {
+      XML child = xml.addChild(this.CLASS_STAMP + "RotZ");
+      int ni = this.rotZ.length;
+      XML_setInt(child, "ni", ni);
+      String txt = "";
+      for (int i = 0; i < ni; i++) {
+        txt += nf(this.rotZ[i], 0, 4).replace(",", "."); // <<<<
+        if (i < ni - 1) txt += ",";
+      }
+      XML_setContent(child, txt);
+    }
+
+    {
       XML child = xml.addChild(this.CLASS_STAMP + "U");
       int ni = this.U.length;
       XML_setInt(child, "ni", ni);
@@ -1359,6 +1401,30 @@ class SolidImpacts {
       String[] parts = split(txt, ",");
       for (int i = 0; i < ni; i++) {
         this.R[i] = float(parts[i]);
+      }
+    }
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + "RotY");
+
+      int ni = XML_getInt(child, "ni");
+      this.rotY = new float [ni];
+      String txt = XML_getContent(child);
+      String[] parts = split(txt, ",");
+      for (int i = 0; i < ni; i++) {
+        this.rotY[i] = float(parts[i]);
+      }
+    }
+
+    {
+      XML child = xml.getChild(this.CLASS_STAMP + "RotZ");
+
+      int ni = XML_getInt(child, "ni");
+      this.rotZ = new float [ni];
+      String txt = XML_getContent(child);
+      String[] parts = split(txt, ",");
+      for (int i = 0; i < ni; i++) {
+        this.rotZ[i] = float(parts[i]);
       }
     }
 

@@ -1648,6 +1648,20 @@ class Faces {
 
     if (this.displayAll) {
 
+      // Types 1/2/3 use allSolarImpacts.Z directly as the position offset
+      // along the section's own normal (sections.pde's own rotateSectionCorner()
+      // passes Section_Z straight through, unrotated, for exactly that
+      // role). A type-0 (arbitrary) section instead stores X/Y/Z as a
+      // plain WORLD position added AFTER rotation (sections.pde's own
+      // getCorners(), type-0 branch) - arbitrarySection_rotateWorldToLocal()'s
+      // own 3rd return value is the equivalent normal-depth offset for
+      // that case; see castShadowsCurrentSection.pde's own identical
+      // conversion for Shades_offsetX/Y (the other 2 components of this
+      // same rotated position).
+      float depthOffset = (allSolarImpacts.sectionType == 0)
+        ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
+        : allSolarImpacts.Z;
+
       for (int f = 0; f < this.nodes.length; f++) {
 
         int vsb = this.getVisibility(f);
@@ -1688,6 +1702,12 @@ class Faces {
                   subFace_Rotated[s][1] = c;
                   subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
                 } else if (allSolarImpacts.sectionType == 3) {
+                } else if (allSolarImpacts.sectionType == 0) {
+                  float[] local = arbitrarySection_rotateWorldToLocal(subFace_Rotated[s][0], subFace_Rotated[s][1], subFace_Rotated[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+
+                  subFace_Rotated[s][0] = local[0];
+                  subFace_Rotated[s][1] = local[1];
+                  subFace_Rotated[s][2] = local[2];
                 }
               }
 
@@ -1695,7 +1715,7 @@ class Faces {
 
               for (int s = 0; s < subFace_Rotated.length; s++) {
 
-                float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
+                float z = subFace_Rotated[s][2] - depthOffset;
                 float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
                 float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
 
@@ -1716,7 +1736,7 @@ class Faces {
                   int s_next = (s + 1) % subFace_Rotated.length;
                   int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;
 
-                  float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
+                  float z_prev = subFace_Rotated[s_prev][2] - depthOffset;
                   float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
                   float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
 
@@ -1737,7 +1757,7 @@ class Faces {
                     SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                   }
 
-                  float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
+                  float z_next = subFace_Rotated[s_next][2] - depthOffset;
                   float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
                   float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
 
