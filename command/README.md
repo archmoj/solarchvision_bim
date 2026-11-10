@@ -385,6 +385,35 @@ Mesh m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.
 
 ------------------------------------------------------------------------
 
+### Section creation
+
+-   `SECTION`: Creates an analysis section - a flat cutting plane used
+    for solar/solid-impact analysis, shadow baking, and sectional views.
+    `t` picks the plane's orientation:
+
+    -   `t=1` horizontal, `t=2` vertical (front), `t=3` vertical (side -
+        `r` is measured from 90° instead of 0°). Each of these uses `r`
+        as its one rotation angle and ignores `ry`/`rz`.
+    -   `t=0` is an arbitrary-orientation section instead, with 3
+        independent rotation angles: `r` doubles as rotX, and `ry`/`rz`
+        are rotY/rotZ, composed in the same X-then-Y-then-Z order Solids'
+        own rotation already uses - so these 3 angles mean exactly what a
+        solid's own rotation does elsewhere in this app.
+
+    Once created, a `t=0` section can be rotated around any of its 3 axes
+    the same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/
+    `ROTATEZ` below, or dragging its rotate handle in the viewport - with
+    the dragged/named axis picking which of rotX/rotY/rotZ actually
+    changes. A `t=1/2/3` section instead always rotates its one `r` angle
+    regardless of which axis handle or command is used, same as before
+    `t=0` existed.
+
+```
+Section x=? y=? z=? r=? ry=? rz=? u=? v=? t=? i=? j=?
+```
+
+------------------------------------------------------------------------
+
 ### Hover creation
 
 -   `HOVER`: Creates a hover point or multiple hover points, replacing
