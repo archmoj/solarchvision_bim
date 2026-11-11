@@ -2,15 +2,27 @@
 // viewport's own live camera position/orientation/zoom, active tool,
 // and shading-display settings (see viewport3D.pde's own to_XML()/
 // from_XML() for the exact field list). true for Open/Fetch (restoring
-// a project should bring back the view it was saved with), false for
-// undo/redo (see undoRedo.pde's own restoreProjectScene3DSnapshot() comment -
-// undo/redo is scoped to 3D-modeling edits only; the person navigating
-// right now should stay looking wherever they're currently looking,
-// not get snapped back to wherever the camera happened to be at some
-// earlier edit). Everything else parse_XML_variables() restores either
-// way - in particular allCameras.from_XML() (actual camera OBJECTS
-// placed in the scene, legitimate modeling content) is a completely
-// separate call, unaffected by this flag.
+// a project should bring back the view it was saved with) - both of
+// load_project()'s own two call sites (loadProject.pde) pass true, so
+// false is currently unreachable in production, not just the less
+// common branch. The name and the original intent are still accurate
+// (restore everything EXCEPT the viewport, for a caller that wants the
+// person navigating right now to stay looking wherever they're
+// currently looking rather than get snapped back to wherever the
+// camera happened to be at some earlier/other state) - undo/redo was
+// the case this was written for, but undoRedoScene3D.pde's own header
+// comment confirms undo/redo deliberately bypasses parse_XML_variables()
+// entirely via its own separate snapshot mechanism (restoreScene3DSnapshot())
+// that never includes WIN3D's own state in the first place, so there's
+// nothing for it to call this with false for. This flag is here for
+// whatever future caller DOES want that behavior through this
+// function specifically (a future undo/redo rewrite, say) - see
+// ParseXmlVariablesTest.java's own restoreViewportFalse_... test, which
+// is the only thing currently exercising this branch at all. Everything
+// else parse_XML_variables() restores either way - in particular
+// allCameras.from_XML() (actual camera OBJECTS placed in the scene,
+// legitimate modeling content) is a completely separate call,
+// unaffected by this flag.
 void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport) {
 
   diag_XML_input = desired_diag;
