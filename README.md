@@ -47,7 +47,9 @@ SOLARCHVISION-BIM brings several parts of that investigation into one workspace:
 
 - **Bring models together:** Import supported BIM, CAD, mesh, and point-cloud formats to use existing project geometry as a starting point.
 - **Model the place:** Create and edit 3D buildings, surfaces, terrain, trees, and other site elements.
-- **Work iteratively:** Use selection and editing tools, with undo and redo for model and viewport changes.
+- **Work iteratively:** Use selection and editing tools, with separate undo/redo histories for the 3D scene, 3D viewport, geographic station selection, and 2D study graph.
+- **Render efficiently:** Use dedicated one-click SOLARCHVISION render actions to run the required pre-bake and post-processing workflow for the current viewport or all sections.
+- **Compare shading consistently:** Use calibrated global, vertex-level, pixel-level camera-render, and section-based shading workflows.
 - **Explore solar exposure:** Investigate sun position, solar radiation, shading, and the effects of surrounding geometry.
 - **Consider benefits and risks:** Explore when solar exposure may be useful and when shade, overheating, or seasonal environmental conditions may create design concerns.
 - **Connect design to location:** Use geographic views, map imagery, station locations, terrain context, and available building and tree data.
@@ -101,7 +103,7 @@ Start with one clear question—for example, how shade on a building or outdoor 
 6. **Move through time.** Use the Case Bar to select hours, days, years, or forecast scenarios supported by the dataset.
 7. **Save or export.** Save the project or use an available export workflow.
 
-For model-based studies such as `Skin Potential (Active)` and `Skin Potential (Passive)`, prepare a selected `Section` or `Camera` using `PreBake Viewport` or `Pre-bake Selected Sections` where required by the workflow.
+For model-based studies such as `Skin Potential (Active)` and `Skin Potential (Passive)`, use the dedicated **SOLARCHVISION current viewport** or **SOLARCHVISION all sections** render action to run the relevant pre-bake and post-processing steps together. The first action processes the current camera/viewport; the second applies the workflow across the model's sections. These one-click actions reduce the need to invoke the individual preparation and processing steps manually.
 
 ### 3. Get familiar with the workspace
 
@@ -209,7 +211,14 @@ Use the selection and editing tools to work with objects and their components:
 
 ### Undo and redo
 
-Undo and redo make iterative model development easier by allowing supported changes to be reversed and restored:
+Undo and redo are available across several parts of the application, so changes can be reversed in the context where they were made. The supported histories cover:
+
+- **3D scene:** changes to model geometry and scene objects.
+- **3D viewport:** changes to the 3D view and its viewport state.
+- **Geographic stations:** station selection and related station-state changes in the World view.
+- **2D study graph:** changes to the study graph and its 2D viewport state.
+
+The 3D scene, 3D viewport, station, and study-graph histories are distinct; an undo or redo operation applies to the relevant context rather than treating every interaction as one undifferentiated history. The general keyboard shortcuts documented here include:
 
 | Shortcut | Action |
 |---|---|
@@ -218,11 +227,26 @@ Undo and redo make iterative model development easier by allowing supported chan
 | `Ctrl+Shift+Z` | Undo a viewport change |
 | `Ctrl+Shift+Y` | Redo a viewport change |
 
-Model changes and viewport changes have separate histories. The available history depends on the type of operation.
+Additional context-specific undo/redo commands are available for the other supported histories. The exact operation that is reversed depends on the active context and command.
 
 ### Visualization
 
 The 3D environment supports perspective and orthographic views, surface and edge display, materials, layers, and analytical overlays. Switch between available shading and impact views to inspect geometry, solar exposure, and environmental results.
+
+### Calibrated shading at multiple levels
+
+SOLARCHVISION-BIM provides complementary shading and solar-impact calculations at several spatial and display levels. These include global calculations based on surface orientation and inclination, vertex-level evaluation, pixel-level evaluation in a camera render, and calculations on model sections. The methods are calibrated to produce results that agree across these representations, allowing a study to be inspected at different levels of detail without treating each display method as an unrelated analysis.
+
+The appropriate method depends on the study and the desired representation: global orientation/inclination analysis provides a surface-level view; vertex-level calculations resolve variation across model geometry; pixel-level camera rendering provides a view-dependent image; and section-based calculations support inspection of selected cuts through the model.
+
+### One-click SOLARCHVISION render actions
+
+Two dedicated render actions bring the required pre-bake and post-processing steps together:
+
+- **SOLARCHVISION current viewport:** runs the SOLARCHVISION render workflow for the current camera/viewport.
+- **SOLARCHVISION all sections:** runs the workflow across all prepared model sections.
+
+These actions simplify workflows that previously required several separate preparation and processing operations. Use the current-viewport action when working with a particular camera view, or the all-sections action when the analysis needs to be prepared and processed across the section set.
 
 ## Geographic context and site modeling
 
@@ -469,37 +493,34 @@ The method can inform early design, refinement of building or landscape elements
 
 ## Statistical scenarios, built from real data
 
-A single weather or climate file can only show one version of the future—or the past. SOLARCHVISION-BIM studies instead draw on a whole *ensemble*: years of climate records, forecast members, or scenario sets, often amounting to dozens of candidate days for the same date.
+A single weather or climate file can only show one version of the past or a forecast. SOLARCHVISION-BIM can instead work with a collection of ensemble members or climate scenarios and derive representative values from their distribution. The Case Bar exposes standard statistics—Minimum, Maximum, Average, and the 25th, 50th (median), and 75th percentiles—alongside three SOLARCHVISION-specific scenarios: **Leaning Low**, **Well-tempered**, and **Leaning High**.
 
-The Case Bar's statistical choices—Minimum, Maximum, Average, the 25th/50th/75th percentiles, and three scenarios unique to SOLARCHVISION described below—are how that whole collection becomes the one representative day a 3D study actually simulates.
+The implementation separates two related tasks:
 
-### Why not just pick "the coldest day on record"?
+1. **Calculate the target statistic from the full distribution.** The statistical routine sorts the available values for a time slot and calculates the requested statistic. Minimum and Maximum are the extremes; Average is the arithmetic mean; and the 25th, 50th, and 75th percentiles are order statistics selected from the sorted values (with the median averaging the two middle values when the sample count is even).
+2. **Select real ensemble member(s) to represent that statistic in the simulation.** The scenario-selection workflow identifies the real ensemble member or members closest to the calculated target. Depending on the statistic and available members, it can use one, two, or three representative samples. Their hourly solar and impact values are then combined using the weighting rule appropriate to the selected statistic.
 
-The simplest approach would be to hand the simulation whichever single real day happens to sit at the requested spot in the ranking—literally the most extreme, or literally the day closest to a given percentile. The trouble is that any one day also carries its own noise: an unusual local gust, a sensor quirk, a one-off weather pattern. Treat that single day as "the" representative scenario and a design risks responding to an anomaly rather than a genuinely representative condition.
+This means the displayed statistic and the weather member(s) used to drive a time-dependent simulation are related, but they are not the same operation. The simulation remains grounded in actual ensemble-member data rather than inventing a synthetic weather sequence independently of the source records.
 
-The opposite mistake is averaging too broadly. Blend enough days together indiscriminately and distinct statistics start to blur into one another—the 25th percentile starts looking suspiciously like the median.
+### Percentiles and representative-member weighting
 
-### SOLARCHVISION's answer: blend just enough real days, and only when it helps
+Minimum and Maximum use the single real member closest to the corresponding extreme. The 25th, 50th, and 75th percentiles each select up to two nearest members; the closest receives twice the weight of the second (**2:1**). This keeps the resulting hourly values closer to the requested percentile while using a second nearby member to reduce noise from relying on only one ensemble member.
 
-Rather than treating every statistic the same way, SOLARCHVISION-BIM decides how many real scenarios to combine—and how heavily to weigh each one—based on what kind of statistic was actually requested:
-
-- **Minimum and Maximum** use exactly one real day: the single most extreme one on record. Blending an extreme with its neighbors would simply erase the extreme, so none happens here.
-- **25th percentile, Median, and 75th percentile** blend the two real days closest to that percentile, weighting the nearer one twice as heavily. That is enough to damp one day's own noise without pulling three distinct, closely spaced percentile categories into looking the same.
-- **Average**, together with three scenarios unique to SOLARCHVISION (below), blends three real days with equal weight. These four statistics are already shaped by the *whole* dataset rather than one sharp point in it, so drawing on a few more real days brings real noise reduction at comparatively little cost.
-
-In every case, the hourly values that drive the simulation trace back to real, physically consistent weather or climate records—never invented from a parametric model or generated independently of actual observations. At most a small handful of real candidate days are blended together, chosen and weighted by a method that matches the statistic being asked for.
+The implementation also handles missing or filtered data at the hourly level. A sample contributes only when the required values are defined and it passes the applicable member filter. If a sample cannot contribute for a particular hour, its weight is not reassigned to another sample. If no selected sample has usable data, the result remains undefined rather than silently treating missing data as zero.
 
 ### Leaning Low, Well-tempered, and Leaning High: scenarios unique to SOLARCHVISION
 
-Alongside the standard percentiles, SOLARCHVISION-BIM offers three scenarios: **Leaning Low**, **Well-tempered**, and **Leaning High**.
+These three options are **not percentiles**. They are rank-weighted means—statistical estimators that use every defined value in the sorted distribution, with a weight determined by its rank:
 
-Picture every recorded or forecast day for a given date, ranked from lowest to highest for whichever variable is being studied—temperature, wind speed, solar radiation, or another supported layer. A percentile picks a single rank off that list and reads it. SOLARCHVISION's three scenarios do something different: every day in the record gets a say, weighted by how close its rank sits to the target.
+- **Leaning Low:** weights lower-ranked values more strongly, with weights decreasing toward the high end. It produces a value between the mean and the minimum.
+- **Well-tempered:** uses a triangular weighting that peaks at the center rank and decreases toward both extremes. Every value contributes, but central values have more influence. The name refers to J.S. Bach's *Well-Tempered Clavier*: “well-tempered,” not “even-tempered,” because the weighting is deliberately non-uniform while remaining balanced around the center.
+- **Leaning High:** weights higher-ranked values more strongly, with weights increasing toward the high end. It produces a value between the mean and the maximum.
 
-- **Leaning Low** gives the lowest-ranked days the strongest voice, tapering off toward the high end—a day genuinely on the lower, milder side of the record, without being the single most extreme outlier.
-- **Leaning High** is the mirror image, favoring the higher end of the record.
-- **Well-tempered** favors the center of the ranking, but—true to its name—still lets even the far ends have a small voice rather than ignoring them outright. It takes its name from J.S. Bach's *Well-Tempered Clavier*: deliberately "well-tempered," not "even-tempered," because the weighting behind it is not flat. Like Bach's tuning system, it is balanced to work well across the whole range rather than being perfect at exactly one point.
+Unlike a percentile, which reads a value at one position in the sorted distribution, each of these three estimators is influenced by the entire distribution. The resulting target is then matched to one or more real ensemble members for the time-dependent simulation.
 
-These three scenarios give a project team a way to explore "distinctly on the high side, without being the single most extreme day on record" or "a calm, representative middle ground" while never losing contact with real, physically consistent data—a nuance that standard percentiles and simple averages do not offer on their own.
+For Average and the three SOLARCHVISION rank-weighted scenarios, up to three nearest representative members are selected and their usable hourly samples are combined with **equal weights**. These statistics describe the distribution as a whole rather than a single rank, so equal weighting helps reduce single-member noise without biasing the result toward one selected member. The number of members is therefore statistic-specific: one for Minimum/Maximum, two for the three percentiles, and three for Average and the SOLARCHVISION scenarios. For passive-impact studies, directional statistics are remapped during member selection so that high/low scenario labels remain intuitive for the passive-impact interpretation.
+
+The implementation is documented in the source files [`normal.pde`](src/solarchvision_bim/normal.pde), which calculates the nine representative statistics, and [`averagedScenarioValues.pde`](src/solarchvision_bim/averagedScenarioValues.pde), which combines hourly values from the selected representative members. The scenario-selection logic is also handled by the related `findScenarioCloseToDailyStatistic` workflow.
 
 ## Method and publications
 
@@ -520,11 +541,11 @@ The application includes a 3D geometry system for points, faces, solids, groups,
 
 Import workflows support IFC, gbXML, OBJ, DAE, DXF, GLB, PLY, LAS, and STL files. The exact geometry and information retained depend on the format and source file. LAS point clouds can be meshed into surfaces during import, with options available through the import dialog.
 
-The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance. Undo and redo are available for supported model and viewport operations.
+The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance. Dedicated SOLARCHVISION render actions combine pre-bake and post-processing for the current viewport or all sections. Calibrated solar/shading workflows operate at global orientation/inclination, vertex, pixel (camera-render), and section levels. Separate undo/redo histories support the 3D scene, 3D viewport, geographic station state, and 2D study graph.
 
 ### Solar, shade, and environmental analysis
 
-Solar workflows use the project location and time, weather or climate radiation data, and modeled geometry. Supported calculations and visualizations include solar direction, direct and diffuse radiation handling, shadow/occlusion calculations, and surface-level impact display. Other environmental features may include wind visualization, wind-rose views, environmental impact fields, contours, raster-like representations, and atmospheric/cloud visualization.
+Solar workflows use the project location and time, weather or climate radiation data, and modeled geometry. Supported calculations and visualizations include solar direction, direct and diffuse radiation handling, shadow/occlusion calculations, and solar impact at global orientation/inclination, vertex, pixel (camera-render), and section levels. These shading methods are calibrated to agree across their respective representations. Other environmental features may include wind visualization, wind-rose views, environmental impact fields, contours, raster-like representations, and atmospheric/cloud visualization.
 
 Exact outputs depend on the selected study and available data.
 
