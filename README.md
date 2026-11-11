@@ -528,6 +528,7 @@ SOLARCHVISION-BIM is the product of the author's own research into solar-climati
 
 The following publications describe the principles behind SOLARCHVISION's solar-climatic approach and show how weather data, solar orientation, building geometry, and urban context can inform design decisions.
 
+- Samimi, Mojtaba. *From the Sun to the Architect (AZ MEHR TA MEHRAZ): Calculation of General Patterns of Direct and Diffuse Solar Radiation for 16 Cities of Iran, Analysis of the Sun’s Positive and Negative Effects on Different Building Orientations and Inclinations and Design Optimization using the Perspectives from the Sun*. M.Arch thesis (Supervisor: M. Tahbaz), Faculty of Architecture and Urban Planning, Shahid Beheshti University, Tehran, 2002–2007, completed 2007 *(recipient of two national awards)*.
 - Samimi, Mojtaba, and Farshad Nasrollahi. [*Intelligent Design using Solar-Climatic Vision: Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8). Young Cities Research Paper Series, Volume 09, 2014.
 - Samimi, Mojtaba. [“Weather Data and Solar Orientations.”](https://doi.org/10.1007/978-3-319-15030-7_12) In *Future City: Architecture for Optimal Living*, edited by Stamatina Th. Rassia and Panos M. Pardalos, Springer, 2015, pp. 221–240.
 - [SOLARCHVISION presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)

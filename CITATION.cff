@@ -31,6 +31,7 @@ references:
       name: "Shahid Beheshti University"
       city: "Tehran"
       country: "IR"
+    notes: "Research conducted 2002-2007 (defended 2007). Recipient of two national awards."
 
   - type: "conference-paper"
     authors:
