@@ -637,6 +637,41 @@ class Select3DTest {
   }
 
   @Test
+  void calculateBoundingBox_worksForSolidsToo_usingPositionDirectlyNotGetCorners () {
+    // calculate_BoundingBox()'s own SOLID branch reads get_posX/Y/Z()
+    // directly rather than calling allSolids.getCorners() and indexing
+    // its own [0] entry (a performance fix - getCorners() computes
+    // this.numdisplayAllDegree (16) other corners nobody here reads,
+    // each with several pow()/trig calls for the superellipse
+    // normalization, only to throw all but one away). Deliberately
+    // nontrivial pow/scale/rotation values below (confirmed directly
+    // against the real compiled app, across several such combinations,
+    // that getCorners()'s own q==0 corner is always exactly the raw
+    // position regardless of any of them - every q-dependent term it
+    // computes is multiplied by qx/qy/qz, themselves 0 at q==0) - so if
+    // a future change ever reintroduces a dependency on power/scale/
+    // rotation here by mistake, picking trivial values (pow=2, scale=1,
+    // rotation=0) would hide that mistake, not catch it.
+    int id = app.allSolids.create(
+      3, 0, 0,     // posX, posY, posZ
+      5, 7, 2.5f,  // powX, powY, powZ
+      4, 3, 2,     // scaleX, scaleY, scaleZ
+      45, 30, 60,  // rotX, rotY, rotZ
+      1            // value
+    );
+    app.allSolids.create(9, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0); // a second solid, plain values
+
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    app.Select3D.solidSelection = new int[]{id, id + 1};
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(3f, app.Select3D.BoundingBox[0][0], 0.0001f); // min X
+    assertEquals(6f, app.Select3D.BoundingBox[1][0], 0.0001f); // mid X
+    assertEquals(9f, app.Select3D.BoundingBox[2][0], 0.0001f); // max X
+  }
+
+  @Test
   void calculateBoundingBox_worksForFacesTooViaGetFaceVertices () {
     // get_Face_Vertices() collects the distinct node indices of the
     // selected faces, then those indices are looked up through allPoints.

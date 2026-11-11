@@ -740,26 +740,23 @@ class Select3D {
 
         if (n < allSolids.DEF.length) {
 
-          float Solid_posX = allSolids.get_posX(n);
-          float Solid_posY = allSolids.get_posY(n);
-          float Solid_posZ = allSolids.get_posZ(n);
-          float Solid_powX = allSolids.get_powX(n);
-          float Solid_powY = allSolids.get_powY(n);
-          float Solid_powZ = allSolids.get_powZ(n);
-          float Solid_scaleX = allSolids.get_scaleX(n);
-          float Solid_scaleY = allSolids.get_scaleY(n);
-          float Solid_scaleZ = allSolids.get_scaleZ(n);
-          float Solid_rotX = allSolids.get_rotX(n);
-          float Solid_rotY = allSolids.get_rotY(n);
-          float Solid_rotZ = allSolids.get_rotZ(n);
-          float Solid_value = allSolids.get_value(n);
-
-          float[][] ImageVertex = allSolids.getCorners(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-
-          // the first vertex is the center of Solid plane
-          x = ImageVertex[0][0];
-          y = ImageVertex[0][1];
-          z = ImageVertex[0][2];
+          // getCorners()'s own q==0 corner (the one calculate_BoundingBox()
+          // actually uses here) is, for every power/scale/rotation/value
+          // combination, always exactly the Solid's own raw position -
+          // every q-dependent term getCorners() computes is multiplied by
+          // qx/qy/qz, which are themselves 0 at q==0 (see its own "if (q
+          // != 0)" guard), so the whole power-normalize/scale/rotate
+          // pipeline collapses to 0 before Solid_posX/Y/Z is added back in
+          // at the very end - confirmed directly against the real
+          // compiled app across several power/scale/rotation
+          // combinations, not just reasoned through. getCorners() itself
+          // still computes this.numdisplayAllDegree (16) OTHER corners
+          // nobody here ever reads, each with several pow()/trig calls
+          // for the superellipse normalization - reading the position
+          // directly skips all of that for every selected Solid.
+          x = allSolids.get_posX(n);
+          y = allSolids.get_posY(n);
+          z = allSolids.get_posZ(n);
         }
       }
 
