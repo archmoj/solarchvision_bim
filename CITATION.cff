@@ -18,6 +18,8 @@ license: "GPL-2.0-only"
 
 url: "https://github.com/archmoj/solarchvision_bim"
 
+message: "If you use SOLARCHVISION-BIM or reimplement its solar-climatic methods in research or software, please acknowledge prior art and cite this repository along with the foundational publications listed below."
+
 references:
   - type: "thesis"
     thesis-type: "Master's thesis"
