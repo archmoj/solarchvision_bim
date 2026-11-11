@@ -19,6 +19,82 @@ license: "GPL-2.0-only"
 url: "https://github.com/archmoj/solarchvision_bim"
 
 references:
+  - type: "thesis"
+    thesis-type: "Master's thesis"
+    authors:
+      - family-names: "Samimi"
+        given-names: "Mojtaba"
+    title: "From the Sun to the Architect (AZ MEHR TA MEHRAZ): Calculation of General Patterns of Direct and Diffuse Solar Radiation for 16 Cities of Iran, Analysis of the Sun's Positive and Negative Effects on Different Building Orientations and Inclinations and Design Optimization using the Perspectives from the Sun"
+    year: 2007
+    department: "Faculty of Architecture and Urban Planning"
+    institution:
+      name: "Shahid Beheshti University"
+      city: "Tehran"
+      country: "IR"
+
+  - type: "conference-paper"
+    authors:
+      - family-names: "Samimi"
+        given-names: "Mojtaba"
+      - family-names: "Parvizsedghy"
+        given-names: "Laya"
+      - family-names: "Adib"
+        given-names: "Morteza"
+    title: "A New Approach For Solar Analysis Of Buildings"
+    year: 2008
+    collection-title: "Proceedings of the 2008 International Conference on Software Engineering Research & Practice (SERP 2008)"
+    editors:
+      - family-names: "Arabnia"
+        given-names: "Hamid R."
+      - family-names: "Reza"
+        given-names: "Hassan"
+    publisher:
+      name: "CSREA Press"
+    isbn: "1-60132-088-4"
+    conference:
+      name: "2008 International Conference on Software Engineering Research & Practice (SERP 2008)"
+      city: "Las Vegas"
+      region: "Nevada"
+      country: "US"
+
+  - type: "conference-paper"
+    authors:
+      - family-names: "Samimi"
+        given-names: "Mojtaba"
+      - family-names: "Parvizsedghy"
+        given-names: "Laya"
+      - family-names: "Adib"
+        given-names: "Morteza"
+    title: "Different Building Faces Against Different Faces of the Sun"
+    year: 2008
+    month: 10
+    start: 650
+    end: 657
+    volume: 1
+    collection-title: "Proceedings of the 1st International Conference on Solar Heating, Cooling and Buildings (EUROSUN 2008)"
+    publisher:
+      name: "Sociedade Portuguesa de Energia Solar (SPES)"
+    isbn: "978-1-61782-228-5"
+
+  - type: "conference-paper"
+    authors:
+      - family-names: "Samimi"
+        given-names: "Mojtaba"
+      - family-names: "Parvizsedghy"
+        given-names: "Laya"
+      - family-names: "Tahbaz"
+        given-names: "Mansoureh"
+    title: "SOLARCHVISION"
+    year: 2009
+    collection-title: "Proceedings of CISBAT 2009: Renewables in a Changing Climate – From Nano to Urban Scale"
+    publisher:
+      name: "LESO-PB, EPFL"
+    url: "https://epfl.ch"
+    conference:
+      name: "CISBAT International Scientific Conference"
+      city: "Lausanne"
+      country: "CH"
+
   - type: "book"
     authors:
       - family-names: "Samimi"
