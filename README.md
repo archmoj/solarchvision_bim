@@ -2,15 +2,17 @@
 
 **Bring space, time, energy, and climate into the design process.**
 
-SOLARCHVISION-BIM is an open-source desktop application for **3D modeling and solar-climatic analysis**. It brings building and site geometry together with geographic context, supported weather and climate data, and time-dependent visualization to help explore how the sun, local climate, weather, and design choices interact.
+SOLARCHVISION-BIM is an open-source desktop application for **3D modeling, BIM and geographic data integration, and solar-climatic analysis**. It brings building and site geometry together with geographic context, weather and climate data, and time-dependent visualization to help explore how the sun, local climate, weather, and design choices interact.
 
-The SOLARCHVISION approach treats solar exposure and shade as context-dependent effects: they can be beneficial in one season or location and undesirable in another. Use the application to investigate design alternatives across buildings, façades, streets, courtyards, landscapes, neighborhoods, and solar-energy applications. By combining spatial models with time-varying environmental data, SOLARCHVISION-BIM helps design teams consider energy demand and production, daylight, comfort, health, and safety earlier in the design process.
+The SOLARCHVISION approach treats solar exposure and shade as context-dependent effects: they can be beneficial in one season or location and undesirable in another. Use the application to investigate design alternatives across buildings, façades, streets, courtyards, landscapes, neighborhoods, and solar-energy applications.
+
+By combining spatial models with time-varying environmental data, SOLARCHVISION-BIM helps design teams consider energy demand and production, daylight, comfort, health, and safety earlier in the design process.
 
 - **For:** Architects, urban and landscape planners, renewable-energy specialists, researchers, educators, and project teams.
 - **Platforms:** GNU/Linux, macOS, and Microsoft Windows.
 - **License:** GNU General Public License v2 (GPL-2.0).
 - **Repository:** [archmoj/solarchvision_bim](https://github.com/archmoj/solarchvision_bim)
-- **Documentation:** [Command reference](command/README.md)
+- **Documentation:** [Command reference](command/README.md) · [Import tools](import/README.md)
 
 > **Scope and limitations:** SOLARCHVISION-BIM supports design exploration and environmental analysis. Results depend on the model, location, input data, processing assumptions, and selected workflow. Outputs are not certified engineering calculations and do not replace professional review or specialist simulations where required.
 
@@ -19,10 +21,13 @@ The SOLARCHVISION approach treats solar exposure and shade as context-dependent 
 - [Why SOLARCHVISION-BIM?](#why-solarchvision-bim)
 - [Get started](#get-started)
 - [What can you explore?](#what-can-you-explore)
+- [Model interoperability and imports](#model-interoperability-and-imports)
+- [3D modeling, editing, and visualization](#3d-modeling-editing-and-visualization)
+- [Geographic context and site modeling](#geographic-context-and-site-modeling)
 - [Weather, climate, and geographic data](#weather-climate-and-geographic-data)
 - [Modeling and analysis workflow](#modeling-and-analysis-workflow)
 - [Keyboard shortcuts](#keyboard-shortcuts)
-- [Command bar and automation](#command-bar-and-automation)
+- [Command bar, scripting, and exports](#command-bar-scripting-and-exports)
 - [The SOLARCHVISION approach](#the-solarchvision-approach)
 - [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)
 - [Method and publications](#method-and-publications)
@@ -40,13 +45,14 @@ The goal is not simply to maximize sunlight or minimize shade. It is to understa
 
 SOLARCHVISION-BIM brings several parts of that investigation into one workspace:
 
+- **Bring models together:** Import supported BIM, CAD, mesh, and point-cloud formats to use existing project geometry as a starting point.
 - **Model the place:** Create and edit 3D buildings, surfaces, terrain, trees, and other site elements.
+- **Work iteratively:** Use selection and editing tools, with undo and redo for model and viewport changes.
 - **Explore solar exposure:** Investigate sun position, solar radiation, shading, and the effects of surrounding geometry.
 - **Consider benefits and risks:** Explore when solar exposure may be useful and when shade, overheating, or seasonal environmental conditions may create design concerns.
-- **Connect design to location:** Use geographic views, map imagery, station locations, and terrain context where available.
+- **Connect design to location:** Use geographic views, map imagery, station locations, terrain context, and available building and tree data.
 - **Explore time and variability:** Compare hours, days, years, and supported forecast scenarios; inspect statistical summaries and percentiles where available.
 - **Support design-team discussions:** Use 3D views, graphs, and supported exports to communicate how proposed changes may affect buildings and outdoor spaces.
-- **Visualize environmental data:** Explore supported weather layers and other spatial environmental fields.
 - **Build repeatable workflows:** Use the graphical interface, command bar, scripts, and supported export formats.
 - **Use and extend open-source software:** Inspect the code, report issues, and adapt the application to your needs.
 
@@ -89,7 +95,7 @@ Start with one clear question—for example, how shade on a building or outdoor 
 
 1. **Choose a location.** Use the `Location` menu to set the project location.
 2. **Load suitable data.** Load an available weather or climate dataset for the location.
-3. **Create a simple scene.** Use `3D-create` to add geometry, or import a supported `.obj` model.
+3. **Create or import a scene.** Use `3D-create` to add geometry, or import a supported model or point cloud.
 4. **Choose a study.** Open the `Analysis` menu and select an available solar or environmental study.
 5. **Inspect the result.** Use the 3D view and available study graphs.
 6. **Move through time.** Use the Case Bar to select hours, days, years, or forecast scenarios supported by the dataset.
@@ -115,6 +121,7 @@ The initial layout can vary. Use the `Setup` menu to switch among available 3D m
 - Investigate how surrounding geometry affects solar access.
 - Explore changes in solar exposure across hours, seasons, and supported weather scenarios.
 - Consider trade-offs between useful solar gains and unwanted exposure.
+- Import existing BIM or CAD geometry and use it as a basis for environmental design studies.
 
 ### Urban planning and public space
 
@@ -122,12 +129,14 @@ The initial layout can vary. Use the `Setup` menu to switch among available 3D m
 - Explore solar access and shadow patterns in streets, courtyards, parks, and other public spaces.
 - Investigate the influence of neighboring buildings, trees, and shading structures.
 - Use geographic and weather context to inform early-stage comparisons.
+- Build contextual massing from available OpenStreetMap or Overture Maps data using the supplied import scripts.
 
 ### Landscape architecture
 
 - Represent terrain, trees, and site elements in a 3D scene.
 - Explore how vegetation and structures affect shade and solar exposure.
 - Compare landscape alternatives across seasons.
+- Use point-cloud data as a basis for site and terrain representation where appropriate.
 
 ### Climate and environmental studies
 
@@ -136,7 +145,113 @@ The initial layout can vary. Use the `Setup` menu to switch among available 3D m
 - Inspect statistical summaries such as minimum, average, maximum, and percentiles where supported.
 - Visualize selected environmental fields and export geometry or model states for other workflows.
 
-These analyses can inform early design, option comparison, and design refinement. Depending on the project and the data available, they may help teams identify locations that warrant closer review for uncomfortable solar exposure, excessive shade, overheating, or seasonal energy and safety concerns—including under selected extreme-weather conditions. These are screening and design-support insights, not a substitute for formal risk assessment or detailed daylight, thermal-comfort, whole-building energy, structural, or other specialist simulations when required.
+These analyses can inform early design, option comparison, and design refinement. Depending on the project and the data available, they may help teams identify locations that warrant closer review for uncomfortable solar exposure, excessive shade, overheating, or seasonal energy and safety concerns—including under selected extreme-weather conditions.
+
+## Model interoperability and imports
+
+SOLARCHVISION-BIM can use existing project geometry as well as geometry created inside the application. Import workflows help bring architectural models, exchange files, meshes, and point-cloud data into a common 3D workspace.
+
+### Supported import formats
+
+| Format | Typical use |
+|---|---|
+| **IFC** (`.ifc`) | Building Information Modeling (BIM) exchange |
+| **gbXML** (`.xml`) | Building and energy-model geometry exchange |
+| **OBJ** (`.obj`) | General 3D geometry and mesh exchange |
+| **DAE** (`.dae`) | COLLADA 3D scenes |
+| **DXF** (`.dxf`) | CAD drawing and geometry exchange |
+| **GLB** (`.glb`) | Binary glTF 3D assets |
+| **PLY** (`.ply`) | Polygon and vertex-based geometry |
+| **LAS** (`.las`) | LiDAR and point-cloud data |
+| **STL** (`.stl`) | Triangulated surface and solid-mesh geometry |
+
+Import behavior and the geometry or attributes retained depend on the source format and the contents of the file. Check the imported result before using it for measurement or analysis. A successful geometry import does not necessarily mean that all source BIM properties, classifications, materials, or relationships are preserved.
+
+### LAS point-cloud workflow
+
+LAS files can be imported as point-cloud data. By default, imported points are meshed into a surface. The **Import LAS** options dialog provides controls to disable meshing, choose a meshing algorithm, and specify a point range. This can be useful when working with large point clouds or when testing a subset before processing the full dataset.
+
+The command interface also provides `IMPORT.LAS` for scripted imports, including an optional maximum point index. The interactive import dialog provides additional point-range controls.
+
+### Import commands
+
+The command line includes dedicated import commands:
+
+```text
+IMPORT.OBJ
+IMPORT.GBXML
+IMPORT.IFC
+IMPORT.DAE
+IMPORT.DXF
+IMPORT.GLB
+IMPORT.PLY
+IMPORT.LAS
+IMPORT.STL
+```
+
+See the [command reference](command/README.md) for command syntax and details.
+
+## 3D modeling, editing, and visualization
+
+SOLARCHVISION-BIM includes its own 3D geometry and scene-editing environment. You can create geometry directly, modify imported models, and add contextual elements for architectural, urban, landscape, and environmental studies.
+
+### Create and edit geometry
+
+The `3D-create` menu provides tools for creating supported objects, including houses, parametric surfaces, boxes, cones, cushions, cylinders, spheres, planes, polygons, extrusions, surfaces, polylines, points, trees, people, and cameras.
+
+Use the selection and editing tools to work with objects and their components:
+
+- **Select:** Select objects and supported geometry elements.
+- **Alter and modify:** Adjust object position, orientation, dimensions, and other available properties.
+- **Match and align:** Align objects and geometry using the available matching tools.
+- **Group and organize:** Work with groups, layers, visibility, and materials.
+- **Inspect and navigate:** Use cameras and viewport controls to examine the model from different perspectives.
+
+### Undo and redo
+
+Undo and redo make iterative model development easier by allowing supported changes to be reversed and restored:
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl+Z` | Undo a model change |
+| `Ctrl+Y` | Redo a model change |
+| `Ctrl+Shift+Z` | Undo a viewport change |
+| `Ctrl+Shift+Y` | Redo a viewport change |
+
+Model changes and viewport changes have separate histories. The available history depends on the type of operation.
+
+### Visualization
+
+The 3D environment supports perspective and orthographic views, surface and edge display, materials, layers, and analytical overlays. Switch between available shading and impact views to inspect geometry, solar exposure, and environmental results.
+
+## Geographic context and site modeling
+
+A design model is more meaningful when considered in its real geographic context. SOLARCHVISION-BIM provides a World view with geographic positioning, map imagery, station locations, and terrain visualization.
+
+The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain context. Some geographic features, including terrain mesh and terrain texture, require an API key.
+
+### Building and tree context from map data
+
+The repository includes scripts for generating 3D building massing around a specified geographic location:
+
+- **OpenStreetMap (OSM):** Python and JavaScript implementations can retrieve building footprints and tree locations through the Overpass API.
+- **Overture Maps:** A Python script can retrieve building data from Overture Maps. Optional tree data can be sourced from OpenStreetMap.
+
+The scripts generate geometry in a local projected coordinate system and can produce OBJ models and native SOLARCHVISION `.svs` geometry scripts. The generated context can include extruded building massing, a ground reference, and tree objects where source data is available.
+
+Building heights depend on available source attributes and fallback settings. The generated massing is intended for contextual modeling, not as a surveyed or construction-accurate representation. Data coverage, completeness, licensing, and attribution requirements depend on the source.
+
+For setup, dependencies, command-line options, and details about the generated files, see the [3D building import documentation](import/README.md).
+
+### Explore the map interactively
+
+The World view's map responds to the mouse directly, without going through a menu:
+
+- **Hover** over the map to see the short name of whichever weather or climate station(s) are nearby, without clicking. When zoomed out over a dataset with many stations, the list is automatically kept short, with a note of how many additional nearby stations were left out rather than listing them all.
+- **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
+- **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map.
+
+A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point.
 
 ## Weather, climate, and geographic data
 
@@ -148,15 +263,7 @@ Use the `Location` menu to select a project location and load or download suppor
 - **SWOB:** Meteorological observations.
 - **HRDPS/GDPS forecast imagery:** Available through the atmospheric visualization workflow where configured.
 
-Coverage and availability vary by location and workflow. Some geographic features, including terrain mesh and terrain texture, require an API key. For Canadian CWEEDS data, consult [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html). CWEEDS files are expected under `input/climate/CWEEDS/`.
-
-### Explore the map interactively
-
-The World view's map responds to the mouse directly, without going through a menu:
-
-- **Hover** over the map to see the short name of whichever weather or climate station(s) are nearby, without clicking - a quick way to see what's around before committing to a location. When zoomed out over a dataset with many stations, the list is automatically kept short, with a note of how many additional nearby stations were left out rather than listing them all.
-- **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
-- **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map. A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point.
+Coverage and availability vary by location and workflow. For Canadian CWEEDS data, consult [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html). CWEEDS files are expected under `input/climate/CWEEDS/`.
 
 ### Check data before interpreting results
 
@@ -164,11 +271,15 @@ Confirm the source, geographic representativeness, time coverage, units, missing
 
 A typical weather file is useful for many building-energy workflows, but it does not represent every possible weather pattern or extreme. A forecast is not a climate projection, and a single observation station is not automatically representative of the project site.
 
-Solar quantities need particular care. A dataset may not provide solar radiation directly, or may provide it at a coarser time step than the analysis requires. Some workflows may derive direct and diffuse solar components from other forecast parameters or estimate hourly values from coarser intervals. Such values are **derived estimates**, not direct measurements; they depend on the source data, method, and assumptions. When using estimated or interpolated data, document the source variables, time step, assumptions, and uncertainty.
+Solar quantities need particular care. A dataset may not provide solar radiation directly, or may provide it at a coarser time step than the analysis requires. Some workflows may derive direct and diffuse solar components from other forecast parameters or estimate hourly values from coarser intervals. Such values are **derived estimates**, not direct measurements; they depend on the source data, method, and assumptions.
+
+When using estimated or interpolated data, document the source variables, time step, assumptions, and uncertainty.
 
 ### Match solar studies to the design question
 
-The appropriate study depends on the design stage and the question being asked. A quick sun-path review can help with orientation, while time-dependent studies using representative weather or climate data can reveal seasonal patterns that a single date or image may miss. For building-skin and urban-fabric studies, where the required inputs and workflows are available, hourly analysis over a year—or comparison across multiple years—can help distinguish recurring patterns from conditions tied to a particular period.
+The appropriate study depends on the design stage and the question being asked. A quick sun-path review can help with orientation, while time-dependent studies using representative weather or climate data can reveal seasonal patterns that a single date or image may miss.
+
+For building-skin and urban-fabric studies, where the required inputs and workflows are available, hourly analysis over a year—or comparison across multiple years—can help distinguish recurring patterns from conditions tied to a particular period.
 
 When comparing design alternatives, consider:
 
@@ -184,14 +295,14 @@ Before comparing results, record the site and orientation, dataset and period, w
 
 ### Create or import a scene
 
-Use the `3D-create` menu to add supported objects, including houses, parametric surfaces, boxes, cones, cushions, cylinders, spheres, planes, polygons, extrusions, surfaces, polylines, points, trees, people, and cameras.
+Use the `3D-create` menu to add supported objects, or import existing geometry using one of the supported formats described above.
 
 After choosing an object type, click in the 3D view to place it:
 
 - **Right-click:** Place the object on the land surface.
 - **Left-click:** Place the object on the surface of an existing 3D model.
 
-Default creation parameters are available under `Geometries & Space` → `Create`. Use `3D-select`, `3D-alter`, `3D-modify`, and `3D-match` to select, adjust, modify, and align objects. The application supports importing `.obj` files as well as its own scene geometry.
+Default creation parameters are available under `Geometries & Space` → `Create`. Use `3D-select`, `3D-alter`, `3D-modify`, and `3D-match` to select, adjust, modify, and align objects.
 
 ### Choose and interpret a study
 
@@ -207,11 +318,24 @@ The **Case Bar** sits above the command bar. Its range controls let you select:
 - **Days** to include in the study.
 - **Scenarios** for ensemble forecasts, or **Years** for multi-year climate input.
 
-Use a left-click to set the start of a range and a right-click to set its end. Available statistical choices include minimum, average, maximum, the 25th, 50th (median), and 75th percentiles, plus `Leaning Low`, `Well-tempered`, and `Leaning High`—three scenarios unique to SOLARCHVISION (see [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)). These options are not interchangeable: choose the statistic or scenario selection that matches the question being investigated.
+Use a left-click to set the start of a range and a right-click to set its end. Available statistical choices include minimum, average, maximum, the 25th, 50th (median), and 75th percentiles, plus `Leaning Low`, `Well-tempered`, and `Leaning High`—three scenarios unique to SOLARCHVISION (see [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)).
+
+These options are not interchangeable: choose the statistic or scenario selection that matches the question being investigated.
 
 ### Save and export
 
-Use the application's project save/load functions to retain supported scene and study information. Available export workflows include OBJ geometry, time-series or date-series OBJ, RAD, SCR, and HTML. These formats serve different purposes; check the target application's documentation before relying on an export for downstream production work.
+Use the application's project save/load functions to retain supported scene and study information. Available export workflows include:
+
+- **OBJ:** Export scene geometry.
+- **OBJ time-series:** Export geometry at different hours.
+- **OBJ date-series:** Export geometry at different days.
+- **LAS:** Export the positions of points in the scene as a point cloud.
+- **RAD:** Export Radiance geometry.
+- **SCR:** Export an AutoCAD script.
+- **HTML:** Export through the available HTML workflow.
+- **Image capture:** Record viewport frames in PNG, JPG, TIF, or BMP formats using the command interface.
+
+These formats serve different purposes; check the target application's documentation before relying on an export for downstream production work.
 
 ## Keyboard shortcuts
 
@@ -221,8 +345,8 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 
 | Shortcut | Action |
 | --- | --- |
-| `TAB` | Show or hide the command bar, next spinner edit when in-progress |
-| `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, cancel viewport shading, or remove the most recently pinned hover point - whichever applies |
+| `TAB` | Show or hide the command bar; advance to the next spinner edit when in progress |
+| `ESC` | Cancel an in-progress spinner edit; otherwise close an open menu, cancel console input, cancel an open pick list, cancel viewport shading, or remove the most recently pinned hover point—whichever applies |
 | `Ctrl+Z` | Undo model change |
 | `Ctrl+Y` | Redo model change |
 | `Ctrl+Shift+Z` | Undo viewport change |
@@ -282,17 +406,33 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `n` / `N` | Show or hide statistics on the hourly graph |
 | `m` / `M` | Show or hide sorted values on the hourly graph |
 
-## Command bar and automation
+## Command bar, scripting, and exports
 
 The command bar is optional. It is useful for setting values precisely, repeating operations, or running commands from scripts. Press `TAB` to show or hide it, or click inside the dark command area at the bottom of the interface.
 
-See the [command reference](command/README.md) for commands covering project files, object creation and editing, camera and view controls, dates, palettes, latitude/longitude, numeric controls, and on/off settings. For example, `day 15` sets the day value through the command interface.
+The command system supports project operations, object creation and editing, camera and view controls, dates, palettes, latitude/longitude, numeric controls, and on/off settings. Commands are not case-sensitive. Use `RUN.SCRIPT` to execute a text file containing commands, commonly with the `.svs` extension.
+
+Examples:
+
+```text
+OPEN
+SAVE
+IMPORT.IFC
+IMPORT.LAS
+EXPORT.OBJ
+EXPORT.LAS
+RUN.SCRIPT
+```
+
+See the [command reference](command/README.md) for complete syntax, arguments, and available commands. The [import documentation](import/README.md) describes the OSM and Overture building-context scripts and their generated files.
 
 ## The SOLARCHVISION approach
 
 **Solar-climatic vision means looking at architecture and urban space from the perspectives of the sun and climate.** Rather than treating sunlight as an unqualified benefit or relying only on a sun-path diagram, investigate where radiation reaches a surface or space, when it arrives, and whether its effect is desirable under local climatic conditions.
 
-The approach treats solar design as an integrated problem spanning building form, orientation, the building skin, outdoor space, urban fabric, and renewable-energy systems. It considers both immediate design decisions and longer-term performance across seasons and changing weather conditions. The analysis is most useful when introduced early enough to influence fundamental choices—such as orientation, dimensions, layout, façade proportions, landscape placement, and shading—rather than being used only to check a nearly finished design.
+The approach treats solar design as an integrated problem spanning building form, orientation, the building skin, outdoor space, urban fabric, and renewable-energy systems. It considers both immediate design decisions and longer-term performance across seasons and changing weather conditions.
+
+The analysis is most useful when introduced early enough to influence fundamental choices—such as orientation, dimensions, layout, façade proportions, landscape placement, and shading—rather than being used only to check a nearly finished design.
 
 The purpose is to help a project team identify promising options, recognize areas that may need further investigation, and exchange evidence in forms that support discussion among architects, landscape architects, urban planners, energy modelers, clients, municipalities, and other decision-makers.
 
@@ -329,7 +469,9 @@ The method can inform early design, refinement of building or landscape elements
 
 ## Statistical scenarios, built from real data
 
-A single weather or climate file can only show one version of the future—or the past. SOLARCHVISION-BIM studies instead draw on a whole *ensemble*: years of climate records, forecast members, or scenario sets, often amounting to dozens of candidate days for the same date. The Case Bar's statistical choices—Minimum, Maximum, Average, the 25th/50th/75th percentiles, and three scenarios unique to SOLARCHVISION described below—are how that whole collection becomes the one representative day a 3D study actually simulates.
+A single weather or climate file can only show one version of the future—or the past. SOLARCHVISION-BIM studies instead draw on a whole *ensemble*: years of climate records, forecast members, or scenario sets, often amounting to dozens of candidate days for the same date.
+
+The Case Bar's statistical choices—Minimum, Maximum, Average, the 25th/50th/75th percentiles, and three scenarios unique to SOLARCHVISION described below—are how that whole collection becomes the one representative day a 3D study actually simulates.
 
 ### Why not just pick "the coldest day on record"?
 
@@ -349,7 +491,7 @@ In every case, the hourly values that drive the simulation trace back to real, p
 
 ### Leaning Low, Well-tempered, and Leaning High: scenarios unique to SOLARCHVISION
 
-Alongside the standard percentiles, SOLARCHVISION-BIM offers three scenarios found nowhere else: **Leaning Low**, **Well-tempered**, and **Leaning High**.
+Alongside the standard percentiles, SOLARCHVISION-BIM offers three scenarios: **Leaning Low**, **Well-tempered**, and **Leaning High**.
 
 Picture every recorded or forecast day for a given date, ranked from lowest to highest for whichever variable is being studied—temperature, wind speed, solar radiation, or another supported layer. A percentile picks a single rank off that list and reads it. SOLARCHVISION's three scenarios do something different: every day in the record gets a say, weighted by how close its rank sits to the target.
 
@@ -361,7 +503,7 @@ These three scenarios give a project team a way to explore "distinctly on the hi
 
 ## Method and publications
 
-SOLARCHVISION-BIM is the product of the author's own research into solar-climatic design, carried on for decades and implemented by hand — connecting weather data, building geometry, and environmental analysis into one tool, one design question at a time. The publications below mark some of that work's milestones, not where it started or where it stops.
+SOLARCHVISION-BIM is the product of the author's own research into solar-climatic design, carried on for decades and implemented by hand—connecting weather data, building geometry, and environmental analysis into one tool, one design question at a time. The publications below mark some of that work's milestones, not where it started or where it stops.
 
 The following publications describe the principles behind SOLARCHVISION's solar-climatic approach and show how weather data, solar orientation, building geometry, and urban context can inform design decisions.
 
@@ -376,11 +518,15 @@ The following publications describe the principles behind SOLARCHVISION's solar-
 
 The application includes a 3D geometry system for points, faces, solids, groups, polylines, materials, and 1D/2D models. Supported workflows include object creation, selection, transformation, grouping, visibility, layers, and material assignment. Procedural vegetation and parametric objects can represent aspects of the built and natural environment.
 
-The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance.
+Import workflows support IFC, gbXML, OBJ, DAE, DXF, GLB, PLY, LAS, and STL files. The exact geometry and information retained depend on the format and source file. LAS point clouds can be meshed into surfaces during import, with options available through the import dialog.
+
+The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance. Undo and redo are available for supported model and viewport operations.
 
 ### Solar, shade, and environmental analysis
 
-Solar workflows use the project location and time, weather or climate radiation data, and modeled geometry. Supported calculations and visualizations include solar direction, direct and diffuse radiation handling, shadow/occlusion calculations, and surface-level impact display. Other environmental features may include wind visualization, wind-rose views, environmental impact fields, contours, raster-like representations, and atmospheric/cloud visualization. Exact outputs depend on the selected study and available data.
+Solar workflows use the project location and time, weather or climate radiation data, and modeled geometry. Supported calculations and visualizations include solar direction, direct and diffuse radiation handling, shadow/occlusion calculations, and surface-level impact display. Other environmental features may include wind visualization, wind-rose views, environmental impact fields, contours, raster-like representations, and atmospheric/cloud visualization.
+
+Exact outputs depend on the selected study and available data.
 
 ### Weather, climate, and scenario data
 
@@ -388,29 +534,33 @@ Supported workflows include EPW/TMY, CWEEDS, CLMREC, ensemble forecast and obser
 
 ### Geographic context and time
 
-The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain visualization. The Earth model can display map imagery around the project location with geographic-grid and terrain context. Time-dependent studies can be explored by hour, day, season, annual period, forecast period, or scenario, depending on the dataset.
+The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain visualization. The Earth model can display map imagery around the project location with geographic-grid and terrain context. Companion import scripts can generate contextual building massing from OpenStreetMap and Overture Maps data. Time-dependent studies can be explored by hour, day, season, annual period, forecast period, or scenario, depending on the dataset.
 
 ### Projects, commands, and exchange
 
-Project persistence uses structured XML for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts or text files for repeatable operations. Export options include OBJ, time-series/date-series OBJ, RAD, SCR, and HTML.
+Project persistence uses structured XML for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts or text files for repeatable operations.
+
+Export options include OBJ, time-series/date-series OBJ, LAS, RAD, SCR, HTML, and viewport image capture. The import and export capabilities are described in the [command reference](command/README.md).
 
 A typical supported workflow is:
 
 ```text
-Building or Site Model + Geographic Location
-                    ↓
-           Weather / Climate Data
-                    ↓
-          Select Time and Scenarios
-                    ↓
-       Solar / Shade / Environmental Study
-                    ↓
-        Explore 3D Views and Study Graphs
-                    ↓
-               Save or Export
+BIM / CAD / Mesh / Point-Cloud Model
+                  +
+       Geographic Location / Site
+                  ↓
+          Weather / Climate Data
+                  ↓
+        Select Time and Scenarios
+                  ↓
+     Solar / Shade / Environmental Study
+                  ↓
+      Explore 3D Views and Study Graphs
+                  ↓
+             Save or Export
 ```
 
-For exact commands and additional workflows, consult the [command reference](command/README.md).
+For exact commands and additional workflows, consult the [command reference](command/README.md) and [import documentation](import/README.md).
 
 ## Contribute and follow the project
 
@@ -427,4 +577,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for installing Processing, running the ap
 
 ## License
 
-The source code and documentation are released under the [GNU General Public License v2](LICENSE.md). Bundled third-party libraries (in `dist/lib/`, once built), the bundled font and imagery, and the external weather/elevation/imagery data sources used at runtime all carry their own separate terms — see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md). See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for acknowledgements and thanks.
+The source code and documentation are released under the [GNU General Public License v2](LICENSE.md). Bundled third-party libraries (in `dist/lib/`, once built), the bundled font and imagery, and the external weather/elevation/imagery data sources used at runtime all carry their own separate terms—see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md). See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for acknowledgements and thanks.
