@@ -269,6 +269,30 @@ class MESSAGE {
   int dY = int(2 * MessageSize);
 }
 
+// pixel_A/B/C/D/H/W (and nothing above setup() ever computes a real
+// value for them) must be declared before MESSAGE/STUDY/WORLD/WIN3D/
+// UI_rollout right below - each of those reads one or more of these in
+// its own field initializer (cX/cY/dX/dY), and Java runs field
+// initializers in textual declaration order, so moving this block any
+// later would silently go back to every one of those classes reading
+// these back as 0 at construction time, regardless of what's declared
+// here. pixel_H/pixel_W default to 2, not 0, specifically so WIN3D's
+// own dX/dY (which feed exportRad.pde's own "-vh" argument via
+// WIN3D.dX / float(WIN3D.dY)) aren't 0 / 0.0 - a literal NaN - on a
+// bare, never-setup()'d instance (exportRadiance() run without a
+// window ever having been shown). setup() still recomputes all six of
+// these from the real window size and then reconstructs every one of
+// these same classes a second time (solarchvision_bim.pde's own
+// setup()), so a real run is entirely unaffected by whatever these
+// default to here - this block only matters for whichever one of them
+// gets read first, before setup() ever runs.
+int pixel_A = 0;
+int pixel_B = 0;
+int pixel_C = 0;
+int pixel_D = 0;
+int pixel_H = 2;
+int pixel_W = 2;
+
 MESSAGE MESSAGE = new MESSAGE();
 
 STUDY STUDY = new STUDY();
@@ -497,13 +521,6 @@ int typeUserCommand = 0;
 float userPointSize = 0.0;
 
 float MessageSize = 15; // this would be recomputed in setup
-int pixel_A = 0;
-int pixel_B = 0;
-int pixel_C = 0;
-int pixel_D = 0;
-
-int pixel_H = 0;
-int pixel_W = 0;
 
 int screenWidth = 0;
 int screenHeight = 0;

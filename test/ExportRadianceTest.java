@@ -19,12 +19,10 @@ import java.nio.file.Path;
 //
 // The .bat file's "rvu" command line also reads WIN3D.dX/dY (through
 // atan_ang()) to compute its own "-vh" (horizontal field of view)
-// argument - WIN3D.dX and dY both default to 0 (pixel_W/pixel_H, never
-// set without a real setup()), so that one argument is a literal "NaN"
-// on a bare, never-setup()'d instance exactly as it would be read back
-// by Radiance - confirmed directly below. Nothing here works around or
-// papers over that; it is simply what exportRadiance() currently writes
-// for an instance that was never shown a window.
+// argument - WIN3D.dX and dY both default to 2 now (viewport3D.pde's
+// own comment explains why a literal 2, not pixel_W/pixel_H, is needed
+// there), so that argument is well-defined even on a bare,
+// never-setup()'d instance - confirmed directly below.
 class ExportRadianceTest {
 
   private solarchvision_bim app;
@@ -169,15 +167,20 @@ class ExportRadianceTest {
   }
 
   @Test
-  void exportRadiance_batFile_vhArgument_isNaN_onABareNeverSetupInstance () throws IOException {
-    // See this file's own header comment: WIN3D.dX and WIN3D.dY both
-    // default to 0 (pixel_W/pixel_H), so WIN3D.dX / float(WIN3D.dY) is
-    // 0 / 0.0, which is NaN in Java - exportRad.pde's own "-vh" argument
-    // propagates that NaN straight through nf() rather than guarding
-    // against it. Pinned here as current, confirmed behavior rather
-    // than silently relied upon elsewhere.
+  void exportRadiance_batFile_vhArgument_isWellDefined_onABareNeverSetupInstance () throws IOException {
+    // Previously: WIN3D.dX and WIN3D.dY both defaulted to 0
+    // (pixel_W/pixel_H, never set without a real setup()), so
+    // WIN3D.dX / float(WIN3D.dY) was 0 / 0.0 - NaN in Java -
+    // propagating straight through exportRad.pde's own "-vh" argument.
+    // WIN3D's own cX/dX/dY now default to 2 instead (see viewport3D.pde's
+    // own comment on why a literal 2, not pixel_W/pixel_H, is what
+    // actually fixes this), so that division is now a well-defined 1.0 -
+    // dX == dY also means the resulting field of view matches -vv's own
+    // default exactly (both 90), confirmed directly below rather than
+    // assumed.
     String content = exportBat();
 
-    assertTrue(content.contains("-vh NaN "), content);
+    assertFalse(content.contains("NaN"), content);
+    assertTrue(content.contains("-vh 90 "), content);
   }
 }
