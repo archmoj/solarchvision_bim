@@ -746,30 +746,36 @@ class SceneLifecycleTest {
     assertEquals(1, app.allFaces.nodes.length);
   }
 
-  // ================= a confirmed, NOT fixed, undo gap in group_Selection ==
+  // ================= group_Selection's undo/redo - FIXED ==================
+  // Previously: group_Selection() had no beginScene3DChange()/
+  // endScene3DChange() of its own. For the FACE category it: (1) called
+  // allFaces.create() to clone the selected face - create() has no
+  // begin/end wrap of its own either (only makeEmpty() does), so this
+  // step was never its own undo-trackable entry; then (2) called
+  // Delete3D.selection(), which DOES wrap itself, to remove the
+  // ORIGINAL face. That wrap's own "before" snapshot was taken at the
+  // moment IT started - by which point the clone from step 1 already
+  // existed alongside the still-live original, so the snapshot
+  // captured BOTH. A single undo restored exactly that snapshot: both
+  // the (restored) original AND the (never removed, because nothing
+  // had undone its untracked creation) clone ended up present
+  // together, and the new group row survived too, rather than the
+  // scene genuinely returning to its pre-Group state.
+  //
+  // Fixed in groups.pde by wrapping the whole run_process block (every
+  // category's own beginNewGroup()/clone-via-create(), AND the trailing
+  // Delete3D.selection() call) in one beginScene3DChange()/
+  // endScene3DChange() pair - the same nesting pattern
+  // deleteAll()/Delete3D.selection() themselves already rely on. That
+  // outer pair's own "before" snapshot is now taken before
+  // beginNewGroup() or any clone exists, and the inner
+  // Delete3D.selection() call runs nested (scene3DChangeDepth already
+  // > 0), so only the outer pair touches the undo history - one single,
+  // genuinely complete step, confirmed directly below rather than
+  // assumed.
 
   @Test
-  void groupSelection_confirmedBug_undoingItDuplicatesTheOriginalRatherThanRestoringIt () {
-    // Found while extending this file's own undo/redo coverage, not
-    // fixed here - flagged for confirmation the same way
-    // Rotate3DTest.java's own groups_rotatesOwnedModel1DsPositionButDoesNotUpdateItsOwnRotationField
-    // flags its own found-but-unfixed bug.
-    //
-    // group_Selection() (groups.pde) has no beginScene3DChange()/
-    // endScene3DChange() of its own - confirmed directly by reading it
-    // end to end. For the FACE category it: (1) calls allFaces.create()
-    // to clone the selected face - create() has no begin/end wrap of its
-    // own either (only makeEmpty() does - confirmed the same way), so
-    // this step is never its own undo-trackable entry; then (2) calls
-    // Delete3D.selection(), which DOES wrap itself, to remove the
-    // ORIGINAL face. That wrap's own "before" snapshot is taken at the
-    // moment IT starts - by which point the clone from step 1 already
-    // exists alongside the still-live original, so the snapshot
-    // captures BOTH. A single undo restores exactly that snapshot:
-    // both the (restored) original AND the (never removed, because
-    // nothing undid its untracked creation) clone end up present
-    // together, and the group row itself survives too, rather than the
-    // scene genuinely returning to its pre-Group state.
+  void groupSelection_canNowBeUndoneThenRedone_cleanly_withNoDuplicate () {
     createOneFace();
     assertEquals(1, app.allFaces.nodes.length);
 
@@ -779,21 +785,87 @@ class SceneLifecycleTest {
     app.Select3D.faceSelection = new int[]{0};
     app.allGroups.group_Selection(1);
     assertEquals(1, app.allGroups.num);
-    assertEquals(1, app.allFaces.nodes.length, "grouping clones 1-for-1 - this part is correct");
+    assertEquals(1, app.allFaces.nodes.length, "grouping clones 1-for-1");
 
     app.undoScene3DChange();
+    assertEquals(0, app.allGroups.num, "the new group is fully removed by undo");
+    assertEquals(1, app.allFaces.nodes.length, "back to exactly the pre-group state - no duplicate left behind");
 
-    // What a clean undo SHOULD leave behind: 0 groups, 1 face (back to
-    // exactly the pre-group state). What it actually leaves behind:
-    assertEquals(1, app.allGroups.num, "BUG: the new group is NOT removed by undo");
-    assertEquals(2, app.allFaces.nodes.length, "BUG: the clone is never removed, so the restored original duplicates it");
-
-    // Redoing from here lands back on the normal, correct post-group
-    // state though - it's specifically the undo step that's short, not
-    // the whole history entry.
     app.redoScene3DChange();
     assertEquals(1, app.allGroups.num);
     assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void groupSelectionAcrossAllFiveTypes_eachOwnUndoStep_reversesOnlyThatOneAdditionCleanly () {
+    // The mixed group built one group_Selection() call at a time (one
+    // per type, the last four with createNewGroup=0 to add to the
+    // group the first call just created) now records one undo step per
+    // call, each of which cleanly reverses just that one type's own
+    // addition - confirmed by undoing all five in order and landing
+    // back on the exact pre-group baseline (every object present,
+    // ungrouped), not a partially-reverted or duplicated state.
+    createOneFace();
+    createOnePolyline();
+    app.allModel1Ds.create(7, 99, 5, 10, 20, 30, 2, 45, 1, 2, 3, 4, 5, 6);
+    app.TREES_KIND.fileCount = 10;
+    app.TREES_KIND.Filenames = new String[]{"oak.png", "pine.png"};
+    app.allModel2Ds.create("TREES", 1, 50, 60, 70, 2);
+    app.allSolids.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+
+    app.seedScene3DHistory();
+
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.faceSelection = new int[]{0};
+    app.allGroups.group_Selection(1);
+    app.currentObjectCategory = app.ObjectCategory.POLYLINE;
+    app.Select3D.polylineSelection = new int[]{0};
+    app.allGroups.group_Selection(0);
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
+    app.Select3D.model1DSelection = new int[]{0};
+    app.allGroups.group_Selection(0);
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
+    app.Select3D.model2DSelection = new int[]{0};
+    app.allGroups.group_Selection(0);
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    app.Select3D.solidSelection = new int[]{0};
+    app.allGroups.group_Selection(0);
+
+    assertEquals(1, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allModel1Ds.num);
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(1, app.allSolids.DEF.length);
+
+    // Undo all 5 additions, one at a time - every count stays pinned at
+    // 1 (never 0, never 2) until the very last undo removes the group
+    // itself (the one call that also ran beginNewGroup()).
+    for (int i = 0; i < 4; i++) {
+      app.undoScene3DChange();
+      assertEquals(1, app.allGroups.num, "undo #" + (i + 1));
+    }
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allModel1Ds.num);
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(1, app.allSolids.DEF.length);
+
+    app.undoScene3DChange(); // the 5th and final undo: the original group_Selection(1) for the face
+    assertEquals(0, app.allGroups.num, "back to no groups at all - the true pre-group baseline");
+    assertEquals(1, app.allFaces.nodes.length, "every object present exactly once, nothing duplicated or lost");
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allModel1Ds.num);
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(1, app.allSolids.DEF.length);
+
+    for (int i = 0; i < 5; i++) app.redoScene3DChange();
+    assertEquals(1, app.allGroups.num, "redoing all 5 steps lands back on the normal grouped state");
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allModel1Ds.num);
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(1, app.allSolids.DEF.length);
   }
 
   // ================= deleteAll() deliberately can't be undone =============

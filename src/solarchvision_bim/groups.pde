@@ -212,6 +212,31 @@ class Groups {
 
     if (run_process) {
 
+      // See isFileOperationInProgress's own comment style elsewhere for
+      // why an outer wrap like this matters here specifically: without
+      // it, beginNewGroup() above and each category's own clone-via-
+      // create() below ran completely outside any beginScene3DChange()/
+      // endScene3DChange() pair (create() has no wrap of its own -
+      // only makeEmpty() does), so the ONLY recorded undo step was the
+      // one Delete3D.selection() below already wraps itself - and that
+      // step's own "before" snapshot was taken AFTER the clone already
+      // existed. Undoing it restored the deleted original, but never
+      // removed the clone (nothing had undone its untracked creation),
+      // and never removed the new group either - leaving a duplicate
+      // object and a phantom group behind instead of genuinely
+      // reversing the whole "Group Selection" action. Confirmed
+      // directly against the real compiled app before this fix (see
+      // SceneLifecycleTest.java's own former
+      // groupSelection_confirmedBug_... test, now corrected to match).
+      // Wrapping the whole sequence here - the same nesting pattern
+      // deleteAll()/Delete3D.selection() themselves already rely on -
+      // makes the inner Delete3D.selection() call below run nested
+      // (scene3DChangeDepth already > 0), so only this outer pair
+      // actually touches the undo history, with its own "before"
+      // snapshot correctly taken before beginNewGroup() or any clone
+      // exists.
+      beginScene3DChange();
+
       if (createNewGroup == 1) {
         float x = Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0];
         float y = Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][1];
@@ -441,6 +466,8 @@ class Groups {
       Select3D.groupSelection[0] = this.num - 1;
 
       switch_category(ObjectCategory.GROUP);
+
+      endScene3DChange();
     }
   }
 
