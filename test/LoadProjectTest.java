@@ -138,43 +138,40 @@ class LoadProjectTest {
   // ================= load_project() with a missing/unreadable file =====
 
   @Test
-  void loadProject_withAMissingFile_throwsNPE_andLeavesIsFileOperationInProgressStuckTrue () {
-    // Not the early, graceful exit fetchProject()'s own comment might
-    // suggest (that comment is about loadXML() throwing, which is what
-    // happens for genuinely malformed content - see the corrupt-file
-    // test below). For a file that's simply not there, Processing's own
-    // loadXML() instead logs its "missing or inaccessible" warning and
-    // returns null without throwing - so load_project()'s own
-    // try/catch around loadXML() never fires, continue_process stays
-    // true, and xml is null going into parse_XML_variables(). That
-    // throws its own NullPointerException, which the retry
-    // (parse_XML_variables(xml, true, true), inside the catch block)
-    // hits again with xml still null - uncaught this time, since it's
-    // thrown from inside the catch rather than another try - so it
-    // escapes load_project() entirely, skipping System.exit(1) and
-    // every bit of code after it, including the "isFileOperationInProgress
-    // = false" at this function's own very end. Confirmed directly
-    // against the real compiled app before writing this: fetchProject()
-    // is unaffected in practice only because it checks File.isFile()
-    // itself first and never reaches load_project() at all for this
-    // exact case (see fetchProject()'s own comment) - any OTHER caller
-    // of load_project() with a missing path (the console's own "open"
-    // command, in particular) would hit this directly.
+  void loadProject_withAMissingFile_doesNotThrow_andLeavesTheModelUntouched () {
+    // Previously: a file that's simply not there made Processing's own
+    // loadXML() log its "missing or inaccessible" warning and return
+    // null without throwing - so load_project()'s own try/catch around
+    // loadXML() never fired, continue_process stayed true, and xml was
+    // null going into parse_XML_variables(). That threw its own
+    // NullPointerException, which the retry (parse_XML_variables(xml,
+    // true, true), inside the catch block) hit again with xml still
+    // null - uncaught this time, since it's thrown from inside the
+    // catch rather than another try - so it escaped load_project()
+    // entirely, skipping System.exit(1) and every bit of code after it,
+    // including the "isFileOperationInProgress = false" at this
+    // function's own very end.
+    //
+    // load_project() now treats a null loadXML() result the same as a
+    // thrown exception (see loadProject.pde's own comment on this), so
+    // a missing file behaves just like the corrupt-file case below:
+    // continue_process is set to false up front, the whole restore
+    // block is skipped, and load_project() reaches its own normal
+    // closing reset. fetchProject() is additionally unaffected because
+    // it checks File.isFile() itself first and never reaches
+    // load_project() at all for this exact case (see fetchProject()'s
+    // own comment) - but any OTHER caller of load_project() with a
+    // missing path (the console's own "open" command, in particular)
+    // goes through this same fixed path now.
     Path missing = Path.of(app.BaseFolder, "this-file-does-not-exist.xml");
     assertFalse(Files.exists(missing), "sanity check, not the point of this test");
     assertFalse(app.isFileOperationInProgress, "sanity check, not the point of this test");
 
-    Throwable thrown = null;
-    try {
-      app.load_project(missing.toString());
-    } catch (Throwable t) {
-      thrown = t;
-    }
+    assertDoesNotThrow(() -> app.load_project(missing.toString()));
 
-    assertInstanceOf(NullPointerException.class, thrown);
     assertEquals(0, app.allGroups.num, "the model itself is untouched - nothing got as far as restoring it");
     assertEquals(0, app.allFaces.nodes.length);
-    assertTrue(app.isFileOperationInProgress, "left stuck true: the throw above escapes before this function's own closing reset ever runs");
+    assertFalse(app.isFileOperationInProgress, "this path now reaches the normal closing reset, same as the corrupt-file case below");
   }
 
   @Test

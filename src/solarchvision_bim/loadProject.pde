@@ -17,7 +17,22 @@ void load_project (String myFile) {
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
   try {
-    xml = loadXML(myFile);
+    // loadXML() doesn't throw for every failure: a genuinely missing/
+    // inaccessible path makes its own createReader() log a warning and
+    // return null, and loadXML() just passes that null straight back
+    // instead of throwing - only a file that exists but fails to parse
+    // (bad XML) actually throws. Left unchecked, continue_process would
+    // stay true with a null xml, and parse_XML_variables(xml, ...)
+    // below would NPE on it - escaping uncaught (its own retry-with-
+    // logging hits that same NPE from inside its own catch block),
+    // skipping isFileOperationInProgress = false at this function's own
+    // end entirely. So treat a null result the same as a thrown
+    // exception here, routing both through the one catch below.
+    XML loaded = loadXML(myFile);
+    if (loaded == null) {
+      throw new java.io.IOException("loadXML() returned null for: " + myFile);
+    }
+    xml = loaded;
   }
   catch (Exception e) {
     println("Can't read:", myFile);
