@@ -81,6 +81,10 @@ class SceneLifecycleTest {
   // either way, which would make a real bug here invisible.
   private solarchvision_bim buildMixedGroupScene () {
     solarchvision_bim a = new solarchvision_bim();
+    // Needed only by the undo/redo tests below, same reasoning as this
+    // file's own setUp(): seedScene3DHistory()/buildScene3DSnapshot()
+    // reach Terrain.to_XML().
+    a.Terrain.Mesh = new float[a.Terrain.rowCount][a.Terrain.columnCount][3];
 
     int p0 = a.allPoints.create(1, 0, 0);
     int p1 = a.allPoints.create(2, 0, 0);
@@ -94,6 +98,11 @@ class SceneLifecycleTest {
     a.allModel1Ds.create(7, 99, 5, 10, 20, 30, 2, 45, 1, 2, 3, 4, 5, 6);
 
     a.TREES_KIND.fileCount = 10;
+    // Needed only by the undo/redo tests below (Model2Ds.to_XML(), reached
+    // from buildScene3DSnapshot(), needs a real filename behind the kind's
+    // own fileIndex - see mixedGroupDelete_canBeUndoneThenRedone_...'s own
+    // comment on this) - harmless to set unconditionally here too.
+    a.TREES_KIND.Filenames = new String[]{"oak.png", "pine.png"};
     a.allModel2Ds.create("TREES", 1, 50, 60, 70, 2);
 
     a.allSolids.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
@@ -645,5 +654,189 @@ class SceneLifecycleTest {
     assertEquals(0, app.allModel1Ds.num);
     assertEquals(0, app.allModel2Ds.num);
     assertEquals(0, app.allSolids.DEF.length);
+  }
+
+  // ================= undo/redo around the mixed group's own transforms ====
+  // Move3D/Rotate3D/Scale3D.Groups() each wrap themselves in their own
+  // beginScene3DChange()/endScene3DChange() (confirmed directly in each
+  // one's own source), so - unlike group_Selection() below - a single
+  // undo cleanly reverses the whole transform, and a single redo
+  // reapplies it, across all five owned types at once.
+
+  @Test
+  void mixedGroupMove_canBeUndoneThenRedone () {
+    solarchvision_bim a = buildMixedGroupScene();
+    a.seedScene3DHistory();
+
+    a.Move3D.Groups(10, 20, 30);
+    assertArrayEquals(new float[]{11, 20, 30}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+
+    a.undoScene3DChange();
+    assertArrayEquals(new float[]{1, 0, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+    assertEquals(10f, a.allModel1Ds.getX(0), 0.0001f);
+
+    a.redoScene3DChange();
+    assertArrayEquals(new float[]{11, 20, 30}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+    assertEquals(20f, a.allModel1Ds.getX(0), 0.0001f);
+  }
+
+  @Test
+  void mixedGroupRotate_canBeUndoneThenRedone () {
+    solarchvision_bim a = buildMixedGroupScene();
+    a.seedScene3DHistory();
+
+    a.Rotate3D.Groups((float) Math.PI / 2, 2); // 90 degrees about Z
+    assertArrayEquals(new float[]{0, 1, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+
+    a.undoScene3DChange();
+    assertArrayEquals(new float[]{1, 0, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+
+    a.redoScene3DChange();
+    assertArrayEquals(new float[]{0, 1, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+  }
+
+  @Test
+  void mixedGroupScale_canBeUndoneThenRedone () {
+    solarchvision_bim a = buildMixedGroupScene();
+    a.seedScene3DHistory();
+
+    a.Scale3D.Groups(0, 0, 0, 2, 2, 2);
+    assertArrayEquals(new float[]{2, 0, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+
+    a.undoScene3DChange();
+    assertArrayEquals(new float[]{1, 0, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+
+    a.redoScene3DChange();
+    assertArrayEquals(new float[]{2, 0, 0}, a.allVertices[a.allFaces.nodes[0][0]], 0.0001f);
+  }
+
+  // ================= undo/redo around ungroup_Selection ====================
+
+  @Test
+  void ungroupSelection_canBeUndoneThenRedone_cleanly () {
+    // Unlike group_Selection() below, ungroup_Selection() has no clone-
+    // creation step of its own to worry about - it just zeroes the
+    // group's owned ranges, then calls Delete3D.selection() (GROUP
+    // category) to remove the now-empty group row, and THAT call's own
+    // beginScene3DChange()/endScene3DChange() wrap captures the true
+    // pre-ungroup state (ownership ranges intact, group row present) as
+    // its "before" snapshot - so a single undo/redo pair here really is
+    // clean, confirmed directly rather than assumed just because the
+    // mixed-group transforms above were.
+    createOneFace();
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.faceSelection = new int[]{0};
+    app.allGroups.group_Selection(1);
+    assertEquals(1, app.allGroups.num);
+
+    app.seedScene3DHistory();
+
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+    app.Select3D.groupSelection = new int[]{0};
+    app.allGroups.ungroup_Selection();
+    assertEquals(0, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length, "the face itself survives ungrouping");
+
+    app.undoScene3DChange();
+    assertEquals(1, app.allGroups.num, "the group comes back");
+    assertEquals(1, app.allFaces.nodes.length);
+
+    app.redoScene3DChange();
+    assertEquals(0, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  // ================= a confirmed, NOT fixed, undo gap in group_Selection ==
+
+  @Test
+  void groupSelection_confirmedBug_undoingItDuplicatesTheOriginalRatherThanRestoringIt () {
+    // Found while extending this file's own undo/redo coverage, not
+    // fixed here - flagged for confirmation the same way
+    // Rotate3DTest.java's own groups_rotatesOwnedModel1DsPositionButDoesNotUpdateItsOwnRotationField
+    // flags its own found-but-unfixed bug.
+    //
+    // group_Selection() (groups.pde) has no beginScene3DChange()/
+    // endScene3DChange() of its own - confirmed directly by reading it
+    // end to end. For the FACE category it: (1) calls allFaces.create()
+    // to clone the selected face - create() has no begin/end wrap of its
+    // own either (only makeEmpty() does - confirmed the same way), so
+    // this step is never its own undo-trackable entry; then (2) calls
+    // Delete3D.selection(), which DOES wrap itself, to remove the
+    // ORIGINAL face. That wrap's own "before" snapshot is taken at the
+    // moment IT starts - by which point the clone from step 1 already
+    // exists alongside the still-live original, so the snapshot
+    // captures BOTH. A single undo restores exactly that snapshot:
+    // both the (restored) original AND the (never removed, because
+    // nothing undid its untracked creation) clone end up present
+    // together, and the group row itself survives too, rather than the
+    // scene genuinely returning to its pre-Group state.
+    createOneFace();
+    assertEquals(1, app.allFaces.nodes.length);
+
+    app.seedScene3DHistory();
+
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.faceSelection = new int[]{0};
+    app.allGroups.group_Selection(1);
+    assertEquals(1, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length, "grouping clones 1-for-1 - this part is correct");
+
+    app.undoScene3DChange();
+
+    // What a clean undo SHOULD leave behind: 0 groups, 1 face (back to
+    // exactly the pre-group state). What it actually leaves behind:
+    assertEquals(1, app.allGroups.num, "BUG: the new group is NOT removed by undo");
+    assertEquals(2, app.allFaces.nodes.length, "BUG: the clone is never removed, so the restored original duplicates it");
+
+    // Redoing from here lands back on the normal, correct post-group
+    // state though - it's specifically the undo step that's short, not
+    // the whole history entry.
+    app.redoScene3DChange();
+    assertEquals(1, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  // ================= deleteAll() deliberately can't be undone =============
+
+  @Test
+  void deleteAll_reseedsHistory_soItCannotItselfBeUndone () {
+    // By design, not a gap - see deleteAll()'s own comment
+    // (globalFunctions.pde): "New" means a genuinely fresh project, so
+    // the undo history itself is reseeded as deleteAll()'s own last
+    // step, the same way Open/Fetch reseed it in load_project(). That
+    // makes deleteAll() itself the new "nothing to undo past this"
+    // baseline - confirmed directly: calling undoScene3DChange() right
+    // after it is a no-op, not a restore of what was just deleted.
+    createOneFace();
+    app.seedScene3DHistory();
+    assertEquals(1, app.allFaces.nodes.length, "setup check");
+
+    app.deleteAll();
+    assertEquals(0, app.allFaces.nodes.length);
+
+    app.undoScene3DChange();
+    assertEquals(0, app.allFaces.nodes.length, "deleteAll() reseeded the history - there is nothing before it to undo to");
+  }
+
+  // ================= undo/redo for a non-groupable category (Camera) ======
+
+  @Test
+  void cameraCreateThenDelete_canBeUndoneThenRedone () {
+    app.seedScene3DHistory();
+    assertEquals(1, app.allCameras.num, "the default camera, setup check");
+
+    app.allCameras.create(1, 2, 3, 1, 0, 0, 0, 90, 60, 1);
+    assertEquals(2, app.allCameras.num);
+
+    app.currentObjectCategory = app.ObjectCategory.CAMERA;
+    app.Select3D.cameraSelection = new int[]{1};
+    app.Delete3D.selection();
+    assertEquals(1, app.allCameras.num);
+
+    app.undoScene3DChange();
+    assertEquals(2, app.allCameras.num, "the created-then-deleted camera comes back");
+
+    app.redoScene3DChange();
+    assertEquals(1, app.allCameras.num);
   }
 }
