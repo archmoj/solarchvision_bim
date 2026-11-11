@@ -12,7 +12,26 @@ void exportRadiance () {
 
   String radFilename = Folder_Export3D + "/" + fileBasename + ".rad";
 
-  radOutput = createWriter(radFilename);
+  // Radiance (and this project's own test suite) expect the .rad file's
+  // line endings to be plain "\n" everywhere, regardless of the
+  // platform this runs on. The PrintWriter createWriter() returns
+  // writes System.lineSeparator() on println() instead (i.e. "\r\n" on
+  // Windows), which would otherwise silently turn every multi-line
+  // match against this file's content into a mismatch on Windows while
+  // still passing on Linux/macOS - so override println() here to always
+  // emit "\n" rather than touching every call site below and in
+  // faces.pde's own RAD3D branch.
+  radOutput = new PrintWriter(createWriter(radFilename)) {
+    @Override
+    public void println () {
+      write("\n");
+    }
+    @Override
+    public void println (String x) {
+      print(x);
+      write("\n");
+    }
+  };
 
   radOutput.println("#SOLARCHVISION");
   radOutput.println();
@@ -38,9 +57,18 @@ void exportRadiance () {
   String batFilename = radFilename.replace(".rad", ".bat");
   PrintWriter batOutput = createWriter(batFilename);
 
-  String Command1 = "oconv " + radFilename;
   String octFilename = radFilename.replace(".rad", ".oct");
-  Command1 += " > " + octFilename;
+
+  // radFilename/octFilename are always built with "/" (see above), same
+  // as Folder_Export3D itself, but the tests compare this line's own
+  // path text against java.nio.file.Path's own toString() (which
+  // normalizes to the platform's native separator - "\" on Windows,
+  // "/" elsewhere): on Linux/macOS this is already a no-op, but on
+  // Windows it's what makes this line's paths match "\"-separated
+  // rather than staying mixed with the "/" that BaseFolder's own
+  // Windows-native temp directory wouldn't otherwise contain.
+  String Command1 = "oconv " + radFilename.replace('/', File.separatorChar);
+  Command1 += " > " + octFilename.replace('/', File.separatorChar);
   batOutput.println(Command1);
 
   String Command2 = "rvu";
