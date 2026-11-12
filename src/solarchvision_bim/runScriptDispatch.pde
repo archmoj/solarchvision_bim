@@ -26,12 +26,12 @@
 // (e.g. "Scale Vector Index", starting with "scale") is unaffected and
 // still dispatches normally.
 HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
-  "box", "camera", "cone", "cushion",
+  "arc", "box", "camera", "cone", "cushion",
   "cylinder", "house1", "house2", "house3",
   "icosahedron", "mesh", "move", "octahedron",
   "person", "polyline", "pyramid",
   "rotate", "rotatex", "rotatey", "rotatez",
-  "scale", "section", "solid", "sphere"
+  "scale", "section", "solid", "sphere", "spline"
 ));
 
 // One resolved allActions match: which key resolved it, the Action

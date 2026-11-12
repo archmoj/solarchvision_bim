@@ -62,10 +62,53 @@ void UI_setTo_Create_Polyline () {
   current_Visibility = User3D.creatorVisibility;
   current_Weight = User3D.creatorWeight;
   current_Closed = User3D.creatorClosed;
+  current_CurveType = allPolylines.CURVE_STRAIGHT;
 
   allPolylines.beginNewPolyline();
 
   CreateObject = CREATE.Polyline;
+  switch_category(ObjectCategory.POLYLINE);
+}
+
+// Same click-by-click vertex entry as UI_setTo_Create_Polyline() above -
+// reuses CREATE.Polyline itself, not a separate CreateObject, since
+// mouseClicked.pde's own CREATE.Polyline branch (add_VertexToLastPolyline)
+// works identically either way. The only difference is current_CurveType,
+// set here before beginNewPolyline()/create() so the polyline this
+// session builds up is flagged CURVE_SPLINE from its very first vertex -
+// see polylines.pde's own comment on CURVE_SPLINE for what that changes
+// at draw time, and add_Spline()'s own comment for the non-interactive,
+// one-line-command equivalent of this same tool.
+void UI_setTo_Create_Spline () {
+  UI_setTo_Create_Nothing();
+
+  current_Material = User3D.creatorMaterial;
+  current_Tessellation = User3D.creatorTessellation;
+  current_Layer = User3D.creatorLayer;
+  current_Visibility = User3D.creatorVisibility;
+  current_Weight = User3D.creatorWeight;
+  current_Closed = User3D.creatorClosed;
+  current_CurveType = allPolylines.CURVE_SPLINE;
+
+  allPolylines.beginNewPolyline();
+
+  CreateObject = CREATE.Polyline;
+  switch_category(ObjectCategory.POLYLINE);
+}
+
+// Unlike Polyline/Spline above, an arc/circle isn't built up vertex by
+// vertex - it's placed whole with one click, the same way Cone/Pyramid/
+// Plane and the other one-click primitives are (see mouseClicked.pde's
+// own CREATE.Arc branch, which runs the public ARC command exactly the
+// way those do their own commands). So there is no beginNewPolyline()
+// call here, and current_Material/current_Weight/etc. are left alone -
+// that click branch pulls its m/tes/lyr/vsb/wgt/clz straight from
+// User3D's own creator* defaults via creatorCommandArgs(), not from
+// these current_* globals.
+void UI_setTo_Create_Arc () {
+  UI_setTo_Create_Nothing();
+
+  CreateObject = CREATE.Arc;
   switch_category(ObjectCategory.POLYLINE);
 }
 

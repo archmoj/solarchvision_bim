@@ -2016,7 +2016,35 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
           }
         } else if (currentObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
           if (CreateObject == CREATE.Polyline) {
+            // Also reached for a Spline in progress (UI_setTo_Create_Spline()
+            // reuses this same CreateObject - see its own comment) - the
+            // vertex-by-vertex behavior here is identical either way, the
+            // curveType that makes one a spline was already fixed in place
+            // back when current_CurveType was set, before this polyline's
+            // first vertex.
             allPolylines.add_VertexToLastPolyline(x, y, z);
+
+            Select3D.polylineSelection = new int [1];
+            Select3D.polylineSelection[0] = allPolylines.nodes.length - 1;
+
+            Select3D.calculate_BoundingBox();
+          } else if (CreateObject == CREATE.Arc) {
+
+            // Unlike Polyline/Spline, placed whole in one click - same
+            // "r"/"rot" reuse as the Cone/Pyramid/etc. one-click shapes
+            // above (rx halves User3D.creatorLength, rot is this click's
+            // orientation), "deg" reusing Creator Polygon Degree rather
+            // than a brand new dedicated setting (it's the same "how many
+            // straight segments approximate a round shape" idea Polygon/
+            // Hyper/Extrude already use it for), and always a full circle
+            // (ang=360) - the ARC command's own m/tes/lyr/vsb/wgt/clz
+            // still apply for a partial arc typed on the command line.
+            runScriptLine("Arc" + creatorCommandArgs() +
+              " x=" + x + " y=" + y + " z=" + z +
+              " r=" + rx +
+              " deg=" + User3D.creatorPolygonDegree +
+              " rot=" + rot +
+              " ang=360");
 
             Select3D.polylineSelection = new int [1];
             Select3D.polylineSelection[0] = allPolylines.nodes.length - 1;

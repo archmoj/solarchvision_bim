@@ -2310,7 +2310,7 @@ String __SPLINE__ (String[] parts) {
     }
     else {
     hint = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc. (wgt is tension: 0=normal, +flattens, -exaggerates)";
-    UI_setTo_Create_Polyline();
+    UI_setTo_Create_Spline();
     }
     return hint;
 }
@@ -2357,7 +2357,7 @@ String __ARC__ (String[] parts) {
     }
     else {
     hint = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
-    UI_setTo_Create_Polyline();
+    UI_setTo_Create_Arc();
     }
     return hint;
 }

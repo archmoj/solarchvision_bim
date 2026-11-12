@@ -67,6 +67,23 @@ class UI_toolBarTest {
   }
 
   @Test
+  void livingType_spline_setsPolylineCreateObject () {
+    // Reuses CREATE.Polyline itself, same as the Polyline button above -
+    // see uiSetTo.pde's own comment on UI_setTo_Create_Spline().
+    items("", "Spline");
+    app.UI_toolBar.performAction("Living Type", 0, 1);
+    assertEquals(app.CREATE.Polyline, app.CreateObject);
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.current_CurveType);
+  }
+
+  @Test
+  void livingType_arc_setsArcCreateObject () {
+    items("", "Arc");
+    app.UI_toolBar.performAction("Living Type", 0, 1);
+    assertEquals(app.CREATE.Arc, app.CreateObject);
+  }
+
+  @Test
   void livingType_surface_reusesMeshCommand_setsFaceCreateObject () {
     // Surprising but confirmed reuse: "Mesh"'s own no-args branch is the
     // one that calls UI_setTo_Create_Face(), not a dedicated "Face" command.

@@ -90,7 +90,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "3.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Spline", "Arc", "Surface", "Building Type", "3.5"
     }
     ,
     {
@@ -412,6 +412,8 @@ class UI_toolBar {
           case "Person": runScriptLine("Person"); break;
           case "Point": UI_setTo_Create_Vertex(); break;
           case "Polyline": runScriptLine("Polyline"); break;
+          case "Spline": runScriptLine("Spline"); break;
+          case "Arc": runScriptLine("Arc"); break;
           case "Surface": runScriptLine("Mesh"); break;
           case "Pyramid": runScriptLine("Pyramid"); break;
           case "Plane": runScriptLine("PolygonMesh"); break;

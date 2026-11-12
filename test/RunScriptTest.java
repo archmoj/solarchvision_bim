@@ -505,6 +505,87 @@ class RunScriptTest {
     assertEquals(1, app.current_Closed);
   }
 
+  // SPLINE/ARC each gained a bare, same-named click-to-create action
+  // alongside POLYLINE's own (UI_setTo_Create_Spline()/_Arc(), wired via
+  // actions.pde and the menu/toolbar) - which only works at all because
+  // "spline"/"arc" were added to bypassAllActionsFor (runScriptDispatch.pde)
+  // at the same time. Without that, a full argument line like the ones
+  // below would resolve to the bare action by its first token before ever
+  // reaching the switch-case - silently switching tools and creating
+  // nothing, exactly the "Rotate/Scale/Move" collision class this file's
+  // own header comment already warns about. These two confirm real
+  // geometry actually gets created, not just a non-"Unrecognized command!"
+  // return value.
+
+  @Test
+  void splineWithArguments_actuallyCreatesAPolyline_notJustTheBareTool () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    app.runScriptLine("Spline m:1 tes:0 lyr:0 wgt:0 clz:0 0,0,0 1,0,0 1,1,0");
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length);
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+  }
+
+  @Test
+  void arcWithArguments_actuallyCreatesAPolyline_notJustTheBareTool () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    app.runScriptLine("Arc m=0 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 r=2 deg=6 rot=0 ang=360");
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(6, app.allPolylines.nodes[0].length);
+    assertEquals(1, app.allPolylines.getClose(0)); // a full 360deg sweep auto-closes
+  }
+
+  // mouseClicked.pde's one-click Arc placement builds exactly this
+  // x=/y=/z=/r=/deg=/rot=/ang= shape (via creatorCommandArgs() for the
+  // rest) - this pins those exact key names directly against the real
+  // command parser, independent of simulating an actual click/ray-cast.
+  @Test
+  void arc_oneClickPlacementArgumentShape_matchesWhatMouseClickedBuilds () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    float rx = 1.5f;
+    float rot = 30;
+    app.runScriptLine("Arc" +
+      " m=" + 7 + " tes=" + 0 + " lyr=" + 0 + " vsb=" + 1 + " wgt=" + 0 + " clz=" + 0 +
+      " x=0 y=0 z=0" +
+      " r=" + rx +
+      " deg=" + 8 +
+      " rot=" + rot +
+      " ang=360");
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(8, app.allPolylines.nodes[0].length);
+  }
+
+  @Test
+  void spline_withNoArguments_returnsTheUsageHintAndSwitchesToTheSplineTool () {
+    app.build_allActions();
+    app.CreateObject = app.CREATE.Nothing;
+
+    String hint = app.runScriptLine("Spline");
+
+    assertTrue(hint.startsWith("Spline m=?"), "got: " + hint);
+    assertEquals(app.CREATE.Polyline, app.CreateObject); // reuses Polyline's CreateObject - see uiSetTo.pde
+  }
+
+  @Test
+  void arc_withNoArguments_returnsTheUsageHintAndSwitchesToTheArcTool () {
+    app.build_allActions();
+    app.CreateObject = app.CREATE.Nothing;
+
+    String hint = app.runScriptLine("Arc");
+
+    assertTrue(hint.startsWith("Arc m=?"), "got: " + hint);
+    assertEquals(app.CREATE.Arc, app.CreateObject); // previously left at CREATE.Polyline - see extraCommands.pde's __ARC__
+  }
+
   @Test
   void house1_withNoArguments_returnsTheUsageHint () {
     app.build_allActions();

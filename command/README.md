@@ -927,8 +927,18 @@ some, drag) in the 3D viewport to actually place the object, instead of
 giving all its coordinates on the command line the way `BOX`, `SPHERE`
 and the other [object creation](#object-creation) commands do.
 
-`Point`, `Polyline`, `Surface`, `Plane`, `Pyramid`, `Polygon`, `Extrude`,
-`Solid`, `Section`, `Camera`, `Parametric 1` through `Parametric 6`
+`Point`, `Polyline`, `Spline`, `Arc`, `Surface`, `Plane`, `Pyramid`,
+`Polygon`, `Extrude`, `Solid`, `Section`, `Camera`, `Parametric 1`
+through `Parametric 6`
+
+`Spline` behaves exactly like `Polyline` - click to add one point at a
+time - except the result is a smooth curve through those points instead
+of straight segments (see [Polyline, Arc and Spline creation](#polyline-arc-and-spline-creation)
+above for what that means for `wgt`). `Arc` instead places a complete
+circle in one click, sized from the same default length used elsewhere
+(`Creator Length`, halved for the radius) and segmented like a polygon
+(`Creator Polygon Degree`); use the `ARC` command directly for a partial
+arc or an exact radius/segment count.
 
 ### Object-property tools (Pick / Change / Assign)
 

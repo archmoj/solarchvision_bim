@@ -157,6 +157,59 @@ class UiSetToCreateTest {
 
     assertEquals(1, app.allPolylines.nodes.length);
     assertEquals(0, app.allPolylines.nodes[0].length);
+    assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(0));
+  }
+
+  @Test
+  void createSpline_copiesEveryCreatorDefault_andOpensOneEmptyPolylineMarkedAsASpline () {
+    // Same setup/assertions as createPolyline_... above - UI_setTo_Create_Spline()
+    // reuses CREATE.Polyline itself (see uiSetTo.pde's own comment), differing
+    // only in current_CurveType.
+    app.User3D.creatorMaterial = 6;
+    app.User3D.creatorTessellation = 1;
+    app.User3D.creatorLayer = 2;
+    app.User3D.creatorVisibility = -1;
+    app.User3D.creatorWeight = 3;
+    app.User3D.creatorClosed = 1;
+
+    app.UI_setTo_Create_Spline();
+
+    assertEquals(app.CREATE.Polyline, app.CreateObject);
+    assertEquals(app.ObjectCategory.POLYLINE, app.currentObjectCategory);
+    assertEquals(6, app.current_Material);
+    assertEquals(1, app.current_Tessellation);
+    assertEquals(2, app.current_Layer);
+    assertEquals(-1, app.current_Visibility);
+    assertEquals(3, app.current_Weight);
+    assertEquals(1, app.current_Closed);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(0, app.allPolylines.nodes[0].length);
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+  }
+
+  @Test
+  void createPolyline_afterASplineSession_isNotLeftMarkedAsASplineToo () {
+    // The exact regression UI_setTo_Create_Polyline()'s own explicit
+    // current_CurveType = CURVE_STRAIGHT guards against: without it, a
+    // Polyline begun right after a Spline session would silently inherit
+    // CURVE_SPLINE left behind in the current_CurveType global.
+    app.UI_setTo_Create_Spline();
+    app.UI_setTo_Create_Polyline();
+
+    assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(1));
+  }
+
+  @Test
+  void createArc_setsArcCreateObjectAndPolylineCategory_withoutOpeningAPolyline () {
+    // Unlike Polyline/Spline, an arc is placed whole with one click
+    // (mouseClicked.pde's own CREATE.Arc branch) rather than built up
+    // vertex by vertex, so there is no in-progress polyline to open yet.
+    app.UI_setTo_Create_Arc();
+
+    assertEquals(app.CREATE.Arc, app.CreateObject);
+    assertEquals(app.ObjectCategory.POLYLINE, app.currentObjectCategory);
+    assertEquals(0, app.allPolylines.nodes.length);
   }
 
   // ================= the SuperOBJ-based primitives ========================

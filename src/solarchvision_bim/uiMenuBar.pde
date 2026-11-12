@@ -386,6 +386,8 @@ class UI_menuBar {
       "Solid",
       "Point",
       "Polyline",
+      "Spline",
+      "Arc",
       ___divider___,
       "TerrainMesh >> Group",
       "TerrainGap >> Group"

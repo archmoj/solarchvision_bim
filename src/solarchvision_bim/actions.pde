@@ -1112,6 +1112,14 @@ void build_allActions() {
     UI_setTo_Create_Polyline();
   });
 
+  putAction("Spline", () -> {
+    UI_setTo_Create_Spline();
+  });
+
+  putAction("Arc", () -> {
+    UI_setTo_Create_Arc();
+  });
+
   putAction("Surface", () -> {
     UI_setTo_Create_Face();
   });
