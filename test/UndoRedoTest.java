@@ -764,7 +764,7 @@ class UndoRedoTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0, 1}};
-    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}}; // material, tessellation, layer, visibility, weight, close - see polylines.pde's own get/set pairs
+    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0}}; // material, tessellation, layer, visibility, weight, close, curveType - see polylines.pde's own get/set pairs
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
 
     seed();

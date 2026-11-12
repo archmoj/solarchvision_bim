@@ -72,6 +72,7 @@ class Clone3D {
     current_Visibility = allPolylines.getVisibility(f);
     current_Weight = allPolylines.getWeight(f);
     current_Closed = allPolylines.getClose(f);
+    current_CurveType = allPolylines.getCurveType(f);
     allPolylines.create(newNodes);
   }
 

@@ -2267,6 +2267,54 @@ String __POLYLINE__ (String[] parts) {
     return hint;
 }
 
+// Same point-list/key:value syntax as __POLYLINE__ above, but the
+// resulting polyline is drawn as a Catmull-Rom/cardinal spline running
+// through every point instead of straight segments - see
+// Polylines.add_Spline()/draw()'s CURVE_SPLINE branch. wgt means
+// tension here (0 = plain Catmull-Rom, positive flattens the curve,
+// negative exaggerates it), not the directional bulge it is for a
+// plain Polyline.
+String __SPLINE__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    int m = 7;
+    int tes = 0;
+    int lyr = 0;
+    int vsb = 1;
+    int wgt = 0;
+    int clz = 0;
+    float[][] points = new float [0][3];
+    for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], ':');
+        if (parameters.length > 1) {
+        String low_case = parameters[0].toLowerCase();
+                if (low_case.equals("m")) m = int(parameters[1]);
+        else if (low_case.equals("tes")) tes = int(parameters[1]);
+        else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+        else if (low_case.equals("vsb")) vsb = int(parameters[1]);
+        else if (low_case.equals("wgt")) wgt = int(parameters[1]);
+        else if (low_case.equals("clz")) clz = int(parameters[1]);
+        }
+        else {
+        String[] xyz = split(parts[q], ",");
+        if (xyz.length > 2) {
+            float[][] newPoint = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}};
+            points = (float[][]) concat(points, newPoint);
+        }
+        }
+    }
+    if (points.length > 1) {
+        allPolylines.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
+        view_changed();
+    }
+    }
+    else {
+    hint = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc. (wgt is tension: 0=normal, +flattens, -exaggerates)";
+    UI_setTo_Create_Polyline();
+    }
+    return hint;
+}
+
 String __ARC__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {

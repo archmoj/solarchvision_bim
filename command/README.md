@@ -385,6 +385,65 @@ Mesh m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.
 
 ------------------------------------------------------------------------
 
+### Polyline, Arc and Spline creation
+
+`POLYLINE`, `ARC` and `SPLINE` all take the same set of `key:value`
+options (`=` also works in place of `:`, same as elsewhere on this
+page) plus a point list, and all three share one open/closed,
+weighted, tessellated rendering pipeline - they differ only in how
+that pipeline turns their points into a curve:
+
+-   `m`: Material index
+-   `tes`: Tessellation level - how many segments each stretch of the
+    curve between two consecutive points is subdivided into (2^tes
+    segments; higher is smoother, at the cost of more vertices)
+-   `lyr`: Layer
+-   `vsb`: Visibility (0 or 1)
+-   `wgt`: Weight, `-20` to `20` - what this bends depends on the
+    command; see each one below
+-   `clz`: Closed (0 = open, 1 = closes the last point back to the
+    first)
+
+-   `POLYLINE`: Creates a polyline through the given points, connected
+    by straight segments. `wgt` bulges each segment outward (positive)
+    or inward (negative), based on the direction of its neighboring
+    segments - `0` keeps it perfectly straight. This is a purely
+    cosmetic per-frame displacement, not real curved geometry: picking
+    and every export path still use the original straight points.
+
+```
+Polyline m=? tes=? lyr=? vsb=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.
+```
+
+-   `SPLINE`: Creates a smooth curve running exactly through every
+    given point - a Catmull-Rom/cardinal spline - instead of straight
+    segments. Unlike `POLYLINE`'s bulge, this always passes through
+    the points you give it; `wgt` here is a tension control instead of
+    a bulge direction: `0` is the plain Catmull-Rom curve, a positive
+    value flattens it toward the straight polyline between points (at
+    `20` each stretch becomes a simple eased blend with no overshoot),
+    and a negative value exaggerates its curvature/overshoot beyond
+    the points (down to `-20`). Like `POLYLINE`, this is draw-time
+    only - picking and export still use the original points.
+
+```
+Spline m=? tes=? lyr=? vsb=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.
+```
+
+-   `ARC`: Creates a circular arc (or, with `ang=360`, a full circle),
+    sampled as `deg` straight segments rather than interpolating given
+    points - `x`/`y`/`z` is the center, `r` the radius, `rot` a
+    starting rotation offset in degrees, and `ang` the total angle
+    swept (360 = full circle). `wgt` still applies on top, bulging the
+    sampled segments the same way it does for `POLYLINE` (`0` leaves
+    the arc as sampled).
+
+```
+Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
+```
+
+------------------------------------------------------------------------
+
 ### Section creation
 
 -   `SECTION`: Creates an analysis section - a flat cutting plane used

@@ -19,7 +19,7 @@ class PolylinesTest {
     assertEquals(3, app.allPolylines.nodes.length);
     assertEquals(0, app.allPolylines.nodes[0].length);
     assertEquals(3, app.allPolylines.options.length);
-    assertEquals(6, app.allPolylines.options[0].length);
+    assertEquals(7, app.allPolylines.options[0].length);
   }
 
   @Test
@@ -31,6 +31,7 @@ class PolylinesTest {
     app.allPolylines.setVisibility(0, 1);
     app.allPolylines.setWeight(0, 4);
     app.allPolylines.setClose(0, 1);
+    app.allPolylines.setCurveType(0, app.allPolylines.CURVE_SPLINE);
 
     assertEquals(3, app.allPolylines.getMaterial(0));
     assertEquals(2, app.allPolylines.getTessellation(0));
@@ -38,6 +39,7 @@ class PolylinesTest {
     assertEquals(1, app.allPolylines.getVisibility(0));
     assertEquals(4, app.allPolylines.getWeight(0));
     assertEquals(1, app.allPolylines.getClose(0));
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
   }
 
   // ================= create ===========================================
@@ -50,12 +52,13 @@ class PolylinesTest {
     app.current_Visibility = 1;
     app.current_Weight = 5;
     app.current_Closed = 1;
+    app.current_CurveType = app.allPolylines.CURVE_SPLINE;
 
     int newId = app.allPolylines.create(new int[]{0, 1});
 
     assertEquals(0, newId);
     assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
-    assertArrayEquals(new int[]{3, 2, 1, 1, 5, 1}, app.allPolylines.options[0]);
+    assertArrayEquals(new int[]{3, 2, 1, 1, 5, 1, 1}, app.allPolylines.options[0]);
   }
 
   @Test
@@ -99,7 +102,38 @@ class PolylinesTest {
     assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
     assertEquals(3, app.allVertices.length);
     assertArrayEquals(new float[]{1, 1, 0}, app.allVertices[2], 0.0001f);
-    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0}, app.allPolylines.options[0]);
+    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 0}, app.allPolylines.options[0]);
+    assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(0));
+  }
+
+  // ================= add_Spline =======================================
+
+  @Test
+  void addSpline_createsPointsForEveryGivenCoordinateAndMarksTheResultAsACurveSplinePolyline () {
+    app.allVertices = new float[0][3];
+
+    app.allPolylines.add_Spline(3, 1, 2, 1, 4, 0,
+      new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}});
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
+    assertEquals(3, app.allVertices.length);
+    assertArrayEquals(new float[]{1, 1, 0}, app.allVertices[2], 0.0001f);
+    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 1}, app.allPolylines.options[0]);
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+  }
+
+  @Test
+  void addSpline_afterAddPolyline_doesNotLeakCurveTypeBetweenTheTwo () {
+    // add_Polyline/add_Spline must each pin current_CurveType themselves
+    // rather than relying on whatever a previous creation left behind.
+    app.allVertices = new float[0][3];
+
+    app.allPolylines.add_Spline(0, 0, 0, 1, 0, 0, new float[][]{{0, 0, 0}, {1, 0, 0}});
+    app.allPolylines.add_Polyline(0, 0, 0, 1, 0, 0, new float[][]{{0, 0, 0}, {1, 0, 0}});
+
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+    assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(1));
   }
 
   // ================= add_Arc ==========================================
@@ -117,6 +151,7 @@ class PolylinesTest {
     assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[2], 0.001f);
     assertArrayEquals(new float[]{0, -1, 0}, app.allVertices[3], 0.001f);
     assertEquals(1, app.allPolylines.getClose(0)); // full circles close automatically
+    assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(0));
   }
 
   @Test
@@ -187,7 +222,7 @@ class PolylinesTest {
   @Test
   void toXMLThenFromXML_roundTripsNodesOptionsAndDisplayAll () {
     app.allPolylines.nodes = new int[][]{{5, 6, 7}};
-    app.allPolylines.options = new int[][]{{3, 2, 1, 1, 4, 1}};
+    app.allPolylines.options = new int[][]{{3, 2, 1, 1, 4, 1, 1}};
     app.allPolylines.displayAll = false;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -198,7 +233,8 @@ class PolylinesTest {
 
     assertEquals(1, fresh.nodes.length);
     assertArrayEquals(new int[]{5, 6, 7}, fresh.nodes[0]);
-    assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1}, fresh.options[0]);
+    assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1, 1}, fresh.options[0]);
+    assertEquals(app.allPolylines.CURVE_SPLINE, fresh.getCurveType(0));
     assertFalse(fresh.displayAll);
   }
 }

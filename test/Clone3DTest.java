@@ -102,12 +102,13 @@ class Clone3DTest {
   void clonePolyline_copiesNodesAndOptionsIncludingWeightAndClosed () {
     app.allVertices = new float[][]{{1, 1, 1}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.allPolylines.options = new int[][]{{3, 0, 1, 1, 5, 1}}; // weight=5, closed=1
+    app.allPolylines.options = new int[][]{{3, 0, 1, 1, 5, 1, 1}}; // weight=5, closed=1, curveType=CURVE_SPLINE
 
     app.Clone3D.clonePolyline(0, new HashMap<Integer, Integer>());
 
     assertEquals(2, app.allPolylines.nodes.length);
-    assertArrayEquals(new int[]{3, 0, 1, 1, 5, 1}, app.allPolylines.options[1]);
+    assertArrayEquals(new int[]{3, 0, 1, 1, 5, 1, 1}, app.allPolylines.options[1]);
+    assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(1));
   }
 
   // ================= cloneModel1D =====================================
@@ -234,7 +235,7 @@ class Clone3DTest {
   void polylinesBatch_clonesEverySelectedPolylineAndSelectsOnlyTheClones () {
     app.allVertices = new float[][]{{0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0}};
     app.Select3D.polylineSelection = new int[]{0};
 
     app.Clone3D.Polylines(true);

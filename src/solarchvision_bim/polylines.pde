@@ -2,6 +2,15 @@ class Polylines {
 
   final static String CLASS_STAMP = "polyline";
 
+  // Per-polyline curve interpolation. CURVE_STRAIGHT is the original
+  // behavior (straight segments, optionally bulged by weight - see
+  // draw() below). CURVE_SPLINE instead runs a Catmull-Rom/cardinal
+  // spline through every vertex (add_Spline()), where weight is
+  // repurposed as a tension control rather than a directional bulge -
+  // see draw()'s own comment on the spline branch for the formula.
+  final static int CURVE_STRAIGHT = 0;
+  final static int CURVE_SPLINE = 1;
+
   Polylines () { // constructor
     makeEmpty(0);
   }
@@ -15,7 +24,7 @@ class Polylines {
     beginScene3DChange();
 
     this.nodes = new int [n][0];
-    this.options = new int [n][6];
+    this.options = new int [n][7];
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -56,6 +65,10 @@ class Polylines {
     return this.options[n][5];
   }
 
+  int getCurveType (int n) {
+    return this.options[n][6];
+  }
+
   void setMaterial (int n, int material) {
     this.options[n][0] = material;
   }
@@ -78,6 +91,10 @@ class Polylines {
 
   void setClose (int n, int close) {
     this.options[n][5] = close;
+  }
+
+  void setCurveType (int n, int curveType) {
+    this.options[n][6] = curveType;
   }
 
 
@@ -109,7 +126,7 @@ class Polylines {
 
       int[][] newPolyline_options = {
         {
-          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
+          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed, current_CurveType
         }
       };
 
@@ -136,6 +153,32 @@ class Polylines {
     current_Visibility = vsb;
     current_Weight = wgt;
     current_Closed = clz;
+    current_CurveType = CURVE_STRAIGHT;
+
+    int[] newPolyline_nodes = new int[points.length];
+
+    for (int i = 0; i < points.length; i++) {
+      newPolyline_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
+    }
+
+    this.create(newPolyline_nodes);
+  }
+
+
+  // Same as add_Polyline() above, except the resulting polyline is
+  // drawn as a Catmull-Rom/cardinal spline through every point instead
+  // of straight (optionally weight-bulged) segments - see draw()'s own
+  // comment on the CURVE_SPLINE branch for the curve formula, and on
+  // what wgt means for a spline (tension, not bulge direction).
+  void add_Spline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+
+    current_Material = m;
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;
+    current_Closed = clz;
+    current_CurveType = CURVE_SPLINE;
 
     int[] newPolyline_nodes = new int[points.length];
 
@@ -162,6 +205,7 @@ class Polylines {
     current_Visibility = vsb;
     current_Weight = wgt;
     current_Closed = clz;
+    current_CurveType = CURVE_STRAIGHT;
 
 
     int[] newPolyline_nodes = {
@@ -244,48 +288,141 @@ class Polylines {
 
               if (drawSegment == 1) {
 
-                for (int q = 0; q <= tessellation; q++) {
+                if (this.getCurveType(f) == CURVE_SPLINE) {
 
-                  float[] P = {0, 0, 0};
+                  // Catmull-Rom/cardinal spline through every vertex -
+                  // unlike the CURVE_STRAIGHT branch below, this is a
+                  // real interpolating curve (passes exactly through
+                  // nA and nB, not just displaced near them), built
+                  // from the standard cubic Hermite basis:
+                  //   H(t) = h00(t)*P1 + h10(t)*m1 + h01(t)*P2 + h11(t)*m2
+                  // with P1/P2 the segment's own two vertices and
+                  // m1/m2 their Catmull-Rom tangents, each half the
+                  // chord to the *next* neighbor on that side (P0 for
+                  // the start, P3 for the end). For a closed polyline,
+                  // P0/P3 simply wrap around (nA_before/nB_after
+                  // above already do this); for an open one, there is
+                  // no neighbor past the first/last vertex, so P0/P3
+                  // are instead reflected across that end vertex
+                  // (2*end - neighbor) rather than reusing
+                  // nA_before/nB_after, which the CURVE_STRAIGHT
+                  // branch above deliberately clamps to a zero tangent
+                  // at open ends - reflection instead keeps the curve
+                  // shaped all the way to its two endpoints.
+                  //
+                  // getWeight(f) is repurposed here as a tension
+                  // control rather than a bulge: tensionScale is 1 at
+                  // weight 0 (the plain Catmull-Rom curve), shrinks
+                  // toward 0 as weight rises toward +20 (flattening
+                  // the curve toward the straight polyline - at
+                  // weight 20 the tangents vanish and each segment
+                  // becomes a plain ease-in/ease-out blend between its
+                  // two vertices), and grows past 1 as weight falls
+                  // toward -20 (exaggerating the curve's overshoot
+                  // beyond its vertices).
 
+                  float[] P0 = {0, 0, 0};
+                  float[] P3 = {0, 0, 0};
+
+                  if (this.getClose(f) == 1) {
+                    for (int i = 0; i < 3; i++) {
+                      P0[i] = base_Vertices[nA_before][i];
+                      P3[i] = base_Vertices[nB_after][i];
+                    }
+                  } else {
+                    if (nA == 0) {
+                      for (int i = 0; i < 3; i++) {
+                        P0[i] = 2 * base_Vertices[nA][i] - base_Vertices[nB][i];
+                      }
+                    } else {
+                      for (int i = 0; i < 3; i++) {
+                        P0[i] = base_Vertices[nA - 1][i];
+                      }
+                    }
+                    if (nB == div - 1) {
+                      for (int i = 0; i < 3; i++) {
+                        P3[i] = 2 * base_Vertices[nB][i] - base_Vertices[nA][i];
+                      }
+                    } else {
+                      for (int i = 0; i < 3; i++) {
+                        P3[i] = base_Vertices[nB + 1][i];
+                      }
+                    }
+                  }
+
+                  float tensionScale = 1.0 - (this.getWeight(f) / 20.0);
+
+                  float[] m1 = {0, 0, 0};
+                  float[] m2 = {0, 0, 0};
                   for (int i = 0; i < 3; i++) {
-                    P[i] = ((tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(tessellation);
+                    m1[i] = tensionScale * (base_Vertices[nB][i] - P0[i]) / 2.0;
+                    m2[i] = tensionScale * (P3[i] - base_Vertices[nA][i]) / 2.0;
                   }
 
+                  for (int q = 0; q <= tessellation; q++) {
 
-                  float[] ANG_start = {0, 0, 0};
-                  float[] ANG_end = {0, 0, 0};
+                    float t = q / float(tessellation);
+                    float t2 = t * t;
+                    float t3 = t2 * t;
 
-                  for (int i = 0; i < 3; i++) {
-                    ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+                    float h00 = 2 * t3 - 3 * t2 + 1;
+                    float h10 = t3 - 2 * t2 + t;
+                    float h01 = -2 * t3 + 3 * t2;
+                    float h11 = t3 - t2;
 
-                    ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+                    float[] P = {0, 0, 0};
+                    for (int i = 0; i < 3; i++) {
+                      P[i] = h00 * base_Vertices[nA][i] + h10 * m1[i] + h01 * base_Vertices[nB][i] + h11 * m2[i];
+                    }
+
+                    WIN3D.graphics.vertex(P[0] * overallScale * WIN3D.scale, -(P[1] * overallScale * WIN3D.scale), P[2] * overallScale * WIN3D.scale);
+
                   }
+                } else {
 
-                  if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
-                    ANG_start = funcs.vec3_unit(ANG_start);
+                  for (int q = 0; q <= tessellation; q++) {
+
+                    float[] P = {0, 0, 0};
+
+                    for (int i = 0; i < 3; i++) {
+                      P[i] = ((tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(tessellation);
+                    }
+
+
+                    float[] ANG_start = {0, 0, 0};
+                    float[] ANG_end = {0, 0, 0};
+
+                    for (int i = 0; i < 3; i++) {
+                      ANG_start[i] = base_Vertices[nA][i] - base_Vertices[nA_before][i];
+
+                      ANG_end[i] = base_Vertices[nB][i] - base_Vertices[nB_after][i];
+                    }
+
+                    if ((ANG_start[0] != 0) || (ANG_start[1] != 0) || (ANG_start[2] != 0)) {
+                      ANG_start = funcs.vec3_unit(ANG_start);
+                    }
+                    if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
+                      ANG_end = funcs.vec3_unit(ANG_end);
+                    }
+
+
+                    float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
+                    float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
+
+                    for (int i = 0; i < 3; i++) {
+                      ANG_start[i] *= dist_start;
+                      ANG_end[i] *= dist_end;
+                    }
+
+                    for (int i = 0; i < 3; i++) {
+                      P[i] += weight * ((tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(tessellation);
+                    }
+
+
+
+                    WIN3D.graphics.vertex(P[0] * overallScale * WIN3D.scale, -(P[1] * overallScale * WIN3D.scale), P[2] * overallScale * WIN3D.scale);
+
                   }
-                  if ((ANG_end[0] != 0) || (ANG_end[1] != 0) || (ANG_end[2] != 0)) {
-                    ANG_end = funcs.vec3_unit(ANG_end);
-                  }
-
-
-                  float dist_start = dist(P[0], P[1], P[2], base_Vertices[nA][0], base_Vertices[nA][1], base_Vertices[nA][2]);
-                  float dist_end = dist(P[0], P[1], P[2], base_Vertices[nB][0], base_Vertices[nB][1], base_Vertices[nB][2]);
-
-                  for (int i = 0; i < 3; i++) {
-                    ANG_start[i] *= dist_start;
-                    ANG_end[i] *= dist_end;
-                  }
-
-                  for (int i = 0; i < 3; i++) {
-                    P[i] += weight * ((tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(tessellation);
-                  }
-
-
-
-                  WIN3D.graphics.vertex(P[0] * overallScale * WIN3D.scale, -(P[1] * overallScale * WIN3D.scale), P[2] * overallScale * WIN3D.scale);
-
                 }
               }
 
@@ -507,6 +644,7 @@ class Polylines {
       XML_setInt(child, "visibility", this.getVisibility(i));
       XML_setInt(child, "weight", this.getWeight(i));
       XML_setInt(child, "close", this.getClose(i));
+      XML_setInt(child, "curveType", this.getCurveType(i));
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -540,6 +678,7 @@ class Polylines {
       this.setVisibility(i, children[i].getInt("visibility"));
       this.setWeight(i, children[i].getInt("weight"));
       this.setClose(i, children[i].getInt("close"));
+      this.setCurveType(i, children[i].getInt("curveType"));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

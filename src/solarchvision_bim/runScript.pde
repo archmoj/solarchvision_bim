@@ -203,6 +203,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "SETLON": return  __SETLON__(parts);
     case "SIZE3D": return  __SIZE3D__(parts);
     case "SPHERE": return  __SPHERE__(parts);
+    case "SPLINE": return  __SPLINE__(parts);
     case "TRUCKX": return  __TRUCKX__(parts);
     case "TRUCKY": return  __TRUCKY__(parts);
     case "TRUCKZ": return  __TRUCKZ__(parts);

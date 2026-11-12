@@ -29,6 +29,7 @@ int current_Layer = 0;
 int current_Visibility = 1;
 int current_Weight = 0;
 int current_Closed = 0;
+int current_CurveType = 0; // Polylines.CURVE_STRAIGHT; see polylines.pde
 
 final String[] STR_SHD = {"F", "T"};
 
