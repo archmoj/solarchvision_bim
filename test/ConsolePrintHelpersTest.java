@@ -32,6 +32,15 @@ class ConsolePrintHelpersTest {
 
   // ================= printlnSaving ===========================================
 
+  // println()'s own trailing line terminator is the platform's, via
+  // System.out's underlying PrintStream - "\n" on Linux/macOS but "\r\n"
+  // on Windows. The leading "\n" baked into printlnSaving()'s own
+  // "\nSaving:" string argument is a literal source character, not a
+  // line terminator println() appends, so that one stays "\n"
+  // everywhere; only the one println() itself adds at the very end
+  // needs this.
+  private static final String EOL = System.lineSeparator();
+
   @Test
   void printlnSaving_printsALeadingBlankLineThenTheSavingLabelAndTerminalLinkColorPath () {
     app.control = app.USER_GUI; // terminalLinkColor()'s own OSC 8 branch - see TerminalLinkTest.java
@@ -41,7 +50,7 @@ class ConsolePrintHelpersTest {
     String out = captured.toString();
     String expectedLink = app.terminalLinkColor("foo.txt");
 
-    assertEquals("\nSaving: " + expectedLink + "\n", out);
+    assertEquals("\nSaving: " + expectedLink + EOL, out);
   }
 
   @Test
@@ -53,7 +62,7 @@ class ConsolePrintHelpersTest {
     String out = captured.toString();
     String expectedLink = app.terminalLinkColor("foo.txt");
 
-    assertEquals("\nSaving: " + expectedLink + "\n", out);
+    assertEquals("\nSaving: " + expectedLink + EOL, out);
     assertFalse(out.contains(app.OSC8_START), "USER_AUTO must not include the OSC 8 hyperlink escape at all - see TerminalLinkTest.java");
   }
 
