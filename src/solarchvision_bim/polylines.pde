@@ -296,7 +296,24 @@ class Polylines {
 
             WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
-            int tessellation = int(pow(2, this.getTessellation(f)));
+            // +2 here (not stored in the item's own tessellation column)
+            // for a Spline or an Arc specifically: at the item's own,
+            // unmodified tessellation level, tes=0 (1 subdivision per
+            // segment) renders no curve at all regardless of curve type
+            // - only each pair of points' own exact positions get
+            // plotted, hiding a spline's bulge and an arc's true-circle
+            // roundness alike (see this file's own CURVE_SPLINE/isArc
+            // comments). This keeps getTessellation()/the Tessellation
+            // tool/the saved XML value exactly what was set, boosting
+            // only what actually gets drawn - a plain (non-arc) straight
+            // Polyline is untouched, since more subdivisions alone would
+            // never show anything on it anyway (see draw()'s own CURVE_STRAIGHT
+            // branch comment).
+            int tessellationLevel = this.getTessellation(f);
+            if ((this.getCurveType(f) == CURVE_SPLINE) || (this.getIsArc(f) == 1)) {
+              tessellationLevel += 2;
+            }
+            int tessellation = int(pow(2, tessellationLevel));
 
             // so that single line to appear!
             if((tessellation == 1) && (this.nodes[f].length == 2)) tessellation = 2;

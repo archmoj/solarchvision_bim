@@ -564,6 +564,43 @@ class RunScriptTest {
     assertEquals(8, app.allPolylines.nodes[0].length);
   }
 
+  // The curve-visibility tessellation boost (Spline/Arc only, +2 levels)
+  // lives entirely in draw()'s own point-of-use computation
+  // (polylines.pde) - not in what SPLINE/ARC default to, or in what gets
+  // stored, shown by the Tessellation tool, or saved to XML. These pin
+  // that the stored value really is left exactly as given, default or
+  // explicit, with no hidden boost baked in anywhere upstream of draw().
+
+  @Test
+  void splineWithNoExplicitTessellation_storesTheRawDefaultUnboosted () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    app.runScriptLine("Spline m:1 lyr:0 wgt:0 clz:0 0,0,0 1,0,0 1,1,0");
+
+    assertEquals(0, app.allPolylines.getTessellation(0));
+  }
+
+  @Test
+  void arcWithNoExplicitTessellation_storesTheRawDefaultUnboosted () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    app.runScriptLine("Arc m=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 r=2 deg=6 rot=0 ang=360");
+
+    assertEquals(0, app.allPolylines.getTessellation(0));
+  }
+
+  @Test
+  void arcWithExplicitTessellation_storesExactlyWhatWasGiven () {
+    app.build_allActions();
+    app.allVertices = new float[0][3];
+
+    app.runScriptLine("Arc m=0 tes=3 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 r=2 deg=6 rot=0 ang=360");
+
+    assertEquals(3, app.allPolylines.getTessellation(0));
+  }
+
   @Test
   void spline_withNoArguments_returnsTheUsageHintAndSwitchesToTheSplineTool () {
     app.build_allActions();
