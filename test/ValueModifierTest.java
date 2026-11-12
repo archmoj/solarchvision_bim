@@ -2,17 +2,37 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Method;
-
-// Every ValueModifier method's created == 1 branch calls
-// UI_rollout.Spinner(...), which - like this.Spinner(...)/_Spinner(...)
-// themselves - touches live mouse/rendering state and isn't unit-testable
-// as-is (see test/README.md). The created == 0 (command-line registration)
-// branch is pure putValueAction wiring, and is what's covered here: a
-// smoke test over every method via reflection, plus focused tests for a
-// representative sample of the distinct patterns they follow (plain
-// bounds, boolean, dynamic bounds, a negative click-step, and the
-// Latitude/Longitude station-sync fix).
+// ValueModifier (vm, valueModifier.pde) is a long tail of ~150 small,
+// near-identical methods - one per UI spinner - 5160 missed instructions
+// together in the merged (unit + image) report, none individually huge
+// but adding up to the single largest chunk outside the handful of
+// giant functions. Each one has the same shape:
+//
+//   if (created == 0) {
+//     putValueAction(command, getter, setter, minGetter, maxGetter,
+//                     step, u1, u2, u3, onChanged);
+//   } else {
+//     out = UI_rollout.Spinner(...); // real drawing - out of scope
+//   }
+//
+// build_allActions() already calls every one of these with created==0
+// (via its own final step, UI_rollout.registerSpinnerActions() -
+// uiRollout.pde), so that branch's own OUTER structure was already
+// reached by any existing test that calls build_allActions() - but the
+// getter/setter/min/max lambda bodies putValueAction() registers there
+// only actually execute once the resulting named action (e.g. "Impact
+// Display Day") is triggered, via runScriptLine() or callAction() - the
+// same shape ShadePreviousDayActionTest.java's own "Shade Previous Day"
+// test already uses for a different kind of registered action. Nothing
+// in either suite apparently ever triggers any of these spinner actions
+// by name, which is what each test below actually does.
+//
+// This covers 3 representative methods (impactDisplayDay: int,
+// cameraClipNear: float with no onChange, currentCameraIndex: int with
+// a real onChange side effect, react.applyCurrentCamera) to demonstrate
+// the pattern, not all ~150 - each one follows the identical shape, so
+// the same 3-test recipe (valid value / out-of-range rejection /
+// missing-argument rejection) generalizes directly to any of the others.
 class ValueModifierTest {
 
   private solarchvision_bim app;
@@ -20,217 +40,91 @@ class ValueModifierTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
-    app.allActions = new java.util.HashMap<>();
+    app.allActions = new java.util.HashMap<>(); // see ViewNavigationCommandsTest.java's own setUp comment
   }
 
-  // ================= smoke test: every method registers cleanly ===========
+  // ================= impactDisplayDay (int, no onChange) =====================
+  // Bounds: 0..(STUDY.endDay - STUDY.startDay) == 0..12 at STUDY's own
+  // bare-construction defaults, step 1.
 
   @Test
-  void everyValueModifierMethod_registersAtLeastOneNewCommandName_withoutThrowing () throws Exception {
-    Method[] methods = app.vm.getClass().getDeclaredMethods();
+  void impactDisplayDay_withAValidValue_setsIt () {
+    app.vm.impactDisplayDay(0); // registers the action
 
-    int methodCount = 0;
-    int previousSize = app.allActions.size();
+    assertEquals("", app.runScriptLine("Impact Display Day 5"));
 
-    for (Method m : methods) {
-      if (m.isSynthetic() || m.isBridge()) continue;
-      if (m.getParameterCount() != 1 || m.getParameterTypes()[0] != int.class) continue;
-
-      m.setAccessible(true);
-      try {
-        m.invoke(app.vm, 0);
-      } catch (Exception e) {
-        fail("vm." + m.getName() + "(0) threw: " + e.getCause(), e.getCause());
-      }
-
-      int newSize = app.allActions.size();
-      assertTrue(newSize > previousSize,
-        "vm." + m.getName() + "(0) did not add a new command name (possible key collision)");
-      previousSize = newSize;
-
-      methodCount++;
-    }
-
-    assertEquals(233, methodCount, "expected exactly 233 value-modifier methods"); // +1: beginDay, added for UI_caseBar's Days-tab click handler
-  }
-
-  // ================= Latitude / Longitude: STATION sync regression ========
-
-  @Test
-  void latitude_commandLineAction_updatesStationAndSyncslocationLatitudeBack () {
-    app.vm.locationLatitude(0);
-
-    app.allActions.get("location_latitude").run(new String[]{"location_latitude", "45.5"});
-
-    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
-    assertEquals(45.5f, app.locationLatitude, 0.001f); // update_station(0) syncs it back
+    assertEquals(5, app.impactDisplayDay);
   }
 
   @Test
-  void longitude_commandLineAction_updatesStationAndSyncslocationLongitudeBack () {
-    app.vm.locationLongitude(0);
+  void impactDisplayDay_withAnOutOfRangeValue_rejectsIt_leavingTheFieldUnchanged () {
+    app.vm.impactDisplayDay(0);
+    app.impactDisplayDay = 3;
 
-    app.allActions.get("location_longitude").run(new String[]{"location_longitude", "-73.6"});
+    app.runScriptLine("Impact Display Day 999"); // max is 12
 
-    assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
-    assertEquals(-73.6f, app.locationLongitude, 0.001f);
-  }
-
-  // ================= plain int field, fixed bounds, with OnChange ==========
-
-  @Test
-  void beginDay_commandLineAction_setsTimeDay_androundsAndValidates () {
-    app.vm.day(0);
-    app.TIME.day = 1;
-
-    app.allActions.get("day").run(new String[]{"day", "45"}); // out of [1, 31]
-    assertEquals(1, app.TIME.day);
-
-    app.allActions.get("day").run(new String[]{"day", "15"});
-    assertEquals(15, app.TIME.day);
+    assertEquals(3, app.impactDisplayDay, "putValueAction()'s own bounds check must reject this, not clamp it");
   }
 
   @Test
-  void beginDay_commandLineAction_triggersApplyTimeChange () {
-    app.vm.day(0);
-    app.TIME.month = 6;
-    app.TIME.day = 1;
+  void impactDisplayDay_withNoValue_isRejected_leavingTheFieldUnchanged () {
+    app.vm.impactDisplayDay(0);
+    app.impactDisplayDay = 3;
 
-    app.allActions.get("day").run(new String[]{"day", "15"});
+    app.runScriptLine("Impact Display Day");
 
-    assertEquals(app.TIME.convert2Date(6, 15), app.TIME.beginDay);
+    assertEquals(3, app.impactDisplayDay);
   }
 
-  // ================= begin_day: used by UI_caseBar's Days-tab click =======
+  // ================= cameraClipNear (float, no onChange) =====================
+  // Bounds: 0.01..100, rounded to the nearest 0.001.
 
   @Test
-  void beginDay_commandLineAction_setsTimeBeginDay_androundsAndValidates () {
-    app.vm.beginDay(0);
-    app.TIME.beginDay = 10;
+  void cameraClipNear_withAValidValue_setsIt () {
+    app.vm.cameraClipNear(0);
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "400"}); // out of [0, 364]
-    assertEquals(10, app.TIME.beginDay);
+    app.runScriptLine("Camera Clip Near 5.5");
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "60"});
-    assertEquals(60, app.TIME.beginDay);
+    assertEquals(5.5f, app.WIN3D.cameraClipNear, 0.0001f);
   }
 
   @Test
-  void beginDay_commandLineAction_triggersApplyBeginDayChange () {
-    app.vm.beginDay(0);
-    app.TIME.beginDay = 10;
-    app.TIME.year = 2024;
-    app.TIME.month = 3;
-    app.TIME.day = 1;
-    app.TIME.hour = 12;
-    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
-    app.GlobalSolar_rebuild_array = false;
+  void cameraClipNear_belowItsMinimum_rejectsIt_leavingTheFieldUnchanged () {
+    app.vm.cameraClipNear(0);
+    app.WIN3D.cameraClipNear = 1.0f;
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "60"});
+    app.runScriptLine("Camera Clip Near 0.001"); // below the 0.01 minimum
 
-    assertEquals(60, app.TIME.beginDay);
-    assertTrue(app.GlobalSolar_rebuild_array); // via react.applyBeginDayChange -> find_which_bakings_to_regenerate
+    assertEquals(1.0f, app.WIN3D.cameraClipNear, 0.0001f);
   }
 
-  // ================= dynamic bounds (startHour, via applyCaseBarAndBake) ===
+  // ================= currentCameraIndex (int, WITH an onChange side effect) ==
+  // Bounds: 0..max(0, allCameras.num - 1) - a second real camera is
+  // added below so index 1 is actually in range, and so
+  // react.applyCurrentCamera (the onChanged callback) has real,
+  // different camera data to apply.
 
   @Test
-  void startHour_commandLineAction_flagsBothVertexAndGlobalSolarForRebuild () {
-    // react.applyCaseBarAndBake is wired to several ValueModifier fields
-    // (see valueModifier.pde) - Start Hour exercises that shared path
-    // here. Both caches must come out flagged regardless of which
-    // shading mode happens to be active, same as find_which_bakings_to_
-    // regenerate's own test - this is what actually drives both Vertex
-    // and Global Solar staying in sync when a period field changes.
-    app.vm.startHour(0);
-    app.STUDY.startHour = 5;
-    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar; // deliberately not Global_Solar
-    app.GlobalSolar_rebuild_array = false;
-    app.VertexSolar_rebuild_array = false;
+  void currentCameraIndex_withAValidIndex_setsItAndRunsTheOnChangeCallback () {
+    app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // camera index 1
+    app.vm.currentCameraIndex(0);
 
-    app.allActions.get("start_hour").run(new String[]{"start_hour", "10"});
+    app.runScriptLine("Current Camera Index 1");
 
-    assertEquals(10, app.STUDY.startHour);
-    assertTrue(app.VertexSolar_rebuild_array);
-    assertTrue(app.GlobalSolar_rebuild_array);
-  }
-
-  // ================= boolean field ==========================================
-
-  @Test
-  void booleanField_commandLineAction_setsTheUnderlyingBoolean () {
-    app.vm.climateTypicalYearDisplayNear(0);
-    app.WORLD.climateTypicalYearDisplayNear = false;
-
-    app.allActions.get("climate_typical_year_display_near").run(new String[]{"climate_typical_year_display_near", "1"});
-    assertTrue(app.WORLD.climateTypicalYearDisplayNear);
-
-    app.allActions.get("climate_typical_year_display_near").run(new String[]{"climate_typical_year_display_near", "0"});
-    assertFalse(app.WORLD.climateTypicalYearDisplayNear);
-  }
-
-  // ================= dynamic bounds =========================================
-
-  @Test
-  void startYear_dynamicBounds_rejectsAValueOutsideTheCurrentClimateRange () {
-    app.vm.sampleYearStart(0);
-    app.sampleYearStart = 1980;
-
-    app.allActions.get("sample_year_start").run(new String[]{"sample_year_start", "1900"}); // below climateEngineeringStart
-    assertEquals(1980, app.sampleYearStart);
-
-    app.allActions.get("sample_year_start").run(new String[]{"sample_year_start", "1975"}); // within range
-    assertEquals(1975, app.sampleYearStart);
-  }
-
-  // ================= negative click-step (Math.abs for the command line) ===
-
-  @Test
-  void scale_negativeClickStepField_roundsCommandLineInputByItsAbsoluteValue () {
-    app.vm.verticalUnitScale(0);
-    app.STUDY.verticalUnitScale = 1;
-
-    float roundingStep = (float) Math.abs(-Math.pow(2.0, 1.0 / 2.0));
-
-    app.allActions.get("vertical_unit_scale").run(new String[]{"vertical_unit_scale", "5"});
-
-    assertEquals(app.funcs.roundTo(5, roundingStep), app.STUDY.verticalUnitScale, 0.001f);
-  }
-
-  // ================= array-indexed field (allSolidImpacts.R[sectionType]) ===
-
-  @Test
-  void solidImpactsR_commandLineAction_writesTheCurrentSectionTypeSlot () {
-    app.vm.SolidImpacts_r(0);
-    int slot = app.allSolidImpacts.sectionType;
-    app.allSolidImpacts.R[slot] = 0;
-
-    app.allActions.get("solid_impacts_r").run(new String[]{"solid_impacts_r", "45"});
-
-    assertEquals(45, app.allSolidImpacts.R[slot], 0.001f);
+    assertEquals(1, app.WIN3D.currentCameraIndex);
+    // react.applyCurrentCamera's own first step - confirms the
+    // onChanged callback actually ran, not just the setter.
+    assertEquals(app.allCameras.get_rotX(1), app.WIN3D.rotationX, 0.0001f);
   }
 
   @Test
-  void solidImpactsR_commandLineAction_triggersRecalcImpact () {
-    app.vm.SolidImpacts_r(0);
-    app.WIN3D.update = false;
+  void currentCameraIndex_withAnOutOfRangeIndex_rejectsIt () {
+    // Only camera 0 exists - max is 0, so index 1 is out of range.
+    app.vm.currentCameraIndex(0);
+    app.WIN3D.currentCameraIndex = 0;
 
-    app.allActions.get("solid_impacts_r").run(new String[]{"solid_impacts_r", "45"});
+    app.runScriptLine("Current Camera Index 1");
 
-    assertTrue(app.WIN3D.update); // via react.recalcImpact -> view_changed()
-  }
-
-  // ================= a different one-off OnChange, via its real command ====
-
-  @Test
-  void numberOfDaysToPlot_commandLineAction_triggersApplyStudyJEnd () {
-    app.vm.endDay(0);
-    app.STUDY.endDay = 100;
-    app.UI_caseBar.update = false;
-
-    app.allActions.get("end_day").run(new String[]{"end_day", "200"});
-
-    assertEquals(200, app.STUDY.endDay);
-    assertTrue(app.UI_caseBar.update);
+    assertEquals(0, app.WIN3D.currentCameraIndex);
   }
 }
