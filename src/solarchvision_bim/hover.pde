@@ -816,6 +816,24 @@ void queueHover (int xMouse, int yMouse, String[] lines, float destX, float dest
   }
   float boxW = 2 * hoverSidePad + maxTextWidth;
 
+  queueHoverBox(xMouse, yMouse, lines, boxW, boxH, destX, destY, destW, destH, placedBoxes, pendingBoxes);
+}
+
+// The actual box-placement/bookkeeping half of queueHover() above, split
+// out so it can be unit-tested directly against a pre-computed boxW/
+// boxH - no live font/graphics context (textSize()/textAscent()/
+// textDescent()/textWidth(), all only available with a real PGraphics)
+// needed to exercise it. queueHover() itself still measures the real
+// text first and simply hands the result here; nothing about its own
+// behavior changes. col is always null on this path (only
+// queuePaletteHover()'s own palette swatches carry a color) - see the
+// col-taking overload just below, which this one is now a convenience
+// wrapper around.
+void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float boxH, float destX, float destY, float destW, float destH, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
+  queueHoverBox(xMouse, yMouse, lines, boxW, boxH, destX, destY, destW, destH, null, placedBoxes, pendingBoxes);
+}
+
+void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float boxH, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
   float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes, currentHoverPreferredPosition);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
@@ -831,7 +849,7 @@ void queueHover (int xMouse, int yMouse, String[] lines, float destX, float dest
     box.xMouse = xMouse;
     box.yMouse = yMouse;
     box.lines = lines;
-    box.col = null;
+    box.col = col;
     box.isLivePoint = resolvingLiveHoverPoint;
     pendingBoxes.add(box);
   }
@@ -910,25 +928,9 @@ void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, flo
   float boxH = hoverTopPad + lines.length * lineHeight + hoverBottomPad;
   float boxW = 2 * hoverSidePad + textWidth(lines[0]);
 
-  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes, currentHoverPreferredPosition);
-  float boxX = boxPos[0];
-  float boxY = boxPos[1];
-
-  if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
-
-  if (pendingBoxes != null) {
-    PendingHoverBox box = new PendingHoverBox();
-    box.x = boxX;
-    box.y = boxY;
-    box.w = boxW;
-    box.h = boxH;
-    box.xMouse = xMouse;
-    box.yMouse = yMouse;
-    box.lines = lines;
-    box.col = col;
-    box.isLivePoint = resolvingLiveHoverPoint;
-    pendingBoxes.add(box);
-  }
+  // Same box-placement/bookkeeping core queueHover() above now also
+  // delegates to - see its own comment on queueHoverBox() for why.
+  queueHoverBox(xMouse, yMouse, lines, boxW, boxH, destX, destY, destW, destH, col, placedBoxes, pendingBoxes);
 }
 
 void drawPaletteHover (PendingHoverBox box) {
