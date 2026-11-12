@@ -2,10 +2,17 @@ int[] getNow_inUTC () {
 
   int LocationTimeZone = getLocationTimeZone();
 
-  int CurrentYear = year();
-  int CurrentMonth = month();
-  int CurrentDay = day();
-  int CurrentHour = hour();
+  return convert_LocalToUTC(LocationTimeZone, year(), month(), day(), hour());
+}
+
+// Pure local-time -> UTC conversion, split out of getNow_inUTC() so the
+// day/month/year rollover logic below can be unit-tested directly against
+// fixed inputs, without needing to fake Processing's own real-clock
+// functions (year()/month()/day()/hour()) - getNow_inUTC() itself still
+// calls those, then just delegates the rollover arithmetic here. Behavior
+// is unchanged from before this split: same branches, same order, same
+// results for the same (LocationTimeZone, year, month, day, hour) inputs.
+int[] convert_LocalToUTC (int LocationTimeZone, int CurrentYear, int CurrentMonth, int CurrentDay, int CurrentHour) {
 
   // converting from local time to global time
 
