@@ -73,6 +73,8 @@ class Clone3D {
     current_Weight = allPolylines.getWeight(f);
     current_Closed = allPolylines.getClose(f);
     current_CurveType = allPolylines.getCurveType(f);
+    current_IsArc = allPolylines.getIsArc(f);
+    if (current_IsArc == 1) current_ArcParams = allPolylines.getArcParams(f);
     allPolylines.create(newNodes);
   }
 

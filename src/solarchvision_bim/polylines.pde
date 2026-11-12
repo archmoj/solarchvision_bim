@@ -19,12 +19,29 @@ class Polylines {
 
   int[][] nodes;
   int[][] options;
+  // Parallel to options/nodes, one row per item: {cx, cy, cz, r, rot,
+  // totalAngle, segments} - the circle add_Arc() originally sampled this
+  // item from, "segments" being its own "n" (number of straight chords
+  // TotalAngle was divided into - NOT necessarily the same as this item's
+  // current vertex count: a full circle auto-closes and drops its
+  // would-be-duplicate last vertex, a partial arc keeps it, and either can
+  // separately end up getClose()==1 or 0 depending on what was passed in,
+  // so this can't be safely re-derived from vertex count + getClose() -
+  // it's stored directly instead). Only meaningful when getIsArc(n)==1
+  // (see options column 7); zero/unused otherwise. Lets draw() re-sample
+  // the TRUE circle at whatever tessellation level is currently set,
+  // rather than only ever subdividing the straight polygon edges
+  // add_Arc() happened to bake in at creation time (which - like a plain
+  // straight Polyline - looks identical no matter how finely it's
+  // subdivided).
+  float[][] arcParams;
 
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.nodes = new int [n][0];
-    this.options = new int [n][7];
+    this.options = new int [n][8];
+    this.arcParams = new float [n][7];
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -69,6 +86,16 @@ class Polylines {
     return this.options[n][6];
   }
 
+  int getIsArc (int n) {
+    return this.options[n][7];
+  }
+
+  // Returns {cx, cy, cz, r, rot, totalAngle, segments} - only meaningful
+  // when getIsArc(n)==1.
+  float[] getArcParams (int n) {
+    return this.arcParams[n];
+  }
+
   void setMaterial (int n, int material) {
     this.options[n][0] = material;
   }
@@ -95,6 +122,14 @@ class Polylines {
 
   void setCurveType (int n, int curveType) {
     this.options[n][6] = curveType;
+  }
+
+  void setIsArc (int n, int isArc) {
+    this.options[n][7] = isArc;
+  }
+
+  void setArcParams (int n, float[] params) {
+    this.arcParams[n] = params;
   }
 
 
@@ -126,11 +161,17 @@ class Polylines {
 
       int[][] newPolyline_options = {
         {
-          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed, current_CurveType
+          current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed, current_CurveType, current_IsArc
         }
       };
 
       this.options =  (int[][]) concat(this.options, newPolyline_options);
+
+      float[][] newPolyline_arcParams = {
+        current_ArcParams
+      };
+
+      this.arcParams = (float[][]) concat(this.arcParams, newPolyline_arcParams);
 
       int[][] newPolyline_nodes = {
         f
@@ -154,6 +195,7 @@ class Polylines {
     current_Weight = wgt;
     current_Closed = clz;
     current_CurveType = CURVE_STRAIGHT;
+    current_IsArc = 0;
 
     int[] newPolyline_nodes = new int[points.length];
 
@@ -179,6 +221,7 @@ class Polylines {
     current_Weight = wgt;
     current_Closed = clz;
     current_CurveType = CURVE_SPLINE;
+    current_IsArc = 0;
 
     int[] newPolyline_nodes = new int[points.length];
 
@@ -206,6 +249,8 @@ class Polylines {
     current_Weight = wgt;
     current_Closed = clz;
     current_CurveType = CURVE_STRAIGHT;
+    current_IsArc = 1;
+    current_ArcParams = new float[] {cx, cy, cz, r, rot, TotalAngle, n};
 
 
     int[] newPolyline_nodes = {
@@ -380,12 +425,47 @@ class Polylines {
                   }
                 } else {
 
+                  // Arc-specific setup (see getIsArc()'s own comment): the
+                  // angle, around the stored circle, of vertex index nA -
+                  // every tessellation sample along this segment is just
+                  // that angle plus a fraction of one vertex-to-vertex
+                  // angle step, so this re-derives the TRUE circle at
+                  // whatever tessellation density is currently set,
+                  // instead of only ever subdividing the straight chord
+                  // between two already-baked polygon corners. arcP[6] is
+                  // the exact segment count add_Arc() originally divided
+                  // TotalAngle by - not re-derived from vertex count/
+                  // getClose() (see getArcParams()'s own comment on why
+                  // that's not safe in general).
+                  boolean isArc = (this.getIsArc(f) == 1);
+                  float arcAngleStep = 0;
+                  float arcAngleA = 0;
+                  float[] arcP = null;
+                  if (isArc) {
+                    arcP = this.getArcParams(f);
+                    int numSegments = int(arcP[6]);
+                    if (numSegments == 0) {
+                      isArc = false; // degenerate (shouldn't happen) - fall back to the straight lerp below
+                    } else {
+                      arcAngleStep = arcP[5] / float(numSegments);
+                      arcAngleA = arcP[4] + nA * arcAngleStep;
+                    }
+                  }
+
                   for (int q = 0; q <= tessellation; q++) {
 
                     float[] P = {0, 0, 0};
 
-                    for (int i = 0; i < 3; i++) {
-                      P[i] = ((tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(tessellation);
+                    if (isArc) {
+                      float t = q / float(tessellation);
+                      float ang = arcAngleA + t * arcAngleStep;
+                      P[0] = arcP[0] + arcP[3] * funcs.cos_ang(ang);
+                      P[1] = arcP[1] + arcP[3] * funcs.sin_ang(ang);
+                      P[2] = arcP[2];
+                    } else {
+                      for (int i = 0; i < 3; i++) {
+                        P[i] = ((tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(tessellation);
+                      }
                     }
 
 
@@ -645,6 +725,17 @@ class Polylines {
       XML_setInt(child, "weight", this.getWeight(i));
       XML_setInt(child, "close", this.getClose(i));
       XML_setInt(child, "curveType", this.getCurveType(i));
+      XML_setInt(child, "isArc", this.getIsArc(i));
+      if (this.getIsArc(i) == 1) {
+        float[] arcP = this.getArcParams(i);
+        XML_setFloat(child, "arcCX", arcP[0]);
+        XML_setFloat(child, "arcCY", arcP[1]);
+        XML_setFloat(child, "arcCZ", arcP[2]);
+        XML_setFloat(child, "arcR", arcP[3]);
+        XML_setFloat(child, "arcRot", arcP[4]);
+        XML_setFloat(child, "arcTotalAngle", arcP[5]);
+        XML_setFloat(child, "arcSegments", arcP[6]);
+      }
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -679,6 +770,18 @@ class Polylines {
       this.setWeight(i, children[i].getInt("weight"));
       this.setClose(i, children[i].getInt("close"));
       this.setCurveType(i, children[i].getInt("curveType"));
+      this.setIsArc(i, children[i].getInt("isArc"));
+      if (this.getIsArc(i) == 1) {
+        this.setArcParams(i, new float[] {
+          XML_getFloat(children[i], "arcCX"),
+          XML_getFloat(children[i], "arcCY"),
+          XML_getFloat(children[i], "arcCZ"),
+          XML_getFloat(children[i], "arcR"),
+          XML_getFloat(children[i], "arcRot"),
+          XML_getFloat(children[i], "arcTotalAngle"),
+          XML_getFloat(children[i], "arcSegments")
+        });
+      }
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

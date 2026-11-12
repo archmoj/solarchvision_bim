@@ -102,13 +102,26 @@ class Clone3DTest {
   void clonePolyline_copiesNodesAndOptionsIncludingWeightAndClosed () {
     app.allVertices = new float[][]{{1, 1, 1}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.allPolylines.options = new int[][]{{3, 0, 1, 1, 5, 1, 1}}; // weight=5, closed=1, curveType=CURVE_SPLINE
+    app.allPolylines.options = new int[][]{{3, 0, 1, 1, 5, 1, 1, 0}}; // weight=5, closed=1, curveType=CURVE_SPLINE, isArc=0
 
     app.Clone3D.clonePolyline(0, new HashMap<Integer, Integer>());
 
     assertEquals(2, app.allPolylines.nodes.length);
-    assertArrayEquals(new int[]{3, 0, 1, 1, 5, 1, 1}, app.allPolylines.options[1]);
+    assertArrayEquals(new int[]{3, 0, 1, 1, 5, 1, 1, 0}, app.allPolylines.options[1]);
     assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(1));
+    assertEquals(0, app.allPolylines.getIsArc(1));
+  }
+
+  @Test
+  void clonePolyline_ofARealArc_copiesIsArcAndCircleParameters () {
+    app.allVertices = new float[0][3];
+    app.allPolylines.add_Arc(0, 0, 0, 1, 0, 0, 1, 2, 3, 4, 5, 6, 270);
+
+    app.Clone3D.clonePolyline(0, new HashMap<Integer, Integer>());
+
+    assertEquals(2, app.allPolylines.nodes.length);
+    assertEquals(1, app.allPolylines.getIsArc(1));
+    assertArrayEquals(new float[]{1, 2, 3, 4, 6, 270, 5}, app.allPolylines.getArcParams(1), 0.0001f);
   }
 
   // ================= cloneModel1D =====================================
@@ -235,7 +248,7 @@ class Clone3DTest {
   void polylinesBatch_clonesEverySelectedPolylineAndSelectsOnlyTheClones () {
     app.allVertices = new float[][]{{0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0}};
+    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}};
     app.Select3D.polylineSelection = new int[]{0};
 
     app.Clone3D.Polylines(true);

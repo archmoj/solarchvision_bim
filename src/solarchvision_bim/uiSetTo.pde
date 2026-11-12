@@ -63,6 +63,7 @@ void UI_setTo_Create_Polyline () {
   current_Weight = User3D.creatorWeight;
   current_Closed = User3D.creatorClosed;
   current_CurveType = allPolylines.CURVE_STRAIGHT;
+  current_IsArc = 0;
 
   allPolylines.beginNewPolyline();
 
@@ -89,6 +90,7 @@ void UI_setTo_Create_Spline () {
   current_Weight = User3D.creatorWeight;
   current_Closed = User3D.creatorClosed;
   current_CurveType = allPolylines.CURVE_SPLINE;
+  current_IsArc = 0;
 
   allPolylines.beginNewPolyline();
 

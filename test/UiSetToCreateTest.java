@@ -201,6 +201,32 @@ class UiSetToCreateTest {
   }
 
   @Test
+  void createPolyline_afterPlacingAnArc_isNotLeftMarkedAsAnArcToo () {
+    // The actual bug this guards against: UI_setTo_Create_Polyline()
+    // previously left current_IsArc/current_ArcParams untouched, so a
+    // Polyline begun right after placing an Arc silently inherited
+    // isArc=1 and the OLD arc's circle parameters - draw() then rendered
+    // the new polyline's points along that stale circle instead of its
+    // own actual clicked vertices.
+    app.allVertices = new float[0][3];
+    app.allPolylines.add_Arc(0, 0, 0, 1, 0, 0, 1, 2, 3, 4, 5, 6, 270); // leaves current_IsArc=1 behind
+
+    app.UI_setTo_Create_Polyline();
+
+    assertEquals(0, app.allPolylines.getIsArc(1));
+  }
+
+  @Test
+  void createSpline_afterPlacingAnArc_isNotLeftMarkedAsAnArcToo () {
+    app.allVertices = new float[0][3];
+    app.allPolylines.add_Arc(0, 0, 0, 1, 0, 0, 1, 2, 3, 4, 5, 6, 270);
+
+    app.UI_setTo_Create_Spline();
+
+    assertEquals(0, app.allPolylines.getIsArc(1));
+  }
+
+  @Test
   void createArc_setsArcCreateObjectAndPolylineCategory_withoutOpeningAPolyline () {
     // Unlike Polyline/Spline, an arc is placed whole with one click
     // (mouseClicked.pde's own CREATE.Arc branch) rather than built up

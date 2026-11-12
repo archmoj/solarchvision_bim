@@ -30,6 +30,8 @@ int current_Visibility = 1;
 int current_Weight = 0;
 int current_Closed = 0;
 int current_CurveType = 0; // Polylines.CURVE_STRAIGHT; see polylines.pde
+int current_IsArc = 0;
+float[] current_ArcParams = {0, 0, 0, 0, 0, 0, 0}; // cx, cy, cz, r, rot, totalAngle, segments - only meaningful when current_IsArc==1; see polylines.pde
 
 final String[] STR_SHD = {"F", "T"};
 

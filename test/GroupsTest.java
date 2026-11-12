@@ -281,7 +281,7 @@ class GroupsTest {
   void groupSelection_polylineCategoryClonesVerticesTheSameWayFacesDoes () {
     app.allVertices = new float[][]{{1, 1, 1}, {2, 2, 2}};
     app.allPolylines.nodes = new int[][]{{0, 1}};
-    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0}};
+    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}};
 
     app.currentObjectCategory = app.ObjectCategory.POLYLINE;
     app.Select3D.polylineSelection = new int[]{0};

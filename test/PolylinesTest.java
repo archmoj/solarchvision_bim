@@ -19,7 +19,7 @@ class PolylinesTest {
     assertEquals(3, app.allPolylines.nodes.length);
     assertEquals(0, app.allPolylines.nodes[0].length);
     assertEquals(3, app.allPolylines.options.length);
-    assertEquals(7, app.allPolylines.options[0].length);
+    assertEquals(8, app.allPolylines.options[0].length);
   }
 
   @Test
@@ -32,6 +32,8 @@ class PolylinesTest {
     app.allPolylines.setWeight(0, 4);
     app.allPolylines.setClose(0, 1);
     app.allPolylines.setCurveType(0, app.allPolylines.CURVE_SPLINE);
+    app.allPolylines.setIsArc(0, 1);
+    app.allPolylines.setArcParams(0, new float[]{1, 2, 3, 4, 5, 6, 7});
 
     assertEquals(3, app.allPolylines.getMaterial(0));
     assertEquals(2, app.allPolylines.getTessellation(0));
@@ -40,6 +42,8 @@ class PolylinesTest {
     assertEquals(4, app.allPolylines.getWeight(0));
     assertEquals(1, app.allPolylines.getClose(0));
     assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+    assertEquals(1, app.allPolylines.getIsArc(0));
+    assertArrayEquals(new float[]{1, 2, 3, 4, 5, 6, 7}, app.allPolylines.getArcParams(0), 0.0001f);
   }
 
   // ================= create ===========================================
@@ -53,12 +57,15 @@ class PolylinesTest {
     app.current_Weight = 5;
     app.current_Closed = 1;
     app.current_CurveType = app.allPolylines.CURVE_SPLINE;
+    app.current_IsArc = 1;
+    app.current_ArcParams = new float[]{10, 20, 30, 40, 50, 60, 70};
 
     int newId = app.allPolylines.create(new int[]{0, 1});
 
     assertEquals(0, newId);
     assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
-    assertArrayEquals(new int[]{3, 2, 1, 1, 5, 1, 1}, app.allPolylines.options[0]);
+    assertArrayEquals(new int[]{3, 2, 1, 1, 5, 1, 1, 1}, app.allPolylines.options[0]);
+    assertArrayEquals(new float[]{10, 20, 30, 40, 50, 60, 70}, app.allPolylines.getArcParams(0), 0.0001f);
   }
 
   @Test
@@ -102,8 +109,9 @@ class PolylinesTest {
     assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
     assertEquals(3, app.allVertices.length);
     assertArrayEquals(new float[]{1, 1, 0}, app.allVertices[2], 0.0001f);
-    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 0}, app.allPolylines.options[0]);
+    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 0, 0}, app.allPolylines.options[0]);
     assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(0));
+    assertEquals(0, app.allPolylines.getIsArc(0));
   }
 
   // ================= add_Spline =======================================
@@ -119,8 +127,9 @@ class PolylinesTest {
     assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
     assertEquals(3, app.allVertices.length);
     assertArrayEquals(new float[]{1, 1, 0}, app.allVertices[2], 0.0001f);
-    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 1}, app.allPolylines.options[0]);
+    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0, 1, 0}, app.allPolylines.options[0]);
     assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(0));
+    assertEquals(0, app.allPolylines.getIsArc(0));
   }
 
   @Test
@@ -152,6 +161,8 @@ class PolylinesTest {
     assertArrayEquals(new float[]{0, -1, 0}, app.allVertices[3], 0.001f);
     assertEquals(1, app.allPolylines.getClose(0)); // full circles close automatically
     assertEquals(app.allPolylines.CURVE_STRAIGHT, app.allPolylines.getCurveType(0));
+    assertEquals(1, app.allPolylines.getIsArc(0));
+    assertArrayEquals(new float[]{0, 0, 0, 1, 0, 360, 4}, app.allPolylines.getArcParams(0), 0.0001f);
   }
 
   @Test
@@ -162,6 +173,33 @@ class PolylinesTest {
 
     assertEquals(3, app.allVertices.length); // start, midpoint, end - all kept
     assertEquals(0, app.allPolylines.getClose(0));
+    assertEquals(1, app.allPolylines.getIsArc(0));
+    assertArrayEquals(new float[]{0, 0, 0, 1, 0, 180, 2}, app.allPolylines.getArcParams(0), 0.0001f);
+  }
+
+  // The segment count (arcParams[6]) draw() re-tessellates a true circle
+  // with has to be stored directly rather than re-derived from vertex
+  // count + getClose() - a partial arc can still end up getClose()==1
+  // (not just a full circle's own auto-close): __ARC__'s own clz default
+  // is 1 regardless of whether ang is a full 360deg sweep (extraCommands.pde),
+  // so a caller that leaves clz alone for e.g. a 180deg arc passes clz=1
+  // straight through to add_Arc without the 360deg auto-close branch ever
+  // firing - meaning this item ends up getClose()==1 with vertex count
+  // n+1 (not n), exactly the case a getClose()-based derivation would get
+  // wrong.
+  @Test
+  void addArc_segmentCountIsCorrectEvenWhenClosedButNotAFullCircle () {
+    app.allVertices = new float[0][3];
+
+    // clz=1 (as if passed straight through from __ARC__'s own default),
+    // TotalAngle=180 (not a multiple of 360, so add_Arc's own auto-close
+    // branch does NOT fire and does not touch EndOfLoop).
+    app.allPolylines.add_Arc(0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 6, 0, 180);
+
+    assertEquals(7, app.allPolylines.nodes[0].length); // n+1 points for a partial arc, even though...
+    assertEquals(1, app.allPolylines.getClose(0));      // ...this is explicitly closed
+    assertEquals(1, app.allPolylines.getIsArc(0));
+    assertArrayEquals(new float[]{0, 0, 0, 1, 0, 180, 6}, app.allPolylines.getArcParams(0), 0.0001f); // segments=6, not 7
   }
 
   // ================= intersect =========================================
@@ -222,7 +260,7 @@ class PolylinesTest {
   @Test
   void toXMLThenFromXML_roundTripsNodesOptionsAndDisplayAll () {
     app.allPolylines.nodes = new int[][]{{5, 6, 7}};
-    app.allPolylines.options = new int[][]{{3, 2, 1, 1, 4, 1, 1}};
+    app.allPolylines.options = new int[][]{{3, 2, 1, 1, 4, 1, 1, 0}};
     app.allPolylines.displayAll = false;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -233,8 +271,41 @@ class PolylinesTest {
 
     assertEquals(1, fresh.nodes.length);
     assertArrayEquals(new int[]{5, 6, 7}, fresh.nodes[0]);
-    assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1, 1}, fresh.options[0]);
+    assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1, 1, 0}, fresh.options[0]);
     assertEquals(app.allPolylines.CURVE_SPLINE, fresh.getCurveType(0));
     assertFalse(fresh.displayAll);
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsAnArcsIsArcFlagAndCircleParameters () {
+    app.allVertices = new float[0][3];
+    app.allPolylines.add_Arc(0, 0, 0, 1, 0, 0, 5, 6, 7, 2, 8, 10, 270);
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allPolylines.to_XML(root);
+
+    solarchvision_bim.Polylines fresh = app.new Polylines();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getIsArc(0));
+    assertArrayEquals(new float[]{5, 6, 7, 2, 10, 270, 8}, fresh.getArcParams(0), 0.0001f);
+  }
+
+  @Test
+  void toXMLThenFromXML_doesNotWriteArcParamsForAPlainPolyline () {
+    // Confirms from_XML's own isArc==1 guard - a plain polyline never had
+    // arcParams populated via create(), so nothing here should attempt to
+    // read arcCX/etc. XML attributes that were never written in the
+    // first place.
+    app.allVertices = new float[0][3];
+    app.allPolylines.add_Polyline(0, 0, 0, 1, 0, 0, new float[][]{{0, 0, 0}, {1, 0, 0}});
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allPolylines.to_XML(root);
+
+    solarchvision_bim.Polylines fresh = app.new Polylines();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getIsArc(0));
   }
 }
