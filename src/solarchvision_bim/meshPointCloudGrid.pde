@@ -214,7 +214,10 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
     // equivalent for showing progress through THIS algorithm - see
     // MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
     // for why its own doc is written broadly enough to cover both.
-    if (progress != null) progress.onPointInserted(i + 1, n);
+    if (progress != null) {
+      progress.onPointInserted(i + 1, n);
+      if (progress.isCancelled()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
+    }
   }
 
   // Still-empty cells, after the binning pass above: MESH_POINT_CLOUD_

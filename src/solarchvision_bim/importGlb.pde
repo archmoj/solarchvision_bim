@@ -50,6 +50,7 @@ int glb_meshCount = 0;
 int glb_meshesProcessed = 0;
 float glb_printedProgress = 0;
 ProgressWindow glb_progressWindow = null;
+boolean glb_cancelled = false; // set by glbReportProgress() once it sees glb_progressWindow.cancelRequested - glbWalkNode() checks this to stop recursing
 
 // glTF accessor componentType constants - only the subset this importer
 // actually reads (POSITION is always FLOAT; indices are always one of
@@ -207,6 +208,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   glb_meshCount = json.hasKey("meshes") ? json.getJSONArray("meshes").size() : 0;
   glb_meshesProcessed = 0;
   glb_printedProgress = 0;
+  glb_cancelled = false;
 
   progressBarHeader();
 
@@ -218,6 +220,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   try {
     PMatrix3D identity = new PMatrix3D();
     for (int i = 0; i < rootNodeIndices.size(); i++) {
+      if (glb_cancelled) break;
       glbWalkNode(json, bin, rootNodeIndices.getInt(i), identity);
     }
   } finally {
@@ -225,9 +228,11 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
     glb_progressWindow = null;
   }
 
-  int remaining = (int) floor(100 - glb_printedProgress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!glb_cancelled) {
+    int remaining = (int) floor(100 - glb_printedProgress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 
   isImportingInProgress = false;
   showArrowCursor();
@@ -239,6 +244,11 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 // glb_meshCount (a mesh, not a line, is the natural unit of progress for
 // a GLB file) instead.
 void glbReportProgress () {
+  if (!glb_cancelled && (glb_progressWindow != null) && glb_progressWindow.cancelRequested) {
+    echoCancelProgress();
+    glb_cancelled = true;
+  }
+
   if (control == USER_AUTO) return;
 
   float Progress = (glb_meshCount > 0) ? (100 * glb_meshesProcessed / float(glb_meshCount)) : 100;
@@ -257,6 +267,8 @@ void glbReportProgress () {
 // cacheElement() use for their own PMatrix3D chains (see that file's own
 // comment: "mirrors pushMatrix()").
 void glbWalkNode (JSONObject json, byte[] bin, int nodeIndex, PMatrix3D parentMatrix) {
+  if (glb_cancelled) return; // partial import is fine - see glbReportProgress()'s own comment
+
   JSONArray nodes = json.getJSONArray("nodes");
   if ((nodeIndex < 0) || (nodeIndex >= nodes.size())) return;
 
@@ -269,9 +281,10 @@ void glbWalkNode (JSONObject json, byte[] bin, int nodeIndex, PMatrix3D parentMa
     glbEmitMesh(json, bin, node.getInt("mesh"), worldMatrix);
   }
 
-  if (node.hasKey("children")) {
+  if (node.hasKey("children") && !glb_cancelled) {
     JSONArray children = node.getJSONArray("children");
     for (int i = 0; i < children.size(); i++) {
+      if (glb_cancelled) break;
       glbWalkNode(json, bin, children.getInt(i), worldMatrix);
     }
   }

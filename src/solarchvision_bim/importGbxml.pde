@@ -574,12 +574,19 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
 
   float Progress = 0;
   float printed_Progress = 0;
+  boolean cancelled = false;
   float totalSurfaces = max(surfaces.size(), 1);
 
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting gbXML") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   for (int s = 0; s < surfaces.size(); s++) {
+    if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
+      echoCancelProgress();
+      cancelled = true;
+      break;
+    }
+
     if (control != USER_AUTO) {
       Progress = 100 * s / totalSurfaces;
       int delta = (int) floor(Progress - printed_Progress);
@@ -669,18 +676,20 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
     ifcRotateImportedModelToTrueNorth(gbxmlImportNorthRotationAngle, baseFaceCount, baseModel2DCount);
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
 
-  String summary = "gbXML import complete: " + gbxmlImportSurfaceCount + " surface(s), " + gbxmlImportOpeningCount + " opening(s) imported (" + gbxmlImportFaceCount + " face(s) total)";
-  if (gbxmlLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + gbxmlLengthUnitScale + " to metres)";
-  if (gbxmlImportAirBoundarySkippedCount > 0) summary += ", " + gbxmlImportAirBoundarySkippedCount + " air/virtual boundary(ies) not imported (no physical construction)";
-  if (gbxmlImportSkippedCount > 0) summary += ", " + gbxmlImportSkippedCount + " unsupported/malformed item(s) skipped";
-  if (gbxmlImportNorthRotationAngle != 0) summary += ", rotated " + gbxmlImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
-  summary += ".";
-  println();
-  println(summary);
+    String summary = "gbXML import complete: " + gbxmlImportSurfaceCount + " surface(s), " + gbxmlImportOpeningCount + " opening(s) imported (" + gbxmlImportFaceCount + " face(s) total)";
+    if (gbxmlLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + gbxmlLengthUnitScale + " to metres)";
+    if (gbxmlImportAirBoundarySkippedCount > 0) summary += ", " + gbxmlImportAirBoundarySkippedCount + " air/virtual boundary(ies) not imported (no physical construction)";
+    if (gbxmlImportSkippedCount > 0) summary += ", " + gbxmlImportSkippedCount + " unsupported/malformed item(s) skipped";
+    if (gbxmlImportNorthRotationAngle != 0) summary += ", rotated " + gbxmlImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
+    summary += ".";
+    println();
+    println(summary);
+  }
 
   // Last step of loading a gbXML file, after the summary above - see
   // importIfc.pde's own identical-in-spirit

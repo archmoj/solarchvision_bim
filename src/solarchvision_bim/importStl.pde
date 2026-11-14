@@ -128,12 +128,24 @@ void stlImportBinary (byte[] raw) {
   if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
   float printed_Progress = 0;
+  boolean cancelled = false;
 
   try {
     int pos = 84; // right after the 80-byte header + 4-byte triangle count
     for (int t = 0; t < triangleCount; t++) {
       if (pos + 50 > raw.length) {
         println("\nSTL import: file is shorter than its own triangle count claims - stopping early");
+        break;
+      }
+
+      // Esc, caught by importProgressWindow's own Toolkit-level listener
+      // (progressWindow.pde) regardless of which window has focus. No
+      // rollback on cancel - whatever faces were already created from
+      // the triangles read so far are kept, same as any other partial
+      // import.
+      if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
+        echoCancelProgress();
+        cancelled = true;
         break;
       }
 
@@ -161,9 +173,11 @@ void stlImportBinary (byte[] raw) {
     if (importProgressWindow != null) importProgressWindow.dispose();
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 }
 
 void stlImportAscii (String FileName) {
@@ -173,6 +187,7 @@ void stlImportAscii (String FileName) {
   float totalLines = FileALL.length; // computed once, not every iteration - same as importObj.pde's own
   float Progress = 0;
   float printed_Progress = 0;
+  boolean cancelled = false;
 
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting STL") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
@@ -185,6 +200,15 @@ void stlImportAscii (String FileName) {
 
   try {
     for (int f = 0; f < FileALL.length; f++) {
+      // Esc, caught by importProgressWindow's own Toolkit-level listener
+      // (progressWindow.pde) regardless of which window has focus. No
+      // rollback on cancel - see stlImportBinary()'s own comment on it.
+      if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
+        echoCancelProgress();
+        cancelled = true;
+        break;
+      }
+
       if (control != USER_AUTO) {
         Progress = 100 * f / totalLines;
         int delta = (int) floor(Progress - printed_Progress);
@@ -233,7 +257,9 @@ void stlImportAscii (String FileName) {
     if (importProgressWindow != null) importProgressWindow.dispose();
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 }

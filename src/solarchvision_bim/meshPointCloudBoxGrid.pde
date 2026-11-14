@@ -135,7 +135,10 @@ ArrayList<BoxGridCell> meshPointCloud_boxGridXY (float[] xs, float[] ys, float[]
       cellPointIndex[cellX][cellY] = i;
     }
 
-    if (progress != null) progress.onPointInserted(i + 1, n);
+    if (progress != null) {
+      progress.onPointInserted(i + 1, n);
+      if (progress.isCancelled()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
+    }
   }
 
   // Same nearest-neighbor fill pass as meshPointCloud_gridXY() - see

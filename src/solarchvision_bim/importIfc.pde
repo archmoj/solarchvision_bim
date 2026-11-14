@@ -2790,6 +2790,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   float Progress = 0;
   float printed_Progress = 0;
+  boolean cancelled = false;
   int totalF = ents.size() + productIds.size();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
@@ -2812,6 +2813,23 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   int f = -1;
   for (Integer id : ents.keySet()) {
+    // Esc, caught by importProgressWindow's own Toolkit-level listener
+    // (progressWindow.pde) regardless of which window has focus. No
+    // rollback - unlike every other importer here, this function isn't
+    // wrapped in try/finally (see importProgressWindow's own comment,
+    // above, for why), so cancelling doesn't return early either:
+    // beginScene3DChange() (this function's own start) still needs its
+    // matching endScene3DChange() to run, and ifcFlushPendingGeometry()
+    // still needs to land whatever's already been queued - breaking out
+    // of both this loop and the product loop below (skipped entirely
+    // once this is set) just means less gets queued for either to do,
+    // not that either is skipped.
+    if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
+      echoCancelProgress();
+      cancelled = true;
+      break;
+    }
+
     f++;
     if (control != USER_AUTO) {
       Progress = 100 * f / totalF;
@@ -2882,7 +2900,17 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   }
   ifcSortAscending(productIds);
 
-  for (Integer id : productIds) {
+  // Skipped entirely, not just entered-and-immediately-broken-out-of,
+  // once the entity-scan loop above was itself cancelled - productIds
+  // is necessarily incomplete at that point, so there's nothing this
+  // loop should still be doing.
+  for (Integer id : (cancelled ? new ArrayList<Integer>() : productIds)) {
+    if (importProgressWindow != null && importProgressWindow.cancelRequested) {
+      echoCancelProgress();
+      cancelled = true;
+      break;
+    }
+
     f++;
     if (control != USER_AUTO) {
       Progress = 100 * f / totalF;
@@ -3087,24 +3115,26 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   endScene3DChange();
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
 
-  String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
-  if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
-  if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
-  if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
-  if (ifcImportSpaceCount > 0) summary += ", " + ifcImportSpaceCount + " space(s) added";
-  if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
-  if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
-  if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";
-  if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
-  if (ifcImportHolesCutCount > 0) summary += ", " + ifcImportHolesCutCount + " inner boundary/boundaries cut out of their face";
-  if (ifcImportNorthRotationAngle != 0) summary += ", rotated " + ifcImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
-  summary += ".";
-  println();
-  println(summary);
+    String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
+    if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
+    if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
+    if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
+    if (ifcImportSpaceCount > 0) summary += ", " + ifcImportSpaceCount + " space(s) added";
+    if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
+    if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
+    if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";
+    if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
+    if (ifcImportHolesCutCount > 0) summary += ", " + ifcImportHolesCutCount + " inner boundary/boundaries cut out of their face";
+    if (ifcImportNorthRotationAngle != 0) summary += ", rotated " + ifcImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
+    summary += ".";
+    println();
+    println(summary);
+  }
 
   // Last step of loading an IFC file, after the summary above - see
   // IFC_IMPORT_GOTO_LATLON's own comment for why this runs at all, and

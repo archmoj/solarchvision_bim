@@ -46,6 +46,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   float totalLines = FileALL.length; // computed once, not every iteration
   float Progress = 0;
   float printed_Progress = 0;
+  boolean cancelled = false;
 
   progressBarHeader();
 
@@ -62,6 +63,17 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
 
   try {
     for (int f = 0; f < FileALL.length; f++) {
+      // Esc, caught by importProgressWindow's own Toolkit-level listener
+      // (progressWindow.pde) regardless of which window has focus. No
+      // rollback on cancel - whatever points/faces were already created
+      // from the lines read so far are kept, same as any other partial
+      // import; the person can undo it themselves if they don't want it.
+      if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
+        echoCancelProgress();
+        cancelled = true;
+        break;
+      }
+
       if (control != USER_AUTO) {
         Progress = 100 * f / totalLines;
         int delta = (int) floor(Progress - printed_Progress);
@@ -114,9 +126,11 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
     if (importProgressWindow != null) importProgressWindow.dispose();
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 
   isImportingInProgress = false;
   showArrowCursor();
