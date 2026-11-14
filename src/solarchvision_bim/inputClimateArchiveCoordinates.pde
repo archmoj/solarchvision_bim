@@ -23,6 +23,7 @@ void loadClimateArchiveCoordinates () {
     climateArchiveCoordinates[f].setCity(parts[0].replace('/', '_'));
     climateArchiveCoordinates[f].setProvince(parts[1]);
     climateArchiveCoordinates[f].setCountry("CA");
+    climateArchiveCoordinates[f].setCode(parts[3]);
     climateArchiveCoordinates[f].setLatitude(latitude);
     climateArchiveCoordinates[f].setLongitude(longitude);
     climateArchiveCoordinates[f].setTimezoneLongitude(funcs.roundTo(longitude, 15));

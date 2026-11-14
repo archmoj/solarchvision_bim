@@ -15,7 +15,13 @@ void downloadClimateArchive () {
         File dir = new File(the_target);
         if (!dir.isFile()) {
 
-          String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          // "Day=" and "submit=Download+Data" are both required - without
+          // them the server serves the bulk-data form page itself (HTML)
+          // instead of running the export and returning real CSV data. Day's
+          // own value doesn't affect which rows come back for an
+          // hourly/monthly bulk export (the whole month is always returned
+          // regardless), so any valid day works; 1 is used here.
+          String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&Day=1&timeframe=1&submit=Download+Data";
 
           println("\nTry downloading: " + the_link);
 
