@@ -28,6 +28,7 @@ class UndoRedoTest {
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
     app.BaseFolder = Files.createTempDirectory("solarchvision-bim-undoredo-test").toString();
     app.sketchPath(); // see SaveProjectTest.java's own comment on why this is needed before any loadImage()/loadStrings()/createInput()
+    app.reset_project_folder_to_default(); // Folder_Project is null until this runs - update_project_folders() itself no longer sets it (updateFolders.pde's own fix)
     app.update_project_folders();
     // fetchProject_doesNotCorruptHistoryViaLoadProjectsOwnFromXmlCascade()
     // below goes through load_project(), which runs update_station(1..4)

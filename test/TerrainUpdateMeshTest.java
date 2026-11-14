@@ -21,12 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 // own STATION constructor call), so no STATION setup is needed either.
 //
 // Folder_Project/Folder_Terrain are set here by hand to this fixture,
-// not via update_project_folders() - that function hardcodes
-// Folder_Project = BaseFolder + "/projects/model-01" internally and
-// would silently overwrite whatever Folder_Project this test set first,
-// so each Folder_* this test needs is set directly, mirroring that
-// function's own derivation formulas (Folder_Terrain = Folder_Project +
-// "/terrain") anchored to this project instead. BaseFolder comes from
+// not via update_project_folders() - that function only derives Folder_*
+// children from whatever Folder_Project already is (reset_project_folder_to_default()
+// is the one that actually sets Folder_Project itself, to the fixed
+// "/projects/model-01" default - see updateFolders.pde), so calling it
+// would still mean overriding Folder_Project right back afterward anyway;
+// setting each Folder_* this test needs directly, mirroring update_project_folders()'s
+// own derivation formula (Folder_Terrain = Folder_Project + "/terrain")
+// anchored to this project instead, is simpler. BaseFolder comes from
 // System.getProperty("user.dir") rather than app.locateBaseFolder() -
 // the same reasoning Earth3DTest.java's own comment gives for its real
 // bundled texture (BaseFolder/sketchPath() resolves wherever Processing's

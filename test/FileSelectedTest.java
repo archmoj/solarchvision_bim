@@ -161,17 +161,19 @@ class FileSelectedTest {
   }
 
   @Test
-  void fileSelectedNew_setsFolderProjectToTheFixedModelFolder_notTheFilesDirectory () {
+  void fileSelectedNew_setsFolderProjectToTheFilesOwnDirectory () {
     // update_project_info() computes Folder_Project from the selected
-    // File's own directory first - but then immediately calls
-    // update_project_folders(), whose first line unconditionally
-    // overwrites Folder_Project with BaseFolder + "/projects/model-01"
-    // (see updateFolders.pde). So the directory the file was actually
-    // opened from never survives - this looks surprising enough to be
-    // worth pinning down explicitly, whether or not it's intentional.
+    // File's own directory, then calls update_project_folders() to
+    // derive everything else from it. This used to be pinning a real
+    // bug instead (see this test's own git history/updateFolders.pde's
+    // comment on reset_project_folder_to_default()): update_project_folders()
+    // itself unconditionally overwrote Folder_Project with BaseFolder +
+    // "/projects/model-01" right after update_project_info() had just
+    // set it from the file, so the directory a project was actually
+    // opened/created from never survived - fixed now, confirmed here.
     app._fileSelected_New(new File("/some/other/directory/MyProject.xml"));
 
-    assertEquals(app.BaseFolder + "/projects/model-01", app.Folder_Project);
+    assertEquals("/some/other/directory", app.Folder_Project);
   }
 
   // ================= _fileSelected_SaveAs ======================================

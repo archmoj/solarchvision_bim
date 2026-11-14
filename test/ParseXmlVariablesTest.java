@@ -31,6 +31,7 @@ class ParseXmlVariablesTest {
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath();
+    app.reset_project_folder_to_default(); // Folder_Project is null until this runs - update_project_folders() itself no longer sets it (updateFolders.pde's own fix)
     app.update_project_folders();
     app.update_input_folders();
   }

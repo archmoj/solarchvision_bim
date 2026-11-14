@@ -25,7 +25,14 @@ class SaveProjectTest {
     // app.locateBaseFolder().
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
-    app.update_project_folders(); // Folder_Project is null until this runs
+    // reset_project_folder_to_default() then update_project_folders() -
+    // Folder_Project is null until the first of these runs; the second
+    // no longer sets it itself (updateFolders.pde's own fix - previously
+    // it unconditionally hardcoded "/projects/model-01" here regardless
+    // of what Folder_Project already was, which is also why this now
+    // needs two calls instead of one).
+    app.reset_project_folder_to_default();
+    app.update_project_folders();
     // fetchProject_afterHoldProject_restoresTheHeldGeometry() below goes
     // through load_project(), which runs update_station(1..4) -
     // update_climateTypicalYear()/update_climateEngineering()/

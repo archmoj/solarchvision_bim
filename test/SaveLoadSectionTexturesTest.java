@@ -57,7 +57,12 @@ class SaveLoadSectionTexturesTest {
     // app.locateBaseFolder().
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
-    app.update_project_folders(); // Folder_Project is null until this runs
+    // See SaveProjectTest.java's own identical comment: Folder_Project
+    // is null until reset_project_folder_to_default() runs;
+    // update_project_folders() itself no longer sets it (updateFolders.pde's
+    // own fix).
+    app.reset_project_folder_to_default();
+    app.update_project_folders();
     // See SaveProjectTest.java's/LoadProjectTest.java's own identical
     // comment: load_project()'s own update_station(1..4) needs
     // Folder_climateTypicalYear/.../Folder_ensembleObservation, which
@@ -79,6 +84,7 @@ class SaveLoadSectionTexturesTest {
     app2.Terrain.Mesh = new float[app2.Terrain.rowCount][app2.Terrain.columnCount][3];
     app2.BaseFolder = app.BaseFolder;
     app2.sketchPath();
+    app2.reset_project_folder_to_default(); // see this file's own setUp() comment on why
     app2.update_project_folders();
     app2.update_input_folders();
     return app2;

@@ -41,6 +41,10 @@ class ScriptCommandFileIOTest {
     // app.locateBaseFolder().
     app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
     app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
+    // See SaveProjectTest.java's own comment: Folder_Project is null
+    // until reset_project_folder_to_default() runs; update_project_folders()
+    // itself no longer sets it (updateFolders.pde's own fix).
+    app.reset_project_folder_to_default();
     app.update_project_folders();
     app.update_input_folders();
 
