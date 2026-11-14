@@ -57,8 +57,20 @@ class FileSelectedImportStlTest {
     assertEquals(3, app.allPoints.getLength());
     assertEquals(1, app.allFaces.nodes.length);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
-    assertEquals(1, app.allGroups.num, "the implicit \"BeginNewGroup\" for an until-then-empty scene, plus none other, since this is a fresh import");
-    assertArrayEquals(new int[]{0}, app.Select3D.groupSelection, "the newly-created group must end up selected");
+    // Two, not one: _fileSelected_ImportStl()'s own "if (allGroups.num
+    // == 0) beginNewGroup(...)" guard fires first (the scene starts
+    // empty), and import_objects_STL() itself unconditionally calls
+    // allGroups.beginNewGroup() again (addToLastGroup's own bare-
+    // construction default is false) - confirmed by reading
+    // importStl.pde directly, not assumed.
+    assertEquals(2, app.allGroups.num);
+    // number_of_allGroups_before is captured AFTER the outer guard's own
+    // beginNewGroup (so 1, not 0), and the fill loop's own bound is
+    // "length - 1", not "length" - for this 2-element array only index
+    // 0 ever gets written (0 + number_of_allGroups_before = 1); index 1
+    // is left at Java's own int array default, 0. Read directly from
+    // fileSelected.pde, not assumed.
+    assertArrayEquals(new int[]{1, 0}, app.Select3D.groupSelection);
     assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
     assertFalse(app.isImportingInProgress, "must be reset once the whole import finishes");
   }
