@@ -160,6 +160,19 @@ boolean showEnsembleForecastDownloadProgress = true;
 // OBJ()'s own (importObj.pde) above.
 boolean showEnsembleObservationDownloadProgress = true;
 
+// Same idea again, for Terrain.download_mesh() (land3D.pde) - "Download
+// Terrain Mesh" (actions.pde). Plain single-threaded loop over rowCount
+// (20) network downloads on the calling thread itself, same shape as
+// import_objects_OBJ()'s own (importObj.pde) above.
+boolean showTerrainMeshDownloadProgress = true;
+
+// Same idea again, for Terrain.download_textures() (land3D.pde) -
+// "Download Terrain Texture" (actions.pde). Plain single-threaded loop
+// over a fixed set of zoom-ring widths (9 tiles) of network downloads on
+// the calling thread itself, same shape as import_objects_OBJ()'s own
+// (importObj.pde) above.
+boolean showTerrainTextureDownloadProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;

@@ -427,30 +427,66 @@ class Terrain {
   void download_mesh () {
     showWaitCursor();
 
+    println("\nDownloading Terrain Mesh. Please wait...");
+
     this.Mesh = new float[this.rowCount][this.columnCount][3];
 
     String folder = stationFolder();
 
-    for (int i = 0; i < this.rowCount; i++) {
-      String the_target = folder + "/" + nf(i, 0) + ".xml";
-      File dir = new File(the_target);
-      if (dir.isFile()) continue;
+    float printed_Progress = 0;
 
-      double[] LAT_ROW = new double[this.columnCount];
-      double[] LON_ROW = new double[this.columnCount];
-      for (int j = 0; j < this.columnCount; j++) {
-        double[] LON_LAT = getLandGrid(i, j);
-        LON_ROW[j] = LON_LAT[0];
-        LAT_ROW[j] = LON_LAT[1];
-      }
+    // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
+    // (importObj.pde, showImportProgress) - a plain single-threaded loop,
+    // here over rowCount network downloads instead of file lines/
+    // entities, on the calling thread, so the only way to show progress
+    // during it is this same manual throttle-and-paint trick.
+    ProgressWindow terrainMeshProgressWindow = (showTerrainMeshDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nDownloading Terrain Mesh") : null;
+    if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.setVisible(true);
 
-      if (!downloadElevationRow_OpenMeteo(the_target, LAT_ROW, LON_ROW)) {
-        downloadElevationRow_TerrainTap(the_target, LAT_ROW, LON_ROW);
+    try {
+      for (int i = 0; i < this.rowCount; i++) {
+        if (control != USER_AUTO) {
+          float Progress = 100 * i / float(this.rowCount);
+          int delta = (int) floor(Progress - printed_Progress);
+          if (delta >= 1) {
+            StringBuilder barBuffer = new StringBuilder();
+            for (int c = 0; c < delta; c++) barBuffer.append('█');
+            print(barBuffer.toString());
+            printed_Progress = floor(Progress);
+            if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.updateFraction(Progress / 100.0f);
+          }
+        }
+
+        String the_target = folder + "/" + nf(i, 0) + ".xml";
+        File dir = new File(the_target);
+        if (dir.isFile()) continue;
+
+        double[] LAT_ROW = new double[this.columnCount];
+        double[] LON_ROW = new double[this.columnCount];
+        for (int j = 0; j < this.columnCount; j++) {
+          double[] LON_LAT = getLandGrid(i, j);
+          LON_ROW[j] = LON_LAT[0];
+          LAT_ROW[j] = LON_LAT[1];
+        }
+
+        if (!downloadElevationRow_OpenMeteo(the_target, LAT_ROW, LON_ROW)) {
+          downloadElevationRow_TerrainTap(the_target, LAT_ROW, LON_ROW);
+        }
       }
+    } finally {
+      if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.dispose();
     }
+
+    int remaining = (int) floor(100 - printed_Progress);
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < remaining; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    println();
 
     this.loadMesh = true;
     this.update_mesh();
+
+    println("Terrain Mesh downloaded.");
 
     showArrowCursor();
   }
@@ -630,6 +666,8 @@ class Terrain {
   void download_textures () {
     showWaitCursor();
 
+    println("\nDownloading Terrain Texture. Please wait...");
+
     float[] ratios = {
       1128.497220, 2256.994440, 4513.988880, 9027.977761, 18055.95552,
       36111.91104, 72223.82209, 144447.6442, 288895.2884, 577790.5767,
@@ -639,45 +677,83 @@ class Terrain {
 
     String folder = stationFolder();
 
-    for (int i = 0; i <= 15; i++) {
-      if (i < 2) continue; // skip too close
-      if (i > 10) continue; // skip too far
+    int totalTiles = 10 - 2 + 1; // the real i=2..10 range actually worked below, not the full 0..15 loop
+    int done = 0;
+    float printed_Progress = 0;
 
-      float widthMeters = 0.05 * ratios[i];
-      String the_target = folder + "/ELEV_" + nf(int(widthMeters), 7) + ".jpg";
-      File dir = new File(the_target);
-      if (dir.isFile()) continue;
+    // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
+    // (importObj.pde, showImportProgress) - a plain single-threaded loop,
+    // here over a fixed set of zoom-ring tile network downloads instead
+    // of file lines/entities, on the calling thread, so the only way to
+    // show progress during it is this same manual throttle-and-paint
+    // trick.
+    ProgressWindow terrainTextureProgressWindow = (showTerrainTextureDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nDownloading Terrain Texture") : null;
+    if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.setVisible(true);
 
-      double[] bbox = satelliteBBoxForWidth(widthMeters);
-      String esri_link = "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export"
-        + "?bbox=" + nfDot((float) bbox[0], 0, 6) + "," + nfDot((float) bbox[1], 0, 6) + "," + nfDot((float) bbox[2], 0, 6) + "," + nfDot((float) bbox[3], 0, 6)
-        + "&bboxSR=4326&imageSR=4326&size=640,640&format=jpg&f=image";
-      println("Try downloading: " + esri_link);
-      try {
-        saveBytes(the_target, loadBytes(esri_link));
-        appendTerrainReference("textures.md", the_target, "Esri World Imagery", esri_link);
-      }
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", esri_link);
+    try {
+      for (int i = 0; i <= 15; i++) {
+        if (i < 2) continue; // skip too close
+        if (i > 10) continue; // skip too far
 
-        // Fallback: Google Static Maps now requires a billed API key (free tier retired).
-        // Only attempted if GOOGLE_STATIC_MAPS_API_KEY was set via .env.
-        if (!GOOGLE_STATIC_MAPS_API_KEY.equals("")) {
-          String google_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nfDot(STATION.getLatitude(), 0, 5) + "," + nfDot(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
-          println("Try downloading (fallback): " + google_link); // don't show the API_KEY
-          try {
-            saveBytes(the_target, loadBytes(google_link + "&key=" + GOOGLE_STATIC_MAPS_API_KEY));
-            appendTerrainReference("textures.md", the_target, "Google Static Maps (fallback)", google_link); // link only, no API_KEY
+        if (control != USER_AUTO) {
+          float Progress = 100 * done / float(totalTiles);
+          int delta = (int) floor(Progress - printed_Progress);
+          if (delta >= 1) {
+            StringBuilder barBuffer = new StringBuilder();
+            for (int c = 0; c < delta; c++) barBuffer.append('█');
+            print(barBuffer.toString());
+            printed_Progress = floor(Progress);
+            if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.updateFraction(Progress / 100.0f);
           }
-          catch (Exception e2) {
-            println("LINK NOT AVAILABLE (fallback):", google_link); // don't show the API_KEY
+        }
+        done += 1;
+
+        float widthMeters = 0.05 * ratios[i];
+        String the_target = folder + "/ELEV_" + nf(int(widthMeters), 7) + ".jpg";
+        File dir = new File(the_target);
+        if (dir.isFile()) continue;
+
+        double[] bbox = satelliteBBoxForWidth(widthMeters);
+        String esri_link = "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export"
+          + "?bbox=" + nfDot((float) bbox[0], 0, 6) + "," + nfDot((float) bbox[1], 0, 6) + "," + nfDot((float) bbox[2], 0, 6) + "," + nfDot((float) bbox[3], 0, 6)
+          + "&bboxSR=4326&imageSR=4326&size=640,640&format=jpg&f=image";
+        println("Try downloading: " + esri_link);
+        try {
+          saveBytes(the_target, loadBytes(esri_link));
+          appendTerrainReference("textures.md", the_target, "Esri World Imagery", esri_link);
+        }
+        catch (Exception e) {
+          println("LINK NOT AVAILABLE:", esri_link);
+
+          // Fallback: Google Static Maps now requires a billed API key (free tier retired).
+          // Only attempted if GOOGLE_STATIC_MAPS_API_KEY was set via .env.
+          if (!GOOGLE_STATIC_MAPS_API_KEY.equals("")) {
+            String google_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nfDot(STATION.getLatitude(), 0, 5) + "," + nfDot(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
+            println("Try downloading (fallback): " + google_link); // don't show the API_KEY
+            try {
+              saveBytes(the_target, loadBytes(google_link + "&key=" + GOOGLE_STATIC_MAPS_API_KEY));
+              appendTerrainReference("textures.md", the_target, "Google Static Maps (fallback)", google_link); // link only, no API_KEY
+            }
+            catch (Exception e2) {
+              println("LINK NOT AVAILABLE (fallback):", google_link); // don't show the API_KEY
+            }
           }
         }
       }
+    } finally {
+      if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.dispose();
     }
+
+    int remaining = (int) floor(100 - printed_Progress);
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < remaining; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    println();
 
     this.loadTexture = true;
     this.update_textures();
+
+    println("Terrain Texture downloaded.");
 
     showArrowCursor();
   }
