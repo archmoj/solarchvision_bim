@@ -158,42 +158,80 @@ class Tropo3D {
   void download_images () {
     showWaitCursor();
 
+    println("\nLoading Toroposphere. Please wait...");
+
     int LocationTimeZone = getLocationTimeZone();
     DateTimeUTC dt = currentUTC();
 
-    for (int i = 0; i < TROPO_timeSteps; i++) {
-      if (WMS_type == DataType.SATELLITE_GOES) {
-        advanceHourBackward(dt);
-      } else {
-        advanceHourForward(dt);
-      }
+    // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
+    // (importObj.pde, showImportProgress) - a plain single-threaded loop,
+    // here over TROPO_timeSteps (24) network downloads instead of file
+    // lines/entities, on the calling thread, so the only way to show
+    // progress during it is this same manual throttle-and-paint trick.
+    ProgressWindow tropoProgressWindow = (showTropoDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nLoading Toroposphere") : null;
+    if (tropoProgressWindow != null) tropoProgressWindow.setVisible(true);
 
-      String parameterStamp = buildParameterStamp();
-      String domainStamp = buildDomainStamp();
-      computeDownloadBoundaries(i);
+    float printed_Progress = 0;
 
-      String link = buildRequestUrl(domainStamp, parameterStamp, dt, i);
+    try {
+      for (int i = 0; i < TROPO_timeSteps; i++) {
+        if (WMS_type == DataType.SATELLITE_GOES) {
+          advanceHourBackward(dt);
+        } else {
+          advanceHourForward(dt);
+        }
 
-      this.Map[i] = createImage(2, 2, RGB); // empty and small, until (if) the download succeeds
-
-      String filename = buildLocalFilename(i, LocationTimeZone, dt);
-      String target = Folder_GEOMET + "/" + filename;
-
-      File dir = new File(target);
-      if (!dir.isFile()) {
-        boolean downloaded = tryDownload(target, link);
-        if (downloaded) {
-          if (parameterStamp.equals("_NT&STYLES=CLOUD")) {
-            recolorCloudLayer(target);
-          }
-          if (WMS_type == DataType.SATELLITE_GOES) {
-            recolorSatelliteVisibility(target);
+        if (control != USER_AUTO) {
+          float Progress = 100 * i / float(TROPO_timeSteps);
+          int delta = (int) floor(Progress - printed_Progress);
+          if (delta >= 1) {
+            StringBuilder barBuffer = new StringBuilder();
+            for (int c = 0; c < delta; c++) barBuffer.append('█');
+            print(barBuffer.toString());
+            printed_Progress = floor(Progress);
+            if (tropoProgressWindow != null) tropoProgressWindow.updateFraction(Progress / 100.0f);
           }
         }
+
+        String parameterStamp = buildParameterStamp();
+        String domainStamp = buildDomainStamp();
+        computeDownloadBoundaries(i);
+
+        String link = buildRequestUrl(domainStamp, parameterStamp, dt, i);
+
+        this.Map[i] = createImage(2, 2, RGB); // empty and small, until (if) the download succeeds
+
+        String filename = buildLocalFilename(i, LocationTimeZone, dt);
+        String target = Folder_GEOMET + "/" + filename;
+
+        File dir = new File(target);
+        if (!dir.isFile()) {
+          boolean downloaded = tryDownload(target, link);
+          if (downloaded) {
+            if (parameterStamp.equals("_NT&STYLES=CLOUD")) {
+              recolorCloudLayer(target);
+            }
+            if (WMS_type == DataType.SATELLITE_GOES) {
+              recolorSatelliteVisibility(target);
+            }
+          }
+        } else {
+          println("\nAlready downloaded: " + target);
+        }
       }
+    } finally {
+      if (tropoProgressWindow != null) tropoProgressWindow.dispose();
     }
 
+    int remaining = (int) floor(100 - printed_Progress);
+    StringBuilder barBuffer = new StringBuilder();
+    for (int c = 0; c < remaining; c++) barBuffer.append('█');
+    print(barBuffer.toString());
+    println();
+
     this.load_images();
+
+    println("Toroposphere loaded.");
 
     showArrowCursor();
   }
