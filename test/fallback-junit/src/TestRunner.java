@@ -46,7 +46,7 @@ public class TestRunner {
       for (String f : failures) System.out.println("  " + f);
     }
 
-    // Matters for scripted/CI use (run_tests_fallback.sh relies on this
+    // Matters for scripted/CI use (fallback_tests.sh relies on this
     // to fail the build) - without it, the process always exits 0 even
     // when tests failed.
     if ((totalFailed > 0) || (totalErrored > 0)) {

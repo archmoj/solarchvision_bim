@@ -67,7 +67,7 @@ actually compiling and running the whole suite against it. See
 `test/fallback-junit/README.md` for what it does and doesn't cover, then:
 
 ```sh
-./test/run_tests_fallback.sh
+./test/fallback_tests.sh
 ```
 
 which finds or installs Processing itself (no step 1 needed either) and

@@ -15,7 +15,7 @@
 # https://github.com/processing/processing4/releases.
 #
 # Usage:
-#   ./test/run_tests_fallback.sh
+#   ./test/fallback_tests.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 

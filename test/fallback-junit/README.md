@@ -45,14 +45,14 @@ test/fallback-junit/
 
 ## Using it
 
-`test/run_tests_fallback.sh` (next to `run_tests.sh`) runs the whole thing
+`test/fallback_tests.sh` (next to `run_tests.sh`) runs the whole thing
 end to end - find or install Processing, build the sketch, compile this
 stub, compile `test/*.java` against it, compile `TestRunner`, run it. See
 that script's own header for exactly what it does and its environment
 variables. In short:
 
 ```sh
-./test/run_tests_fallback.sh
+./test/fallback_tests.sh
 ```
 
 If you're doing this by hand instead (e.g. adapting the approach rather
@@ -65,7 +65,7 @@ than running the script as-is), the shape is:
    often reachable even when Maven Central isn't, since release assets
    are served from `release-assets.githubusercontent.com` - that's a
    normal download, no special handling needed, and it's what
-   `run_tests_fallback.sh` does automatically if `PROCESSING_HOME` isn't
+   `fallback_tests.sh` does automatically if `PROCESSING_HOME` isn't
    already set to a working install.
 2. Compile everything under `src/` here into a `classes/` directory.
 3. Compile `test/*.java` with that `classes/` directory (plus
