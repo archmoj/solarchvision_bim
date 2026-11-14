@@ -574,7 +574,6 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
 
   float Progress = 0;
   float printed_Progress = 0;
-  StringBuilder barBuffer = new StringBuilder();
   float totalSurfaces = max(surfaces.size(), 1);
 
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting gbXML") : null;
@@ -585,11 +584,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
       Progress = 100 * s / totalSurfaces;
       int delta = (int) floor(Progress - printed_Progress);
       if (delta >= 1) {
-        barBuffer.setLength(0);
-        for (int c = 0; c < delta; c++) {
-          barBuffer.append('█');
-        }
-        print(barBuffer.toString());
+        printProgressBarChunk(delta);
         printed_Progress = floor(Progress);
         if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
       }
@@ -675,11 +670,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   }
 
   int remaining = (int) floor(100 - printed_Progress);
-  barBuffer.setLength(0);
-  for (int c = 0; c < remaining; c++) {
-    barBuffer.append('█');
-  }
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   String summary = "gbXML import complete: " + gbxmlImportSurfaceCount + " surface(s), " + gbxmlImportOpeningCount + " opening(s) imported (" + gbxmlImportFaceCount + " face(s) total)";

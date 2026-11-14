@@ -157,9 +157,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   int remaining = (int) floor(100 - ply_printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   isImportingInProgress = false;
@@ -178,9 +176,7 @@ void plyReportProgress () {
   float Progress = (ply_totalInstances > 0) ? (100 * ply_processedInstances / (float) ply_totalInstances) : 100;
   int delta = (int) floor(Progress - ply_printedProgress);
   if (delta >= 1) {
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < delta; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(delta);
     ply_printedProgress = floor(Progress);
     if (ply_progressWindow != null) ply_progressWindow.updateFraction(Progress / 100.0f);
   }

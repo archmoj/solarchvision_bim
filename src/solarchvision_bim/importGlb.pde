@@ -226,9 +226,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   int remaining = (int) floor(100 - glb_printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   isImportingInProgress = false;
@@ -236,7 +234,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
 }
 
 // One console/ProgressWindow update, called once per mesh processed -
-// same delta >= 1 throttle and '█' console bar importObj.pde's
+// same delta >= 1 throttle and printProgressBarChunk() console bar importObj.pde's
 // own per-line loop already uses, just keyed off glb_meshesProcessed/
 // glb_meshCount (a mesh, not a line, is the natural unit of progress for
 // a GLB file) instead.
@@ -246,9 +244,7 @@ void glbReportProgress () {
   float Progress = (glb_meshCount > 0) ? (100 * glb_meshesProcessed / float(glb_meshCount)) : 100;
   int delta = (int) floor(Progress - glb_printedProgress);
   if (delta >= 1) {
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < delta; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(delta);
     glb_printedProgress = floor(Progress);
     if (glb_progressWindow != null) glb_progressWindow.updateFraction(Progress / 100.0f);
   }

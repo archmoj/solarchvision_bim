@@ -366,11 +366,7 @@ void preBakeViewport () {
           int done = ++completedChunks[0];
           int targetBlocks = floor(100.0f * done / numChunks);
           if (targetBlocks > printedBlocks[0]) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = printedBlocks[0]; c < targetBlocks; c++) {
-              barBuffer.append('█');
-            }
-            print(barBuffer.toString()); // one print() call instead of `delta` calls
+            printProgressBarChunk(targetBlocks - printedBlocks[0]); // one print() call instead of `delta` calls
             printedBlocks[0] = targetBlocks;
           }
         }

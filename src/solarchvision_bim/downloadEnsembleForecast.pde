@@ -34,9 +34,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
         float Progress = 100 * f / float(allLayers.length);
         int delta = (int) floor(Progress - printed_Progress);
         if (delta >= 1) {
-          StringBuilder barBuffer = new StringBuilder();
-          for (int c = 0; c < delta; c++) barBuffer.append('█');
-          print(barBuffer.toString());
+          printProgressBarChunk(delta);
           printed_Progress = floor(Progress);
           if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.updateFraction(Progress / 100.0f);
         }
@@ -79,9 +77,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
   }
 
   int remaining = (int) floor(100 - printed_Progress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   if (new_files_downloaded) {

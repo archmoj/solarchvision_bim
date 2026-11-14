@@ -510,9 +510,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
           float Progress = 100 * max(0, k - effectiveStart) / (float) effectiveTotal;
           int delta = (int) floor(Progress - printedProgress);
           if (delta >= 1) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = 0; c < delta; c++) barBuffer.append('█');
-            print(barBuffer.toString());
+            printProgressBarChunk(delta);
             printedProgress = floor(Progress);
             if (lasProgressWindow != null) lasProgressWindow.updateFraction(Progress / 100.0f);
           }
@@ -620,9 +618,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     }
 
     int remaining = (int) floor(100 - printedProgress);
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < remaining; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(remaining);
     println();
 
     if (lasImportMeshPointCloud) {
@@ -692,7 +688,7 @@ int lasCreatePoint (float x, float y, float z) {
 // meshPointCloud_delaunayXY() there and meshPointCloud_gridXY() in
 // meshPointCloudGrid.pde) that throttles and reports progress the exact
 // same way the point-reading loop in import_objects_LAS() above already
-// does (a console '█' bar, at most once per whole-percent step, plus an
+// does (a console printProgressBarChunk() bar, at most once per whole-percent step, plus an
 // optional ProgressWindow) - a small class (holding its own
 // printedProgress) rather than a lambda specifically so that per-call
 // state has somewhere plain to live, matching the shape MeshTriangle/
@@ -712,9 +708,7 @@ class LasMeshProgressReporter implements MeshPointCloudProgressListener {
     float Progress = 100 * pointsInserted / (float) totalPoints;
     int delta = (int) floor(Progress - printedProgress);
     if (delta >= 1) {
-      StringBuilder barBuffer = new StringBuilder();
-      for (int c = 0; c < delta; c++) barBuffer.append('█');
-      print(barBuffer.toString());
+      printProgressBarChunk(delta);
       printedProgress = floor(Progress);
       if (window != null) window.updateFraction(Progress / 100.0f);
     }
@@ -794,9 +788,7 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY, float[
   }
 
   int remaining = (int) floor(100 - reporter.printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   for (int[] face : faces) {
@@ -840,9 +832,7 @@ void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
   }
 
   int remaining = (int) floor(100 - reporter.printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   lasCreateBoxGridFaces(cells);

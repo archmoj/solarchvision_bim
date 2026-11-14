@@ -54,6 +54,41 @@ boolean canShowProgressWindow () {
   return !java.awt.GraphicsEnvironment.isHeadless();
 }
 
+// U+2588 FULL BLOCK - the one character every console progress bar in
+// this codebase draws with (the console text bar every "Download .../
+// Load ..." action and importer prints, NOT the ProgressWindow above,
+// which paints its own fill rect and needs no character at all).
+// Centralized here, alongside the rest of the shared progress-bar
+// helpers, so every call site reads PROGRESS_BAR_CHAR instead of
+// repeating the literal - one edit, not a grep-and-replace across every
+// download/import file, if it ever turns out to render as a '?' or a
+// tofu box on some console/font combination instead of a solid block.
+final char PROGRESS_BAR_CHAR = '█';
+
+// Prints `count` more PROGRESS_BAR_CHAR characters, as one print() call
+// instead of `count` separate ones - the exact throttle-and-print shape
+// every caller above already built by hand, both for its own delta >= 1
+// throttled steps and for its own final "flush whatever's left" call
+// once the loop is done. A fresh StringBuilder each call (rather than one
+// kept alive across a whole function, the way a few callers used to) -
+// this is only ever called a few dozen times total per action (once per
+// whole percentage point, not once per loop iteration), so the extra
+// allocation is immaterial next to the network/file/compute work each
+// caller is actually timing.
+void printProgressBarChunk (int count) {
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < count; c++) barBuffer.append(PROGRESS_BAR_CHAR);
+  print(barBuffer.toString());
+}
+
+// Moved from uiConsoleBar.pde - this is a shared progress-bar helper,
+// not part of that file's own UI_consoleBar class or its command-bar
+// drawing code.
+void progressBarHeader () {
+  println("       10%       20%       30%       40%       50%       60%       70%       80%       90%       100%");
+  println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
+}
+
 class ProgressWindow extends java.awt.Frame {
   volatile float fraction = 0;
   String label;

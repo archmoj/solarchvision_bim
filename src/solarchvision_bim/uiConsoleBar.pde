@@ -508,10 +508,8 @@ void printError (String txt) {
   }
 }
 
-void progressBarHeader () {
-  println("       10%       20%       30%       40%       50%       60%       70%       80%       90%       100%");
-  println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
-}
+// progressBarHeader() moved to progressWindow.pde - it's a shared
+// progress-bar helper, not part of this file's own UI_consoleBar class.
 
 String asciiArt = ("""
    _______  _______  ___      _______  ______   _______  __   __  __   __ _______ _______ _______ _______  __   __ 

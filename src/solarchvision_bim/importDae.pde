@@ -179,9 +179,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   int remaining = (int) floor(100 - dae_printedProgress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   isImportingInProgress = false;
@@ -256,9 +254,7 @@ void daeReportProgress () {
   float Progress = (dae_totalGeometryInstances > 0) ? (100 * dae_processedGeometryInstances / (float) dae_totalGeometryInstances) : 100;
   int delta = (int) floor(Progress - dae_printedProgress);
   if (delta >= 1) {
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < delta; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(delta);
     dae_printedProgress = floor(Progress);
     if (dae_progressWindow != null) dae_progressWindow.updateFraction(Progress / 100.0f);
   }

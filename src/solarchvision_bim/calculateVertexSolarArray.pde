@@ -106,7 +106,6 @@ void calculate_VertexSolar_array () {
 
   float Progress = 0;
   float printed_Progress = 0;
-  StringBuilder barBuffer = new StringBuilder();
 
   // showSkinPotentialProgress (globals.pde's own comment on the name) -
   // same ProgressWindow (progressWindow.pde) as "Prebaking", just a
@@ -127,11 +126,7 @@ void calculate_VertexSolar_array () {
         Progress = 100 * f / float(allFaces.nodes.length);
         float delta = floor(Progress - printed_Progress);
         if (delta >= 1) {
-          barBuffer.setLength(0);
-          for (int c = 0; c < delta; c++) {
-            barBuffer.append('█');
-          }
-          print(barBuffer.toString()); // one print() call instead of `delta` calls
+          printProgressBarChunk((int) delta); // one print() call instead of `delta` calls
           printed_Progress = floor(Progress);
           if (progressWindow != null) progressWindow.updateFraction(Progress / 100.0f);
         }
@@ -344,9 +339,7 @@ void calculate_VertexSolar_array () {
     VertexSolar_XYZ[idx] = vertexXYZ_list.get(idx);
   }
 
-  for(int c = 0; c < floor(100 - printed_Progress); c++) {
-    print("█");
-  }
+  printProgressBarChunk((int) floor(100 - printed_Progress));
 
   println();
 

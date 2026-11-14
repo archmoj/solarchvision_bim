@@ -185,9 +185,7 @@ class Tropo3D {
           float Progress = 100 * i / float(TROPO_timeSteps);
           int delta = (int) floor(Progress - printed_Progress);
           if (delta >= 1) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = 0; c < delta; c++) barBuffer.append('█');
-            print(barBuffer.toString());
+            printProgressBarChunk(delta);
             printed_Progress = floor(Progress);
             if (tropoProgressWindow != null) tropoProgressWindow.updateFraction(Progress / 100.0f);
           }
@@ -224,9 +222,7 @@ class Tropo3D {
     }
 
     int remaining = (int) floor(100 - printed_Progress);
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < remaining; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(remaining);
     println();
 
     this.load_images();

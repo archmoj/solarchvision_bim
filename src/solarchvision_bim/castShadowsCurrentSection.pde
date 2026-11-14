@@ -91,7 +91,6 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   int totalFrames = (totalDateAngles * totalHourAngles * 2) + (2 * DiffuseVectors.length);
   int framesDone = 0;
   float printed_Progress = 0;
-  StringBuilder barBuffer = new StringBuilder();
 
   progressBarHeader();
 
@@ -165,11 +164,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
               float Progress = 100.0 * framesDone / totalFrames;
               int delta = (int) floor(Progress - printed_Progress);
               if (delta >= 1) {
-                barBuffer.setLength(0);
-                for (int c = 0; c < delta; c++) {
-                  barBuffer.append('█');
-                }
-                print(barBuffer.toString()); // one print() call instead of `delta` calls
+                printProgressBarChunk(delta); // one print() call instead of `delta` calls
                 printed_Progress = floor(Progress);
                 if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.updateFraction(Progress / 100.0f);
               }
@@ -233,11 +228,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
             float Progress = 100.0 * framesDone / totalFrames;
             int delta = (int) floor(Progress - printed_Progress);
             if (delta >= 1) {
-              barBuffer.setLength(0);
-              for (int c = 0; c < delta; c++) {
-                barBuffer.append('█');
-              }
-              print(barBuffer.toString()); // one print() call instead of `delta` calls
+              printProgressBarChunk(delta); // one print() call instead of `delta` calls
               printed_Progress = floor(Progress);
               if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.updateFraction(Progress / 100.0f);
             }
@@ -291,11 +282,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   // character or two short - same wrap-up shape as import_objects_OBJ()'s
   // own identical lines (importObj.pde).
   int remaining = (int) floor(100 - printed_Progress);
-  barBuffer.setLength(0);
-  for (int c = 0; c < remaining; c++) {
-    barBuffer.append('█');
-  }
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   showArrowCursor();

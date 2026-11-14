@@ -449,9 +449,7 @@ class Terrain {
           float Progress = 100 * i / float(this.rowCount);
           int delta = (int) floor(Progress - printed_Progress);
           if (delta >= 1) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = 0; c < delta; c++) barBuffer.append('█');
-            print(barBuffer.toString());
+            printProgressBarChunk(delta);
             printed_Progress = floor(Progress);
             if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.updateFraction(Progress / 100.0f);
           }
@@ -478,9 +476,7 @@ class Terrain {
     }
 
     int remaining = (int) floor(100 - printed_Progress);
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < remaining; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(remaining);
     println();
 
     this.loadMesh = true;
@@ -699,9 +695,7 @@ class Terrain {
           float Progress = 100 * done / float(totalTiles);
           int delta = (int) floor(Progress - printed_Progress);
           if (delta >= 1) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = 0; c < delta; c++) barBuffer.append('█');
-            print(barBuffer.toString());
+            printProgressBarChunk(delta);
             printed_Progress = floor(Progress);
             if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.updateFraction(Progress / 100.0f);
           }
@@ -745,9 +739,7 @@ class Terrain {
     }
 
     int remaining = (int) floor(100 - printed_Progress);
-    StringBuilder barBuffer = new StringBuilder();
-    for (int c = 0; c < remaining; c++) barBuffer.append('█');
-    print(barBuffer.toString());
+    printProgressBarChunk(remaining);
     println();
 
     this.loadTexture = true;

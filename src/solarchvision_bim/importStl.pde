@@ -141,9 +141,7 @@ void stlImportBinary (byte[] raw) {
         float Progress = 100 * t / float(triangleCount);
         int delta = (int) floor(Progress - printed_Progress);
         if (delta >= 1) {
-          StringBuilder barBuffer = new StringBuilder();
-          for (int c = 0; c < delta; c++) barBuffer.append('█');
-          print(barBuffer.toString());
+          printProgressBarChunk(delta);
           printed_Progress = floor(Progress);
           if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
         }
@@ -164,9 +162,7 @@ void stlImportBinary (byte[] raw) {
   }
 
   int remaining = (int) floor(100 - printed_Progress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 }
 
@@ -177,7 +173,6 @@ void stlImportAscii (String FileName) {
   float totalLines = FileALL.length; // computed once, not every iteration - same as importObj.pde's own
   float Progress = 0;
   float printed_Progress = 0;
-  StringBuilder barBuffer = new StringBuilder();
 
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting STL") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
@@ -194,11 +189,7 @@ void stlImportAscii (String FileName) {
         Progress = 100 * f / totalLines;
         int delta = (int) floor(Progress - printed_Progress);
         if (delta >= 1) {
-          barBuffer.setLength(0);
-          for (int c = 0; c < delta; c++) {
-            barBuffer.append('█');
-          }
-          print(barBuffer.toString());
+          printProgressBarChunk(delta);
           printed_Progress = floor(Progress);
           if (importProgressWindow != null) importProgressWindow.updateFraction(Progress / 100.0f);
         }
@@ -243,10 +234,6 @@ void stlImportAscii (String FileName) {
   }
 
   int remaining = (int) floor(100 - printed_Progress);
-  barBuffer.setLength(0);
-  for (int c = 0; c < remaining; c++) {
-    barBuffer.append('█');
-  }
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 }

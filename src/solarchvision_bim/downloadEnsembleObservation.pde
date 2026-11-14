@@ -41,9 +41,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
           float Progress = 100 * done / float(totalSteps);
           int delta = (int) floor(Progress - printed_Progress);
           if (delta >= 1) {
-            StringBuilder barBuffer = new StringBuilder();
-            for (int c = 0; c < delta; c++) barBuffer.append('█');
-            print(barBuffer.toString());
+            printProgressBarChunk(delta);
             printed_Progress = floor(Progress);
             if (ensembleObservationProgressWindow != null) ensembleObservationProgressWindow.updateFraction(Progress / 100.0f);
           }
@@ -82,9 +80,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
   }
 
   int remaining = (int) floor(100 - printed_Progress);
-  StringBuilder barBuffer = new StringBuilder();
-  for (int c = 0; c < remaining; c++) barBuffer.append('█');
-  print(barBuffer.toString());
+  printProgressBarChunk(remaining);
   println();
 
   ensembleObservationShouldLoad = true;
