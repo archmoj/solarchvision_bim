@@ -65,23 +65,23 @@ class ProgressWindow extends java.awt.Frame {
     this.setSize(560, 44); // 2x the original 280 width - same height
     this.setLocationRelativeTo(null); // centers on the default screen
     this.setAlwaysOnTop(true);
-    this.setBackground(new java.awt.Color(240, 240, 240));
+    this.setBackground(new java.awt.Color(223, 223, 223));
   }
 
   void paint (java.awt.Graphics g) {
     int w = this.getWidth();
     int h = this.getHeight();
 
-    g.setColor(new java.awt.Color(230, 230, 230));
-    g.fillRect(0, 0, w, h);
+    g.setColor(new java.awt.Color(191, 191, 191));
+    g.fillRect(5, 5, w - 11, h - 11);
 
     g.setColor(java.awt.Color.BLACK);
     g.drawRect(5, 5, w - 11, h - 11);
 
-    g.setColor(new java.awt.Color(0, 170, 0)); // bold green - every ProgressWindow caller (prebake, skin potential, imports, every "Download .../Load ..." action) shares this one fill color
+    g.setColor(new java.awt.Color(63, 191, 63));
     g.fillRect(6, 6, (int) ((w - 12) * constrain(this.fraction, 0, 1)), h - 12);
 
-    g.setColor(java.awt.Color.BLACK);
+    g.setColor(java.awt.Color.WHITE);
     g.drawString(this.label + ": " + (int) (this.fraction * 100) + "%", 10, h - 16);
   }
 
