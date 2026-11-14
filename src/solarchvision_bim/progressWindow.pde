@@ -81,6 +81,15 @@ void printProgressBarChunk (int count) {
   print(barBuffer.toString());
 }
 
+// Called by a cancellable Download .../Load ... action right before it
+// break/returns out of its own loop on ProgressWindow.cancelRequested -
+// one shared place for this message, same reasoning as every other
+// helper in this file, rather than each caller printing its own slightly
+// different wording.
+void echoCancelProgress () {
+  println("Cancelled by Esc.");
+}
+
 // Moved from uiConsoleBar.pde - this is a shared progress-bar helper,
 // not part of that file's own UI_consoleBar class or its command-bar
 // drawing code.
@@ -91,7 +100,26 @@ void progressBarHeader () {
 
 class ProgressWindow extends java.awt.Frame {
   volatile float fraction = 0;
+  volatile boolean cancelRequested = false;
   String label;
+
+  // A Toolkit-level AWTEventListener, not a per-component KeyListener -
+  // this window never calls requestFocus()/setFocusableWindowState(), so
+  // a plain KeyListener on it would never actually receive anything
+  // unless the main sketch window's own keyboard focus were stolen out
+  // from under the person mid-download/import, which would be a far
+  // bigger surprise than not catching Esc at all. A Toolkit-level
+  // listener sees every key event system-wide regardless of which window
+  // currently has focus, so Esc cancels whether the sketch window or
+  // this overlay (or neither) happens to have it. Scoped to exactly
+  // while THIS window is visible - installed in setVisible(true),
+  // removed again in setVisible(false) and dispose() - so it doesn't
+  // keep listening, or keep this object reachable, once the action that
+  // owns it has finished. Every existing caller's own construct ->
+  // setVisible(true) -> ... -> dispose() lifecycle only ever actually
+  // hits the dispose() removal, not setVisible(false), but both are
+  // handled for whichever one a future caller ends up using.
+  java.awt.event.AWTEventListener escListener = null;
 
   ProgressWindow (String label) {
     super(label);
@@ -102,6 +130,35 @@ class ProgressWindow extends java.awt.Frame {
     this.setAlwaysOnTop(true);
     this.setBackground(new java.awt.Color(223, 223, 223));
     this.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 18)); // was the AWT default (~11-12pt) - bumped up for readability
+  }
+
+  void setVisible (boolean show) {
+    super.setVisible(show);
+    if (show) {
+      if (this.escListener == null) {
+        this.escListener = (java.awt.AWTEvent e) -> {
+          java.awt.event.KeyEvent ke = (java.awt.event.KeyEvent) e;
+          if ((ke.getID() == java.awt.event.KeyEvent.KEY_PRESSED) && (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE)) {
+            this.cancelRequested = true;
+          }
+        };
+        java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(this.escListener, java.awt.AWTEvent.KEY_EVENT_MASK);
+      }
+    } else {
+      this.removeEscListener();
+    }
+  }
+
+  void removeEscListener () {
+    if (this.escListener != null) {
+      java.awt.Toolkit.getDefaultToolkit().removeAWTEventListener(this.escListener);
+      this.escListener = null;
+    }
+  }
+
+  void dispose () {
+    this.removeEscListener();
+    super.dispose();
   }
 
   void paint (java.awt.Graphics g) {

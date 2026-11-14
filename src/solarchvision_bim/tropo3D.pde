@@ -172,9 +172,20 @@ class Tropo3D {
     if (tropoProgressWindow != null) tropoProgressWindow.setVisible(true);
 
     float printed_Progress = 0;
+    boolean cancelled = false;
 
     try {
       for (int i = 0; i < TROPO_timeSteps; i++) {
+        // Esc, caught by tropoProgressWindow's own Toolkit-level listener
+        // (progressWindow.pde) regardless of which window has focus -
+        // checked before this iteration's own network request, not
+        // after.
+        if ((tropoProgressWindow != null) && tropoProgressWindow.cancelRequested) {
+          echoCancelProgress();
+          cancelled = true;
+          break;
+        }
+
         if (WMS_type == DataType.SATELLITE_GOES) {
           advanceHourBackward(dt);
         } else {
@@ -221,13 +232,17 @@ class Tropo3D {
       if (tropoProgressWindow != null) tropoProgressWindow.dispose();
     }
 
-    int remaining = (int) floor(100 - printed_Progress);
-    printProgressBarChunk(remaining);
-    println();
+    if (!cancelled) {
+      int remaining = (int) floor(100 - printed_Progress);
+      printProgressBarChunk(remaining);
+      println();
+    }
 
+    // Still loads whatever slots were actually downloaded before Esc -
+    // same reasoning as every other cancellable download here.
     this.load_images();
 
-    println("Toroposphere loaded.");
+    if (!cancelled) println("Toroposphere loaded.");
 
     showArrowCursor();
   }

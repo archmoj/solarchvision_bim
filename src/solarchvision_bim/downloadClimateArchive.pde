@@ -20,6 +20,7 @@ void downloadClimateArchive () {
     int totalMonths = (1 + climateArchiveEnd - climateArchiveStart) * 12;
     int done = 0;
     float printed_Progress = 0;
+    boolean cancelled = false;
 
     // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
     // (importObj.pde, showImportProgress) - a plain single-threaded nested
@@ -30,8 +31,24 @@ void downloadClimateArchive () {
     if (climateArchiveProgressWindow != null) climateArchiveProgressWindow.setVisible(true);
 
     try {
+      downloadClimateArchiveLoop:
       for (int k = 0; k < (1 + climateArchiveEnd - climateArchiveStart); k++) {
         for (int m = 0; m < 12; m++) {
+
+          // Esc, caught by climateArchiveProgressWindow's own Toolkit-
+          // level listener (progressWindow.pde) regardless of which
+          // window has focus - checked before this iteration's own
+          // network request, not after, so cancelling doesn't cost one
+          // more download past the point Esc was pressed. A labeled
+          // break (not a plain one) since this is the inner of two
+          // nested loops - a plain break would only exit the month
+          // loop, leaving the year loop to start right back into the
+          // next k with nothing left to stop it.
+          if ((climateArchiveProgressWindow != null) && climateArchiveProgressWindow.cancelRequested) {
+            echoCancelProgress();
+            cancelled = true;
+            break downloadClimateArchiveLoop;
+          }
 
           if (control != USER_AUTO) {
             float Progress = 100 * done / float(totalMonths);
@@ -77,13 +94,18 @@ void downloadClimateArchive () {
       if (climateArchiveProgressWindow != null) climateArchiveProgressWindow.dispose();
     }
 
-    int remaining = (int) floor(100 - printed_Progress);
-    printProgressBarChunk(remaining);
-    println();
+    if (!cancelled) {
+      int remaining = (int) floor(100 - printed_Progress);
+      printProgressBarChunk(remaining);
+      println();
+    }
 
+    // Still reflects whatever was actually downloaded before Esc, same
+    // as a completed run - a cancelled download isn't a failed one, it
+    // just stopped early.
     climateArchiveShouldLoad = true;
     updateClimateArchive();
 
-    println("Climate Archive downloaded.");
+    if (!cancelled) println("Climate Archive downloaded.");
   }
 }

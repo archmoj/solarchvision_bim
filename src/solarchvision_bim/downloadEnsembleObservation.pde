@@ -14,6 +14,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
   int totalSteps = ensembleObservationMaxDays * 24 * nearestWeatherStationCount;
   int done = 0;
   float printed_Progress = 0;
+  boolean cancelled = false;
 
   // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
   // (importObj.pde, showImportProgress) - a plain single-threaded nested
@@ -25,6 +26,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
   if (ensembleObservationProgressWindow != null) ensembleObservationProgressWindow.setVisible(true);
 
   try {
+    downloadEnsembleObservationLoop:
     for (int j_for = 0; j_for < ensembleObservationMaxDays * 24; j_for++) {
       timeNow.add(Calendar.HOUR_OF_DAY, -1);
 
@@ -36,6 +38,20 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
       String dayStr = nf(YEAR, 4) + nf(MONTH, 2) + nf(DAY, 2);
 
       for (int q = 0; q < nearestWeatherStationCount; q++) {
+
+        // Esc, caught by ensembleObservationProgressWindow's own
+        // Toolkit-level listener (progressWindow.pde) regardless of
+        // which window has focus - checked before this iteration's own
+        // network request, not after. A labeled break (not a plain one)
+        // since this is the inner of two nested loops - a plain break
+        // would only exit the per-station loop, leaving the per-hour
+        // loop to start right back into the next hour with nothing left
+        // to stop it.
+        if ((ensembleObservationProgressWindow != null) && ensembleObservationProgressWindow.cancelRequested) {
+          echoCancelProgress();
+          cancelled = true;
+          break downloadEnsembleObservationLoop;
+        }
 
         if (control != USER_AUTO) {
           float Progress = 100 * done / float(totalSteps);
@@ -79,12 +95,14 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
     if (ensembleObservationProgressWindow != null) ensembleObservationProgressWindow.dispose();
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 
   ensembleObservationShouldLoad = true;
   update_ensembleObservation(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
 
-  println("Ensemble Observation downloaded.");
+  if (!cancelled) println("Ensemble Observation downloaded.");
 }

@@ -434,6 +434,7 @@ class Terrain {
     String folder = stationFolder();
 
     float printed_Progress = 0;
+    boolean cancelled = false;
 
     // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
     // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -445,6 +446,16 @@ class Terrain {
 
     try {
       for (int i = 0; i < this.rowCount; i++) {
+        // Esc, caught by terrainMeshProgressWindow's own Toolkit-level
+        // listener (progressWindow.pde) regardless of which window has
+        // focus - checked before this row's own network request, not
+        // after.
+        if ((terrainMeshProgressWindow != null) && terrainMeshProgressWindow.cancelRequested) {
+          echoCancelProgress();
+          cancelled = true;
+          break;
+        }
+
         if (control != USER_AUTO) {
           float Progress = 100 * i / float(this.rowCount);
           int delta = (int) floor(Progress - printed_Progress);
@@ -475,14 +486,16 @@ class Terrain {
       if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.dispose();
     }
 
-    int remaining = (int) floor(100 - printed_Progress);
-    printProgressBarChunk(remaining);
-    println();
+    if (!cancelled) {
+      int remaining = (int) floor(100 - printed_Progress);
+      printProgressBarChunk(remaining);
+      println();
+    }
 
     this.loadMesh = true;
     this.update_mesh();
 
-    println("Terrain Mesh downloaded.");
+    if (!cancelled) println("Terrain Mesh downloaded.");
 
     showArrowCursor();
   }
@@ -676,6 +689,7 @@ class Terrain {
     int totalTiles = 10 - 2 + 1; // the real i=2..10 range actually worked below, not the full 0..15 loop
     int done = 0;
     float printed_Progress = 0;
+    boolean cancelled = false;
 
     // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
     // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -688,6 +702,17 @@ class Terrain {
 
     try {
       for (int i = 0; i <= 15; i++) {
+        // Esc, caught by terrainTextureProgressWindow's own Toolkit-level
+        // listener (progressWindow.pde) regardless of which window has
+        // focus - checked before this tile's own network request, not
+        // after, and ahead of the skip-range continues below so it isn't
+        // delayed by however many of those happen to run first.
+        if ((terrainTextureProgressWindow != null) && terrainTextureProgressWindow.cancelRequested) {
+          echoCancelProgress();
+          cancelled = true;
+          break;
+        }
+
         if (i < 2) continue; // skip too close
         if (i > 10) continue; // skip too far
 
@@ -738,14 +763,16 @@ class Terrain {
       if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.dispose();
     }
 
-    int remaining = (int) floor(100 - printed_Progress);
-    printProgressBarChunk(remaining);
-    println();
+    if (!cancelled) {
+      int remaining = (int) floor(100 - printed_Progress);
+      printProgressBarChunk(remaining);
+      println();
+    }
 
     this.loadTexture = true;
     this.update_textures();
 
-    println("Terrain Texture downloaded.");
+    if (!cancelled) println("Terrain Texture downloaded.");
 
     showArrowCursor();
   }

@@ -19,6 +19,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
   boolean new_files_downloaded = false;
 
   float printed_Progress = 0;
+  boolean cancelled = false;
 
   // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
   // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -30,6 +31,17 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
 
   try {
     for (int f = 0; f < allLayers.length; f++) {
+      // Esc, caught by ensembleForecastProgressWindow's own Toolkit-level
+      // listener (progressWindow.pde) regardless of which window has
+      // focus - checked before this iteration's own network request, not
+      // after, so cancelling doesn't cost one more download past the
+      // point Esc was pressed.
+      if ((ensembleForecastProgressWindow != null) && ensembleForecastProgressWindow.cancelRequested) {
+        echoCancelProgress();
+        cancelled = true;
+        break;
+      }
+
       if (control != USER_AUTO) {
         float Progress = 100 * f / float(allLayers.length);
         int delta = (int) floor(Progress - printed_Progress);
@@ -76,9 +88,11 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
     if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.dispose();
   }
 
-  int remaining = (int) floor(100 - printed_Progress);
-  printProgressBarChunk(remaining);
-  println();
+  if (!cancelled) {
+    int remaining = (int) floor(100 - printed_Progress);
+    printProgressBarChunk(remaining);
+    println();
+  }
 
   if (new_files_downloaded) {
 
@@ -118,5 +132,5 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   }
 
-  println("Ensemble Forecast downloaded.");
+  if (!cancelled) println("Ensemble Forecast downloaded.");
 }
