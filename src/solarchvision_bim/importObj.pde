@@ -51,7 +51,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   progressBarHeader();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
-  // (preBakeViewport3D.pde), updated inline alongside the existing console
+  // (progressWindow.pde), updated inline alongside the existing console
   // bar's own delta >= 1 throttle, same shape as calculate_VertexSolar_
   // array.pde's own. Wrapped in try/finally (this loop is short enough
   // that doing so safely doesn't mean re-indenting hundreds of lines,

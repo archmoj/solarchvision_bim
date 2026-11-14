@@ -96,7 +96,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   progressBarHeader();
 
   // showSectionBakeProgress (globalVariables.pde's own comment) -
-  // ProgressWindow (preBakeViewport3D.pde), updated inline alongside the
+  // ProgressWindow (progressWindow.pde), updated inline alongside the
   // console bar's own delta >= 1 throttle just below, same shape as
   // import_objects_OBJ()'s own (importObj.pde) - this loop, like that
   // one, is plain single-threaded iteration on the calling thread

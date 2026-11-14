@@ -1050,7 +1050,7 @@ class SolarImpacts {
           // bars elsewhere in this codebase (e.g. calculate_
           // VertexSolarArray.pde's own) - RES1*RES2 can be well over a
           // million pixels, and updateFraction() now paints synchronously
-          // (ProgressWindow's own comment, preBakeViewport3D.pde), so
+          // (ProgressWindow's own comment, progressWindow.pde), so
           // calling it every single pixel, not just every whole percent,
           // would add real, avoidable overhead to this loop.
           int calcImpactSummaryLastDrawnPercent = -1;

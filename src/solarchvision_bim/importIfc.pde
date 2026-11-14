@@ -2794,7 +2794,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int totalF = ents.size() + productIds.size();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
-  // (preBakeViewport3D.pde), one instance spanning BOTH passes below
+  // (progressWindow.pde), one instance spanning BOTH passes below
   // (the entity scan, then the product loop): f/totalF already counts
   // continuously across both (f keeps incrementing, never reset, between
   // them), so Progress is already a single, unified 0-100 metric for the
