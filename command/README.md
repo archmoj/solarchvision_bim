@@ -85,6 +85,24 @@ This page has two parts:
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page
+-   `RUN.STAMP <value>`: Overrides `RunStamp` (normally the real
+    system clock at startup, `YYYYMMDD_HH`) with the given value
+    directly. `RunStamp` is folded into several session folders
+    (`Folder_GEOMET`, `Folder_Export3D`, `Folder_Graphics`,
+    `Folder_ScreenShots`), so this is mainly for repeatably pointing a
+    session at a fixed, pre-captured subfolder (a real `GEOMET` tile
+    fixture dated some specific past hour, say) instead of whatever
+    "right now" happens to be - only takes effect for folders derived
+    *after* this runs (a following `NEW`'s own project-folder
+    derivation, typically), not retroactively.
+-   `RUN.NOW <YYYYMMDDHH>`: Overrides `getNow_inUTC()`'s own idea of
+    "right now" (normally the real system clock too) with the given
+    value. A few things compare the current simulated date/time against
+    this to decide whether to show something at all (`Load Toroposphere`'s
+    own troposphere tile only draws when its simulated day matches
+    "today", for instance) - this is what lets that kind of check pass
+    repeatably against a fixed, pre-captured fixture, the same way
+    `RUN.STAMP` does for folder paths specifically.
 -   `REC.PNG`: Records the frame (screenshot) in `.png` format (filename is optional)
 -   `REC.JPG`: Records the frame (screenshot) in `.jpg` format (filename is optional)
 -   `REC.TIF`: Records the frame (screenshot) in `.tif` format (filename is optional)
