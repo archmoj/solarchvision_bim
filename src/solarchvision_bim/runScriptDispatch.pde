@@ -31,7 +31,28 @@ HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "icosahedron", "mesh", "move", "octahedron",
   "person", "polyline", "pyramid",
   "rotate", "rotatex", "rotatey", "rotatez",
-  "scale", "section", "solid", "sphere", "spline"
+  "scale", "section", "solid", "sphere", "spline",
+  // New/Open/Save/Save As/every Import * also each have their own menu-
+  // caption action registered (actions.pde), which - unlike this set's
+  // other entries above, added for a no-argument hint to reach the
+  // switch-case instead - unconditionally opens Processing's own native
+  // file dialog (selectFile_New()/_Open()/_SaveAs()/_ImportX()), with no
+  // regard for whether a path argument was actually given. Without these
+  // here, a script line like "New projects/test/test.xml" (or "Import
+  // OBJ some/file.obj", "Save As out.xml", ...) would resolve via
+  // matchFirstToken/matchTrailingWordRemoved to that bare menu action
+  // instead of __NEW__()'s/__OPEN__()'s/etc. own switch-case (which do
+  // check parts.length and use the given path directly) - popping up a
+  // real dialog and hanging indefinitely under USER=AUTO, where nothing
+  // can ever click through it. Export's own menu actions don't have this
+  // problem (confirmed by reading each one; "Export 3D > OBJ" and
+  // EXPORT.OBJ's own switch-case entry both call exportObj("") the same
+  // way, no file argument involved on either path), so none of those are
+  // here.
+  "new", "open", "save", "save as",
+  "import obj", "import ifc", "import gbxml", "import glb",
+  "import stl", "import dxf", "import ply", "import las",
+  "import dae", "import commands"
 ));
 
 // One resolved allActions match: which key resolved it, the Action

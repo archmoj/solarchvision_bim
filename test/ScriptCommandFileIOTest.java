@@ -141,31 +141,29 @@ class ScriptCommandFileIOTest {
     assertEquals(0, app.typeUserCommand);
   }
 
-  // ================= the SAVE command collision ===========================
-  // A real finding, not a hypothetical: with the real action set loaded
-  // (build_allActions(), exactly as the production app always has it
-  // by the time anyone can type a command at all), typing
-  // "SAVE <path>" does NOT write to that path - or even reach __SAVE__
-  // in extraCommands.pde at all.
+  // ================= the SAVE command collision (fixed) ====================
+  // Was a real, confirmed bug, not a hypothetical: with the real action
+  // set loaded (build_allActions(), exactly as the production app always
+  // has it by the time anyone can type a command at all), typing
+  // "SAVE <path>" used to not write to that path at all - or even reach
+  // __SAVE__ in extraCommands.pde.
   //
   // runScriptDispatch.pde's own resolveAction() lowercases the WHOLE
   // typed line first and tries it, with its trailing word stripped off,
   // against allActions before the switch-case ever runs (its own
   // matchTrailingWordRemoved(), tier 2) - actions.pde registers a bare,
   // zero-argument "Save" action (putAction("Save", ...), saving to the
-  // project's own default path) that matches that stripped-down line,
-  // and bypassAllActionsFor (runScriptDispatch.pde's own exception list
-  // for exactly this kind of collision) does not include "save". So
-  // "SAVE /some/given/path.xml" silently becomes the bare Save action
-  // instead, with the given path never read at all.
-  //
-  // Harmless by coincidence here - both paths end up calling
-  // saveProject(), just with a different, fixed destination, not
-  // nothing - but this project's own command-line / scripting interface
-  // genuinely cannot direct a save to an arbitrary path once build_
-  // allActions() has ever run, which is always, outside a test.
+  // project's own default path) that matches that stripped-down line.
+  // bypassAllActionsFor (runScriptDispatch.pde's own exception list for
+  // exactly this kind of collision) now includes "save" (along with
+  // "new"/"open"/"save as"/every "import *" - each has the identical
+  // shape: its own menu-caption action ignores any argument, "new"'s/
+  // "open"'s/"import *"'s own versions by popping up a real, blocking
+  // file dialog instead of merely picking the wrong destination the way
+  // "save" did), so "SAVE /some/given/path.xml" now correctly reaches
+  // __SAVE__'s own switch-case, which does use the given path.
   @Test
-  void saveCommand_withARealActionSet_ignoresTheGivenPath_andSavesToTheDefaultLocationInstead () {
+  void saveCommand_withARealActionSet_usesTheGivenPath () {
     app.build_allActions();
 
     Path customPath = app.BaseFolder != null ? Path.of(app.BaseFolder, "custom-save-target.xml") : null;
@@ -173,8 +171,8 @@ class ScriptCommandFileIOTest {
 
     app.runScriptLine("SAVE " + customPath);
 
-    assertFalse(Files.exists(customPath), "the explicitly given path was never written to");
+    assertTrue(Files.exists(customPath), "the explicitly given path must now be written to");
     Path defaultPath = Path.of(app.Folder_Project, app.ProjectName + ".xml");
-    assertTrue(Files.exists(defaultPath), "the bare \"Save\" action's own fixed default path was used instead");
+    assertFalse(Files.exists(defaultPath), "the bare \"Save\" action's own fixed default path must NOT be used when a real path was given");
   }
 }
