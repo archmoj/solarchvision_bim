@@ -14,28 +14,7 @@ void updateClimateArchive () {
 
   if (climateArchiveShouldLoad) {
 
-    climateArchiveNearestStationIndex = -1;
-    climateArchiveNearestStationDist = FLOAT_undefined;
-
-    for (int f = 0; f < climateArchiveCoordinates.length; f++) {
-
-      //if (int(climateArchiveCoordinates[f].getEndyear()) == 2016)
-      { // only use stations with this condition
-
-        float _lat = climateArchiveCoordinates[f].getLatitude();
-        float _lon = climateArchiveCoordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-        if (climateArchiveNearestStationDist > d) {
-
-          climateArchiveNearestStationDist = d;
-          climateArchiveNearestStationIndex = f;
-        }
-      }
-    }
-
+    findClimateArchiveNearestStation();
 
     for (int k = 0; k < (1 + climateArchiveEnd - climateArchiveStart); k++) {
       for (int m = 0; m < 12; m++) {
@@ -72,4 +51,37 @@ void updateClimateArchive () {
 
   sampleYearStart = climateArchiveStart;
   sampleYearEnd = climateArchiveEnd;
+}
+
+// Finds the Climate Archive station nearest STATION's current lon/lat and
+// sets climateArchiveNearestStationIndex/climateArchiveNearestStationDist
+// (globalVariables.pde) accordingly. Factored out of updateClimateArchive()
+// (above) so downloadClimateArchive() (downloadClimateArchive.pde) can call
+// it directly too: that function used to rely on "Use Climate Archive"
+// (actions.pde) having already run updateClimateArchive() at least once to
+// populate climateArchiveNearestStationIndex - until then it stayed at its
+// never-a-real-index default (-1, globalVariables.pde), so "Download
+// Climate Archive" (actions.pde) silently did nothing on its own.
+void findClimateArchiveNearestStation () {
+  climateArchiveNearestStationIndex = -1;
+  climateArchiveNearestStationDist = FLOAT_undefined;
+
+  for (int f = 0; f < climateArchiveCoordinates.length; f++) {
+
+    //if (int(climateArchiveCoordinates[f].getEndyear()) == 2016)
+    { // only use stations with this condition
+
+      float _lat = climateArchiveCoordinates[f].getLatitude();
+      float _lon = climateArchiveCoordinates[f].getLongitude();
+      if (_lon > 180) _lon -= 360; // << important!
+
+      float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+
+      if (climateArchiveNearestStationDist > d) {
+
+        climateArchiveNearestStationDist = d;
+        climateArchiveNearestStationIndex = f;
+      }
+    }
+  }
 }

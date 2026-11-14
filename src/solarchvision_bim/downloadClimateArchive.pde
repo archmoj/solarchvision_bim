@@ -1,5 +1,18 @@
 void downloadClimateArchive () {
 
+  // findClimateArchiveNearestStation() (updateClimateArchive.pde) used to
+  // only ever run inside updateClimateArchive()'s own climateArchiveShould
+  // Load branch - never called from here - so climateArchiveNearestStation
+  // Index was still sitting at its -1 default (globalVariables.pde) the
+  // very first time this ran, before "Use Climate Archive" (actions.pde)
+  // had ever triggered that branch once: the check right below silently
+  // skipped the whole download. Calling it here too, unconditionally,
+  // means this action finds (or re-finds, if STATION has since moved) the
+  // nearest station on its own, the same way "Download Ensemble Forecast"/
+  // "Download Ensemble Observation" (actions.pde) don't need a prior "Use
+  // ..." action either.
+  findClimateArchiveNearestStation();
+
   if (climateArchiveNearestStationIndex != -1) {
 
     println("\nDownloading Climate Archive. Please wait...");
