@@ -272,7 +272,34 @@ void draw () {
 }
 
 void keyPressed (KeyEvent e) {
-  if (isInProgress()) return;
+  if (isInProgress()) {
+    // This sketch runs on P2D, which Processing drives through JOGL/
+    // NEWT - a native windowing layer entirely separate from java.awt.
+    // A real keystroke to the main sketch window (which keeps OS focus
+    // throughout a download/import/calculation, since ProgressWindow
+    // never calls requestFocus()) reaches HERE via NEWT's own event
+    // pipeline, but never enters java.awt.Toolkit's event queue at all -
+    // so ProgressWindow's own Toolkit-level AWTEventListener (escListener,
+    // progressWindow.pde) never actually fires for it in real use,
+    // despite working against a synthetic, directly-posted AWT event in
+    // isolation. activeProgressWindow (progressWindow.pde's own field)
+    // is what actually makes Esc cancel under P2D/NEWT - set directly
+    // here, from the one real key-event path this sketch is confirmed
+    // to receive (see the key = 0 line just below, and its own comment,
+    // for the matching confirmation on the exit-on-Esc side of this same
+    // bug).
+    if ((key == ESC) && (activeProgressWindow != null)) activeProgressWindow.cancelRequested = true;
+
+    // Processing's own default behavior (quitting the whole sketch on
+    // Esc) runs AFTER this method returns, as part of PApplet's own
+    // key-event dispatch, and knows nothing about isInProgress() - only
+    // explicitly zeroing key here (the same key = 0 the ordinary,
+    // not-in-progress case further down already does) stops that
+    // default from firing and exiting the entire app out from under
+    // whatever's running.
+    if (key == ESC) key = 0;
+    return;
+  }
 
   if (frameCount > Last_initializationStep) {
 

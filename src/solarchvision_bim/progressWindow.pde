@@ -98,6 +98,32 @@ void progressBarHeader () {
   println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
 }
 
+// The one ProgressWindow currently on screen, if any - null the rest of
+// the time. Set in setVisible(true), cleared in setVisible(false)/
+// dispose() (see those methods' own comments just below). Every
+// existing caller only ever has at most one of these alive at once (see
+// isInProgress()'s own comment, globalFunctions.pde, on why imports
+// aren't reentrant - the same is true of every other show*Progress-
+// gated action), so a single plain field is enough - this is NOT a
+// stack/list of nested windows.
+//
+// Exists specifically so solarchvision_bim.pde's own keyPressed() can
+// set cancelRequested directly on whichever ProgressWindow is currently
+// open, the moment it sees an Esc while isInProgress() is true - see
+// that method's own comment for why this is the reliable path and
+// escListener (below) often isn't: this sketch runs on P2D, which
+// Processing drives through JOGL/NEWT, a native windowing layer
+// entirely separate from java.awt - a real keystroke to the main
+// sketch window (which keeps OS focus throughout, since this class
+// never calls requestFocus()) reaches Processing's own keyPressed() via
+// NEWT's own event pipeline, but never enters java.awt.Toolkit's event
+// queue at all, so escListener below never fires for it. escListener is
+// kept anyway (harmless, and still the only path that would work on a
+// legacy AWT/JAVA2D renderer, or if an actual AWT/Swing window
+// genuinely does have focus), but this field is what actually makes
+// Esc work under P2D/NEWT in real, non-synthetic use.
+ProgressWindow activeProgressWindow = null;
+
 class ProgressWindow extends java.awt.Frame {
   volatile float fraction = 0;
   volatile boolean cancelRequested = false;
@@ -135,6 +161,7 @@ class ProgressWindow extends java.awt.Frame {
   void setVisible (boolean show) {
     super.setVisible(show);
     if (show) {
+      activeProgressWindow = this; // see that field's own comment for why - the real, reliable cancel path under P2D/NEWT
       if (this.escListener == null) {
         this.escListener = (java.awt.AWTEvent e) -> {
           java.awt.event.KeyEvent ke = (java.awt.event.KeyEvent) e;
@@ -146,6 +173,7 @@ class ProgressWindow extends java.awt.Frame {
       }
     } else {
       this.removeEscListener();
+      if (activeProgressWindow == this) activeProgressWindow = null;
     }
   }
 
@@ -158,6 +186,7 @@ class ProgressWindow extends java.awt.Frame {
 
   void dispose () {
     this.removeEscListener();
+    if (activeProgressWindow == this) activeProgressWindow = null;
     super.dispose();
   }
 
