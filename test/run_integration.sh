@@ -108,7 +108,14 @@ for SCRIPT in "$@"; do
   # written - checked independently right below regardless - and letting
   # `set -e` abort the whole run here would lose every other script's
   # coverage too, not just this one's.
-  JAVA_TOOL_OPTIONS="-javaagent:$(to_native_path "$(pwd)/${JACOCO_AGENT_JAR}")=destfile=$(to_native_path "$(pwd)/${EXEC_FILE}"),includes=solarchvision_bim*,append=true" \
+  # -Dstdout.encoding/-Dstderr.encoding=UTF-8 - same reasoning as
+  # run_tests.sh's own comment on this pair: command/test/terrain.svs (at
+  # least) drives a real download/import action, whose console progress
+  # bar prints '█' - without forcing UTF-8 here too, that becomes '?' on
+  # a non-UTF-8 console/codepage (a Windows runner's default, confirmed
+  # against a real Windows CI run) right alongside the -javaagent flag
+  # this same variable already carries.
+  JAVA_TOOL_OPTIONS="-Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -javaagent:$(to_native_path "$(pwd)/${JACOCO_AGENT_JAR}")=destfile=$(to_native_path "$(pwd)/${EXEC_FILE}"),includes=solarchvision_bim*,append=true" \
     bash test/image/make_baseline.sh "$NAME" || true
 
   if [ -s "$EXEC_FILE" ]; then

@@ -255,8 +255,22 @@ if [ "$COVERAGE_ENABLED" -eq 1 ]; then
   JAVA_AGENT_ARG="-javaagent:${JACOCO_AGENT_JAR}=destfile=${JACOCO_EXEC},includes=solarchvision_bim*"
 fi
 
+# -Dstdout.encoding/-Dstderr.encoding=UTF-8 - every "Download .../Load
+# ..." action and importer's own console progress bar prints '█' (U+2588,
+# progressWindow.pde's own PROGRESS_BAR_CHAR), several of which run
+# directly from this project's own tests (e.g. FindClimateArchiveNearest
+# StationTest calling downloadClimateArchive()). Without these, Java 18+'s
+# own JEP 400 default charset for System.out/System.err falls back to
+# whatever the native console/codepage happens to be - fine on Linux/
+# macOS's own UTF-8 locale, but GitHub's windows-latest runner's native
+# codepage can't encode U+2588, so every one of those characters silently
+# became a '?' there instead of throwing (confirmed against a real
+# Windows CI run, not just in theory). Forcing UTF-8 here, regardless of
+# the actual console, fixes it the same way on every platform this
+# script runs on - CI or a real local Windows run alike - rather than
+# depending on whatever codepage happened to be configured.
 set +e
-"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$(to_native_classpath "$CLASSPATH_POSIX:$TEST_CLASSES")" \
+"$JAVA_BIN" -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$(to_native_classpath "$CLASSPATH_POSIX:$TEST_CLASSES")" \
   org.junit.platform.console.ConsoleLauncher execute \
   --scan-classpath="$TEST_CLASSES" \
   --details=tree

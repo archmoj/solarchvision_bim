@@ -158,8 +158,13 @@ mkdir -p "$TEST_CLASSES"
 "$JAVAC_BIN" -encoding UTF-8 -cp "$CLASSPATH" -d "$TEST_CLASSES" test/*.java
 
 echo "==> Running tests"
+# -Dstdout.encoding/-Dstderr.encoding=UTF-8 - see run_tests.sh's own
+# comment on this same flag pair: without it, the console progress bar
+# several tests exercise (e.g. FindClimateArchiveNearestStationTest)
+# prints '?' instead of '█' on a non-UTF-8 console/codepage, a Windows
+# console being the common real-world case.
 set +e
-"$JAVA_BIN" -cp "$CLASSPATH:$TEST_CLASSES" TestRunner "$TEST_CLASSES"
+"$JAVA_BIN" -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -cp "$CLASSPATH:$TEST_CLASSES" TestRunner "$TEST_CLASSES"
 TEST_EXIT_CODE=$?
 set -e
 
