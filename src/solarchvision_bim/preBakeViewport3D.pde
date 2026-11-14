@@ -76,7 +76,7 @@ class ProgressWindow extends java.awt.Frame {
     g.setColor(java.awt.Color.BLACK);
     g.drawRect(5, 5, w - 11, h - 11);
 
-    g.setColor(new java.awt.Color(255, 204, 0)); // same bold amber/gold as the render button itself
+    g.setColor(new java.awt.Color(0, 170, 0)); // bold green - every ProgressWindow caller (prebake, skin potential, imports, every "Download .../Load ..." action) shares this one fill color
     g.fillRect(6, 6, (int) ((w - 12) * constrain(this.fraction, 0, 1)), h - 12);
 
     g.setColor(java.awt.Color.BLACK);
