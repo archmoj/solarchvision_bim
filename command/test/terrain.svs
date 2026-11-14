@@ -4,15 +4,27 @@
 # shows the real terrain mesh, terrain texture, NAEFS ensemble-forecast
 # data, and GEOMET troposphere tile it provides.
 
-# RunStamp (globalVariables.pde) defaults to the real system clock at
-# startup, and Folder_GEOMET (updateFolders.pde) is built from it - but
-# the real GEOMET fixture is a fixed, pre-captured subfolder
-# (projects/test/data/GEOMET/20261113_23/), not "right now". RUN.STAMP
-# overrides RunStamp directly so Folder_GEOMET resolves to that real
-# subfolder once NEW below derives it - must run first, since NEW's own
-# update_project_folders() call only derives Folder_GEOMET from
-# whatever RunStamp already is at that moment.
+# Two real-clock overrides, both needed before anything below depends on
+# them, and both fixed to the exact moment the real fixture data was
+# actually captured (2026-11-13 23:00):
+#
+# - RunStamp (globalVariables.pde) defaults to the real system clock at
+#   startup, and Folder_GEOMET (updateFolders.pde) is built from it -
+#   but the real GEOMET fixture is a fixed, pre-captured subfolder
+#   (projects/test/data/GEOMET/20261113_23/), not "right now". RUN.STAMP
+#   overrides RunStamp directly so Folder_GEOMET resolves to that real
+#   subfolder once NEW below derives it - must run first, since NEW's
+#   own update_project_folders() call only derives Folder_GEOMET from
+#   whatever RunStamp already is at that moment.
+# - getNow_inUTC() (getNowInUtc.pde) reads the real system clock too,
+#   with its own, separate "right now" problem: Tropo3D.shouldDraw()'s
+#   own selectedDayHasForecastAvailable() check compares the simulated
+#   day (Year/Month/Day below) against it, and only draws the
+#   troposphere tile at all when they match - which, without RUN.NOW,
+#   could only ever be true on the one real calendar day this fixture
+#   happens to be dated, not whenever this test actually runs.
 RUN.STAMP 20261113_23
+RUN.NOW 2026111323
 
 # NEW takes no existing file to work - it just points Folder_Project at
 # the given path's own parent directory and clears the scene (see
@@ -47,9 +59,10 @@ Earth3D Display Surface 0
 # 2026111300 (year/month/day/hour) - matching that here is what lets
 # "Use Ensemble Forecast" below actually find and load them (its own
 # update_ensembleForecast() builds each file's name from TIME.year/
-# month/day/hour directly). TIME.hour's own bare-construction default
-# is already 0 (TIME.modelRun's own default), so only year/month/day
-# need setting.
+# month/day/hour directly), and is also what selectedDayHasForecastAvailable()
+# (see this file's own header comment on RUN.NOW) compares against.
+# TIME.hour's own bare-construction default is already 0 (TIME.modelRun's
+# own default), so only year/month/day need setting.
 Year 2026
 Month 11
 Day 13
@@ -67,9 +80,26 @@ Use Ensemble Forecast
 # are reused as-is, not re-fetched (Tropo3D.download_images()'s own
 # "if (!dir.isFile())" check) - and shows it (Tropo3D.displaySurface = true,
 # part of this same action - see actions.pde's own "Load Toroposphere").
+# RUN.NOW above is what actually makes it visible, not just loaded -
+# see this file's own header comment.
 Load Toroposphere
 
 Hide Sun Path
+
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
+shade next hour
 
 =======
 S.W.

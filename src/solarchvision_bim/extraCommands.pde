@@ -190,6 +190,28 @@ String __RUN_STAMP__ (String[] parts) {
     return hint;
 }
 
+// Overrides getNow_inUTC()'s own idea of "right now" (overrideNowYear/
+// Month/Day/Hour - getNowInUtc.pde) - a single YYYYMMDDHH argument,
+// parsed the same digit-grouped way RUN.STAMP's own real fixture value
+// is already shaped (RunStamp's own own "YYYYMMDD_HH" format, just
+// without the underscore). See getNowInUtc.pde's own comment on why
+// this exists: Tropo3D.selectedDayHasForecastAvailable() (and anything
+// else gated on real-clock "now") can otherwise never pass against a
+// fixed, pre-captured fixture except on the one real calendar day/hour
+// it happens to be dated.
+String __RUN_NOW__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+      String s = parts[1];
+      overrideNowYear = int(s.substring(0, 4));
+      overrideNowMonth = int(s.substring(4, 6));
+      overrideNowDay = int(s.substring(6, 8));
+      overrideNowHour = int(s.substring(8, 10));
+    }
+    else hint = "RUN.NOW ?";
+    return hint;
+}
+
 String __EXPORT_OBJ_TIMESERIES__ (String[] parts) {
     String hint = "";
     exportObj_timeSeries();

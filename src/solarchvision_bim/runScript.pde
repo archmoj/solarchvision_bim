@@ -272,6 +272,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "PARAMETRIC": return  __PARAMETRIC__(parts);
     case "RUN.SCRIPT": return  __RUN_SCRIPT__(parts);
     case "RUN.STAMP": return  __RUN_STAMP__(parts);
+    case "RUN.NOW": return  __RUN_NOW__(parts);
     case "SHADE.REAL": return  __SHADE_REAL__(parts);
     case "SHADE.WIRE": return  __SHADE_WIRE__(parts);
     case "TARGETROLL": return  __TARGETROLL__(parts);

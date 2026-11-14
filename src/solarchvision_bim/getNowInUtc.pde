@@ -1,6 +1,24 @@
+// A script-settable stand-in for year()/month()/day()/hour() - the real
+// system clock, with no override of its own, that getNow_inUTC() below
+// otherwise always reads directly. Needed for anything gated on "is
+// this actually today" against a fixed, pre-captured fixture dated some
+// real day in the past (Tropo3D's own selectedDayHasForecastAvailable(),
+// specifically) - without this, a real/pre-generated baseline image
+// that depends on that check passing can only ever match on the one
+// real calendar day the fixture happens to be dated, not whenever the
+// test is actually run. -1 (overrideNowYear's own default) means "use
+// the real clock" - RUN.NOW (extraCommands.pde) is the only thing that
+// sets these.
+int overrideNowYear = -1;
+int overrideNowMonth, overrideNowDay, overrideNowHour;
+
 int[] getNow_inUTC () {
 
   int LocationTimeZone = getLocationTimeZone();
+
+  if (overrideNowYear != -1) {
+    return convert_LocalToUTC(LocationTimeZone, overrideNowYear, overrideNowMonth, overrideNowDay, overrideNowHour);
+  }
 
   return convert_LocalToUTC(LocationTimeZone, year(), month(), day(), hour());
 }
