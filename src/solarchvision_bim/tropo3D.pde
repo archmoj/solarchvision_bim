@@ -362,6 +362,31 @@ class Tropo3D {
   void recolorCloudLayer (String target) {
     println("\nImage processing cloud layer");
     PImage img = loadImage(target);
+
+    // tryDownload() (above) only means the HTTP request itself didn't
+    // throw - the WMS server can still answer 200 with something that
+    // isn't actually a TROPO_DOWNLOAD_WIDTH x TROPO_DOWNLOAD_HEIGHT PNG
+    // (an HTML error page saved under a ".png" name, a truncated
+    // response, ...), which loadImage() can't decode into a real image
+    // and instead quietly hands back its own tiny (often 1x1) failure
+    // placeholder. Looping np up to the full WIDTH*HEIGHT below against
+    // that placeholder's own much smaller pixels[] is exactly what threw
+    // ArrayIndexOutOfBoundsException here (confirmed against a real
+    // failure, not just in theory) - checking the actual decoded size
+    // first, instead of trusting the WIDTH/HEIGHT this function was
+    // asked to produce, is what import_objects_*'s own "parse what's
+    // actually there, not what was expected" convention already does
+    // for a malformed input file. Deleting the bad file (rather than
+    // leaving it on disk) matters too: download_images()'s own
+    // "if (!dir.isFile())" check above would otherwise treat this
+    // corrupt file as "already downloaded" forever, silently skipping
+    // every future retry.
+    if ((img == null) || (img.width != TROPO_DOWNLOAD_WIDTH) || (img.height != TROPO_DOWNLOAD_HEIGHT)) {
+      println("Download looks corrupt (not a " + TROPO_DOWNLOAD_WIDTH + "x" + TROPO_DOWNLOAD_HEIGHT + " image) - discarding: " + target);
+      (new File(target)).delete();
+      return;
+    }
+
     img.loadPixels();
 
     for (int np = 0; np < (TROPO_DOWNLOAD_WIDTH * TROPO_DOWNLOAD_HEIGHT); np++) {
@@ -385,6 +410,16 @@ class Tropo3D {
   void recolorSatelliteVisibility (String target) {
     println("\nImage processing cloud layer");
     PImage img = loadImage(target);
+
+    // Same corrupt-download guard as recolorCloudLayer()'s own, just
+    // above - see that function's own comment on why this check (and
+    // the delete) is needed at all.
+    if ((img == null) || (img.width != TROPO_DOWNLOAD_WIDTH) || (img.height != TROPO_DOWNLOAD_HEIGHT)) {
+      println("Download looks corrupt (not a " + TROPO_DOWNLOAD_WIDTH + "x" + TROPO_DOWNLOAD_HEIGHT + " image) - discarding: " + target);
+      (new File(target)).delete();
+      return;
+    }
+
     img.loadPixels();
 
     for (int np = 0; np < (TROPO_DOWNLOAD_WIDTH * TROPO_DOWNLOAD_HEIGHT); np++) {
