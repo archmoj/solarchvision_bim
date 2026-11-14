@@ -60,9 +60,21 @@ SKETCH_DIR = os.path.join(REPO_ROOT, "src", "solarchvision_bim")
 # core), not REPO_ROOT - see test/image/README.md for why and the symlink
 # workaround this relies on. Search both that location and REPO_ROOT so a
 # future change in either direction doesn't silently break this again.
+# Most command/test/*.svs scripts never switch projects at all, so their
+# screenshot always lands under the default projects/model-01 - but a
+# few (terrain.svs) deliberately NEW a different project (projects/test,
+# which bundles real terrain/climate fixture data - see updateFolders.pde's
+# own comment on why NEW can now actually do this) so their own output
+# lands under THAT project's own export/screenshots instead. screenshots_
+# since() below already searches every listed root by mtime regardless of
+# which test is running, so adding projects/test here is additive and
+# doesn't change where any existing, still-model-01-only test's own
+# screenshot is found.
 SCREENSHOTS_ROOTS = [
     os.path.join(REPO_ROOT, "projects", "model-01", "export", "screenshots"),
     os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots"),
+    os.path.join(REPO_ROOT, "projects", "test", "export", "screenshots"),
+    os.path.join(SKETCH_DIR, "projects", "test", "export", "screenshots"),
 ]
 COMMAND_TEST_DIR = os.path.join(REPO_ROOT, "command", "test")
 IMAGE_TEST_DIR = os.path.join(REPO_ROOT, "test", "image")

@@ -1,0 +1,37 @@
+# This test loads the real terrain/climate fixture project
+# (projects/test - real elevation/texture data for Toronto, see
+# projects/test/terrain/elevations.md and textures.md) instead of the
+# default projects/model-01, and shows the real terrain mesh and
+# texture it provides.
+#
+# NEW takes no existing file to work - it just points Folder_Project at
+# the given path's own parent directory and clears the scene (see
+# fileSelected.pde's own _fileSelected_New()); no "test.xml" needs to
+# actually exist on disk. STATION's own bare-construction default
+# (Toronto, 43.67,-79.63) already matches this fixture's own real
+# coordinates (043669998_-079629997), so no separate station command is
+# needed here.
+New projects/test/test.xml
+
+# default clear
+Delete all
+
+# Terrain Load Mesh's own OnChange (react.applyLandLoadMesh) is what
+# actually calls Terrain.update_mesh() - only on a real change, so it's
+# toggled off then back on here to force a fresh reload from the
+# project just switched to, rather than relying on whatever (if
+# anything) was already loaded.
+Terrain Load Mesh 0
+Terrain Load Mesh 1
+
+Terrain Display Surface 1
+Terrain Display Texture 1
+
+Earth3D Display Surface 0
+
+Hide Sun Path
+
+=======
+S.W.
+REC.png terrain-mesh-and-texture
+=======

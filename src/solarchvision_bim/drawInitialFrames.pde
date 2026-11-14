@@ -3,6 +3,7 @@ boolean draw_initial_frames () {
 
     background(223);
 
+    reset_project_folder_to_default(); // see updateFolders.pde's own comment on why this is now separate
     update_project_folders();
 
     float cr;

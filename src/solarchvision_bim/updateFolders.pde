@@ -1,6 +1,25 @@
-void update_project_folders () {
-
+// Resets Folder_Project to the default project - startup's own first
+// project, before anything has been opened or newly created. Kept
+// separate from update_project_folders() below (which this is always
+// followed by - see drawInitialFrames.pde) specifically so that
+// update_project_info() (fileSelected.pde, called from both
+// _fileSelected_Open() and _fileSelected_New()) can call
+// update_project_folders() on its own, AFTER it has already set
+// Folder_Project to the just-opened/just-created project's own real
+// folder - update_project_folders() previously hardcoded this same
+// default assignment itself, silently overwriting whatever
+// update_project_info() had just set and making OPEN/NEW unable to
+// actually switch projects via this path at all.
+void reset_project_folder_to_default () {
   Folder_Project = BaseFolder + "/projects/model-01";
+}
+
+// Derives every other project-scoped folder from Folder_Project as it
+// currently stands - does NOT itself decide what Folder_Project is.
+// Callers that want the startup default call reset_project_folder_to_default()
+// immediately before this; callers switching to a different project
+// (update_project_info()) set Folder_Project themselves first instead.
+void update_project_folders () {
 
   Folder_GEOMET = Folder_Project + "/data/GEOMET" + "/" + RunStamp;
 
