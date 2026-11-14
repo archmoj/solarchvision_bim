@@ -62,9 +62,19 @@ void updateClimateArchive () {
 // populate climateArchiveNearestStationIndex - until then it stayed at its
 // never-a-real-index default (-1, globalVariables.pde), so "Download
 // Climate Archive" (actions.pde) silently did nothing on its own.
+// Guarded against climateArchiveCoordinates still being null/empty -
+// loadClimateArchiveCoordinates() (inputClimateArchiveCoordinates.pde)
+// populates it once at real startup, but any code path that drives
+// update_station()/updateClimateArchive() without that having run yet
+// (confirmed directly: UndoRedoStationTest's restoreProjectStationSnapshot
+// ()/undoStationChange() tests, which construct the sketch and exercise
+// update_station(-1) without loading any coordinate files first) would
+// otherwise NPE on climateArchiveCoordinates.length below.
 void findClimateArchiveNearestStation () {
   climateArchiveNearestStationIndex = -1;
   climateArchiveNearestStationDist = FLOAT_undefined;
+
+  if (climateArchiveCoordinates == null) return;
 
   for (int f = 0; f < climateArchiveCoordinates.length; f++) {
 

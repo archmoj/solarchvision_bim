@@ -1,5 +1,20 @@
 void download_climateTypicalYear () {
 
+  // findClimateTypicalYearNearestStation() (updateClimateTypicalYear.pde)
+  // used to only ever run from inside update_climateTypicalYear()'s own
+  // climateTypicalYearShouldLoad branch (now; see that function's own
+  // comment on it) - never called from here - so STATION's own
+  // climateTypicalYearFilename/climateTypicalYearDownload could still be
+  // whatever a TMYEPW marker click last set them to (or the hardcoded
+  // startup default, whose climateTypicalYearDownload is blank), not the
+  // city nearest STATION's actual current position, if STATION had
+  // instead been moved from the command line (SETLAT/SETLON/SETLATLON/
+  // SETLONLAT, extraCommands.pde). Calling it here too, unconditionally,
+  // means this action finds (or re-finds) the nearest city on its own
+  // first, the same way "Download Climate Archive" (downloadClimateArchive
+  // .pde) now does.
+  findClimateTypicalYearNearestStation();
+
   boolean new_files_downloaded = false;
 
   String FN = STATION.getClimateTypicalYearFilename();

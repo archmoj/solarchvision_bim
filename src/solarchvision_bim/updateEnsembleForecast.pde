@@ -16,6 +16,8 @@ void update_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_
 
   if (ensembleForecastShouldLoad) {
 
+    findEnsembleForecastNearestStation();
+
     for (int f = 0; f < allLayers.length; f++) {
       if (allLayers[f].name.equals("")) {
       } else {
@@ -52,4 +54,34 @@ void update_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_
 
   sampleMemberStart = ensembleForecastStart;
   sampleMemberEnd = ensembleForecastEnd;
+}
+
+// Keeps STATION's own ensembleForecastFilename (the NAEFS grid-point name
+// its download/load filenames are built from, above and in
+// downloadEnsembleForecast.pde) tracking STATION's actual current lon/lat,
+// instead of whatever was last set by a map click - selectEnsembleForecast
+// Station() (mouseClicked.pde) only runs on an explicit NAEFS marker click,
+// never on a command-line SETLAT/SETLON/SETLATLON/SETLONLAT (extraCommands.
+// pde) move, so without this, a station moved only from the command line
+// kept downloading/loading forecast data for whichever grid point (if any)
+// happened to be clicked before - silently the wrong location, not even an
+// empty/missing-file error to notice. findNearestStation() (mouseClicked.
+// pde) is the same plain nearest-of-coords lookup already used for every
+// other dataset's own "quiet nearest station" bookkeeping there.
+//
+// Guarded against ensembleForecastCoordinates still being null/empty -
+// loadEnsembleForecastCoordinates() (inputEnsembleForecastCoordinates.pde)
+// populates it once at real startup, but any code path that drives
+// update_station()/update_ensembleForecast() without that having run yet
+// (confirmed directly: UndoRedoStationTest's restoreProjectStationSnapshot
+// ()/undoStationChange() tests, which construct the sketch and exercise
+// update_station(-1) without loading any coordinate files first) would
+// otherwise NPE inside findNearestStation() on coords.length.
+void findEnsembleForecastNearestStation () {
+  if (ensembleForecastCoordinates == null || ensembleForecastCoordinates.length == 0) return;
+
+  NearestStation nearest = findNearestStation(ensembleForecastCoordinates, STATION.getLongitude(), STATION.getLatitude());
+  if (nearest.index != -1) {
+    STATION.setEnsembleForecastFilename(ensembleForecastCoordinates[nearest.index].getEnsembleForecastFilename());
+  }
 }

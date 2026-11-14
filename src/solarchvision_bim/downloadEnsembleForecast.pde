@@ -1,5 +1,19 @@
 void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
+  // findEnsembleForecastNearestStation() (updateEnsembleForecast.pde) used
+  // to only ever run from inside update_ensembleForecast()'s own
+  // ensembleForecastShouldLoad branch (now; see that function's own
+  // comment on it) - never called from here - so STATION's own
+  // ensembleForecastFilename could still be whatever a NAEFS marker click
+  // last set it to (or the hardcoded startup default), not the grid point
+  // nearest STATION's actual current position, if STATION had instead
+  // been moved from the command line (SETLAT/SETLON/SETLATLON/SETLONLAT,
+  // extraCommands.pde). Calling it here too, unconditionally, means this
+  // action finds (or re-finds) the nearest grid point on its own first,
+  // the same way "Download Climate Archive" (downloadClimateArchive.pde)
+  // now does.
+  findEnsembleForecastNearestStation();
+
   println("\nDownloading Ensemble Forecast. Please wait...");
 
   boolean new_files_downloaded = false;
