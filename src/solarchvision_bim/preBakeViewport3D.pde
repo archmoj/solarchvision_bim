@@ -60,7 +60,7 @@ class ProgressWindow extends java.awt.Frame {
     super(label);
     this.label = label;
     this.setUndecorated(true);
-    this.setSize(280, 44);
+    this.setSize(560, 44); // 2x the original 280 width - same height
     this.setLocationRelativeTo(null); // centers on the default screen
     this.setAlwaysOnTop(true);
     this.setBackground(new java.awt.Color(240, 240, 240));
