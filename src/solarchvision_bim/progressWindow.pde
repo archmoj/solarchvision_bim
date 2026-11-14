@@ -66,6 +66,7 @@ class ProgressWindow extends java.awt.Frame {
     this.setLocationRelativeTo(null); // centers on the default screen
     this.setAlwaysOnTop(true);
     this.setBackground(new java.awt.Color(223, 223, 223));
+    this.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 18)); // was the AWT default (~11-12pt) - bumped up for readability
   }
 
   void paint (java.awt.Graphics g) {
@@ -82,7 +83,8 @@ class ProgressWindow extends java.awt.Frame {
     g.fillRect(6, 6, (int) ((w - 12) * constrain(this.fraction, 0, 1)), h - 12);
 
     g.setColor(java.awt.Color.WHITE);
-    g.drawString(this.label + ": " + (int) (this.fraction * 100) + "%", 10, h - 16);
+    g.setFont(this.getFont());
+    g.drawString(this.label + ": " + (int) (this.fraction * 100) + "%", 10, h - 14);
   }
 
   // Paints synchronously, directly on the calling thread, rather than
