@@ -171,9 +171,19 @@ class FileSelectedTest {
     // "/projects/model-01" right after update_project_info() had just
     // set it from the file, so the directory a project was actually
     // opened/created from never survived - fixed now, confirmed here.
-    app._fileSelected_New(new File("/some/other/directory/MyProject.xml"));
+    File f = new File("/some/other/directory/MyProject.xml");
+    app._fileSelected_New(f);
 
-    assertEquals("/some/other/directory", app.Folder_Project);
+    // Computed the same way update_project_info() itself does
+    // (getAbsolutePath(), backslashes normalized to forward slashes,
+    // the filename stripped), rather than a hardcoded Unix-style
+    // string: a leading "/" resolves to the filesystem root on Unix,
+    // but to "whatever the current drive is, drive-relative" on
+    // Windows (e.g. "D:/some/other/directory"), so the two platforms'
+    // own real getAbsolutePath() results for this same File are
+    // genuinely different strings, not just a separator difference.
+    String expected = f.getAbsolutePath().replace('\\', '/').replace("/" + f.getName(), "");
+    assertEquals(expected, app.Folder_Project);
   }
 
   // ================= _fileSelected_SaveAs ======================================
