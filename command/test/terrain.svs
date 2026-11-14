@@ -1,9 +1,19 @@
 # This test loads the real terrain/climate fixture project
-# (projects/test - real elevation/texture data for Toronto, see
-# projects/test/terrain/elevations.md and textures.md) instead of the
-# default projects/model-01, and shows the real terrain mesh and
-# texture it provides.
-#
+# (projects/test - real elevation/texture/NAEFS/GEOMET data for
+# Toronto, see projects/test/terrain/elevations.md and textures.md) and
+# shows the real terrain mesh, terrain texture, NAEFS ensemble-forecast
+# data, and GEOMET troposphere tile it provides.
+
+# RunStamp (globalVariables.pde) defaults to the real system clock at
+# startup, and Folder_GEOMET (updateFolders.pde) is built from it - but
+# the real GEOMET fixture is a fixed, pre-captured subfolder
+# (projects/test/data/GEOMET/20261113_23/), not "right now". RUN.STAMP
+# overrides RunStamp directly so Folder_GEOMET resolves to that real
+# subfolder once NEW below derives it - must run first, since NEW's own
+# update_project_folders() call only derives Folder_GEOMET from
+# whatever RunStamp already is at that moment.
+RUN.STAMP 20261113_23
+
 # NEW takes no existing file to work - it just points Folder_Project at
 # the given path's own parent directory and clears the scene (see
 # fileSelected.pde's own _fileSelected_New()); no "test.xml" needs to
@@ -24,10 +34,40 @@ Delete all
 Terrain Load Mesh 0
 Terrain Load Mesh 1
 
+# Terrain.skipStart's own bare-construction default is 1 (skips the
+# innermost row); 0 includes it.
+Terrain Skip Start 0
+
 Terrain Display Surface 1
 Terrain Display Texture 1
 
 Earth3D Display Surface 0
+
+# The real NAEFS fixture's own filenames are all timestamped
+# 2026111300 (year/month/day/hour) - matching that here is what lets
+# "Use Ensemble Forecast" below actually find and load them (its own
+# update_ensembleForecast() builds each file's name from TIME.year/
+# month/day/hour directly). TIME.hour's own bare-construction default
+# is already 0 (TIME.modelRun's own default), so only year/month/day
+# need setting.
+Year 2026
+Month 11
+Day 13
+
+# Loads every real NAEFS layer file that exists for that date (TMP-SFC/
+# MSLP/RELH-SFC/APCP-SFC - projects/test/data/NAEFS/) AND switches
+# STUDY's own current data source to it in the same step (currentDataSource/
+# STUDY.daysMergedCount/the WORLD ensemble-forecast display flags - see
+# actions.pde's own "Use Ensemble Forecast" action) - loading and
+# showing in one real command, not two.
+Use Ensemble Forecast
+
+# Loads the real GEOMET troposphere tile from the now-correctly-
+# resolved Folder_GEOMET (RUN.STAMP above) - already-downloaded files
+# are reused as-is, not re-fetched (Tropo3D.download_images()'s own
+# "if (!dir.isFile())" check) - and shows it (Tropo3D.displaySurface = true,
+# part of this same action - see actions.pde's own "Load Toroposphere").
+Load Toroposphere
 
 Hide Sun Path
 

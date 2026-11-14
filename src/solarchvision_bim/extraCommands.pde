@@ -171,6 +171,25 @@ String __RUN_SCRIPT__ (String[] parts) {
     return hint;
 }
 
+// Overrides RunStamp directly - the one real way to point a session at
+// a fixed, pre-captured GEOMET/export subfolder (Folder_GEOMET/
+// Folder_Export3D/Folder_Graphics/Folder_ScreenShots - updateFolders.pde -
+// all include it) instead of "right now" (RunStamp's own bare-
+// construction default: nf(year(),4)+nf(month(),2)+nf(day(),2)+"_"+
+// nf(hour(),2), the real system clock at startup). No putValueAction()
+// for this one - it's a plain String, not a float/int/boolean spinner
+// value the usual command family handles - so it's its own small
+// switch-case command instead, the same shape as SAVE.AS/RUN.SCRIPT.
+// Only takes effect for folders derived AFTER this runs (NEW's own
+// update_project_folders() call, say) - it doesn't retroactively change
+// any Folder_* a project switch already derived before this line.
+String __RUN_STAMP__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) RunStamp = parts[1];
+    else hint = "RUN.STAMP ?";
+    return hint;
+}
+
 String __EXPORT_OBJ_TIMESERIES__ (String[] parts) {
     String hint = "";
     exportObj_timeSeries();
