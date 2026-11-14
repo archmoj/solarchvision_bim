@@ -140,6 +140,26 @@ boolean showSectionBakeProgress = true;
 // same shape as import_objects_OBJ()'s own (importObj.pde) above.
 boolean showTropoDownloadProgress = true;
 
+// Same idea again, for downloadClimateArchive() (downloadClimateArchive.
+// pde) - "Download Climate Archive" (actions.pde). Plain single-threaded
+// nested loop (year x month) of network downloads on the calling thread
+// itself, same shape as import_objects_OBJ()'s own (importObj.pde) above.
+boolean showClimateArchiveDownloadProgress = true;
+
+// Same idea again, for download_ensembleForecast() (downloadEnsemble
+// Forecast.pde) - "Download Ensemble Forecast" (actions.pde). Plain
+// single-threaded loop over allLayers of network downloads on the calling
+// thread itself, same shape as import_objects_OBJ()'s own (importObj.pde)
+// above.
+boolean showEnsembleForecastDownloadProgress = true;
+
+// Same idea again, for download_ensembleObservation() (downloadEnsemble
+// Observation.pde) - "Download Ensemble Observation" (actions.pde). Plain
+// single-threaded nested loop (hour x nearby weather station) of network
+// downloads on the calling thread itself, same shape as import_objects_
+// OBJ()'s own (importObj.pde) above.
+boolean showEnsembleObservationDownloadProgress = true;
+
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;

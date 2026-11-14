@@ -1,40 +1,74 @@
 void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
+  println("\nDownloading Ensemble Forecast. Please wait...");
+
   boolean new_files_downloaded = false;
 
-  for (int f = 0; f < allLayers.length; f++) {
-    if (allLayers[f].name.equals("")) {
-    } else {
-      String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);
+  float printed_Progress = 0;
 
-      String FN = dayStr + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" +
-        STATION.getEnsembleForecastFilename() + "_" + allLayers[f].name + "_000-384.xml";
+  // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
+  // (importObj.pde, showImportProgress) - a plain single-threaded loop,
+  // here over allLayers network downloads instead of file lines/entities,
+  // on the calling thread, so the only way to show progress during it is
+  // this same manual throttle-and-paint trick.
+  ProgressWindow ensembleForecastProgressWindow = (showEnsembleForecastDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nDownloading Ensemble Forecast") : null;
+  if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.setVisible(true);
 
-      String the_target = Folder_ensembleForecast + "/" + FN;
-
-      File dir = new File(the_target);
-      if (!dir.isFile()) {
-
-        String the_directory = dayStr + "/" + nf(THE_HOUR, 2) + "/" +
-          allLayers[f].name + "/raw";
-        String the_link = "https://dd.weather.gc.ca/" + dayStr +
-          "/WXO-DD/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
-
-        the_target = the_target + ".bz2";
-
-        println("\nTry downloading: " + the_link);
-
-        try {
-          saveBytes(the_target, loadBytes(the_link));
-
-          new_files_downloaded = true;
+  try {
+    for (int f = 0; f < allLayers.length; f++) {
+      if (control != USER_AUTO) {
+        float Progress = 100 * f / float(allLayers.length);
+        int delta = (int) floor(Progress - printed_Progress);
+        if (delta >= 1) {
+          StringBuilder barBuffer = new StringBuilder();
+          for (int c = 0; c < delta; c++) barBuffer.append('█');
+          print(barBuffer.toString());
+          printed_Progress = floor(Progress);
+          if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.updateFraction(Progress / 100.0f);
         }
-        catch (Exception e) {
-          println("LINK NOT AVAILABLE:", the_link);
+      }
+
+      if (allLayers[f].name.equals("")) {
+      } else {
+        String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);
+
+        String FN = dayStr + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" +
+          STATION.getEnsembleForecastFilename() + "_" + allLayers[f].name + "_000-384.xml";
+
+        String the_target = Folder_ensembleForecast + "/" + FN;
+
+        File dir = new File(the_target);
+        if (!dir.isFile()) {
+
+          String the_directory = dayStr + "/" + nf(THE_HOUR, 2) + "/" +
+            allLayers[f].name + "/raw";
+          String the_link = "https://dd.weather.gc.ca/" + dayStr +
+            "/WXO-DD/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+
+          the_target = the_target + ".bz2";
+
+          println("\nTry downloading: " + the_link);
+
+          try {
+            saveBytes(the_target, loadBytes(the_link));
+
+            new_files_downloaded = true;
+          }
+          catch (Exception e) {
+            println("LINK NOT AVAILABLE:", the_link);
+          }
         }
       }
     }
+  } finally {
+    if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.dispose();
   }
+
+  int remaining = (int) floor(100 - printed_Progress);
+  StringBuilder barBuffer = new StringBuilder();
+  for (int c = 0; c < remaining; c++) barBuffer.append('█');
+  print(barBuffer.toString());
+  println();
 
   if (new_files_downloaded) {
 
@@ -73,4 +107,6 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
     ensembleForecastShouldLoad = true;
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   }
+
+  println("Ensemble Forecast downloaded.");
 }
