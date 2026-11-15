@@ -1356,6 +1356,23 @@ class Model2Ds {
           float ratio = this.canopyCapHeightFraction(kind.imageRatio(n)); // see that method's own comment - 0.5 (the tree's mid-height) for a square image, higher for a narrower one
           float texRatio = this.canopyCapTextureFraction(kind.imageRatio(n)); // how much of the texture's own height the mask samples - see that method's own comment for why this differs from `ratio` above
 
+          // Same depthOffset the Vertical mask block above (and faces.
+          // pde's own castShadows()) uses - allSolarImpacts.Z directly
+          // for types 1/2/3, converted through arbitrarySection_
+          // rotateWorldToLocal() for type 0. This used to be skipped
+          // here because the projection below only ever ran for
+          // sectionType == 1 (see that condition's own history just
+          // below): on a vertical (2, pre-swapped from 3) or arbitrary
+          // (0) section, this cap quad never got projected or clipped
+          // against the section's own plane at all, so a tree's canopy-
+          // cap contribution to the shadow silhouette was silently
+          // dropped for every section except a horizontal one, even
+          // though the Vertical mask block right above already handles
+          // all of 0/1/2 correctly.
+          float depthOffset = (allSolarImpacts.sectionType == 0)
+            ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
+            : allSolarImpacts.Z;
+
           for (int back_front = -1; back_front <= 1; back_front += 2) {
 
             float rot = back_front * PI / 2 + t;
@@ -1402,25 +1419,49 @@ class Model2Ds {
             TU[3] = 0;
             TV[3] = 0;
 
-            if (allSolarImpacts.sectionType == 1) {
-              if (z + 2 * rh * ratio > allSolarImpacts.Z) {
+            // Same local-frame rotation the Vertical mask block above
+            // applies before its own depth clip/projection, so this
+            // flat cap quad lands in exactly the same local frame that
+            // quad's own TX/TY/TZ already do for every section type -
+            // not just sectionType == 1, which is all this used to
+            // cover.
+            if (allSolarImpacts.sectionType == 2) {
+              for (int q = 0; q < 4; q++) {
+                float a = TX[q];
+                float b = -TY[q];
+                float c = TZ[q];
 
-                for (int q = 0; q < 4; q++) {
+                TX[q] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
+                TY[q] = c;
+                TZ[q] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+              }
+            } else if (allSolarImpacts.sectionType == 0) {
+              for (int q = 0; q < 4; q++) {
+                float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
-                  TZ[q] = TZ[q] - allSolarImpacts.Z;
-                  TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
-                  TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);
+                TX[q] = local[0];
+                TY[q] = local[1];
+                TZ[q] = local[2];
+              }
+            }
 
-                  if (allSolarImpacts.sectionType == 1) {
-                    float px = TX[q];
-                    float py = TY[q];
+            if (TZ[2] > depthOffset) {
 
-                    TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-                    TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                  }
+              for (int q = 0; q < 4; q++) {
 
-                  TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
+                TZ[q] = TZ[q] - depthOffset;
+                TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);
+
+                if (allSolarImpacts.sectionType == 1) {
+                  float px = TX[q];
+                  float py = TY[q];
+
+                  TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
+                  TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
                 }
+
+                TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
               }
             }
 
