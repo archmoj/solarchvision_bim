@@ -80,4 +80,92 @@ class KeyPressedGuardsTest {
     assertEquals(999, app.X_clicked);
     assertEquals(999, app.Y_clicked);
   }
+
+  // ======================= Esc-abort cascade (new this session) ==========
+  // Inside the isInProgress() guard above, keyPressed() does two more
+  // things before returning (solarchvision_bim.pde): (1) if the key IS
+  // Esc and activeProgressWindow (progressWindow.pde) is non-null, set
+  // its abortRequested flag; (2) if the key IS Esc at all - window or no
+  // window - zero out `key` so PApplet's own post-keyPressed() default
+  // behavior (quit the whole sketch on Esc) can't fire out from under a
+  // still-running action. Neither of those was covered by the 3 guard
+  // tests above, which only ever exercise the "skip the whole body"
+  // paths.
+  //
+  // `key` is a plain PApplet field, not something a direct, synthetic
+  // call to keyPressed(e) populates on its own (that only happens via
+  // PApplet's real handleKeyEvent() dispatch, which these tests
+  // deliberately bypass - same reasoning as the KeyEvent-construction
+  // comment at the top of this file) - so each test below sets app.key
+  // itself, exactly as it would be set immediately before a real
+  // keyPressed() call.
+
+  @Test
+  void escWhileInProgress_zeroesKeyEvenWithNoActiveWindow () {
+    app.isShadingViewport = true; // isInProgress() == true
+    app.key = app.ESC;
+    app.activeProgressWindow = null; // nothing to abort - must not throw
+
+    assertDoesNotThrow(() -> app.keyPressed(plainKeyEvent()));
+
+    assertEquals(0, app.key, "Esc must still be zeroed so PApplet's own quit-on-Esc default can't fire");
+  }
+
+  @Test
+  void nonEscKeyWhileInProgress_leavesKeyUntouched () {
+    app.isShadingViewport = true;
+    app.key = 'a';
+    app.activeProgressWindow = null;
+
+    assertDoesNotThrow(() -> app.keyPressed(plainKeyEvent()));
+
+    assertEquals('a', app.key, "only Esc is special-cased here - any other key must be left alone");
+  }
+
+  @Test
+  void escWhileInProgress_withNoActiveWindow_doesNotThrow () {
+    // Esc is the common case where no action happens to be showing a
+    // ProgressWindow at all (canShowProgressWindow() == false, or the
+    // action simply hasn't reached setVisible(true) yet) - must be a
+    // total no-op on the abort side, not a NullPointerException.
+    app.isShadingViewport = true;
+    app.key = app.ESC;
+    app.activeProgressWindow = null;
+
+    assertDoesNotThrow(() -> app.keyPressed(plainKeyEvent()));
+  }
+
+  @Test
+  void escWhileInProgress_withRealActiveWindow_setsAbortRequested () {
+    if (java.awt.GraphicsEnvironment.isHeadless()) return; // needs a real display - see ProgressWindowTest.java's own comment
+
+    app.isShadingViewport = true;
+    app.key = app.ESC;
+    solarchvision_bim.ProgressWindow win = app.new ProgressWindow("Test");
+    app.activeProgressWindow = win;
+
+    try {
+      assertDoesNotThrow(() -> app.keyPressed(plainKeyEvent()));
+      assertTrue(win.abortRequested);
+    } finally {
+      win.dispose();
+    }
+  }
+
+  @Test
+  void nonEscKeyWhileInProgress_withRealActiveWindow_doesNotSetAbortRequested () {
+    if (java.awt.GraphicsEnvironment.isHeadless()) return;
+
+    app.isShadingViewport = true;
+    app.key = 'a';
+    solarchvision_bim.ProgressWindow win = app.new ProgressWindow("Test");
+    app.activeProgressWindow = win;
+
+    try {
+      assertDoesNotThrow(() -> app.keyPressed(plainKeyEvent()));
+      assertFalse(win.abortRequested);
+    } finally {
+      win.dispose();
+    }
+  }
 }

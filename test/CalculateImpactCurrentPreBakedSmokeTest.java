@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 // SolarImpacts.calculate_Impact_CurrentPreBaked() (solarImpacts.pde) was
 // the single largest fully-untested function in the whole codebase -
@@ -81,5 +83,42 @@ class CalculateImpactCurrentPreBakedSmokeTest {
     int dayIndex = app.STUDY.startDay + 1;
     assertEquals(4, app.allSolarImpacts.Image[app.Impact_ACTIVE][dayIndex].width, "the 2x2 placeholder must have been replaced by a real RES1xRES2 image");
     assertEquals(4, app.allSolarImpacts.Image[app.Impact_PASSIVE][dayIndex].width);
+  }
+
+  // New this session: calculate_Impact_CurrentPreBaked() used to drive
+  // only its own ProgressWindow (never shown here - canShowProgressWindow()
+  // is false in this headless test) with no matching console bar at all -
+  // the one asymmetry found (solarImpacts.pde's own comment, and the
+  // call-count grep comparison across every other ProgressWindow-using
+  // file) across the whole codebase's otherwise-consistent console+window
+  // pairing convention. Fixed by mirroring the exact throttled-println
+  // pattern calculateVertexSolarArray.pde/castShadowsCurrentSection.pde
+  // already used.
+  //
+  // app.control defaults to USER_GUI (globalVariables.pde's own `int
+  // control = USER_GUI;`), NOT USER_AUTO, so the new `control !=
+  // USER_AUTO`-gated console code below is exercised by this fixture's
+  // own default setup already - nothing extra needs setting here.
+  //
+  // Doesn't try to count exact percentages (that's the throttle logic's
+  // own concern, not this smoke test's) - only that the bar's own
+  // character actually reaches the console at all, and that the run
+  // ends with the required fresh blank line (progressBarHeader()/
+  // printProgressBarChunk()'s own final flush, right before dispose()).
+  @Test
+  void printsAConsoleProgressBarAlongsideItsWindowOne () {
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(capturedOut));
+
+    try {
+      app.allSolarImpacts.calculate_Impact_CurrentPreBaked();
+    } finally {
+      System.setOut(originalOut);
+    }
+
+    String output = capturedOut.toString();
+    assertTrue(output.indexOf(app.PROGRESS_BAR_CHAR) >= 0, "expected at least one console progress-bar character in the captured output");
+    assertTrue(output.endsWith(System.lineSeparator()), "must end with the final blank-line flush, right before dispose()");
   }
 }

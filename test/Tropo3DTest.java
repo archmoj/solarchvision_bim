@@ -549,4 +549,30 @@ class Tropo3DTest {
     assertEquals(expectedGray, p1 & 0xFF, "blue");
     assertEquals(255, (p1 >> 24) & 0xFF, "alpha");
   }
+
+  // ===================== "Load Troposphere" action rename =================
+  // Fixed this session: "Toroposphere" (a long-standing typo - this file
+  // is tropo3D.pde, not toropo3D.pde) was corrected to "Troposphere" in
+  // every source location that spelled it that way (actions.pde's own
+  // putAction() call, uiMenuBar.pde's matching menu-item string,
+  // globalVariables.pde's own comment, and this class's own download_
+  // images()-driving console/window labels). build_allActions()
+  // (actions.pde) registers each action under two keys -
+  // normalizeActionKey()'s lowercase-with-underscores form, AND a
+  // lowercase-with-spaces form when it differs - so both are checked
+  // here, alongside confirming the old misspelled key is gone rather
+  // than merely assuming the rename was exhaustive.
+  //
+  // Only checks that the action is reachable under its corrected name -
+  // not what running it does. download_images()'s own network calls are
+  // out of scope for a registration-only test like this one.
+  @Test
+  void loadTroposphereActionIsRegisteredUnderItsCorrectlySpelledName () {
+    app.build_allActions();
+
+    assertTrue(app.allActions.containsKey("load_troposphere"));
+    assertTrue(app.allActions.containsKey("load troposphere"));
+    assertFalse(app.allActions.containsKey("load_toroposphere"), "the old misspelled key must not linger alongside the fix");
+    assertFalse(app.allActions.containsKey("load toroposphere"), "the old misspelled key must not linger alongside the fix");
+  }
 }
