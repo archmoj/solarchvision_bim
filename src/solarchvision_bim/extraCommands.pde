@@ -2861,12 +2861,21 @@ String __PREBAKE_VIEWPORT__ (String[] parts) {
     return hint;
 }
 
+// All 4 of these capture STATION's lon/lat BEFORE moving it, so that -
+// right after the move - reloadClimateDataIfStationMovedAway()
+// (updateStation.pde) can tell how far the station actually moved, and
+// only re-derive/reload Climate Typical Year/Ensemble Forecast data when
+// that move is big enough to matter (that function's own comment on why
+// it isn't simply unconditional).
 String __SETLONLAT__ (String[] parts) {
     String hint = "";
     if (parts.length > 2) {
+    float oldLon = STATION.getLongitude();
+    float oldLat = STATION.getLatitude();
     STATION.setLatitude(float(parts[2]));
     STATION.setLongitude(float(parts[1]));
     update_station(0);
+    reloadClimateDataIfStationMovedAway(oldLon, oldLat);
     }
     else {
     hint = "SetLonLat ? ?";
@@ -2877,9 +2886,12 @@ String __SETLONLAT__ (String[] parts) {
 String __SETLATLON__ (String[] parts) {
     String hint = "";
     if (parts.length > 2) {
+    float oldLon = STATION.getLongitude();
+    float oldLat = STATION.getLatitude();
     STATION.setLatitude(float(parts[1]));
     STATION.setLongitude(float(parts[2]));
     update_station(0);
+    reloadClimateDataIfStationMovedAway(oldLon, oldLat);
     }
     else {
     hint = "SetLatLon ? ?";
@@ -2890,8 +2902,11 @@ String __SETLATLON__ (String[] parts) {
 String __SETLON__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
+    float oldLon = STATION.getLongitude();
+    float oldLat = STATION.getLatitude();
     STATION.setLongitude(float(parts[1]));
     update_station(0);
+    reloadClimateDataIfStationMovedAway(oldLon, oldLat);
     }
     else {
     hint = "SetLon ?";
@@ -2902,8 +2917,11 @@ String __SETLON__ (String[] parts) {
 String __SETLAT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
+    float oldLon = STATION.getLongitude();
+    float oldLat = STATION.getLatitude();
     STATION.setLatitude(float(parts[1]));
     update_station(0);
+    reloadClimateDataIfStationMovedAway(oldLon, oldLat);
     }
     else {
     hint = "SetLat ?";

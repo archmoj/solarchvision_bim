@@ -57,3 +57,51 @@ void update_station (int Step) {
     }
   }
 }
+
+// Called right after SETLAT/SETLON/SETLATLON/SETLONLAT (extraCommands.pde)
+// changes STATION's own lon/lat - the one live way the station can move
+// that has no station selection of its own to begin with (a map click
+// always explicitly picks its own exact TMYEPW/NAEFS station via
+// selectClimateTypicalYearStation()/selectEnsembleForecastStation(),
+// mouseClicked.pde). Without this, a command-line move just kept
+// downloading/loading Climate Typical Year/Ensemble Forecast data for
+// whichever station (if any) a PRIOR map click had picked, or the
+// untouched startup default, however far the move actually was
+// (ebaeecd4aa92's own original bug).
+//
+// But re-deriving the nearest station on EVERY command-line move,
+// however small, is itself what broke test/image/README.md's whole
+// image-regression suite the first time this was attempted (ebaeecd4aa92,
+// then reverted, a9ddae2c93cd): the "nearest" TMYEPW.csv/NAEFS-grid row
+// for Toronto/Vancouver/Montreal's own hardcoded startup defaults turned
+// out to be a different, same-city-different-source entry with no
+// matching local file, silently blanking out the already-correct default
+// data. So this only re-derives (and only actually reloads) each dataset
+// once the move is big enough that oldLon/oldLat no longer counts as
+// "nearby" STATION's own new position - using the exact same maxDist
+// each dataset's own StationPicker (mouseClicked.pde) already uses to
+// decide whether a map click landed unambiguously on one station or
+// needs to ask which of several close-together ones was meant. A small
+// edit (nudging a decimal place, fixing a typo) leaves the already-
+// loaded station alone, exactly like a map click re-clicking the same
+// marker would; an actual relocation re-derives and reloads, exactly as
+// ebaeecd4aa92 intended.
+//
+// Climate Typical Year and Ensemble Forecast are judged and reloaded
+// independently - TMYEPW stations (climateTypicalYearPicker's own 10000m)
+// sit much closer together than NAEFS grid points (ensembleForecastPicker's
+// own, much coarser 50000m), so a move that's "far" for one can still be
+// "near" for the other.
+void reloadClimateDataIfStationMovedAway (float oldLon, float oldLat) {
+  float moved = funcs.lon_lat_dist(oldLon, oldLat, STATION.getLongitude(), STATION.getLatitude());
+
+  if (moved > climateTypicalYearPicker.maxDist) {
+    findClimateTypicalYearNearestStation();
+    update_station(1);
+  }
+
+  if (moved > ensembleForecastPicker.maxDist) {
+    findEnsembleForecastNearestStation();
+    update_station(5);
+  }
+}
