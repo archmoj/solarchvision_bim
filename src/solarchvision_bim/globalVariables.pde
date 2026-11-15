@@ -135,7 +135,7 @@ boolean showImportProgress = true;
 boolean showSectionBakeProgress = true;
 
 // Same idea again, for Tropo3D.download_images() (tropo3D.pde) - "Load
-// Toroposphere" (actions.pde). Plain single-threaded loop over
+// Troposphere" (actions.pde). Plain single-threaded loop over
 // TROPO_timeSteps (24) network downloads on the calling thread itself,
 // same shape as import_objects_OBJ()'s own (importObj.pde) above.
 boolean showTropoDownloadProgress = true;

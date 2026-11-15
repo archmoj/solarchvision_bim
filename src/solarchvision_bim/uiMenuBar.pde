@@ -148,7 +148,7 @@ class UI_menuBar {
       "Update Ensemble Observation",
       "Update Ensemble Forecast",
       ___divider___,
-      "Load Toroposphere",
+      "Load Troposphere",
       "Load Terrain Mesh",
       "Load Terrain Texture",
       "Download Terrain Mesh",

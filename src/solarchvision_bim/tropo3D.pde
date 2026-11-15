@@ -158,7 +158,7 @@ class Tropo3D {
   void download_images () {
     showWaitCursor();
 
-    println("\nLoading Toroposphere. Please wait...");
+    println("\nLoading Troposphere. Please wait...");
 
     int LocationTimeZone = getLocationTimeZone();
     DateTimeUTC dt = currentUTC();
@@ -168,7 +168,7 @@ class Tropo3D {
     // here over TROPO_timeSteps (24) network downloads instead of file
     // lines/entities, on the calling thread, so the only way to show
     // progress during it is this same manual throttle-and-paint trick.
-    ProgressWindow tropoProgressWindow = (showTropoDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nLoading Toroposphere") : null;
+    ProgressWindow tropoProgressWindow = (showTropoDownloadProgress && canShowProgressWindow()) ? new ProgressWindow("\nLoading Troposphere") : null;
     if (tropoProgressWindow != null) tropoProgressWindow.setVisible(true);
 
     float printed_Progress = 0;
@@ -242,7 +242,7 @@ class Tropo3D {
     // same reasoning as every other abortable download here.
     this.load_images();
 
-    if (!aborted) println("Toroposphere loaded.");
+    if (!aborted) println("Troposphere loaded.");
 
     showArrowCursor();
   }

@@ -557,7 +557,7 @@ void build_allActions() {
     Terrain.download_textures();
   });
 
-  putAction("Load Toroposphere", () -> {
+  putAction("Load Troposphere", () -> {
     Tropo3D.download_images();
     Tropo3D.displaySurface = true;
     WORLD.revise();

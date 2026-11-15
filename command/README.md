@@ -98,7 +98,7 @@ This page has two parts:
 -   `RUN.NOW <YYYYMMDDHH>`: Overrides `getNow_inUTC()`'s own idea of
     "right now" (normally the real system clock too) with the given
     value. A few things compare the current simulated date/time against
-    this to decide whether to show something at all (`Load Toroposphere`'s
+    this to decide whether to show something at all (`Load Troposphere`'s
     own troposphere tile only draws when its simulated day matches
     "today", for instance) - this is what lets that kind of check pass
     repeatably against a fixed, pre-captured fixture, the same way
@@ -1174,7 +1174,7 @@ around.
     `Download Terrain Texture`
 -   `Update Climate Typical Year`, `Update Climate Engineering`, `Update Ensemble Forecast`, `Update Ensemble Observation`,
     `Update Climate Archive`, `Update Station`
--   `Load Terrain Mesh`, `Load Terrain Texture`, `Load Toroposphere`
+-   `Load Terrain Mesh`, `Load Terrain Texture`, `Load Troposphere`
 -   `Use Climate Typical Year`, `Use Climate Engineering`,
     `Use Climate Archive`, `Use Ensemble Observation`,
     `Use Ensemble Forecast`: choose which data source feeds the

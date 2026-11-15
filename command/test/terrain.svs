@@ -79,10 +79,10 @@ Use Ensemble Forecast
 # resolved Folder_GEOMET (RUN.STAMP above) - already-downloaded files
 # are reused as-is, not re-fetched (Tropo3D.download_images()'s own
 # "if (!dir.isFile())" check) - and shows it (Tropo3D.displaySurface = true,
-# part of this same action - see actions.pde's own "Load Toroposphere").
+# part of this same action - see actions.pde's own "Load Troposphere").
 # RUN.NOW above is what actually makes it visible, not just loaded -
 # see this file's own header comment.
-Load Toroposphere
+Load Troposphere
 
 Hide Sun Path
 
