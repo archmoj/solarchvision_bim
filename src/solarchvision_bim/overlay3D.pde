@@ -668,7 +668,29 @@ class Overlay3D {
 
               ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
-              for (int vNo = 0; vNo < allPolylines.nodes[f].length; vNo++) {
+              // allPolylines.nodes[f][j] is this polyline's own j'th point
+              // index into allPoints - every other sub-object loop in
+              // this file (allFaces.nodes[f][j], allModel1Ds.Faces[f][j],
+              // allModel2Ds.Faces[f][j], allSolids.Faces[f][j], see
+              // computeFaceTessellation() and the blocks around this one)
+              // goes through that same indirection before indexing its
+              // own vertex/point array. This one used to skip it and
+              // index allPoints directly by the 0..length-1 loop counter
+              // instead - drawing a GROUP's polyline edges by connecting
+              // whichever points happen to sit at allPoints' own indices
+              // 0..(this polyline's node count - 1), wherever those
+              // actually are in the model, rather than this polyline's
+              // real points. Since that shape has nothing to do with the
+              // polyline's own (typically small, local) geometry, it can
+              // span arbitrarily far across the model - exactly the
+              // "lines go outside the WIN3D viewport area" symptom,
+              // since drawClosedShape()'s window-clip only ever shrinks
+              // a shape's visible portion down to the window, it can't
+              // make an otherwise-correct shape draw outside it; the
+              // shape itself has to be wrong first, as it was here.
+              for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+
+                int vNo = allPolylines.nodes[f][j];
 
                 float x = allPoints.getX(vNo) * overallScale;
                 float y = allPoints.getY(vNo) * overallScale;
