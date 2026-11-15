@@ -57,6 +57,25 @@ class SolarImpactsTest {
     assertDoesNotThrow(() -> app.allSolarImpacts.calculate_ImpactOnSections(new int[]{}));
   }
 
+  @Test
+  void calculateImpactSelectedSections_clearsImageIsFromViewport_evenWhenNothingIsSelected () {
+    // win3DOverlay_imageIsFromViewport = false is the very first thing
+    // calculate_ImpactOnSections() does, unconditionally, before the
+    // per-section loop even starts (solarImpacts.pde's own comment on
+    // that line) - showSolarImpactOverlay/win3DOverlay_needsClearRect()
+    // (drawViewport3DLayers.pde) both rely on this to keep a section's
+    // own render from ever being mistaken for a fresh viewport study.
+    // This pins that reset down as unconditional - not something a
+    // future "skip the rest of the work when sections is empty" early-
+    // return could accidentally skip along with the (genuinely skippable)
+    // loop/calculate_Impact_CurrentPreBaked() calls below it.
+    app.allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
+
+    app.allSolarImpacts.calculate_ImpactOnSections(new int[]{});
+
+    assertFalse(app.allSolarImpacts.win3DOverlay_imageIsFromViewport);
+  }
+
   // ================= to_XML / from_XML round trip ========================
 
   @Test
