@@ -343,4 +343,52 @@ class Overlay3DTest {
 
     assertEquals(0, result.length);
   }
+
+  @Test
+  void clipAndProject_everyPointStaysInsideTheWindow_evenWhenAFaceCrossesTheNearPlaneRepeatedly () {
+    // A real repro, found by randomized search rather than worked out by
+    // hand: a (camera-space) quad - the kind computeGroupBoxVertices()
+    // feeds drawClosedShape() once per box face - whose 4 corners'
+    // camera-space z straddles NEAR_Z back and forth more than once
+    // around the loop (here: behind, in front, behind, in front) rather
+    // than just once. That's exactly what happens to a selection's
+    // bounding box while it's being rotated right through/near the
+    // camera plane - the reported "green box pokes outside WIN3D" case.
+    // clipPolygon_nearPlane() (correctly) slices this into 3 separate
+    // in-front pieces, several of them vanishingly close to the near
+    // plane - dividing by a camera-space z that small blows the
+    // perspective-projected x/y up into the hundreds of thousands to
+    // tens of millions, and at that scale clipPolygon_toWindow()'s own
+    // edge-intersection math (da/(da-db), both operands huge and close
+    // together) loses enough 32-bit float precision to land a corner a
+    // full pixel outside the window instead of exactly on its edge -
+    // confirmed by reproducing this same face/window outside the sketch
+    // without clipPolygon_toWindow()'s clamp, where it lands at
+    // (250, -251) against a window whose own ymin is -250. The clamp
+    // added to clipPolygon_toWindow() is what keeps this assertion true.
+    app.WIN3D.projectionTypeIndex = 1; // perspective
+    app.WIN3D.scale = 500;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.referenceScale = 1;
+
+    java.util.ArrayList<float[]> camVertices = new java.util.ArrayList<float[]>();
+    camVertices.add(new float[]{0.08092761f, 1.5565732f, -1.115781E-4f});
+    camVertices.add(new float[]{-2.6042364f, -1.2417552f, 0.0012401348f});
+    camVertices.add(new float[]{0.19409204f, -3.9269192f, -0.0013801676f});
+    camVertices.add(new float[]{2.879256f, -1.1285908f, 0.0049342476f});
+
+    solarchvision_bim.Overlay3D.DrawStyle style = app.Overlay3D.new DrawStyle(2, 0);
+    style.innerWinX1 = -250;
+    style.innerWinY1 = -250;
+    style.innerWinX2 = 250;
+    style.innerWinY2 = 250;
+
+    float[][] result = app.Overlay3D.clipAndProject(camVertices, style);
+
+    assertTrue(result.length > 0, "test precondition: this face does intersect the window");
+    for (float[] p : result) {
+      assertTrue(p[0] >= style.innerWinX1 && p[0] <= style.innerWinX2, "x=" + p[0] + " escaped the window");
+      assertTrue(p[1] >= style.innerWinY1 && p[1] <= style.innerWinY2, "y=" + p[1] + " escaped the window");
+    }
+  }
 }

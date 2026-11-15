@@ -1007,6 +1007,35 @@ class Overlay3D {
     result = clipPolygon_halfPlane(result, -1,  0, -xmax); //  x <= xmax
     result = clipPolygon_halfPlane(result,  0,  1, ymin);  //  y >= ymin
     result = clipPolygon_halfPlane(result,  0, -1, -ymax); //  y <= ymax
+
+    // Each clipPolygon_halfPlane() pass only ever keeps a point already
+    // satisfying that pass's own constraint, or replaces it with a fresh
+    // intersection point computed to lie exactly on that pass's boundary
+    // (clipPolygon_intersect()'s "t" below) - with exact arithmetic every
+    // surviving point would end up inside [xmin,xmax]x[ymin,ymax] to the
+    // float. It isn't exact in practice: rotating a selection/model close
+    // to the camera drives some of its camera-space z very close to
+    // NEAR_Z, and dividing by a z that small (clipAndProject's own x/z,
+    // y/z perspective divide, above) blows the resulting image-space
+    // coordinates up to the thousands or millions - at that scale, two
+    // of this same edge's endpoints can agree in every significant digit
+    // a 32-bit float has room for, so clipPolygon_intersect()'s own
+    // "da - db" (the two ends' signed distance from the boundary line)
+    // loses most or all of its precision to cancellation, and the "t"
+    // it divides by that difference can come out far enough off 0..1
+    // that the "intersection" it computes lands outside the window
+    // instead of exactly on its edge. A plain clamp here is the
+    // reliable fix for that - every point clipPolygon_halfPlane() kept
+    // outright was already in range (clamping it is a no-op), and every
+    // point it just computed was only ever meant to sit exactly on one
+    // of these 4 boundaries anyway, so pinning it there if float
+    // precision missed is correcting the intended result, not
+    // overriding it.
+    for (int i = 0; i < result.length; i++) {
+      result[i][0] = constrain(result[i][0], xmin, xmax);
+      result[i][1] = constrain(result[i][1], ymin, ymax);
+    }
+
     return result;
   }
 
