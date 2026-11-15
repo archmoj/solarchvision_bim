@@ -117,7 +117,7 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
   float totalPairs = pairCount; // computed once, not every iteration - same as importObj.pde's own totalLines
   float Progress = 0;
   float printed_Progress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
 
   progressBarHeader();
 
@@ -131,11 +131,11 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
     while (idx < pairCount) {
       // Esc, caught by importProgressWindow's own Toolkit-level listener
       // (progressWindow.pde) regardless of which window has focus. No
-      // rollback on cancel - whatever entities were already handled are
+      // rollback on abort - whatever entities were already handled are
       // kept, same as any other partial import.
-      if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
-        echoCancelProgress();
-        cancelled = true;
+      if ((importProgressWindow != null) && importProgressWindow.abortRequested) {
+        echoAbortProgress();
+        aborted = true;
         break;
       }
 
@@ -197,11 +197,11 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
     if (importProgressWindow != null) importProgressWindow.dispose();
   }
 
-  if (!cancelled && (dxfEntitiesImported == 0)) {
+  if (!aborted && (dxfEntitiesImported == 0)) {
     println("\nDXF import: no 3DFACE or polyface-mesh POLYLINE entities found - this version doesn't read any other entity type's geometry (LWPOLYLINE, MESH, block/INSERT references, ...)");
   }
 
-  if (!cancelled) {
+  if (!aborted) {
     int remaining = (int) floor(100 - printed_Progress);
     printProgressBarChunk(remaining);
     println();

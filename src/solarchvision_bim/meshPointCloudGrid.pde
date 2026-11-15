@@ -216,7 +216,7 @@ ArrayList<int[]> meshPointCloud_gridXY (float[] xs, float[] ys, MeshPointCloudPr
     // for why its own doc is written broadly enough to cover both.
     if (progress != null) {
       progress.onPointInserted(i + 1, n);
-      if (progress.isCancelled()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
+      if (progress.isAborted()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
     }
   }
 

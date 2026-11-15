@@ -14,7 +14,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
   int totalSteps = ensembleObservationMaxDays * 24 * nearestWeatherStationCount;
   int done = 0;
   float printed_Progress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
 
   // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
   // (importObj.pde, showImportProgress) - a plain single-threaded nested
@@ -47,9 +47,9 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
         // would only exit the per-station loop, leaving the per-hour
         // loop to start right back into the next hour with nothing left
         // to stop it.
-        if ((ensembleObservationProgressWindow != null) && ensembleObservationProgressWindow.cancelRequested) {
-          echoCancelProgress();
-          cancelled = true;
+        if ((ensembleObservationProgressWindow != null) && ensembleObservationProgressWindow.abortRequested) {
+          echoAbortProgress();
+          aborted = true;
           break downloadEnsembleObservationLoop;
         }
 
@@ -95,7 +95,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
     if (ensembleObservationProgressWindow != null) ensembleObservationProgressWindow.dispose();
   }
 
-  if (!cancelled) {
+  if (!aborted) {
     int remaining = (int) floor(100 - printed_Progress);
     printProgressBarChunk(remaining);
     println();
@@ -104,5 +104,5 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
   ensembleObservationShouldLoad = true;
   update_ensembleObservation(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
 
-  if (!cancelled) println("Ensemble Observation downloaded.");
+  if (!aborted) println("Ensemble Observation downloaded.");
 }

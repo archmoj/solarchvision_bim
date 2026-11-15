@@ -172,7 +172,7 @@ class Tropo3D {
     if (tropoProgressWindow != null) tropoProgressWindow.setVisible(true);
 
     float printed_Progress = 0;
-    boolean cancelled = false;
+    boolean aborted = false;
 
     try {
       for (int i = 0; i < TROPO_timeSteps; i++) {
@@ -180,9 +180,9 @@ class Tropo3D {
         // (progressWindow.pde) regardless of which window has focus -
         // checked before this iteration's own network request, not
         // after.
-        if ((tropoProgressWindow != null) && tropoProgressWindow.cancelRequested) {
-          echoCancelProgress();
-          cancelled = true;
+        if ((tropoProgressWindow != null) && tropoProgressWindow.abortRequested) {
+          echoAbortProgress();
+          aborted = true;
           break;
         }
 
@@ -232,17 +232,17 @@ class Tropo3D {
       if (tropoProgressWindow != null) tropoProgressWindow.dispose();
     }
 
-    if (!cancelled) {
+    if (!aborted) {
       int remaining = (int) floor(100 - printed_Progress);
       printProgressBarChunk(remaining);
       println();
     }
 
     // Still loads whatever slots were actually downloaded before Esc -
-    // same reasoning as every other cancellable download here.
+    // same reasoning as every other abortable download here.
     this.load_images();
 
-    if (!cancelled) println("Toroposphere loaded.");
+    if (!aborted) println("Toroposphere loaded.");
 
     showArrowCursor();
   }

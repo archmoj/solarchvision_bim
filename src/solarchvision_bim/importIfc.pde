@@ -2790,7 +2790,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   float Progress = 0;
   float printed_Progress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
   int totalF = ents.size() + productIds.size();
 
   // showImportProgress (globals.pde's own comment) - ProgressWindow
@@ -2817,16 +2817,16 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // (progressWindow.pde) regardless of which window has focus. No
     // rollback - unlike every other importer here, this function isn't
     // wrapped in try/finally (see importProgressWindow's own comment,
-    // above, for why), so cancelling doesn't return early either:
+    // above, for why), so aborting doesn't return early either:
     // beginScene3DChange() (this function's own start) still needs its
     // matching endScene3DChange() to run, and ifcFlushPendingGeometry()
     // still needs to land whatever's already been queued - breaking out
     // of both this loop and the product loop below (skipped entirely
     // once this is set) just means less gets queued for either to do,
     // not that either is skipped.
-    if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
-      echoCancelProgress();
-      cancelled = true;
+    if ((importProgressWindow != null) && importProgressWindow.abortRequested) {
+      echoAbortProgress();
+      aborted = true;
       break;
     }
 
@@ -2901,13 +2901,13 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcSortAscending(productIds);
 
   // Skipped entirely, not just entered-and-immediately-broken-out-of,
-  // once the entity-scan loop above was itself cancelled - productIds
+  // once the entity-scan loop above was itself aborted - productIds
   // is necessarily incomplete at that point, so there's nothing this
   // loop should still be doing.
-  for (Integer id : (cancelled ? new ArrayList<Integer>() : productIds)) {
-    if (importProgressWindow != null && importProgressWindow.cancelRequested) {
-      echoCancelProgress();
-      cancelled = true;
+  for (Integer id : (aborted ? new ArrayList<Integer>() : productIds)) {
+    if (importProgressWindow != null && importProgressWindow.abortRequested) {
+      echoAbortProgress();
+      aborted = true;
       break;
     }
 
@@ -3115,7 +3115,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   endScene3DChange();
 
-  if (!cancelled) {
+  if (!aborted) {
     int remaining = (int) floor(100 - printed_Progress);
     printProgressBarChunk(remaining);
     println();

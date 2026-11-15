@@ -67,7 +67,7 @@ int dae_totalGeometryInstances = 0;
 int dae_processedGeometryInstances = 0;
 float dae_printedProgress = 0;
 ProgressWindow dae_progressWindow = null;
-boolean dae_cancelled = false; // set by daeReportProgress() once it sees dae_progressWindow.cancelRequested - daeWalkNode() checks this to stop recursing
+boolean dae_aborted = false; // set by daeReportProgress() once it sees dae_progressWindow.abortRequested - daeWalkNode() checks this to stop recursing
 
 void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/import_
@@ -161,7 +161,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   dae_processedGeometryInstances = 0;
   dae_printedProgress = 0;
   daeFacesImported = 0;
-  dae_cancelled = false;
+  dae_aborted = false;
 
   dae_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting DAE") : null;
   if (dae_progressWindow != null) dae_progressWindow.setVisible(true);
@@ -169,7 +169,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   try {
     PMatrix3D identity = new PMatrix3D();
     for (XML node : visualScene.getChildren("node")) {
-      if (dae_cancelled) break;
+      if (dae_aborted) break;
       daeWalkNode(collada, node, identity);
     }
   } finally {
@@ -177,11 +177,11 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
     dae_progressWindow = null;
   }
 
-  if (!dae_cancelled && (daeFacesImported == 0)) {
+  if (!dae_aborted && (daeFacesImported == 0)) {
     println("\nDAE import: no faces were imported - this version only reads <triangles>/<polylist> primitives reachable from the scene's own node hierarchy");
   }
 
-  if (!dae_cancelled) {
+  if (!dae_aborted) {
     int remaining = (int) floor(100 - dae_printedProgress);
     printProgressBarChunk(remaining);
     println();
@@ -252,9 +252,9 @@ int daeCountGeometryInstances (XML nodeEl) {
 // for the same reason: counting actual faces/vertices up front would
 // need its own full pre-pass this version doesn't do.
 void daeReportProgress () {
-  if (!dae_cancelled && (dae_progressWindow != null) && dae_progressWindow.cancelRequested) {
-    echoCancelProgress();
-    dae_cancelled = true;
+  if (!dae_aborted && (dae_progressWindow != null) && dae_progressWindow.abortRequested) {
+    echoAbortProgress();
+    dae_aborted = true;
   }
 
   if (control == USER_AUTO) return;
@@ -300,7 +300,7 @@ void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
 
   for (XML instGeom : nodeEl.getChildren("instance_geometry")) {
     daeReportProgress();
-    if (dae_cancelled) return; // partial import is fine - see daeReportProgress()'s own comment
+    if (dae_aborted) return; // partial import is fine - see daeReportProgress()'s own comment
 
     String geomId = daeRefId(daeAttr(instGeom, "url"));
     XML geometryEl = daeFindById(collada, geomId);
@@ -315,7 +315,7 @@ void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
   }
 
   for (XML child : nodeEl.getChildren("node")) {
-    if (dae_cancelled) return;
+    if (dae_aborted) return;
     daeWalkNode(collada, child, worldMatrix);
   }
 }

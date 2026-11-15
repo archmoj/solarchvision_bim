@@ -486,15 +486,15 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
     int effectiveTotal = max(1, effectiveEnd - effectiveStart); // never 0 - avoids a divide-by-zero for an empty/inverted range; the bar just never advances in that case, which is correct, since nothing real gets read either
 
     float printedProgress = 0;
-    boolean cancelled = false;
+    boolean aborted = false;
 
     try {
       int pos = header.offsetToPointData;
       for (int k = 0; k < pointCount; k++) {
 
-        if ((lasProgressWindow != null) && lasProgressWindow.cancelRequested) {
-          echoCancelProgress();
-          cancelled = true;
+        if ((lasProgressWindow != null) && lasProgressWindow.abortRequested) {
+          echoAbortProgress();
+          aborted = true;
           break;
         }
 
@@ -624,7 +624,7 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
       println("\nLAS import: region-of-interest filter kept " + keptCount + " of " + pointCount + " point(s) read");
     }
 
-    if (!cancelled) {
+    if (!aborted) {
       int remaining = (int) floor(100 - printedProgress);
       printProgressBarChunk(remaining);
       println();
@@ -634,9 +634,9 @@ void import_objects_LAS (String FileName, int m, int tes, int lyr, int vsb, int 
       lasMeshPointCloud(lasPointIndex, lasFinalX, lasFinalY, lasFinalZ);
     }
 
-    if (!cancelled && (lasPointsImported == 0)) {
+    if (!aborted && (lasPointsImported == 0)) {
       println("\nLAS import: no points were imported");
-    } else if (!cancelled && lasImportMeshPointCloud && (lasFacesImported == 0)) {
+    } else if (!aborted && lasImportMeshPointCloud && (lasFacesImported == 0)) {
       String meshingFunctionName;
       if (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_DELAUNAY) meshingFunctionName = "meshPointCloud.pde's own meshPointCloud_delaunayXY()";
       else if (lasImportMeshAlgorithm == LAS_MESH_ALGORITHM_BOX_GRID) meshingFunctionName = "meshPointCloudBoxGrid.pde's own meshPointCloud_boxGridXY()";
@@ -706,16 +706,16 @@ int lasCreatePoint (float x, float y, float z) {
 class LasMeshProgressReporter implements MeshPointCloudProgressListener {
   ProgressWindow window; // nullable - see import_objects_LAS()'s own "showImportProgress && canShowProgressWindow()" check for when this is null
   float printedProgress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
 
   LasMeshProgressReporter (ProgressWindow window) {
     this.window = window;
   }
 
   void onPointInserted (int pointsInserted, int totalPoints) {
-    if (!cancelled && (window != null) && window.cancelRequested) {
-      echoCancelProgress();
-      cancelled = true;
+    if (!aborted && (window != null) && window.abortRequested) {
+      echoAbortProgress();
+      aborted = true;
     }
 
     if (control == USER_AUTO) return;
@@ -729,8 +729,8 @@ class LasMeshProgressReporter implements MeshPointCloudProgressListener {
     }
   }
 
-  boolean isCancelled () {
-    return cancelled;
+  boolean isAborted () {
+    return aborted;
   }
 }
 
@@ -806,7 +806,7 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY, float[
     if (meshProgressWindow != null) meshProgressWindow.dispose();
   }
 
-  if (!reporter.cancelled) {
+  if (!reporter.aborted) {
     int remaining = (int) floor(100 - reporter.printedProgress);
     printProgressBarChunk(remaining);
     println();
@@ -852,7 +852,7 @@ void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
     if (meshProgressWindow != null) meshProgressWindow.dispose();
   }
 
-  if (!reporter.cancelled) {
+  if (!reporter.aborted) {
     int remaining = (int) floor(100 - reporter.printedProgress);
     printProgressBarChunk(remaining);
     println();

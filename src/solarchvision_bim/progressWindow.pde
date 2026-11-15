@@ -81,13 +81,13 @@ void printProgressBarChunk (int count) {
   print(barBuffer.toString());
 }
 
-// Called by a cancellable Download .../Load ... action right before it
-// break/returns out of its own loop on ProgressWindow.cancelRequested -
+// Called by an abortable Download .../Load ... action right before it
+// break/returns out of its own loop on ProgressWindow.abortRequested -
 // one shared place for this message, same reasoning as every other
 // helper in this file, rather than each caller printing its own slightly
 // different wording.
-void echoCancelProgress () {
-  println("Cancelled by Esc.");
+void echoAbortProgress () {
+  println("Aborted by Esc.");
 }
 
 // Moved from uiConsoleBar.pde - this is a shared progress-bar helper,
@@ -108,7 +108,7 @@ void progressBarHeader () {
 // stack/list of nested windows.
 //
 // Exists specifically so solarchvision_bim.pde's own keyPressed() can
-// set cancelRequested directly on whichever ProgressWindow is currently
+// set abortRequested directly on whichever ProgressWindow is currently
 // open, the moment it sees an Esc while isInProgress() is true - see
 // that method's own comment for why this is the reliable path and
 // escListener (below) often isn't: this sketch runs on P2D, which
@@ -126,7 +126,7 @@ ProgressWindow activeProgressWindow = null;
 
 class ProgressWindow extends java.awt.Frame {
   volatile float fraction = 0;
-  volatile boolean cancelRequested = false;
+  volatile boolean abortRequested = false;
   String label;
 
   // A Toolkit-level AWTEventListener, not a per-component KeyListener -
@@ -136,7 +136,7 @@ class ProgressWindow extends java.awt.Frame {
   // from under the person mid-download/import, which would be a far
   // bigger surprise than not catching Esc at all. A Toolkit-level
   // listener sees every key event system-wide regardless of which window
-  // currently has focus, so Esc cancels whether the sketch window or
+  // currently has focus, so Esc aborts whether the sketch window or
   // this overlay (or neither) happens to have it. Scoped to exactly
   // while THIS window is visible - installed in setVisible(true),
   // removed again in setVisible(false) and dispose() - so it doesn't
@@ -161,12 +161,12 @@ class ProgressWindow extends java.awt.Frame {
   void setVisible (boolean show) {
     super.setVisible(show);
     if (show) {
-      activeProgressWindow = this; // see that field's own comment for why - the real, reliable cancel path under P2D/NEWT
+      activeProgressWindow = this; // see that field's own comment for why - the real, reliable abort path under P2D/NEWT
       if (this.escListener == null) {
         this.escListener = (java.awt.AWTEvent e) -> {
           java.awt.event.KeyEvent ke = (java.awt.event.KeyEvent) e;
           if ((ke.getID() == java.awt.event.KeyEvent.KEY_PRESSED) && (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE)) {
-            this.cancelRequested = true;
+            this.abortRequested = true;
           }
         };
         java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(this.escListener, java.awt.AWTEvent.KEY_EVENT_MASK);

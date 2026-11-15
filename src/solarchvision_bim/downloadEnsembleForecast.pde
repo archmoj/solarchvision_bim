@@ -19,7 +19,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
   boolean new_files_downloaded = false;
 
   float printed_Progress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
 
   // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
   // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -34,11 +34,11 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
       // Esc, caught by ensembleForecastProgressWindow's own Toolkit-level
       // listener (progressWindow.pde) regardless of which window has
       // focus - checked before this iteration's own network request, not
-      // after, so cancelling doesn't cost one more download past the
+      // after, so aborting doesn't cost one more download past the
       // point Esc was pressed.
-      if ((ensembleForecastProgressWindow != null) && ensembleForecastProgressWindow.cancelRequested) {
-        echoCancelProgress();
-        cancelled = true;
+      if ((ensembleForecastProgressWindow != null) && ensembleForecastProgressWindow.abortRequested) {
+        echoAbortProgress();
+        aborted = true;
         break;
       }
 
@@ -88,7 +88,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
     if (ensembleForecastProgressWindow != null) ensembleForecastProgressWindow.dispose();
   }
 
-  if (!cancelled) {
+  if (!aborted) {
     int remaining = (int) floor(100 - printed_Progress);
     printProgressBarChunk(remaining);
     println();
@@ -132,5 +132,5 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   }
 
-  if (!cancelled) println("Ensemble Forecast downloaded.");
+  if (!aborted) println("Ensemble Forecast downloaded.");
 }

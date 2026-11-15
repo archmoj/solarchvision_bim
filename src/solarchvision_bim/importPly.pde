@@ -78,7 +78,7 @@ long ply_totalInstances = 0;
 long ply_processedInstances = 0;
 float ply_printedProgress = 0;
 ProgressWindow ply_progressWindow = null;
-boolean ply_cancelled = false; // set by plyImportAscii()/plyImportBinary()'s own loop once it sees ply_progressWindow.cancelRequested - see those loops' own comment
+boolean ply_aborted = false; // set by plyImportAscii()/plyImportBinary()'s own loop once it sees ply_progressWindow.abortRequested - see those loops' own comment
 
 void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_GLB()'s/
@@ -132,7 +132,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   ply_processedInstances = 0;
   ply_printedProgress = 0;
   plyFacesImported = 0;
-  ply_cancelled = false;
+  ply_aborted = false;
 
   progressBarHeader();
 
@@ -154,11 +154,11 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
     ply_progressWindow = null;
   }
 
-  if (!ply_cancelled && (plyFacesImported == 0)) {
+  if (!ply_aborted && (plyFacesImported == 0)) {
     println("\nPLY import: no faces were imported - this version only reads the 'vertex' element's own x/y/z and the 'face' element's own first list property (its vertex-index list)");
   }
 
-  if (!ply_cancelled) {
+  if (!ply_aborted) {
     int remaining = (int) floor(100 - ply_printedProgress);
     printProgressBarChunk(remaining);
     println();
@@ -173,9 +173,9 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
 // delta >= 1 throttle glbReportProgress() (importGlb.pde)
 // already uses.
 void plyReportProgress () {
-  if (!ply_cancelled && (ply_progressWindow != null) && ply_progressWindow.cancelRequested) {
-    echoCancelProgress();
-    ply_cancelled = true;
+  if (!ply_aborted && (ply_progressWindow != null) && ply_progressWindow.abortRequested) {
+    echoAbortProgress();
+    ply_aborted = true;
   }
 
   if (control == USER_AUTO) return;
@@ -350,7 +350,7 @@ void plyImportAscii (byte[] raw, int dataStartByteOffset) {
 
     for (int n = 0; n < element.count; n++) {
       plyReportProgress();
-      if (ply_cancelled) return; // partial import is fine - see plyReportProgress()'s own comment
+      if (ply_aborted) return; // partial import is fine - see plyReportProgress()'s own comment
 
       if (lineIdx >= lines.length) {
         println("\nPLY import: data ends before the header's own element/property counts expected it to - stopping early");
@@ -414,7 +414,7 @@ void plyImportBinary (byte[] raw, int dataStartByteOffset, boolean littleEndian)
 
     for (int n = 0; n < element.count; n++) {
       plyReportProgress();
-      if (ply_cancelled) return; // partial import is fine - see plyReportProgress()'s own comment
+      if (ply_aborted) return; // partial import is fine - see plyReportProgress()'s own comment
 
       float x = 0, y = 0, z = 0;
       IntList faceIndices = null;

@@ -283,12 +283,12 @@ void keyPressed (KeyEvent e) {
     // progressWindow.pde) never actually fires for it in real use,
     // despite working against a synthetic, directly-posted AWT event in
     // isolation. activeProgressWindow (progressWindow.pde's own field)
-    // is what actually makes Esc cancel under P2D/NEWT - set directly
+    // is what actually makes Esc abort under P2D/NEWT - set directly
     // here, from the one real key-event path this sketch is confirmed
     // to receive (see the key = 0 line just below, and its own comment,
     // for the matching confirmation on the exit-on-Esc side of this same
     // bug).
-    if ((key == ESC) && (activeProgressWindow != null)) activeProgressWindow.cancelRequested = true;
+    if ((key == ESC) && (activeProgressWindow != null)) activeProgressWindow.abortRequested = true;
 
     // Processing's own default behavior (quitting the whole sketch on
     // Esc) runs AFTER this method returns, as part of PApplet's own

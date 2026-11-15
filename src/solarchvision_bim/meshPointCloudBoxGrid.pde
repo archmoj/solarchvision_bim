@@ -137,7 +137,7 @@ ArrayList<BoxGridCell> meshPointCloud_boxGridXY (float[] xs, float[] ys, float[]
 
     if (progress != null) {
       progress.onPointInserted(i + 1, n);
-      if (progress.isCancelled()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
+      if (progress.isAborted()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment (meshPointCloud.pde)
     }
   }
 

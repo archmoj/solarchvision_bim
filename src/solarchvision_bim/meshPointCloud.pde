@@ -120,10 +120,10 @@ interface MeshPointCloudProgressListener {
   // so meshing can stop early the same way the point-reading loop in
   // import_objects_LAS() does - see LasMeshProgressReporter's own
   // comment (importLas.pde) for the one real implementation. Defaults to
-  // false (never cancelled) so this stays source-compatible with any
+  // false (never aborted) so this stays source-compatible with any
   // other MeshPointCloudProgressListener that doesn't care about
-  // cancellation at all.
-  default boolean isCancelled () { return false; }
+  // aborting at all.
+  default boolean isAborted () { return false; }
 }
 
 // One triangle, mid-construction, as 3 indices into whatever point
@@ -221,7 +221,7 @@ ArrayList<int[]> meshPointCloud_delaunayXY (float[] xs, float[] ys, MeshPointClo
     meshInsertPoint(triangles, px, py, insertOrder[oi]);
     if (progress != null) {
       progress.onPointInserted(oi + 1, n);
-      if (progress.isCancelled()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment
+      if (progress.isAborted()) break; // partial mesh is fine - see MeshPointCloudProgressListener's own comment
     }
   }
 

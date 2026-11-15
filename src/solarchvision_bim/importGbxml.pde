@@ -574,16 +574,16 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
 
   float Progress = 0;
   float printed_Progress = 0;
-  boolean cancelled = false;
+  boolean aborted = false;
   float totalSurfaces = max(surfaces.size(), 1);
 
   ProgressWindow importProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting gbXML") : null;
   if (importProgressWindow != null) importProgressWindow.setVisible(true);
 
   for (int s = 0; s < surfaces.size(); s++) {
-    if ((importProgressWindow != null) && importProgressWindow.cancelRequested) {
-      echoCancelProgress();
-      cancelled = true;
+    if ((importProgressWindow != null) && importProgressWindow.abortRequested) {
+      echoAbortProgress();
+      aborted = true;
       break;
     }
 
@@ -676,7 +676,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
     ifcRotateImportedModelToTrueNorth(gbxmlImportNorthRotationAngle, baseFaceCount, baseModel2DCount);
   }
 
-  if (!cancelled) {
+  if (!aborted) {
     int remaining = (int) floor(100 - printed_Progress);
     printProgressBarChunk(remaining);
     println();

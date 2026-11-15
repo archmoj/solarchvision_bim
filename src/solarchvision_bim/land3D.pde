@@ -434,7 +434,7 @@ class Terrain {
     String folder = stationFolder();
 
     float printed_Progress = 0;
-    boolean cancelled = false;
+    boolean aborted = false;
 
     // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
     // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -450,9 +450,9 @@ class Terrain {
         // listener (progressWindow.pde) regardless of which window has
         // focus - checked before this row's own network request, not
         // after.
-        if ((terrainMeshProgressWindow != null) && terrainMeshProgressWindow.cancelRequested) {
-          echoCancelProgress();
-          cancelled = true;
+        if ((terrainMeshProgressWindow != null) && terrainMeshProgressWindow.abortRequested) {
+          echoAbortProgress();
+          aborted = true;
           break;
         }
 
@@ -486,7 +486,7 @@ class Terrain {
       if (terrainMeshProgressWindow != null) terrainMeshProgressWindow.dispose();
     }
 
-    if (!cancelled) {
+    if (!aborted) {
       int remaining = (int) floor(100 - printed_Progress);
       printProgressBarChunk(remaining);
       println();
@@ -495,7 +495,7 @@ class Terrain {
     this.loadMesh = true;
     this.update_mesh();
 
-    if (!cancelled) println("Terrain Mesh downloaded.");
+    if (!aborted) println("Terrain Mesh downloaded.");
 
     showArrowCursor();
   }
@@ -689,7 +689,7 @@ class Terrain {
     int totalTiles = 10 - 2 + 1; // the real i=2..10 range actually worked below, not the full 0..15 loop
     int done = 0;
     float printed_Progress = 0;
-    boolean cancelled = false;
+    boolean aborted = false;
 
     // Same console-bar/ProgressWindow shape as import_objects_OBJ()'s own
     // (importObj.pde, showImportProgress) - a plain single-threaded loop,
@@ -707,9 +707,9 @@ class Terrain {
         // focus - checked before this tile's own network request, not
         // after, and ahead of the skip-range continues below so it isn't
         // delayed by however many of those happen to run first.
-        if ((terrainTextureProgressWindow != null) && terrainTextureProgressWindow.cancelRequested) {
-          echoCancelProgress();
-          cancelled = true;
+        if ((terrainTextureProgressWindow != null) && terrainTextureProgressWindow.abortRequested) {
+          echoAbortProgress();
+          aborted = true;
           break;
         }
 
@@ -763,7 +763,7 @@ class Terrain {
       if (terrainTextureProgressWindow != null) terrainTextureProgressWindow.dispose();
     }
 
-    if (!cancelled) {
+    if (!aborted) {
       int remaining = (int) floor(100 - printed_Progress);
       printProgressBarChunk(remaining);
       println();
@@ -772,7 +772,7 @@ class Terrain {
     this.loadTexture = true;
     this.update_textures();
 
-    if (!cancelled) println("Terrain Texture downloaded.");
+    if (!aborted) println("Terrain Texture downloaded.");
 
     showArrowCursor();
   }
