@@ -144,7 +144,23 @@ void draw_WIN3D_layers () {
   // pick which already-computed slice to show and are read live here too,
   // so the day-navigation/impact-type-toggle actions need only change
   // those (and request the override) - nothing else to re-arm.
-  showSolarImpactOverlay = allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
+  //
+  // win3DOverlay_imageIsFromViewport (solarImpacts.pde) is also required
+  // here now - win3DOverlay_dataFresh() only tells you this.Image[][] is
+  // internally consistent (model/analysis-time settings all still
+  // match), not WHOSE geometry it was last painted from. calculate_
+  // ImpactOnSections() overwrites this.Image[][] with each selected
+  // section's own render in turn (clearing this flag false right before
+  // it starts) and, unlike plotImpact_urban()'s own call to the exact
+  // same calculate_Impact_CurrentPreBaked(), has no reason to ever set
+  // it back true - so without this check, a day-navigation/impact-type-
+  // toggle request (D/d/Shift+Tab, forcing solarImpactOverrideRequested)
+  // made any time after rendering sections, even with a perfectly fresh,
+  // matching-camera this.Image[][], would paint that section's render
+  // straight over the live WIN3D viewport as if it were a fresh viewport
+  // study.
+  showSolarImpactOverlay = allSolarImpacts.win3DOverlay_dataFresh() && allSolarImpacts.win3DOverlay_imageIsFromViewport
+      && (solarImpactCameraMatches || solarImpactOverrideRequested)
       && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length;
 
   // Recorded for WIN3D.isSolarPaletteMode() to read - see that method's

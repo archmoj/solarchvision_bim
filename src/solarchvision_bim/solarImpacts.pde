@@ -263,15 +263,28 @@ class SolarImpacts {
   // Whether drawViewport3DLayers.pde is about to paint the white clearing
   // rect over the entire WIN3D area this frame - true exactly in the
   // "explicit cycling request, but the camera doesn't match" case (see
-  // that file's own comment): the data is fresh, the camera doesn't
-  // match, an override was requested, and the requested day/type slice
-  // actually exists. WIN3D.draw() calls this at its own top to skip its
-  // (otherwise wasted) render work when the result is just going to be
-  // painted over anyway - see that method's own comment for why reading
-  // WIN3D.showSolarImpactOverride here, rather than a locally-captured
-  // copy of it, is still safe to do from inside WIN3D.draw().
+  // that file's own comment): the data is fresh, it's actually the
+  // viewport's own data (win3DOverlay_imageIsFromViewport - NOT just
+  // calculate_ImpactOnSections()'s own section render, which also leaves
+  // win3DOverlay_dataFresh() true but isn't shown as the WIN3D overlay
+  // at all), the camera doesn't match, an override was requested, and
+  // the requested day/type slice actually exists. WIN3D.draw() calls
+  // this at its own top to skip its (otherwise wasted) render work when
+  // the result is just going to be painted over anyway - see that
+  // method's own comment for why reading WIN3D.showSolarImpactOverride
+  // here, rather than a locally-captured copy of it, is still safe to do
+  // from inside WIN3D.draw(). This has to keep matching drawViewport3D
+  // Layers.pde's own showSolarImpactOverlay condition exactly for the
+  // "camera doesn't match, override requested" case - this method true
+  // while that one comes out false (as it would without this same
+  // win3DOverlay_imageIsFromViewport check, right after rendering
+  // sections) would make WIN3D.draw() skip its real render AND drawView
+  // port3DLayers.pde skip painting the compensating white rect/overlay
+  // in its place, leaving nothing repainted at all - whatever was on
+  // screen the previous frame just sits there, stale, instead.
   boolean win3DOverlay_needsClearRect () {
     return this.win3DOverlay_dataFresh() &&
+      this.win3DOverlay_imageIsFromViewport &&
       !this.win3DOverlay_cameraMatches() &&
       WIN3D.showSolarImpactOverride &&
       impactDisplayDay < this.Image[WIN3D.impactTypeIndex].length;

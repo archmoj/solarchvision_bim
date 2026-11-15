@@ -262,6 +262,14 @@ class SolarImpactsTest {
   @Test
   void needsClearRect_isTrue_whenDataIsFreshCameraMismatchedAndOverrideRequested () {
     app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    // win3DOverlay_recordAnalysisState() itself can't know which of its
+    // two callers (plotImpact_urban() vs calculate_ImpactOnSections())
+    // drove it - set true here the same way plotImpact_urban() does
+    // after a genuine viewport analysis, so this represents that case
+    // rather than a section's own render (calculate_ImpactOnSections()
+    // leaves this false, and should never need the clearing rect at
+    // all - see the sibling test for that case just below).
+    app.allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
     app.allSolarImpacts.Image = new PImage[2][5];
     app.WIN3D.impactTypeIndex = 0;
     app.impactDisplayDay = 2;
@@ -274,9 +282,27 @@ class SolarImpactsTest {
   }
 
   @Test
+  void needsClearRect_isFalse_whenTheImageIsNotFromTheViewport () {
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    // Left false, as calculate_ImpactOnSections() leaves it right after
+    // overwriting this.Image[][] with one of allSections' own cross-
+    // sections instead of the camera/viewport - WIN3D.draw() must still
+    // render for real in this case (drawViewport3DLayers.pde's own
+    // showSolarImpactOverlay comes out false too, so nothing else would
+    // paint over a skipped render - see that method's own comment).
+    app.allSolarImpacts.Image = new PImage[2][5];
+    app.WIN3D.impactTypeIndex = 0;
+    app.impactDisplayDay = 2;
+    app.WIN3D.showSolarImpactOverride = true;
+
+    assertFalse(app.allSolarImpacts.win3DOverlay_needsClearRect(), "a section's own render never needs the clearing rect");
+  }
+
+  @Test
   void needsClearRect_isFalse_whenTheCameraActuallyMatches_evenWithAnOverrideRequested () {
     app.allSolarImpacts.win3DOverlay_recordCameraState();
     app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    app.allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
     app.allSolarImpacts.Image = new PImage[2][5];
     app.WIN3D.showSolarImpactOverride = true;
 

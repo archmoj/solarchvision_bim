@@ -2595,7 +2595,26 @@ class STUDY {
       // immediately above - see win3DOverlay_imageIsFromViewport's own
       // comment (solarImpacts.pde) for what drawViewport3DLayers.pde does
       // with this.
-      allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
+      //
+      // Guarded on that same "Viewport_" SceneName now, rather than set
+      // unconditionally: this.updateImpactGraph never resets itself back
+      // to false (deliberately - see its own field comment), so this
+      // whole block can run again well after calculate_ImpactOnSections()
+      // last touched SceneName/RES1/RES2/etc. for one of allSections' own
+      // cross-sections instead of the viewport - calculate_Impact_
+      // CurrentPreBaked() just now would have repainted this.Image[][]
+      // from THAT section's own baked files again, not the viewport's,
+      // and this flag has no business claiming otherwise just because
+      // this particular call site happens to be the one that normally
+      // means "viewport". this.sectionType/RES1/RES2/X/Y/Z/etc. are left
+      // exactly as calculate_Impact_CurrentPreBaked() used them - nothing
+      // about this.Image[][] or this function's own display below
+      // changes either way, only whether drawViewport3DLayers.pde is told
+      // it may treat this.Image[][] as fresh viewport data for its own,
+      // separate full-screen overlay.
+      if (SceneName.startsWith("Viewport_")) {
+        allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
+      }
 
       int RES1 = allSolarImpacts.RES1;
       int RES2 = allSolarImpacts.RES2;
