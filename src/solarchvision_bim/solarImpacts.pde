@@ -561,8 +561,23 @@ class SolarImpacts {
       // consistent with, not an exception to, how this specific function
       // already accepts that an exception part-way through leaves its own
       // cleanup undone.
+      // Same console-bar/ProgressWindow shape as calculate_VertexSolar_
+      // array()'s own (calculateVertexSolarArray.pde) and
+      // castShadowsCurrentSection()'s own (castShadowsCurrentSection.pde)
+      // - one printedProgress shared across this calculation's 3 separate
+      // phases below (day accumulation [0, 0.5], summary-palette pixels
+      // [0.5, 0.9], per-variation finishing [0.9, 1.0]), the same
+      // delta >= 1 throttle at each one, and the bar topped up to
+      // exactly 100 characters right before dispose() (below) the same
+      // way those two already do. Unlike the window (gated by
+      // showCalcImpactProgress/canShowProgressWindow()), the console bar
+      // itself only depends on control != USER_AUTO, matching every
+      // other console-bar/ProgressWindow pair in this codebase.
+      float calcImpact_printedProgress = 0;
+
       ProgressWindow calcImpactProgressWindow = (showCalcImpactProgress && canShowProgressWindow()) ? new ProgressWindow("\nSkin Potential") : null;
       if (calcImpactProgressWindow != null) calcImpactProgressWindow.setVisible(true);
+      progressBarHeader();
 
       // STEP 0 (not yet parallelized): timing instrumentation only, no
       // behavior change - a baseline to compare each later parallelized
@@ -689,12 +704,18 @@ class SolarImpacts {
 
         for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-          if (calcImpactProgressWindow != null) {
+          if (control != USER_AUTO) {
             // First of this p-block's own 2 steps (that comment's own
             // wording) - day accumulation, then the summary palette loop
             // below - so this half of the bar is [0, 0.5], not [0, 1]:
             // see that loop's own matching update for the other half.
-            calcImpactProgressWindow.updateFraction(0.5f * (j - STUDY.startDay) / (float) max(1, STUDY.endDay - STUDY.startDay));
+            float Progress = 100.0f * 0.5f * (j - STUDY.startDay) / (float) max(1, STUDY.endDay - STUDY.startDay);
+            int delta = (int) floor(Progress - calcImpact_printedProgress);
+            if (delta >= 1) {
+              printProgressBarChunk(delta);
+              calcImpact_printedProgress = floor(Progress);
+              if (calcImpactProgressWindow != null) calcImpactProgressWindow.updateFraction(Progress / 100.0f);
+            }
           }
 
           now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
@@ -1056,10 +1077,16 @@ class SolarImpacts {
           int calcImpactSummaryLastDrawnPercent = -1;
 
           for (int np = 0; np < (RES1 * RES2); np++) {
-            if (calcImpactProgressWindow != null) {
+            if (control != USER_AUTO) {
               int percent = (int) floor(100.0f * np / (RES1 * RES2));
               if (percent != calcImpactSummaryLastDrawnPercent) {
-                calcImpactProgressWindow.updateFraction(0.5f + 0.4f * percent / 100.0f);
+                float Progress = 50.0f + 0.4f * percent;
+                int delta = (int) floor(Progress - calcImpact_printedProgress);
+                if (delta >= 1) {
+                  printProgressBarChunk(delta);
+                  calcImpact_printedProgress = floor(Progress);
+                }
+                if (calcImpactProgressWindow != null) calcImpactProgressWindow.updateFraction(Progress / 100.0f);
                 calcImpactSummaryLastDrawnPercent = percent;
               }
             }
@@ -1113,8 +1140,14 @@ class SolarImpacts {
             }
             //}
 
-            if (calcImpactProgressWindow != null) {
-              calcImpactProgressWindow.updateFraction(0.9f + 0.1f * (q + 1) / (float) numberOfImpactVariations);
+            if (control != USER_AUTO) {
+              float Progress = 90.0f + 10.0f * (q + 1) / (float) numberOfImpactVariations;
+              int delta = (int) floor(Progress - calcImpact_printedProgress);
+              if (delta >= 1) {
+                printProgressBarChunk(delta);
+                calcImpact_printedProgress = floor(Progress);
+              }
+              if (calcImpactProgressWindow != null) calcImpactProgressWindow.updateFraction(Progress / 100.0f);
             }
           }
           calcImpact_summaryPaletteMillis += millis() - calcImpact_summaryPaletteT0;
@@ -1141,6 +1174,14 @@ class SolarImpacts {
 
       calcImpact_executor.shutdown();
       this.isCalculatingImpact = false;
+
+      // Tops the console bar up to exactly 100 characters even if
+      // rounding across the 3 phases above left it a character or two
+      // short - same wrap-up shape as calculate_VertexSolar_array()'s/
+      // castShadowsCurrentSection()'s own identical lines.
+      printProgressBarChunk((int) floor(100 - calcImpact_printedProgress));
+      println();
+
       if (calcImpactProgressWindow != null) calcImpactProgressWindow.dispose();
     }
   }
