@@ -971,8 +971,6 @@ class UI_rollout {
     STUDY.impactGraphIndex = active ? impactGraphIndex_URBAN_ACTIVE : impactGraphIndex_URBAN_PASSIVE;
     allSolarImpacts.calculate_ImpactOnSections(everySection);
 
-    reviseAll();
-
     // Consumes its own click, same as handleRenderViewportButtonClick()'s own
     // identical reasoning above.
     X_clicked = -1;

@@ -1240,7 +1240,8 @@ class SolarImpacts {
 
     this.displayImage = true;
     allSolidImpacts.displayImage = false;
-    UI_rollout.revise();
+
+    reviseAll();
   }
 
 
