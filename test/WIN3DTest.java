@@ -234,6 +234,14 @@ class WIN3DTest {
   @Test
   void draw_skipsRenderingAndConsumesUpdate_whenTheClearingRectWillCoverItAnyway () {
     app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    // win3DOverlay_recordAnalysisState() itself can't tell plotImpact_
+    // urban()'s own call from calculate_ImpactOnSections()'s - set true
+    // here the same way plotImpact_urban() does, so this represents a
+    // genuine viewport analysis (the only case win3DOverlay_needsClearRect()
+    // - and so this early-return - should fire for; see SolarImpactsTest's
+    // own needsClearRect_isFalse_whenTheImageIsNotFromTheViewport for the
+    // sibling case, a section's own render, where it must not).
+    app.allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
     app.allSolarImpacts.Image = new PImage[2][5];
     app.WIN3D.impactTypeIndex = 0;
     app.impactDisplayDay = 2;
