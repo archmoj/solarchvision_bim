@@ -46,13 +46,49 @@ class Overlay3D {
         fill(fillColor);
       }
 
-      float pad = 0.5 * strokeWeight + 1;
-
-      innerWinX1 = -0.5 * WIN3D.dX + pad;
-      innerWinY1 = -0.5 * WIN3D.dY + pad;
-      innerWinX2 = 0.5 * WIN3D.dX - pad;
-      innerWinY2 = 0.5 * WIN3D.dY - pad;
+      float[] innerWindow = computeInnerWindow(this.strokeWeight);
+      innerWinX1 = innerWindow[0];
+      innerWinY1 = innerWindow[1];
+      innerWinX2 = innerWindow[2];
+      innerWinY2 = innerWindow[3];
     }
+  }
+
+  // Pulled out of DrawStyle.applyStyle() above so it's callable without
+  // the graphics calls the rest of that method makes (strokeWeight()/
+  // stroke()/fill() all need a real PGraphics - this doesn't), the same
+  // reason computeFaceTessellation()/computePivotAxisVertices()/
+  // computeGroupBoxVertices() below were each pulled out of draw().
+  //
+  // Returns {innerWinX1, innerWinY1, innerWinX2, innerWinY2}: the window
+  // a stroked path is itself clipped/clamped to stay within
+  // (clipPolygon_toWindow(), called via clipAndProject()/
+  // drawClosedShape() for every style here) or checked against before
+  // an unclipped line/ellipse is drawn at all (isInside(), for the
+  // pivot/axis/vertex/terrain markers). Either way, the PATH stays
+  // inside this inner rect, but Processing's own stroke rendering
+  // (round caps/joins by default) then draws strokeWeight/2 further out
+  // from that path in every direction, plus a little more still for
+  // antialiasing's own blur at the stroke's edge. 1px of margin for
+  // that was enough for the thin (strokeWeight 2) styles this
+  // originally shipped with, but TERRAIN_STYLE/SOLID_STYLE/
+  // GROUP_BOX_STYLE's strokeWeight 4 leaves only that same flat 1px
+  // beyond its own (now twice as wide) half-stroke - not enough room
+  // for the thicker line's own antialiasing to stay inside WIN3D too.
+  // Scaling the margin itself with strokeWeight, rather than leaving it
+  // flat, keeps pace with that: margin beyond the stroke's outer edge
+  // is strokeWeight + 2 - 0.5*strokeWeight = 0.5*strokeWeight + 2, up
+  // from a flat 1px, so a thicker stroke gets more room, not the same
+  // fixed sliver a thin one gets.
+  float[] computeInnerWindow (int strokeWeight) {
+    float pad = strokeWeight + 2;
+
+    return new float[]{
+      -0.5 * WIN3D.dX + pad,
+      -0.5 * WIN3D.dY + pad,
+      0.5 * WIN3D.dX - pad,
+      0.5 * WIN3D.dY - pad
+    };
   }
 
 

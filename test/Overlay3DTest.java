@@ -11,6 +11,35 @@ class Overlay3DTest {
     app = new solarchvision_bim();
   }
 
+  // ================= computeInnerWindow (extracted) =======================
+
+  @Test
+  void computeInnerWindow_marginBeyondTheStrokesOwnOuterEdge_growsWithStrokeWeight_notFlat () {
+    // innerWinX1/Y1/X2/Y2 are where the PATH gets clipped/checked to
+    // (clipPolygon_toWindow()/isInside(), both above) - Processing's own
+    // stroke rendering then draws strokeWeight/2 further out from that
+    // path, in every direction (round caps/joins, the default), plus a
+    // little more for antialiasing's own blur at the stroke's edge. The
+    // margin beyond THAT outer edge - not just beyond the path - is
+    // what has to stay generous for a thicker stroke, which is exactly
+    // what this pins down: strokeWeight 2 (every thin-line style here)
+    // and strokeWeight 4 (TERRAIN_STYLE/SOLID_STYLE/GROUP_BOX_STYLE's
+    // own weight) should NOT get the same flat margin beyond their own,
+    // differently-sized, half-stroke.
+    app.WIN3D.dX = 400;
+    app.WIN3D.dY = 300;
+
+    float[] thin = app.Overlay3D.computeInnerWindow(2);
+    float thinMarginBeyondStroke = thin[0] - (-0.5f * app.WIN3D.dX) - 0.5f * 2;
+
+    float[] thick = app.Overlay3D.computeInnerWindow(4);
+    float thickMarginBeyondStroke = thick[0] - (-0.5f * app.WIN3D.dX) - 0.5f * 4;
+
+    assertTrue(thickMarginBeyondStroke > thinMarginBeyondStroke,
+      "a weight-4 stroke's own margin (" + thickMarginBeyondStroke +
+      ") should be more generous than a weight-2 stroke's (" + thinMarginBeyondStroke + "), not flat");
+  }
+
   // ================= computeFaceTessellation (extracted) ==================
 
   @Test
