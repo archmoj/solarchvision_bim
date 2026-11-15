@@ -1,0 +1,36 @@
+# set test time
+Month 1
+Day 15
+
+# clear default model
+Delete all
+
+3d-model 7
+
+Delete All Model2Ds
+
+Tree1 m=0 x=10 y=10 z=0 h=20 degree=10 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
+Tree1 m=0 x=-5 y=-25 z=-10 h=20 degree=9 seed=0 r=0 tilt=60 twist=137.5 ratio=0.8 base=2 trunk=1 leaf=0.2
+
+Tree2 m=10 x=25 y=10 z=-5 h=20
+Tree2 m=9 x=-10 y=-10 z=0 h=20
+
+Delete All Sections
+Section t=0 x=0 y=0 z=0 r=0 ry=30 rz=-45 u=64 v=64 i=200 j=200
+
+Select nothing
+
+Hide Sun Path
+Hide Earth Surface
+Shade.Real
+
+ENLARGE3D
+=======
+S.E.
+
+Select All Sections
+Prebake Selected Sections
+Process Active Impact on Selected Sections
+Select nothing
+
+REC.png solar-impacts-on-sections-type0
