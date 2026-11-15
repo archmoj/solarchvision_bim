@@ -792,7 +792,7 @@ void lasMeshPointCloud (int[] pointIndex, float[] finalX, float[] finalY, float[
   println("\nMeshing the point cloud into a surface. Please wait...");
   progressBarHeader();
 
-  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Meshing LAS point cloud") : null;
+  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nMeshing LAS point cloud") : null;
   if (meshProgressWindow != null) meshProgressWindow.setVisible(true);
 
   LasMeshProgressReporter reporter = new LasMeshProgressReporter(meshProgressWindow);
@@ -840,7 +840,7 @@ void lasMeshPointCloudBoxGrid (float[] finalX, float[] finalY, float[] finalZ) {
   println("\nMeshing the point cloud into a surface. Please wait...");
   progressBarHeader();
 
-  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("Meshing LAS point cloud") : null;
+  ProgressWindow meshProgressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nMeshing LAS point cloud") : null;
   if (meshProgressWindow != null) meshProgressWindow.setVisible(true);
 
   LasMeshProgressReporter reporter = new LasMeshProgressReporter(meshProgressWindow);

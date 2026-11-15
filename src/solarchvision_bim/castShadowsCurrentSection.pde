@@ -111,7 +111,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   // section, each with its own fresh window, so without this every one
   // of them would show the exact same plain "Baking Section" title with
   // no way to tell which section currently has focus.
-  String sectionProgressWindowTitle = "Baking " + ((sectionCount > 1) ? ("Section " + sectionIndex + "/" + sectionCount) : "Section");
+  String sectionProgressWindowTitle = "\nBaking " + ((sectionCount > 1) ? ("Section " + sectionIndex + "/" + sectionCount) : "Section");
   ProgressWindow sectionBakeProgressWindow = (showSectionBakeProgress && canShowProgressWindow()) ? new ProgressWindow(sectionProgressWindowTitle) : null;
   if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.setVisible(true);
 

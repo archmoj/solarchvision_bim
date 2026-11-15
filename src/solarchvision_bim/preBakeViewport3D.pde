@@ -20,12 +20,12 @@ void preBakeViewport () {
   // those, all take real time too and, left untracked, would leave the
   // bar stuck at a stale "done" through all of it. Disposed once, at
   // this function's own very end.
-  ProgressWindow prebakeProgressWindow = (showPrebakeProgress && canShowProgressWindow()) ? new ProgressWindow("Prebaking") : null;
+  ProgressWindow prebakeProgressWindow = (showPrebakeProgress && canShowProgressWindow()) ? new ProgressWindow("\nPrebaking") : null;
   if (prebakeProgressWindow != null) prebakeProgressWindow.setVisible(true);
 
   showWaitCursor();
 
-  println("PreBaking for Direct and Diffuse models. Please wait...");
+  println("\nPreBaking for Direct and Diffuse models. Please wait...");
 
   // Force a fresh build - see shadeViewport3D.pde's own comment on this:
   // Model2Ds.addToFaceGrid()'s tree/person billboards are camera-facing,

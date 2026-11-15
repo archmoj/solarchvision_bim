@@ -561,7 +561,7 @@ class SolarImpacts {
       // consistent with, not an exception to, how this specific function
       // already accepts that an exception part-way through leaves its own
       // cleanup undone.
-      ProgressWindow calcImpactProgressWindow = (showCalcImpactProgress && canShowProgressWindow()) ? new ProgressWindow("Skin Potential") : null;
+      ProgressWindow calcImpactProgressWindow = (showCalcImpactProgress && canShowProgressWindow()) ? new ProgressWindow("\nSkin Potential") : null;
       if (calcImpactProgressWindow != null) calcImpactProgressWindow.setVisible(true);
 
       // STEP 0 (not yet parallelized): timing instrumentation only, no

@@ -148,7 +148,16 @@ class ProgressWindow extends java.awt.Frame {
 
   ProgressWindow (String label) {
     super(label);
-    this.label = label;
+    // Every caller passes the same label text it also prints to the
+    // console with its own leading "\n" (so that println() starts on a
+    // fresh line, regardless of whatever was on the console line before
+    // it) - reusing that exact string here rather than a second, label-
+    // only literal per caller. drawString() below doesn't render "\n" as
+    // a line break at all though (it would just draw as a stray,
+    // unreadable glyph inline with the rest of the text), so strip
+    // exactly that one leading newline here, once, rather than at every
+    // single paint() call.
+    this.label = label.startsWith("\n") ? label.substring(1) : label;
     this.setUndecorated(true);
     this.setSize(560, 44); // 2x the original 280 width - same height
     this.setLocationRelativeTo(null); // centers on the default screen
