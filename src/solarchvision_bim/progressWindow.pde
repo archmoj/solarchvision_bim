@@ -130,21 +130,20 @@ class ProgressWindow extends java.awt.Frame {
   String label;
 
   // A Toolkit-level AWTEventListener, not a per-component KeyListener -
-  // this window never calls requestFocus()/setFocusableWindowState(), so
-  // a plain KeyListener on it would never actually receive anything
-  // unless the main sketch window's own keyboard focus were stolen out
-  // from under the person mid-download/import, which would be a far
-  // bigger surprise than not catching Esc at all. A Toolkit-level
-  // listener sees every key event system-wide regardless of which window
-  // currently has focus, so Esc aborts whether the sketch window or
-  // this overlay (or neither) happens to have it. Scoped to exactly
-  // while THIS window is visible - installed in setVisible(true),
-  // removed again in setVisible(false) and dispose() - so it doesn't
-  // keep listening, or keep this object reachable, once the action that
-  // owns it has finished. Every existing caller's own construct ->
-  // setVisible(true) -> ... -> dispose() lifecycle only ever actually
-  // hits the dispose() removal, not setVisible(false), but both are
-  // handled for whichever one a future caller ends up using.
+  // this window calls setFocusableWindowState(false) (below) precisely
+  // so it never ends up with real OS keyboard focus in the first place,
+  // so a plain KeyListener on it would never receive anything anyway. A
+  // Toolkit-level listener sees every key event system-wide regardless
+  // of which window currently has focus, so Esc aborts whether the
+  // sketch window or this overlay (or neither) happens to have it.
+  // Scoped to exactly while THIS window is visible - installed in
+  // setVisible(true), removed again in setVisible(false) and dispose()
+  // - so it doesn't keep listening, or keep this object reachable, once
+  // the action that owns it has finished. Every existing caller's own
+  // construct -> setVisible(true) -> ... -> dispose() lifecycle only
+  // ever actually hits the dispose() removal, not setVisible(false),
+  // but both are handled for whichever one a future caller ends up
+  // using.
   java.awt.event.AWTEventListener escListener = null;
 
   ProgressWindow (String label) {
@@ -154,6 +153,18 @@ class ProgressWindow extends java.awt.Frame {
     this.setSize(560, 44); // 2x the original 280 width - same height
     this.setLocationRelativeTo(null); // centers on the default screen
     this.setAlwaysOnTop(true);
+
+    // Without this, a click on this window (or Alt+Tab reaching it, since
+    // it's a real top-level window) can give it genuine OS keyboard
+    // focus - and once it has that, real keystrokes go to IT, not to the
+    // main sketch's own NEWT window, so Esc stops working via the one
+    // path that's actually proven reliable (activeProgressWindow, set
+    // from the sketch's own keyPressed() - see that field's own
+    // comment). This window has nothing on it that needs a real click
+    // anymore (no button, no decorations), so there's no downside left
+    // to it never taking focus at all.
+    this.setFocusableWindowState(false);
+
     this.setBackground(new java.awt.Color(223, 223, 223));
     this.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 18)); // was the AWT default (~11-12pt) - bumped up for readability
   }
