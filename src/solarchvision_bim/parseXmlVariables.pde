@@ -102,6 +102,22 @@ void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport
 
   allMaterials.Selection = XML_getInt(display, "materialSelection");
   overallScale = XML_getFloat(display, "overallScale");
+  // Unlike every other display.getXxx() call here, this one is a
+  // brand new attribute - no file saved before this setting existed
+  // ever had it under any name, old-flat-"variable" layout included
+  // (unlike this session's earlier renames/regroupings, where the
+  // value genuinely was always there, just differently named/nested).
+  // XML_getFloat()'s own xml.getFloat(tag) (xmlHelpers.pde) returns a
+  // bare 0 for a tag that isn't present, which would silently zero out
+  // this lift (and bring back the z-fighting FACE_TO_SECTION_LIFT
+  // exists to prevent) on every project saved before this change. Its
+  // own 2-argument overload takes an explicit fallback instead - used
+  // directly here, bypassing the XML_getFloat() wrapper (and its
+  // diag_XML_input logging) for this one call - with
+  // FACE_TO_SECTION_LIFT's own compiled-in default (faceToSection.pde)
+  // as that fallback, so an old file keeps that default instead of
+  // silently losing the lift entirely.
+  FACE_TO_SECTION_LIFT = display.getFloat("faceToSectionLift", FACE_TO_SECTION_LIFT);
 
   viewLayout = XML_getInt(display, "viewLayout");
   activeLanguage = XML_getInt(parent, "activeLanguage");

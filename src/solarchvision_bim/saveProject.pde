@@ -119,6 +119,7 @@ XML buildProjectSnapshot (boolean copyTexturesAlongside) {
 
     XML_setInt(display, "materialSelection", allMaterials.Selection);
     XML_setFloat(display, "overallScale", overallScale);
+    XML_setFloat(display, "faceToSectionLift", FACE_TO_SECTION_LIFT);
 
     XML_setInt(display, "viewLayout", viewLayout);
 

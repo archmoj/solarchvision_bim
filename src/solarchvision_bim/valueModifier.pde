@@ -3104,6 +3104,32 @@ class ValueModifier {
     }
     return out;
   }
+  float faceToSectionLift (int created) {
+    // No viewport/study/world redraw depends on this one - it's only
+    // ever read at the moment "Face >> Section" (faceToSection.pde)
+    // actually runs, not on every frame the way overallScale/
+    // celestialMagnification's own WIN3D-affecting values are.
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 10; //stop
+    float s3 = 0.01; //step (positive = plain add/subtract on +/- click, unlike overallScale's geometric one - a lift distance has no natural "double it" meaning)
+
+    float out = 0;
+    String command = "Face To Section Lift";
+    if (created == 0) {
+      putValueAction(command,
+        () -> FACE_TO_SECTION_LIFT,
+        (v) -> { FACE_TO_SECTION_LIFT = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, FACE_TO_SECTION_LIFT, s1, s2, s3);
+    }
+    return out;
+  }
   int plotLayoutIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D

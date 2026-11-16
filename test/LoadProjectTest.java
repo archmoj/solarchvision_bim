@@ -136,6 +136,53 @@ class LoadProjectTest {
     assertEquals(7, app.impactDisplayDay);
   }
 
+  @Test
+  void loadProject_roundTripsFaceToSectionLift () throws IOException {
+    app.FACE_TO_SECTION_LIFT = 0.25f;
+
+    Path saved = saveToTempFile("load-project-facetosectionlift-test");
+
+    app.FACE_TO_SECTION_LIFT = 0.01f;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(0.25f, app.FACE_TO_SECTION_LIFT, 0.001f);
+  }
+
+  @Test
+  void parseXmlVariables_keepsFaceToSectionLiftsCompiledDefault_onAFileSavedBeforeItExisted () {
+    // parse_XML_variables()'s own display.getFloat("faceToSectionLift",
+    // FACE_TO_SECTION_LIFT) fallback (see its own comment) - a file
+    // saved before this setting existed has no "faceToSectionLift"
+    // attribute on "display" at all, so loading it should keep
+    // whatever FACE_TO_SECTION_LIFT already was, not silently zero it
+    // out the way a bare xml.getFloat() would. processing.data.XML has
+    // no removeAttribute(), so simulating "this attribute was never
+    // written" means rebuilding "display" without it, the same way
+    // the geometry/climate pre-grouping tests above rebuild without a
+    // whole child element.
+    processing.data.XML xml = app.buildProjectSnapshot(true);
+    processing.data.XML variable = xml.getChild("variable");
+    processing.data.XML oldDisplay = variable.getChild("display");
+
+    processing.data.XML newDisplay = new processing.data.XML("display");
+    for (String attribute : oldDisplay.listAttributes()) {
+      if (!attribute.equals("faceToSectionLift")) {
+        newDisplay.setString(attribute, oldDisplay.getString(attribute));
+      }
+    }
+    variable.removeChild(oldDisplay);
+    variable.addChild(newDisplay);
+
+    assertFalse(variable.getChild("display").hasAttribute("faceToSectionLift"), "sanity check: the pre-existing-setting layout really is what this test is exercising");
+
+    app.FACE_TO_SECTION_LIFT = 0.01f; // sanity: still the compiled default from faceToSection.pde
+
+    app.parse_XML_variables(xml, false, true);
+
+    assertEquals(0.01f, app.FACE_TO_SECTION_LIFT, 0.0001f);
+  }
+
   // The three tests below exercise the other groups the earlier
   // grouping changes introduced (environment/view/impacts at the
   // document root, climate/layer inside "variable") through the real

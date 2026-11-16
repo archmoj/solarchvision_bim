@@ -50,6 +50,22 @@ class FaceToSectionTest {
     assertFalse(farCornerInside);
   }
 
+  // FACE_TO_SECTION_LIFT is no longer a fixed constant (see
+  // faceToSection.pde's own comment on it) - this confirms
+  // convertSelectedFacesToSections() actually reads the live global
+  // each time it runs, rather than having captured 0.01 once somewhere.
+  @Test
+  void convertSelectedFacesToSections_usesWhateverFaceToSectionLiftCurrentlyIs () {
+    app.allVertices = new float[][]{{0, 0, 5}, {4, 0, 5}, {0, 3, 5}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.Select3D.faceSelection = new int[]{0};
+    app.FACE_TO_SECTION_LIFT = 0.5f;
+
+    app.convertSelectedFacesToSections();
+
+    assertEquals(5f + 0.5f, app.allSections.getZ(0), 0.0001f);
+  }
+
   // A flat, CCW-wound, already-rectangular quad - every one of its own 4
   // vertices becomes a real corner, so this should behave exactly like
   // the bounding-rectangle path (for a rectangle, "real corners" and

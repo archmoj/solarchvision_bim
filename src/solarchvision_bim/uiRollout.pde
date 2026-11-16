@@ -305,6 +305,7 @@ class UI_rollout {
     vm.Sun3DFitInSkyDome(0);
     vm.celestialMagnification(0);
     vm.overallScale(0);
+    vm.faceToSectionLift(0);
     vm.plotLayoutIndex(0);
     vm.verticalUnitScale(0);
     vm.showRawLines(0);
@@ -714,6 +715,7 @@ class UI_rollout {
         Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
         celestialMagnification = vm.celestialMagnification(1);
         overallScale = vm.overallScale(1);
+        FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
     } else if (this.parent == PARENT_ILLUSTRATION) {
