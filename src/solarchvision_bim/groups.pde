@@ -566,23 +566,23 @@ class Groups {
       XML child = parent.addChild("item");
       XML_setInt(child, "id", i);
 
-      XML_setString(child, "Model1Ds",
+      XML_setString(child, "model1Ds",
                     nf(this.getStart_Model1D(i), 0) + "|" +
                     nf(this.getStop_Model1D(i), 0));
 
-      XML_setString(child, "Model2Ds",
+      XML_setString(child, "model2Ds",
                     nf(this.getStart_Model2D(i), 0) + "|" +
                     nf(this.getStop_Model2D(i), 0));
 
-      XML_setString(child, "Faces",
+      XML_setString(child, "faces",
                     nf(this.getStart_Face(i), 0) + "|" +
                     nf(this.getStop_Face(i), 0));
 
-      XML_setString(child, "Polylines",
+      XML_setString(child, "polylines",
                     nf(this.getStart_Polyline(i), 0) + "|" +
                     nf(this.getStop_Polyline(i), 0));
 
-      XML_setString(child, "Solids",
+      XML_setString(child, "solids",
                     nf(this.getStart_Solid(i), 0) + "|" +
                     nf(this.getStop_Solid(i), 0));
 
@@ -609,31 +609,31 @@ class Groups {
     for (int i = 0; i < ni; i++) {
 
       {
-        String[] parts = split(XML_getString(children[i], "Model1Ds"), "|");
+        String[] parts = split(XML_getString(children[i], "model1Ds"), "|");
         this.setStart_Model1D(i, int(parts[0]));
         this.setStop_Model1D(i, int(parts[1]));
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Model2Ds"), "|");
+        String[] parts = split(XML_getString(children[i], "model2Ds"), "|");
         this.setStart_Model2D(i, int(parts[0]));
         this.setStop_Model2D(i, int(parts[1]));
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Faces"), "|");
+        String[] parts = split(XML_getString(children[i], "faces"), "|");
         this.setStart_Face(i, int(parts[0]));
         this.setStop_Face(i, int(parts[1]));
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Polylines"), "|");
+        String[] parts = split(XML_getString(children[i], "polylines"), "|");
         this.setStart_Polyline(i, int(parts[0]));
         this.setStop_Polyline(i, int(parts[1]));
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Solids"), "|");
+        String[] parts = split(XML_getString(children[i], "solids"), "|");
         this.setStart_Solid(i, int(parts[0]));
         this.setStop_Solid(i, int(parts[1]));
       }
