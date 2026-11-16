@@ -69,7 +69,7 @@ class MouseClickedTest {
   // The ObjectCategory.SOLID branch's own local rx/ry/rz (half-widths,
   // same as every other shape branch) land in the "SOLID" command's own
   // sx/sy/sz named parameters, not its rx/ry/rz ones - confirmed against
-  // solids.pde's create(x,y,z,px,py,pz,sx,sy,sz,tx,ty,tz,v) signature
+  // solids.pde's create(x,y,z,px,py,pz,sx,sy,sz,rx,ry,rz,v) signature
   // directly, not assumed from parameter names matching across the two
   // call sites. DEF[0] stores all 13 raw create() arguments in order, so
   // comparing it directly is a precise check of exactly what reached

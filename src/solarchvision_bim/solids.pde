@@ -263,11 +263,11 @@ class Solids {
 
 
 
-  int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
+  int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float rx, float ry, float rz, float v) {
 
     float[][] newSolid = {
       {
-        x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v
+        x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v
       }
     };
     this.DEF = (float[][]) concat(this.DEF, newSolid);
