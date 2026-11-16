@@ -21,19 +21,19 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   String ScenePathPrefix = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
 
-  int RES1 = allSolarImpacts.RES1;
-  int RES2 = allSolarImpacts.RES2;
+  int resX = allSolarImpacts.ResX;
+  int resY = allSolarImpacts.ResY;
 
-  Shades_scaleX = RES1 / allSolarImpacts.U;
-  Shades_scaleY = RES2 / allSolarImpacts.V;
+  Shades_scaleX = resX / allSolarImpacts.SizeX;
+  Shades_scaleY = resY / allSolarImpacts.SizeY;
 
   Shades_offsetX = allSolarImpacts.X;
   Shades_offsetY = allSolarImpacts.Y;
 
 
-  SHADOW_graphics = createGraphics(RES1, RES2, P2D);
+  SHADOW_graphics = createGraphics(resX, resY, P2D);
 
-  TREES_graphics = createGraphics(RES1, RES2, P2D);
+  TREES_graphics = createGraphics(resX, resY, P2D);
 
   // Every section is the same arbitrary-orientation shape now (see
   // sections.pde), so the sun direction is always rotated into the
@@ -126,7 +126,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
 
             File_Name += "_Camera00";
 
-            renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name, ".png");
+            renderShadowFrame(SunR, SunR_Rotated_check, SHD, resX, resY, File_Name, ".png");
 
             framesDone++;
             if (control != USER_AUTO) {
@@ -147,7 +147,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
     {
       int RAD_TYPE = 1;
 
-      PGraphics DIFFUSE_graphics = createGraphics(RES1, RES2, P2D);
+      PGraphics DIFFUSE_graphics = createGraphics(resX, resY, P2D);
 
       for (int SHD = 0; SHD <= 1; SHD++) {
 
@@ -174,7 +174,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
             SunR_Rotated[3] = localSun[2];
           }
 
-          renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
+          renderShadowFrame(SunR, SunR_Rotated_check, SHD, resX, resY, File_Name + nf(i, 3), ".jpg");
 
           shadowFrames[i] = SHADOW_graphics.get();
 
@@ -200,7 +200,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
         DIFFUSE_graphics.stroke(0);
         DIFFUSE_graphics.strokeWeight(0);
         DIFFUSE_graphics.rectMode(CORNER);
-        DIFFUSE_graphics.rect(0, 0, RES1, RES2);
+        DIFFUSE_graphics.rect(0, 0, resX, resY);
 
         float tintAlpha = 255 / (0.5 * DiffuseVectors.length);
 
@@ -212,7 +212,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
 
           DIFFUSE_graphics.tint(255, tintAlpha);
 
-          DIFFUSE_graphics.image(img, 0, 0, RES1, RES2);
+          DIFFUSE_graphics.image(img, 0, 0, resX, resY);
 
           DIFFUSE_graphics.noTint();
         }
@@ -241,7 +241,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
 }
 
 void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
-                        int RES1, int RES2, String File_Name, String finalExt) {
+                        int resX, int resY, String File_Name, String finalExt) {
 
   TREES_graphics.beginDraw();
 
@@ -251,12 +251,12 @@ void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
   TREES_graphics.stroke(255);
   TREES_graphics.strokeWeight(0);
   TREES_graphics.rectMode(CORNER);
-  TREES_graphics.rect(0, 0, RES1, RES2);
+  TREES_graphics.rect(0, 0, resX, resY);
 
   if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
     TREES_graphics.pushMatrix();
-    TREES_graphics.translate(RES1 / 2, RES2 / 2);
+    TREES_graphics.translate(resX / 2, resY / 2);
 
     TREES_graphics.stroke(0);
     TREES_graphics.fill(0);
@@ -285,12 +285,12 @@ void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
   SHADOW_graphics.stroke(255 * _val);
   SHADOW_graphics.strokeWeight(0);
   SHADOW_graphics.rectMode(CORNER);
-  SHADOW_graphics.rect(0, 0, RES1, RES2);
+  SHADOW_graphics.rect(0, 0, resX, resY);
 
   if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
     SHADOW_graphics.pushMatrix();
-    SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
+    SHADOW_graphics.translate(resX / 2, resY / 2);
 
     SHADOW_graphics.stroke(0);
     SHADOW_graphics.fill(0);
@@ -317,7 +317,7 @@ void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
 
     SHADOW_graphics.tint(255, 255);
 
-    SHADOW_graphics.image(img, 0, 0, RES1, RES2);
+    SHADOW_graphics.image(img, 0, 0, resX, resY);
 
     SHADOW_graphics.noTint();
   }

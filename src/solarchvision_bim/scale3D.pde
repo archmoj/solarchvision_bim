@@ -142,8 +142,8 @@ class Scale3D {
 
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
-      allSections.setU(f, allSections.getU(f) * sx);
-      allSections.setV(f, allSections.getV(f) * sy);
+      allSections.setSizeX(f, allSections.getSizeX(f) * sx);
+      allSections.setSizeY(f, allSections.getSizeY(f) * sy);
     }
 
     allSolidImpacts.calculate_ImpactOnSections();

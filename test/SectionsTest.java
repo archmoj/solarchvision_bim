@@ -18,7 +18,7 @@ class SectionsTest {
     app.allSections.makeEmpty(2);
     assertEquals(2, app.allSections.num);
     assertEquals(2, app.allSections.f_data.length);
-    assertEquals(8, app.allSections.f_data[0].length); // X,Y,Z,rotX,rotY,rotZ,U,V
+    assertEquals(8, app.allSections.f_data[0].length); // X,Y,Z,rotX,rotY,rotZ,sizeX,sizeY
     assertEquals(2, app.allSections.i_data.length);
     assertEquals(2, app.allSections.SolidImpact.length);
     assertEquals(2, app.allSections.SolarImpact.length);
@@ -35,10 +35,10 @@ class SectionsTest {
     assertEquals(20f, app.allSections.getY(0), 0.0001f);
     assertEquals(30f, app.allSections.getZ(0), 0.0001f);
     assertEquals(45f, app.allSections.getRotX(0), 0.0001f);
-    assertEquals(2f, app.allSections.getU(0), 0.0001f);
-    assertEquals(3f, app.allSections.getV(0), 0.0001f);
-    assertEquals(4, app.allSections.get_res1(0));
-    assertEquals(4, app.allSections.get_res2(0));
+    assertEquals(2f, app.allSections.getSizeX(0), 0.0001f);
+    assertEquals(3f, app.allSections.getSizeY(0), 0.0001f);
+    assertEquals(4, app.allSections.get_resX(0));
+    assertEquals(4, app.allSections.get_resY(0));
 
     assertEquals(1, app.allSections.SolidImpact.length);
     assertEquals(4, app.allSections.SolidImpact[0].width);
@@ -57,19 +57,19 @@ class SectionsTest {
     app.allSections.setY(0, 2);
     app.allSections.setZ(0, 3);
     app.allSections.setRotX(0, 4);
-    app.allSections.setU(0, 5);
-    app.allSections.setV(0, 6);
+    app.allSections.setSizeX(0, 5);
+    app.allSections.setSizeY(0, 6);
     app.allSections.setRotY(0, 7);
     app.allSections.setRotZ(0, 8);
-    app.allSections.set_res1(0, 8);
-    app.allSections.set_res2(0, 9);
+    app.allSections.set_resX(0, 8);
+    app.allSections.set_resY(0, 9);
 
     assertEquals(1f, app.allSections.getX(0), 0.0001f);
-    assertEquals(6f, app.allSections.getV(0), 0.0001f);
+    assertEquals(6f, app.allSections.getSizeY(0), 0.0001f);
     assertEquals(7f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(8f, app.allSections.getRotZ(0), 0.0001f);
-    assertEquals(8, app.allSections.get_res1(0));
-    assertEquals(9, app.allSections.get_res2(0));
+    assertEquals(8, app.allSections.get_resX(0));
+    assertEquals(9, app.allSections.get_resY(0));
   }
 
   // ================= RotateX / RotateY / RotateZ ========================
@@ -194,7 +194,7 @@ class SectionsTest {
     assertEquals(45f, fresh.getRotX(0), 0.0001f);
     assertEquals(15f, fresh.getRotY(0), 0.0001f);
     assertEquals(25f, fresh.getRotZ(0), 0.0001f);
-    assertEquals(4, fresh.get_res1(0));
+    assertEquals(4, fresh.get_resX(0));
     assertFalse(fresh.displayAll);
   }
 }

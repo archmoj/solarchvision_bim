@@ -278,8 +278,8 @@ class UI_rollout {
     vm.SolidImpacts_rotX(0);
     vm.SolidImpacts_z(0);
     vm.SolidImpacts_positionStep(0);
-    vm.SolidImpacts_u(0);
-    vm.SolidImpacts_v(0);
+    vm.SolidImpacts_sizeX(0);
+    vm.SolidImpacts_sizeY(0);
     vm.SolidImpacts_x(0);
     vm.SolidImpacts_y(0);
     vm.SolidImpacts_windSpeed(0);
@@ -681,8 +681,8 @@ class UI_rollout {
         allSolidImpacts.RotX = vm.SolidImpacts_rotX(1);
         allSolidImpacts.Z = vm.SolidImpacts_z(1);
         allSolidImpacts.positionStep = vm.SolidImpacts_positionStep(1);
-        allSolidImpacts.U = vm.SolidImpacts_u(1);
-        allSolidImpacts.V = vm.SolidImpacts_v(1);
+        allSolidImpacts.SizeX = vm.SolidImpacts_sizeX(1);
+        allSolidImpacts.SizeY = vm.SolidImpacts_sizeY(1);
         allSolidImpacts.X = vm.SolidImpacts_x(1);
         allSolidImpacts.Y = vm.SolidImpacts_y(1);
         allSolidImpacts.WindSpeed = vm.SolidImpacts_windSpeed(1);

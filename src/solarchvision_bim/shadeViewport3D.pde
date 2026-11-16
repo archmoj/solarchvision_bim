@@ -29,7 +29,7 @@ boolean noShadeOnlyVisibleFaceEdges = false;
 String cameraFaceEdgesTexture = "";
 
 // preBakeViewport3D.pde renders the face-edges bake at WIN3D.dX/dY times
-// this, rather than at allSolarImpacts.RES1/RES2 like the rest of its
+// this, rather than at allSolarImpacts.ResX/ResY like the rest of its
 // bakes - crisper, closer-to-antialiased-looking lines once Processing's
 // own image() scales this (larger) source down to the (same as always)
 // on-screen size drawViewport3DLayers.pde displays it at, without changing
@@ -206,7 +206,7 @@ void ShadeViewport () {
   // during a plain live preview it's always in sync with the current
   // WIN3D.dY (renderFrame() just ran this very frame), making this
   // equivalent to the simpler 1/quality. But preBakeViewport() calls this
-  // in mask mode after overriding WIN3D.dY to allSolarImpacts.RES2,
+  // in mask mode after overriding WIN3D.dY to allSolarImpacts.ResY,
   // without ever calling renderFrame() - so WIN3D.scale there is still
   // whatever it was the last time the viewport was actually drawn, at its
   // true on-screen size, not RES2. Deriving
@@ -794,7 +794,7 @@ void ShadeViewport () {
     // drawViewport3DLayers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
     // with no aspect correction, which only matches the live preview
     // (sized off WIN3D.dX/dY itself). The mask is a background bake, sized
-    // at the unrelated allSolarImpacts.RES1/RES2, and was never meant to
+    // at the unrelated allSolarImpacts.ResX/ResY, and was never meant to
     // be shown over the viewport - flagging it for display here would
     // both pop up an overlay nobody asked for and stretch it wrong.
     //

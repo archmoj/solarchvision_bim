@@ -24,7 +24,7 @@ import java.nio.file.Path;
 // sets up the STATE those computations would have left behind - real,
 // non-placeholder PImages painted into allSections.SolidImpact/SolarImpact,
 // confirmed by hand to be exactly the shape calculate_Impact_
-// CurrentPreBaked() itself leaves (createImage(RES1, RES2, RGB) replacing
+// CurrentPreBaked() itself leaves (createImage(ResX, ResY, RGB) replacing
 // the small 2x2 placeholder - see that method's own
 // "allSections.SolarImpact[f][j + 1][q] = createImage(...)" line,
 // solarImpacts.pde) - and tests the part that's actually at risk of
@@ -165,7 +165,7 @@ class SaveLoadSectionTexturesTest {
   void loadProject_inAFreshSession_restoresASectionsSolarImpactTexture_includingItsRealResolution () throws IOException {
     // Mirrors exactly what calculate_Impact_CurrentPreBaked() itself does
     // (solarImpacts.pde's own "allSections.SolarImpact[f][j + 1][q] =
-    // createImage(this.RES1, this.RES2, RGB)" line) - replacing the
+    // createImage(this.ResX, this.ResY, RGB)" line) - replacing the
     // small 2x2 placeholder allSections.create() seeds every slot with
     // (sections.pde's own comment on that) with a real, full-resolution
     // image for the one (day, variation) slot that was actually baked.

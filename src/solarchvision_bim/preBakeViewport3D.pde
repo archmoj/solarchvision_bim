@@ -71,8 +71,8 @@ void preBakeViewport () {
   int pre_WIN3D_dX = WIN3D.dX;
   int pre_WIN3D_dY = WIN3D.dY;
 
-  WIN3D.dX = allSolarImpacts.RES1;
-  WIN3D.dY = allSolarImpacts.RES2;
+  WIN3D.dX = allSolarImpacts.ResX;
+  WIN3D.dY = allSolarImpacts.ResY;
   WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
 
   WIN3D.transform_3DViewport();
@@ -508,7 +508,7 @@ void preBakeViewport () {
   // Camera folder - this is ShadeViewport_2DsTexture()'s own former body,
   // inlined here now that this is its only caller. No need to redo its
   // WIN3D.dX/dY/view_R/transform_3DViewport() setup: WIN3D.dX/dY are
-  // already allSolarImpacts.RES1/RES2 from the top of this function, and
+  // already allSolarImpacts.ResX/ResY from the top of this function, and
   // nothing since has touched them or the camera.
   camera2DTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "2Ds_Camera" + nf(cameraIndex, 2) + ".png";
 

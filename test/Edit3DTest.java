@@ -234,14 +234,14 @@ class Edit3DTest {
 
   @Test
   void sections_tessellation_doublesOrHalvesResolution_clampedToOneHundredToSixteenHundred_onBothAxes () {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4); // RES1 == RES2 == 4
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4); // resX == resY == 4
     app.Select3D.sectionSelection = new int[]{ 0 };
     app.User3D.currentTool = app.UITASK.Tessellation;
 
     app.Edit3D.Sections(1); // 4 -> 8, well below the 100 floor - clamped UP to 100
 
-    assertEquals(100, app.allSections.get_res1(0));
-    assertEquals(100, app.allSections.get_res2(0), "both axes move together");
+    assertEquals(100, app.allSections.get_resX(0));
+    assertEquals(100, app.allSections.get_resY(0), "both axes move together");
   }
 
   @Test
@@ -251,10 +251,10 @@ class Edit3DTest {
     app.User3D.currentTool = app.UITASK.Tessellation;
 
     app.Edit3D.Sections(1);
-    assertEquals(400, app.allSections.get_res1(0));
+    assertEquals(400, app.allSections.get_resX(0));
 
     app.Edit3D.Sections(-1);
-    assertEquals(200, app.allSections.get_res1(0));
+    assertEquals(200, app.allSections.get_resX(0));
   }
 
   // ================= Solids() ==============================================

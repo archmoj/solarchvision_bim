@@ -172,8 +172,8 @@ class ValueModifierAllActionsTest {
       "Solid Impacts RotX", // SolidImpacts_rotX
       "Solid Impacts Z", // SolidImpacts_z
       "Solid Impacts Position Step", // SolidImpacts_positionStep
-      "Solid Impacts U", // SolidImpacts_u
-      "Solid Impacts V", // SolidImpacts_v
+      "Solid Impacts SizeX", // SolidImpacts_sizeX
+      "Solid Impacts SizeY", // SolidImpacts_sizeY
       "Solid Impacts X", // SolidImpacts_x
       "Solid Impacts Y", // SolidImpacts_y
       "Solid Impacts Wind Speed", // SolidImpacts_windSpeed

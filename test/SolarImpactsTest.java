@@ -85,10 +85,10 @@ class SolarImpactsTest {
     app.allSolarImpacts.Y = 2;
     app.allSolarImpacts.Z = 3;
     app.allSolarImpacts.RotX = 45;
-    app.allSolarImpacts.U = 100;
-    app.allSolarImpacts.V = 200;
-    app.allSolarImpacts.RES1 = 50;
-    app.allSolarImpacts.RES2 = 60;
+    app.allSolarImpacts.SizeX = 100;
+    app.allSolarImpacts.SizeY = 200;
+    app.allSolarImpacts.ResX = 50;
+    app.allSolarImpacts.ResY = 60;
     app.allSolarImpacts.sectionType = 2;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -102,10 +102,10 @@ class SolarImpactsTest {
     assertEquals(2f, fresh.Y, 0.0001f);
     assertEquals(3f, fresh.Z, 0.0001f);
     assertEquals(45f, fresh.RotX, 0.0001f);
-    assertEquals(100f, fresh.U, 0.0001f);
-    assertEquals(200f, fresh.V, 0.0001f);
-    assertEquals(50, fresh.RES1);
-    assertEquals(60, fresh.RES2);
+    assertEquals(100f, fresh.SizeX, 0.0001f);
+    assertEquals(200f, fresh.SizeY, 0.0001f);
+    assertEquals(50, fresh.ResX);
+    assertEquals(60, fresh.ResY);
     assertEquals(2, fresh.sectionType);
   }
 

@@ -187,13 +187,13 @@ class Edit3D {
       // longer does anything for a section.
 
       if (User3D.currentTool == UITASK.Tessellation) {
-        int n = allSections.get_res1(f);
+        int n = allSections.get_resX(f);
         if (p > 0) n *= 2;
         else if (p < 0) n /= 2;
         n = clamp(n, 100, 1600);
 
-        allSections.set_res1(f, n);
-        allSections.set_res2(f, n); // also modifying the other one
+        allSections.set_resX(f, n);
+        allSections.set_resY(f, n); // also modifying the other one
 
         allSolids_updated = true;
       }

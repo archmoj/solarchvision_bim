@@ -2600,13 +2600,13 @@ class STUDY {
       // unconditionally: this.updateImpactGraph never resets itself back
       // to false (deliberately - see its own field comment), so this
       // whole block can run again well after calculate_ImpactOnSections()
-      // last touched SceneName/RES1/RES2/etc. for one of allSections' own
+      // last touched SceneName/ResX/ResY/etc. for one of allSections' own
       // cross-sections instead of the viewport - calculate_Impact_
       // CurrentPreBaked() just now would have repainted this.Image[][]
       // from THAT section's own baked files again, not the viewport's,
       // and this flag has no business claiming otherwise just because
       // this particular call site happens to be the one that normally
-      // means "viewport". this.sectionType/RES1/RES2/X/Y/Z/etc. are left
+      // means "viewport". this.sectionType/ResX/ResY/X/Y/Z/etc. are left
       // exactly as calculate_Impact_CurrentPreBaked() used them - nothing
       // about this.Image[][] or this function's own display below
       // changes either way, only whether drawViewport3DLayers.pde is told
@@ -2616,12 +2616,12 @@ class STUDY {
         allSolarImpacts.win3DOverlay_imageIsFromViewport = true;
       }
 
-      int RES1 = allSolarImpacts.RES1;
-      int RES2 = allSolarImpacts.RES2;
+      int resX = allSolarImpacts.ResX;
+      int resY = allSolarImpacts.ResY;
 
       float sizeX = (180 * (this.centralGraphScale / 200)) * sx_Plot;
       float sizeY = sizeX;
-      float aspect = 1.0 * RES1 / RES2;
+      float aspect = 1.0 * resX / resY;
       if (aspect > 1) {
         sizeY /= aspect;
       } else if (aspect < 1) {

@@ -32,7 +32,7 @@ import java.io.PrintStream;
 // test, this is deliberately a SMOKE test: fully hand-verifying its
 // numeric output would mean reimplementing its own scenario-averaged,
 // per-pixel palette math independently to cross-check against - its own
-// separate, larger effort. RES1/RES2 (the real per-pixel grid this
+// separate, larger effort. ResX/ResY (the real per-pixel grid this
 // function iterates, normally 400x400) are shrunk to 4x4 here purely so
 // the test completes quickly - the function does spin up a real
 // background thread pool (java.util.concurrent.ExecutorService) for its
@@ -64,8 +64,8 @@ class CalculateImpactCurrentPreBakedSmokeTest {
     app.load_climateTypicalYear(System.getProperty("user.dir") + "/input/climate/TMYEPW/CAN_ON_Toronto.716240_CWEC.epw");
     app.currentDataSource = app.dataID_climateTypicalYear;
 
-    app.allSolarImpacts.RES1 = 4;
-    app.allSolarImpacts.RES2 = 4;
+    app.allSolarImpacts.ResX = 4;
+    app.allSolarImpacts.ResY = 4;
     app.allSolarImpacts.rebuild_Image_array = true; // its own bare-construction default too, set explicitly for clarity
   }
 
@@ -81,7 +81,7 @@ class CalculateImpactCurrentPreBakedSmokeTest {
     // Impact_PASSIVE (1) - numberOfImpactVariations covers both every
     // single day.
     int dayIndex = app.STUDY.startDay + 1;
-    assertEquals(4, app.allSolarImpacts.Image[app.Impact_ACTIVE][dayIndex].width, "the 2x2 placeholder must have been replaced by a real RES1xRES2 image");
+    assertEquals(4, app.allSolarImpacts.Image[app.Impact_ACTIVE][dayIndex].width, "the 2x2 placeholder must have been replaced by a real resX x resY image");
     assertEquals(4, app.allSolarImpacts.Image[app.Impact_PASSIVE][dayIndex].width);
   }
 

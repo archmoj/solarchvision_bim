@@ -472,7 +472,10 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     exactly what a solid's own rotation does elsewhere in this app.
     `x`/`y`/`z` is the section's own center, rotated about its own
     center by `rx`/`ry`/`rz` and then translated there - not folded in
-    before rotating.
+    before rotating. `dx`/`dy` is the quad's own physical width/height
+    along its local X/Y axes (the same axes `rx`/`ry` rotate around),
+    and `resX`/`resY` is the pixel resolution of the baked solar/solid-
+    impact texture along those same two local axes.
 
     Once created, a section can be rotated around any of its 3 axes the
     same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/`ROTATEZ`
@@ -480,7 +483,7 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     dragged/named axis picking which of rotX/rotY/rotZ actually changes.
 
 ```
-Section x=? y=? z=? rx=? ry=? rz=? u=? v=? i=? j=?
+Section x=? y=? z=? rx=? ry=? rz=? dx=? dy=? resX=? resY=?
 ```
 
 ------------------------------------------------------------------------
@@ -858,8 +861,8 @@ the user interface.
 | `Solid Impacts Process Sub Divisions` | Number of subdivisions used when processing solid impacts | 0 to 3 |
 | `Solid Impacts Position Step` | Step size used when stepping through impact-analysis positions | 5 to 80 |
 | `Solid Impacts RotX` | Rotation of the current impact-analysis section | -360 to 360 |
-| `Solid Impacts U` | U-axis scale of the current impact-analysis section | 0.125 to 3200 |
-| `Solid Impacts V` | V-axis scale of the current impact-analysis section | 0.125 to 3200 |
+| `Solid Impacts SizeX` | Width (along local X) of the current impact-analysis section | 0.125 to 3200 |
+| `Solid Impacts SizeY` | Height (along local Y) of the current impact-analysis section | 0.125 to 3200 |
 | `Solid Impacts X` | X offset of the current impact-analysis section | -10000 to 10000 |
 | `Solid Impacts Y` | Y offset of the current impact-analysis section | -10000 to 10000 |
 | `Solid Impacts Z` | Z offset (elevation) of the current impact-analysis section | -1000 to 1000 |

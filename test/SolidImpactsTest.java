@@ -106,8 +106,8 @@ class SolidImpactsTest {
     app.allSolidImpacts.Power = 2;
     app.allSolidImpacts.displayPoints = true;
     app.allSolidImpacts.displayLines = false;
-    app.allSolidImpacts.RES1 = 100;
-    app.allSolidImpacts.RES2 = 120;
+    app.allSolidImpacts.ResX = 100;
+    app.allSolidImpacts.ResY = 120;
     app.allSolidImpacts.Grade = 0.05f;
     app.allSolidImpacts.displayImage = false;
     app.allSolidImpacts.sectionType = 1;
@@ -119,8 +119,8 @@ class SolidImpactsTest {
     app.allSolidImpacts.MinimumDistance_traceV = 0.5f;
     app.allSolidImpacts.Z = 1;
     app.allSolidImpacts.RotX = 5;
-    app.allSolidImpacts.U = 9;
-    app.allSolidImpacts.V = 13;
+    app.allSolidImpacts.SizeX = 9;
+    app.allSolidImpacts.SizeY = 13;
     app.allSolidImpacts.X = 17;
     app.allSolidImpacts.Y = 21;
 
@@ -135,15 +135,15 @@ class SolidImpactsTest {
     assertEquals(2f, fresh.Power, 0.0001f);
     assertTrue(fresh.displayPoints);
     assertFalse(fresh.displayLines);
-    assertEquals(100, fresh.RES1);
-    assertEquals(120, fresh.RES2);
+    assertEquals(100, fresh.ResX);
+    assertEquals(120, fresh.ResY);
     assertEquals(0.05f, fresh.Grade, 0.0001f);
     assertFalse(fresh.displayImage);
     assertEquals(1, fresh.sectionType);
     assertEquals(1f, fresh.Z, 0.001f);
     assertEquals(5f, fresh.RotX, 0.001f);
-    assertEquals(9f, fresh.U, 0.001f);
-    assertEquals(13f, fresh.V, 0.001f);
+    assertEquals(9f, fresh.SizeX, 0.001f);
+    assertEquals(13f, fresh.SizeY, 0.001f);
     assertEquals(17f, fresh.X, 0.001f);
     assertEquals(21f, fresh.Y, 0.001f);
   }

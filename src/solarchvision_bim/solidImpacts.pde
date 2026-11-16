@@ -18,13 +18,13 @@ class SolidImpacts {
   float RotX = 0; // see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  float U = 100; // i.e. 100m
-  float V = 100; // i.e. 100m
+  float SizeX = 100; // i.e. 100m
+  float SizeY = 100; // i.e. 100m
 
-  int RES1 = 400;
-  int RES2 = 400;
+  int ResX = 400;
+  int ResY = 400;
 
-  PImage Image = createImage(this.RES1, this.RES2, ARGB);
+  PImage Image = createImage(this.ResX, this.ResY, ARGB);
 
 
 
@@ -141,8 +141,8 @@ class SolidImpacts {
       int f = Select3D.sectionSelection[o];
 
       this.sectionType = 1; // on: an impact section is now active
-      this.RES1        = allSections.get_res1(f);
-      this.RES2        = allSections.get_res2(f);
+      this.ResX        = allSections.get_resX(f);
+      this.ResY        = allSections.get_resY(f);
 
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
@@ -150,19 +150,19 @@ class SolidImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.U = allSections.getU(f);
-      this.V = allSections.getV(f);
+      this.SizeX = allSections.getSizeX(f);
+      this.SizeY = allSections.getSizeY(f);
 
       {
-        if ((this.Image.width != this.RES1) || (this.Image.height != this.RES2)) {
-          this.Image = createImage(this.RES1, this.RES2, ARGB);
+        if ((this.Image.width != this.ResX) || (this.Image.height != this.ResY)) {
+          this.Image = createImage(this.ResX, this.ResY, ARGB);
 
-          allSections.SolidImpact[f] = createImage(this.RES1, this.RES2, ARGB);
+          allSections.SolidImpact[f] = createImage(this.ResX, this.ResY, ARGB);
         }
 
         this.calculate_Impact_CurrentSection();
 
-        allSections.SolidImpact[f].copy(this.Image, 0, 0, this.RES1, this.RES2, 0, 0, this.RES1, this.RES2);
+        allSections.SolidImpact[f].copy(this.Image, 0, 0, this.ResX, this.ResY, 0, 0, this.ResX, this.ResY);
       }
     }
 
@@ -467,25 +467,25 @@ class SolidImpacts {
       float Section_RotX = this.RotX;
       float Section_RotY = this.rotY;
       float Section_RotZ = this.rotZ;
-      float Section_U = this.U;
-      float Section_V = this.V;
+      float Section_SizeX = this.SizeX;
+      float Section_SizeY = this.SizeY;
 
-      int Section_RES1 = this.RES1;
-      int Section_RES2 = this.RES2;
+      int Section_ResX = this.ResX;
+      int Section_ResY = this.ResY;
 
-      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
       float[] SectionCorner_C = ImageVertex[3];
       float[] SectionCorner_D = ImageVertex[4];
 
-      for (int i = 0; i < this.RES1; i++) {
-        for (int j = 0; j < this.RES2; j++) {
+      for (int i = 0; i < this.ResX; i++) {
+        for (int j = 0; j < this.ResY; j++) {
 
-          float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
-          float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
-          float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
+          float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.ResX), 1 - j / float(this.ResY));
+          float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.ResX), 1 - j / float(this.ResY));
+          float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.ResX), 1 - j / float(this.ResY));
 
           this.complex = 0;
           float val = this.get_Impact_atXYZ(x, y, z);
@@ -526,7 +526,7 @@ class SolidImpacts {
             }
           }
 
-          this.Image.pixels[i + j * this.RES1] = color(COL[1], COL[2], COL[3], COL[0]);
+          this.Image.pixels[i + j * this.ResX] = color(COL[1], COL[2], COL[3], COL[0]);
         }
       }
 
@@ -581,11 +581,11 @@ class SolidImpacts {
 
         String myFile = getFilename_SolidImpact() + ".pdf";
 
-        PGraphics pdf = createGraphics(this.RES1, this.RES2, PDF, myFile);
+        PGraphics pdf = createGraphics(this.ResX, this.ResY, PDF, myFile);
 
         pdf.beginDraw();
 
-        pdf.image(this.Image, 0, 0, this.RES1, this.RES2);
+        pdf.image(this.Image, 0, 0, this.ResX, this.ResY);
 
         if ((this.Process_subDivisions == 2) || (this.Process_subDivisions == 3)) {
           if (this.displayLines) {
@@ -658,8 +658,8 @@ class SolidImpacts {
                   // per-type inverses this used to pick between.
                   float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-                  i[p] = this.RES1 * (local[0] / this.U + 0.5);
-                  j[p] = this.RES2 * (local[1] / this.V + 0.5);
+                  i[p] = this.ResX * (local[0] / this.SizeX + 0.5);
+                  j[p] = this.ResY * (local[1] / this.SizeY + 0.5);
                 }
 
                 pdf.line(i[0], j[0], i[1], j[1]);
@@ -685,8 +685,8 @@ class SolidImpacts {
               // to pick between.
               float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-              float i = this.RES1 * (local[0] / this.U + 0.5);
-              float j = this.RES2 * (local[1] / this.V + 0.5);
+              float i = this.ResX * (local[0] / this.SizeX + 0.5);
+              float j = this.ResY * (local[1] / this.SizeY + 0.5);
 
               pdf.ellipse(i, j, 1, 1);
             }
@@ -1013,26 +1013,26 @@ class SolidImpacts {
      float Section_Y = this.Y[this.sectionType];
      float Section_Z = this.Z[this.sectionType];
      float Section_RotX = this.RotX[this.sectionType];
-     float Section_U = this.U[this.sectionType];
-     float Section_V = this.V[this.sectionType];
+     float Section_SizeX = this.SizeX[this.sectionType];
+     float Section_SizeY = this.SizeY[this.sectionType];
 
      int Section_complex = this.sectionType;
-     int Section_RES1 = this.RES1;
-     int Section_RES2 = this.RES2;
+     int Section_ResX = this.ResX;
+     int Section_ResY = this.ResY;
 
-     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_RotX, Section_U, Section_V, Section_RES1, Section_RES2);
+     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_RotX, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
 
      float[] SectionCorner_A = ImageVertex[1];
      float[] SectionCorner_B = ImageVertex[2];
      float[] SectionCorner_C = ImageVertex[3];
      float[] SectionCorner_D = ImageVertex[4];
 
-     for (int i = 0; i < this.RES1; i += 10) {
-     for (int j = 0; j < this.RES2; j += 10) {
+     for (int i = 0; i < this.ResX; i += 10) {
+     for (int j = 0; j < this.ResY; j += 10) {
 
-     float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.RES1), 1 - j / float(this.RES2));
-     float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.RES1), 1 - j / float(this.RES2));
-     float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.RES1), 1 - j / float(this.RES2));
+     float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.ResX), 1 - j / float(this.ResY));
+     float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.ResX), 1 - j / float(this.ResY));
+     float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.ResX), 1 - j / float(this.ResY));
 
      */
 
@@ -1165,8 +1165,8 @@ class SolidImpacts {
     XML_setBoolean(parent, this.CLASS_STAMP + "DisplayPoints", this.displayPoints);
     XML_setBoolean(parent, this.CLASS_STAMP + "DisplayLines", this.displayLines);
 
-    XML_setInt(parent, this.CLASS_STAMP + "Width", this.RES1);
-    XML_setInt(parent, this.CLASS_STAMP + "Height", this.RES2);
+    XML_setInt(parent, this.CLASS_STAMP + "ResX", this.ResX);
+    XML_setInt(parent, this.CLASS_STAMP + "ResY", this.ResY);
     XML_setFloat(parent, this.CLASS_STAMP + "Grade", this.Grade);
     XML_setBoolean(parent, this.CLASS_STAMP + "DisplayImage", this.displayImage);
     XML_setInt(parent, this.CLASS_STAMP + "SectionType", this.sectionType);
@@ -1181,8 +1181,8 @@ class SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + "RotX", this.RotX);
     XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
     XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
-    XML_setFloat(parent, this.CLASS_STAMP + "U", this.U);
-    XML_setFloat(parent, this.CLASS_STAMP + "V", this.V);
+    XML_setFloat(parent, this.CLASS_STAMP + "SizeX", this.SizeX);
+    XML_setFloat(parent, this.CLASS_STAMP + "SizeY", this.SizeY);
     XML_setFloat(parent, this.CLASS_STAMP + "X", this.X);
     XML_setFloat(parent, this.CLASS_STAMP + "Y", this.Y);
   }
@@ -1200,8 +1200,8 @@ class SolidImpacts {
     this.displayPoints = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayPoints");
     this.displayLines = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayLines");
 
-    this.RES1 = XML_getInt(parent, this.CLASS_STAMP + "Width");
-    this.RES2 = XML_getInt(parent, this.CLASS_STAMP + "Height");
+    this.ResX = XML_getInt(parent, this.CLASS_STAMP + "ResX");
+    this.ResY = XML_getInt(parent, this.CLASS_STAMP + "ResY");
     this.Grade = XML_getFloat(parent, this.CLASS_STAMP + "Grade");
     this.displayImage = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayImage");
     this.sectionType = XML_getInt(parent, this.CLASS_STAMP + "SectionType");
@@ -1216,8 +1216,8 @@ class SolidImpacts {
     this.RotX = XML_getFloat(parent, this.CLASS_STAMP + "RotX");
     this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
     this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
-    this.U = XML_getFloat(parent, this.CLASS_STAMP + "U");
-    this.V = XML_getFloat(parent, this.CLASS_STAMP + "V");
+    this.SizeX = XML_getFloat(parent, this.CLASS_STAMP + "SizeX");
+    this.SizeY = XML_getFloat(parent, this.CLASS_STAMP + "SizeY");
     this.X = XML_getFloat(parent, this.CLASS_STAMP + "X");
     this.Y = XML_getFloat(parent, this.CLASS_STAMP + "Y");
   }

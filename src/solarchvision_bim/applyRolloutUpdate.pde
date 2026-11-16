@@ -46,8 +46,8 @@ void applyRolloutUpdate() {
 
   pre_USER_createUniformSuperellipsoidPower = User3D.creatorUniformSuperellipsoidPower;
 
-  pre_allSolidImpacts_horizontalUnitScale = allSolidImpacts.U;
-  pre_allSolidImpacts_verticalUnitScale = allSolidImpacts.V;
+  pre_allSolidImpacts_horizontalUnitScale = allSolidImpacts.SizeX;
+  pre_allSolidImpacts_verticalUnitScale = allSolidImpacts.SizeY;
 
   pre_allSolidImpacts_sU_offset = allSolidImpacts.X;
   pre_allSolidImpacts_sverticalUnitOffset = allSolidImpacts.Y;
@@ -254,8 +254,8 @@ void applyRolloutUpdate() {
   react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.RotX);
   react.recalcImpact.run(pre_allSolidImpacts_Elevation, allSolidImpacts.Z);
 
-  react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale, allSolidImpacts.U);
-  react.recalcImpact.run(pre_allSolidImpacts_verticalUnitScale, allSolidImpacts.V);
+  react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale, allSolidImpacts.SizeX);
+  react.recalcImpact.run(pre_allSolidImpacts_verticalUnitScale, allSolidImpacts.SizeY);
   react.recalcImpact.run(pre_allSolidImpacts_sU_offset, allSolidImpacts.X);
   react.recalcImpact.run(pre_allSolidImpacts_sverticalUnitOffset, allSolidImpacts.Y);
 

@@ -254,13 +254,13 @@ UrbanHoverHit studyUrbanHover_hitTest (int xMouse, int yMouse) {
     if (graphicsX < cx - halfW || graphicsX > cx + halfW || graphicsY < cy - halfH || graphicsY > cy + halfH) continue;
 
     // daySnapshot's own [q][component][x][y] shape gives the resolution
-    // directly - no need to separately look up allSolarImpacts.RES1/RES2
+    // directly - no need to separately look up allSolarImpacts.ResX/ResY
     // (which, by hover time, may not even still match this row's own).
     int resX = info.daySnapshot[0][0].length;
     int resY = info.daySnapshot[0][0][0].length;
 
     // plotImpact_urban() sizes sizeX/sizeY to already match the image's
-    // own aspect ratio (RES1/RES2), so unlike WIN3D's overlay fit rect,
+    // own aspect ratio (resX/resY), so unlike WIN3D's overlay fit rect,
     // there's no letterboxing/cropping to account for here - a plain
     // linear fraction of the thumbnail maps straight onto the data.
     float fx = (graphicsX - (cx - halfW)) / STUDY.urbanThumbnail_sizeX;

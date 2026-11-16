@@ -117,7 +117,7 @@ class MouseClickedTest {
     app.build_allActions();
     int before = app.allSections.num;
 
-    String hint = app.runScriptLine("Section x=10 y=20 z=30 r=45 u=2 v=3 t=1 i=4 j=4");
+    String hint = app.runScriptLine("Section x=10 y=20 z=30 rx=45 dx=2 dy=3 resX=4 resY=4");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(before + 1, app.allSections.num, "a bare tool-switch collision would leave this unchanged");
@@ -959,8 +959,8 @@ class MouseClickedTest {
     assertEquals(1f, sp.Y, 0.001f);
     assertEquals(5f, sp.Z, 0.001f);
     assertEquals(0f, sp.RotX, 0.001f);
-    assertEquals(2f, sp.U, 0.001f);
-    assertEquals(2f, sp.V, 0.001f);
+    assertEquals(2f, sp.SizeX, 0.001f);
+    assertEquals(2f, sp.SizeY, 0.001f);
   }
 
   @Test
@@ -981,8 +981,8 @@ class MouseClickedTest {
     assertEquals(90f, sp.RotX, 0.001f);
     assertEquals(0f, sp.RotY, 0.001f);
     assertEquals(0f, sp.RotZ, 0.001f);
-    assertEquals(2f, sp.U, 0.001f);
-    assertEquals(4f, sp.V, 0.001f);
+    assertEquals(2f, sp.SizeX, 0.001f);
+    assertEquals(4f, sp.SizeY, 0.001f);
   }
 
   @Test

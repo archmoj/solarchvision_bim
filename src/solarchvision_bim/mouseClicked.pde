@@ -548,9 +548,9 @@ CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
 // the 3 Euler rotation angles - see arbitrarySection.pde - and extents)
 // for a new section, plus whether one should actually be created at all.
 class SectionParams {
-  float X, Y, Z, RotX, U, V;
+  float X, Y, Z, RotX, SizeX, SizeY;
   float RotY = 0, RotZ = 0;
-  int RES1, RES2;
+  int ResX, ResY;
   boolean createNew = false;
 }
 
@@ -581,11 +581,11 @@ SectionParams computeSectionParams (int f, float[] RxP) {
   sp.RotX = allSolidImpacts.RotX;
   sp.RotY = allSolidImpacts.rotY;
   sp.RotZ = allSolidImpacts.rotZ;
-  sp.U = allSolidImpacts.U;
-  sp.V = allSolidImpacts.V;
+  sp.SizeX = allSolidImpacts.SizeX;
+  sp.SizeY = allSolidImpacts.SizeY;
 
-  sp.RES1 = allSolidImpacts.RES1;
-  sp.RES2 = allSolidImpacts.RES2;
+  sp.ResX = allSolidImpacts.ResX;
+  sp.ResY = allSolidImpacts.ResY;
 
   if (mouseButton == LEFT) {
 
@@ -669,8 +669,8 @@ SectionParams computeSectionParams (int f, float[] RxP) {
       if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
         // Horizontal: lies flat in its own local X-Y plane already, so
         // only rotZ (around the normal) is needed.
-        sp.U = max_x - min_x;
-        sp.V = max_y - min_y;
+        sp.SizeX = max_x - min_x;
+        sp.SizeY = max_y - min_y;
 
         sp.RotX = 0;
         sp.RotY = 0;
@@ -681,8 +681,8 @@ SectionParams computeSectionParams (int f, float[] RxP) {
         // measured from 90 - min_Beta the same way the old "Type 3"
         // single-angle convention was, just expressed as a sign on rotZ
         // here instead of a separate type.
-        sp.U = max_y - min_y;
-        sp.V = max_z - min_z;
+        sp.SizeX = max_y - min_y;
+        sp.SizeY = max_z - min_z;
 
         sp.RotX = 90;
         sp.RotY = 0;
@@ -694,7 +694,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
       PVector GAxGB = AG.cross(BG);
 
-      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
+      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.SizeX, sp.SizeY, sp.ResX, sp.ResY);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -2092,8 +2092,8 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               // to this mouse-click workflow, not part of the
               // command itself, so it stays here unchanged.
               runScriptLine("Section x=" + sp.X + " y=" + sp.Y + " z=" + sp.Z +
-                " rx=" + sp.RotX + " ry=" + sp.RotY + " rz=" + sp.RotZ + " u=" + sp.U + " v=" + sp.V +
-                " i=" + sp.RES1 + " j=" + sp.RES2);
+                " rx=" + sp.RotX + " ry=" + sp.RotY + " rz=" + sp.RotZ + " dx=" + sp.SizeX + " dy=" + sp.SizeY +
+                " resX=" + sp.ResX + " resY=" + sp.ResY);
 
               selectNewlyCreated(keep_number_of_allSections, allSections.num,
                 () -> Select3D.deselect_Sections(),
@@ -2106,12 +2106,12 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               allSolidImpacts.RotX = sp.RotX;
               allSolidImpacts.rotY = sp.RotY;
               allSolidImpacts.rotZ = sp.RotZ;
-              allSolidImpacts.U = sp.U;
-              allSolidImpacts.V = sp.V;
+              allSolidImpacts.SizeX = sp.SizeX;
+              allSolidImpacts.SizeY = sp.SizeY;
 
               allSolidImpacts.sectionType = 1;
-              allSolidImpacts.RES1 = sp.RES1;
-              allSolidImpacts.RES2 = sp.RES2;
+              allSolidImpacts.ResX = sp.ResX;
+              allSolidImpacts.ResY = sp.ResY;
 
               allSolidImpacts.calculate_ImpactOnSections();
 

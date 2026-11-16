@@ -9,7 +9,7 @@ class Sections {
   boolean displayAll = true;
 
   int num;
-  // Columns: 0:X 1:Y 2:Z 3:rotX 4:rotY 5:rotZ 6:U 7:V. Every section is
+  // Columns: 0:X 1:Y 2:Z 3:rotX 4:rotY 5:rotZ 6:sizeX 7:sizeY. Every section is
   // the same single shape now - a flat quad in its own local X-Y plane
   // (local Z is its normal), oriented by 3 Euler angles (rotX/rotY/rotZ,
   // kept contiguous here the way Solids' own f_data groups posX/Y/Z,
@@ -37,18 +37,18 @@ class Sections {
     endScene3DChange();
   }
 
-  void create (float x, float y, float z, float rotX, float u, float v, int RES1, int RES2) {
-    this.create(x, y, z, rotX, 0, 0, u, v, RES1, RES2);
+  void create (float x, float y, float z, float rotX, float sizeX, float sizeY, int resX, int resY) {
+    this.create(x, y, z, rotX, 0, 0, sizeX, sizeY, resX, resY);
   }
 
-  void create (float x, float y, float z, float rotX, float rotY, float rotZ, float u, float v, int RES1, int RES2) {
-    int[][] Temp_i_data = { { RES1, RES2 } };
+  void create (float x, float y, float z, float rotX, float rotY, float rotZ, float sizeX, float sizeY, int resX, int resY) {
+    int[][] Temp_i_data = { { resX, resY } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
-    float[][] Temp_f_data = { { x, y, z, rotX, rotY, rotZ, u, v } };
+    float[][] Temp_f_data = { { x, y, z, rotX, rotY, rotZ, sizeX, sizeY } };
     this.f_data = (float[][]) concat(this.f_data, Temp_f_data);
 
-    PImage[] Temp_SolidImpact = { createImage(RES1, RES2, RGB) };
+    PImage[] Temp_SolidImpact = { createImage(resX, resY, RGB) };
     this.SolidImpact = (PImage[]) concat(this.SolidImpact, Temp_SolidImpact);
 
     PImage[][][] Temp_SolarImpact = new PImage[1][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
@@ -62,10 +62,10 @@ class Sections {
     this.num += 1;
   }
 
-  int get_res1 (int n) { return this.i_data[n][0]; }
-  int get_res2 (int n) { return this.i_data[n][1]; }
-  void set_res1 (int n, int t) { this.i_data[n][0] = t; }
-  void set_res2 (int n, int t) { this.i_data[n][1] = t; }
+  int get_resX (int n) { return this.i_data[n][0]; }
+  int get_resY (int n) { return this.i_data[n][1]; }
+  void set_resX (int n, int t) { this.i_data[n][0] = t; }
+  void set_resY (int n, int t) { this.i_data[n][1] = t; }
 
   float getX (int n) { return this.f_data[n][0]; } // offsetX
   float getY (int n) { return this.f_data[n][1]; } // offsetY
@@ -73,16 +73,16 @@ class Sections {
   float getRotX (int n) { return this.f_data[n][3]; }
   float getRotY (int n) { return this.f_data[n][4]; }
   float getRotZ (int n) { return this.f_data[n][5]; }
-  float getU (int n) { return this.f_data[n][6]; } // scaleU
-  float getV (int n) { return this.f_data[n][7]; } // scaleV
+  float getSizeX (int n) { return this.f_data[n][6]; }
+  float getSizeY (int n) { return this.f_data[n][7]; }
   void setX (int n, float f) { this.f_data[n][0] = f; }
   void setY (int n, float f) { this.f_data[n][1] = f; }
   void setZ (int n, float f) { this.f_data[n][2] = f; }
   void setRotX (int n, float f) { this.f_data[n][3] = f; }
   void setRotY (int n, float f) { this.f_data[n][4] = f; }
   void setRotZ (int n, float f) { this.f_data[n][5] = f; }
-  void setU (int n, float f) { this.f_data[n][6] = f; }
-  void setV (int n, float f) { this.f_data[n][7] = f; }
+  void setSizeX (int n, float f) { this.f_data[n][6] = f; }
+  void setSizeY (int n, float f) { this.f_data[n][7] = f; }
 
   // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
   // accumulation. Rotate3D.pde's own Sections() now always dispatches
@@ -139,10 +139,10 @@ class Sections {
     float Section_RotX = this.getRotX(f);
     float Section_RotY = this.getRotY(f);
     float Section_RotZ = this.getRotZ(f);
-    float Section_U = this.getU(f);
-    float Section_V = this.getV(f);
-    int Section_RES1 = this.get_res1(f);
-    int Section_RES2 = this.get_res2(f);
+    float Section_SizeX = this.getSizeX(f);
+    float Section_SizeY = this.getSizeY(f);
+    int Section_ResX = this.get_resX(f);
+    int Section_ResY = this.get_resY(f);
 
     String the_filename = "Impact_" + nf(f, 0) + ".bmp";
 
@@ -154,12 +154,12 @@ class Sections {
       writeSectionGroupHeader(f, the_filename);
     }
 
-    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
 
     num_vertices_added = 0;
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
     for (int _turn = 1; _turn <= end_turn; _turn++) {
-      renderSectionFace(f, subFace, target_window, Section_RES1, Section_RES2, _turn);
+      renderSectionFace(f, subFace, target_window, Section_ResX, Section_ResY, _turn);
     }
 
     this.Faces[f][0] = f * 4 + 0;
@@ -217,7 +217,7 @@ class Sections {
     }
   }
 
-  void renderSectionFace (int f, float[][] subFace, int target_window, int Section_RES1, int Section_RES2, int _turn) {
+  void renderSectionFace (int f, float[][] subFace, int target_window, int Section_ResX, int Section_ResY, int _turn) {
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
       WIN3D.graphics.noStroke();
@@ -237,7 +237,7 @@ class Sections {
       float v = subFace[q][4];
 
       if (target_window == TypeWindow.WIN3D) {
-        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * Section_RES1, v * Section_RES2);
+        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * Section_ResX, v * Section_ResY);
       }
 
       if (target_window == TypeWindow.OBJ3D) {
@@ -326,7 +326,7 @@ class Sections {
   // around the world origin rather than the section's own center
   // whenever X or Y wasn't 0) - those 3 are gone; every section is this
   // one shape now.
-  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_U, float Section_V, int Section_RES1, int Section_RES2) {
+  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_SizeX, float Section_SizeY, int Section_ResX, int Section_ResY) {
     float[][] ImageVertex = new float[5][5];
 
     for (int q = 0; q < 5; q++) {
@@ -335,8 +335,8 @@ class Sections {
       float u  = CORNER_LOCAL[q][2];
       float v  = CORNER_LOCAL[q][3];
 
-      float localX = qx * 0.5 * Section_U;
-      float localY = qy * 0.5 * Section_V;
+      float localX = qx * 0.5 * Section_SizeX;
+      float localY = qy * 0.5 * Section_SizeY;
       float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_RotX, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
       ImageVertex[q][0] = xyz[0];
@@ -420,13 +420,13 @@ class Sections {
         txt += ",";
         txt += nf(this.getRotZ(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.getU(i), 0, 4).replace(",", ".");
+        txt += nf(this.getSizeX(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.getV(i), 0, 4).replace(",", ".");
+        txt += nf(this.getSizeY(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.get_res1(i), 0);
+        txt += nf(this.get_resX(i), 0);
         txt += ",";
-        txt += nf(this.get_res2(i), 0);
+        txt += nf(this.get_resY(i), 0);
         XML_setContent(child, txt);
       }
       XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -490,10 +490,10 @@ class Sections {
         this.setRotX(i, float(parts[3]));
         this.setRotY(i, float(parts[4]));
         this.setRotZ(i, float(parts[5]));
-        this.setU(i, float(parts[6]));
-        this.setV(i, float(parts[7]));
-        this.set_res1(i, int(parts[8]));
-        this.set_res2(i, int(parts[9]));
+        this.setSizeX(i, float(parts[6]));
+        this.setSizeY(i, float(parts[7]));
+        this.set_resX(i, int(parts[8]));
+        this.set_resY(i, int(parts[9]));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }

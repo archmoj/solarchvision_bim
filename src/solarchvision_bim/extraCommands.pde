@@ -2223,17 +2223,17 @@ String __SECTION__ (String[] parts) {
     float rx = getF(p, "rx", 0);
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
-    float u = getF(p, "u", 20);
-    float v = getF(p, "v", 20);
-    int i = getI(p, "i", 200);
-    int j = getI(p, "j", 200);
-    if ((i > 0) && (j > 0) && (u > 0) && (v > 0)) {
-        allSections.create(x, y, z, rx, ry, rz, u, v, i, j);
+    float dx = getF(p, "dx", 20);
+    float dy = getF(p, "dy", 20);
+    int resX = getI(p, "resX", 200);
+    int resY = getI(p, "resY", 200);
+    if ((resX > 0) && (resY > 0) && (dx > 0) && (dy > 0)) {
+        allSections.create(x, y, z, rx, ry, rz, dx, dy, resX, resY);
         view_changed();
     }
     }
     else {
-    hint = "Section x=? y=? z=? rx=? ry=? rz=? u=? v=? i=? j=?";
+    hint = "Section x=? y=? z=? rx=? ry=? rz=? dx=? dy=? resX=? resY=?";
     UI_setTo_Create_Section();
     }
     return hint;

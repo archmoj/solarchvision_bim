@@ -2526,7 +2526,7 @@ class Create3D {
 
     if (n == 7) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
-      runScriptLine("Section x=0 y=0 z=0.1 r=0 u=64 v=64 t=1 i=400 j=400");
+      runScriptLine("Section x=0 y=0 z=0.1 rx=0 dx=64 dy=64 resX=400 resY=400");
 
       {
         runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
@@ -2632,7 +2632,7 @@ class Create3D {
 
     if (n == 11) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
-      runScriptLine("Section x=0 y=0 z=0.1 r=0 u=50 v=50 t=1 i=200 j=200");
+      runScriptLine("Section x=0 y=0 z=0.1 rx=0 dx=50 dy=50 resX=200 resY=200");
     }
 
 

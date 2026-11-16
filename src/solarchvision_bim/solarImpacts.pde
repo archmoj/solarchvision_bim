@@ -56,11 +56,11 @@ class SolarImpacts {
   float RotX = 0; // North is up by default - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  float U = 500; // i.e. 500 = 500m
-  float V = 500; // i.e. 500 = 500m
+  float SizeX = 500; // i.e. 500 = 500m
+  float SizeY = 500; // i.e. 500 = 500m
 
-  int RES1 = 400;
-  int RES2 = 400;
+  int ResX = 400;
+  int ResY = 400;
 
 
 
@@ -554,7 +554,7 @@ class SolarImpacts {
       // this function's own outermost unit of work for that step) that
       // still updates often enough to be useful relative to the whole
       // call's runtime. The summary-palette pass, by contrast, really is
-      // one big per-pixel loop (RES1*RES2) with no inner concurrency to
+      // one big per-pixel loop (resX*resY) with no inner concurrency to
       // thread through, so it's tracked directly, throttled to whole-
       // percent steps the same way the console bars elsewhere in this
       // codebase are (see that loop's own comment). The final per-
@@ -633,19 +633,19 @@ class SolarImpacts {
       if (count_k < 0) count_k = 0;
 
 
-      int RES1 = this.RES1;
-      int RES2 = this.RES2;
+      int resX = this.ResX;
+      int resY = this.ResY;
       // Declared here, not inside whichever loop first needed it, so
       // every parallelized loop below (the accumulation loop, deep
       // inside the hour/RAD_TYPE loop; the per-day palette loop, at the
       // day loop's own level; the summary palette loop, after the day
-      // loop) can all see the same one, since RES1/RES2 don't change
+      // loop) can all see the same one, since resX/resY don't change
       // again for the rest of this call.
-      int calcImpact_totalPixels = RES1 * RES2;
+      int calcImpact_totalPixels = resX * resY;
 
       // This camera's Model2Ds (tree/person) visibility mask, baked by
       // preBakeViewport() (via ShadeViewport()'s noShadeOnlyVisible2DTextures
-      // mode - see shadeViewport3D.pde) at this very same RES1 x RES2 grid, under
+      // mode - see shadeViewport3D.pde) at this very same resX x resY grid, under
       // the same Folder_Shadings/NearLatitude_Stamp()/SceneName/Camera
       // naming the Shadings[] PNGs below are loaded from. Loaded once, up
       // front, rather than per day/hour: it doesn't depend on either.
@@ -683,7 +683,7 @@ class SolarImpacts {
 
         PImage[] total_Image_RGBA = new PImage[2];
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          total_Image_RGBA[q] = createImage(RES1, RES2, RGB);
+          total_Image_RGBA[q] = createImage(resX, resY, RGB);
         }
 
         // this.total_Matrix_ARGB aliases the same array the code below
@@ -694,15 +694,15 @@ class SolarImpacts {
         // slot per this.Image[q]'s own dayIndex) before the day loop
         // below fills each slot in turn.
         float[][][][] total_Matrix_ARGB;
-        total_Matrix_ARGB = new float [2][4][RES1][RES2];
+        total_Matrix_ARGB = new float [2][4][resX][resY];
         this.total_Matrix_ARGB = total_Matrix_ARGB;
 
         this.Matrix_ARGB = new float[this.Image[0].length][][][][];
         this.dayValuesMUL = new float[this.Image[0].length];
 
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
+        for (int np = 0; np < (resX * resY); np++) {
+          int Image_X = np % resX;
+          int Image_Y = np / resX;
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             total_Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
@@ -764,12 +764,12 @@ class SolarImpacts {
 
           float[][][][] Matrix_ARGB;
 
-          Matrix_ARGB = new float [2][4][RES1][RES2];
+          Matrix_ARGB = new float [2][4][resX][resY];
           this.Matrix_ARGB[j + 1] = Matrix_ARGB;
 
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
+          for (int np = 0; np < (resX * resY); np++) {
+            int Image_X = np % resX;
+            int Image_Y = np / resX;
 
             for (int q = 0; q < numberOfImpactVariations; q++) {
               Matrix_ARGB[q][0][Image_X][Image_Y] = FLOAT_undefined;
@@ -781,7 +781,7 @@ class SolarImpacts {
 
           PImage[] Image_RGBA = new PImage[2];
           for (int q = 0; q < numberOfImpactVariations; q++) {
-            Image_RGBA[q] = createImage(RES1, RES2, RGB);
+            Image_RGBA[q] = createImage(resX, resY, RGB);
           }
 
           int valuesNUM = 0;
@@ -918,7 +918,7 @@ class SolarImpacts {
                       final PImage[] calcImpact_Shadings = Shadings;
                       final PImage[] calcImpact_Trees2D = Trees2D;
                       final float[][][][] calcImpact_Matrix_ARGB = Matrix_ARGB;
-                      final int calcImpact_RES1 = RES1;
+                      final int calcImpact_resX = resX;
 
                       java.util.List<java.util.concurrent.Future<?>> calcImpact_accumulationFutures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
                       for (int chunkStart = 0; chunkStart < calcImpact_totalPixels; chunkStart += calcImpact_chunkSize) {
@@ -927,8 +927,8 @@ class SolarImpacts {
 
                         calcImpact_accumulationFutures.add(calcImpact_executor.submit(() -> {
                           for (int np = npFrom; np < npTo; np++) {
-                            int Image_X = np % calcImpact_RES1;
-                            int Image_Y = np / calcImpact_RES1;
+                            int Image_X = np % calcImpact_resX;
+                            int Image_Y = np / calcImpact_resX;
 
                             for (int q = 0; q < numberOfImpactVariations; q++) {
                               if (is_undefined(calcImpact_Matrix_ARGB[q][0][Image_X][Image_Y])) {
@@ -1017,8 +1017,8 @@ class SolarImpacts {
 
           // Single-threaded, deliberately not parallelized
           for (int np = 0; np < calcImpact_totalPixels; np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
+            int Image_X = np % resX;
+            int Image_Y = np / resX;
 
             // A pixel this camera's Model2Ds mask marks non-transparent -
             // a tree/person was hit there - skips the radiation/impact
@@ -1079,16 +1079,16 @@ class SolarImpacts {
           // above was the first, [0, 0.5]) - this half is [0.5, 1.0].
           // Throttled to whole-percent steps, same shape as the console
           // bars elsewhere in this codebase (e.g. calculate_
-          // VertexSolarArray.pde's own) - RES1*RES2 can be well over a
+          // VertexSolarArray.pde's own) - resX*resY can be well over a
           // million pixels, and updateFraction() now paints synchronously
           // (ProgressWindow's own comment, progressWindow.pde), so
           // calling it every single pixel, not just every whole percent,
           // would add real, avoidable overhead to this loop.
           int calcImpactSummaryLastDrawnPercent = -1;
 
-          for (int np = 0; np < (RES1 * RES2); np++) {
+          for (int np = 0; np < (resX * resY); np++) {
             if (control != USER_AUTO) {
-              int percent = (int) floor(100.0f * np / (RES1 * RES2));
+              int percent = (int) floor(100.0f * np / (resX * resY));
               if (percent != calcImpactSummaryLastDrawnPercent) {
                 float Progress = 50.0f + 0.4f * percent;
                 int delta = (int) floor(Progress - calcImpact_printedProgress);
@@ -1101,8 +1101,8 @@ class SolarImpacts {
               }
             }
 
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
+            int Image_X = np % resX;
+            int Image_Y = np / resX;
 
             // Same Model2Ds mask bypass as the per-day loop above, applied
             // here to the summary image too.
@@ -1223,8 +1223,8 @@ class SolarImpacts {
       int f = sections[o];
 
       this.sectionType = 1; // on: an impact section is now active
-      this.RES1 = allSections.get_res1(f);
-      this.RES2 = allSections.get_res2(f);
+      this.ResX = allSections.get_resX(f);
+      this.ResY = allSections.get_resY(f);
 
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
@@ -1232,13 +1232,13 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.U = allSections.getU(f);
-      this.V = allSections.getV(f);
+      this.SizeX = allSections.getSizeX(f);
+      this.SizeY = allSections.getSizeY(f);
 
       SceneName = "Section_" + Section_Stamp();
 
       // o counts DOWN from sectionCount - 1 to 0 as this loop progresses
-      // (this.sectionType/RES1/.../V already use it that way, above), so
+      // (this.sectionType/ResX/.../SizeY already use it that way, above), so
       // sectionCount - o counts UP from 1 to sectionCount instead - this
       // section's own position in THIS batch, which is what a person
       // watching the bake run actually wants to see ("Section 2 of 5"),
@@ -1275,8 +1275,8 @@ class SolarImpacts {
       int f = sections[o];
 
       this.sectionType = 1; // on: an impact section is now active
-      this.RES1        = allSections.get_res1(f);
-      this.RES2        = allSections.get_res2(f);
+      this.ResX        = allSections.get_resX(f);
+      this.ResY        = allSections.get_resY(f);
 
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
@@ -1284,8 +1284,8 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.U = allSections.getU(f);
-      this.V = allSections.getV(f);
+      this.SizeX = allSections.getSizeX(f);
+      this.SizeY = allSections.getSizeY(f);
 
       SceneName = "Section_" + Section_Stamp();
 
@@ -1294,9 +1294,9 @@ class SolarImpacts {
 
       for (int j = STUDY.startDay - 1; j < STUDY.endDay; j++) {
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          allSections.SolarImpact[f][j + 1][q] = createImage(this.RES1, this.RES2, RGB);
+          allSections.SolarImpact[f][j + 1][q] = createImage(this.ResX, this.ResY, RGB);
 
-          allSections.SolarImpact[f][j + 1][q].copy(this.Image[q][j + 1], 0, 0, this.RES1, this.RES2, 0, 0, this.RES1, this.RES2);
+          allSections.SolarImpact[f][j + 1][q].copy(this.Image[q][j + 1], 0, 0, this.ResX, this.ResY, 0, 0, this.ResX, this.ResY);
         }
       }
     }
@@ -1317,11 +1317,11 @@ class SolarImpacts {
     XML_setFloat(parent, "rotX", this.RotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
-    XML_setFloat(parent, "u", this.U);
-    XML_setFloat(parent, "v", this.V);
+    XML_setFloat(parent, "sizeX", this.SizeX);
+    XML_setFloat(parent, "sizeY", this.SizeY);
 
-    XML_setInt(parent, "width", this.RES1);
-    XML_setInt(parent, "height", this.RES2);
+    XML_setInt(parent, "resX", this.ResX);
+    XML_setInt(parent, "resY", this.ResY);
 
     XML_setInt(parent, "sectionType", this.sectionType);
   }
@@ -1339,11 +1339,11 @@ class SolarImpacts {
     this.RotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
-    this.U = XML_getFloat(parent, "u");
-    this.V = XML_getFloat(parent, "v");
+    this.SizeX = XML_getFloat(parent, "sizeX");
+    this.SizeY = XML_getFloat(parent, "sizeY");
 
-    this.RES1 = XML_getInt(parent, "width");
-    this.RES2 = XML_getInt(parent, "height");
+    this.ResX = XML_getInt(parent, "resX");
+    this.ResY = XML_getInt(parent, "resY");
     this.sectionType = XML_getInt(parent, "sectionType");
   }
 
