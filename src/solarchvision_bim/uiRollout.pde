@@ -52,10 +52,8 @@ class UI_rollout {
     CHILD_GEOMETRY_MODIFY = pushChild("Modify");
     CHILD_GEOMETRY_SOLID = pushChild("Solid");
     CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Fractal Tree");
-    CHILD_GEOMETRY_ENVIRONMENT = pushChild("Environment");
     CHILD_GEOMETRY_VIEWPORT = pushChild("Viewport");
     CHILD_GEOMETRY_SIMULATION = pushChild("Simulation");
-    CHILD_GEOMETRY_VISIBILITY = pushChild("Visibility");
     CHILD_GEOMETRY_OTHER = pushChild("Other");
 
     PARENT_ILLUSTRATION = pushParent("Illustration Options");
@@ -64,6 +62,11 @@ class UI_rollout {
     CHILD_ILLUSTRATION_3D_SOLAR = pushChild("3D-Solar");
     CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("3D-Spatial");
     CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
+    // Environment/Visibility used to live under Geometry & Space, but both
+    // are about what is currently shown and how, not about creating or
+    // editing objects - which is what Illustration Options is for.
+    CHILD_ILLUSTRATION_ENVIRONMENT = pushChild("Environment");
+    CHILD_ILLUSTRATION_VISIBILITY = pushChild("Visibility");
 
     PARENT_EXPORT = pushParent("Export Products");
     CHILD_EXPORT_DATA = pushChild("Data");
@@ -89,10 +92,8 @@ class UI_rollout {
   int CHILD_GEOMETRY_MODIFY;
   int CHILD_GEOMETRY_SOLID;
   int CHILD_GEOMETRY_FRACTAL_TREE;
-  int CHILD_GEOMETRY_ENVIRONMENT;
   int CHILD_GEOMETRY_VIEWPORT;
   int CHILD_GEOMETRY_SIMULATION;
-  int CHILD_GEOMETRY_VISIBILITY;
   int CHILD_GEOMETRY_OTHER;
 
   int PARENT_ILLUSTRATION;
@@ -101,6 +102,8 @@ class UI_rollout {
   int CHILD_ILLUSTRATION_3D_SOLAR;
   int CHILD_ILLUSTRATION_3D_SPATIAL;
   int CHILD_ILLUSTRATION_SELECTION;
+  int CHILD_ILLUSTRATION_ENVIRONMENT;
+  int CHILD_ILLUSTRATION_VISIBILITY;
 
   int PARENT_POSTPROCESS;
   int CHILD_POSTPROCESS_INTERPOLATION;
@@ -631,43 +634,6 @@ class UI_rollout {
         User3D.creatorModel1DTreeBase = vm.creatorModel1DTreeBase(1);
       }
 
-      if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
-
-        Terrain.loadTexture = vm.TerrainLoadTextures(1);
-        Terrain.loadMesh = vm.TerrainLoadMesh(1);
-        Terrain.skipStart = vm.TerrainSkipStart(1);
-        Terrain.skipEnd = vm.TerrainSkipEnd(1);
-        Terrain.displaySurface = vm.TerrainDisplaySurface(1);
-        Terrain.displayTexture = vm.TerrainDisplayTexture(1);
-        Terrain.displayPoints = vm.TerrainDisplayPoints(1);
-        Terrain.displayDepth = vm.TerrainDisplayDepth(1);
-        allWindRoses.displayImage = vm.WindRoseDisplayImage(1);
-        allWindRoses.planeSize = vm.WindRosePlaneSize(1);
-        allWindRoses.imageResolution = vm.WindRoseImageResolution(1);
-
-
-
-        Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
-        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
-        Sky3D.radius = vm.Sky3DRadius(1);
-        Sun3D.displayPath = vm.Sun3DDisplayPath(1);
-        Sun3D.displayPattern = vm.Sun3DDisplayPattern(1);
-        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
-        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
-        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
-        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
-        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
-        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
-        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
-        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
-        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
-        Earth3D.recomputeLevelOfDetailDependents();
-        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
-        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
-        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
-      }
-
-
       if (this.child == CHILD_GEOMETRY_VIEWPORT) {
 
         WIN3D.currentCameraIndex = vm.currentCameraIndex(1);
@@ -697,29 +663,6 @@ class UI_rollout {
         allSolidImpacts.Process_subDivisions = vm.SolidImpacts_processSubDivisions(1);
         allSolidImpacts.displayPoints = vm.SolidImpactsDisplayPoints(1);
         allSolidImpacts.displayLines = vm.SolidImpactsDisplayLines(1);
-      }
-
-      if (this.child == CHILD_GEOMETRY_VISIBILITY) {
-
-        // Every plain "show/hide this category of object" toggle that has
-        // no other configuration of its own (a setting that comes WITH other
-        // related settings - e.g. SolidImpacts.displayPoints, which lives
-        // alongside that simulation's many other parameters, or WindRose's
-        // displayImage, which lives alongside its planeSize/imageResolution -
-        // stays with those siblings instead of being pulled in here).
-        allModel2Ds.displayAll = vm.Model2DsDisplayAll(1);
-        allModel1Ds.displayAll = vm.Model1DsDisplayAll(1);
-        allModel1Ds.displayLeaves = vm.Model1DsDisplayLeaves(1);
-        allPolylines.displayAll = vm.PolylinesDisplayAll(1);
-        allFaces.displayAll = vm.FacesDisplayAll(1);
-        allSolids.displayAll = vm.SolidsDisplayAll(1);
-        allSections.displayAll = vm.SectionsDisplayAll(1);
-        allPoints.displayAll = vm.Create3DDisplayVertices(1);
-        allFaces.displayEdges = vm.Create3DDisplayEdges(1);
-        allFaces.showNormalLines = vm.Create3DDisplayNormals(1);
-        allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
-        allCameras.displayAll = vm.CamerasDisplayAll(1);
-        allWindFlows.displayAll = vm.WindFlowsDisplayAll(1);
       }
 
       if (this.child == CHILD_GEOMETRY_OTHER) {
@@ -815,6 +758,63 @@ class UI_rollout {
         Select3D.sectionDisplayEdges = vm.sectionDisplayEdges(1);
         Select3D.cameraDisplayFrustum = vm.cameraDisplayFrustum(1);
         Select3D.terrainDisplayVertices = vm.terrainDisplayVertices(1);
+      }
+
+      if (this.child == CHILD_ILLUSTRATION_ENVIRONMENT) {
+
+        Terrain.loadTexture = vm.TerrainLoadTextures(1);
+        Terrain.loadMesh = vm.TerrainLoadMesh(1);
+        Terrain.skipStart = vm.TerrainSkipStart(1);
+        Terrain.skipEnd = vm.TerrainSkipEnd(1);
+        Terrain.displaySurface = vm.TerrainDisplaySurface(1);
+        Terrain.displayTexture = vm.TerrainDisplayTexture(1);
+        Terrain.displayPoints = vm.TerrainDisplayPoints(1);
+        Terrain.displayDepth = vm.TerrainDisplayDepth(1);
+        allWindRoses.displayImage = vm.WindRoseDisplayImage(1);
+        allWindRoses.planeSize = vm.WindRosePlaneSize(1);
+        allWindRoses.imageResolution = vm.WindRoseImageResolution(1);
+
+        Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
+        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
+        Sky3D.radius = vm.Sky3DRadius(1);
+        Sun3D.displayPath = vm.Sun3DDisplayPath(1);
+        Sun3D.displayPattern = vm.Sun3DDisplayPattern(1);
+        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
+        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
+        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
+        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
+        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
+        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
+        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
+        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
+        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
+        Earth3D.recomputeLevelOfDetailDependents();
+        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
+        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
+        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
+      }
+
+      if (this.child == CHILD_ILLUSTRATION_VISIBILITY) {
+
+        // Every plain "show/hide this category of object" toggle that has
+        // no other configuration of its own (a setting that comes WITH other
+        // related settings - e.g. SolidImpacts.displayPoints, which lives
+        // alongside that simulation's many other parameters, or WindRose's
+        // displayImage, which lives alongside its planeSize/imageResolution -
+        // stays with those siblings instead of being pulled in here).
+        allModel2Ds.displayAll = vm.Model2DsDisplayAll(1);
+        allModel1Ds.displayAll = vm.Model1DsDisplayAll(1);
+        allModel1Ds.displayLeaves = vm.Model1DsDisplayLeaves(1);
+        allPolylines.displayAll = vm.PolylinesDisplayAll(1);
+        allFaces.displayAll = vm.FacesDisplayAll(1);
+        allSolids.displayAll = vm.SolidsDisplayAll(1);
+        allSections.displayAll = vm.SectionsDisplayAll(1);
+        allPoints.displayAll = vm.Create3DDisplayVertices(1);
+        allFaces.displayEdges = vm.Create3DDisplayEdges(1);
+        allFaces.showNormalLines = vm.Create3DDisplayNormals(1);
+        allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
+        allCameras.displayAll = vm.CamerasDisplayAll(1);
+        allWindFlows.displayAll = vm.WindFlowsDisplayAll(1);
       }
     } else if (this.parent == PARENT_POSTPROCESS) {
 
