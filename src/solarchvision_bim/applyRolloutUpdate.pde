@@ -54,7 +54,7 @@ void applyRolloutUpdate() {
 
   pre_allSolidImpacts_Grade = allSolidImpacts.Grade;
   pre_allSolidImpacts_Power = allSolidImpacts.Power;
-  pre_allSolidImpacts_Rotation = allSolidImpacts.RotX;
+  pre_allSolidImpacts_Rotation = allSolidImpacts.rotX;
   pre_allSolidImpacts_Elevation = allSolidImpacts.Z;
 
   pre_allSolidImpacts_Wspd = allSolidImpacts.WindSpeed;
@@ -100,7 +100,7 @@ void applyRolloutUpdate() {
 
   pre_Selection_faceDisplayEdges = Select3D.faceDisplayEdges;
   pre_Selection_faceDisplayVertexSelection = Select3D.faceDisplayVertexSelection;
-  pre_Selection_polylineDisplayvertexSelection = Select3D.polylineDisplayvertexSelection;
+  pre_Selection_polylineDisplayVertexSelection = Select3D.polylineDisplayVertexSelection;
   pre_Selection_vertexDisplayMarkers = Select3D.vertexDisplayMarkers;
   pre_Selection_polylineDisplayVertices = Select3D.polylineDisplayVertices;
 
@@ -229,7 +229,7 @@ void applyRolloutUpdate() {
 
   react.viewChangedOnly.run(pre_Selection_faceDisplayVertexSelection ? 1 : 0, Select3D.faceDisplayVertexSelection ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_polylineDisplayvertexSelection ? 1 : 0, Select3D.polylineDisplayvertexSelection ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_polylineDisplayVertexSelection ? 1 : 0, Select3D.polylineDisplayVertexSelection ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_vertexDisplayMarkers ? 1 : 0, Select3D.vertexDisplayMarkers ? 1 : 0);
 
@@ -251,7 +251,7 @@ void applyRolloutUpdate() {
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
-  react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.RotX);
+  react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.rotX);
   react.recalcImpact.run(pre_allSolidImpacts_Elevation, allSolidImpacts.Z);
 
   react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale, allSolidImpacts.getSizeX());
@@ -350,7 +350,7 @@ boolean pre_Selection_groupDisplayBox;
 
 boolean pre_Selection_faceDisplayEdges;
 boolean pre_Selection_faceDisplayVertexSelection;
-boolean pre_Selection_polylineDisplayvertexSelection;
+boolean pre_Selection_polylineDisplayVertexSelection;
 boolean pre_Selection_vertexDisplayMarkers;
 boolean pre_Selection_polylineDisplayVertices;
 

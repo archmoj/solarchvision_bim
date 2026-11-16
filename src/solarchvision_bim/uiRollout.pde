@@ -678,7 +678,7 @@ class UI_rollout {
         allSolidImpacts.sectionType = vm.SolidImpacts_sectionType(1);
         allSolidImpacts.Grade = vm.SolidImpacts_grade(1);
         allSolidImpacts.Power = vm.SolidImpacts_power(1);
-        allSolidImpacts.RotX = vm.SolidImpacts_rotX(1);
+        allSolidImpacts.rotX = vm.SolidImpacts_rotX(1);
         allSolidImpacts.Z = vm.SolidImpacts_z(1);
         allSolidImpacts.positionStep = vm.SolidImpacts_positionStep(1);
         allSolidImpacts.setSizeX(vm.SolidImpacts_sizeX(1));
@@ -793,7 +793,7 @@ class UI_rollout {
         Select3D.groupDisplayEdges = vm.groupDisplayEdges(1);
         Select3D.faceDisplayEdges = vm.faceDisplayEdges(1);
         Select3D.faceDisplayVertexSelection = vm.faceDisplayVertexSelection(1);
-        Select3D.polylineDisplayvertexSelection = vm.polylineDisplayVertexSelection(1);
+        Select3D.polylineDisplayVertexSelection = vm.polylineDisplayVertexSelection(1);
         Select3D.vertexDisplayMarkers = vm.vertexDisplayMarkers(1);
         Select3D.polylineDisplayVertices = vm.polylineDisplayVertices(1);
         Select3D.model2DDisplayBounds = vm.model2DDisplayBounds(1);

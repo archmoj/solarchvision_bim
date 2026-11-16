@@ -67,7 +67,7 @@ class SaveImageTest {
     app.allSolarImpacts.X = 10;
     app.allSolarImpacts.Y = 20;
     app.allSolarImpacts.Z = 30;
-    app.allSolarImpacts.RotX = 45;
+    app.allSolarImpacts.rotX = 45;
 
     assertEquals("t2u10p000v20p000w30p000r45p000ry0p000rz0p000", app.Section_Stamp());
   }
@@ -80,7 +80,7 @@ class SaveImageTest {
   @Test
   void sectionStamp_replacesMinusSignsWithNRatherThanLeavingThemRaw () {
     app.allSolarImpacts.X = -1.5f;
-    app.allSolarImpacts.RotX = -90;
+    app.allSolarImpacts.rotX = -90;
 
     assertEquals("t0un1p500v0p000w0p000rn90p000ry0p000rz0p000", app.Section_Stamp());
   }
@@ -93,7 +93,7 @@ class SaveImageTest {
     // exact bug this whole test file exists to guard against for the
     // sectionType digit itself.
     app.allSolarImpacts.sectionType = 0;
-    app.allSolarImpacts.RotX = 10;
+    app.allSolarImpacts.rotX = 10;
     app.allSolarImpacts.rotY = 20;
     app.allSolarImpacts.rotZ = -30;
 
@@ -126,13 +126,13 @@ class SaveImageTest {
     app.allSolarImpacts.X = 5;
     app.allSolarImpacts.Y = 6;
     app.allSolarImpacts.Z = 7;
-    app.allSolarImpacts.RotX = 8;
+    app.allSolarImpacts.rotX = 8;
 
     app.allSolidImpacts.sectionType = 1;
     app.allSolidImpacts.X = 999;
     app.allSolidImpacts.Y = 999;
     app.allSolidImpacts.Z = 999;
-    app.allSolidImpacts.RotX = 999;
+    app.allSolidImpacts.rotX = 999;
 
     assertEquals("t1u5p000v6p000w7p000r8p000ry0p000rz0p000", app.Section_Stamp());
   }
@@ -155,7 +155,7 @@ class SaveImageTest {
       app.allSolarImpacts.X = 0;
       app.allSolarImpacts.Y = 0;
       app.allSolarImpacts.Z = 0;
-      app.allSolarImpacts.RotX = 0;
+      app.allSolarImpacts.rotX = 0;
 
       stamps.add(app.Section_Stamp());
     }
@@ -285,7 +285,7 @@ class SaveImageTest {
 
     app.allSolidImpacts.sectionType = 1;
     app.allSolidImpacts.Z = 5;
-    app.allSolidImpacts.RotX = 3;
+    app.allSolidImpacts.rotX = 3;
     app.allSolidImpacts.rotY = 1;
     app.allSolidImpacts.rotZ = 2;
     app.allSolidImpacts.Power = 2.0f;
@@ -322,7 +322,7 @@ class SaveImageTest {
 
     app.allSolarImpacts.sectionType = 1;
     app.allSolarImpacts.Z = 8;
-    app.allSolarImpacts.RotX = 4;
+    app.allSolarImpacts.rotX = 4;
 
     assertEquals(
         "FG/24-03-15/Ensemble Observation/Impacts/Solar1h0008r004",

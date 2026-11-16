@@ -555,7 +555,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
-      if (Select3D.polylineDisplayvertexSelection) {
+      if (Select3D.polylineDisplayVertexSelection) {
 
         POLYLINE_LABEL_STYLE.applyStyle();
 

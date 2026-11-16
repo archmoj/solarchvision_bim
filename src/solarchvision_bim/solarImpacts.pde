@@ -53,12 +53,12 @@ class SolarImpacts {
   float Y = 0;
   float X = 0;
   float Z = 0;
-  float RotX = 0; // North is up by default - see arbitrarySection.pde
+  float rotX = 0; // North is up by default - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
   // The currently-analyzed section's own n local corners (a flat
   // {x0,y0,x1,y1,...} array), mirrored from allSections the same way
-  // X/Y/Z/RotX/.../rotZ are just above - see Sections' own corners
+  // X/Y/Z/rotX/.../rotZ are just above - see Sections' own corners
   // field comment (sections.pde) for what these mean. Default is
   // today's old 500x500 symmetric rectangle.
   float[] corners = { -250, -250, 250, -250, 250, 250, -250, 250 };
@@ -1233,7 +1233,7 @@ class SolarImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
-      this.RotX = allSections.getRotX(f);
+      this.rotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.corners = (float[]) allSections.getCornersXY(f).clone();
@@ -1284,7 +1284,7 @@ class SolarImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
-      this.RotX = allSections.getRotX(f);
+      this.rotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.corners = (float[]) allSections.getCornersXY(f).clone();
@@ -1326,7 +1326,7 @@ class SolarImpacts {
     XML_setFloat(parent, "x", this.X);
     XML_setFloat(parent, "y", this.Y);
     XML_setFloat(parent, "z", this.Z);
-    XML_setFloat(parent, "rotX", this.RotX);
+    XML_setFloat(parent, "rotX", this.rotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
     XML_setFloatArray(parent, "corners", this.corners);
@@ -1347,7 +1347,7 @@ class SolarImpacts {
     this.X = XML_getFloat(parent, "x");
     this.Y = XML_getFloat(parent, "y");
     this.Z = XML_getFloat(parent, "z");
-    this.RotX = XML_getFloat(parent, "rotX");
+    this.rotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
     this.corners = XML_getFloatArray(parent, "corners");

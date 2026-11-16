@@ -582,7 +582,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
   sp.X = allSolidImpacts.X;
   sp.Y = allSolidImpacts.Y;
   sp.Z = allSolidImpacts.Z;
-  sp.RotX = allSolidImpacts.RotX;
+  sp.RotX = allSolidImpacts.rotX;
   sp.RotY = allSolidImpacts.rotY;
   sp.RotZ = allSolidImpacts.rotZ;
   sp.SizeX = allSolidImpacts.getSizeX();
@@ -621,7 +621,7 @@ SectionParams computeSectionParamsFromFace (int f) {
   sp.X = allSolidImpacts.X;
   sp.Y = allSolidImpacts.Y;
   sp.Z = allSolidImpacts.Z;
-  sp.RotX = allSolidImpacts.RotX;
+  sp.RotX = allSolidImpacts.rotX;
   sp.RotY = allSolidImpacts.rotY;
   sp.RotZ = allSolidImpacts.rotZ;
   sp.SizeX = allSolidImpacts.getSizeX();
@@ -963,7 +963,7 @@ void flipFaceOrientationIfNeeded (int f) {
 // this exact block twice in a row: once against allFaces.nodes[f] (with
 // Select3D.faceSelection/faceDisplayVertexSelection) and once against
 // allPolylines.nodes[f] (with Select3D.polylineSelection/
-// polylineDisplayvertexSelection), confirmed identical modulo which array
+// polylineDisplayVertexSelection), confirmed identical modulo which array
 // before extracting. `nodeRow` is mutated directly (Java arrays are
 // passed by reference), so the caller doesn't need to reassign anything.
 void rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
@@ -1935,7 +1935,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
                 Select3D.polylineSelection = new int [1];
                 Select3D.polylineSelection[0] = f;
 
-                Select3D.polylineDisplayvertexSelection = true;
+                Select3D.polylineDisplayVertexSelection = true;
 
                 rotateNodesToStartAtNearestVertex(allPolylines.nodes[f], RxP);
               }
@@ -2269,7 +2269,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               allSolidImpacts.X = sp.X;
               allSolidImpacts.Y = sp.Y;
               allSolidImpacts.Z = sp.Z;
-              allSolidImpacts.RotX = sp.RotX;
+              allSolidImpacts.rotX = sp.RotX;
               allSolidImpacts.rotY = sp.RotY;
               allSolidImpacts.rotZ = sp.RotZ;
               allSolidImpacts.corners = new float[] { -sp_hx, -sp_hy, sp_hx, -sp_hy, sp_hx, sp_hy, -sp_hx, sp_hy };

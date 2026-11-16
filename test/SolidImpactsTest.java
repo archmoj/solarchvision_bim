@@ -118,7 +118,7 @@ class SolidImpactsTest {
     app.allSolidImpacts.MinimumDistance_traceU = 1.5f;
     app.allSolidImpacts.MinimumDistance_traceV = 0.5f;
     app.allSolidImpacts.Z = 1;
-    app.allSolidImpacts.RotX = 5;
+    app.allSolidImpacts.rotX = 5;
     app.allSolidImpacts.corners = new float[]{-4.5f, -6.5f, 4.5f, -6.5f, 4.5f, 6.5f, -4.5f, 6.5f};
     app.allSolidImpacts.X = 17;
     app.allSolidImpacts.Y = 21;
@@ -140,7 +140,7 @@ class SolidImpactsTest {
     assertFalse(fresh.displayImage);
     assertEquals(1, fresh.sectionType);
     assertEquals(1f, fresh.Z, 0.001f);
-    assertEquals(5f, fresh.RotX, 0.001f);
+    assertEquals(5f, fresh.rotX, 0.001f);
     assertEquals(9f, fresh.getSizeX(), 0.001f);
     assertEquals(13f, fresh.getSizeY(), 0.001f);
     assertEquals(17f, fresh.X, 0.001f);

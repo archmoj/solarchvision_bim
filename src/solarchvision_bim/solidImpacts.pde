@@ -15,12 +15,12 @@ class SolidImpacts {
   float X = 0;
   float Y = 0;
   float Z = 0.1; // <<<
-  float RotX = 0; // see arbitrarySection.pde
+  float rotX = 0; // see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
   // The currently-analyzed section's own n local corners (a flat
   // {x0,y0,x1,y1,...} array), mirrored from allSections the same way
-  // X/Y/Z/RotX/rotY/rotZ are just above - see Sections' own corners
+  // X/Y/Z/rotX/rotY/rotZ are just above - see Sections' own corners
   // field comment (sections.pde) for what these mean. Default is
   // today's old 100x100 symmetric rectangle.
   float[] corners = { -50, -50, 50, -50, 50, 50, -50, 50 };
@@ -179,7 +179,7 @@ class SolidImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f);
-      this.RotX = allSections.getRotX(f);
+      this.rotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.corners = (float[]) allSections.getCornersXY(f).clone();
@@ -241,7 +241,7 @@ class SolidImpacts {
       // world conversion in this collapsed model does, replacing the 3
       // hand-rolled per-type rotations this used to pick between (which
       // left a type-0/arbitrary section's own rotation unapplied here).
-      float[] Q = arbitrarySection_rotateLocalToWorld(a, b, c, this.RotX, this.rotY, this.rotZ);
+      float[] Q = arbitrarySection_rotateLocalToWorld(a, b, c, this.rotX, this.rotY, this.rotZ);
       a = Q[0];
       b = Q[1];
       c = Q[2];
@@ -495,7 +495,7 @@ class SolidImpacts {
       float Section_X = this.X;
       float Section_Y = this.Y;
       float Section_Z = this.Z;
-      float Section_RotX = this.RotX;
+      float Section_RotX = this.rotX;
       float Section_RotY = this.rotY;
       float Section_RotZ = this.rotZ;
 
@@ -720,7 +720,7 @@ class SolidImpacts {
                   // section's own plane (Euler inverse - see
                   // arbitrarySection.pde), replacing the 3 hand-rolled
                   // per-type inverses this used to pick between.
-                  float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
+                  float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.rotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
                   i[p] = this.ResX * ((local[0] - _maskCenterX) / _maskSizeX + 0.5);
                   j[p] = this.ResY * ((local[1] - _maskCenterY) / _maskSizeY + 0.5);
@@ -747,7 +747,7 @@ class SolidImpacts {
               // own plane (Euler inverse - see arbitrarySection.pde),
               // replacing the 3 hand-rolled per-type inverses this used
               // to pick between.
-              float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
+              float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.rotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
               float i = this.ResX * ((local[0] - _maskCenterX) / _maskSizeX + 0.5);
               float j = this.ResY * ((local[1] - _maskCenterY) / _maskSizeY + 0.5);
@@ -1212,7 +1212,7 @@ class SolidImpacts {
     XML_setFloat(parent, "minDistTraceV", this.MinimumDistance_traceV);
 
     XML_setFloat(parent, "z", this.Z);
-    XML_setFloat(parent, "rotX", this.RotX);
+    XML_setFloat(parent, "rotX", this.rotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
     XML_setFloatArray(parent, "corners", this.corners);
@@ -1246,7 +1246,7 @@ class SolidImpacts {
     this.MinimumDistance_traceV = XML_getFloat(parent, "minDistTraceV");
 
     this.Z = XML_getFloat(parent, "z");
-    this.RotX = XML_getFloat(parent, "rotX");
+    this.rotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
     this.corners = XML_getFloatArray(parent, "corners");

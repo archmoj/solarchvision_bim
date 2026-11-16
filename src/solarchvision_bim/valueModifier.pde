@@ -2481,13 +2481,13 @@ class ValueModifier {
     String command = "Solid Impacts RotX";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.RotX,
-        (v) -> { allSolidImpacts.RotX = v; },
+        () -> allSolidImpacts.rotX,
+        (v) -> { allSolidImpacts.rotX = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts rotX", allSolidImpacts.RotX, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts rotX", allSolidImpacts.rotX, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4242,13 +4242,13 @@ class ValueModifier {
     String command = "Polyline Display Vertex Selection";
     if (created == 0) {
       putValueAction(command,
-        () -> (Select3D.polylineDisplayvertexSelection ? 1f : 0f),
-        (v) -> { Select3D.polylineDisplayvertexSelection = (v >= 0.5f); },
+        () -> (Select3D.polylineDisplayVertexSelection ? 1f : 0f),
+        (v) -> { Select3D.polylineDisplayVertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Select3D.polylineDisplayvertexSelection);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Select3D.polylineDisplayVertexSelection);
     }
     return out;
   }

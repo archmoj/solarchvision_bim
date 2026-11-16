@@ -84,7 +84,7 @@ class SolarImpactsTest {
     app.allSolarImpacts.X = 1;
     app.allSolarImpacts.Y = 2;
     app.allSolarImpacts.Z = 3;
-    app.allSolarImpacts.RotX = 45;
+    app.allSolarImpacts.rotX = 45;
     app.allSolarImpacts.corners = new float[]{-50, -100, 50, -100, 50, 100, -50, 100};
     app.allSolarImpacts.ResX = 50;
     app.allSolarImpacts.ResY = 60;
@@ -100,7 +100,7 @@ class SolarImpactsTest {
     assertEquals(1f, fresh.X, 0.0001f);
     assertEquals(2f, fresh.Y, 0.0001f);
     assertEquals(3f, fresh.Z, 0.0001f);
-    assertEquals(45f, fresh.RotX, 0.0001f);
+    assertEquals(45f, fresh.rotX, 0.0001f);
     assertArrayEquals(new float[]{-50, -100, 50, -100, 50, 100, -50, 100}, fresh.corners, 0.0001f);
     assertEquals(50, fresh.ResX);
     assertEquals(60, fresh.ResY);
