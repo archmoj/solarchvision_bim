@@ -236,7 +236,52 @@ class LoadProjectTest {
     processing.data.XML xml = app.buildProjectSnapshot(true);
 
     assertEquals("solarchvisionV" + app.version, xml.getName());
-    assertNotNull(xml.getChild(app.allFaces.CLASS_STAMP));
-    assertNotNull(xml.getChild(app.allPolylines.CLASS_STAMP));
+  }
+
+  @Test
+  void buildProjectSnapshot_nestsGeometryClasses_underAGeometryGroup () {
+    // Faces and Polylines (along with Points, Solids, Sections,
+    // Model1Ds, Model2Ds, Groups and Layers) no longer land as their
+    // own unrelated siblings directly on the document root - see
+    // saveProject.pde's own comment on buildProjectSnapshot() for why.
+    // They're still found by their usual CLASS_STAMP name, just one
+    // level down, under a shared "geometry" element.
+    processing.data.XML xml = app.buildProjectSnapshot(true);
+
+    processing.data.XML geometry = xml.getChild("geometry");
+    assertNotNull(geometry, "a geometry group should exist on a freshly-built snapshot");
+    assertNull(xml.getChild(app.allFaces.CLASS_STAMP), "face should no longer sit directly on the root");
+    assertNull(xml.getChild(app.allPolylines.CLASS_STAMP), "polyline should no longer sit directly on the root");
+    assertNotNull(geometry.getChild(app.allFaces.CLASS_STAMP));
+    assertNotNull(geometry.getChild(app.allPolylines.CLASS_STAMP));
+  }
+
+  @Test
+  void parseXmlVariables_stillLoadsGeometry_fromAPreGroupingSaveFile () {
+    // A file saved before this grouping existed never had a "geometry"
+    // element at all - its own "face"/"polyline"/etc. elements sit
+    // directly on the root, exactly where buildProjectSnapshot() used
+    // to put them. parse_XML_variables() falls back to the bare root
+    // whenever a named group is missing, so that old, ungrouped layout
+    // still loads correctly instead of silently coming back empty.
+    processing.data.XML xml = app.buildProjectSnapshot(true);
+
+    // Simulate a pre-grouping file: hoist "geometry"'s own children
+    // back up to the root, then remove the now-empty "geometry"
+    // wrapper, so nothing below this point can see a "geometry"
+    // element anywhere in the tree.
+    processing.data.XML geometry = xml.getChild("geometry");
+    processing.data.XML[] geometryChildren = geometry.getChildren();
+    for (processing.data.XML child : geometryChildren) {
+      xml.addChild(child);
+    }
+    xml.removeChild(geometry);
+
+    assertNull(xml.getChild("geometry"));
+    assertNotNull(xml.getChild(app.allFaces.CLASS_STAMP), "sanity check: the ungrouped layout really is what this test is exercising");
+
+    // Should not throw, and should still find Faces/Polylines/etc. by
+    // falling back to the root.
+    app.parse_XML_variables(xml, false, true);
   }
 }

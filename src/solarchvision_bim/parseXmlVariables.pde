@@ -97,58 +97,82 @@ void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport
   }
 
 
+  // Matches buildProjectSnapshot()'s own four named groups
+  // (saveProject.pde) - every file this writes from here on has all
+  // four, every time. A file saved before this grouping existed has
+  // none of them: each affected class's own CLASS_STAMP child sits
+  // directly on the document root instead, exactly where it always
+  // did. Falling back to the bare root xml for any group that isn't
+  // found reproduces that old lookup exactly - each class's own
+  // from_XML() still just does xml.getChild(this.CLASS_STAMP) against
+  // whatever "xml" it's handed, so no change there is needed, and an
+  // old file's actual saved geometry/environment/view/impacts data is
+  // found and restored rather than silently reset to defaults (unlike
+  // this session's earlier attribute-level renames, where the old
+  // value genuinely no longer exists anywhere in the file under any
+  // name). Call order is unchanged from before grouping existed - see
+  // buildProjectSnapshot()'s matching comment.
+  XML geometryGroup = xml.getChild("geometry");
+  if (geometryGroup == null) geometryGroup = xml;
+  XML environmentGroup = xml.getChild("environment");
+  if (environmentGroup == null) environmentGroup = xml;
+  XML viewGroup = xml.getChild("view");
+  if (viewGroup == null) viewGroup = xml;
+  XML impactsGroup = xml.getChild("impacts");
+  if (impactsGroup == null) impactsGroup = xml;
+
   STATION.from_XML(xml);
 
-  allPoints.from_XML(xml);
+  allPoints.from_XML(geometryGroup);
 
-  allPolylines.from_XML(xml);
+  allPolylines.from_XML(geometryGroup);
 
-  allFaces.from_XML(xml);
+  allFaces.from_XML(geometryGroup);
 
-  allCameras.from_XML(xml);
+  allCameras.from_XML(viewGroup);
 
-  allSolids.from_XML(xml);
+  allSolids.from_XML(geometryGroup);
 
-  allSections.from_XML(xml);
+  allSections.from_XML(geometryGroup);
 
-  allModel1Ds.from_XML(xml);
+  allModel1Ds.from_XML(geometryGroup);
 
-  allModel2Ds.from_XML(xml);
+  allModel2Ds.from_XML(geometryGroup);
 
-  allGroups.from_XML(xml); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
+  allGroups.from_XML(geometryGroup); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
 
-  Terrain.from_XML(xml);
+  Terrain.from_XML(environmentGroup);
 
-  Earth3D.from_XML(xml);
+  Earth3D.from_XML(environmentGroup);
 
-  Sky3D.from_XML(xml);
+  Sky3D.from_XML(environmentGroup);
 
-  Tropo3D.from_XML(xml);
+  Tropo3D.from_XML(environmentGroup);
 
-  Moon3D.from_XML(xml);
+  Moon3D.from_XML(environmentGroup);
 
-  Sun3D.from_XML(xml);
+  Sun3D.from_XML(environmentGroup);
 
-  if (restoreViewport) WIN3D.from_XML(xml);
+  if (restoreViewport) WIN3D.from_XML(viewGroup);
 
-  User3D.from_XML(xml);
+  User3D.from_XML(viewGroup);
 
-  Select3D.from_XML(xml);
+  Select3D.from_XML(viewGroup);
 
   WORLD.from_XML(xml);
 
   STUDY.from_XML(xml);
 
-  allWindRoses.from_XML(xml);
+  allWindRoses.from_XML(impactsGroup);
 
-  allWindFlows.from_XML(xml);
+  allWindFlows.from_XML(impactsGroup);
 
-  allSolidImpacts.from_XML(xml);
+  allSolidImpacts.from_XML(impactsGroup);
 
-  allSolarImpacts.from_XML(xml);
+  allSolarImpacts.from_XML(impactsGroup);
 
   for (int i = 0; i < allLayers.length; i++) {
-    allLayers[i].from_XML(xml);
+    allLayers[i].from_XML(geometryGroup);
   }
 
   println("End of loading XML");

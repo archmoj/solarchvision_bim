@@ -110,58 +110,80 @@ XML buildProjectSnapshot (boolean copyTexturesAlongside) {
   }
 
 
+  // Four named group elements collect the ~25 previously-flat top-level
+  // siblings by what they actually are, instead of every class landing
+  // as an unrelated sibling of every other one directly under the
+  // document root (the same flatness Layers used to have on its own,
+  // one level up - see layer.pde's own comment on that). Each group is
+  // created unconditionally, every save, and handed to its members'
+  // own to_XML(xml) exactly as the bare root used to be - no class's
+  // own to_XML() changed at all, only which XML node it's told to add
+  // its own CLASS_STAMP child(ren) under. Call ORDER below is
+  // deliberately identical to before this grouping existed (e.g.
+  // allCameras still runs where it always has, between allFaces and
+  // allSolids) - only the destination argument of each call changed -
+  // so nothing that depends on execution order (groups.pde's own
+  // "Groups should be inputted after Faces, Polylines, ..." note,
+  // in particular) is affected. See parse_XML_variables()'s matching
+  // comment for how an older, pre-grouping save file still loads
+  // correctly despite never having these four elements at all.
+  XML geometryGroup = xml.addChild("geometry");
+  XML environmentGroup = xml.addChild("environment");
+  XML viewGroup = xml.addChild("view");
+  XML impactsGroup = xml.addChild("impacts");
+
   STATION.to_XML(xml);
 
-  allPoints.to_XML(xml);
+  allPoints.to_XML(geometryGroup);
 
-  allPolylines.to_XML(xml);
+  allPolylines.to_XML(geometryGroup);
 
-  allFaces.to_XML(xml);
+  allFaces.to_XML(geometryGroup);
 
-  allCameras.to_XML(xml);
+  allCameras.to_XML(viewGroup);
 
-  allSolids.to_XML(xml);
+  allSolids.to_XML(geometryGroup);
 
-  allSections.to_XML(xml);
+  allSections.to_XML(geometryGroup);
 
-  allModel1Ds.to_XML(xml);
+  allModel1Ds.to_XML(geometryGroup);
 
-  allModel2Ds.to_XML(xml);
+  allModel2Ds.to_XML(geometryGroup);
 
-  allGroups.to_XML(xml);
+  allGroups.to_XML(geometryGroup);
 
-  Terrain.to_XML(xml, copyTexturesAlongside);
+  Terrain.to_XML(environmentGroup, copyTexturesAlongside);
 
-  Earth3D.to_XML(xml);
+  Earth3D.to_XML(environmentGroup);
 
-  Sky3D.to_XML(xml);
+  Sky3D.to_XML(environmentGroup);
 
-  Tropo3D.to_XML(xml);
+  Tropo3D.to_XML(environmentGroup);
 
-  Moon3D.to_XML(xml);
+  Moon3D.to_XML(environmentGroup);
 
-  Sun3D.to_XML(xml);
+  Sun3D.to_XML(environmentGroup);
 
-  WIN3D.to_XML(xml);
+  WIN3D.to_XML(viewGroup);
 
-  User3D.to_XML(xml);
+  User3D.to_XML(viewGroup);
 
-  Select3D.to_XML(xml);
+  Select3D.to_XML(viewGroup);
 
   WORLD.to_XML(xml);
 
   STUDY.to_XML(xml);
 
-  allWindRoses.to_XML(xml);
+  allWindRoses.to_XML(impactsGroup);
 
-  allWindFlows.to_XML(xml);
+  allWindFlows.to_XML(impactsGroup);
 
-  allSolidImpacts.to_XML(xml);
+  allSolidImpacts.to_XML(impactsGroup);
 
-  allSolarImpacts.to_XML(xml);
+  allSolarImpacts.to_XML(impactsGroup);
 
   for (int i = 0; i < allLayers.length; i++) {
-    allLayers[i].to_XML(xml);
+    allLayers[i].to_XML(geometryGroup);
   }
 
   return xml;
