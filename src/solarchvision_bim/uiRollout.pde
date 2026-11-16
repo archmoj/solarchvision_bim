@@ -55,6 +55,7 @@ class UI_rollout {
     CHILD_GEOMETRY_ENVIRONMENT = pushChild("Environment");
     CHILD_GEOMETRY_VIEWPORT = pushChild("Viewport");
     CHILD_GEOMETRY_SIMULATION = pushChild("Simulation");
+    CHILD_GEOMETRY_VISIBILITY = pushChild("Visibility");
     CHILD_GEOMETRY_OTHER = pushChild("Other");
 
     PARENT_ILLUSTRATION = pushParent("Illustration Options");
@@ -91,6 +92,7 @@ class UI_rollout {
   int CHILD_GEOMETRY_ENVIRONMENT;
   int CHILD_GEOMETRY_VIEWPORT;
   int CHILD_GEOMETRY_SIMULATION;
+  int CHILD_GEOMETRY_VISIBILITY;
   int CHILD_GEOMETRY_OTHER;
 
   int PARENT_ILLUSTRATION;
@@ -639,13 +641,6 @@ class UI_rollout {
         Terrain.displayTexture = vm.TerrainDisplayTexture(1);
         Terrain.displayPoints = vm.TerrainDisplayPoints(1);
         Terrain.displayDepth = vm.TerrainDisplayDepth(1);
-        allModel2Ds.displayAll = vm.Model2DsDisplayAll(1);
-        allModel1Ds.displayAll = vm.Model1DsDisplayAll(1);
-        allModel1Ds.displayLeaves = vm.Model1DsDisplayLeaves(1);
-        allPolylines.displayAll = vm.PolylinesDisplayAll(1);
-        allFaces.displayAll = vm.FacesDisplayAll(1);
-        allSolids.displayAll = vm.SolidsDisplayAll(1);
-        allSections.displayAll = vm.SectionsDisplayAll(1);
         allWindRoses.displayImage = vm.WindRoseDisplayImage(1);
         allWindRoses.planeSize = vm.WindRosePlaneSize(1);
         allWindRoses.imageResolution = vm.WindRoseImageResolution(1);
@@ -678,10 +673,6 @@ class UI_rollout {
         WIN3D.currentCameraIndex = vm.currentCameraIndex(1);
         WIN3D.cameraClipNear = vm.cameraClipNear(1);
         WIN3D.cameraClipFar = vm.cameraClipFar(1);
-        allPoints.displayAll = vm.Create3DDisplayVertices(1);
-        allFaces.displayEdges = vm.Create3DDisplayEdges(1);
-        allFaces.showNormalLines = vm.Create3DDisplayNormals(1);
-        allCameras.displayAll = vm.CamerasDisplayAll(1);
       }
 
 
@@ -706,12 +697,33 @@ class UI_rollout {
         allSolidImpacts.Process_subDivisions = vm.SolidImpacts_processSubDivisions(1);
         allSolidImpacts.displayPoints = vm.SolidImpactsDisplayPoints(1);
         allSolidImpacts.displayLines = vm.SolidImpactsDisplayLines(1);
+      }
+
+      if (this.child == CHILD_GEOMETRY_VISIBILITY) {
+
+        // Every plain "show/hide this category of object" toggle that has
+        // no other configuration of its own (a setting that comes WITH other
+        // related settings - e.g. SolidImpacts.displayPoints, which lives
+        // alongside that simulation's many other parameters, or WindRose's
+        // displayImage, which lives alongside its planeSize/imageResolution -
+        // stays with those siblings instead of being pulled in here).
+        allModel2Ds.displayAll = vm.Model2DsDisplayAll(1);
+        allModel1Ds.displayAll = vm.Model1DsDisplayAll(1);
+        allModel1Ds.displayLeaves = vm.Model1DsDisplayLeaves(1);
+        allPolylines.displayAll = vm.PolylinesDisplayAll(1);
+        allFaces.displayAll = vm.FacesDisplayAll(1);
+        allSolids.displayAll = vm.SolidsDisplayAll(1);
+        allSections.displayAll = vm.SectionsDisplayAll(1);
+        allPoints.displayAll = vm.Create3DDisplayVertices(1);
+        allFaces.displayEdges = vm.Create3DDisplayEdges(1);
+        allFaces.showNormalLines = vm.Create3DDisplayNormals(1);
+        allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
+        allCameras.displayAll = vm.CamerasDisplayAll(1);
         allWindFlows.displayAll = vm.WindFlowsDisplayAll(1);
       }
 
       if (this.child == CHILD_GEOMETRY_OTHER) {
 
-        allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
         celestialMagnification = vm.celestialMagnification(1);
         overallScale = vm.overallScale(1);
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
