@@ -653,8 +653,23 @@ class UI_rollout {
 
 
         Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
+        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
+        Sky3D.radius = vm.Sky3DRadius(1);
         Sun3D.displayPath = vm.Sun3DDisplayPath(1);
         Sun3D.displayPattern = vm.Sun3DDisplayPattern(1);
+        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
+        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
+        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
+        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
+        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
+        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
+        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
+        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
+        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
+        Earth3D.recomputeLevelOfDetailDependents();
+        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
+        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
+        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
       }
 
 
@@ -697,22 +712,6 @@ class UI_rollout {
       if (this.child == CHILD_GEOMETRY_OTHER) {
 
         allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
-        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
-        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
-        Sky3D.radius = vm.Sky3DRadius(1);
-        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
-        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
-        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
-        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
-        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
-        Earth3D.recomputeLevelOfDetailDependents();
-
-        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
-        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
-        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
-        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
-        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
-        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
         celestialMagnification = vm.celestialMagnification(1);
         overallScale = vm.overallScale(1);
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
