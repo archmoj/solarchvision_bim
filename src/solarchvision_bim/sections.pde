@@ -9,14 +9,16 @@ class Sections {
   boolean displayAll = true;
 
   int num;
-  // Columns: 0:X 1:Y 2:Z 3:rotX 4:U 5:V 6:rotY 7:rotZ. Every section is
+  // Columns: 0:X 1:Y 2:Z 3:rotX 4:rotY 5:rotZ 6:U 7:V. Every section is
   // the same single shape now - a flat quad in its own local X-Y plane
   // (local Z is its normal), oriented by 3 Euler angles (rotX/rotY/rotZ,
-  // composed in that X-then-Y-then-Z order - see arbitrarySection.pde)
-  // and then translated to X/Y/Z. There used to be 3 other "types" with
-  // their own single-angle rotation and translate-before-rotate math
-  // (rotateSectionCorner(), removed) - dropped as part of collapsing
-  // every section onto this one (former "type 0") representation.
+  // kept contiguous here the way Solids' own f_data groups posX/Y/Z,
+  // powX/Y/Z, scaleX/Y/Z and rotX/Y/Z - composed in that X-then-Y-
+  // then-Z order - see arbitrarySection.pde) and then translated to
+  // X/Y/Z. There used to be 3 other "types" with their own single-angle
+  // rotation and translate-before-rotate math (rotateSectionCorner(),
+  // removed) - dropped as part of collapsing every section onto this
+  // one (former "type 0") representation.
   float[][] f_data = new float[0][8];
   int[][] i_data = new int[0][2];
 
@@ -36,14 +38,14 @@ class Sections {
   }
 
   void create (float x, float y, float z, float rotX, float u, float v, int RES1, int RES2) {
-    this.create(x, y, z, rotX, u, v, RES1, RES2, 0, 0);
+    this.create(x, y, z, rotX, 0, 0, u, v, RES1, RES2);
   }
 
-  void create (float x, float y, float z, float rotX, float u, float v, int RES1, int RES2, float rotY, float rotZ) {
+  void create (float x, float y, float z, float rotX, float rotY, float rotZ, float u, float v, int RES1, int RES2) {
     int[][] Temp_i_data = { { RES1, RES2 } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
-    float[][] Temp_f_data = { { x, y, z, rotX, u, v, rotY, rotZ } };
+    float[][] Temp_f_data = { { x, y, z, rotX, rotY, rotZ, u, v } };
     this.f_data = (float[][]) concat(this.f_data, Temp_f_data);
 
     PImage[] Temp_SolidImpact = { createImage(RES1, RES2, RGB) };
@@ -69,25 +71,25 @@ class Sections {
   float getY (int n) { return this.f_data[n][1]; } // offsetY
   float getZ (int n) { return this.f_data[n][2]; } // elevation
   float getRotX (int n) { return this.f_data[n][3]; }
-  float getU (int n) { return this.f_data[n][4]; } // scaleU
-  float getV (int n) { return this.f_data[n][5]; } // scaleV
-  float getRotY (int n) { return this.f_data[n][6]; }
-  float getRotZ (int n) { return this.f_data[n][7]; }
+  float getRotY (int n) { return this.f_data[n][4]; }
+  float getRotZ (int n) { return this.f_data[n][5]; }
+  float getU (int n) { return this.f_data[n][6]; } // scaleU
+  float getV (int n) { return this.f_data[n][7]; } // scaleV
   void setX (int n, float f) { this.f_data[n][0] = f; }
   void setY (int n, float f) { this.f_data[n][1] = f; }
   void setZ (int n, float f) { this.f_data[n][2] = f; }
   void setRotX (int n, float f) { this.f_data[n][3] = f; }
-  void setU (int n, float f) { this.f_data[n][4] = f; }
-  void setV (int n, float f) { this.f_data[n][5] = f; }
-  void setRotY (int n, float f) { this.f_data[n][6] = f; }
-  void setRotZ (int n, float f) { this.f_data[n][7] = f; }
+  void setRotY (int n, float f) { this.f_data[n][4] = f; }
+  void setRotZ (int n, float f) { this.f_data[n][5] = f; }
+  void setU (int n, float f) { this.f_data[n][6] = f; }
+  void setV (int n, float f) { this.f_data[n][7] = f; }
 
   // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
   // accumulation. Rotate3D.pde's own Sections() now always dispatches
   // here (every section is the same arbitrary-orientation shape).
   void RotateX (int n, float f) { this.f_data[n][3] += f; }
-  void RotateY (int n, float f) { this.f_data[n][6] += f; }
-  void RotateZ (int n, float f) { this.f_data[n][7] += f; }
+  void RotateY (int n, float f) { this.f_data[n][4] += f; }
+  void RotateZ (int n, float f) { this.f_data[n][5] += f; }
 
   void move (int n, float dx, float dy, float dz) {
     this.f_data[n][0] += dx;
@@ -414,6 +416,10 @@ class Sections {
         txt += ",";
         txt += nf(this.getRotX(i), 0, 4).replace(",", ".");
         txt += ",";
+        txt += nf(this.getRotY(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getRotZ(i), 0, 4).replace(",", ".");
+        txt += ",";
         txt += nf(this.getU(i), 0, 4).replace(",", ".");
         txt += ",";
         txt += nf(this.getV(i), 0, 4).replace(",", ".");
@@ -421,10 +427,6 @@ class Sections {
         txt += nf(this.get_res1(i), 0);
         txt += ",";
         txt += nf(this.get_res2(i), 0);
-        txt += ",";
-        txt += nf(this.getRotY(i), 0, 4).replace(",", ".");
-        txt += ",";
-        txt += nf(this.getRotZ(i), 0, 4).replace(",", ".");
         XML_setContent(child, txt);
       }
       XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -486,12 +488,12 @@ class Sections {
         this.setY(i, float(parts[1]));
         this.setZ(i, float(parts[2]));
         this.setRotX(i, float(parts[3]));
-        this.setU(i, float(parts[4]));
-        this.setV(i, float(parts[5]));
-        this.set_res1(i, int(parts[6]));
-        this.set_res2(i, int(parts[7]));
-        this.setRotY(i, float(parts[8]));
-        this.setRotZ(i, float(parts[9]));
+        this.setRotY(i, float(parts[4]));
+        this.setRotZ(i, float(parts[5]));
+        this.setU(i, float(parts[6]));
+        this.setV(i, float(parts[7]));
+        this.set_res1(i, int(parts[8]));
+        this.set_res2(i, int(parts[9]));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }

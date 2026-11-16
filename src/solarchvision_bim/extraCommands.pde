@@ -2228,7 +2228,7 @@ String __SECTION__ (String[] parts) {
     int i = getI(p, "i", 200);
     int j = getI(p, "j", 200);
     if ((i > 0) && (j > 0) && (u > 0) && (v > 0)) {
-        allSections.create(x, y, z, rx, u, v, i, j, ry, rz);
+        allSections.create(x, y, z, rx, ry, rz, u, v, i, j);
         view_changed();
     }
     }

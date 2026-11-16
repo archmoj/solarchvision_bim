@@ -227,9 +227,9 @@ class Clone3D {
       int OBJ_ID = Select3D.sectionSelection[o];
       allSections.create(
         allSections.getX(OBJ_ID), allSections.getY(OBJ_ID), allSections.getZ(OBJ_ID),
-        allSections.getRotX(OBJ_ID), allSections.getU(OBJ_ID), allSections.getV(OBJ_ID),
-        allSections.get_res1(OBJ_ID), allSections.get_res2(OBJ_ID),
-        allSections.getRotY(OBJ_ID), allSections.getRotZ(OBJ_ID)
+        allSections.getRotX(OBJ_ID), allSections.getRotY(OBJ_ID), allSections.getRotZ(OBJ_ID),
+        allSections.getU(OBJ_ID), allSections.getV(OBJ_ID),
+        allSections.get_res1(OBJ_ID), allSections.get_res2(OBJ_ID)
       );
     }
 

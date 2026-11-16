@@ -18,7 +18,7 @@ class SectionsTest {
     app.allSections.makeEmpty(2);
     assertEquals(2, app.allSections.num);
     assertEquals(2, app.allSections.f_data.length);
-    assertEquals(8, app.allSections.f_data[0].length); // X,Y,Z,R,U,V,rotY,rotZ
+    assertEquals(8, app.allSections.f_data[0].length); // X,Y,Z,rotX,rotY,rotZ,U,V
     assertEquals(2, app.allSections.i_data.length);
     assertEquals(2, app.allSections.SolidImpact.length);
     assertEquals(2, app.allSections.SolarImpact.length);
@@ -176,7 +176,7 @@ class SectionsTest {
     // at zero iterations and avoids the real PImage.save()/loadImage()
     // calls they'd otherwise make - there's no way to exercise those
     // safely against a hand-built scene with no real files on disk.
-    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 2, 3, 15, 25}};
+    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 15, 25, 2, 3}};
     app.allSections.i_data = new int[][]{{4, 4}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[0];
