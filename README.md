@@ -23,6 +23,8 @@ By combining spatial models with time-varying environmental data, SOLARCHVISION-
 - [What can you explore?](#what-can-you-explore)
 - [Model interoperability and imports](#model-interoperability-and-imports)
 - [3D modeling, editing, and visualization](#3d-modeling-editing-and-visualization)
+  - [Sections: the shape-exact cutting plane](#sections-the-shape-exact-cutting-plane)
+  - [Render viewport: pixel-exact camera rendering](#render-viewport-pixel-exact-camera-rendering)
 - [Geographic context and site modeling](#geographic-context-and-site-modeling)
 - [Weather, climate, and geographic data](#weather-climate-and-geographic-data)
 - [Modeling and analysis workflow](#modeling-and-analysis-workflow)
@@ -237,16 +239,35 @@ The 3D environment supports perspective and orthographic views, surface and edge
 
 SOLARCHVISION-BIM provides complementary shading and solar-impact calculations at several spatial and display levels. These include global calculations based on surface orientation and inclination, vertex-level evaluation, pixel-level evaluation in a camera render, and calculations on model sections. The methods are calibrated to produce results that agree across these representations, allowing a study to be inspected at different levels of detail without treating each display method as an unrelated analysis.
 
-The appropriate method depends on the study and the desired representation: global orientation/inclination analysis provides a surface-level view; vertex-level calculations resolve variation across model geometry; pixel-level camera rendering provides a view-dependent image; and section-based calculations support inspection of selected cuts through the model.
+The appropriate method depends on the study and the desired representation: global orientation/inclination analysis provides a surface-level view; vertex-level calculations resolve variation across model geometry; pixel-level camera rendering provides a view-dependent image; and section-based calculations support inspection of selected cuts through the model—see **Sections**, below.
 
-### One-click SOLARCHVISION render actions
+### Sections: the shape-exact cutting plane
 
-Two dedicated render actions bring the required pre-bake and post-processing steps together:
+If one object in SOLARCHVISION-BIM deserves to be singled out, it's the **Section**—a flat analysis plane you place and orient freely in the model, used for solar- and solid-impact baking, shadow casting, and sectional views. It's the one tool built to cut through a design at exactly the angle a question calls for, rather than along a fixed axis.
 
-- **SOLARCHVISION current viewport:** runs the SOLARCHVISION render workflow for the current camera/viewport.
-- **SOLARCHVISION all sections:** runs the workflow across all prepared model sections.
+- **Any orientation.** A section is positioned and oriented by three independent rotation angles—the same Euler convention used throughout the application—so it can lie flat, stand vertical, or tilt to follow a sloped roof or an angled façade, not just the flat-or-vertical cases a simpler cutting plane would be limited to.
+- **Any shape, exactly.** A section's outline is a polygon with as many corners as the question requires: a triangle, a quadrilateral, a pentagon, a hexagon, or beyond. The shape is stored and used as the *real* polygon—not approximated by its bounding rectangle—so the 3D-viewport fill, the exported OBJ/HTML geometry, the baked impact texture, and on-screen picking/selection all agree on precisely where the section starts and stops.
+- **Built from the model itself.** Convert any selected face—flat or sloped, three-sided or many—directly into its own section with **Face ▸ Section**, carrying over that face's real shape and plane. A section can also be placed with a single click in the 3D view, or created precisely from the command bar:
 
-These actions simplify workflows that previously required several separate preparation and processing operations. Use the current-viewport action when working with a particular camera view, or the all-sections action when the analysis needs to be prepared and processed across the section set.
+  ```text
+  Section x=? y=? z=? rx=? ry=? rz=? resX=? resY=? x1,y1 x2,y2 x3,y3 etc.
+  ```
+
+- **Where it pays off.** Sections are what the **SOLARCHVISION all sections** render action processes in one pass (see below)—the one calibrated shading level, among the four described above, built to follow an irregular cut through a building, courtyard, or landscape feature at its real shape, rather than describing a surface or a camera view.
+
+See the [command reference](command/README.md#section-creation) for the full `SECTION` syntax and related editing commands.
+
+### Render viewport: pixel-exact camera rendering
+
+Sections cut through the model at an exact shape and angle; **SOLARCHVISION current viewport** does the equivalent job for the camera itself. One click, pinned to the bottom of the rollout panel in bold amber so it's never far from reach, drives a genuine per-pixel ray cast from the live camera—not an interpolation across triangle vertices—so every pixel on screen resolves its own occlusion and solar/solid impact exactly as that camera sees it:
+
+1. **Pre-bakes the view.** Casts a ray through every screen pixel (rebuilding camera-facing billboards—trees, people—first, so they're correctly accounted for), then saves the resulting direct- and diffuse-radiation images.
+2. **Clears any leftover shading overlay**, so the render shows the model itself rather than a stale grayscale preview left over from an earlier pass.
+3. **Jumps straight to the matching Skin Potential graph**—Active or Passive, whichever the current study is set to—so the pixel-level result is immediately there to read.
+
+It's the finest-grained of the four calibrated shading levels introduced above: global and vertex-level analysis describe a surface, a Section describes an arbitrary cut through the model, and the render viewport describes exactly what the camera would see, pixel by pixel.
+
+Its sibling action, **SOLARCHVISION all sections**, runs that same bake-and-process workflow across every prepared [Section](#sections-the-shape-exact-cutting-plane) instead of the camera view. Between the two, a one-click action is available for whichever representation a study needs—the current camera's exact view, or an arbitrary cut through the model—without hand-sequencing the separate preparation and processing steps each used to require.
 
 ## Geographic context and site modeling
 
