@@ -34,7 +34,7 @@ class SectionsTest {
     assertEquals(10f, app.allSections.getX(0), 0.0001f);
     assertEquals(20f, app.allSections.getY(0), 0.0001f);
     assertEquals(30f, app.allSections.getZ(0), 0.0001f);
-    assertEquals(45f, app.allSections.getR(0), 0.0001f);
+    assertEquals(45f, app.allSections.getRotX(0), 0.0001f);
     assertEquals(2f, app.allSections.getU(0), 0.0001f);
     assertEquals(3f, app.allSections.getV(0), 0.0001f);
     assertEquals(4, app.allSections.get_res1(0));
@@ -56,7 +56,7 @@ class SectionsTest {
     app.allSections.setX(0, 1);
     app.allSections.setY(0, 2);
     app.allSections.setZ(0, 3);
-    app.allSections.setR(0, 4);
+    app.allSections.setRotX(0, 4);
     app.allSections.setU(0, 5);
     app.allSections.setV(0, 6);
     app.allSections.setRotY(0, 7);
@@ -87,7 +87,7 @@ class SectionsTest {
     app.allSections.RotateZ(0, 30);
     app.allSections.RotateX(0, 5);
 
-    assertEquals(15f, app.allSections.getR(0), 0.0001f);    // RotateX == R
+    assertEquals(15f, app.allSections.getRotX(0), 0.0001f);    // RotateX == RotX
     assertEquals(20f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(30f, app.allSections.getRotZ(0), 0.0001f);
   }
@@ -101,7 +101,7 @@ class SectionsTest {
     assertEquals(2f, app.allSections.getX(0), 0.0001f);
     assertEquals(3f, app.allSections.getY(0), 0.0001f);
     assertEquals(4f, app.allSections.getZ(0), 0.0001f);
-    assertEquals(45f, app.allSections.getR(0), 0.0001f); // untouched
+    assertEquals(45f, app.allSections.getRotX(0), 0.0001f); // untouched
   }
 
   // ================= shouldDraw =======================================
@@ -191,7 +191,7 @@ class SectionsTest {
 
     assertEquals(1, fresh.num);
     assertEquals(10f, fresh.getX(0), 0.0001f);
-    assertEquals(45f, fresh.getR(0), 0.0001f);
+    assertEquals(45f, fresh.getRotX(0), 0.0001f);
     assertEquals(15f, fresh.getRotY(0), 0.0001f);
     assertEquals(25f, fresh.getRotZ(0), 0.0001f);
     assertEquals(4, fresh.get_res1(0));

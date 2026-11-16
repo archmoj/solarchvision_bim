@@ -958,7 +958,7 @@ class MouseClickedTest {
     assertEquals(1f, sp.X, 0.001f);
     assertEquals(1f, sp.Y, 0.001f);
     assertEquals(5f, sp.Z, 0.001f);
-    assertEquals(0f, sp.R, 0.001f);
+    assertEquals(0f, sp.RotX, 0.001f);
     assertEquals(2f, sp.U, 0.001f);
     assertEquals(2f, sp.V, 0.001f);
   }
@@ -978,7 +978,7 @@ class MouseClickedTest {
     assertEquals(1f, sp.X, 0.001f);
     assertEquals(0f, sp.Y, 0.001f);
     assertEquals(2f, sp.Z, 0.001f);
-    assertEquals(90f, sp.R, 0.001f);
+    assertEquals(90f, sp.RotX, 0.001f);
     assertEquals(0f, sp.RotY, 0.001f);
     assertEquals(0f, sp.RotZ, 0.001f);
     assertEquals(2f, sp.U, 0.001f);
@@ -1003,7 +1003,7 @@ class MouseClickedTest {
     assertEquals(1f, sp.X, 0.001f);
     assertEquals(1f, sp.Y, 0.001f);
     assertEquals(5f, sp.Z, 0.001f);
-    assertEquals(180f, sp.R, 0.001f);
+    assertEquals(180f, sp.RotX, 0.001f);
   }
 
   @Test

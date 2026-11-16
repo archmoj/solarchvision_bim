@@ -2217,10 +2217,10 @@ String __SECTION__ (String[] parts) {
     float x = getF(p, "x", 0);
     float y = getF(p, "y", 0);
     float z = getF(p, "z", 0);
-    // r/ry/rz: Euler rotation angles (rotX/rotY/rotZ, composed in that
+    // rx/ry/rz: Euler rotation angles (rotX/rotY/rotZ, composed in that
     // order - see arbitrarySection.pde). Every section is this one
     // arbitrary-orientation shape now.
-    float r = getF(p, "r", 0);
+    float rx = getF(p, "rx", 0);
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
     float u = getF(p, "u", 20);
@@ -2228,12 +2228,12 @@ String __SECTION__ (String[] parts) {
     int i = getI(p, "i", 200);
     int j = getI(p, "j", 200);
     if ((i > 0) && (j > 0) && (u > 0) && (v > 0)) {
-        allSections.create(x, y, z, r, u, v, i, j, ry, rz);
+        allSections.create(x, y, z, rx, u, v, i, j, ry, rz);
         view_changed();
     }
     }
     else {
-    hint = "Section x=? y=? z=? r=? ry=? rz=? u=? v=? i=? j=?";
+    hint = "Section x=? y=? z=? rx=? ry=? rz=? u=? v=? i=? j=?";
     UI_setTo_Create_Section();
     }
     return hint;

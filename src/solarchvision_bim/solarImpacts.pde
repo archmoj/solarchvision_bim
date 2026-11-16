@@ -53,7 +53,7 @@ class SolarImpacts {
   float Y = 0;
   float X = 0;
   float Z = 0;
-  float R = 0; // North is up by default; rotX - see arbitrarySection.pde
+  float RotX = 0; // North is up by default - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
   float U = 500; // i.e. 500 = 500m
@@ -1229,7 +1229,7 @@ class SolarImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
-      this.R = allSections.getR(f);
+      this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.U = allSections.getU(f);
@@ -1281,7 +1281,7 @@ class SolarImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f) + 0.1; // <<
-      this.R = allSections.getR(f);
+      this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.U = allSections.getU(f);
@@ -1314,7 +1314,7 @@ class SolarImpacts {
     XML_setFloat(parent, "x", this.X);
     XML_setFloat(parent, "y", this.Y);
     XML_setFloat(parent, "z", this.Z);
-    XML_setFloat(parent, "r", this.R);
+    XML_setFloat(parent, "rotX", this.RotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
     XML_setFloat(parent, "u", this.U);
@@ -1336,7 +1336,7 @@ class SolarImpacts {
     this.X = XML_getFloat(parent, "x");
     this.Y = XML_getFloat(parent, "y");
     this.Z = XML_getFloat(parent, "z");
-    this.R = XML_getFloat(parent, "r");
+    this.RotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
     this.U = XML_getFloat(parent, "u");

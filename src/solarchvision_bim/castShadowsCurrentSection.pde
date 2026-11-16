@@ -53,7 +53,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   // just below in faces.pde/land3D.pde/model1Ds.pde/model2Ds.pde - same
   // function, same angles - so this and those stay in the exact same
   // local frame as each other.
-  float[] localPos = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+  float[] localPos = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
   Shades_offsetX = localPos[0];
   Shades_offsetY = localPos[1];
 
@@ -111,7 +111,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
           int SunR_Rotated_check = 3;
 
           {
-            float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+            float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
             SunR_Rotated[1] = localSun[0];
             SunR_Rotated[2] = localSun[1];
@@ -167,7 +167,7 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
           int SunR_Rotated_check = 3;
 
           {
-            float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+            float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
             SunR_Rotated[1] = localSun[0];
             SunR_Rotated[2] = localSun[1];

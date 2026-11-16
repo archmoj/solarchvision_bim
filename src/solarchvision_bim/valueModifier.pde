@@ -2467,7 +2467,7 @@ class ValueModifier {
     }
     return out;
   }
-  float SolidImpacts_r (int created) {
+  float SolidImpacts_rotX (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2478,16 +2478,16 @@ class ValueModifier {
     float s4 = 0.001; //round
 
     float out = 0;
-    String command = "Solid Impacts R";
+    String command = "Solid Impacts RotX";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.R,
-        (v) -> { allSolidImpacts.R = v; },
+        () -> allSolidImpacts.RotX,
+        (v) -> { allSolidImpacts.RotX = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts r", allSolidImpacts.R, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts rotX", allSolidImpacts.RotX, s1, s2, s3, s4);
     }
     return out;
   }

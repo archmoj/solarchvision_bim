@@ -148,7 +148,7 @@ class ArbitrarySectionTest {
 
     app.Rotate3D.Sections((float) Math.toRadians(45), 2); // the_Vector 2 = Z
 
-    assertEquals(0f, app.allSections.getR(0), 0.0001f);     // untouched (rotX)
+    assertEquals(0f, app.allSections.getRotX(0), 0.0001f);     // untouched (rotX)
     assertEquals(0f, app.allSections.getRotY(0), 0.0001f);  // untouched
     assertEquals(45f, app.allSections.getRotZ(0), 0.01f);
   }
@@ -163,7 +163,7 @@ class ArbitrarySectionTest {
 
     app.Rotate3D.Sections((float) Math.toRadians(30), 0); // the_Vector 0 = X
 
-    assertEquals(30f, app.allSections.getR(0), 0.01f);
+    assertEquals(30f, app.allSections.getRotX(0), 0.01f);
     assertEquals(0f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(0f, app.allSections.getRotZ(0), 0.0001f);
   }

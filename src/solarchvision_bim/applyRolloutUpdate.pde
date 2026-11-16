@@ -54,7 +54,7 @@ void applyRolloutUpdate() {
 
   pre_allSolidImpacts_Grade = allSolidImpacts.Grade;
   pre_allSolidImpacts_Power = allSolidImpacts.Power;
-  pre_allSolidImpacts_Rotation = allSolidImpacts.R;
+  pre_allSolidImpacts_Rotation = allSolidImpacts.RotX;
   pre_allSolidImpacts_Elevation = allSolidImpacts.Z;
 
   pre_allSolidImpacts_Wspd = allSolidImpacts.WindSpeed;
@@ -251,7 +251,7 @@ void applyRolloutUpdate() {
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
-  react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.R);
+  react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.RotX);
   react.recalcImpact.run(pre_allSolidImpacts_Elevation, allSolidImpacts.Z);
 
   react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale, allSolidImpacts.U);

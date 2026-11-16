@@ -548,7 +548,7 @@ CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
 // the 3 Euler rotation angles - see arbitrarySection.pde - and extents)
 // for a new section, plus whether one should actually be created at all.
 class SectionParams {
-  float X, Y, Z, R, U, V;
+  float X, Y, Z, RotX, U, V;
   float RotY = 0, RotZ = 0;
   int RES1, RES2;
   boolean createNew = false;
@@ -578,7 +578,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
   sp.X = allSolidImpacts.X;
   sp.Y = allSolidImpacts.Y;
   sp.Z = allSolidImpacts.Z;
-  sp.R = allSolidImpacts.R;
+  sp.RotX = allSolidImpacts.RotX;
   sp.RotY = allSolidImpacts.rotY;
   sp.RotZ = allSolidImpacts.rotZ;
   sp.U = allSolidImpacts.U;
@@ -672,7 +672,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
         sp.U = max_x - min_x;
         sp.V = max_y - min_y;
 
-        sp.R = 0;
+        sp.RotX = 0;
         sp.RotY = 0;
         sp.RotZ = min_Beta;
       } else {
@@ -684,7 +684,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
         sp.U = max_y - min_y;
         sp.V = max_z - min_z;
 
-        sp.R = 90;
+        sp.RotX = 90;
         sp.RotY = 0;
         sp.RotZ = min_Beta - 90;
       }
@@ -694,7 +694,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
       PVector GAxGB = AG.cross(BG);
 
-      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.R, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
+      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -721,7 +721,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
         // of the 3 Euler rotations, so this is valid regardless of
         // rotY/rotZ above. Position (X/Y/Z) is untouched: it's already
         // the literal world centroid, not something that needs undoing.
-        sp.R = sp.R + 180;
+        sp.RotX = sp.RotX + 180;
       }
 
       sp.createNew = true;
@@ -2092,7 +2092,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               // to this mouse-click workflow, not part of the
               // command itself, so it stays here unchanged.
               runScriptLine("Section x=" + sp.X + " y=" + sp.Y + " z=" + sp.Z +
-                " r=" + sp.R + " ry=" + sp.RotY + " rz=" + sp.RotZ + " u=" + sp.U + " v=" + sp.V +
+                " rx=" + sp.RotX + " ry=" + sp.RotY + " rz=" + sp.RotZ + " u=" + sp.U + " v=" + sp.V +
                 " i=" + sp.RES1 + " j=" + sp.RES2);
 
               selectNewlyCreated(keep_number_of_allSections, allSections.num,
@@ -2103,7 +2103,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               allSolidImpacts.X = sp.X;
               allSolidImpacts.Y = sp.Y;
               allSolidImpacts.Z = sp.Z;
-              allSolidImpacts.R = sp.R;
+              allSolidImpacts.RotX = sp.RotX;
               allSolidImpacts.rotY = sp.RotY;
               allSolidImpacts.rotZ = sp.RotZ;
               allSolidImpacts.U = sp.U;

@@ -467,12 +467,12 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
 -   `SECTION`: Creates an analysis section - a flat cutting plane used
     for solar/solid-impact analysis, shadow baking, and sectional views.
     Every section has the same arbitrary orientation: 3 independent
-    rotation angles - `r` doubles as rotX, and `ry`/`rz` are rotY/rotZ,
-    composed in the same X-then-Y-then-Z order Solids' own rotation
-    already uses, so these 3 angles mean exactly what a solid's own
-    rotation does elsewhere in this app. `x`/`y`/`z` is the section's
-    own center, rotated about its own center by `r`/`ry`/`rz` and then
-    translated there - not folded in before rotating.
+    rotation angles `rx`/`ry`/`rz`, composed in the same X-then-Y-then-Z
+    order Solids' own rotation already uses, so these 3 angles mean
+    exactly what a solid's own rotation does elsewhere in this app.
+    `x`/`y`/`z` is the section's own center, rotated about its own
+    center by `rx`/`ry`/`rz` and then translated there - not folded in
+    before rotating.
 
     Once created, a section can be rotated around any of its 3 axes the
     same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/`ROTATEZ`
@@ -480,7 +480,7 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     dragged/named axis picking which of rotX/rotY/rotZ actually changes.
 
 ```
-Section x=? y=? z=? r=? ry=? rz=? u=? v=? i=? j=?
+Section x=? y=? z=? rx=? ry=? rz=? u=? v=? i=? j=?
 ```
 
 ------------------------------------------------------------------------
@@ -857,7 +857,7 @@ the user interface.
 | `Solid Impacts Power` | Exponent applied when weighting solid-impact results | 0.0001 to 64.0 |
 | `Solid Impacts Process Sub Divisions` | Number of subdivisions used when processing solid impacts | 0 to 3 |
 | `Solid Impacts Position Step` | Step size used when stepping through impact-analysis positions | 5 to 80 |
-| `Solid Impacts R` | Rotation of the current impact-analysis section | -360 to 360 |
+| `Solid Impacts RotX` | Rotation of the current impact-analysis section | -360 to 360 |
 | `Solid Impacts U` | U-axis scale of the current impact-analysis section | 0.125 to 3200 |
 | `Solid Impacts V` | V-axis scale of the current impact-analysis section | 0.125 to 3200 |
 | `Solid Impacts X` | X offset of the current impact-analysis section | -10000 to 10000 |

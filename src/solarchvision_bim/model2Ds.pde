@@ -1274,12 +1274,12 @@ class Model2Ds {
           // Every section stores X/Y/Z as a plain WORLD position added
           // AFTER rotation (sections.pde) - see faces.pde's own
           // castShadows() for the identical conversion.
-          float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
+          float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
           // Every section is the same arbitrary-orientation shape now -
           // always rotate into its local frame (arbitrarySection.pde).
           for (int q = 0; q < 4; q++) {
-            float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+            float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
             TX[q] = local[0];
             TY[q] = local[1];
@@ -1319,7 +1319,7 @@ class Model2Ds {
 
           // Same depthOffset the Vertical mask block above (and faces.
           // pde's own castShadows()) uses.
-          float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
+          float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
           for (int back_front = -1; back_front <= 1; back_front += 2) {
 
@@ -1373,7 +1373,7 @@ class Model2Ds {
             // quad's own TX/TY/TZ already do - every section is the
             // same arbitrary-orientation shape now.
             for (int q = 0; q < 4; q++) {
-              float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+              float[] local = arbitrarySection_rotateWorldToLocal(TX[q], TY[q], TZ[q], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
               TX[q] = local[0];
               TY[q] = local[1];

@@ -84,7 +84,7 @@ class SolarImpactsTest {
     app.allSolarImpacts.X = 1;
     app.allSolarImpacts.Y = 2;
     app.allSolarImpacts.Z = 3;
-    app.allSolarImpacts.R = 45;
+    app.allSolarImpacts.RotX = 45;
     app.allSolarImpacts.U = 100;
     app.allSolarImpacts.V = 200;
     app.allSolarImpacts.RES1 = 50;
@@ -101,7 +101,7 @@ class SolarImpactsTest {
     assertEquals(1f, fresh.X, 0.0001f);
     assertEquals(2f, fresh.Y, 0.0001f);
     assertEquals(3f, fresh.Z, 0.0001f);
-    assertEquals(45f, fresh.R, 0.0001f);
+    assertEquals(45f, fresh.RotX, 0.0001f);
     assertEquals(100f, fresh.U, 0.0001f);
     assertEquals(200f, fresh.V, 0.0001f);
     assertEquals(50, fresh.RES1);

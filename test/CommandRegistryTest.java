@@ -186,12 +186,9 @@ class CommandRegistryTest {
   }
 
   @Test
-  void solidImpactsR_isRegisteredUnderItsExactTitle () {
-    // One of the "dynamic Spinner label" methods - the console-command
-    // title is still static ("Solid Impacts R"), only the on-screen
-    // Spinner caption varies with the current section index.
-    app.vm.SolidImpacts_r(0);
+  void solidImpactsRotX_isRegisteredUnderItsExactTitle () {
+    app.vm.SolidImpacts_rotX(0);
 
-    assertTrue(app.allActions.containsKey(normalizeKey("Solid Impacts R")));
+    assertTrue(app.allActions.containsKey(normalizeKey("Solid Impacts RotX")));
   }
 }

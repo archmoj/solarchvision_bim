@@ -1654,7 +1654,7 @@ class Faces {
       // normal-depth offset; see castShadowsCurrentSection.pde's own
       // identical conversion for Shades_offsetX/Y (the other 2
       // components of this same rotated position).
-      float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
+      float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
       for (int f = 0; f < this.nodes.length; f++) {
 
@@ -1692,7 +1692,7 @@ class Faces {
                 // frame with the full 3-axis transform
                 // (arbitrarySection.pde), rather than picking between a
                 // single-angle vertical-only shortcut and a no-op.
-                float[] local = arbitrarySection_rotateWorldToLocal(subFace_Rotated[s][0], subFace_Rotated[s][1], subFace_Rotated[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+                float[] local = arbitrarySection_rotateWorldToLocal(subFace_Rotated[s][0], subFace_Rotated[s][1], subFace_Rotated[s][2], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
                 subFace_Rotated[s][0] = local[0];
                 subFace_Rotated[s][1] = local[1];

@@ -716,7 +716,7 @@ class Select3D {
           float Section_X = allSections.getX(n);
           float Section_Y = allSections.getY(n);
           float Section_Z = allSections.getZ(n);
-          float Section_R = allSections.getR(n);
+          float Section_RotX = allSections.getRotX(n);
           float Section_RotY = allSections.getRotY(n);
           float Section_RotZ = allSections.getRotZ(n);
           float Section_U = allSections.getU(n);
@@ -725,7 +725,7 @@ class Select3D {
           int Section_RES1 = allSections.get_res1(n);
           int Section_RES2 = allSections.get_res2(n);
 
-          float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+          float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
           // the first vertex is the center of Section plane
           x = ImageVertex[0][0];

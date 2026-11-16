@@ -169,7 +169,7 @@ class ValueModifierAllActionsTest {
       "SolidImpacts sectionType", // SolidImpacts_sectionType
       "Solid Impacts Grade", // SolidImpacts_grade
       "Solid Impacts Power", // SolidImpacts_power
-      "Solid Impacts R", // SolidImpacts_r
+      "Solid Impacts RotX", // SolidImpacts_rotX
       "Solid Impacts Z", // SolidImpacts_z
       "Solid Impacts Position Step", // SolidImpacts_positionStep
       "Solid Impacts U", // SolidImpacts_u

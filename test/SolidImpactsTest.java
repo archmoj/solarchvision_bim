@@ -118,7 +118,7 @@ class SolidImpactsTest {
     app.allSolidImpacts.MinimumDistance_traceU = 1.5f;
     app.allSolidImpacts.MinimumDistance_traceV = 0.5f;
     app.allSolidImpacts.Z = 1;
-    app.allSolidImpacts.R = 5;
+    app.allSolidImpacts.RotX = 5;
     app.allSolidImpacts.U = 9;
     app.allSolidImpacts.V = 13;
     app.allSolidImpacts.X = 17;
@@ -141,7 +141,7 @@ class SolidImpactsTest {
     assertFalse(fresh.displayImage);
     assertEquals(1, fresh.sectionType);
     assertEquals(1f, fresh.Z, 0.001f);
-    assertEquals(5f, fresh.R, 0.001f);
+    assertEquals(5f, fresh.RotX, 0.001f);
     assertEquals(9f, fresh.U, 0.001f);
     assertEquals(13f, fresh.V, 0.001f);
     assertEquals(17f, fresh.X, 0.001f);

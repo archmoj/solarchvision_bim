@@ -9,7 +9,7 @@ class Sections {
   boolean displayAll = true;
 
   int num;
-  // Columns: 0:X 1:Y 2:Z 3:R(rotX) 4:U 5:V 6:rotY 7:rotZ. Every section is
+  // Columns: 0:X 1:Y 2:Z 3:rotX 4:U 5:V 6:rotY 7:rotZ. Every section is
   // the same single shape now - a flat quad in its own local X-Y plane
   // (local Z is its normal), oriented by 3 Euler angles (rotX/rotY/rotZ,
   // composed in that X-then-Y-then-Z order - see arbitrarySection.pde)
@@ -35,15 +35,15 @@ class Sections {
     endScene3DChange();
   }
 
-  void create (float x, float y, float z, float r, float u, float v, int RES1, int RES2) {
-    this.create(x, y, z, r, u, v, RES1, RES2, 0, 0);
+  void create (float x, float y, float z, float rotX, float u, float v, int RES1, int RES2) {
+    this.create(x, y, z, rotX, u, v, RES1, RES2, 0, 0);
   }
 
-  void create (float x, float y, float z, float r, float u, float v, int RES1, int RES2, float rotY, float rotZ) {
+  void create (float x, float y, float z, float rotX, float u, float v, int RES1, int RES2, float rotY, float rotZ) {
     int[][] Temp_i_data = { { RES1, RES2 } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
-    float[][] Temp_f_data = { { x, y, z, r, u, v, rotY, rotZ } };
+    float[][] Temp_f_data = { { x, y, z, rotX, u, v, rotY, rotZ } };
     this.f_data = (float[][]) concat(this.f_data, Temp_f_data);
 
     PImage[] Temp_SolidImpact = { createImage(RES1, RES2, RGB) };
@@ -68,7 +68,7 @@ class Sections {
   float getX (int n) { return this.f_data[n][0]; } // offsetX
   float getY (int n) { return this.f_data[n][1]; } // offsetY
   float getZ (int n) { return this.f_data[n][2]; } // elevation
-  float getR (int n) { return this.f_data[n][3]; } // rotX
+  float getRotX (int n) { return this.f_data[n][3]; }
   float getU (int n) { return this.f_data[n][4]; } // scaleU
   float getV (int n) { return this.f_data[n][5]; } // scaleV
   float getRotY (int n) { return this.f_data[n][6]; }
@@ -76,7 +76,7 @@ class Sections {
   void setX (int n, float f) { this.f_data[n][0] = f; }
   void setY (int n, float f) { this.f_data[n][1] = f; }
   void setZ (int n, float f) { this.f_data[n][2] = f; }
-  void setR (int n, float f) { this.f_data[n][3] = f; }
+  void setRotX (int n, float f) { this.f_data[n][3] = f; }
   void setU (int n, float f) { this.f_data[n][4] = f; }
   void setV (int n, float f) { this.f_data[n][5] = f; }
   void setRotY (int n, float f) { this.f_data[n][6] = f; }
@@ -85,7 +85,7 @@ class Sections {
   // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
   // accumulation. Rotate3D.pde's own Sections() now always dispatches
   // here (every section is the same arbitrary-orientation shape).
-  void RotateX (int n, float f) { this.f_data[n][3] += f; } // rotX == R
+  void RotateX (int n, float f) { this.f_data[n][3] += f; }
   void RotateY (int n, float f) { this.f_data[n][6] += f; }
   void RotateZ (int n, float f) { this.f_data[n][7] += f; }
 
@@ -134,7 +134,7 @@ class Sections {
     float Section_X = this.getX(f);
     float Section_Y = this.getY(f);
     float Section_Z = this.getZ(f);
-    float Section_R = this.getR(f);
+    float Section_RotX = this.getRotX(f);
     float Section_RotY = this.getRotY(f);
     float Section_RotZ = this.getRotZ(f);
     float Section_U = this.getU(f);
@@ -152,7 +152,7 @@ class Sections {
       writeSectionGroupHeader(f, the_filename);
     }
 
-    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
     num_vertices_added = 0;
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
@@ -316,7 +316,7 @@ class Sections {
   };
 
   // Every section is a flat quad in its own local X-Y plane (local Z is
-  // its normal), rotated about its OWN center by Section_R/RotY/RotZ
+  // its normal), rotated about its OWN center by Section_RotX/RotY/RotZ
   // (Euler angles, X-then-Y-then-Z - see arbitrarySection.pde), THEN
   // translated by Section_X/Y/Z. This used to be just the "type 0"
   // branch here, with 3 other hand-rolled single-angle types (each
@@ -324,7 +324,7 @@ class Sections {
   // around the world origin rather than the section's own center
   // whenever X or Y wasn't 0) - those 3 are gone; every section is this
   // one shape now.
-  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_R, float Section_RotY, float Section_RotZ, float Section_U, float Section_V, int Section_RES1, int Section_RES2) {
+  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_U, float Section_V, int Section_RES1, int Section_RES2) {
     float[][] ImageVertex = new float[5][5];
 
     for (int q = 0; q < 5; q++) {
@@ -335,7 +335,7 @@ class Sections {
 
       float localX = qx * 0.5 * Section_U;
       float localY = qy * 0.5 * Section_V;
-      float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_R, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
+      float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_RotX, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
       ImageVertex[q][0] = xyz[0];
       ImageVertex[q][1] = xyz[1];
@@ -412,7 +412,7 @@ class Sections {
         txt += ",";
         txt += nf(this.getZ(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.getR(i), 0, 4).replace(",", ".");
+        txt += nf(this.getRotX(i), 0, 4).replace(",", ".");
         txt += ",";
         txt += nf(this.getU(i), 0, 4).replace(",", ".");
         txt += ",";
@@ -485,7 +485,7 @@ class Sections {
         this.setX(i, float(parts[0]));
         this.setY(i, float(parts[1]));
         this.setZ(i, float(parts[2]));
-        this.setR(i, float(parts[3]));
+        this.setRotX(i, float(parts[3]));
         this.setU(i, float(parts[4]));
         this.setV(i, float(parts[5]));
         this.set_res1(i, int(parts[6]));

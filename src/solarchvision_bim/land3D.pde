@@ -1388,12 +1388,12 @@ class Terrain {
     // Every section stores X/Y/Z as a plain WORLD position added AFTER
     // rotation (sections.pde) - see faces.pde's own castShadows() for
     // the identical conversion.
-    float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
+    float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
     for (int s = 0; s < subFace.length; s++) {
       // Every section is the same arbitrary-orientation shape now -
       // always rotate into its local frame (arbitrarySection.pde).
-      float[] local = arbitrarySection_rotateWorldToLocal(subFace[s][0], subFace[s][1], subFace[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+      float[] local = arbitrarySection_rotateWorldToLocal(subFace[s][0], subFace[s][1], subFace[s][2], allSolarImpacts.RotX, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
       subFace[s][0] = local[0];
       subFace[s][1] = local[1];

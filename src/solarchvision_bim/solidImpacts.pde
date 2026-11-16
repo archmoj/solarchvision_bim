@@ -15,7 +15,7 @@ class SolidImpacts {
   float X = 0;
   float Y = 0;
   float Z = 0.1; // <<<
-  float R = 0; // rotX - see arbitrarySection.pde
+  float RotX = 0; // see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
   float U = 100; // i.e. 100m
@@ -147,7 +147,7 @@ class SolidImpacts {
       this.X = allSections.getX(f);
       this.Y = allSections.getY(f);
       this.Z = allSections.getZ(f);
-      this.R = allSections.getR(f);
+      this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
       this.U = allSections.getU(f);
@@ -210,7 +210,7 @@ class SolidImpacts {
       // world conversion in this collapsed model does, replacing the 3
       // hand-rolled per-type rotations this used to pick between (which
       // left a type-0/arbitrary section's own rotation unapplied here).
-      float[] Q = arbitrarySection_rotateLocalToWorld(a, b, c, this.R, this.rotY, this.rotZ);
+      float[] Q = arbitrarySection_rotateLocalToWorld(a, b, c, this.RotX, this.rotY, this.rotZ);
       a = Q[0];
       b = Q[1];
       c = Q[2];
@@ -464,7 +464,7 @@ class SolidImpacts {
       float Section_X = this.X;
       float Section_Y = this.Y;
       float Section_Z = this.Z;
-      float Section_R = this.R;
+      float Section_RotX = this.RotX;
       float Section_RotY = this.rotY;
       float Section_RotZ = this.rotZ;
       float Section_U = this.U;
@@ -473,7 +473,7 @@ class SolidImpacts {
       int Section_RES1 = this.RES1;
       int Section_RES2 = this.RES2;
 
-      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -656,7 +656,7 @@ class SolidImpacts {
                   // section's own plane (Euler inverse - see
                   // arbitrarySection.pde), replacing the 3 hand-rolled
                   // per-type inverses this used to pick between.
-                  float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.R, this.rotY, this.rotZ, this.X, this.Y, this.Z);
+                  float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
                   i[p] = this.RES1 * (local[0] / this.U + 0.5);
                   j[p] = this.RES2 * (local[1] / this.V + 0.5);
@@ -683,7 +683,7 @@ class SolidImpacts {
               // own plane (Euler inverse - see arbitrarySection.pde),
               // replacing the 3 hand-rolled per-type inverses this used
               // to pick between.
-              float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.R, this.rotY, this.rotZ, this.X, this.Y, this.Z);
+              float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
               float i = this.RES1 * (local[0] / this.U + 0.5);
               float j = this.RES2 * (local[1] / this.V + 0.5);
@@ -1012,7 +1012,7 @@ class SolidImpacts {
      float Section_X = this.X[this.sectionType];
      float Section_Y = this.Y[this.sectionType];
      float Section_Z = this.Z[this.sectionType];
-     float Section_R = this.R[this.sectionType];
+     float Section_RotX = this.RotX[this.sectionType];
      float Section_U = this.U[this.sectionType];
      float Section_V = this.V[this.sectionType];
 
@@ -1020,7 +1020,7 @@ class SolidImpacts {
      int Section_RES1 = this.RES1;
      int Section_RES2 = this.RES2;
 
-     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
+     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_RotX, Section_U, Section_V, Section_RES1, Section_RES2);
 
      float[] SectionCorner_A = ImageVertex[1];
      float[] SectionCorner_B = ImageVertex[2];
@@ -1178,7 +1178,7 @@ class SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + "MinDistTraceV", this.MinimumDistance_traceV);
 
     XML_setFloat(parent, this.CLASS_STAMP + "Z", this.Z);
-    XML_setFloat(parent, this.CLASS_STAMP + "R", this.R);
+    XML_setFloat(parent, this.CLASS_STAMP + "RotX", this.RotX);
     XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
     XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
     XML_setFloat(parent, this.CLASS_STAMP + "U", this.U);
@@ -1213,7 +1213,7 @@ class SolidImpacts {
     this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + "MinDistTraceV");
 
     this.Z = XML_getFloat(parent, this.CLASS_STAMP + "Z");
-    this.R = XML_getFloat(parent, this.CLASS_STAMP + "R");
+    this.RotX = XML_getFloat(parent, this.CLASS_STAMP + "RotX");
     this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
     this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
     this.U = XML_getFloat(parent, this.CLASS_STAMP + "U");
