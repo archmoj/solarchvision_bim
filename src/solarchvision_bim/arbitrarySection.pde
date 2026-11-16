@@ -1,4 +1,4 @@
-// A "type 0" (arbitrary) section is oriented by 3 Euler angles - rotX
+// Every section is oriented by 3 Euler angles - rotX
 // (stored in the section's own existing R slot, reused rather than
 // adding a redundant 4th column), rotY and rotZ - composed in exactly
 // the same order Solids' own getCorners() (solids.pde) composes

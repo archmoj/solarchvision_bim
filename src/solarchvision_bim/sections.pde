@@ -9,18 +9,22 @@ class Sections {
   boolean displayAll = true;
 
   int num;
-  // Columns: 0:X 1:Y 2:Z 3:R 4:U 5:V 6:rotY 7:rotZ. R (column 3) doubles
-  // as "rotX" for a type-0 (arbitrary) section - see arbitrarySection.pde -
-  // exactly as it's always been the single rotation angle for types 1/2/3;
-  // rotY/rotZ are meaningful only for type 0 and stay 0 otherwise.
+  // Columns: 0:X 1:Y 2:Z 3:R(rotX) 4:U 5:V 6:rotY 7:rotZ. Every section is
+  // the same single shape now - a flat quad in its own local X-Y plane
+  // (local Z is its normal), oriented by 3 Euler angles (rotX/rotY/rotZ,
+  // composed in that X-then-Y-then-Z order - see arbitrarySection.pde)
+  // and then translated to X/Y/Z. There used to be 3 other "types" with
+  // their own single-angle rotation and translate-before-rotate math
+  // (rotateSectionCorner(), removed) - dropped as part of collapsing
+  // every section onto this one (former "type 0") representation.
   float[][] f_data = new float[0][8];
-  int[][] i_data = new int[0][3];
+  int[][] i_data = new int[0][2];
 
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.f_data = new float[n][8];
-    this.i_data = new int[n][3];
+    this.i_data = new int[n][2];
     this.SolidImpact = new PImage[n];
     this.SolarImpact = new PImage[n][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     this.num = n;
@@ -31,12 +35,12 @@ class Sections {
     endScene3DChange();
   }
 
-  void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
-    this.create(x, y, z, r, u, v, t, RES1, RES2, 0, 0);
+  void create (float x, float y, float z, float r, float u, float v, int RES1, int RES2) {
+    this.create(x, y, z, r, u, v, RES1, RES2, 0, 0);
   }
 
-  void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2, float rotY, float rotZ) {
-    int[][] Temp_i_data = { { t, RES1, RES2 } };
+  void create (float x, float y, float z, float r, float u, float v, int RES1, int RES2, float rotY, float rotZ) {
+    int[][] Temp_i_data = { { RES1, RES2 } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
     float[][] Temp_f_data = { { x, y, z, r, u, v, rotY, rotZ } };
@@ -56,21 +60,17 @@ class Sections {
     this.num += 1;
   }
 
-  int get_type (int n) { return this.i_data[n][0]; }
-  int get_res1 (int n) { return this.i_data[n][1]; }
-  int get_res2 (int n) { return this.i_data[n][2]; }
-  void set_type (int n, int t) { this.i_data[n][0] = t; }
-  void set_res1 (int n, int t) { this.i_data[n][1] = t; }
-  void set_res2 (int n, int t) { this.i_data[n][2] = t; }
+  int get_res1 (int n) { return this.i_data[n][0]; }
+  int get_res2 (int n) { return this.i_data[n][1]; }
+  void set_res1 (int n, int t) { this.i_data[n][0] = t; }
+  void set_res2 (int n, int t) { this.i_data[n][1] = t; }
 
   float getX (int n) { return this.f_data[n][0]; } // offsetX
   float getY (int n) { return this.f_data[n][1]; } // offsetY
   float getZ (int n) { return this.f_data[n][2]; } // elevation
-  float getR (int n) { return this.f_data[n][3]; } // rotation
+  float getR (int n) { return this.f_data[n][3]; } // rotX
   float getU (int n) { return this.f_data[n][4]; } // scaleU
   float getV (int n) { return this.f_data[n][5]; } // scaleV
-  // Only meaningful for a type-0 (arbitrary) section - rotX is getR()/
-  // setR() above, reused rather than duplicated (see f_data's own comment).
   float getRotY (int n) { return this.f_data[n][6]; }
   float getRotZ (int n) { return this.f_data[n][7]; }
   void setX (int n, float f) { this.f_data[n][0] = f; }
@@ -83,9 +83,8 @@ class Sections {
   void setRotZ (int n, float f) { this.f_data[n][7] = f; }
 
   // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
-  // accumulation, used only for a type-0 section (Rotate3D.pde's own
-  // Sections() dispatches here only when get_type(f) == 0; types 1/2/3
-  // keep rotating through setR() alone, unaffected by these).
+  // accumulation. Rotate3D.pde's own Sections() now always dispatches
+  // here (every section is the same arbitrary-orientation shape).
   void RotateX (int n, float f) { this.f_data[n][3] += f; } // rotX == R
   void RotateY (int n, float f) { this.f_data[n][6] += f; }
   void RotateZ (int n, float f) { this.f_data[n][7] += f; }
@@ -132,11 +131,6 @@ class Sections {
   }
 
   void drawSection (int f, int target_window) {
-    int Section_Type = this.get_type(f);
-    // Type 0 used to mean "off"/no section - it's now the arbitrary-
-    // orientation type instead (see arbitrarySection.pde), so there's no
-    // longer a type value that skips drawing here.
-
     float Section_X = this.getX(f);
     float Section_Y = this.getY(f);
     float Section_Z = this.getZ(f);
@@ -158,7 +152,7 @@ class Sections {
       writeSectionGroupHeader(f, the_filename);
     }
 
-    float[][] subFace = getCorners(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
     num_vertices_added = 0;
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
@@ -321,7 +315,16 @@ class Sections {
     {-1,  1, 0, 0 }
   };
 
-  float[][] getCorners (int Section_Type, float Section_X, float Section_Y, float Section_Z, float Section_R, float Section_RotY, float Section_RotZ, float Section_U, float Section_V, int Section_RES1, int Section_RES2) {
+  // Every section is a flat quad in its own local X-Y plane (local Z is
+  // its normal), rotated about its OWN center by Section_R/RotY/RotZ
+  // (Euler angles, X-then-Y-then-Z - see arbitrarySection.pde), THEN
+  // translated by Section_X/Y/Z. This used to be just the "type 0"
+  // branch here, with 3 other hand-rolled single-angle types (each
+  // folding Section_X/Y into the point BEFORE rotating, so they rotated
+  // around the world origin rather than the section's own center
+  // whenever X or Y wasn't 0) - those 3 are gone; every section is this
+  // one shape now.
+  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_R, float Section_RotY, float Section_RotZ, float Section_U, float Section_V, int Section_RES1, int Section_RES2) {
     float[][] ImageVertex = new float[5][5];
 
     for (int q = 0; q < 5; q++) {
@@ -330,29 +333,9 @@ class Sections {
       float u  = CORNER_LOCAL[q][2];
       float v  = CORNER_LOCAL[q][3];
 
-      float[] xyz;
-
-      if (Section_Type == 0) {
-        // Arbitrary section (arbitrarySection.pde): the local quad is
-        // flat (lies in its own local X-Y plane, local Z is its normal),
-        // rotated about its OWN center (Section_R/RotY/RotZ), THEN
-        // translated by Section_X/Y/Z - unlike types 1/2/3 just below,
-        // which fold Section_X/Section_Y into the point BEFORE rotating
-        // (so they end up rotating around the world origin, not the
-        // section's own center, whenever X or Y isn't 0) - a pre-existing
-        // quirk of those 3 types kept exactly as-is rather than "fixed"
-        // here, since nothing asked for that and other code may already
-        // depend on it.
-        float localX = qx * 0.5 * Section_U;
-        float localY = qy * 0.5 * Section_V;
-        xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_R, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
-      } else {
-        float a = qx * 0.5 * Section_U + Section_X;
-        float b = qy * 0.5 * Section_V + Section_Y;
-        float c = Section_Z;
-
-        xyz = rotateSectionCorner(Section_Type, a, b, c, Section_R);
-      }
+      float localX = qx * 0.5 * Section_U;
+      float localY = qy * 0.5 * Section_V;
+      float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_R, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
       ImageVertex[q][0] = xyz[0];
       ImageVertex[q][1] = xyz[1];
@@ -362,28 +345,6 @@ class Sections {
     }
 
     return ImageVertex;
-  }
-
-  // Type 1: horizontal (plan) section. Type 2: vertical section. Type 3: vertical
-  // section with rotation measured from 90 degrees instead of 0 - preserved as-is.
-  float[] rotateSectionCorner (int Section_Type, float a, float b, float c, float Section_R) {
-    if (Section_Type == 1) {
-      float x = a * funcs.cos_ang(Section_R) - b * funcs.sin_ang(Section_R);
-      float y = a * funcs.sin_ang(Section_R) + b * funcs.cos_ang(Section_R);
-      return new float[] { x, y, c };
-    }
-    if (Section_Type == 2) {
-      float x = a * funcs.cos_ang(Section_R) - c * funcs.sin_ang(Section_R);
-      float y = -(a * funcs.sin_ang(Section_R) + c * funcs.cos_ang(Section_R));
-      return new float[] { x, y, b };
-    }
-    if (Section_Type == 3) {
-      float r = 90 - Section_R;
-      float x = a * funcs.cos_ang(r) - c * funcs.sin_ang(r);
-      float y = -(a * funcs.sin_ang(r) + c * funcs.cos_ang(r));
-      return new float[] { x, y, b };
-    }
-    return new float[] { 0, 0, 0 };
   }
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
@@ -457,8 +418,6 @@ class Sections {
         txt += ",";
         txt += nf(this.getV(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.get_type(i), 0);
-        txt += ",";
         txt += nf(this.get_res1(i), 0);
         txt += ",";
         txt += nf(this.get_res2(i), 0);
@@ -517,7 +476,7 @@ class Sections {
       XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = XML_getInt(parent, "ni");
       this.f_data = new float[ni][8];
-      this.i_data = new int[ni][3];
+      this.i_data = new int[ni][2];
       this.num = ni;
       XML[] children = parent.getChildren("item");
       for (int i = 0; i < ni; i++) {
@@ -529,14 +488,10 @@ class Sections {
         this.setR(i, float(parts[3]));
         this.setU(i, float(parts[4]));
         this.setV(i, float(parts[5]));
-        this.set_type(i, int(parts[6]));
-        this.set_res1(i, int(parts[7]));
-        this.set_res2(i, int(parts[8]));
-        // Added alongside the arbitrary (type 0) section feature -
-        // guarded so a record saved just before this change (9 fields,
-        // no rotY/rotZ) still loads instead of throwing.
-        this.setRotY(i, (parts.length > 9) ? float(parts[9]) : 0);
-        this.setRotZ(i, (parts.length > 10) ? float(parts[10]) : 0);
+        this.set_res1(i, int(parts[6]));
+        this.set_res2(i, int(parts[7]));
+        this.setRotY(i, float(parts[8]));
+        this.setRotZ(i, float(parts[9]));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }

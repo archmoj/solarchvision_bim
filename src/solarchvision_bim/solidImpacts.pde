@@ -8,38 +8,18 @@ class SolidImpacts {
   int complex = 0; // INTERNAL! 0:simple 1:complex
 
 
-  float[] X = {
-    0, 0, 0, 0
-  };
-  float[] Y = {
-    0, 0, 0, 0
-  };
-
-  float[] Z = {
-    0, 0.1, 0, 0
-  }; // <<<
-
-  float[] R = {
-    0, 0, 0, 0
-  };
-
-  // Only meaningful at index 0 (sectionType 0, arbitrary - see
-  // arbitrarySection.pde); R[0] above doubles as that type's "rotX",
-  // exactly as it does for allSections' own per-section data
-  // (sections.pde). Indices 1-3 stay 0, unused by types 1/2/3.
-  float[] rotY = {
-    0, 0, 0, 0
-  };
-  float[] rotZ = {
-    0, 0, 0, 0
-  };
-
-  float[] U = {
-    100, 100, 100, 100
-  }; // i.e. 100m
-  float[] V = {
-    100, 100, 100, 100
-  }; // i.e. 100m
+  // The currently-analyzed section's own position/orientation/extent -
+  // a single set now, mirroring allSections' own per-section data
+  // (sections.pde): every section is the same arbitrary-orientation
+  // shape, so there's no more per-"type" slot to keep 4 of these in.
+  float X = 0;
+  float Y = 0;
+  float Z = 0.1; // <<<
+  float R = 0; // rotX - see arbitrarySection.pde
+  float rotY = 0;
+  float rotZ = 0;
+  float U = 100; // i.e. 100m
+  float V = 100; // i.e. 100m
 
   int RES1 = 400;
   int RES2 = 400;
@@ -49,7 +29,7 @@ class SolidImpacts {
 
 
   boolean displayImage = true;
-  int sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+  int sectionType = 0; // 0:off, 1:on (an impact section is active)
 
   float positionStep = 1.25;
 
@@ -160,18 +140,18 @@ class SolidImpacts {
 
       int f = Select3D.sectionSelection[o];
 
-      this.sectionType = allSections.get_type(f);
+      this.sectionType = 1; // on: an impact section is now active
       this.RES1        = allSections.get_res1(f);
       this.RES2        = allSections.get_res2(f);
 
-      this.X[this.sectionType] = allSections.getX(f);
-      this.Y[this.sectionType] = allSections.getY(f);
-      this.Z[this.sectionType] = allSections.getZ(f);
-      this.R[this.sectionType] = allSections.getR(f);
-      this.rotY[this.sectionType] = allSections.getRotY(f);
-      this.rotZ[this.sectionType] = allSections.getRotZ(f);
-      this.U[this.sectionType] = allSections.getU(f);
-      this.V[this.sectionType] = allSections.getV(f);
+      this.X = allSections.getX(f);
+      this.Y = allSections.getY(f);
+      this.Z = allSections.getZ(f);
+      this.R = allSections.getR(f);
+      this.rotY = allSections.getRotY(f);
+      this.rotZ = allSections.getRotZ(f);
+      this.U = allSections.getU(f);
+      this.V = allSections.getV(f);
 
       {
         if ((this.Image.width != this.RES1) || (this.Image.height != this.RES2)) {
@@ -224,31 +204,16 @@ class SolidImpacts {
       float b = r * funcs.sin_ang(t + test_t);
       float c = 0;
 
-      if (this.sectionType == 1) {
-        float Qx = a * funcs.cos_ang(-this.R[this.sectionType]) - b * funcs.sin_ang(-this.R[this.sectionType]);
-        float Qy = -(a * funcs.sin_ang(-this.R[this.sectionType]) + b * funcs.cos_ang(-this.R[this.sectionType]));
-        float Qz = c;
-
-        a = Qx;
-        b = Qy;
-        c = Qz;
-      } else if (this.sectionType == 2) {
-        float Qx = a * funcs.cos_ang(this.R[this.sectionType]) - c * funcs.sin_ang(this.R[this.sectionType]);
-        float Qy = -(a * funcs.sin_ang(this.R[this.sectionType]) + c * funcs.cos_ang(this.R[this.sectionType]));
-        float Qz = -b;
-
-        a = Qx;
-        b = Qy;
-        c = Qz;
-      } else if (this.sectionType == 3) {
-        float Qx = a * funcs.cos_ang(90 - this.R[this.sectionType]) - c * funcs.sin_ang(90 - this.R[this.sectionType]);
-        float Qy = -(a * funcs.sin_ang(90 - this.R[this.sectionType]) + c * funcs.cos_ang(90 - this.R[this.sectionType]));
-        float Qz = -b;
-
-        a = Qx;
-        b = Qy;
-        c = Qz;
-      }
+      // (a, b, c) is a sample offset within the section's own local
+      // plane - rotate it into world (a pure direction, no translation -
+      // see arbitrarySection.pde) the same way every other local-to-
+      // world conversion in this collapsed model does, replacing the 3
+      // hand-rolled per-type rotations this used to pick between (which
+      // left a type-0/arbitrary section's own rotation unapplied here).
+      float[] Q = arbitrarySection_rotateLocalToWorld(a, b, c, this.R, this.rotY, this.rotZ);
+      a = Q[0];
+      b = Q[1];
+      c = Q[2];
 
       float test_x = x + a;
       float test_y = y + b;
@@ -496,20 +461,19 @@ class SolidImpacts {
 
       this.Image.loadPixels();
 
-      float Section_X = this.X[this.sectionType];
-      float Section_Y = this.Y[this.sectionType];
-      float Section_Z = this.Z[this.sectionType];
-      float Section_R = this.R[this.sectionType];
-      float Section_RotY = this.rotY[this.sectionType];
-      float Section_RotZ = this.rotZ[this.sectionType];
-      float Section_U = this.U[this.sectionType];
-      float Section_V = this.V[this.sectionType];
+      float Section_X = this.X;
+      float Section_Y = this.Y;
+      float Section_Z = this.Z;
+      float Section_R = this.R;
+      float Section_RotY = this.rotY;
+      float Section_RotZ = this.rotZ;
+      float Section_U = this.U;
+      float Section_V = this.V;
 
-      int Section_complex = this.sectionType;
       int Section_RES1 = this.RES1;
       int Section_RES2 = this.RES2;
 
-      float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
+      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_R, Section_RotY, Section_RotZ, Section_U, Section_V, Section_RES1, Section_RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -688,36 +652,14 @@ class SolidImpacts {
                     z0 = this.Contours_V2Vertices[n][2];
                   }
 
-                  float r = 0;
+                  // World point -> local (a, b) offset within the
+                  // section's own plane (Euler inverse - see
+                  // arbitrarySection.pde), replacing the 3 hand-rolled
+                  // per-type inverses this used to pick between.
+                  float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.R, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-                  if (this.sectionType == 1) {
-                    r = -this.R[this.sectionType];
-                  } else if (this.sectionType == 2) {
-                    r = this.R[this.sectionType];
-                  } else if (this.sectionType == 3) {
-                    r = -this.R[this.sectionType];
-                  }
-
-                  float x = x0 * funcs.cos_ang(r) - y0 * funcs.sin_ang(r);
-                  float y = x0 * funcs.sin_ang(r) + y0 * funcs.cos_ang(r);
-                  float z = z0;
-
-                  float a = 0;
-                  float b = 0;
-
-                  if (this.sectionType == 1) {
-                    a = x;
-                    b = -y;
-                  } else if (this.sectionType == 2) {
-                    a = x;
-                    b = -z;
-                  } else if (this.sectionType == 3) {
-                    a = -y;
-                    b = -z;
-                  }
-
-                  i[p] = this.RES1 * ((a - this.X[this.sectionType]) / this.U[this.sectionType] + 0.5);
-                  j[p] = this.RES2 * ((b + this.Y[this.sectionType]) / this.V[this.sectionType] + 0.5);
+                  i[p] = this.RES1 * (local[0] / this.U + 0.5);
+                  j[p] = this.RES2 * (local[1] / this.V + 0.5);
                 }
 
                 pdf.line(i[0], j[0], i[1], j[1]);
@@ -737,36 +679,14 @@ class SolidImpacts {
               float y0 = this.Contours_U1Vertices[n][1];
               float z0 = this.Contours_U1Vertices[n][2];
 
-              float r = 0;
+              // World point -> local (a, b) offset within the section's
+              // own plane (Euler inverse - see arbitrarySection.pde),
+              // replacing the 3 hand-rolled per-type inverses this used
+              // to pick between.
+              float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.R, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-              if (this.sectionType == 1) {
-                r = -this.R[this.sectionType];
-              } else if (this.sectionType == 2) {
-                r = this.R[this.sectionType];
-              } else if (this.sectionType == 3) {
-                r = -this.R[this.sectionType];
-              }
-
-              float x = x0 * funcs.cos_ang(r) - y0 * funcs.sin_ang(r);
-              float y = x0 * funcs.sin_ang(r) + y0 * funcs.cos_ang(r);
-              float z = z0;
-
-              float a = 0;
-              float b = 0;
-
-              if (this.sectionType == 1) {
-                a = x;
-                b = -y;
-              } else if (this.sectionType == 2) {
-                a = x;
-                b = -z;
-              } else if (this.sectionType == 3) {
-                a = -y;
-                b = -z;
-              }
-
-              float i = this.RES1 * ((a - this.X[this.sectionType]) / this.U[this.sectionType] + 0.5);
-              float j = this.RES2 * ((b + this.Y[this.sectionType]) / this.V[this.sectionType] + 0.5);
+              float i = this.RES1 * (local[0] / this.U + 0.5);
+              float j = this.RES2 * (local[1] / this.V + 0.5);
 
               pdf.ellipse(i, j, 1, 1);
             }
@@ -1257,102 +1177,14 @@ class SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + "MinDistTraceU", this.MinimumDistance_traceU);
     XML_setFloat(parent, this.CLASS_STAMP + "MinDistTraceV", this.MinimumDistance_traceV);
 
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "Z");
-      int ni = this.Z.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Z[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "R");
-      int ni = this.R.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.R[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "RotY");
-      int ni = this.rotY.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.rotY[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "RotZ");
-      int ni = this.rotZ.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.rotZ[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "U");
-      int ni = this.U.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.U[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "V");
-      int ni = this.V.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.V[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "X");
-      int ni = this.X.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.X[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
-    {
-      XML child = xml.addChild(this.CLASS_STAMP + "Y");
-      int ni = this.Y.length;
-      XML_setInt(child, "ni", ni);
-      String txt = "";
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Y[i], 0, 4).replace(",", "."); // <<<<
-        if (i < ni - 1) txt += ",";
-      }
-      XML_setContent(child, txt);
-    }
-
+    XML_setFloat(parent, this.CLASS_STAMP + "Z", this.Z);
+    XML_setFloat(parent, this.CLASS_STAMP + "R", this.R);
+    XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
+    XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
+    XML_setFloat(parent, this.CLASS_STAMP + "U", this.U);
+    XML_setFloat(parent, this.CLASS_STAMP + "V", this.V);
+    XML_setFloat(parent, this.CLASS_STAMP + "X", this.X);
+    XML_setFloat(parent, this.CLASS_STAMP + "Y", this.Y);
   }
 
 
@@ -1380,101 +1212,13 @@ class SolidImpacts {
     this.MinimumDistance_traceU = XML_getFloat(parent, this.CLASS_STAMP + "MinDistTraceU");
     this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + "MinDistTraceV");
 
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "Z");
-
-      int ni = XML_getInt(child, "ni");
-      this.Z = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.Z[i] = float(parts[i]);
-      }
-    }
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "R");
-
-      int ni = XML_getInt(child, "ni");
-      this.R = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.R[i] = float(parts[i]);
-      }
-    }
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "RotY");
-
-      int ni = XML_getInt(child, "ni");
-      this.rotY = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.rotY[i] = float(parts[i]);
-      }
-    }
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "RotZ");
-
-      int ni = XML_getInt(child, "ni");
-      this.rotZ = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.rotZ[i] = float(parts[i]);
-      }
-    }
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "U");
-
-      int ni = XML_getInt(child, "ni");
-      this.U = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.U[i] = float(parts[i]);
-      }
-    }
-
-    {
-        XML child = xml.getChild(this.CLASS_STAMP + "V");
-
-      int ni = XML_getInt(child, "ni");
-      this.V = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.V[i] = float(parts[i]);
-      }
-    }
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "X");
-
-      int ni = XML_getInt(child, "ni");
-      this.X = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.X[i] = float(parts[i]);
-      }
-    }
-
-
-    {
-      XML child = xml.getChild(this.CLASS_STAMP + "Y");
-
-      int ni = XML_getInt(child, "ni");
-      this.Y = new float [ni];
-      String txt = XML_getContent(child);
-      String[] parts = split(txt, ",");
-      for (int i = 0; i < ni; i++) {
-        this.Y[i] = float(parts[i]);
-      }
-    }
+    this.Z = XML_getFloat(parent, this.CLASS_STAMP + "Z");
+    this.R = XML_getFloat(parent, this.CLASS_STAMP + "R");
+    this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
+    this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
+    this.U = XML_getFloat(parent, this.CLASS_STAMP + "U");
+    this.V = XML_getFloat(parent, this.CLASS_STAMP + "V");
+    this.X = XML_getFloat(parent, this.CLASS_STAMP + "X");
+    this.Y = XML_getFloat(parent, this.CLASS_STAMP + "Y");
   }
 }

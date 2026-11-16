@@ -182,12 +182,11 @@ class Edit3D {
     for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
       int f = Select3D.sectionSelection[o];
 
-      if (User3D.currentTool == UITASK.Seed_Material) {
-        allSections.set_type(f, clamp(allSections.get_type(f) + p, 0, 3));
-        allSolids_updated = true;
-      }
+      // UITASK.Seed_Material used to cycle a section's "type" (0-3) here -
+      // there's only one shape now (see sections.pde), so that tool no
+      // longer does anything for a section.
 
-      else if (User3D.currentTool == UITASK.Tessellation) {
+      if (User3D.currentTool == UITASK.Tessellation) {
         int n = allSections.get_res1(f);
         if (p > 0) n *= 2;
         else if (p < 0) n /= 2;

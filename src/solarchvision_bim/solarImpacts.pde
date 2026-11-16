@@ -48,15 +48,12 @@ class SolarImpacts {
 
   boolean displayImage = false;
 
-  int sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+  int sectionType = 0; // 0:off, 1:on (an impact section is active)
 
   float Y = 0;
   float X = 0;
   float Z = 0;
-  float R = 0; // North is up by default
-  // Only meaningful for sectionType 0 (arbitrary - see arbitrarySection.pde);
-  // R above doubles as that type's "rotX", same convention as allSections'
-  // own per-section data (sections.pde).
+  float R = 0; // North is up by default; rotX - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
   float U = 500; // i.e. 500 = 500m
@@ -1225,7 +1222,7 @@ class SolarImpacts {
 
       int f = sections[o];
 
-      this.sectionType = allSections.get_type(f);
+      this.sectionType = 1; // on: an impact section is now active
       this.RES1 = allSections.get_res1(f);
       this.RES2 = allSections.get_res2(f);
 
@@ -1277,7 +1274,7 @@ class SolarImpacts {
 
       int f = sections[o];
 
-      this.sectionType = allSections.get_type(f);
+      this.sectionType = 1; // on: an impact section is now active
       this.RES1        = allSections.get_res1(f);
       this.RES2        = allSections.get_res2(f);
 

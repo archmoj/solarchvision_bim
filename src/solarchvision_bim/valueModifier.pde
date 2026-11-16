@@ -2381,7 +2381,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 0; //start
-    int s2 = 3; //stop
+    int s2 = 1; //stop - 0:off, 1:on
     int s3 = 1; //step
 
     int out = 0;
@@ -2403,7 +2403,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 0; //start
-    int s2 = 3; //stop
+    int s2 = 1; //stop - 0:off, 1:on
     int s3 = 1; //step
 
     int out = 0;
@@ -2481,13 +2481,13 @@ class ValueModifier {
     String command = "Solid Impacts R";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.R[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.R[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.R,
+        (v) -> { allSolidImpacts.R = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts r[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts r", allSolidImpacts.R, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2505,13 +2505,13 @@ class ValueModifier {
     String command = "Solid Impacts Z";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.Z[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.Z[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.Z,
+        (v) -> { allSolidImpacts.Z = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts z", allSolidImpacts.Z, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2552,13 +2552,13 @@ class ValueModifier {
     String command = "Solid Impacts U";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.U[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.U[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.U,
+        (v) -> { allSolidImpacts.U = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts u[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts u", allSolidImpacts.U, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2576,13 +2576,13 @@ class ValueModifier {
     String command = "Solid Impacts V";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.V[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.V[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.V,
+        (v) -> { allSolidImpacts.V = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts v[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts v", allSolidImpacts.V, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2600,13 +2600,13 @@ class ValueModifier {
     String command = "Solid Impacts X";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.X[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.X[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.X,
+        (v) -> { allSolidImpacts.X = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts x[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts x", allSolidImpacts.X, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2624,13 +2624,13 @@ class ValueModifier {
     String command = "Solid Impacts Y";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.Y[allSolidImpacts.sectionType],
-        (v) -> { allSolidImpacts.Y[allSolidImpacts.sectionType] = v; },
+        () -> allSolidImpacts.Y,
+        (v) -> { allSolidImpacts.Y = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts y", allSolidImpacts.Y, s1, s2, s3, s4);
     }
     return out;
   }

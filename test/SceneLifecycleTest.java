@@ -572,7 +572,7 @@ class SceneLifecycleTest {
   void sectionLifecycle_create_move_delete_leavesNoSectionsBehind () {
     assertEquals(0, app.allSections.num);
 
-    app.allSections.create(1, 2, 3, 5, 0, 0, 0, 100, 100);
+    app.allSections.create(1, 2, 3, 5, 0, 0, 100, 100);
     assertEquals(1, app.allSections.num);
 
     app.currentObjectCategory = app.ObjectCategory.SECTION;

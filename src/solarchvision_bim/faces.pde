@@ -1648,19 +1648,13 @@ class Faces {
 
     if (this.displayAll) {
 
-      // Types 1/2/3 use allSolarImpacts.Z directly as the position offset
-      // along the section's own normal (sections.pde's own rotateSectionCorner()
-      // passes Section_Z straight through, unrotated, for exactly that
-      // role). A type-0 (arbitrary) section instead stores X/Y/Z as a
-      // plain WORLD position added AFTER rotation (sections.pde's own
-      // getCorners(), type-0 branch) - arbitrarySection_rotateWorldToLocal()'s
-      // own 3rd return value is the equivalent normal-depth offset for
-      // that case; see castShadowsCurrentSection.pde's own identical
-      // conversion for Shades_offsetX/Y (the other 2 components of this
-      // same rotated position).
-      float depthOffset = (allSolarImpacts.sectionType == 0)
-        ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
-        : allSolarImpacts.Z;
+      // Every section stores X/Y/Z as a plain WORLD position added AFTER
+      // rotation (sections.pde's own getCorners()) - arbitrarySection_
+      // rotateWorldToLocal()'s own 3rd return value is the equivalent
+      // normal-depth offset; see castShadowsCurrentSection.pde's own
+      // identical conversion for Shades_offsetX/Y (the other 2
+      // components of this same rotated position).
+      float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
       for (int f = 0; f < this.nodes.length; f++) {
 
@@ -1693,22 +1687,16 @@ class Faces {
               float[][] subFace_Rotated = subFace;
 
               for (int s = 0; s < subFace_Rotated.length; s++) {
-                if (allSolarImpacts.sectionType == 2) {
-                  float a = subFace_Rotated[s][0];
-                  float b = -subFace_Rotated[s][1];
-                  float c = subFace_Rotated[s][2];
+                // Every section is the same arbitrary-orientation shape
+                // now (sections.pde) - always rotate into its local
+                // frame with the full 3-axis transform
+                // (arbitrarySection.pde), rather than picking between a
+                // single-angle vertical-only shortcut and a no-op.
+                float[] local = arbitrarySection_rotateWorldToLocal(subFace_Rotated[s][0], subFace_Rotated[s][1], subFace_Rotated[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
-                  subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-                  subFace_Rotated[s][1] = c;
-                  subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                } else if (allSolarImpacts.sectionType == 3) {
-                } else if (allSolarImpacts.sectionType == 0) {
-                  float[] local = arbitrarySection_rotateWorldToLocal(subFace_Rotated[s][0], subFace_Rotated[s][1], subFace_Rotated[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
-
-                  subFace_Rotated[s][0] = local[0];
-                  subFace_Rotated[s][1] = local[1];
-                  subFace_Rotated[s][2] = local[2];
-                }
+                subFace_Rotated[s][0] = local[0];
+                subFace_Rotated[s][1] = local[1];
+                subFace_Rotated[s][2] = local[2];
               }
 
               SHADOW_graphics.beginShape();
@@ -1723,14 +1711,9 @@ class Faces {
 
                 if (z >= 0) {
 
-                  if (allSolarImpacts.sectionType == 1) {
-                    float px = x;
-                    float py = y;
-
-                    x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-                    y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                  }
-
+                  // x/y are already in the same local frame
+                  // Shades_offsetX/Y is, so no further rotation is
+                  // needed here.
                   SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
                 } else {
                   int s_next = (s + 1) % subFace_Rotated.length;
@@ -1746,14 +1729,6 @@ class Faces {
                     float x_trim = x_prev * (1 - ratio) + x * ratio;
                     float y_trim = y_prev * (1 - ratio) + y * ratio;
 
-                    if (allSolarImpacts.sectionType == 1) {
-                      float px = x_trim;
-                      float py = y_trim;
-
-                      x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-                      y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                    }
-
                     SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                   }
 
@@ -1766,14 +1741,6 @@ class Faces {
 
                     float x_trim = x_next * (1 - ratio) + x * ratio;
                     float y_trim = y_next * (1 - ratio) + y * ratio;
-
-                    if (allSolarImpacts.sectionType == 1) {
-                      float px = x_trim;
-                      float py = y_trim;
-
-                      x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-                      y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                    }
 
                     SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                   }

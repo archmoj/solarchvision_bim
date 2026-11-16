@@ -128,11 +128,11 @@ class SaveImageTest {
     app.allSolarImpacts.Z = 7;
     app.allSolarImpacts.R = 8;
 
-    app.allSolidImpacts.sectionType = 2;
-    app.allSolidImpacts.X[2] = 999;
-    app.allSolidImpacts.Y[2] = 999;
-    app.allSolidImpacts.Z[2] = 999;
-    app.allSolidImpacts.R[2] = 999;
+    app.allSolidImpacts.sectionType = 1;
+    app.allSolidImpacts.X = 999;
+    app.allSolidImpacts.Y = 999;
+    app.allSolidImpacts.Z = 999;
+    app.allSolidImpacts.R = 999;
 
     assertEquals("t1u5p000v6p000w7p000r8p000ry0p000rz0p000", app.Section_Stamp());
   }
@@ -143,9 +143,11 @@ class SaveImageTest {
     // going through castShadows_CurrentSection()'s createGraphics() calls,
     // which aren't runnable headlessly - see test/README.md's "Extending
     // this" section): 3 freshly-created sections, left at their default
-    // X/Y/Z/R (as "SOLARCHVISION all sections" would process them), differing
-    // only by type 1/2/3 - the exact shape render_ShadowsOnSections()'s own
-    // loop drives allSolarImpacts through, one section at a time.
+    // X/Y/Z/R (as "SOLARCHVISION all sections" would process them), each
+    // getting a distinct sectionType value (now just an on/off-style
+    // marker rather than a shape type) - the exact shape render_
+    // ShadowsOnSections()'s own loop drives allSolarImpacts through, one
+    // section at a time.
     java.util.Set<String> stamps = new java.util.HashSet<>();
 
     for (int type = 1; type <= 3; type++) {
@@ -255,18 +257,17 @@ class SaveImageTest {
   }
 
   // ================= getFilename_SolidImpact ===============================
-  // allSolidImpacts' Z/R/rotY/rotZ are indexed by its own sectionType (see
-  // arbitrarySection.pde / sections.pde), so these pin sectionType and its
-  // matching index together rather than touching index 0 only.
+  // allSolidImpacts' Z/R/rotY/rotZ are plain scalars now (sections.pde),
+  // so there's no per-sectionType index to thread through here.
 
   @Test
-  void getFilenameSolidImpact_bareDefaultScene_encodesEveryFieldAtSectionType0 () {
+  void getFilenameSolidImpact_bareDefaultScene_encodesEveryFieldAtItsDefault () {
     app.Folder_Graphics = "FG";
     app.TIME.year = 24;
     app.TIME.month = 3;
     app.TIME.day = 15;
-    // allSolidImpacts defaults: sectionType 0, Z[0] 0, R[0]/rotY[0]/rotZ[0]
-    // 0, Power 1.0, Grade 0.02; currentDataSource defaults to
+    // allSolidImpacts defaults: sectionType 0, Z/R/rotY/rotZ 0, Power
+    // 1.0, Grade 0.02; currentDataSource defaults to
     // dataID_climateTypicalYear.
 
     assertEquals(
@@ -275,27 +276,23 @@ class SaveImageTest {
   }
 
   @Test
-  void getFilenameSolidImpact_readsZRRotYRotZ_fromTheSectionTypesOwnIndex () {
+  void getFilenameSolidImpact_readsZRRotYRotZ () {
     app.Folder_Graphics = "FG";
     app.TIME.year = 24;
     app.TIME.month = 3;
     app.TIME.day = 15;
     app.currentDataSource = app.dataID_climateArchive;
 
-    app.allSolidImpacts.sectionType = 2;
-    app.allSolidImpacts.Z[2] = 5;
-    app.allSolidImpacts.R[2] = 3;
-    app.allSolidImpacts.rotY[2] = 1;
-    app.allSolidImpacts.rotZ[2] = 2;
+    app.allSolidImpacts.sectionType = 1;
+    app.allSolidImpacts.Z = 5;
+    app.allSolidImpacts.R = 3;
+    app.allSolidImpacts.rotY = 1;
+    app.allSolidImpacts.rotZ = 2;
     app.allSolidImpacts.Power = 2.0f;
     app.allSolidImpacts.Grade = 0.1f;
-    // Decoys at other indices - must be ignored since sectionType is 2.
-    app.allSolidImpacts.Z[0] = 99;
-    app.allSolidImpacts.R[1] = 99;
-    app.allSolidImpacts.rotY[3] = 99;
 
     assertEquals(
-        "FG/24-03-15/Climate Archive/Impacts/Solid2h0005r003ry001rz002p02_00m00_10",
+        "FG/24-03-15/Climate Archive/Impacts/Solid1h0005r003ry001rz002p02_00m00_10",
         app.getFilename_SolidImpact());
   }
 

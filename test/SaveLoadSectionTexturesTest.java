@@ -121,7 +121,7 @@ class SaveLoadSectionTexturesTest {
 
   @Test
   void savingASection_withARenderedSolidImpactTexture_writesARealBmpFile_withTheRightPixels () throws IOException {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 4, 4);
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4);
     app.allSections.SolidImpact[0] = solidColorImage(4, 4, 10, 20, 30);
 
     Path saved = saveToTempFile("save-load-textures-solidimpact-file-test");
@@ -143,7 +143,7 @@ class SaveLoadSectionTexturesTest {
 
   @Test
   void loadProject_inAFreshSession_restoresASectionsSolidImpactTexture_pixelForPixel () throws IOException {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 4, 4);
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4);
     app.allSections.SolidImpact[0] = solidColorImage(4, 4, 10, 20, 30);
 
     Path saved = saveToTempFile("save-load-textures-solidimpact-fresh-test");
@@ -169,7 +169,7 @@ class SaveLoadSectionTexturesTest {
     // small 2x2 placeholder allSections.create() seeds every slot with
     // (sections.pde's own comment on that) with a real, full-resolution
     // image for the one (day, variation) slot that was actually baked.
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 8, 6);
+    app.allSections.create(0, 0, 0, 5, 1, 1, 8, 6);
     int dayIndex = 1; // STUDY.startDay + 1, same as the production loop's own "j + 1"
     int activeVariation = 0;
     assertEquals(2, app.allSections.SolarImpact[0][dayIndex].length, "sanity check, not the point of this test"); // numberOfImpactVariations
@@ -205,8 +205,8 @@ class SaveLoadSectionTexturesTest {
     // ni/nj's own roles) without it showing up at all on a single-section
     // fixture like the tests above - two sections, each with a distinct
     // SolidImpact color, is what actually exercises it.
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 4, 4);
-    app.allSections.create(10, 0, 0, 5, 1, 1, 1, 4, 4);
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4);
+    app.allSections.create(10, 0, 0, 5, 1, 1, 4, 4);
     app.allSections.SolidImpact[0] = solidColorImage(4, 4, 255, 0, 0);
     app.allSections.SolidImpact[1] = solidColorImage(4, 4, 0, 255, 0);
     app.allSections.SolarImpact[0][1][0] = solidColorImage(4, 4, 255, 255, 0);

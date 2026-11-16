@@ -35,46 +35,27 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
 
   TREES_graphics = createGraphics(RES1, RES2, P2D);
 
-  int keep_allSolarImpacts_sectionType = allSolarImpacts.sectionType;
-  float keep_allSolarImpacts_rotation = allSolarImpacts.R;
-
-  if (allSolarImpacts.sectionType == 3) {
-    allSolarImpacts.sectionType = 2;
-    allSolarImpacts.R = 90 - allSolarImpacts.R;
-  }
-
-  boolean rotate = (allSolarImpacts.sectionType == 2);
-  float cosR = 0, sinR = 0;
-  if (rotate) {
-    cosR = funcs.cos_ang(-allSolarImpacts.R);
-    sinR = funcs.sin_ang(-allSolarImpacts.R);
-  }
-
-  // Type 0 (arbitrary - arbitrarySection.pde): instead of the single-
-  // angle cosR/sinR swap above (only valid for a vertical, type-2-shaped
-  // plane), the sun direction is rotated into the section's own local
-  // frame with the full 3-axis transform. Local Z (arbitrarySection_
+  // Every section is the same arbitrary-orientation shape now (see
+  // sections.pde), so the sun direction is always rotated into the
+  // section's own local frame with the full 3-axis transform
+  // (arbitrarySection.pde) - replacing the old single-angle swap that
+  // only applied for a vertical, "type 2/3"-shaped plane, and left a
+  // horizontal (then-"type 1") or arbitrary ("type 0") section's own
+  // rotation unhandled here. Local Z (arbitrarySection_
   // rotateWorldToLocal()'s own 3rd return value) is, by construction,
-  // along the section's own normal - the same role SunR_Rotated[3] (the
-  // untouched/type-1 case) already plays - so SunR_Rotated_check stays 3
-  // below rather than moving to 2 the way the type-2/3 swap needs.
-  boolean arbitrary = (allSolarImpacts.sectionType == 0);
-  if (arbitrary) {
-    // Types 1/2/3 store X/Y/Z pre-rotation (type 2/3's own rotateSectionCorner,
-    // sections.pde, rotates Section_X/Y/Z-derived "a/b/c" as a whole), so
-    // Section_X/Y already ARE the local, in-plane offset Shades_offsetX/Y
-    // need - no extra step. A type-0 section instead stores X/Y/Z as a
-    // plain WORLD position added AFTER rotation (getCorners()'s own type-0
-    // branch, sections.pde), so getting the equivalent local-frame offset
-    // here needs one explicit conversion: rotate (not translate) the
-    // section's own position the same way a vertex position gets rotated
-    // just below in faces.pde/land3D.pde/model1Ds.pde/model2Ds.pde's own
-    // type-0 branches - same function, same angles - so this and those
-    // stay in the exact same local frame as each other.
-    float[] localPos = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
-    Shades_offsetX = localPos[0];
-    Shades_offsetY = localPos[1];
-  }
+  // along the section's own normal, so SunR_Rotated_check is always 3
+  // below.
+  //
+  // Likewise, X/Y/Z is a plain WORLD position added AFTER rotation
+  // (getCorners(), sections.pde), so getting the equivalent local-frame
+  // offset Shades_offsetX/Y need means rotating (not translating) the
+  // section's own position the same way a vertex position gets rotated
+  // just below in faces.pde/land3D.pde/model1Ds.pde/model2Ds.pde - same
+  // function, same angles - so this and those stay in the exact same
+  // local frame as each other.
+  float[] localPos = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
+  Shades_offsetX = localPos[0];
+  Shades_offsetY = localPos[1];
 
   // Total frames this one call will render, so the console bar/
   // ProgressWindow below can show real percent-through-the-whole-call
@@ -129,24 +110,12 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
           SunR_Rotated = SunR;
           int SunR_Rotated_check = 3;
 
-          if (rotate) {
-            float a = SunR_Rotated[1];
-            float b = -SunR_Rotated[2];
-            float c = SunR_Rotated[3];
-
-            SunR_Rotated[1] = a * cosR - b * sinR;
-            SunR_Rotated[2] = c;
-            SunR_Rotated[3] = a * sinR + b * cosR;
-
-            SunR_Rotated_check = 2;
-          } else if (arbitrary) {
+          {
             float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
             SunR_Rotated[1] = localSun[0];
             SunR_Rotated[2] = localSun[1];
             SunR_Rotated[3] = localSun[2];
-
-            SunR_Rotated_check = 3;
           }
 
           for (int SHD = 0; SHD <= 1; SHD++) {
@@ -197,27 +166,13 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
           SunR_Rotated = SunR;
           int SunR_Rotated_check = 3;
 
-          if (rotate) {
-            float a = SunR_Rotated[1];
-            float b = -SunR_Rotated[2];
-            float c = SunR_Rotated[3];
-
-            SunR_Rotated[1] = a * cosR - b * sinR;
-            SunR_Rotated[2] = c;
-            SunR_Rotated[3] = a * sinR + b * cosR;
-
-            SunR_Rotated_check = 2;
-          } else if (arbitrary) {
+          {
             float[] localSun = arbitrarySection_rotateWorldToLocal(SunR_Rotated[1], SunR_Rotated[2], SunR_Rotated[3], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
             SunR_Rotated[1] = localSun[0];
             SunR_Rotated[2] = localSun[1];
             SunR_Rotated[3] = localSun[2];
-
-            SunR_Rotated_check = 3;
           }
-
-
 
           renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
 
@@ -272,9 +227,6 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
     }
   } finally {
     if (sectionBakeProgressWindow != null) sectionBakeProgressWindow.dispose();
-
-    allSolarImpacts.sectionType = keep_allSolarImpacts_sectionType;
-    allSolarImpacts.R = keep_allSolarImpacts_rotation;
   }
 
   // Tops the console bar up to exactly 100 characters even if rounding

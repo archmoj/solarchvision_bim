@@ -54,8 +54,8 @@ void applyRolloutUpdate() {
 
   pre_allSolidImpacts_Grade = allSolidImpacts.Grade;
   pre_allSolidImpacts_Power = allSolidImpacts.Power;
-  pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType] = allSolidImpacts.R[allSolidImpacts.sectionType];
-  pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType] = allSolidImpacts.Z[allSolidImpacts.sectionType];
+  pre_allSolidImpacts_Rotation = allSolidImpacts.R;
+  pre_allSolidImpacts_Elevation = allSolidImpacts.Z;
 
   pre_allSolidImpacts_Wspd = allSolidImpacts.WindSpeed;
   pre_allSolidImpacts_Wdir = allSolidImpacts.WindDirection;
@@ -251,13 +251,13 @@ void applyRolloutUpdate() {
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
-  react.recalcImpact.run(pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType], allSolidImpacts.R[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType], allSolidImpacts.Z[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_Rotation, allSolidImpacts.R);
+  react.recalcImpact.run(pre_allSolidImpacts_Elevation, allSolidImpacts.Z);
 
-  react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_verticalUnitScale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType], allSolidImpacts.X[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_sverticalUnitOffset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale, allSolidImpacts.U);
+  react.recalcImpact.run(pre_allSolidImpacts_verticalUnitScale, allSolidImpacts.V);
+  react.recalcImpact.run(pre_allSolidImpacts_sU_offset, allSolidImpacts.X);
+  react.recalcImpact.run(pre_allSolidImpacts_sverticalUnitOffset, allSolidImpacts.Y);
 
   react.recalcImpact.run(pre_allSolidImpacts_Wspd, allSolidImpacts.WindSpeed);
   react.recalcImpact.run(pre_allSolidImpacts_Wdir, allSolidImpacts.WindDirection);
@@ -378,24 +378,12 @@ float pre_allSolids_ColorScaleFactor;
 
 float pre_allSolidImpacts_Grade;
 float pre_allSolidImpacts_Power;
-float[] pre_allSolidImpacts_Rotation = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_Elevation = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_horizontalUnitScale = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_verticalUnitScale = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_sU_offset = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_sverticalUnitOffset = {
-  0, 0, 0, 0
-};
+float pre_allSolidImpacts_Rotation = 0;
+float pre_allSolidImpacts_Elevation = 0;
+float pre_allSolidImpacts_horizontalUnitScale = 0;
+float pre_allSolidImpacts_verticalUnitScale = 0;
+float pre_allSolidImpacts_sU_offset = 0;
+float pre_allSolidImpacts_sverticalUnitOffset = 0;
 
 float pre_allSolidImpacts_Wspd;
 float pre_allSolidImpacts_Wdir;

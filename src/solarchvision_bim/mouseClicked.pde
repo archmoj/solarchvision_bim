@@ -544,24 +544,21 @@ CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
   return cp;
 }
 
-// Result of computeSectionParams below: the plane
-// parameters (position, rotation, extents, and which of horizontal/
-// vertical it is) for a new section, plus whether one should actually
-// be created at all.
+// Result of computeSectionParams below: the plane parameters (position,
+// the 3 Euler rotation angles - see arbitrarySection.pde - and extents)
+// for a new section, plus whether one should actually be created at all.
 class SectionParams {
   float X, Y, Z, R, U, V;
-  // Only meaningful for a type-0 (arbitrary) section - this function
-  // always derives Type 1/2/3 (see its own comment below), so these stay
-  // 0 (R alone, "rotX", is what every case here actually sets).
   float RotY = 0, RotZ = 0;
-  int Type, RES1, RES2;
+  int RES1, RES2;
   boolean createNew = false;
 }
 
 // Pulled out of mouseClicked()'s "create a section" handling. Two very
 // different cases, both preserved exactly as they were:
-//  - Right-click: always creates a horizontal (Type 1) section centered
-//    exactly at the click point, at allSolidImpacts' current resolution.
+//  - Right-click: always creates a horizontal (flat, unrotated-about-Z)
+//    section centered exactly at the click point, at allSolidImpacts'
+//    current resolution.
 //  - Left-click on a face with more than 2 nodes: derives the section's
 //    own plane from the FACE's geometry instead - rotates the face flat
 //    to find its own minimum bounding rectangle (via each edge's own
@@ -578,14 +575,15 @@ class SectionParams {
 SectionParams computeSectionParams (int f, float[] RxP) {
   SectionParams sp = new SectionParams();
 
-  sp.X = allSolidImpacts.X[allSolidImpacts.sectionType];
-  sp.Y = allSolidImpacts.Y[allSolidImpacts.sectionType];
-  sp.Z = allSolidImpacts.Z[allSolidImpacts.sectionType];
-  sp.R = allSolidImpacts.R[allSolidImpacts.sectionType];
-  sp.U = allSolidImpacts.U[allSolidImpacts.sectionType];
-  sp.V = allSolidImpacts.V[allSolidImpacts.sectionType];
+  sp.X = allSolidImpacts.X;
+  sp.Y = allSolidImpacts.Y;
+  sp.Z = allSolidImpacts.Z;
+  sp.R = allSolidImpacts.R;
+  sp.RotY = allSolidImpacts.rotY;
+  sp.RotZ = allSolidImpacts.rotZ;
+  sp.U = allSolidImpacts.U;
+  sp.V = allSolidImpacts.V;
 
-  sp.Type = allSolidImpacts.sectionType;
   sp.RES1 = allSolidImpacts.RES1;
   sp.RES2 = allSolidImpacts.RES2;
 
@@ -636,17 +634,10 @@ SectionParams computeSectionParams (int f, float[] RxP) {
       float min_z = FLOAT_undefined;
       float max_z = -FLOAT_undefined;
 
-      float[] G = {
-        0, 0, 0
-      };
       for (int j = 0; j < n; j++) {
         float the_x = tmpVertices[j][0];
         float the_y = tmpVertices[j][1];
         float the_z = tmpVertices[j][2];
-
-        G[0] += the_x / float(n);
-        G[1] += the_y / float(n);
-        G[2] += the_z / float(n);
 
         if (min_x > the_x) min_x = the_x;
         if (max_x < the_x) max_x = the_x;
@@ -656,44 +647,46 @@ SectionParams computeSectionParams (int f, float[] RxP) {
         if (max_z < the_z) max_z = the_z;
       }
 
-      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-        sp.Type = 1;
+      // World-frame centroid of the clicked face - this is the section's
+      // literal X/Y/Z position in the (now single, Euler-angle) model:
+      // rotate about the section's own center (rotX/rotY/rotZ below),
+      // THEN translate here. No further permutation/negation of this
+      // position is needed for either orientation below, unlike the old
+      // per-type math this replaced.
+      float[] G = {
+        0, 0, 0
+      };
+      for (int j = 0; j < n; j++) {
+        G[0] += allPoints.getX(allFaces.nodes[f][j]) / float(n);
+        G[1] += allPoints.getY(allFaces.nodes[f][j]) / float(n);
+        G[2] += allPoints.getZ(allFaces.nodes[f][j]) / float(n);
+      }
 
+      sp.X = G[0];
+      sp.Y = G[1];
+      sp.Z = G[2];
+
+      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
+        // Horizontal: lies flat in its own local X-Y plane already, so
+        // only rotZ (around the normal) is needed.
         sp.U = max_x - min_x;
         sp.V = max_y - min_y;
 
-        sp.X = G[0];
-        sp.Y = G[1];
-
-        sp.Z = G[2];
-
-        sp.R = min_Beta;
+        sp.R = 0;
+        sp.RotY = 0;
+        sp.RotZ = min_Beta;
       } else {
-        sp.Type = 2;
-
+        // Vertical: tipped upright by rotX=90 first (so local Y becomes
+        // world Z), then rotZ orients it within the vertical plane -
+        // measured from 90 - min_Beta the same way the old "Type 3"
+        // single-angle convention was, just expressed as a sign on rotZ
+        // here instead of a separate type.
         sp.U = max_y - min_y;
         sp.V = max_z - min_z;
 
-        sp.X = -G[1];
-        sp.Y = G[2];
-
-        sp.Z = -G[0];
-
-        sp.R = 90 - min_Beta;
-      }
-
-      // recalculating G...
-      G[0] = 0;
-      G[1] = 0;
-      G[2] = 0;
-      for (int j = 0; j < n; j++) {
-        float the_x = allPoints.getX(allFaces.nodes[f][j]);
-        float the_y = allPoints.getY(allFaces.nodes[f][j]);
-        float the_z = allPoints.getZ(allFaces.nodes[f][j]);
-
-        G[0] += the_x / float(n);
-        G[1] += the_y / float(n);
-        G[2] += the_z / float(n);
+        sp.R = 90;
+        sp.RotY = 0;
+        sp.RotZ = min_Beta - 90;
       }
 
       PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);
@@ -701,7 +694,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
       PVector GAxGB = AG.cross(BG);
 
-      float[][] ImageVertex = allSections.getCorners(sp.Type, sp.X, sp.Y, sp.Z, sp.R, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
+      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.R, sp.RotY, sp.RotZ, sp.U, sp.V, sp.RES1, sp.RES2);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -723,11 +716,12 @@ SectionParams computeSectionParams (int f, float[] RxP) {
       float V = GAxGB_other.dot(GAxGB);
 
       if (V < 0) {
-        // flip face
-
-        sp.R = 180 + sp.R;
-        sp.Z *= -1;
-        sp.X *= -1;
+        // Flip face: reverse the plane's normal by rotating 180 degrees
+        // about its OWN local X axis - composed as the first (innermost)
+        // of the 3 Euler rotations, so this is valid regardless of
+        // rotY/rotZ above. Position (X/Y/Z) is untouched: it's already
+        // the literal world centroid, not something that needs undoing.
+        sp.R = sp.R + 180;
       }
 
       sp.createNew = true;
@@ -736,7 +730,9 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
   if (mouseButton == RIGHT) {
 
-    sp.Type = 1;
+    // R/RotY/RotZ are left at whatever was inherited above (the sticky
+    // rotation from allSolidImpacts), same as before this function had
+    // 3 angles to carry instead of 1.
 
     sp.X = RxP[1];
     sp.Y = RxP[2];
@@ -2096,28 +2092,30 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               // to this mouse-click workflow, not part of the
               // command itself, so it stays here unchanged.
               runScriptLine("Section x=" + sp.X + " y=" + sp.Y + " z=" + sp.Z +
-                " r=" + sp.R + " u=" + sp.U + " v=" + sp.V +
-                " t=" + sp.Type + " i=" + sp.RES1 + " j=" + sp.RES2);
+                " r=" + sp.R + " ry=" + sp.RotY + " rz=" + sp.RotZ + " u=" + sp.U + " v=" + sp.V +
+                " i=" + sp.RES1 + " j=" + sp.RES2);
 
               selectNewlyCreated(keep_number_of_allSections, allSections.num,
                 () -> Select3D.deselect_Sections(),
                 (o) -> { Select3D.sectionSelection = concat(Select3D.sectionSelection, new int[] {o}); }
                 );
 
-              allSolidImpacts.X[allSolidImpacts.sectionType] = sp.X;
-              allSolidImpacts.Y[allSolidImpacts.sectionType] = sp.Y;
-              allSolidImpacts.Z[allSolidImpacts.sectionType] = sp.Z;
-              allSolidImpacts.R[allSolidImpacts.sectionType] = sp.R;
-              allSolidImpacts.U[allSolidImpacts.sectionType] = sp.U;
-              allSolidImpacts.V[allSolidImpacts.sectionType] = sp.V;
+              allSolidImpacts.X = sp.X;
+              allSolidImpacts.Y = sp.Y;
+              allSolidImpacts.Z = sp.Z;
+              allSolidImpacts.R = sp.R;
+              allSolidImpacts.rotY = sp.RotY;
+              allSolidImpacts.rotZ = sp.RotZ;
+              allSolidImpacts.U = sp.U;
+              allSolidImpacts.V = sp.V;
 
-              allSolidImpacts.sectionType = sp.Type;
+              allSolidImpacts.sectionType = 1;
               allSolidImpacts.RES1 = sp.RES1;
               allSolidImpacts.RES2 = sp.RES2;
 
               allSolidImpacts.calculate_ImpactOnSections();
 
-              allSolarImpacts.sectionType = sp.Type;
+              allSolarImpacts.sectionType = 1;
             }
           }
         }

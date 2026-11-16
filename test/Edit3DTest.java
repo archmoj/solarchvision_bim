@@ -233,19 +233,8 @@ class Edit3DTest {
   // ================= Sections() ===========================================
 
   @Test
-  void sections_type_isClampedToZeroToThree () {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 0, 4, 4); // type == 0
-    app.Select3D.sectionSelection = new int[]{ 0 };
-    app.User3D.currentTool = app.UITASK.Seed_Material;
-
-    app.Edit3D.Sections(10);
-
-    assertEquals(3, app.allSections.get_type(0));
-  }
-
-  @Test
   void sections_tessellation_doublesOrHalvesResolution_clampedToOneHundredToSixteenHundred_onBothAxes () {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 4, 4); // RES1 == RES2 == 4
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4); // RES1 == RES2 == 4
     app.Select3D.sectionSelection = new int[]{ 0 };
     app.User3D.currentTool = app.UITASK.Tessellation;
 
@@ -257,7 +246,7 @@ class Edit3DTest {
 
   @Test
   void sections_tessellation_doublesNormally_onceAlreadyWithinRange () {
-    app.allSections.create(0, 0, 0, 5, 1, 1, 1, 200, 200);
+    app.allSections.create(0, 0, 0, 5, 1, 1, 200, 200);
     app.Select3D.sectionSelection = new int[]{ 0 };
     app.User3D.currentTool = app.UITASK.Tessellation;
 

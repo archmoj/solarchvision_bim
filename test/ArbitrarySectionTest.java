@@ -110,39 +110,24 @@ class ArbitrarySectionTest {
     assertArrayEquals(new float[]{5, -2, 7}, backToLocal, 0.001f);
   }
 
-  // ================= Sections.getCorners() - type 0 ======================
+  // ================= Sections.getCorners() ===============================
 
   @Test
-  void getCorners_type0_centerIsExactlyXYZ_regardlessOfRotation () {
-    float[][] corners = app.allSections.getCorners(0, 10, 20, 30, 15, 25, 35, 40, 50, 100, 100);
+  void getCorners_centerIsExactlyXYZ_regardlessOfRotation () {
+    float[][] corners = app.allSections.getCorners(10, 20, 30, 15, 25, 35, 40, 50, 100, 100);
     // Index 0 is the center point (CORNER_LOCAL's own row 0, sections.pde).
     assertArrayEquals(new float[]{10, 20, 30}, java.util.Arrays.copyOf(corners[0], 3), 0.0001f);
   }
 
   @Test
-  void getCorners_type0_atZeroRotation_matchesType1AtZeroR () {
-    // Sanity cross-check: an arbitrary section with every angle at 0 must
-    // draw the exact same rectangle a type-1 (horizontal) section at R=0
-    // already does - same CORNER_LOCAL grid, same flat-in-XY-then-translate
-    // shape, just reached via 2 different code paths (getCorners()'s type-0
-    // branch vs. rotateSectionCorner()'s type-1 branch, sections.pde).
-    float[][] type0 = app.allSections.getCorners(0, 10, 20, 30, 0, 0, 0, 40, 50, 100, 100);
-    float[][] type1 = app.allSections.getCorners(1, 10, 20, 30, 0, 0, 0, 40, 50, 100, 100);
-
-    for (int q = 0; q < 5; q++) {
-      assertArrayEquals(type1[q], type0[q], 0.0001f, "corner " + q + " differs");
-    }
-  }
-
-  @Test
-  void getCorners_type0_rotZ90_spinsTheRectangleInItsOwnPlane () {
+  void getCorners_rotZ90_spinsTheRectangleInItsOwnPlane () {
     // U != V so a 90-degree roll (rotZ) is actually detectable: the wide
     // axis becomes the tall one. CORNER_LOCAL row 1 is local (-U/2, -V/2);
     // with U=40, V=20 that's local (-20, -10, 0), hand-rotated by rotZ=90
     // (funcs.cos_ang(90)=0, funcs.sin_ang(90)=1) through
     // arbitrarySection_rotateLocalToWorld()'s own Z step: x = a*0 - b*1 =
     // -b = 10; y = a*1 + b*0 = a = -20; z = c = 0.
-    float[][] corners = app.allSections.getCorners(0, 0, 0, 0, 0, 0, 90, 40, 20, 100, 100);
+    float[][] corners = app.allSections.getCorners(0, 0, 0, 0, 0, 90, 40, 20, 100, 100);
 
     assertArrayEquals(new float[]{10, -20, 0}, java.util.Arrays.copyOf(corners[1], 3), 0.001f);
   }
@@ -154,9 +139,9 @@ class ArbitrarySectionTest {
   // ================= Rotate3D.Sections() ===================================
 
   @Test
-  void rotate3DSections_type0_dispatchesByTheVector_withoutTouchingR_whenNotVectorX () {
+  void rotate3DSections_dispatchesByTheVector_withoutTouchingR_whenNotVectorX () {
     app.allSections.f_data = new float[][]{new float[8]};
-    app.allSections.i_data = new int[][]{{0, 100, 100}}; // type 0
+    app.allSections.i_data = new int[][]{{100, 100}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[]{app.createImage(100, 100, processing.core.PConstants.RGB)};
     app.Select3D.sectionSelection = new int[]{0};
@@ -169,9 +154,9 @@ class ArbitrarySectionTest {
   }
 
   @Test
-  void rotate3DSections_type0_vectorX_accumulatesIntoR () {
+  void rotate3DSections_vectorX_accumulatesIntoR () {
     app.allSections.f_data = new float[][]{new float[8]};
-    app.allSections.i_data = new int[][]{{0, 100, 100}};
+    app.allSections.i_data = new int[][]{{100, 100}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[]{app.createImage(100, 100, processing.core.PConstants.RGB)};
     app.Select3D.sectionSelection = new int[]{0};
@@ -179,24 +164,6 @@ class ArbitrarySectionTest {
     app.Rotate3D.Sections((float) Math.toRadians(30), 0); // the_Vector 0 = X
 
     assertEquals(30f, app.allSections.getR(0), 0.01f);
-    assertEquals(0f, app.allSections.getRotY(0), 0.0001f);
-    assertEquals(0f, app.allSections.getRotZ(0), 0.0001f);
-  }
-
-  @Test
-  void rotate3DSections_type1_ignoresTheVector_rotatesROnly () {
-    // Regression: types 1/2/3 must keep their pre-existing behavior -
-    // one single angle (R), unaffected by which axis handle was dragged -
-    // exactly as before the_Vector was threaded through at all.
-    app.allSections.f_data = new float[][]{{0, 0, 0, 10, 1, 1, 0, 0}};
-    app.allSections.i_data = new int[][]{{1, 100, 100}}; // type 1
-    app.allSections.num = 1;
-    app.allSections.SolidImpact = new processing.core.PImage[]{app.createImage(100, 100, processing.core.PConstants.RGB)};
-    app.Select3D.sectionSelection = new int[]{0};
-
-    app.Rotate3D.Sections((float) Math.toRadians(5), 1); // the_Vector 1 = Y - irrelevant for type 1
-
-    assertEquals(15f, app.allSections.getR(0), 0.01f);
     assertEquals(0f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(0f, app.allSections.getRotZ(0), 0.0001f);
   }

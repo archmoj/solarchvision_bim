@@ -100,7 +100,7 @@ class SolidImpactsTest {
   // ================= to_XML / from_XML round trip ==========================
 
   @Test
-  void toXMLThenFromXML_roundTripsScalarFieldsAndTheFourCornerArrays () {
+  void toXMLThenFromXML_roundTripsScalarFields () {
     app.allSolidImpacts.WindSpeed = 8;
     app.allSolidImpacts.WindDirection = 90;
     app.allSolidImpacts.Power = 2;
@@ -117,12 +117,12 @@ class SolidImpactsTest {
     app.allSolidImpacts.deltaLines = 0.02f;
     app.allSolidImpacts.MinimumDistance_traceU = 1.5f;
     app.allSolidImpacts.MinimumDistance_traceV = 0.5f;
-    app.allSolidImpacts.Z = new float[]{1, 2, 3, 4};
-    app.allSolidImpacts.R = new float[]{5, 6, 7, 8};
-    app.allSolidImpacts.U = new float[]{9, 10, 11, 12};
-    app.allSolidImpacts.V = new float[]{13, 14, 15, 16};
-    app.allSolidImpacts.X = new float[]{17, 18, 19, 20};
-    app.allSolidImpacts.Y = new float[]{21, 22, 23, 24};
+    app.allSolidImpacts.Z = 1;
+    app.allSolidImpacts.R = 5;
+    app.allSolidImpacts.U = 9;
+    app.allSolidImpacts.V = 13;
+    app.allSolidImpacts.X = 17;
+    app.allSolidImpacts.Y = 21;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allSolidImpacts.to_XML(root);
@@ -140,11 +140,11 @@ class SolidImpactsTest {
     assertEquals(0.05f, fresh.Grade, 0.0001f);
     assertFalse(fresh.displayImage);
     assertEquals(1, fresh.sectionType);
-    assertArrayEquals(new float[]{1, 2, 3, 4}, fresh.Z, 0.001f);
-    assertArrayEquals(new float[]{5, 6, 7, 8}, fresh.R, 0.001f);
-    assertArrayEquals(new float[]{9, 10, 11, 12}, fresh.U, 0.001f);
-    assertArrayEquals(new float[]{13, 14, 15, 16}, fresh.V, 0.001f);
-    assertArrayEquals(new float[]{17, 18, 19, 20}, fresh.X, 0.001f);
-    assertArrayEquals(new float[]{21, 22, 23, 24}, fresh.Y, 0.001f);
+    assertEquals(1f, fresh.Z, 0.001f);
+    assertEquals(5f, fresh.R, 0.001f);
+    assertEquals(9f, fresh.U, 0.001f);
+    assertEquals(13f, fresh.V, 0.001f);
+    assertEquals(17f, fresh.X, 0.001f);
+    assertEquals(21f, fresh.Y, 0.001f);
   }
 }

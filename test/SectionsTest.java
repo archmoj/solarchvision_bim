@@ -27,8 +27,8 @@ class SectionsTest {
   // ================= create ===========================================
 
   @Test
-  void create_appendsPositionAndTypeDataAndGrowsTheImpactArrays () {
-    app.allSections.create(10, 20, 30, 45, 2, 3, 1, 4, 4);
+  void create_appendsPositionDataAndGrowsTheImpactArrays () {
+    app.allSections.create(10, 20, 30, 45, 2, 3, 4, 4);
 
     assertEquals(1, app.allSections.num);
     assertEquals(10f, app.allSections.getX(0), 0.0001f);
@@ -37,7 +37,6 @@ class SectionsTest {
     assertEquals(45f, app.allSections.getR(0), 0.0001f);
     assertEquals(2f, app.allSections.getU(0), 0.0001f);
     assertEquals(3f, app.allSections.getV(0), 0.0001f);
-    assertEquals(1, app.allSections.get_type(0));
     assertEquals(4, app.allSections.get_res1(0));
     assertEquals(4, app.allSections.get_res2(0));
 
@@ -52,7 +51,7 @@ class SectionsTest {
   @Test
   void gettersAndSetters_roundTripEveryColumn () {
     app.allSections.f_data = new float[][]{new float[8]};
-    app.allSections.i_data = new int[][]{new int[3]};
+    app.allSections.i_data = new int[][]{new int[2]};
 
     app.allSections.setX(0, 1);
     app.allSections.setY(0, 2);
@@ -62,7 +61,6 @@ class SectionsTest {
     app.allSections.setV(0, 6);
     app.allSections.setRotY(0, 7);
     app.allSections.setRotZ(0, 8);
-    app.allSections.set_type(0, 1);
     app.allSections.set_res1(0, 8);
     app.allSections.set_res2(0, 9);
 
@@ -70,7 +68,6 @@ class SectionsTest {
     assertEquals(6f, app.allSections.getV(0), 0.0001f);
     assertEquals(7f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(8f, app.allSections.getRotZ(0), 0.0001f);
-    assertEquals(1, app.allSections.get_type(0));
     assertEquals(8, app.allSections.get_res1(0));
     assertEquals(9, app.allSections.get_res2(0));
   }
@@ -128,28 +125,6 @@ class SectionsTest {
     assertTrue(app.allSections.shouldDraw(app.TypeWindow.WIN3D));
   }
 
-  // ================= rotateSectionCorner ================================
-
-  @Test
-  void rotateSectionCorner_type1RotatesInThePlaneAndKeepsCUnchanged () {
-    float[] result = app.allSections.rotateSectionCorner(1, 1, 0, 5, 90);
-    assertArrayEquals(new float[]{0, 1, 5}, result, 0.001f);
-  }
-
-  @Test
-  void rotateSectionCorner_type3At0DegreesMatchesType2At90Degrees () {
-    // Type 3 measures rotation from 90deg instead of 0 - so type 3 at
-    // R=0 should produce exactly what type 2 gives at R=90.
-    float[] type2 = app.allSections.rotateSectionCorner(2, 1, 7, 5, 90);
-    float[] type3 = app.allSections.rotateSectionCorner(3, 1, 7, 5, 0);
-    assertArrayEquals(type2, type3, 0.001f);
-  }
-
-  @Test
-  void rotateSectionCorner_isTheOriginForAnyOtherType () {
-    assertArrayEquals(new float[]{0, 0, 0}, app.allSections.rotateSectionCorner(9, 1, 2, 3, 90), 0.0001f);
-  }
-
   // ================= intersect / intersectFace ==========================
 
   @Test
@@ -181,7 +156,7 @@ class SectionsTest {
   @Test
   void resizeSolarImpactArray_rebuildsToMatchTheCurrentSectionCount () {
     app.allSections.f_data = new float[][]{new float[8]};
-    app.allSections.i_data = new int[][]{new int[3]};
+    app.allSections.i_data = new int[][]{new int[2]};
     app.allSections.num = 1;
 
     app.allSections.resize_solarImpact_array();
@@ -192,7 +167,7 @@ class SectionsTest {
   // ================= to_XML / from_XML round trip ======================
 
   @Test
-  void toXMLThenFromXML_roundTripsPositionAndTypeData () {
+  void toXMLThenFromXML_roundTripsPositionData () {
     // SolidImpact/SolarImpact are deliberately left at length 0 here,
     // decoupled from f_data/i_data/num (which normally stay in sync via
     // create()/makeEmpty()) - to_XML's 3 blocks each derive their own
@@ -202,7 +177,7 @@ class SectionsTest {
     // calls they'd otherwise make - there's no way to exercise those
     // safely against a hand-built scene with no real files on disk.
     app.allSections.f_data = new float[][]{{10, 20, 30, 45, 2, 3, 15, 25}};
-    app.allSections.i_data = new int[][]{{1, 4, 4}};
+    app.allSections.i_data = new int[][]{{4, 4}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[0];
     app.allSections.SolarImpact = new processing.core.PImage[0][0][0];
@@ -219,35 +194,7 @@ class SectionsTest {
     assertEquals(45f, fresh.getR(0), 0.0001f);
     assertEquals(15f, fresh.getRotY(0), 0.0001f);
     assertEquals(25f, fresh.getRotZ(0), 0.0001f);
-    assertEquals(1, fresh.get_type(0));
     assertEquals(4, fresh.get_res1(0));
     assertFalse(fresh.displayAll);
-  }
-
-  @Test
-  void fromXML_defaultsRotYAndRotZToZero_forARecordSavedBeforeTheyExisted () {
-    // Forward-compat: a record with only the original 9 comma-separated
-    // fields (no rotY/rotZ) must still load, rather than throwing.
-    processing.data.XML root = new processing.data.XML("root");
-    processing.data.XML parent = root.addChild("section");
-    parent.setInt("ni", 1);
-    processing.data.XML item = parent.addChild("item");
-    item.setInt("id", 0);
-    item.setContent("10,20,30,45,2,3,1,4,4"); // no trailing rotY/rotZ
-    parent.setString("displayAll", "true");
-    // from_XML() also reads 2 more sibling children for the SolidImpact/
-    // SolarImpact texture arrays - empty-but-present, so it doesn't NPE
-    // the way the lone "section" child above would on its own.
-    root.addChild("sectionSolidImpact").setInt("ni", 0);
-    processing.data.XML solarChild = root.addChild("sectionSolarImpact");
-    solarChild.setInt("ni", 0);
-    solarChild.setInt("nj", 0);
-    solarChild.setInt("nk", 0);
-
-    solarchvision_bim.Sections fresh = app.new Sections();
-    fresh.from_XML(root);
-
-    assertEquals(0f, fresh.getRotY(0), 0.0001f);
-    assertEquals(0f, fresh.getRotZ(0), 0.0001f);
   }
 }

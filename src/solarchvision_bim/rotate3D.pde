@@ -146,12 +146,10 @@ class Rotate3D {
   }
 
   // the_Vector (0:X 1:Y 2:Z, same convention as rotateAroundVector() above)
-  // only matters for a type-0 (arbitrary) section - see arbitrarySection.pde.
-  // Types 1/2/3 keep rotating through their one single R angle regardless
-  // of which axis handle was dragged, exactly as before this parameter
-  // existed - that's the whole reason those types only ever had one
-  // rotation angle to begin with, so there's nothing for the_Vector to
-  // pick between for them.
+  // picks which of the section's own 3 Euler angles (rotX/rotY/rotZ - see
+  // arbitrarySection.pde) the dragged/named axis actually changes. Every
+  // section has all 3 now - there's no more single-angle type that only
+  // ever rotated through R regardless of which axis was picked.
   void Sections (float r, int the_Vector) {
     beginScene3DChange();
 
@@ -160,13 +158,9 @@ class Rotate3D {
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
 
-      if (allSections.get_type(f) == 0) {
-        if (the_Vector == 0)      allSections.RotateX(f, degrees);
-        else if (the_Vector == 1) allSections.RotateY(f, degrees);
-        else if (the_Vector == 2) allSections.RotateZ(f, degrees);
-      } else {
-        allSections.setR(f, allSections.getR(f) + degrees);
-      }
+      if (the_Vector == 0)      allSections.RotateX(f, degrees);
+      else if (the_Vector == 1) allSections.RotateY(f, degrees);
+      else if (the_Vector == 2) allSections.RotateZ(f, degrees);
     }
 
     allSolidImpacts.calculate_ImpactOnSections();

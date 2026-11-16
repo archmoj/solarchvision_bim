@@ -1385,30 +1385,19 @@ class Terrain {
   }
 
   void castLandSubFaceShadow (float[][] subFace) {
-    // See faces.pde's own castShadows() for why this is allSolarImpacts.Z
-    // directly for types 1/2/3 but needs converting for a type-0
-    // (arbitrary) section.
-    float depthOffset = (allSolarImpacts.sectionType == 0)
-      ? arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2]
-      : allSolarImpacts.Z;
+    // Every section stores X/Y/Z as a plain WORLD position added AFTER
+    // rotation (sections.pde) - see faces.pde's own castShadows() for
+    // the identical conversion.
+    float depthOffset = arbitrarySection_rotateWorldToLocal(allSolarImpacts.X, allSolarImpacts.Y, allSolarImpacts.Z, allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ)[2];
 
     for (int s = 0; s < subFace.length; s++) {
-      if (allSolarImpacts.sectionType == 2) {
-        float a = subFace[s][0];
-        float b = -subFace[s][1];
-        float c = subFace[s][2];
+      // Every section is the same arbitrary-orientation shape now -
+      // always rotate into its local frame (arbitrarySection.pde).
+      float[] local = arbitrarySection_rotateWorldToLocal(subFace[s][0], subFace[s][1], subFace[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
 
-        subFace[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-        subFace[s][1] = c;
-        subFace[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-      } else if (allSolarImpacts.sectionType == 0) {
-        float[] local = arbitrarySection_rotateWorldToLocal(subFace[s][0], subFace[s][1], subFace[s][2], allSolarImpacts.R, allSolarImpacts.rotY, allSolarImpacts.rotZ);
-
-        subFace[s][0] = local[0];
-        subFace[s][1] = local[1];
-        subFace[s][2] = local[2];
-      }
-      // sectionType == 3: no rotation, kept as in the original
+      subFace[s][0] = local[0];
+      subFace[s][1] = local[1];
+      subFace[s][2] = local[2];
     }
 
     SHADOW_graphics.beginShape();
@@ -1419,11 +1408,9 @@ class Terrain {
       float y = subFace[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
 
       if (z >= 0) {
-        if (allSolarImpacts.sectionType == 1) {
-          float px = x, py = y;
-          x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-          y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-        }
+        // x/y are already in the same local frame Shades_offsetX/Y is
+        // (both rotated above/in castShadowsCurrentSection.pde), so no
+        // further rotation is needed here.
         SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
       } else {
         castLandShadowClippedEdge(subFace, s, (s + subFace.length - 1) % subFace.length, x, y, z, depthOffset);
@@ -1446,12 +1433,6 @@ class Terrain {
     float ratio = z_n / (z_n - z);
     float x_trim = x_n * (1 - ratio) + x * ratio;
     float y_trim = y_n * (1 - ratio) + y * ratio;
-
-    if (allSolarImpacts.sectionType == 1) {
-      float px = x_trim, py = y_trim;
-      x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R);
-      y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-    }
 
     SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
   }

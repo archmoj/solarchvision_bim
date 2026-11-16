@@ -466,27 +466,21 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
 
 -   `SECTION`: Creates an analysis section - a flat cutting plane used
     for solar/solid-impact analysis, shadow baking, and sectional views.
-    `t` picks the plane's orientation:
+    Every section has the same arbitrary orientation: 3 independent
+    rotation angles - `r` doubles as rotX, and `ry`/`rz` are rotY/rotZ,
+    composed in the same X-then-Y-then-Z order Solids' own rotation
+    already uses, so these 3 angles mean exactly what a solid's own
+    rotation does elsewhere in this app. `x`/`y`/`z` is the section's
+    own center, rotated about its own center by `r`/`ry`/`rz` and then
+    translated there - not folded in before rotating.
 
-    -   `t=1` horizontal, `t=2` vertical (front), `t=3` vertical (side -
-        `r` is measured from 90° instead of 0°). Each of these uses `r`
-        as its one rotation angle and ignores `ry`/`rz`.
-    -   `t=0` is an arbitrary-orientation section instead, with 3
-        independent rotation angles: `r` doubles as rotX, and `ry`/`rz`
-        are rotY/rotZ, composed in the same X-then-Y-then-Z order Solids'
-        own rotation already uses - so these 3 angles mean exactly what a
-        solid's own rotation does elsewhere in this app.
-
-    Once created, a `t=0` section can be rotated around any of its 3 axes
-    the same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/
-    `ROTATEZ` below, or dragging its rotate handle in the viewport - with
-    the dragged/named axis picking which of rotX/rotY/rotZ actually
-    changes. A `t=1/2/3` section instead always rotates its one `r` angle
-    regardless of which axis handle or command is used, same as before
-    `t=0` existed.
+    Once created, a section can be rotated around any of its 3 axes the
+    same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/`ROTATEZ`
+    below, or dragging its rotate handle in the viewport - with the
+    dragged/named axis picking which of rotX/rotY/rotZ actually changes.
 
 ```
-Section x=? y=? z=? r=? ry=? rz=? u=? v=? t=? i=? j=?
+Section x=? y=? z=? r=? ry=? rz=? u=? v=? i=? j=?
 ```
 
 ------------------------------------------------------------------------
@@ -857,8 +851,8 @@ the user interface.
 | `Current Data Source` | Which loaded data source the impact analysis is computed from | _(depends on loaded data)_ |
 | `Impact Layer Index` | Which impact statistic is shown: minimum, median, or maximum | 0 to 8 |
 | `Impact Display Day` | Which day (within the plotted range) is currently shown | _(depends on loaded data)_ |
-| `SolidImpacts sectionType` | Which section cut (0-3) the solid-impact analysis uses | 0 to 3 |
-| `SolarImpacts sectionType` | Which section cut (0-3) the solar-impact analysis uses | 0 to 3 |
+| `SolidImpacts sectionType` | Whether a solid-impact analysis section is active | 0 to 1 |
+| `SolarImpacts sectionType` | Whether a solar-impact analysis section is active | 0 to 1 |
 | `Solid Impacts Grade` | Ground slope/grade used for solid-impact analysis | 0.0001 to 64.0 |
 | `Solid Impacts Power` | Exponent applied when weighting solid-impact results | 0.0001 to 64.0 |
 | `Solid Impacts Process Sub Divisions` | Number of subdivisions used when processing solid impacts | 0 to 3 |
