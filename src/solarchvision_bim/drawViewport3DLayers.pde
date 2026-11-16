@@ -174,7 +174,7 @@ void draw_WIN3D_layers () {
     mayDrawPalette = true;
 
     // Only needed when the camera doesn't match (needsSolarImpactClearRect,
-    // captured above): the overlay's own baked aspect ratio (RES1 x RES2)
+    // captured above): the overlay's own baked aspect ratio (resX x resY)
     // rarely matches the live viewport's (WIN3D.dX x WIN3D.dY), so the
     // r > 1 branch below draws it narrower than WIN3D.dX, centered,
     // leaving uncovered strips on either side. With a matching camera,

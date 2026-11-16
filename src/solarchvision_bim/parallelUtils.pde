@@ -108,7 +108,7 @@ void awaitAllWithProgress (java.util.List<java.util.concurrent.Future<?>> future
 //
 // Flags a pixel whenever the MAJORITY of its available neighbors
 // disagree with it.
-IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
+IntList listSuspectPixels (int[] pixels, int resX, int resY) {
   IntList list = new IntList();
 
   // opposite-direction pairs: N-S, E-W, NE-SW, NW-SE
@@ -127,8 +127,8 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
     int centerBlue  = (COL) & 0xFF;
     float centerColor = centerAlpha / 255.0 * (centerRed + centerGreen + centerBlue) / 3.0;
 
-    int x = np % RES1;
-    int y = np / RES1;
+    int x = np % resX;
+    int y = np / resX;
 
     int validPairs = 0;
     int bothDifferentPairs = 0;
@@ -137,12 +137,12 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
       int ax = x + pair[0], ay = y + pair[1];
       int bx = x + pair[2], by = y + pair[3];
 
-      boolean aIn = ax >= 0 && ax < RES1 && ay >= 0 && ay < RES2;
-      boolean bIn = bx >= 0 && bx < RES1 && by >= 0 && by < RES2;
+      boolean aIn = ax >= 0 && ax < resX && ay >= 0 && ay < resY;
+      boolean bIn = bx >= 0 && bx < resX && by >= 0 && by < resY;
       if (!aIn || !bIn) continue; // only count pairs fully inside the image
 
-      boolean aDiff = isDifferent(pixels[ay * RES1 + ax], centerAlpha, centerColor);
-      boolean bDiff = isDifferent(pixels[by * RES1 + bx], centerAlpha, centerColor);
+      boolean aDiff = isDifferent(pixels[ay * resX + ax], centerAlpha, centerColor);
+      boolean bDiff = isDifferent(pixels[by * resX + bx], centerAlpha, centerColor);
 
       validPairs++;
       if (aDiff && bDiff) bothDifferentPairs++;
@@ -157,8 +157,8 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
 /*
   // show suspect pixel
   for (int np : list) {
-    int x = np % RES1;
-    int y = np / RES1;
+    int x = np % resX;
+    int y = np / resX;
 
     int m = 3;
     for (int dx = -m; dx <= m; dx++) {
@@ -166,8 +166,8 @@ IntList listSuspectPixels (int[] pixels, int RES1, int RES2) {
         if (abs(dx) < m && abs(dy) < m) continue;
         int nx = x + dx;
         int ny = y + dy;
-        if (nx < 0 || nx >= RES1 || ny < 0 || ny >= RES2) continue;
-        pixels[ny * RES1 + nx] = color(255, 255, 0, 255);
+        if (nx < 0 || nx >= resX || ny < 0 || ny >= resY) continue;
+        pixels[ny * resX + nx] = color(255, 255, 0, 255);
       }
     }
   }

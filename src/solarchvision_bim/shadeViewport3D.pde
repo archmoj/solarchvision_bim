@@ -102,15 +102,15 @@ volatile boolean isShadingViewport = false;
 // a new pair each call, so each caller keeps deciding its own allocation
 // pattern (pass 1: a fresh pair per pixel; the repair loop: same).
 void deriveShadeRay (
-  int np, int RES1, float halfRES1, float halfRES2,
+  int np, int resX, float halfResX, float halfResY,
   float invQuality, float invScale, float baseX, float baseY, float baseZ,
   boolean isOrtho, float centerX, float centerY, float centerZ,
   float[] ray_start, float[] ray_direction
 ) {
-  int Image_X_i = np % RES1;
-  int Image_Y_i = np / RES1;
-  float Image_X = Image_X_i - halfRES1;
-  float Image_Y = Image_Y_i - halfRES2;
+  int Image_X_i = np % resX;
+  int Image_Y_i = np / resX;
+  float Image_X = Image_X_i - halfResX;
+  float Image_Y = Image_Y_i - halfResY;
 
   float[] ray_end = WIN3D.calculate_Click3D(Image_X * invQuality, Image_Y * invQuality);
   ray_end[0] *= invScale;
@@ -177,8 +177,8 @@ void ShadeViewport () {
 
 
   float quality = WIN3D.shadingQuality;
-  int RES1 = round(WIN3D.dX * quality);
-  int RES2 = round(WIN3D.dY * quality);
+  int resX = round(WIN3D.dX * quality);
+  int resY = round(WIN3D.dY * quality);
 
   // shadeBuffer is the only thing pass 1/pass 2 below ever write into -
   // Shade_RGBA itself (a shared global) is built fresh, as a purely local
@@ -192,15 +192,15 @@ void ShadeViewport () {
   // this call's own pass 1/pass 2 finished (observed from users on
   // Windows as ArrayIndexOutOfBoundsException: arraycopy: last
   // destination index ... out of bounds - this call's own shadeBuffer,
-  // sized off this call's own RES1/RES2, copied into a Shade_RGBA some
+  // sized off this call's own resX/resY, copied into a Shade_RGBA some
   // other, since-finished call had already swapped in at a different
   // size). Deferring both the allocation and the publish to right around
   // the copy itself (below) means this call's destination can only ever
-  // be sized off this call's own RES1/RES2, no matter what any
+  // be sized off this call's own resX/resY, no matter what any
   // concurrently-running call does to the shared field in the meantime.
-  int[] shadeBuffer = new int[RES1 * RES2];
+  int[] shadeBuffer = new int[resX * resY];
 
-  // Maps an offset in RES1/RES2 pixel space back to the click-space
+  // Maps an offset in resX/resY pixel space back to the click-space
   // calculate_Click3D() below expects. WIN3D.scale is only ever refreshed
   // inside WIN3D.renderFrame() - the normal per-frame draw() cycle - so
   // during a plain live preview it's always in sync with the current
@@ -209,15 +209,15 @@ void ShadeViewport () {
   // in mask mode after overriding WIN3D.dY to allSolarImpacts.ResY,
   // without ever calling renderFrame() - so WIN3D.scale there is still
   // whatever it was the last time the viewport was actually drawn, at its
-  // true on-screen size, not RES2. Deriving
+  // true on-screen size, not resY. Deriving
   // invQuality from WIN3D.scale itself - rather than assuming it already
-  // matches the current WIN3D.dY/RES2 - keeps the ray mapping correct
+  // matches the current WIN3D.dY/resY - keeps the ray mapping correct
   // either way, exactly as preBakeViewport()'s own ScaleToFit does for
   // its Direct/Diffuse bake.
-  float invQuality = (WIN3D.scale * WIN3D.referenceScale) / RES2;
+  float invQuality = (WIN3D.scale * WIN3D.referenceScale) / resY;
   float invScale    = 1.0 / overallScale;
-  float halfRES1 = 0.5 * RES1;
-  float halfRES2 = 0.5 * RES2;
+  float halfResX = 0.5 * resX;
+  float halfResY = 0.5 * resY;
   boolean isOrtho = (WIN3D.projectionTypeIndex == 0);
 
   float baseX = WIN3D.cameraX * invScale;
@@ -291,10 +291,10 @@ void ShadeViewport () {
   // a grid of internal edges across it. Two passes because an edge is
   // inherently about a pixel's relationship to ones that, in raster
   // order, haven't been computed yet.
-  int[] faceEdgeHit = noShadeOnlyVisibleFaceEdges ? new int[RES1 * RES2] : null;
-  float[] faceEdgeNormalX = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
-  float[] faceEdgeNormalY = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
-  float[] faceEdgeNormalZ = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
+  int[] faceEdgeHit = noShadeOnlyVisibleFaceEdges ? new int[resX * resY] : null;
+  float[] faceEdgeNormalX = noShadeOnlyVisibleFaceEdges ? new float[resX * resY] : null;
+  float[] faceEdgeNormalY = noShadeOnlyVisibleFaceEdges ? new float[resX * resY] : null;
+  float[] faceEdgeNormalZ = noShadeOnlyVisibleFaceEdges ? new float[resX * resY] : null;
 
   // This pass is independent per pixel - it reads only data that's fixed
   // for this whole call (camera, geometry, sun direction) and writes
@@ -357,7 +357,7 @@ void ShadeViewport () {
       for (int np = npFrom; np < npTo; np++) {
         float[] ray_start = new float[3];
         float[] ray_direction = new float[3];
-        deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,
+        deriveShadeRay(np, resX, halfResX, halfResY, invQuality, invScale, baseX, baseY, baseZ,
           isOrtho, centerX, centerY, centerZ, ray_start, ray_direction);
 
         float[] RxP = intersectAll(ray_start, ray_direction, 0, faceTestStampLocal, currentRayStampLocal);
@@ -540,7 +540,7 @@ void ShadeViewport () {
   // entirely in both.
   if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
     long shadeListSuspectsT0 = millis();
-    IntList suspectPixels = listSuspectPixels(shadeBuffer, RES1, RES2);
+    IntList suspectPixels = listSuspectPixels(shadeBuffer, resX, resY);
     shadeListSuspectsMillis += millis() - shadeListSuspectsT0;
 
     int[] repairStamp = new int[faceTestStampSize];
@@ -550,7 +550,7 @@ void ShadeViewport () {
     for (int np : suspectPixels) {
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
-      deriveShadeRay(np, RES1, halfRES1, halfRES2, invQuality, invScale, baseX, baseY, baseZ,
+      deriveShadeRay(np, resX, halfResX, halfResY, invQuality, invScale, baseX, baseY, baseZ,
         isOrtho, centerX, centerY, centerZ, ray_start, ray_direction);
 
       float[] RxP = intersectAll(ray_start, ray_direction, 0, repairStamp, repairCounter);
@@ -649,10 +649,10 @@ void ShadeViewport () {
     int mismatches = 0;
 
     for (int np = 0; np < totalPixels; np++) {
-      int Image_X_i = np % RES1;
-      int Image_Y_i = np / RES1;
-      float Image_X = Image_X_i - halfRES1;
-      float Image_Y = Image_Y_i - halfRES2;
+      int Image_X_i = np % resX;
+      int Image_Y_i = np / resX;
+      float Image_X = Image_X_i - halfResX;
+      float Image_Y = Image_Y_i - halfResY;
 
       float[] ray_start = new float[3];
       float[] ray_direction = new float[3];
@@ -727,17 +727,17 @@ void ShadeViewport () {
 
       pass2Futures.add(executor.submit(() -> {
         for (int np = npFrom; np < npTo; np++) {
-          int Image_X_i = np % RES1;
-          int Image_Y_i = np / RES1;
+          int Image_X_i = np % resX;
+          int Image_Y_i = np / resX;
 
-          boolean isEdge = (Image_X_i + 1 < RES1) && isFaceEdgeBetween(
+          boolean isEdge = (Image_X_i + 1 < resX) && isFaceEdgeBetween(
             faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
             faceEdgeHit[np + 1], faceEdgeNormalX[np + 1], faceEdgeNormalY[np + 1], faceEdgeNormalZ[np + 1]
           );
-          if (!isEdge && Image_Y_i + 1 < RES2) {
+          if (!isEdge && Image_Y_i + 1 < resY) {
             isEdge = isFaceEdgeBetween(
               faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
-              faceEdgeHit[np + RES1], faceEdgeNormalX[np + RES1], faceEdgeNormalY[np + RES1], faceEdgeNormalZ[np + RES1]
+              faceEdgeHit[np + resX], faceEdgeNormalX[np + resX], faceEdgeNormalY[np + resX], faceEdgeNormalZ[np + resX]
             );
           }
 
@@ -761,7 +761,7 @@ void ShadeViewport () {
   // until the Shade_RGBA = freshShadeRGBA assignment just below - unlike
   // the shared Shade_RGBA global itself, nothing outside this call can
   // swap it out for a differently-sized image behind this call's back, so
-  // it's guaranteed to still be exactly the RES1 x RES2 image createImage()
+  // it's guaranteed to still be exactly the resX x resY image createImage()
   // made it as, right here, whatever any other concurrently-running
   // ShadeViewport() call is doing to the shared global at the same time
   // (see shadeBuffer's own comment above for the failure this replaced).
@@ -771,7 +771,7 @@ void ShadeViewport () {
   // running call can still end up "winning" (whichever finishes last ends
   // up as the Shade_RGBA actually shown), but neither call's own copy can
   // ever fail with a size mismatch again.
-  PImage freshShadeRGBA = createImage(RES1, RES2, ARGB);
+  PImage freshShadeRGBA = createImage(resX, resY, ARGB);
   freshShadeRGBA.loadPixels();
   System.arraycopy(shadeBuffer, 0, freshShadeRGBA.pixels, 0, shadeBuffer.length);
   freshShadeRGBA.updatePixels();

@@ -605,16 +605,16 @@ class Model2Ds {
 
                   println("Making opacity texture:", new_Texture_path);
 
-                  int RES1 = kind.Images[i].width;
-                  int RES2 = kind.Images[i].height;
+                  int resX = kind.Images[i].width;
+                  int resY = kind.Images[i].height;
 
-                  PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
+                  PImage Opacity_Texture = createImage(resX, resY, ARGB);
 
                   Opacity_Texture.loadPixels();
 
-                  for (int np = 0; np < (RES1 * RES2); np++) {
-                    int Image_X = np % RES1;
-                    int Image_Y = np / RES1;
+                  for (int np = 0; np < (resX * resY); np++) {
+                    int Image_X = np % resX;
+                    int Image_Y = np / resX;
 
                     color COL = kind.Images[i].get(Image_X, Image_Y);
                     //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
@@ -1153,8 +1153,8 @@ class Model2Ds {
         Model2DKind kind = this.Kind[OBJ_ID];
         int n = this.FileIndex[OBJ_ID];
 
-        int RES1 = kind.Images[n].width;
-        int RES2 = kind.Images[n].height;
+        int resX = kind.Images[n].width;
+        int resY = kind.Images[n].height;
 
         kind.Images[n].loadPixels();
 
@@ -1162,8 +1162,8 @@ class Model2Ds {
         // already abs()'d above, so that branch could never fire - the
         // mirror flag never affected this particular alpha sample)
 
-        int Image_X = int(u * RES1);
-        int Image_Y = int(v * RES2);
+        int Image_X = int(u * resX);
+        int Image_Y = int(v * resY);
 
         color COL = kind.Images[n].get(Image_X, Image_Y);
         //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;

@@ -43,19 +43,19 @@ class WindFlow {
 
           println("Saving texture:", TEXTURE_path);
 
-          int RES1 = User3D.exporterColorScaleResolution;
-          int RES2 = User3D.exporterColorScaleResolution / 16;
+          int resX = User3D.exporterColorScaleResolution;
+          int resY = User3D.exporterColorScaleResolution / 16;
 
-          PImage palette_Texture = createImage(RES1, RES2, ARGB);
+          PImage palette_Texture = createImage(resX, resY, ARGB);
 
 
           palette_Texture.loadPixels();
 
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
+          for (int np = 0; np < (resX * resY); np++) {
+            int Image_X = np % resX;
+            int Image_Y = np / resX;
 
-            float _val = (Image_X / (0.5 * RES1)) - 1;
+            float _val = (Image_X / (0.5 * resX)) - 1;
 
             float _u = 0.5 + 0.5 * _val;
 

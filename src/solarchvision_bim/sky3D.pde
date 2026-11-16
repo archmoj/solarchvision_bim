@@ -177,13 +177,13 @@ class Sky3D {
   void writeSkyPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
-    int RES1 = User3D.exporterColorScaleResolution;
-    int RES2 = User3D.exporterColorScaleResolution / 16;
-    PImage palette_Texture = createImage(RES1, RES2, ARGB);
+    int resX = User3D.exporterColorScaleResolution;
+    int resY = User3D.exporterColorScaleResolution / 16;
+    PImage palette_Texture = createImage(resX, resY, ARGB);
     palette_Texture.loadPixels();
-    for (int np = 0; np < (RES1 * RES2); np++) {
-      int Image_X = np % RES1;
-      float val = (Image_X / (0.5 * RES1)) - 1;
+    for (int np = 0; np < (resX * resY); np++) {
+      int Image_X = np % resX;
+      float val = (Image_X / (0.5 * resX)) - 1;
       float u = 0.5 + val;
       if (WIN3D.impactTypeIndex == Impact_ACTIVE) u = 0.5 + 0.5 * val;
       float[] COL = PAINT.getColorStyle(PAL_type, u);

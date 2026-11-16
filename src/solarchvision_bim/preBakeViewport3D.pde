@@ -82,10 +82,10 @@ void preBakeViewport () {
   float ScaleToFit = float(pre_WIN3D_dY) / float(WIN3D.dY);
 
 
-  int RES1 = WIN3D.dX;
-  int RES2 = WIN3D.dY;
+  int resX = WIN3D.dX;
+  int resY = WIN3D.dY;
 
-  float[][] Diffuse_Matrix = new float [2][(RES1 * RES2)];
+  float[][] Diffuse_Matrix = new float [2][(resX * resY)];
 
   int numDateAngles = (end_DATE_ANGLE - start_DATE_ANGLE) / step_DATE_ANGLE + 1;
   int numHours = (end_HOUR - start_HOUR) / step_HOUR + 1;
@@ -137,7 +137,7 @@ void preBakeViewport () {
 
   for (int m = 0; m < n_Map; m++) {
     for (int SHD = 0; SHD <= 1; SHD++) {
-      Direct_RGBA[m][SHD] = createImage(RES1, RES2, ARGB);
+      Direct_RGBA[m][SHD] = createImage(resX, resY, ARGB);
       Direct_RGBA[m][SHD].loadPixels();
     }
   }
@@ -185,7 +185,7 @@ void preBakeViewport () {
   // the last chunk finishes, same as before, just filled in out of
   // left-to-right order as whichever chunk happens to finish next.
   int numThreads = max(1, Runtime.getRuntime().availableProcessors());
-  int totalPixels = RES1 * RES2;
+  int totalPixels = resX * resY;
   // Several chunks per thread, not one: a pixel that hits geometry costs
   // far more (DiffuseVectors.length + n_Map secondary ray casts) than one
   // that misses straight into transparent background, so splitting into
@@ -222,8 +222,8 @@ void preBakeViewport () {
       int[] currentRayStampLocal = { 0 };
 
       for (int np = npFrom; np < npTo; np++) {
-        int Image_X = np % RES1;
-        int Image_Y = np / RES1;
+        int Image_X = np % resX;
+        int Image_Y = np / resX;
 
         Image_X -= 0.5 * WIN3D.dX;
         Image_Y -= 0.5 * WIN3D.dY;
@@ -397,7 +397,7 @@ void preBakeViewport () {
     println();
   }
 
-  println("Ray-casting loop (" + (RES1 * RES2) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
+  println("Ray-casting loop (" + (resX * resY) + " pixels) finished in " + nf((millis() - phaseStartMillis) / 1000.0, 0, 2) + "s");
   phaseStartMillis = millis();
 
   // [0.6, 0.65] of prebakeProgressWindow's own full range (this
@@ -458,7 +458,7 @@ void preBakeViewport () {
 
     File_Name += "_Camera" + nf(cameraIndex, 2);
 
-    Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB);
+    Diffuse_RGBA[SHD] = createImage(resX, resY, ARGB);
 
     Diffuse_RGBA[SHD].loadPixels();
 
@@ -466,14 +466,14 @@ void preBakeViewport () {
     // split into one half per SHD (just 2 total) with this per-pixel
     // loop's own progress tracked within each half - same throttled-
     // percent shape as the Direct_RGBA saves loop just above, since
-    // RES1*RES2 can be a meaningfully large loop on its own, unlike the
+    // resX*resY can be a meaningfully large loop on its own, unlike the
     // handful of SHD iterations wrapping it.
     int prebakeDiffuseLastDrawnPercent = -1;
 
-    for (int np = 0; np < (RES1 * RES2); np++) {
+    for (int np = 0; np < (resX * resY); np++) {
 
       if (prebakeProgressWindow != null) {
-        int percent = (int) floor(100.0f * np / (RES1 * RES2));
+        int percent = (int) floor(100.0f * np / (resX * resY));
         if (percent != prebakeDiffuseLastDrawnPercent) {
           prebakeProgressWindow.updateFraction(0.65f + 0.05f * SHD + 0.05f * percent / 100.0f);
           prebakeDiffuseLastDrawnPercent = percent;
@@ -533,9 +533,9 @@ void preBakeViewport () {
   // at FACE_EDGE_RESOLUTION_MULTIPLIER times the usual resolution (see
   // that constant's own comment, shadeViewport3D.pde): WIN3D.dX/dY
   // temporarily doubled for just this one call - ShadeViewport()'s own
-  // invQuality already derives itself from whichever RES1/RES2 actually
+  // invQuality already derives itself from whichever resX/resY actually
   // end up in use (its own comment on that), rather than assuming
-  // RES1/RES2 == WIN3D.dX/dY * quality, so the field of view comes out
+  // resX/resY == WIN3D.dX/dY * quality, so the field of view comes out
   // correct at the higher resolution too with no other change needed.
   cameraFaceEdgesTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "FaceEdges_Camera" + nf(cameraIndex, 2) + ".png";
 

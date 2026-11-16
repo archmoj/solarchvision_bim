@@ -5,7 +5,7 @@ void place_WIN3D_hover (int xMouse, int yMouse) {
 // Called every frame the solar-impact overlay is shown, right after
 // drawViewport3DLayers.pde draws it - img/fit are that same image and the
 // fit rect hoverFitRect() above just computed for it. img
-// is only needed here for its width/height - the same RES1 x RES2 grid
+// is only needed here for its width/height - the same resX x resY grid
 // allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
 // below locate the exact data point under the mouse, same as it used to
 // locate the exact rendered pixel - not for sampling a color from it
