@@ -1193,31 +1193,31 @@ class SolidImpacts {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setFloat(parent, this.CLASS_STAMP + "WindSpeed", this.WindSpeed);
-    XML_setFloat(parent, this.CLASS_STAMP + "WindDirection", this.WindDirection);
-    XML_setFloat(parent, this.CLASS_STAMP + "Power", this.Power);
-    XML_setBoolean(parent, this.CLASS_STAMP + "DisplayPoints", this.displayPoints);
-    XML_setBoolean(parent, this.CLASS_STAMP + "DisplayLines", this.displayLines);
+    XML_setFloat(parent, "windSpeed", this.WindSpeed);
+    XML_setFloat(parent, "windDirection", this.WindDirection);
+    XML_setFloat(parent, "power", this.Power);
+    XML_setBoolean(parent, "displayPoints", this.displayPoints);
+    XML_setBoolean(parent, "displayLines", this.displayLines);
 
-    XML_setInt(parent, this.CLASS_STAMP + "ResX", this.ResX);
-    XML_setInt(parent, this.CLASS_STAMP + "ResY", this.ResY);
-    XML_setFloat(parent, this.CLASS_STAMP + "Grade", this.Grade);
-    XML_setBoolean(parent, this.CLASS_STAMP + "DisplayImage", this.displayImage);
-    XML_setInt(parent, this.CLASS_STAMP + "SectionType", this.sectionType);
-    XML_setFloat(parent, this.CLASS_STAMP + "PositionStep", this.positionStep);
-    XML_setInt(parent, this.CLASS_STAMP + "ProcessSubDivisions", this.Process_subDivisions);
-    XML_setFloat(parent, this.CLASS_STAMP + "DeltaStep", this.deltaStep);
-    XML_setFloat(parent, this.CLASS_STAMP + "DeltaLines", this.deltaLines);
-    XML_setFloat(parent, this.CLASS_STAMP + "MinDistTraceU", this.MinimumDistance_traceU);
-    XML_setFloat(parent, this.CLASS_STAMP + "MinDistTraceV", this.MinimumDistance_traceV);
+    XML_setInt(parent, "resX", this.ResX);
+    XML_setInt(parent, "resY", this.ResY);
+    XML_setFloat(parent, "grade", this.Grade);
+    XML_setBoolean(parent, "displayImage", this.displayImage);
+    XML_setInt(parent, "sectionType", this.sectionType);
+    XML_setFloat(parent, "positionStep", this.positionStep);
+    XML_setInt(parent, "processSubDivisions", this.Process_subDivisions);
+    XML_setFloat(parent, "deltaStep", this.deltaStep);
+    XML_setFloat(parent, "deltaLines", this.deltaLines);
+    XML_setFloat(parent, "minDistTraceU", this.MinimumDistance_traceU);
+    XML_setFloat(parent, "minDistTraceV", this.MinimumDistance_traceV);
 
-    XML_setFloat(parent, this.CLASS_STAMP + "Z", this.Z);
-    XML_setFloat(parent, this.CLASS_STAMP + "RotX", this.RotX);
-    XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
-    XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
-    XML_setFloatArray(parent, this.CLASS_STAMP + "corners", this.corners);
-    XML_setFloat(parent, this.CLASS_STAMP + "X", this.X);
-    XML_setFloat(parent, this.CLASS_STAMP + "Y", this.Y);
+    XML_setFloat(parent, "z", this.Z);
+    XML_setFloat(parent, "rotX", this.RotX);
+    XML_setFloat(parent, "rotY", this.rotY);
+    XML_setFloat(parent, "rotZ", this.rotZ);
+    XML_setFloatArray(parent, "corners", this.corners);
+    XML_setFloat(parent, "x", this.X);
+    XML_setFloat(parent, "y", this.Y);
   }
 
 
@@ -1226,31 +1226,31 @@ class SolidImpacts {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.WindSpeed = XML_getFloat(parent, this.CLASS_STAMP + "WindSpeed");
-    this.WindDirection = XML_getFloat(parent, this.CLASS_STAMP + "WindDirection");
-    this.Power = XML_getFloat(parent, this.CLASS_STAMP + "Power");
+    this.WindSpeed = XML_getFloat(parent, "windSpeed");
+    this.WindDirection = XML_getFloat(parent, "windDirection");
+    this.Power = XML_getFloat(parent, "power");
 
-    this.displayPoints = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayPoints");
-    this.displayLines = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayLines");
+    this.displayPoints = XML_getBoolean(parent, "displayPoints");
+    this.displayLines = XML_getBoolean(parent, "displayLines");
 
-    this.ResX = XML_getInt(parent, this.CLASS_STAMP + "ResX");
-    this.ResY = XML_getInt(parent, this.CLASS_STAMP + "ResY");
-    this.Grade = XML_getFloat(parent, this.CLASS_STAMP + "Grade");
-    this.displayImage = XML_getBoolean(parent, this.CLASS_STAMP + "DisplayImage");
-    this.sectionType = XML_getInt(parent, this.CLASS_STAMP + "SectionType");
-    this.positionStep = XML_getFloat(parent, this.CLASS_STAMP + "PositionStep");
-    this.Process_subDivisions = XML_getInt(parent, this.CLASS_STAMP + "ProcessSubDivisions");
-    this.deltaStep = XML_getFloat(parent, this.CLASS_STAMP + "DeltaStep");
-    this.deltaLines = XML_getFloat(parent, this.CLASS_STAMP + "DeltaLines");
-    this.MinimumDistance_traceU = XML_getFloat(parent, this.CLASS_STAMP + "MinDistTraceU");
-    this.MinimumDistance_traceV = XML_getFloat(parent, this.CLASS_STAMP + "MinDistTraceV");
+    this.ResX = XML_getInt(parent, "resX");
+    this.ResY = XML_getInt(parent, "resY");
+    this.Grade = XML_getFloat(parent, "grade");
+    this.displayImage = XML_getBoolean(parent, "displayImage");
+    this.sectionType = XML_getInt(parent, "sectionType");
+    this.positionStep = XML_getFloat(parent, "positionStep");
+    this.Process_subDivisions = XML_getInt(parent, "processSubDivisions");
+    this.deltaStep = XML_getFloat(parent, "deltaStep");
+    this.deltaLines = XML_getFloat(parent, "deltaLines");
+    this.MinimumDistance_traceU = XML_getFloat(parent, "minDistTraceU");
+    this.MinimumDistance_traceV = XML_getFloat(parent, "minDistTraceV");
 
-    this.Z = XML_getFloat(parent, this.CLASS_STAMP + "Z");
-    this.RotX = XML_getFloat(parent, this.CLASS_STAMP + "RotX");
-    this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
-    this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
-    this.corners = XML_getFloatArray(parent, this.CLASS_STAMP + "corners");
-    this.X = XML_getFloat(parent, this.CLASS_STAMP + "X");
-    this.Y = XML_getFloat(parent, this.CLASS_STAMP + "Y");
+    this.Z = XML_getFloat(parent, "z");
+    this.RotX = XML_getFloat(parent, "rotX");
+    this.rotY = XML_getFloat(parent, "rotY");
+    this.rotZ = XML_getFloat(parent, "rotZ");
+    this.corners = XML_getFloatArray(parent, "corners");
+    this.X = XML_getFloat(parent, "x");
+    this.Y = XML_getFloat(parent, "y");
   }
 }
