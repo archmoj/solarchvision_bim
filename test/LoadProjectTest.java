@@ -284,4 +284,58 @@ class LoadProjectTest {
     // falling back to the root.
     app.parse_XML_variables(xml, false, true);
   }
+
+  @Test
+  void buildProjectSnapshot_nestsClimateSettings_underAClimateGroupInsideVariable () {
+    // Same grouping fix as "geometry" above, one level further down:
+    // the ~35 previously-flat attributes on "variable" (climate/
+    // weather data-source config, develop-layer analysis settings,
+    // and display/rendering options) are now split into named
+    // sub-elements of "variable" instead of all sitting as its own
+    // flat, unrelated siblings. sceneName/activeLanguage/currentFont
+    // stay directly on "variable" - true scene-identity, not a
+    // setting belonging to any one of those three categories.
+    processing.data.XML xml = app.buildProjectSnapshot(true);
+    processing.data.XML variable = xml.getChild("variable");
+
+    processing.data.XML climate = variable.getChild("climate");
+    assertNotNull(climate, "a climate group should exist on a freshly-built snapshot");
+    assertNull(variable.getString("climateBasedSolarForecast"), "climateBasedSolarForecast should no longer sit directly on variable");
+    assertNotNull(climate.getString("climateBasedSolarForecast"));
+
+    assertNotNull(variable.getChild("layer"), "a layer group should exist on a freshly-built snapshot");
+    assertNotNull(variable.getChild("display"), "a display group should exist on a freshly-built snapshot");
+    assertNotNull(variable.getString("sceneName"), "sceneName is scene identity, not a climate/layer/display setting - it stays directly on variable");
+  }
+
+  @Test
+  void parseXmlVariables_stillLoadsClimateSettings_fromAPreGroupingSaveFile () {
+    // Mirrors parseXmlVariables_stillLoadsGeometry_fromAPreGroupingSaveFile
+    // above, one level down: a "variable" block saved before this
+    // grouping existed has none of "climate"/"layer"/"display" - every
+    // setting sat directly on "variable" itself, exactly where
+    // parse_XML_variables() falls back to when the more specific child
+    // isn't there.
+    app.climateBasedSolarForecast = 42;
+    processing.data.XML xml = app.buildProjectSnapshot(true);
+    processing.data.XML variable = xml.getChild("variable");
+
+    // Simulate a pre-grouping "variable" block: hoist "climate"'s own
+    // attributes back up onto "variable" directly, then remove the
+    // now-empty "climate" wrapper.
+    processing.data.XML climate = variable.getChild("climate");
+    String[] climateAttributeNames = climate.listAttributes();
+    for (String attributeName : climateAttributeNames) {
+      variable.setString(attributeName, climate.getString(attributeName));
+    }
+    variable.removeChild(climate);
+
+    assertNull(variable.getChild("climate"));
+    assertNotNull(variable.getString("climateBasedSolarForecast"), "sanity check: the ungrouped layout really is what this test is exercising");
+
+    app.climateBasedSolarForecast = 0; // clobber the in-memory value so the assertion below can only pass by actually reading it back
+    app.parse_XML_variables(xml, false, true);
+
+    assertEquals(42, app.climateBasedSolarForecast);
+  }
 }
