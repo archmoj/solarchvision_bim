@@ -122,7 +122,7 @@ class LayersTest {
     original.to_XML(root);
 
     solarchvision_bim.LAYER loaded = app.new LAYER(0, 0, 0, "", "", "", "");
-    loaded.id = 4; // from_XML looks the child up by "LAYER_<id>", so id must match first
+    loaded.id = 4; // from_XML searches the <layer> wrapper's <item> children by id, so id must match first
     loaded.from_XML(root);
 
     assertEquals(4, loaded.id);
@@ -133,5 +133,40 @@ class LayersTest {
     assertEquals(2.5f, loaded.verticalUnitScale, 0.0001f);
     assertEquals(-10f, loaded.verticalUnitOffset, 0.0001f);
     assertEquals(1f, loaded.verticalNegativePadding, 0.0001f);
+  }
+
+  // Regression for the shared-wrapper fix: every LAYER instance's own
+  // to_XML() call now appends to the SAME <layer> wrapper (one per
+  // call to_XML lands on, reused across instances) instead of each
+  // instance minting its own uniquely-named top-level sibling. This
+  // proves several layers serialized in sequence - the real
+  // saveProject.pde/parseXmlVariables.pde usage - land as one <layer
+  // ni="3"><item id="..."/>...</layer>, not three separate top-level
+  // elements, and that each round-trips back to the right instance by
+  // id.
+  @Test
+  void toXML_ofSeveralLayers_shareOneWrapperDeclaringTheirCount () {
+    solarchvision_bim.LAYER a = app.new LAYER(1, 0, 0, "a", "A", "A_fr", "A");
+    a.id = 0;
+    solarchvision_bim.LAYER b = app.new LAYER(2, 0, 0, "b", "B", "B_fr", "B");
+    b.id = 1;
+    solarchvision_bim.LAYER c = app.new LAYER(3, 0, 0, "c", "C", "C_fr", "C");
+    c.id = 2;
+
+    processing.data.XML root = new processing.data.XML("root");
+    a.to_XML(root);
+    b.to_XML(root);
+    c.to_XML(root);
+
+    processing.data.XML[] wrappers = root.getChildren("layer");
+    assertEquals(1, wrappers.length, "all three instances should share one <layer> wrapper");
+    assertEquals(3, wrappers[0].getChildren("item").length);
+
+    solarchvision_bim.LAYER loadedB = app.new LAYER(0, 0, 0, "", "", "", "");
+    loadedB.id = 1;
+    loadedB.from_XML(root);
+    assertEquals("b", loadedB.unit);
+    assertEquals("B", loadedB.name);
+    assertEquals(2f, loadedB.verticalUnitScale, 0.0001f);
   }
 }
