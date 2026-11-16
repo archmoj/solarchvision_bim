@@ -56,14 +56,12 @@ class SolarImpacts {
   float RotX = 0; // North is up by default - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  // The currently-analyzed section's own 4 local corners, mirrored
-  // from allSections the same way X/Y/Z/RotX/.../rotZ are just above -
-  // see Sections' own f_data comment (sections.pde) for what these
-  // mean. Default is today's old 500x500 symmetric rectangle.
-  float P1X = -250, P1Y = -250;
-  float P2X = 250, P2Y = -250;
-  float P3X = 250, P3Y = 250;
-  float P4X = -250, P4Y = 250;
+  // The currently-analyzed section's own n local corners (a flat
+  // {x0,y0,x1,y1,...} array), mirrored from allSections the same way
+  // X/Y/Z/RotX/.../rotZ are just above - see Sections' own corners
+  // field comment (sections.pde) for what these mean. Default is
+  // today's old 500x500 symmetric rectangle.
+  float[] corners = { -250, -250, 250, -250, 250, 250, -250, 250 };
 
   int ResX = 400;
   int ResY = 400;
@@ -1238,14 +1236,7 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.P1X = allSections.getP1X(f);
-      this.P1Y = allSections.getP1Y(f);
-      this.P2X = allSections.getP2X(f);
-      this.P2Y = allSections.getP2Y(f);
-      this.P3X = allSections.getP3X(f);
-      this.P3Y = allSections.getP3Y(f);
-      this.P4X = allSections.getP4X(f);
-      this.P4Y = allSections.getP4Y(f);
+      this.corners = (float[]) allSections.getCornersXY(f).clone();
 
       SceneName = "Section_" + Section_Stamp();
 
@@ -1296,14 +1287,7 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.P1X = allSections.getP1X(f);
-      this.P1Y = allSections.getP1Y(f);
-      this.P2X = allSections.getP2X(f);
-      this.P2Y = allSections.getP2Y(f);
-      this.P3X = allSections.getP3X(f);
-      this.P3Y = allSections.getP3Y(f);
-      this.P4X = allSections.getP4X(f);
-      this.P4Y = allSections.getP4Y(f);
+      this.corners = (float[]) allSections.getCornersXY(f).clone();
 
       SceneName = "Section_" + Section_Stamp();
 
@@ -1321,10 +1305,10 @@ class SolarImpacts {
           // per-vertex projection is cheap specifically because it
           // assumes that), so the section's real shape - which may be
           // smaller than that rectangle - is cropped in here instead, as
-          // a single post-process pass reusing the exact same 4 corners
-          // as a mask polygon. See f_data's own comment (sections.pde).
-          allSections.applySectionMask(allSections.SolarImpact[f][j + 1][q],
-            this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
+          // a single post-process pass reusing the exact same n corners
+          // as a mask polygon. See sections.pde's own comment on its
+          // corners field.
+          allSections.applySectionMask(allSections.SolarImpact[f][j + 1][q], this.corners);
         }
       }
     }
@@ -1345,14 +1329,7 @@ class SolarImpacts {
     XML_setFloat(parent, "rotX", this.RotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
-    XML_setFloat(parent, "p1x", this.P1X);
-    XML_setFloat(parent, "p1y", this.P1Y);
-    XML_setFloat(parent, "p2x", this.P2X);
-    XML_setFloat(parent, "p2y", this.P2Y);
-    XML_setFloat(parent, "p3x", this.P3X);
-    XML_setFloat(parent, "p3y", this.P3Y);
-    XML_setFloat(parent, "p4x", this.P4X);
-    XML_setFloat(parent, "p4y", this.P4Y);
+    XML_setFloatArray(parent, "corners", this.corners);
 
     XML_setInt(parent, "resX", this.ResX);
     XML_setInt(parent, "resY", this.ResY);
@@ -1373,14 +1350,7 @@ class SolarImpacts {
     this.RotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
-    this.P1X = XML_getFloat(parent, "p1x");
-    this.P1Y = XML_getFloat(parent, "p1y");
-    this.P2X = XML_getFloat(parent, "p2x");
-    this.P2Y = XML_getFloat(parent, "p2y");
-    this.P3X = XML_getFloat(parent, "p3x");
-    this.P3Y = XML_getFloat(parent, "p3y");
-    this.P4X = XML_getFloat(parent, "p4x");
-    this.P4Y = XML_getFloat(parent, "p4y");
+    this.corners = XML_getFloatArray(parent, "corners");
 
     this.ResX = XML_getInt(parent, "resX");
     this.ResY = XML_getInt(parent, "resY");

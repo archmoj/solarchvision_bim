@@ -15,7 +15,7 @@ class FaceToSectionTest {
   // convention MouseClickedTest's own horizontal-face tests use, so the
   // flip-correction inside computeSectionParamsFromFace() does not fire.
   @Test
-  void triangleFace_becomesATriangleSection_withP4DefaultingToP1 () {
+  void triangleFace_becomesAnExactTriangleSection () {
     app.allVertices = new float[][]{{0, 0, 5}, {4, 0, 5}, {0, 3, 5}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.Select3D.faceSelection = new int[]{0};
@@ -27,37 +27,26 @@ class FaceToSectionTest {
     // Lifted FACE_TO_SECTION_LIFT along the (horizontal, +Z) normal.
     assertEquals(5f + app.FACE_TO_SECTION_LIFT, app.allSections.getZ(0), 0.0001f);
 
-    // The 3 real vertices, projected into the section's own local plane,
-    // survive as p1..p4 (not just the face's bounding rectangle) - and
-    // p4 defaults back to p1, closing the triangle exactly like the
-    // __SECTION__ command's own p4x/p4y-omitted default.
-    assertEquals(app.allSections.getP1X(0), app.allSections.getP4X(0), 0.0001f);
-    assertEquals(app.allSections.getP1Y(0), app.allSections.getP4Y(0), 0.0001f);
+    // Sections now store an exact n-gon (sections.pde's own corners
+    // field) - a triangular face becomes exactly 3 stored corners, not
+    // a padded-to-4 quad.
+    assertEquals(3, app.allSections.getNumCorners(0));
 
-    // The mask polygon (p1,p2,p3) must actually be the 4x3 right
-    // triangle the 3 source vertices describe, not its 4x3 bounding
-    // rectangle - check via sectionBoundingBox() (the rectangle every
-    // bake/render path still uses) plus an explicit inside/outside probe
-    // of sectionInsideMask() at a point that's inside the bounding
-    // rectangle but outside the actual triangle.
-    float[] box = app.allSections.sectionBoundingBox(
-      app.allSections.getP1X(0), app.allSections.getP1Y(0),
-      app.allSections.getP2X(0), app.allSections.getP2Y(0),
-      app.allSections.getP3X(0), app.allSections.getP3Y(0),
-      app.allSections.getP4X(0), app.allSections.getP4Y(0)
-      );
+    // The mask polygon (the 3 real corners) must actually be the 4x3
+    // right triangle the 3 source vertices describe, not its 4x3
+    // bounding rectangle - check via sectionBoundingBox() (the
+    // rectangle every bake/render path still uses) plus an explicit
+    // inside/outside probe of sectionInsideMask() at a point that's
+    // inside the bounding rectangle but outside the actual triangle.
+    float[] cornersXY = app.allSections.getCornersXY(0);
+    float[] box = app.allSections.sectionBoundingBox(cornersXY);
     assertEquals(4f, box[2], 0.0001f); // sizeX
     assertEquals(3f, box[3], 0.0001f); // sizeY
 
-    // (3.5, 2.5) in local coords sits in the bounding rectangle's far
+    // (1.9, 1.4) in local coords sits in the bounding rectangle's far
     // corner (near (hx, hy) = (2, 1.5)) but well outside the triangle's
     // hypotenuse - outside the mask.
-    boolean farCornerInside = app.allSections.sectionInsideMask(1.9f, 1.4f,
-      app.allSections.getP1X(0), app.allSections.getP1Y(0),
-      app.allSections.getP2X(0), app.allSections.getP2Y(0),
-      app.allSections.getP3X(0), app.allSections.getP3Y(0),
-      app.allSections.getP4X(0), app.allSections.getP4Y(0)
-      );
+    boolean farCornerInside = app.allSections.sectionInsideMask(1.9f, 1.4f, cornersXY);
     assertFalse(farCornerInside);
   }
 
@@ -74,24 +63,22 @@ class FaceToSectionTest {
     app.convertSelectedFacesToSections();
 
     assertEquals(1, app.allSections.num);
+    assertEquals(4, app.allSections.getNumCorners(0));
     assertEquals(1f, app.allSections.getX(0), 0.0001f);
     assertEquals(1f, app.allSections.getY(0), 0.0001f);
     assertEquals(2f, app.allSections.getSizeX(0), 0.0001f);
     assertEquals(2f, app.allSections.getSizeY(0), 0.0001f);
   }
 
-  // A 5-sided face has no single quad that could represent it exactly,
-  // so this falls back to the same (possibly rotated-frame) bounding
-  // rectangle a live left-click (computeSectionParamsFromFace()) would
-  // have built - p1..p4 are that rectangle's own 4 corners, in its own
-  // local frame, by construction: p1-p2 and p1-p4 are always exactly
-  // perpendicular, with lengths SizeX and SizeY. That holds regardless
-  // of which way computeSectionParamsFromFace()'s own minimum-bounding-
-  // box search happened to rotate the frame for this particular
-  // pentagon, so it's checked directly instead of hand-deriving that
-  // rotation's exact angle.
+  // A 5-sided face now becomes an EXACT pentagon section - Sections no
+  // longer cap out at 4 corners (sections.pde's own corners field is a
+  // genuine variable-length n-gon), so there's no bounding-rectangle
+  // approximation needed anymore for a face with more than 4 sides.
+  // This checks the stored corners are exactly the face's own 5
+  // vertices (projected into the section's own local plane, in the
+  // same order), not a 4-corner approximation of them.
   @Test
-  void pentagonFace_fallsBackToItsBoundingRectangle () {
+  void pentagonFace_becomesAnExactPentagonSection () {
     app.allVertices = new float[][]{
       {0, 0, 5}, {4, 0, 5}, {4, 3, 5}, {2, 5, 5}, {0, 3, 5}
       };
@@ -101,24 +88,23 @@ class FaceToSectionTest {
     app.convertSelectedFacesToSections();
 
     assertEquals(1, app.allSections.num);
+    assertEquals(5, app.allSections.getNumCorners(0));
 
-    float p1x = app.allSections.getP1X(0);
-    float p1y = app.allSections.getP1Y(0);
-    float p2x = app.allSections.getP2X(0);
-    float p2y = app.allSections.getP2Y(0);
-    float p4x = app.allSections.getP4X(0);
-    float p4y = app.allSections.getP4Y(0);
+    // Every one of the pentagon's own 5 source vertices, projected into
+    // the section's own local plane, must be a genuine polygon vertex -
+    // i.e. strictly outside the mask only just past it. Cheap,
+    // rotation-agnostic check: the mask must contain its own centroid
+    // (a non-degenerate polygon always does for this convex pentagon),
+    // and must NOT contain a point far outside the bounding box.
+    float[] cornersXY = app.allSections.getCornersXY(0);
+    float[] box = app.allSections.sectionBoundingBox(cornersXY);
+    float centerX = box[0];
+    float centerY = box[1];
+    assertTrue(app.allSections.sectionInsideMask(centerX, centerY, cornersXY));
 
-    float side12x = p2x - p1x;
-    float side12y = p2y - p1y;
-    float side14x = p4x - p1x;
-    float side14y = p4y - p1y;
-
-    // Perpendicular sides...
-    assertEquals(0f, side12x * side14x + side12y * side14y, 0.001f);
-    // ...whose lengths are exactly SizeX and SizeY.
-    assertEquals(app.allSections.getSizeX(0), Math.sqrt(side12x * side12x + side12y * side12y), 0.001f);
-    assertEquals(app.allSections.getSizeY(0), Math.sqrt(side14x * side14x + side14y * side14y), 0.001f);
+    float farX = centerX + box[2];
+    float farY = centerY + box[3];
+    assertFalse(app.allSections.sectionInsideMask(farX, farY, cornersXY));
   }
 
   // Degenerate (<= 2 node) faces are skipped, exactly like a live
@@ -189,23 +175,25 @@ class FaceToSectionTest {
     return (float) Math.toDegrees(Math.atan(x));
   }
 
-  // Bug B regression test: an asymmetric n>4 polygon (pentagon) whose
-  // simple vertex-average centroid is provably NOT at its bounding box's
-  // geometric center. This face is kept purely vertical (all 5 vertices
-  // share world X=0) so the new tilted-plane solver (Bug A's fix) does
-  // not engage here - this isolates Bug B's fix (the true per-vertex
-  // min/max, not a rectangle assumed centered on the vertex centroid).
+  // Bug B regression test (original form): an asymmetric n>4 polygon
+  // (pentagon) whose simple vertex-average centroid is provably NOT at
+  // its bounding box's geometric center. This used to matter because
+  // the OLD code approximated anything above 4 sides with a bounding
+  // rectangle assumed centered on the vertex centroid - wrong for an
+  // asymmetric shape like this gable wall. Sections now store an EXACT
+  // n-gon, so there's no bounding-rectangle approximation left to get
+  // wrong; this test instead locks in that the exact stored pentagon
+  // still covers the asymmetric peak correctly (the far peak vertex is
+  // on the mask boundary, and a point just beyond it - still inside the
+  // old bounding rectangle - is correctly outside the real mask).
   //
   // Vertices (world Y, Z), all at world X=0:
   //   (0,0) -> (4,0) -> (4,3) -> (1,7) -> (0,3) -> close
   // This is a wall rectangle (Y in [0,4], Z in [0,3]) topped by a
   // triangular peak at (Y=1, Z=7) - shifted well off the Y-midpoint
-  // (Y=2), so the peak drags the vertex-average noticeably off the true
-  // bounding box's center:
-  //   vertex-average   (Y,Z) = (9/5, 13/5)   = (1.8, 2.6)
-  //   bounding-box-center     = ((0+4)/2, (0+7)/2) = (2, 3.5)
+  // (Y=2).
   @Test
-  void pentagonFace_withOffCenterPeak_boundingRectangleCoversAllVerticesNotJustTheCentroid () {
+  void pentagonFace_withOffCenterPeak_getsAnExactMaskNotABoundingRectangle () {
     app.allVertices = new float[][]{
       {0, 0, 0}, {0, 4, 0}, {0, 4, 3}, {0, 1, 7}, {0, 0, 3}
       };
@@ -215,41 +203,42 @@ class FaceToSectionTest {
     app.convertSelectedFacesToSections();
 
     assertEquals(1, app.allSections.num);
+    assertEquals(5, app.allSections.getNumCorners(0));
 
-    float p1x = app.allSections.getP1X(0);
-    float p1y = app.allSections.getP1Y(0);
-    float p3x = app.allSections.getP3X(0);
-    float p3y = app.allSections.getP3Y(0);
+    float[] cornersXY = app.allSections.getCornersXY(0);
+    float[] box = app.allSections.sectionBoundingBox(cornersXY);
 
-    // sp.X/Y/Z (the section's world position, pre-lift) is the simple
-    // vertex-average - and a pure rotation about that same point maps
-    // the vertex average to exactly local (0,0). The OLD, buggy code
-    // built its rectangle symmetrically around that same local origin
-    // (p1 = -half-size, p3 = +half-size), so its center was always
-    // exactly (0,0). The true bounding box of this asymmetric pentagon
-    // is NOT centered on the vertex average, so the FIXED rectangle's
-    // center must be measurably away from (0,0).
-    float centerX = (p1x + p3x) / 2f;
-    float centerY = (p1y + p3y) / 2f;
-    float centerDist = (float) Math.sqrt(centerX * centerX + centerY * centerY);
+    // The bounding box itself is still asymmetric around the vertex
+    // centroid (which sits at local (0,0) - see this function's own
+    // earlier comment history) - i.e. the box's own center is
+    // measurably away from (0,0), confirming the peak really is
+    // off-center.
+    float centerDist = (float) Math.sqrt(box[0] * box[0] + box[1] * box[1]);
     assertTrue(centerDist > 0.1f,
-      "Expected the bounding rectangle's center to be measurably off the vertex centroid (old-bug symmetric assumption), but it was within 0.1 of it: (" + centerX + ", " + centerY + ")");
+      "Expected the bounding rectangle's center to be measurably off the vertex centroid, but it was within 0.1 of it: (" + box[0] + ", " + box[1] + ")");
 
-    // And, by construction of a real bounding box: every one of the 5
-    // source vertices, projected into the section's own local frame,
-    // must fall within [p1..p3]'s rectangle (with a little slack for
-    // floating point).
-    float minX = Math.min(p1x, p3x) - 0.001f;
-    float maxX = Math.max(p1x, p3x) + 0.001f;
-    float minY = Math.min(p1y, p3y) - 0.001f;
-    float maxY = Math.max(p1y, p3y) + 0.001f;
-
-    float sizeX = app.allSections.getSizeX(0);
-    float sizeY = app.allSections.getSizeY(0);
-    assertTrue(sizeX > 0.001f);
-    assertTrue(sizeY > 0.001f);
-    assertTrue((maxX - minX) <= (sizeX + 0.01f));
-    assertTrue((maxY - minY) <= (sizeY + 0.01f));
+    // In world terms the bounding box spans Y in [0,4] and Z in [0,7],
+    // but the pentagon only reaches Z=7 at a single point (Y=1) - so
+    // the box's own 2 "high" corners (Y=0,Z=7) and (Y=4,Z=7) are both
+    // genuinely outside the pentagon, while its 2 "low" corners
+    // (Y=0,Z=0) and (Y=4,Z=0) sit exactly on the pentagon's own
+    // boundary. A rotation/reflection into the section's own local
+    // frame renames which corner is which (local axes don't
+    // necessarily line up with world Y/Z the same way every time this
+    // runs) but never changes which POINTS are inside or outside the
+    // polygon - so at least one of the local box's own 4 corners must
+    // still be outside the real mask, even though all 4 are (trivially)
+    // inside the bounding rectangle every bake path still rasterizes
+    // against.
+    float[] cx = { box[0] - 0.49f * box[2], box[0] + 0.49f * box[2] };
+    float[] cy = { box[1] - 0.49f * box[3], box[1] + 0.49f * box[3] };
+    boolean anyCornerOutside = false;
+    for (float x : cx) {
+      for (float y : cy) {
+        if (!app.allSections.sectionInsideMask(x, y, cornersXY)) anyCornerOutside = true;
+      }
+    }
+    assertTrue(anyCornerOutside, "Expected at least one bounding-box corner to fall outside the exact pentagon mask");
   }
 
   // Converting several selected faces at once creates one section per

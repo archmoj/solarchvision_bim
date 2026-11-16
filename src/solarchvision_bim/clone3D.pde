@@ -225,16 +225,15 @@ class Clone3D {
 
     for (int o = 0; o < Select3D.sectionSelection.length; o++) {
       int OBJ_ID = Select3D.sectionSelection[o];
-      // The real 4 corners, not the derived bounding-box getSizeX/
-      // getSizeY - a non-rectangular section cloned via those would
-      // silently turn into its own bounding rectangle instead.
+      // The real n corners (a copy, not the stored array itself - so
+      // scaling/editing the clone never aliases back into the
+      // original), not the derived bounding-box getSizeX/getSizeY - a
+      // non-rectangular section cloned via those would silently turn
+      // into its own bounding rectangle instead.
       allSections.create(
         allSections.getX(OBJ_ID), allSections.getY(OBJ_ID), allSections.getZ(OBJ_ID),
         allSections.getRotX(OBJ_ID), allSections.getRotY(OBJ_ID), allSections.getRotZ(OBJ_ID),
-        allSections.getP1X(OBJ_ID), allSections.getP1Y(OBJ_ID),
-        allSections.getP2X(OBJ_ID), allSections.getP2Y(OBJ_ID),
-        allSections.getP3X(OBJ_ID), allSections.getP3Y(OBJ_ID),
-        allSections.getP4X(OBJ_ID), allSections.getP4Y(OBJ_ID),
+        (float[]) allSections.getCornersXY(OBJ_ID).clone(),
         allSections.get_resX(OBJ_ID), allSections.get_resY(OBJ_ID)
       );
     }

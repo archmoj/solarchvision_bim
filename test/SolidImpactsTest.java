@@ -119,14 +119,7 @@ class SolidImpactsTest {
     app.allSolidImpacts.MinimumDistance_traceV = 0.5f;
     app.allSolidImpacts.Z = 1;
     app.allSolidImpacts.RotX = 5;
-    app.allSolidImpacts.P1X = -4.5f;
-    app.allSolidImpacts.P1Y = -6.5f;
-    app.allSolidImpacts.P2X = 4.5f;
-    app.allSolidImpacts.P2Y = -6.5f;
-    app.allSolidImpacts.P3X = 4.5f;
-    app.allSolidImpacts.P3Y = 6.5f;
-    app.allSolidImpacts.P4X = -4.5f;
-    app.allSolidImpacts.P4Y = 6.5f;
+    app.allSolidImpacts.corners = new float[]{-4.5f, -6.5f, 4.5f, -6.5f, 4.5f, 6.5f, -4.5f, 6.5f};
     app.allSolidImpacts.X = 17;
     app.allSolidImpacts.Y = 21;
 

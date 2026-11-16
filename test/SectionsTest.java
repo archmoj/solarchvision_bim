@@ -18,7 +18,8 @@ class SectionsTest {
     app.allSections.makeEmpty(2);
     assertEquals(2, app.allSections.num);
     assertEquals(2, app.allSections.f_data.length);
-    assertEquals(14, app.allSections.f_data[0].length); // X,Y,Z,rotX,rotY,rotZ,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y
+    assertEquals(6, app.allSections.f_data[0].length); // X,Y,Z,rotX,rotY,rotZ
+    assertEquals(2, app.allSections.corners.length); // one variable-length row per section
     assertEquals(2, app.allSections.i_data.length);
     assertEquals(2, app.allSections.SolidImpact.length);
     assertEquals(2, app.allSections.SolarImpact.length);
@@ -50,8 +51,9 @@ class SectionsTest {
 
   @Test
   void gettersAndSetters_roundTripEveryColumn () {
-    app.allSections.f_data = new float[][]{new float[14]};
+    app.allSections.f_data = new float[][]{new float[6]};
     app.allSections.i_data = new int[][]{new int[2]};
+    app.allSections.corners = new float[][]{new float[10]}; // 5 corners worth of slots
 
     app.allSections.setX(0, 1);
     app.allSections.setY(0, 2);
@@ -59,14 +61,16 @@ class SectionsTest {
     app.allSections.setRotX(0, 4);
     app.allSections.setRotY(0, 7);
     app.allSections.setRotZ(0, 8);
-    app.allSections.setP1X(0, 11);
-    app.allSections.setP1Y(0, 12);
-    app.allSections.setP2X(0, 13);
-    app.allSections.setP2Y(0, 14);
-    app.allSections.setP3X(0, 15);
-    app.allSections.setP3Y(0, 16);
-    app.allSections.setP4X(0, 17);
-    app.allSections.setP4Y(0, 18);
+    app.allSections.setCornerX(0, 0, 11);
+    app.allSections.setCornerY(0, 0, 12);
+    app.allSections.setCornerX(0, 1, 13);
+    app.allSections.setCornerY(0, 1, 14);
+    app.allSections.setCornerX(0, 2, 15);
+    app.allSections.setCornerY(0, 2, 16);
+    app.allSections.setCornerX(0, 3, 17);
+    app.allSections.setCornerY(0, 3, 18);
+    app.allSections.setCornerX(0, 4, 19);
+    app.allSections.setCornerY(0, 4, 20);
     app.allSections.set_resX(0, 8);
     app.allSections.set_resY(0, 9);
 
@@ -76,14 +80,17 @@ class SectionsTest {
     assertEquals(4f, app.allSections.getRotX(0), 0.0001f);
     assertEquals(7f, app.allSections.getRotY(0), 0.0001f);
     assertEquals(8f, app.allSections.getRotZ(0), 0.0001f);
-    assertEquals(11f, app.allSections.getP1X(0), 0.0001f);
-    assertEquals(12f, app.allSections.getP1Y(0), 0.0001f);
-    assertEquals(13f, app.allSections.getP2X(0), 0.0001f);
-    assertEquals(14f, app.allSections.getP2Y(0), 0.0001f);
-    assertEquals(15f, app.allSections.getP3X(0), 0.0001f);
-    assertEquals(16f, app.allSections.getP3Y(0), 0.0001f);
-    assertEquals(17f, app.allSections.getP4X(0), 0.0001f);
-    assertEquals(18f, app.allSections.getP4Y(0), 0.0001f);
+    assertEquals(5, app.allSections.getNumCorners(0));
+    assertEquals(11f, app.allSections.getCornerX(0, 0), 0.0001f);
+    assertEquals(12f, app.allSections.getCornerY(0, 0), 0.0001f);
+    assertEquals(13f, app.allSections.getCornerX(0, 1), 0.0001f);
+    assertEquals(14f, app.allSections.getCornerY(0, 1), 0.0001f);
+    assertEquals(15f, app.allSections.getCornerX(0, 2), 0.0001f);
+    assertEquals(16f, app.allSections.getCornerY(0, 2), 0.0001f);
+    assertEquals(17f, app.allSections.getCornerX(0, 3), 0.0001f);
+    assertEquals(18f, app.allSections.getCornerY(0, 3), 0.0001f);
+    assertEquals(19f, app.allSections.getCornerX(0, 4), 0.0001f);
+    assertEquals(20f, app.allSections.getCornerY(0, 4), 0.0001f);
     assertEquals(8, app.allSections.get_resX(0));
     assertEquals(9, app.allSections.get_resY(0));
   }
@@ -96,7 +103,7 @@ class SectionsTest {
 
   @Test
   void rotateXYZ_eachAccumulateIntoTheirOwnColumnOnly () {
-    app.allSections.f_data = new float[][]{new float[14]};
+    app.allSections.f_data = new float[][]{new float[6]};
 
     app.allSections.RotateX(0, 10);
     app.allSections.RotateY(0, 20);
@@ -112,7 +119,7 @@ class SectionsTest {
 
   @Test
   void move_addsTheOffsetToPositionOnly () {
-    app.allSections.f_data = new float[][]{{1, 1, 1, 45, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0}};
+    app.allSections.f_data = new float[][]{{1, 1, 1, 45, 2, 3}};
     app.allSections.move(0, 1, 2, 3);
     assertEquals(2f, app.allSections.getX(0), 0.0001f);
     assertEquals(3f, app.allSections.getY(0), 0.0001f);
@@ -171,7 +178,7 @@ class SectionsTest {
 
   @Test
   void resizeSolarImpactArray_rebuildsToMatchTheCurrentSectionCount () {
-    app.allSections.f_data = new float[][]{new float[14]};
+    app.allSections.f_data = new float[][]{new float[6]};
     app.allSections.i_data = new int[][]{new int[2]};
     app.allSections.num = 1;
 
@@ -192,8 +199,9 @@ class SectionsTest {
     // at zero iterations and avoids the real PImage.save()/loadImage()
     // calls they'd otherwise make - there's no way to exercise those
     // safely against a hand-built scene with no real files on disk.
-    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 15, 25, -1, -1, 1, -1, 1, 1, -1, 1}};
+    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 15, 25}};
     app.allSections.i_data = new int[][]{{4, 4}};
+    app.allSections.corners = new float[][]{{-1, -1, 1, -1, 1, 1, -1, 1}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[0];
     app.allSections.SolarImpact = new processing.core.PImage[0][0][0];
@@ -211,6 +219,11 @@ class SectionsTest {
     assertEquals(15f, fresh.getRotY(0), 0.0001f);
     assertEquals(25f, fresh.getRotZ(0), 0.0001f);
     assertEquals(4, fresh.get_resX(0));
+    assertEquals(4, fresh.getNumCorners(0));
+    assertEquals(-1f, fresh.getCornerX(0, 0), 0.0001f);
+    assertEquals(-1f, fresh.getCornerY(0, 0), 0.0001f);
+    assertEquals(1f, fresh.getCornerX(0, 2), 0.0001f);
+    assertEquals(1f, fresh.getCornerY(0, 2), 0.0001f);
     assertFalse(fresh.displayAll);
   }
 }

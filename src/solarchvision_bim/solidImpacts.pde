@@ -18,41 +18,39 @@ class SolidImpacts {
   float RotX = 0; // see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  // The currently-analyzed section's own 4 local corners, mirrored from
-  // allSections the same way X/Y/Z/RotX/rotY/rotZ are just above - see
-  // Sections' own f_data comment (sections.pde) for what these mean.
-  // Default is today's old 100x100 symmetric rectangle.
-  float P1X = -50, P1Y = -50;
-  float P2X = 50, P2Y = -50;
-  float P3X = 50, P3Y = 50;
-  float P4X = -50, P4Y = 50;
+  // The currently-analyzed section's own n local corners (a flat
+  // {x0,y0,x1,y1,...} array), mirrored from allSections the same way
+  // X/Y/Z/RotX/rotY/rotZ are just above - see Sections' own corners
+  // field comment (sections.pde) for what these mean. Default is
+  // today's old 100x100 symmetric rectangle.
+  float[] corners = { -50, -50, 50, -50, 50, 50, -50, 50 };
 
   // Derived convenience, mirroring Sections' own getSizeX/getSizeY
   // (sections.pde) - "how big is this section" for a caller (mouse
   // Clicked.pde's drag-resize tool) that only wants a plain rectangle.
-  float getSizeX () { return allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y)[2]; }
-  float getSizeY () { return allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y)[3]; }
+  float getSizeX () { return allSections.sectionBoundingBox(this.corners)[2]; }
+  float getSizeY () { return allSections.sectionBoundingBox(this.corners)[3]; }
 
   // Likewise a method, not a setter on a stored field - scales every
   // corner's X (or Y) proportionally to hit the requested bounding-box
   // width (or height), the same as scale3D.pde's own Sections()
-  // handling. Used by both valueModifier.pde's own spinner setter and
-  // uiRollout.pde's re-application of that spinner's drawn value.
+  // handling, now over however many corners this cache actually holds
+  // (not a fixed 4). Used by both valueModifier.pde's own spinner
+  // setter and uiRollout.pde's re-application of that spinner's drawn
+  // value.
   void setSizeX (float v) {
     float old = this.getSizeX();
     float s = (old != 0) ? v / old : 1;
-    this.P1X *= s;
-    this.P2X *= s;
-    this.P3X *= s;
-    this.P4X *= s;
+    for (int k = 0; k < this.corners.length / 2; k++) {
+      this.corners[2 * k] *= s;
+    }
   }
   void setSizeY (float v) {
     float old = this.getSizeY();
     float s = (old != 0) ? v / old : 1;
-    this.P1Y *= s;
-    this.P2Y *= s;
-    this.P3Y *= s;
-    this.P4Y *= s;
+    for (int k = 0; k < this.corners.length / 2; k++) {
+      this.corners[2 * k + 1] *= s;
+    }
   }
 
   int ResX = 400;
@@ -184,14 +182,7 @@ class SolidImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.P1X = allSections.getP1X(f);
-      this.P1Y = allSections.getP1Y(f);
-      this.P2X = allSections.getP2X(f);
-      this.P2Y = allSections.getP2Y(f);
-      this.P3X = allSections.getP3X(f);
-      this.P3Y = allSections.getP3Y(f);
-      this.P4X = allSections.getP4X(f);
-      this.P4Y = allSections.getP4Y(f);
+      this.corners = (float[]) allSections.getCornersXY(f).clone();
 
       {
         if ((this.Image.width != this.ResX) || (this.Image.height != this.ResY)) {
@@ -512,7 +503,7 @@ class SolidImpacts {
       int Section_ResY = this.ResY;
 
       float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
-        this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y, Section_ResX, Section_ResY);
+        this.corners, Section_ResX, Section_ResY);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -584,9 +575,9 @@ class SolidImpacts {
       // projection is cheap specifically because it assumes that), so a
       // non-rectangular section's real shape - which may be smaller than
       // that rectangle - is cropped in here instead, as a single post-
-      // process pass reusing the same 4 corners as a mask polygon. See
-      // f_data's own comment (sections.pde).
-      allSections.applySectionMask(this.Image, this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
+      // process pass reusing the same n corners as a mask polygon. See
+      // sections.pde's own comment on its corners field.
+      allSections.applySectionMask(this.Image, this.corners);
 
       if (this.record_IMG == true) {
         String myFile = getFilename_SolidImpact() + ".jpg";
@@ -643,12 +634,12 @@ class SolidImpacts {
 
         pdf.image(this.Image, 0, 0, this.ResX, this.ResY);
 
-        // Bounding box of this bake's own 4 corners, reused just below
+        // Bounding box of this bake's own n corners, reused just below
         // in place of the old implicit "centered on local origin"
         // assumption (this.SizeX/SizeY alone, before corners existed) -
         // reduces to that exact formula when centerX/centerY are 0, as
         // they still are for every plain symmetric-rectangle section.
-        float[] _maskBox = allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
+        float[] _maskBox = allSections.sectionBoundingBox(this.corners);
         float _maskCenterX = _maskBox[0];
         float _maskCenterY = _maskBox[1];
         float _maskSizeX = _maskBox[2];
@@ -1248,14 +1239,7 @@ class SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + "RotX", this.RotX);
     XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
     XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
-    XML_setFloat(parent, this.CLASS_STAMP + "P1X", this.P1X);
-    XML_setFloat(parent, this.CLASS_STAMP + "P1Y", this.P1Y);
-    XML_setFloat(parent, this.CLASS_STAMP + "P2X", this.P2X);
-    XML_setFloat(parent, this.CLASS_STAMP + "P2Y", this.P2Y);
-    XML_setFloat(parent, this.CLASS_STAMP + "P3X", this.P3X);
-    XML_setFloat(parent, this.CLASS_STAMP + "P3Y", this.P3Y);
-    XML_setFloat(parent, this.CLASS_STAMP + "P4X", this.P4X);
-    XML_setFloat(parent, this.CLASS_STAMP + "P4Y", this.P4Y);
+    XML_setFloatArray(parent, this.CLASS_STAMP + "corners", this.corners);
     XML_setFloat(parent, this.CLASS_STAMP + "X", this.X);
     XML_setFloat(parent, this.CLASS_STAMP + "Y", this.Y);
   }
@@ -1289,14 +1273,7 @@ class SolidImpacts {
     this.RotX = XML_getFloat(parent, this.CLASS_STAMP + "RotX");
     this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
     this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
-    this.P1X = XML_getFloat(parent, this.CLASS_STAMP + "P1X");
-    this.P1Y = XML_getFloat(parent, this.CLASS_STAMP + "P1Y");
-    this.P2X = XML_getFloat(parent, this.CLASS_STAMP + "P2X");
-    this.P2Y = XML_getFloat(parent, this.CLASS_STAMP + "P2Y");
-    this.P3X = XML_getFloat(parent, this.CLASS_STAMP + "P3X");
-    this.P3Y = XML_getFloat(parent, this.CLASS_STAMP + "P3Y");
-    this.P4X = XML_getFloat(parent, this.CLASS_STAMP + "P4X");
-    this.P4Y = XML_getFloat(parent, this.CLASS_STAMP + "P4Y");
+    this.corners = XML_getFloatArray(parent, this.CLASS_STAMP + "corners");
     this.X = XML_getFloat(parent, this.CLASS_STAMP + "X");
     this.Y = XML_getFloat(parent, this.CLASS_STAMP + "Y");
   }

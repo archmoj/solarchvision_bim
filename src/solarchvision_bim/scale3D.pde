@@ -142,18 +142,16 @@ class Scale3D {
 
     for (int q = 0; q < Select3D.sectionSelection.length; q++) {
       int f = Select3D.sectionSelection[q];
-      // setSizeX/setSizeY no longer exist - size is derived from the 4
+      // setSizeX/setSizeY no longer exist - size is derived from the
       // real corners now, so scaling means scaling each corner's own
       // local offset directly (around the section's own local origin,
-      // same as every other object's scale3D.pde handling).
-      allSections.setP1X(f, allSections.getP1X(f) * sx);
-      allSections.setP1Y(f, allSections.getP1Y(f) * sy);
-      allSections.setP2X(f, allSections.getP2X(f) * sx);
-      allSections.setP2Y(f, allSections.getP2Y(f) * sy);
-      allSections.setP3X(f, allSections.getP3X(f) * sx);
-      allSections.setP3Y(f, allSections.getP3Y(f) * sy);
-      allSections.setP4X(f, allSections.getP4X(f) * sx);
-      allSections.setP4Y(f, allSections.getP4Y(f) * sy);
+      // same as every other object's scale3D.pde handling) - now over
+      // however many corners this section actually has, not a fixed 4.
+      int numCorners = allSections.getNumCorners(f);
+      for (int k = 0; k < numCorners; k++) {
+        allSections.setCornerX(f, k, allSections.getCornerX(f, k) * sx);
+        allSections.setCornerY(f, k, allSections.getCornerY(f, k) * sy);
+      }
     }
 
     allSolidImpacts.calculate_ImpactOnSections();

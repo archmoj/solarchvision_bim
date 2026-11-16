@@ -140,7 +140,8 @@ class ArbitrarySectionTest {
 
   @Test
   void rotate3DSections_dispatchesByTheVector_withoutTouchingR_whenNotVectorX () {
-    app.allSections.f_data = new float[][]{new float[14]};
+    app.allSections.f_data = new float[][]{new float[6]};
+    app.allSections.corners = new float[][]{{-50, -50, 50, -50, 50, 50, -50, 50}};
     app.allSections.i_data = new int[][]{{100, 100}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[]{app.createImage(100, 100, processing.core.PConstants.RGB)};
@@ -155,7 +156,8 @@ class ArbitrarySectionTest {
 
   @Test
   void rotate3DSections_vectorX_accumulatesIntoR () {
-    app.allSections.f_data = new float[][]{new float[14]};
+    app.allSections.f_data = new float[][]{new float[6]};
+    app.allSections.corners = new float[][]{{-50, -50, 50, -50, 50, 50, -50, 50}};
     app.allSections.i_data = new int[][]{{100, 100}};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[]{app.createImage(100, 100, processing.core.PConstants.RGB)};

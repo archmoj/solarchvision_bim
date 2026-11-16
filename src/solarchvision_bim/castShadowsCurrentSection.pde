@@ -24,15 +24,15 @@ void castShadows_CurrentSection (int sectionIndex, int sectionCount) {
   int resX = allSolarImpacts.ResX;
   int resY = allSolarImpacts.ResY;
 
-  // Bounding box of this bake's own 4 corners - the rectangle this
+  // Bounding box of this bake's own n corners - the rectangle this
   // whole shadow-casting pipeline actually rasterizes (unchanged, cheap
-  // per-vertex scale+offset, on purpose - see f_data's own comment,
-  // sections.pde). centerX/centerY is 0,0 for every plain symmetric
-  // section, same as before corners existed; Shades_offsetX/Y below
-  // (the real, final assignment - this one gets overwritten) picks it
-  // up once rotated into local space, same as the section's own
-  // position.
-  float[] shadeMaskBox = allSections.sectionBoundingBox(allSolarImpacts.P1X, allSolarImpacts.P1Y, allSolarImpacts.P2X, allSolarImpacts.P2Y, allSolarImpacts.P3X, allSolarImpacts.P3Y, allSolarImpacts.P4X, allSolarImpacts.P4Y);
+  // per-vertex scale+offset, on purpose - see sections.pde's own
+  // comment on its corners field). centerX/centerY is 0,0 for every
+  // plain symmetric section, same as before corners existed; Shades_
+  // offsetX/Y below (the real, final assignment - this one gets
+  // overwritten) picks it up once rotated into local space, same as
+  // the section's own position.
+  float[] shadeMaskBox = allSections.sectionBoundingBox(allSolarImpacts.corners);
   float shadeMaskCenterX = shadeMaskBox[0];
   float shadeMaskCenterY = shadeMaskBox[1];
 

@@ -2246,18 +2246,17 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               // SizeY, derived from the clicked face's own bounding
               // box above) - no mask/crop of its own to express - so
               // it just spells that rectangle's own 4 corners out
-              // directly (p4 would default to p1 if omitted, same as
-              // every other caller, but there's no reason to rely on
-              // that default here when the real corner is known).
+              // directly as the new point-list syntax's x,y tokens
+              // (extraCommands.pde's __SECTION__).
               float sp_hx = 0.5 * sp.SizeX;
               float sp_hy = 0.5 * sp.SizeY;
               runScriptLine("Section x=" + sp.X + " y=" + sp.Y + " z=" + sp.Z +
                 " rx=" + sp.RotX + " ry=" + sp.RotY + " rz=" + sp.RotZ +
-                " p1x=" + (-sp_hx) + " p1y=" + (-sp_hy) +
-                " p2x=" + sp_hx + " p2y=" + (-sp_hy) +
-                " p3x=" + sp_hx + " p3y=" + sp_hy +
-                " p4x=" + (-sp_hx) + " p4y=" + sp_hy +
-                " resX=" + sp.ResX + " resY=" + sp.ResY);
+                " resX=" + sp.ResX + " resY=" + sp.ResY +
+                " " + (-sp_hx) + "," + (-sp_hy) +
+                " " + sp_hx + "," + (-sp_hy) +
+                " " + sp_hx + "," + sp_hy +
+                " " + (-sp_hx) + "," + sp_hy);
 
               selectNewlyCreated(keep_number_of_allSections, allSections.num,
                 () -> Select3D.deselect_Sections(),
@@ -2270,14 +2269,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               allSolidImpacts.RotX = sp.RotX;
               allSolidImpacts.rotY = sp.RotY;
               allSolidImpacts.rotZ = sp.RotZ;
-              allSolidImpacts.P1X = -sp_hx;
-              allSolidImpacts.P1Y = -sp_hy;
-              allSolidImpacts.P2X = sp_hx;
-              allSolidImpacts.P2Y = -sp_hy;
-              allSolidImpacts.P3X = sp_hx;
-              allSolidImpacts.P3Y = sp_hy;
-              allSolidImpacts.P4X = -sp_hx;
-              allSolidImpacts.P4Y = sp_hy;
+              allSolidImpacts.corners = new float[] { -sp_hx, -sp_hy, sp_hx, -sp_hy, sp_hx, sp_hy, -sp_hx, sp_hy };
 
               allSolidImpacts.sectionType = 1;
               allSolidImpacts.ResX = sp.ResX;
