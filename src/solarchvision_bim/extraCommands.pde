@@ -2225,8 +2225,8 @@ String __SECTION__ (String[] parts) {
     float rz = getF(p, "rz", 0);
     float dx = getF(p, "dx", 20);
     float dy = getF(p, "dy", 20);
-    int resX = getI(p, "resX", 200);
-    int resY = getI(p, "resY", 200);
+    int resX = getI(p, "resx", 200);
+    int resY = getI(p, "resy", 200);
     if ((resX > 0) && (resY > 0) && (dx > 0) && (dy > 0)) {
         allSections.create(x, y, z, rx, ry, rz, dx, dy, resX, resY);
         view_changed();
