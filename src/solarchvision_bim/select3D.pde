@@ -719,18 +719,20 @@ class Select3D {
           float Section_RotX = allSections.getRotX(n);
           float Section_RotY = allSections.getRotY(n);
           float Section_RotZ = allSections.getRotZ(n);
-          float Section_SizeX = allSections.getSizeX(n);
-          float Section_SizeY = allSections.getSizeY(n);
 
-          int Section_ResX = allSections.get_resX(n);
-          int Section_ResY = allSections.get_resY(n);
+          // The world-space center of the section's own bounding box -
+          // getCorners() used to return this as a dedicated index-0
+          // "center" row; now that it returns only the n real polygon
+          // corners (sections.pde's own getCorners() comment - this is
+          // what makes a section's rendered/exported/picked geometry
+          // the actual n-gon instead of its bounding rectangle), that
+          // center is computed directly here instead.
+          float[] box = allSections.sectionBoundingBox(allSections.getCornersXY(n));
+          float[] centerWorld = arbitrarySection_pointLocalToWorld(box[0], box[1], 0, Section_RotX, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
-          float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
-
-          // the first vertex is the center of Section plane
-          x = ImageVertex[0][0];
-          y = ImageVertex[0][1];
-          z = ImageVertex[0][2];
+          x = centerWorld[0];
+          y = centerWorld[1];
+          z = centerWorld[2];
         }
       }
 

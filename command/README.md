@@ -479,11 +479,13 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     hexagon, or beyond, each an exact shape rather than an
     approximation. Fewer than 3 points (or none at all) falls back to a
     plain 20x20 rectangle. The baked texture (`resX`/`resY` pixels along
-    those same two local axes) always covers the axis-aligned bounding
-    rectangle of those points - a non-rectangular shape is cropped out
-    of that rectangle's own alpha channel, and out of picking, rather
-    than being a different exported/rendered geometry: the section's
-    own quad face is always that bounding rectangle.
+    those same two local axes) still covers the axis-aligned bounding
+    rectangle of those points, but the section's own rendered/exported/
+    picked geometry is the real polygon itself, not that bounding
+    rectangle - a non-rectangular shape is cut out of the baked
+    texture's own rectangle (both in the 3D viewport and in exported
+    OBJ/HTML geometry) and out of picking, rather than only being
+    cropped out of that rectangle's alpha channel.
 
     Once created, a section can be rotated around any of its 3 axes the
     same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/`ROTATEZ`

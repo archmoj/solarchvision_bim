@@ -31,18 +31,18 @@ class Sections {
   // local origin), then a fixed 4-corner p1..p4 (with p4 closing back
   // to p1 to make a triangle). Now there's no fixed slot count at all -
   // any n>=3 is a genuine, exact n-gon, not an approximation. Used for
-  // two different things: the axis-aligned BOUNDING BOX of these n
-  // points is what every existing bake/render/shadow-cast/pick path
-  // still works with (see sectionBoundingBox() below) - that's
-  // unchanged math, just no longer capped at exactly 4 points - while
-  // the n points themselves double as a mask polygon
-  // (sectionInsideMask() below) that crops that bounding rectangle's
-  // own baked texture (alpha) and picking test down to the section's
-  // real shape - now an EXACT fit for any n, including a pentagon or
-  // hexagon, not just a triangle/quad with everything above 4 sides
-  // forced into a bounding-rectangle approximation. A section's
-  // exported/rendered GEOMETRY is still the plain bounding rectangle
-  // (getCorners() below) - that limitation is unchanged.
+  // three things: the axis-aligned BOUNDING BOX of these n points still
+  // drives the baking grid (sectionBoundingBox() below, unchanged math,
+  // just no longer capped at exactly 4 points) - used by
+  // castShadowsCurrentSection.pde to rasterize the SolidImpact/
+  // SolarImpact texture over this section; the n points themselves
+  // double as a mask polygon (sectionInsideMask() below) that crops
+  // that baked texture's own alpha down to the section's real shape;
+  // and, since getCorners() below now returns these n points directly
+  // (not a 4-corner bounding-rectangle approximation), they're also the
+  // section's actual rendered/exported/picked GEOMETRY - draw()'s own
+  // Faces[f]/Vertices, the OBJ/HTML export, and intersectFace()'s own
+  // picking all trace the real polygon, not its bounding box.
   float[][] corners = new float[0][];
 
   void makeEmpty (int n) {
@@ -185,18 +185,35 @@ class Sections {
     return true;
   }
 
+  // Faces[f] is now a variable-length row of n real corner indices (n =
+  // getNumCorners(f)), the same pattern Faces.nodes/Polylines.nodes
+  // already use - not a fixed 4-wide quad row. This is what actually
+  // makes a section's rendered/exported/picked GEOMETRY the real n-gon
+  // (corners' own comment above): Vertices is sized to exactly the sum
+  // of every section's own corner count, and each section's own slice
+  // of it is found through vertexOffsetOf below, computed once here so
+  // drawSection()/renderSectionFace() never need to re-derive it from
+  // a stale f*4-style formula.
   void draw (int target_window) {
-    this.Faces = new int[this.num][4];
-    this.Vertices = new float[4 * this.num][3];
+    this.Faces = new int[this.num][];
+    int[] vertexOffsetOf = new int[this.num];
+    int totalVerts = 0;
+    for (int f = 0; f < this.num; f++) {
+      int n = this.getNumCorners(f);
+      this.Faces[f] = new int[n];
+      vertexOffsetOf[f] = totalVerts;
+      totalVerts += n;
+    }
+    this.Vertices = new float[totalVerts][3];
 
     if (!shouldDraw(target_window)) return;
 
     for (int f = 0; f < this.num; f++) {
-      drawSection(f, target_window);
+      drawSection(f, target_window, vertexOffsetOf[f]);
     }
   }
 
-  void drawSection (int f, int target_window) {
+  void drawSection (int f, int target_window, int vertexOffset) {
     float Section_X = this.getX(f);
     float Section_Y = this.getY(f);
     float Section_Z = this.getZ(f);
@@ -218,20 +235,20 @@ class Sections {
 
     float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
       this.getCornersXY(f), Section_ResX, Section_ResY);
+    int n = subFace.length;
 
     num_vertices_added = 0;
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
     for (int _turn = 1; _turn <= end_turn; _turn++) {
-      renderSectionFace(f, subFace, target_window, Section_ResX, Section_ResY, _turn);
+      renderSectionFace(f, subFace, target_window, Section_ResX, Section_ResY, _turn, vertexOffset);
     }
 
-    this.Faces[f][0] = f * 4 + 0;
-    this.Faces[f][1] = f * 4 + 1;
-    this.Faces[f][2] = f * 4 + 2;
-    this.Faces[f][3] = f * 4 + 3;
+    for (int k = 0; k < n; k++) {
+      this.Faces[f][k] = vertexOffset + k;
+    }
 
     if (target_window == TypeWindow.OBJ3D) {
-      writeSectionObjFace();
+      writeSectionObjFace(n);
     }
     if (target_window == TypeWindow.HTML) {
       writeSectionHTML(subFace, the_filename);
@@ -280,7 +297,13 @@ class Sections {
     }
   }
 
-  void renderSectionFace (int f, float[][] subFace, int target_window, int Section_ResX, int Section_ResY, int _turn) {
+  // q now runs over subFace's own n real corners (0..n-1) - no more
+  // fixed q=1..4 - and this.Vertices is indexed through vertexOffset
+  // (this section's own slice of the shared Vertices array, computed
+  // once in draw() above) rather than a stale f*4-style formula.
+  void renderSectionFace (int f, float[][] subFace, int target_window, int Section_ResX, int Section_ResY, int _turn, int vertexOffset) {
+    int n = subFace.length;
+
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
       WIN3D.graphics.noStroke();
@@ -292,7 +315,7 @@ class Sections {
       }
     }
 
-    for (int q = 1; q <= 4; q++) {
+    for (int q = 0; q < n; q++) {
       float x = subFace[q][0];
       float y = subFace[q][1];
       float z = subFace[q][2];
@@ -313,9 +336,9 @@ class Sections {
         }
       }
 
-      this.Vertices[f * 4 + q - 1][0] = x;
-      this.Vertices[f * 4 + q - 1][1] = y;
-      this.Vertices[f * 4 + q - 1][2] = z;
+      this.Vertices[vertexOffset + q][0] = x;
+      this.Vertices[vertexOffset + q][1] = y;
+      this.Vertices[vertexOffset + q][2] = z;
     }
 
     if (target_window == TypeWindow.WIN3D) {
@@ -323,34 +346,63 @@ class Sections {
     }
   }
 
-  void writeSectionObjFace () {
-    String n1_txt = nf(obj_lastVertexNumber - 3, 0);
-    String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-    String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-    String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-
-    String m1_txt = nf(obj_lastVtextureNumber - 3, 0);
-    String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-    String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-    String m4_txt = nf(obj_lastVtextureNumber - 0, 0);
+  // Generalizes the old fixed 4-vertex "f n1/m1 n2/m2 n3/m3 n4/m4" line
+  // to any n (mirrors the n-vertex OBJ face-writing pattern faces.pde's
+  // own exporter already uses for Faces' own variable-length polygons).
+  // By the time this runs, renderSectionFace()'s own _turn==3 pass has
+  // already advanced obj_lastVertexNumber/obj_lastVtextureNumber by
+  // exactly n (one per corner, in the same order subFace/this.Vertices
+  // use) - so this section's own n vertex/texture-coordinate indices
+  // are the last n numbers handed out, oldest first.
+  void writeSectionObjFace (int n) {
+    String[] n_txt = new String[n];
+    String[] m_txt = new String[n];
+    for (int s = 0; s < n; s++) {
+      n_txt[s] = nf(obj_lastVertexNumber - (n - 1) + s, 0);
+      m_txt[s] = nf(obj_lastVtextureNumber - (n - 1) + s, 0);
+    }
 
     obj_lastFaceNumber += 1;
-    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+    String front = "f ";
+    for (int s = 0; s < n; s++) {
+      if (s > 0) front += " ";
+      front += n_txt[s] + "/" + m_txt[s];
+    }
+    objOutput.println(front);
 
     if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
-      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+      // Same starting vertex, winding reversed - the n=4 case (v1 v4 v3
+      // v2) this replaces was already this pattern, just hardcoded.
+      String back = "f " + n_txt[0] + "/" + m_txt[0];
+      for (int s = n - 1; s >= 1; s--) {
+        back += " " + n_txt[s] + "/" + m_txt[s];
+      }
+      objOutput.println(back);
     }
   }
 
+  // subFace now holds exactly n real corners (no more wasted center row
+  // at index 0 - getCorners()'s own comment below) - coordIndex is
+  // built to match, "0 1 ... n-1 -1", instead of the old hardcoded
+  // 4-corner "0 1 2 3 -1".
   void writeSectionHTML (float[][] subFace, String the_filename) {
+    int n = subFace.length;
+
+    String coordIndex = "";
+    for (int s = 0; s < n; s++) {
+      if (s > 0) coordIndex += " ";
+      coordIndex += nf(s, 0);
+    }
+    coordIndex += " -1";
+
     htmlOutput.println("\t\t\t\t<shape>");
     htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
-    htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
+    htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='" + coordIndex + "'>"); // force two-sided
 
     htmlOutput.print("\t\t\t\t\t\t<Coordinate point='");
-    for (int s = 1; s < subFace.length; s++) {
-      if (s > 1) htmlOutput.print(",");
+    for (int s = 0; s < n; s++) {
+      if (s > 0) htmlOutput.print(",");
       htmlOutput.print(nf(subFace[s][0], 0, User3D.exporterPrecisionVertex) + " " +
                         nf(subFace[s][1], 0, User3D.exporterPrecisionVertex) + " " +
                         nf(subFace[s][2], 0, User3D.exporterPrecisionVertex));
@@ -358,8 +410,8 @@ class Sections {
     htmlOutput.println("'></Coordinate>");
 
     htmlOutput.print("\t\t\t\t\t\t<TextureCoordinate point='");
-    for (int s = 1; s < subFace.length; s++) {
-      if (s > 1) htmlOutput.print(",");
+    for (int s = 0; s < n; s++) {
+      if (s > 0) htmlOutput.print(",");
       float u = subFace[s][3];
       float v = 1 - subFace[s][4]; // mirroring the image
       HTMLprintVtexture(u, v);
@@ -370,25 +422,31 @@ class Sections {
     htmlOutput.println("\t\t\t\t</shape>");
   }
 
-  // Corner layout for a section quad: {localX, localY, u, v}. Index 0 is the (unused
-  // by draw()) center point kept for parity with the original 5-row array.
-  final float[][] CORNER_LOCAL = {
-    { 0,  0, 0.5, 0.5 },
-    {-1, -1, 0, 1 },
-    { 1, -1, 1, 1 },
-    { 1,  1, 1, 0 },
-    {-1,  1, 0, 0 }
-  };
-
-  // Every section is a flat quad in its own local X-Y plane (local Z is
-  // its normal), rotated about its OWN center by Section_RotX/RotY/RotZ
-  // (Euler angles, X-then-Y-then-Z - see arbitrarySection.pde), THEN
-  // translated by Section_X/Y/Z. This used to be just the "type 0"
+  // Every section is a flat n-gon in its own local X-Y plane (local Z
+  // is its normal), rotated about its OWN center by Section_RotX/RotY/
+  // RotZ (Euler angles, X-then-Y-then-Z - see arbitrarySection.pde),
+  // THEN translated by Section_X/Y/Z. This used to be just the "type 0"
   // branch here, with 3 other hand-rolled single-angle types (each
   // folding Section_X/Y into the point BEFORE rotating, so they rotated
   // around the world origin rather than the section's own center
   // whenever X or Y wasn't 0) - those 3 are gone; every section is this
   // one shape now.
+  //
+  // Returns exactly the n real corners of Section_CornersXY, one row
+  // per corner, each {worldX, worldY, worldZ, u, v} - no more wasted
+  // center row at index 0 (the old fixed-4-corner version returned 5
+  // rows; draw()/the exporters never actually read that row). u/v are
+  // normalized against the section's own bounding box - the same box
+  // the baked SolidImpact/SolarImpact texture (ResX x ResY) is
+  // rasterized over (castShadowsCurrentSection.pde) - using the exact
+  // same (qx+1)/2, (1-qy)/2-style mapping the old CORNER_LOCAL table
+  // hardcoded for a rectangle's own 4 corners, just generalized to any
+  // local point. This is also what makes the section's rendered/
+  // exported/picked GEOMETRY the real n-gon rather than its bounding
+  // rectangle (corners' own comment above no longer applies - that
+  // limitation is gone): every real corner gets its own vertex, so
+  // WIN3D's beginShape()/endShape(CLOSE), the OBJ "f ..." line and the
+  // HTML IndexedFaceSet all trace the polygon itself.
   float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float[] Section_CornersXY, int Section_ResX, int Section_ResY) {
     float[] box = sectionBoundingBox(Section_CornersXY);
     float centerX = box[0];
@@ -396,26 +454,26 @@ class Sections {
     float sizeX = box[2];
     float sizeY = box[3];
 
-    float[][] ImageVertex = new float[5][5];
+    int n = Section_CornersXY.length / 2;
+    float[][] WorldVertex = new float[n][5];
 
-    for (int q = 0; q < 5; q++) {
-      float qx = CORNER_LOCAL[q][0];
-      float qy = CORNER_LOCAL[q][1];
-      float u  = CORNER_LOCAL[q][2];
-      float v  = CORNER_LOCAL[q][3];
+    for (int k = 0; k < n; k++) {
+      float localX = Section_CornersXY[2 * k];
+      float localY = Section_CornersXY[2 * k + 1];
 
-      float localX = centerX + qx * 0.5 * sizeX;
-      float localY = centerY + qy * 0.5 * sizeY;
+      float u = (sizeX > 0) ? 0.5 + (localX - centerX) / sizeX : 0.5;
+      float v = (sizeY > 0) ? 0.5 - (localY - centerY) / sizeY : 0.5;
+
       float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_RotX, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
-      ImageVertex[q][0] = xyz[0];
-      ImageVertex[q][1] = xyz[1];
-      ImageVertex[q][2] = xyz[2];
-      ImageVertex[q][3] = u;
-      ImageVertex[q][4] = v;
+      WorldVertex[k][0] = xyz[0];
+      WorldVertex[k][1] = xyz[1];
+      WorldVertex[k][2] = xyz[2];
+      WorldVertex[k][3] = u;
+      WorldVertex[k][4] = v;
     }
 
-    return ImageVertex;
+    return WorldVertex;
   }
 
   // Legacy convenience overload - same symmetric-rectangle expansion as
@@ -427,6 +485,30 @@ class Sections {
     float hx = 0.5 * Section_SizeX;
     float hy = 0.5 * Section_SizeY;
     return getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, new float[] { -hx, -hy, hx, -hy, hx, hy, -hx, hy }, Section_ResX, Section_ResY);
+  }
+
+  // Always exactly the 4 corners of a section's own axis-aligned
+  // bounding rectangle (sectionBoundingBox() below), regardless of how
+  // many real corners Section_CornersXY actually has - the "axis-
+  // aligned BOUNDING BOX... still drives the baking grid" case corners'
+  // own comment above describes. solidImpacts.pde's own
+  // calculate_Impact_CurrentSection() bilinear-interpolates its bake
+  // across exactly these 4 corners (A,B,C,D order: -x-y, +x-y, +x+y,
+  // -x+y), the same rectangle applySectionMask() then crops down to the
+  // real n-gon afterward - unlike getCorners() above, which now returns
+  // the n REAL corners themselves, for rendering/exporting/picking the
+  // actual polygon rather than this rectangle.
+  float[][] getBoundingRectangleCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float[] Section_CornersXY, int Section_ResX, int Section_ResY) {
+    float[] box = sectionBoundingBox(Section_CornersXY);
+    float cx = box[0];
+    float cy = box[1];
+    float hx = 0.5 * box[2];
+    float hy = 0.5 * box[3];
+    // Centered on the bounding box's own center (cx, cy) - NOT the
+    // local origin - so an asymmetric n-gon (its local origin need not
+    // be its bounding box's center) still gets the right rectangle.
+    return getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
+      new float[] { cx - hx, cy - hy, cx + hx, cy - hy, cx + hx, cy + hy, cx - hx, cy + hy }, Section_ResX, Section_ResY);
   }
 
   // Axis-aligned bounding box of n local (x,y) corners (a flat
@@ -559,25 +641,56 @@ class Sections {
     float Z = dist2intersect * ray_dir[2] + ray_pnt[2];
     float[] P = { X, Y, Z };
 
-    if (!funcs.isInside_Rectangle(P, A, B, C)) return miss;
-
-    // P lies within the section's own baked RECTANGLE (just checked
-    // above) but may still be outside its real mask polygon - a
-    // non-rectangular section's rectangle is bigger than its visible/
-    // selectable shape (f_data's own comment above). Convert the hit
-    // back into the section's own local plane and re-test there, the
-    // same way the mask crop in solidImpacts.pde's/solarImpacts.pde's
-    // baking loops does.
-    // f_data has no row for f when Vertices/Faces were populated some
-    // other way than the usual draw() pass (a few unit tests do this
-    // directly) - nothing to mask against then, so just keep today's
-    // plain-rectangle hit.
-    if (f < this.f_data.length) {
-      float[] local = arbitrarySection_pointWorldToLocal(X, Y, Z, this.getRotX(f), this.getRotY(f), this.getRotZ(f), this.getX(f), this.getY(f), this.getZ(f));
-      if (!sectionInsideMask(local[0], local[1], this.getCornersXY(f))) return miss;
-    }
+    // Faces[f]/Vertices now ARE the section's real n-gon (getCorners()'s
+    // own comment above - this used to be a bounding-rectangle
+    // approximation, checked with funcs.isInside_Rectangle(P, A, B, C)
+    // and then re-tested against the real mask polygon in the section's
+    // own local plane via f_data/corners). A single general point-in-
+    // polygon test against the actual face vertices is now both
+    // necessary and sufficient, and - unlike the old f_data-based mask
+    // re-test - it works even when a caller builds Faces/Vertices
+    // directly without an f_data/corners row of its own (a few unit
+    // tests do this).
+    if (!pointInsideFacePolygon(f, P, face_norm)) return miss;
 
     return new float[] { X, Y, Z, dist2intersect };
+  }
+
+  // General point-in-polygon test for section face f, done within the
+  // face's own plane (face_norm is that plane's already-computed
+  // normal). Builds a 2D (u, v) basis in the plane from the face's own
+  // first edge, projects every one of the face's n real vertices (and
+  // P, already known to lie on this same plane) into that basis, then
+  // runs the same even-odd ray-cast sectionInsideMask() uses in a
+  // section's own local frame - just generalized to the actual
+  // Vertices/Faces ring instead of a stored corners row, so this works
+  // for any n and needs no f_data/corners at all.
+  boolean pointInsideFacePolygon (int f, float[] P, float[] face_norm) {
+    int n = this.Faces[f].length;
+    float[] origin = this.Vertices[this.Faces[f][0]];
+    float[] u = funcs.vec3_diff(this.Vertices[this.Faces[f][1]], origin);
+    float[] v = funcs.vec3_cross(face_norm, u);
+
+    float[] projX = new float[n];
+    float[] projY = new float[n];
+    for (int k = 0; k < n; k++) {
+      float[] rel = funcs.vec3_diff(this.Vertices[this.Faces[f][k]], origin);
+      projX[k] = funcs.vec3_dot(rel, u);
+      projY[k] = funcs.vec3_dot(rel, v);
+    }
+
+    float[] relP = funcs.vec3_diff(P, origin);
+    float px = funcs.vec3_dot(relP, u);
+    float py = funcs.vec3_dot(relP, v);
+
+    boolean inside = false;
+    for (int i = 0, j = n - 1; i < n; j = i++) {
+      if (((projY[i] > py) != (projY[j] > py)) &&
+          (px < (projX[j] - projX[i]) * (py - projY[i]) / (projY[j] - projY[i]) + projX[i])) {
+        inside = !inside;
+      }
+    }
+    return inside;
   }
 
   public void to_XML (XML xml) {    {

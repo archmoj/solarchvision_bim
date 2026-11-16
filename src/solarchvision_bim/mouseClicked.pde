@@ -737,10 +737,13 @@ SectionParams computeSectionParamsFromFace (int f) {
 
     float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.SizeX, sp.SizeY, sp.ResX, sp.ResY);
 
-    float[] SectionCorner_A = ImageVertex[1];
-    float[] SectionCorner_B = ImageVertex[2];
-    float[] SectionCorner_C = ImageVertex[3];
-    float[] SectionCorner_D = ImageVertex[4];
+    // Index 0 is now the first real corner - getCorners() no longer
+    // returns a dedicated center row at index 0 (sections.pde's own
+    // getCorners() comment).
+    float[] SectionCorner_A = ImageVertex[0];
+    float[] SectionCorner_B = ImageVertex[1];
+    float[] SectionCorner_C = ImageVertex[2];
+    float[] SectionCorner_D = ImageVertex[3];
 
     float[] ImageCenter = {
       0, 0, 0

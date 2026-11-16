@@ -114,22 +114,41 @@ class ArbitrarySectionTest {
 
   @Test
   void getCorners_centerIsExactlyXYZ_regardlessOfRotation () {
+    // getCorners() now returns just the n real corners (no extra center
+    // row - sections.pde's own comment on corners/getCorners()). For a
+    // symmetric 4-corner rectangle, the average of all 4 world corners
+    // still lands exactly on X,Y,Z regardless of rotation, since
+    // rotate-then-translate is affine: the average of the rotated+
+    // translated corners equals the rotated+translated average of the
+    // local corners, and that local average is (0,0,0) - the section's
+    // own local origin.
     float[][] corners = app.allSections.getCorners(10, 20, 30, 15, 25, 35, 40, 50, 100, 100);
-    // Index 0 is the center point (CORNER_LOCAL's own row 0, sections.pde).
-    assertArrayEquals(new float[]{10, 20, 30}, java.util.Arrays.copyOf(corners[0], 3), 0.0001f);
+    assertEquals(4, corners.length);
+    float avgX = 0, avgY = 0, avgZ = 0;
+    for (float[] c : corners) {
+      avgX += c[0];
+      avgY += c[1];
+      avgZ += c[2];
+    }
+    avgX /= corners.length;
+    avgY /= corners.length;
+    avgZ /= corners.length;
+    assertArrayEquals(new float[]{10, 20, 30}, new float[]{avgX, avgY, avgZ}, 0.0001f);
   }
 
   @Test
   void getCorners_rotZ90_spinsTheRectangleInItsOwnPlane () {
     // U != V so a 90-degree roll (rotZ) is actually detectable: the wide
-    // axis becomes the tall one. CORNER_LOCAL row 1 is local (-U/2, -V/2);
-    // with U=40, V=20 that's local (-20, -10, 0), hand-rotated by rotZ=90
+    // axis becomes the tall one. Index 0 is now the first real corner
+    // (no more wasted center row at index 0 - sections.pde's own
+    // getCorners() comment) - local (-U/2, -V/2); with U=40, V=20 that's
+    // local (-20, -10, 0), hand-rotated by rotZ=90
     // (funcs.cos_ang(90)=0, funcs.sin_ang(90)=1) through
     // arbitrarySection_rotateLocalToWorld()'s own Z step: x = a*0 - b*1 =
     // -b = 10; y = a*1 + b*0 = a = -20; z = c = 0.
     float[][] corners = app.allSections.getCorners(0, 0, 0, 0, 0, 90, 40, 20, 100, 100);
 
-    assertArrayEquals(new float[]{10, -20, 0}, java.util.Arrays.copyOf(corners[1], 3), 0.001f);
+    assertArrayEquals(new float[]{10, -20, 0}, java.util.Arrays.copyOf(corners[0], 3), 0.001f);
   }
 
   // ================= Sections.RotateX/Y/Z =================================

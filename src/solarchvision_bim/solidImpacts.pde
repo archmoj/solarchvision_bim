@@ -502,13 +502,19 @@ class SolidImpacts {
       int Section_ResX = this.ResX;
       int Section_ResY = this.ResY;
 
-      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
+      // The bake grid is still the section's bounding RECTANGLE (its
+      // own alpha gets cropped to the real n-gon afterward by
+      // applySectionMask()) - getCorners() itself now returns the n
+      // REAL polygon corners instead (sections.pde's own comment), so
+      // this bilinear bake explicitly asks for the rectangle via
+      // getBoundingRectangleCorners().
+      float[][] ImageVertex = allSections.getBoundingRectangleCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
         this.corners, Section_ResX, Section_ResY);
 
-      float[] SectionCorner_A = ImageVertex[1];
-      float[] SectionCorner_B = ImageVertex[2];
-      float[] SectionCorner_C = ImageVertex[3];
-      float[] SectionCorner_D = ImageVertex[4];
+      float[] SectionCorner_A = ImageVertex[0];
+      float[] SectionCorner_B = ImageVertex[1];
+      float[] SectionCorner_C = ImageVertex[2];
+      float[] SectionCorner_D = ImageVertex[3];
 
       for (int i = 0; i < this.ResX; i++) {
         for (int j = 0; j < this.ResY; j++) {

@@ -68,7 +68,10 @@ class ObjVertexWritersTest {
 
   // ================= Sections.writeSectionObjFace ===============================
   // No num_vertices_added term at all (unlike its Sky3D/Sun3D siblings
-  // above) - just obj_lastVertexNumber/obj_lastVtextureNumber directly.
+  // above) - just obj_lastVertexNumber/obj_lastVtextureNumber directly,
+  // now generalized to any n (sections.pde's own comment) rather than
+  // a hardcoded 4 - this exercises it with n=4, which reproduces the
+  // exact same two lines the old hardcoded version always wrote.
 
   @Test
   void sections_writeSectionObjFace_writesBothWindings () {
@@ -76,7 +79,7 @@ class ObjVertexWritersTest {
     app.obj_lastVertexNumber = 10;
     app.obj_lastVtextureNumber = 20;
 
-    app.allSections.writeSectionObjFace();
+    app.allSections.writeSectionObjFace(4);
     app.objOutput.flush();
 
     String expected =
@@ -87,17 +90,18 @@ class ObjVertexWritersTest {
   }
 
   // ================= Sections.writeSectionHTML ===================================
-  // subFace's own index 0 is a center point this function never reads
-  // (its own coordIndex is hardcoded "0 1 2 3 -1") - only indices 1-4
-  // (the 4 real corners) are used, each {x, y, z, u, v}. No clamp01()
-  // here (unlike Earth3D/Tropo3D's own writeFaceHTML()), so every u/v
-  // below is a plain, already-in-range value.
+  // subFace now holds exactly n real corners, each {x, y, z, u, v} - no
+  // more wasted center row at index 0 (sections.pde's own getCorners()
+  // comment) - and coordIndex is built to match ("0 1 ... n-1 -1",
+  // "0 1 2 3 -1" for this n=4 case - the same string the old hardcoded
+  // version always wrote). No clamp01() here (unlike Earth3D/Tropo3D's
+  // own writeFaceHTML()), so every u/v below is a plain, already-in-
+  // range value.
 
   @Test
   void sections_writeSectionHTML_writesTheExpectedX3DShapeBlock () {
     app.htmlOutput = new PrintWriter(captured);
     float[][] subFace = {
-        {0, 0, 0, 0, 0},       // index 0 - unused
         {1, 2, 3, 0.5f, 0.25f},
         {4, 5, 6, 0.1f, 0.9f},
         {-1, -2, -3, 0.8f, 0.3f},

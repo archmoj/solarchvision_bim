@@ -226,4 +226,96 @@ class SectionsTest {
     assertEquals(1f, fresh.getCornerY(0, 2), 0.0001f);
     assertFalse(fresh.displayAll);
   }
+
+  // ================= draw()/intersect() trace the real n-gon, not its
+  // bounding rectangle =====================================================
+  // A concave L-shaped hexagon (a unit-2 square with its top-right unit
+  // quadrant notched out): local corners (0,0) (2,0) (2,1) (1,1) (1,2)
+  // (0,2). Its axis-aligned bounding box is the full (0,0)-(2,2) square,
+  // but the notch at roughly (1.5,1.5) is NOT part of the shape - the
+  // one case a bounding-rectangle approximation could never represent
+  // (sections.pde's own corners/getCorners() comments). Built with no
+  // rotation/offset (rotX=rotY=rotZ=0, X=Y=Z=0) so local == world,
+  // keeping the geometry easy to check directly.
+
+  private void makeLShapedSection () {
+    float[] lShapeCorners = { 0, 0, 2, 0, 2, 1, 1, 1, 1, 2, 0, 2 };
+    app.allSections.create(0, 0, 0, 0, 0, 0, lShapeCorners, 4, 4);
+  }
+
+  @Test
+  void draw_buildsOneVertexPerRealCorner_notFourPerSection () {
+    makeLShapedSection();
+
+    app.allSections.draw(app.TypeWindow.RAD3D); // no WIN3D graphics/file writers touched at this target
+
+    assertEquals(1, app.allSections.Faces.length);
+    assertEquals(6, app.allSections.Faces[0].length, "an L-shaped hexagon has 6 corners, not the old fixed 4");
+    assertEquals(6, app.allSections.Vertices.length);
+
+    float[] lShapeCorners = { 0, 0, 2, 0, 2, 1, 1, 1, 1, 2, 0, 2 };
+    for (int k = 0; k < 6; k++) {
+      int vNo = app.allSections.Faces[0][k];
+      assertEquals(lShapeCorners[2 * k], app.allSections.Vertices[vNo][0], 0.0001f);
+      assertEquals(lShapeCorners[2 * k + 1], app.allSections.Vertices[vNo][1], 0.0001f);
+      assertEquals(0f, app.allSections.Vertices[vNo][2], 0.0001f);
+    }
+  }
+
+  @Test
+  void intersect_missesTheNotchEvenThoughItIsInsideTheBoundingRectangle () {
+    makeLShapedSection();
+    app.allSections.draw(app.TypeWindow.RAD3D);
+
+    // (1.5, 1.5) sits inside the (0,0)-(2,2) bounding box but squarely
+    // inside the notched-out quadrant - a bounding-rectangle pick would
+    // have hit here; the real L-shape must not.
+    float[] result = app.allSections.intersect(new float[]{1.5f, 1.5f, 10}, new float[]{0, 0, -1});
+
+    assertEquals(-1, (int) result[0], "the notch is cut out of the real shape, so this must miss");
+  }
+
+  @Test
+  void intersect_hitsASolidPartOfTheLShape () {
+    makeLShapedSection();
+    app.allSections.draw(app.TypeWindow.RAD3D);
+
+    float[] result = app.allSections.intersect(new float[]{0.5f, 0.5f, 10}, new float[]{0, 0, -1});
+
+    assertEquals(0, (int) result[0]);
+    assertEquals(0.5f, result[1], 0.0001f);
+    assertEquals(0.5f, result[2], 0.0001f);
+    assertEquals(0f, result[3], 0.0001f);
+  }
+
+  // ================= getCorners() vs getBoundingRectangleCorners() =======
+  // getCorners() now returns the n REAL corners (rendering/export/
+  // picking); getBoundingRectangleCorners() always returns exactly 4 -
+  // the bounding rectangle solidImpacts.pde's own bake loop still
+  // bilinear-interpolates across (sections.pde's own comment on both).
+
+  @Test
+  void getCorners_returnsExactlyNRealCorners_forAnLShapedHexagon () {
+    float[] lShapeCorners = { 0, 0, 2, 0, 2, 1, 1, 1, 1, 2, 0, 2 };
+    float[][] corners = app.allSections.getCorners(0, 0, 0, 0, 0, 0, lShapeCorners, 4, 4);
+
+    assertEquals(6, corners.length);
+    for (int k = 0; k < 6; k++) {
+      assertEquals(lShapeCorners[2 * k], corners[k][0], 0.0001f);
+      assertEquals(lShapeCorners[2 * k + 1], corners[k][1], 0.0001f);
+    }
+  }
+
+  @Test
+  void getBoundingRectangleCorners_alwaysReturnsFourCorners_forAnLShapedHexagon () {
+    float[] lShapeCorners = { 0, 0, 2, 0, 2, 1, 1, 1, 1, 2, 0, 2 };
+    float[][] corners = app.allSections.getBoundingRectangleCorners(0, 0, 0, 0, 0, 0, lShapeCorners, 4, 4);
+
+    assertEquals(4, corners.length);
+    // The bounding box of the L-shape is the full (0,0)-(2,2) square.
+    assertArrayEquals(new float[]{0, 0}, new float[]{corners[0][0], corners[0][1]}, 0.0001f);
+    assertArrayEquals(new float[]{2, 0}, new float[]{corners[1][0], corners[1][1]}, 0.0001f);
+    assertArrayEquals(new float[]{2, 2}, new float[]{corners[2][0], corners[2][1]}, 0.0001f);
+    assertArrayEquals(new float[]{0, 2}, new float[]{corners[3][0], corners[3][1]}, 0.0001f);
+  }
 }
