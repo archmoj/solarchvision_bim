@@ -307,7 +307,7 @@ class Clone3DTest {
 
   @Test
   void sectionsBatch_clonesEverySelectedSectionAndSelectsOnlyTheClones () {
-    app.allSections.f_data = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8}};
+    app.allSections.f_data = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}};
     app.allSections.i_data = new int[][]{{4, 4}}; // small 4x4 resolution
     app.allSections.SolidImpact = new processing.core.PImage[1];
     app.allSections.SolarImpact = new processing.core.PImage[1][1][1];

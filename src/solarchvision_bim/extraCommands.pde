@@ -2223,17 +2223,31 @@ String __SECTION__ (String[] parts) {
     float rx = getF(p, "rx", 0);
     float ry = getF(p, "ry", 0);
     float rz = getF(p, "rz", 0);
-    float dx = getF(p, "dx", 20);
-    float dy = getF(p, "dy", 20);
+    // 4 independent local (x,y) corners, replacing the old symmetric
+    // dx/dy pair - p1/p2/p3 default to 3 corners of that same old
+    // 20x20 rectangle (so a bare "Section x=0 y=0 z=0" still makes
+    // something sane); p4 is different - when it's left out entirely
+    // it defaults to p1 instead of its own fixed number, closing a
+    // triangle back to its first point without needing to duplicate it
+    // (see sections.pde's own getCorners()/sectionInsideMask() comment
+    // for why a repeated corner like that needs no special handling).
+    float p1x = getF(p, "p1x", -10);
+    float p1y = getF(p, "p1y", -10);
+    float p2x = getF(p, "p2x", 10);
+    float p2y = getF(p, "p2y", -10);
+    float p3x = getF(p, "p3x", 10);
+    float p3y = getF(p, "p3y", 10);
+    float p4x = p.containsKey("p4x") ? getF(p, "p4x", 0) : p1x;
+    float p4y = p.containsKey("p4y") ? getF(p, "p4y", 0) : p1y;
     int resX = getI(p, "resx", 200);
     int resY = getI(p, "resy", 200);
-    if ((resX > 0) && (resY > 0) && (dx > 0) && (dy > 0)) {
-        allSections.create(x, y, z, rx, ry, rz, dx, dy, resX, resY);
+    if ((resX > 0) && (resY > 0)) {
+        allSections.create(x, y, z, rx, ry, rz, p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, resX, resY);
         view_changed();
     }
     }
     else {
-    hint = "Section x=? y=? z=? rx=? ry=? rz=? dx=? dy=? resX=? resY=?";
+    hint = "Section x=? y=? z=? rx=? ry=? rz=? resX=? resY=? p1x=? p1y=? p2x=? p2y=? p3x=? p3y=? p4x=? p4y=?";
     UI_setTo_Create_Section();
     }
     return hint;

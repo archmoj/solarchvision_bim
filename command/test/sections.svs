@@ -16,9 +16,9 @@ Tree2 m=10 x=25 y=10 z=0 h=20
 Tree2 m=9 x=-10 y=-10 z=0 h=20
 
 Delete All Sections
-Section x=0 y=0 z=0 rx=0 ry=0 rz=0 dx=64 dy=64 resX=200 resY=200
-Section x=0 y=16 z=0 rx=90 ry=0 rz=0 dx=64 dy=32 resX=200 resY=100
-Section x=-16 y=0 z=0 rx=90 ry=0 rz=-90 dx=64 dy=32 resX=200 resY=100
+Section x=0 y=0 z=0 rx=0 ry=0 rz=0 resX=200 resY=200 p1x=-32 p1y=-32 p2x=32 p2y=-32 p3x=32 p3y=32 p4x=-32 p4y=32
+Section x=0 y=16 z=0 rx=90 ry=0 rz=0 resX=200 resY=100 p1x=-32 p1y=-16 p2x=32 p2y=-16 p3x=32 p3y=16 p4x=-32 p4y=16
+Section x=-16 y=0 z=0 rx=90 ry=0 rz=-90 resX=200 resY=100 p1x=-32 p1y=-16 p2x=32 p2y=-16 p3x=32 p3y=16 p4x=-32 p4y=16
 
 Select nothing
 

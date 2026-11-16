@@ -56,8 +56,14 @@ class SolarImpacts {
   float RotX = 0; // North is up by default - see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  float SizeX = 500; // i.e. 500 = 500m
-  float SizeY = 500; // i.e. 500 = 500m
+  // The currently-analyzed section's own 4 local corners, mirrored
+  // from allSections the same way X/Y/Z/RotX/.../rotZ are just above -
+  // see Sections' own f_data comment (sections.pde) for what these
+  // mean. Default is today's old 500x500 symmetric rectangle.
+  float P1X = -250, P1Y = -250;
+  float P2X = 250, P2Y = -250;
+  float P3X = 250, P3Y = 250;
+  float P4X = -250, P4Y = 250;
 
   int ResX = 400;
   int ResY = 400;
@@ -438,7 +444,7 @@ class SolarImpacts {
     for (int i = 0; i < this.Image.length; i++) {
       for (int j = STUDY.startDay - 1; j < STUDY.endDay; j++) { // total image at j = -1
 
-        this.Image[i][j + 1] = createImage(2, 2, RGB); // empty and small
+        this.Image[i][j + 1] = createImage(2, 2, ARGB); // empty and small
       }
     }
 
@@ -683,7 +689,7 @@ class SolarImpacts {
 
         PImage[] total_Image_RGBA = new PImage[2];
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          total_Image_RGBA[q] = createImage(resX, resY, RGB);
+          total_Image_RGBA[q] = createImage(resX, resY, ARGB);
         }
 
         // this.total_Matrix_ARGB aliases the same array the code below
@@ -781,7 +787,7 @@ class SolarImpacts {
 
           PImage[] Image_RGBA = new PImage[2];
           for (int q = 0; q < numberOfImpactVariations; q++) {
-            Image_RGBA[q] = createImage(resX, resY, RGB);
+            Image_RGBA[q] = createImage(resX, resY, ARGB);
           }
 
           int valuesNUM = 0;
@@ -1232,13 +1238,19 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.SizeX = allSections.getSizeX(f);
-      this.SizeY = allSections.getSizeY(f);
+      this.P1X = allSections.getP1X(f);
+      this.P1Y = allSections.getP1Y(f);
+      this.P2X = allSections.getP2X(f);
+      this.P2Y = allSections.getP2Y(f);
+      this.P3X = allSections.getP3X(f);
+      this.P3Y = allSections.getP3Y(f);
+      this.P4X = allSections.getP4X(f);
+      this.P4Y = allSections.getP4Y(f);
 
       SceneName = "Section_" + Section_Stamp();
 
       // o counts DOWN from sectionCount - 1 to 0 as this loop progresses
-      // (this.sectionType/ResX/.../SizeY already use it that way, above), so
+      // (this.sectionType/ResX/.../P4Y already use it that way, above), so
       // sectionCount - o counts UP from 1 to sectionCount instead - this
       // section's own position in THIS batch, which is what a person
       // watching the bake run actually wants to see ("Section 2 of 5"),
@@ -1284,8 +1296,14 @@ class SolarImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.SizeX = allSections.getSizeX(f);
-      this.SizeY = allSections.getSizeY(f);
+      this.P1X = allSections.getP1X(f);
+      this.P1Y = allSections.getP1Y(f);
+      this.P2X = allSections.getP2X(f);
+      this.P2Y = allSections.getP2Y(f);
+      this.P3X = allSections.getP3X(f);
+      this.P3Y = allSections.getP3Y(f);
+      this.P4X = allSections.getP4X(f);
+      this.P4Y = allSections.getP4Y(f);
 
       SceneName = "Section_" + Section_Stamp();
 
@@ -1294,9 +1312,19 @@ class SolarImpacts {
 
       for (int j = STUDY.startDay - 1; j < STUDY.endDay; j++) {
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          allSections.SolarImpact[f][j + 1][q] = createImage(this.ResX, this.ResY, RGB);
+          allSections.SolarImpact[f][j + 1][q] = createImage(this.ResX, this.ResY, ARGB);
 
           allSections.SolarImpact[f][j + 1][q].copy(this.Image[q][j + 1], 0, 0, this.ResX, this.ResY, 0, 0, this.ResX, this.ResY);
+
+          // Shadow-casting itself (castShadowsCurrentSection.pde) still
+          // only ever rasterizes the section's own baked RECTANGLE (its
+          // per-vertex projection is cheap specifically because it
+          // assumes that), so the section's real shape - which may be
+          // smaller than that rectangle - is cropped in here instead, as
+          // a single post-process pass reusing the exact same 4 corners
+          // as a mask polygon. See f_data's own comment (sections.pde).
+          allSections.applySectionMask(allSections.SolarImpact[f][j + 1][q],
+            this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
         }
       }
     }
@@ -1317,8 +1345,14 @@ class SolarImpacts {
     XML_setFloat(parent, "rotX", this.RotX);
     XML_setFloat(parent, "rotY", this.rotY);
     XML_setFloat(parent, "rotZ", this.rotZ);
-    XML_setFloat(parent, "sizeX", this.SizeX);
-    XML_setFloat(parent, "sizeY", this.SizeY);
+    XML_setFloat(parent, "p1x", this.P1X);
+    XML_setFloat(parent, "p1y", this.P1Y);
+    XML_setFloat(parent, "p2x", this.P2X);
+    XML_setFloat(parent, "p2y", this.P2Y);
+    XML_setFloat(parent, "p3x", this.P3X);
+    XML_setFloat(parent, "p3y", this.P3Y);
+    XML_setFloat(parent, "p4x", this.P4X);
+    XML_setFloat(parent, "p4y", this.P4Y);
 
     XML_setInt(parent, "resX", this.ResX);
     XML_setInt(parent, "resY", this.ResY);
@@ -1339,8 +1373,14 @@ class SolarImpacts {
     this.RotX = XML_getFloat(parent, "rotX");
     this.rotY = XML_getFloat(parent, "rotY");
     this.rotZ = XML_getFloat(parent, "rotZ");
-    this.SizeX = XML_getFloat(parent, "sizeX");
-    this.SizeY = XML_getFloat(parent, "sizeY");
+    this.P1X = XML_getFloat(parent, "p1x");
+    this.P1Y = XML_getFloat(parent, "p1y");
+    this.P2X = XML_getFloat(parent, "p2x");
+    this.P2Y = XML_getFloat(parent, "p2y");
+    this.P3X = XML_getFloat(parent, "p3x");
+    this.P3Y = XML_getFloat(parent, "p3y");
+    this.P4X = XML_getFloat(parent, "p4x");
+    this.P4Y = XML_getFloat(parent, "p4y");
 
     this.ResX = XML_getInt(parent, "resX");
     this.ResY = XML_getInt(parent, "resY");

@@ -18,8 +18,42 @@ class SolidImpacts {
   float RotX = 0; // see arbitrarySection.pde
   float rotY = 0;
   float rotZ = 0;
-  float SizeX = 100; // i.e. 100m
-  float SizeY = 100; // i.e. 100m
+  // The currently-analyzed section's own 4 local corners, mirrored from
+  // allSections the same way X/Y/Z/RotX/rotY/rotZ are just above - see
+  // Sections' own f_data comment (sections.pde) for what these mean.
+  // Default is today's old 100x100 symmetric rectangle.
+  float P1X = -50, P1Y = -50;
+  float P2X = 50, P2Y = -50;
+  float P3X = 50, P3Y = 50;
+  float P4X = -50, P4Y = 50;
+
+  // Derived convenience, mirroring Sections' own getSizeX/getSizeY
+  // (sections.pde) - "how big is this section" for a caller (mouse
+  // Clicked.pde's drag-resize tool) that only wants a plain rectangle.
+  float getSizeX () { return allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y)[2]; }
+  float getSizeY () { return allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y)[3]; }
+
+  // Likewise a method, not a setter on a stored field - scales every
+  // corner's X (or Y) proportionally to hit the requested bounding-box
+  // width (or height), the same as scale3D.pde's own Sections()
+  // handling. Used by both valueModifier.pde's own spinner setter and
+  // uiRollout.pde's re-application of that spinner's drawn value.
+  void setSizeX (float v) {
+    float old = this.getSizeX();
+    float s = (old != 0) ? v / old : 1;
+    this.P1X *= s;
+    this.P2X *= s;
+    this.P3X *= s;
+    this.P4X *= s;
+  }
+  void setSizeY (float v) {
+    float old = this.getSizeY();
+    float s = (old != 0) ? v / old : 1;
+    this.P1Y *= s;
+    this.P2Y *= s;
+    this.P3Y *= s;
+    this.P4Y *= s;
+  }
 
   int ResX = 400;
   int ResY = 400;
@@ -150,8 +184,14 @@ class SolidImpacts {
       this.RotX = allSections.getRotX(f);
       this.rotY = allSections.getRotY(f);
       this.rotZ = allSections.getRotZ(f);
-      this.SizeX = allSections.getSizeX(f);
-      this.SizeY = allSections.getSizeY(f);
+      this.P1X = allSections.getP1X(f);
+      this.P1Y = allSections.getP1Y(f);
+      this.P2X = allSections.getP2X(f);
+      this.P2Y = allSections.getP2Y(f);
+      this.P3X = allSections.getP3X(f);
+      this.P3Y = allSections.getP3Y(f);
+      this.P4X = allSections.getP4X(f);
+      this.P4Y = allSections.getP4Y(f);
 
       {
         if ((this.Image.width != this.ResX) || (this.Image.height != this.ResY)) {
@@ -467,13 +507,12 @@ class SolidImpacts {
       float Section_RotX = this.RotX;
       float Section_RotY = this.rotY;
       float Section_RotZ = this.rotZ;
-      float Section_SizeX = this.SizeX;
-      float Section_SizeY = this.SizeY;
 
       int Section_ResX = this.ResX;
       int Section_ResY = this.ResY;
 
-      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
+      float[][] ImageVertex = allSections.getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
+        this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y, Section_ResX, Section_ResY);
 
       float[] SectionCorner_A = ImageVertex[1];
       float[] SectionCorner_B = ImageVertex[2];
@@ -502,7 +541,15 @@ class SolidImpacts {
           if ((this.Process_subDivisions == 1) || (this.Process_subDivisions == 2)) {
             //if ((g == g_line) && (g != 0)) {
             if ((abs(g - g_line) < 0.001) && (g != 0)) {
-              COL[0] = 0;
+              // Alpha was 0 here before this file's PImage storage became
+              // ARGB (see sections.pde's own comment on that change) - it
+              // was always meaningless under the old RGB-format image,
+              // which ignored alpha and rendered this as solid black
+              // regardless. Now that alpha is real, 0 would punch a
+              // transparent hole through the mask-cropped texture instead
+              // of drawing a contour line, so it's pinned opaque here to
+              // keep the exact same solid-black appearance as before.
+              COL[0] = 255;
               COL[1] = 0;//255;
               COL[2] = 0;//255;
               COL[3] = 0;//255;
@@ -531,6 +578,15 @@ class SolidImpacts {
       }
 
       this.Image.updatePixels();
+
+      // Shadow-casting itself still only ever rasterizes this bake's own
+      // baked RECTANGLE (castShadowsCurrentSection.pde's per-vertex
+      // projection is cheap specifically because it assumes that), so a
+      // non-rectangular section's real shape - which may be smaller than
+      // that rectangle - is cropped in here instead, as a single post-
+      // process pass reusing the same 4 corners as a mask polygon. See
+      // f_data's own comment (sections.pde).
+      allSections.applySectionMask(this.Image, this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
 
       if (this.record_IMG == true) {
         String myFile = getFilename_SolidImpact() + ".jpg";
@@ -586,6 +642,17 @@ class SolidImpacts {
         pdf.beginDraw();
 
         pdf.image(this.Image, 0, 0, this.ResX, this.ResY);
+
+        // Bounding box of this bake's own 4 corners, reused just below
+        // in place of the old implicit "centered on local origin"
+        // assumption (this.SizeX/SizeY alone, before corners existed) -
+        // reduces to that exact formula when centerX/centerY are 0, as
+        // they still are for every plain symmetric-rectangle section.
+        float[] _maskBox = allSections.sectionBoundingBox(this.P1X, this.P1Y, this.P2X, this.P2Y, this.P3X, this.P3Y, this.P4X, this.P4Y);
+        float _maskCenterX = _maskBox[0];
+        float _maskCenterY = _maskBox[1];
+        float _maskSizeX = _maskBox[2];
+        float _maskSizeY = _maskBox[3];
 
         if ((this.Process_subDivisions == 2) || (this.Process_subDivisions == 3)) {
           if (this.displayLines) {
@@ -658,8 +725,8 @@ class SolidImpacts {
                   // per-type inverses this used to pick between.
                   float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-                  i[p] = this.ResX * (local[0] / this.SizeX + 0.5);
-                  j[p] = this.ResY * (local[1] / this.SizeY + 0.5);
+                  i[p] = this.ResX * ((local[0] - _maskCenterX) / _maskSizeX + 0.5);
+                  j[p] = this.ResY * ((local[1] - _maskCenterY) / _maskSizeY + 0.5);
                 }
 
                 pdf.line(i[0], j[0], i[1], j[1]);
@@ -685,8 +752,8 @@ class SolidImpacts {
               // to pick between.
               float[] local = arbitrarySection_pointWorldToLocal(x0, y0, z0, this.RotX, this.rotY, this.rotZ, this.X, this.Y, this.Z);
 
-              float i = this.ResX * (local[0] / this.SizeX + 0.5);
-              float j = this.ResY * (local[1] / this.SizeY + 0.5);
+              float i = this.ResX * ((local[0] - _maskCenterX) / _maskSizeX + 0.5);
+              float j = this.ResY * ((local[1] - _maskCenterY) / _maskSizeY + 0.5);
 
               pdf.ellipse(i, j, 1, 1);
             }
@@ -1181,8 +1248,14 @@ class SolidImpacts {
     XML_setFloat(parent, this.CLASS_STAMP + "RotX", this.RotX);
     XML_setFloat(parent, this.CLASS_STAMP + "RotY", this.rotY);
     XML_setFloat(parent, this.CLASS_STAMP + "RotZ", this.rotZ);
-    XML_setFloat(parent, this.CLASS_STAMP + "SizeX", this.SizeX);
-    XML_setFloat(parent, this.CLASS_STAMP + "SizeY", this.SizeY);
+    XML_setFloat(parent, this.CLASS_STAMP + "P1X", this.P1X);
+    XML_setFloat(parent, this.CLASS_STAMP + "P1Y", this.P1Y);
+    XML_setFloat(parent, this.CLASS_STAMP + "P2X", this.P2X);
+    XML_setFloat(parent, this.CLASS_STAMP + "P2Y", this.P2Y);
+    XML_setFloat(parent, this.CLASS_STAMP + "P3X", this.P3X);
+    XML_setFloat(parent, this.CLASS_STAMP + "P3Y", this.P3Y);
+    XML_setFloat(parent, this.CLASS_STAMP + "P4X", this.P4X);
+    XML_setFloat(parent, this.CLASS_STAMP + "P4Y", this.P4Y);
     XML_setFloat(parent, this.CLASS_STAMP + "X", this.X);
     XML_setFloat(parent, this.CLASS_STAMP + "Y", this.Y);
   }
@@ -1216,8 +1289,14 @@ class SolidImpacts {
     this.RotX = XML_getFloat(parent, this.CLASS_STAMP + "RotX");
     this.rotY = XML_getFloat(parent, this.CLASS_STAMP + "RotY");
     this.rotZ = XML_getFloat(parent, this.CLASS_STAMP + "RotZ");
-    this.SizeX = XML_getFloat(parent, this.CLASS_STAMP + "SizeX");
-    this.SizeY = XML_getFloat(parent, this.CLASS_STAMP + "SizeY");
+    this.P1X = XML_getFloat(parent, this.CLASS_STAMP + "P1X");
+    this.P1Y = XML_getFloat(parent, this.CLASS_STAMP + "P1Y");
+    this.P2X = XML_getFloat(parent, this.CLASS_STAMP + "P2X");
+    this.P2Y = XML_getFloat(parent, this.CLASS_STAMP + "P2Y");
+    this.P3X = XML_getFloat(parent, this.CLASS_STAMP + "P3X");
+    this.P3Y = XML_getFloat(parent, this.CLASS_STAMP + "P3Y");
+    this.P4X = XML_getFloat(parent, this.CLASS_STAMP + "P4X");
+    this.P4Y = XML_getFloat(parent, this.CLASS_STAMP + "P4Y");
     this.X = XML_getFloat(parent, this.CLASS_STAMP + "X");
     this.Y = XML_getFloat(parent, this.CLASS_STAMP + "Y");
   }

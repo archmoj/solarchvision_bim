@@ -681,8 +681,8 @@ class UI_rollout {
         allSolidImpacts.RotX = vm.SolidImpacts_rotX(1);
         allSolidImpacts.Z = vm.SolidImpacts_z(1);
         allSolidImpacts.positionStep = vm.SolidImpacts_positionStep(1);
-        allSolidImpacts.SizeX = vm.SolidImpacts_sizeX(1);
-        allSolidImpacts.SizeY = vm.SolidImpacts_sizeY(1);
+        allSolidImpacts.setSizeX(vm.SolidImpacts_sizeX(1));
+        allSolidImpacts.setSizeY(vm.SolidImpacts_sizeY(1));
         allSolidImpacts.X = vm.SolidImpacts_x(1);
         allSolidImpacts.Y = vm.SolidImpacts_y(1);
         allSolidImpacts.WindSpeed = vm.SolidImpacts_windSpeed(1);

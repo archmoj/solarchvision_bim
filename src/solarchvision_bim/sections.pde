@@ -9,23 +9,39 @@ class Sections {
   boolean displayAll = true;
 
   int num;
-  // Columns: 0:X 1:Y 2:Z 3:rotX 4:rotY 5:rotZ 6:sizeX 7:sizeY. Every section is
-  // the same single shape now - a flat quad in its own local X-Y plane
-  // (local Z is its normal), oriented by 3 Euler angles (rotX/rotY/rotZ,
-  // kept contiguous here the way Solids' own f_data groups posX/Y/Z,
-  // powX/Y/Z, scaleX/Y/Z and rotX/Y/Z - composed in that X-then-Y-
-  // then-Z order - see arbitrarySection.pde) and then translated to
-  // X/Y/Z. There used to be 3 other "types" with their own single-angle
-  // rotation and translate-before-rotate math (rotateSectionCorner(),
-  // removed) - dropped as part of collapsing every section onto this
-  // one (former "type 0") representation.
-  float[][] f_data = new float[0][8];
+  // Columns: 0:X 1:Y 2:Z 3:rotX 4:rotY 5:rotZ 6:p1x 7:p1y 8:p2x 9:p2y
+  // 10:p3x 11:p3y 12:p4x 13:p4y. Every section is the same single shape
+  // now - a flat quad in its own local X-Y plane (local Z is its
+  // normal), oriented by 3 Euler angles (rotX/rotY/rotZ, kept contiguous
+  // here the way Solids' own f_data groups posX/Y/Z, powX/Y/Z, scaleX/
+  // Y/Z and rotX/Y/Z - composed in that X-then-Y-then-Z order - see
+  // arbitrarySection.pde) and then translated to X/Y/Z. There used to
+  // be 3 other "types" with their own single-angle rotation and
+  // translate-before-rotate math (rotateSectionCorner(), removed) -
+  // dropped as part of collapsing every section onto this one (former
+  // "type 0") representation.
+  //
+  // p1..p4 used to be a single symmetric sizeX/sizeY pair (a rectangle
+  // centered on the local origin). They're now 4 independent local
+  // (x,y) corners - p4 closing back to p1 makes a triangle (see
+  // __SECTION__, extraCommands.pde) - used for two different things:
+  // the axis-aligned BOUNDING BOX of these 4 points is what every
+  // existing bake/render/shadow-cast/pick path still works with (see
+  // sectionBoundingBox() below) - that's unchanged math, just no longer
+  // assumed centered on the local origin - while the 4 points
+  // themselves double as a mask polygon (sectionInsideMask() below)
+  // that crops that bounding rectangle's own baked texture (alpha) and
+  // picking test down to the section's real shape. A non-rectangular
+  // section's true silhouette therefore only exists in its texture's
+  // alpha channel and in picking - its exported/rendered GEOMETRY is
+  // still the plain bounding rectangle.
+  float[][] f_data = new float[0][14];
   int[][] i_data = new int[0][2];
 
   void makeEmpty (int n) {
     beginScene3DChange();
 
-    this.f_data = new float[n][8];
+    this.f_data = new float[n][14];
     this.i_data = new int[n][2];
     this.SolidImpact = new PImage[n];
     this.SolarImpact = new PImage[n][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
@@ -37,24 +53,36 @@ class Sections {
     endScene3DChange();
   }
 
+  // Legacy convenience overloads - a plain symmetric rectangle (today's
+  // only shape, before corners existed), expanded into the 4-corner
+  // form below. Every existing caller that only ever wanted a rectangle
+  // (clone3D.pde's own sibling that clones the real corners is the one
+  // exception - see its own comment) keeps working unchanged through
+  // these.
   void create (float x, float y, float z, float rotX, float sizeX, float sizeY, int resX, int resY) {
     this.create(x, y, z, rotX, 0, 0, sizeX, sizeY, resX, resY);
   }
 
   void create (float x, float y, float z, float rotX, float rotY, float rotZ, float sizeX, float sizeY, int resX, int resY) {
+    float hx = 0.5 * sizeX;
+    float hy = 0.5 * sizeY;
+    this.create(x, y, z, rotX, rotY, rotZ, -hx, -hy, hx, -hy, hx, hy, -hx, hy, resX, resY);
+  }
+
+  void create (float x, float y, float z, float rotX, float rotY, float rotZ, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float p4x, float p4y, int resX, int resY) {
     int[][] Temp_i_data = { { resX, resY } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
-    float[][] Temp_f_data = { { x, y, z, rotX, rotY, rotZ, sizeX, sizeY } };
+    float[][] Temp_f_data = { { x, y, z, rotX, rotY, rotZ, p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y } };
     this.f_data = (float[][]) concat(this.f_data, Temp_f_data);
 
-    PImage[] Temp_SolidImpact = { createImage(resX, resY, RGB) };
+    PImage[] Temp_SolidImpact = { createImage(resX, resY, ARGB) };
     this.SolidImpact = (PImage[]) concat(this.SolidImpact, Temp_SolidImpact);
 
     PImage[][][] Temp_SolarImpact = new PImage[1][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     for (int j = STUDY.startDay; j <= STUDY.endDay; j++) {
       for (int q = 0; q < numberOfImpactVariations; q++) {
-        Temp_SolarImpact[0][j][q] = createImage(2, 2, RGB); // empty and small
+        Temp_SolarImpact[0][j][q] = createImage(2, 2, ARGB); // empty and small
       }
     }
     this.SolarImpact = (PImage[][][]) concat(this.SolarImpact, Temp_SolarImpact);
@@ -73,16 +101,36 @@ class Sections {
   float getRotX (int n) { return this.f_data[n][3]; }
   float getRotY (int n) { return this.f_data[n][4]; }
   float getRotZ (int n) { return this.f_data[n][5]; }
-  float getSizeX (int n) { return this.f_data[n][6]; }
-  float getSizeY (int n) { return this.f_data[n][7]; }
+  float getP1X (int n) { return this.f_data[n][6]; }
+  float getP1Y (int n) { return this.f_data[n][7]; }
+  float getP2X (int n) { return this.f_data[n][8]; }
+  float getP2Y (int n) { return this.f_data[n][9]; }
+  float getP3X (int n) { return this.f_data[n][10]; }
+  float getP3Y (int n) { return this.f_data[n][11]; }
+  float getP4X (int n) { return this.f_data[n][12]; }
+  float getP4Y (int n) { return this.f_data[n][13]; }
   void setX (int n, float f) { this.f_data[n][0] = f; }
   void setY (int n, float f) { this.f_data[n][1] = f; }
   void setZ (int n, float f) { this.f_data[n][2] = f; }
   void setRotX (int n, float f) { this.f_data[n][3] = f; }
   void setRotY (int n, float f) { this.f_data[n][4] = f; }
   void setRotZ (int n, float f) { this.f_data[n][5] = f; }
-  void setSizeX (int n, float f) { this.f_data[n][6] = f; }
-  void setSizeY (int n, float f) { this.f_data[n][7] = f; }
+  void setP1X (int n, float f) { this.f_data[n][6] = f; }
+  void setP1Y (int n, float f) { this.f_data[n][7] = f; }
+  void setP2X (int n, float f) { this.f_data[n][8] = f; }
+  void setP2Y (int n, float f) { this.f_data[n][9] = f; }
+  void setP3X (int n, float f) { this.f_data[n][10] = f; }
+  void setP3Y (int n, float f) { this.f_data[n][11] = f; }
+  void setP4X (int n, float f) { this.f_data[n][12] = f; }
+  void setP4Y (int n, float f) { this.f_data[n][13] = f; }
+
+  // Derived (not stored) - the axis-aligned bounding box of this
+  // section's own 4 local corners, read through getP1X.../getP4Y so
+  // these always reflect whatever's actually stored. Any caller that
+  // just wants "how big is this section" (scale3D.pde used to read a
+  // stored sizeX/sizeY field directly; it now gets this instead).
+  float getSizeX (int n) { return sectionBoundingBox(getP1X(n), getP1Y(n), getP2X(n), getP2Y(n), getP3X(n), getP3Y(n), getP4X(n), getP4Y(n))[2]; }
+  float getSizeY (int n) { return sectionBoundingBox(getP1X(n), getP1Y(n), getP2X(n), getP2Y(n), getP3X(n), getP3Y(n), getP4X(n), getP4Y(n))[3]; }
 
   // Mirrors Solids' own RotateX/RotateY/RotateZ (solids.pde) - plain
   // accumulation. Rotate3D.pde's own Sections() now always dispatches
@@ -105,7 +153,7 @@ class Sections {
     for (int i = 0; i < this.num; i++) {
       for (int j = STUDY.startDay; j <= STUDY.endDay; j++) {
         for (int q = 0; q < numberOfImpactVariations; q++) {
-          this.SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
+          this.SolarImpact[i][j][q] = createImage(2, 2, ARGB); // empty and small
         }
       }
     }
@@ -139,8 +187,6 @@ class Sections {
     float Section_RotX = this.getRotX(f);
     float Section_RotY = this.getRotY(f);
     float Section_RotZ = this.getRotZ(f);
-    float Section_SizeX = this.getSizeX(f);
-    float Section_SizeY = this.getSizeY(f);
     int Section_ResX = this.get_resX(f);
     int Section_ResY = this.get_resY(f);
 
@@ -154,7 +200,9 @@ class Sections {
       writeSectionGroupHeader(f, the_filename);
     }
 
-    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
+    float[][] subFace = getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ,
+      this.getP1X(f), this.getP1Y(f), this.getP2X(f), this.getP2Y(f), this.getP3X(f), this.getP3Y(f), this.getP4X(f), this.getP4Y(f),
+      Section_ResX, Section_ResY);
 
     num_vertices_added = 0;
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
@@ -326,7 +374,13 @@ class Sections {
   // around the world origin rather than the section's own center
   // whenever X or Y wasn't 0) - those 3 are gone; every section is this
   // one shape now.
-  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_SizeX, float Section_SizeY, int Section_ResX, int Section_ResY) {
+  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_P1X, float Section_P1Y, float Section_P2X, float Section_P2Y, float Section_P3X, float Section_P3Y, float Section_P4X, float Section_P4Y, int Section_ResX, int Section_ResY) {
+    float[] box = sectionBoundingBox(Section_P1X, Section_P1Y, Section_P2X, Section_P2Y, Section_P3X, Section_P3Y, Section_P4X, Section_P4Y);
+    float centerX = box[0];
+    float centerY = box[1];
+    float sizeX = box[2];
+    float sizeY = box[3];
+
     float[][] ImageVertex = new float[5][5];
 
     for (int q = 0; q < 5; q++) {
@@ -335,8 +389,8 @@ class Sections {
       float u  = CORNER_LOCAL[q][2];
       float v  = CORNER_LOCAL[q][3];
 
-      float localX = qx * 0.5 * Section_SizeX;
-      float localY = qy * 0.5 * Section_SizeY;
+      float localX = centerX + qx * 0.5 * sizeX;
+      float localY = centerY + qy * 0.5 * sizeY;
       float[] xyz = arbitrarySection_pointLocalToWorld(localX, localY, 0, Section_RotX, Section_RotY, Section_RotZ, Section_X, Section_Y, Section_Z);
 
       ImageVertex[q][0] = xyz[0];
@@ -347,6 +401,90 @@ class Sections {
     }
 
     return ImageVertex;
+  }
+
+  // Legacy convenience overload - same symmetric-rectangle expansion as
+  // the matching create() overload above, for callers (select3D.pde,
+  // mouseClicked.pde's computeSectionParams) that only ever build or
+  // query a plain rectangle and have no mask/crop of their own to
+  // express.
+  float[][] getCorners (float Section_X, float Section_Y, float Section_Z, float Section_RotX, float Section_RotY, float Section_RotZ, float Section_SizeX, float Section_SizeY, int Section_ResX, int Section_ResY) {
+    float hx = 0.5 * Section_SizeX;
+    float hy = 0.5 * Section_SizeY;
+    return getCorners(Section_X, Section_Y, Section_Z, Section_RotX, Section_RotY, Section_RotZ, -hx, -hy, hx, -hy, hx, hy, -hx, hy, Section_ResX, Section_ResY);
+  }
+
+  // Axis-aligned bounding box of 4 local (x,y) corners - {centerX,
+  // centerY, sizeX, sizeY}. This is the rectangle getCorners() above,
+  // and every existing bake/render/shadow-cast/pick path that calls it,
+  // actually builds - see f_data's own comment above for why that's a
+  // different thing from the 4 points themselves.
+  float[] sectionBoundingBox (float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float p4x, float p4y) {
+    float minX = min(min(p1x, p2x), min(p3x, p4x));
+    float maxX = max(max(p1x, p2x), max(p3x, p4x));
+    float minY = min(min(p1y, p2y), min(p3y, p4y));
+    float maxY = max(max(p1y, p2y), max(p3y, p4y));
+    return new float[] { 0.5 * (minX + maxX), 0.5 * (minY + maxY), maxX - minX, maxY - minY };
+  }
+
+  // Standard even-odd ray-casting point-in-polygon test against this
+  // section's own 4 local corners (p4==p1 - the default when a command
+  // omits p4x/p4y, see __SECTION__ - closes a triangle back to its
+  // first point; a zero-length edge like that contributes no crossing,
+  // so it needs no special case here). localX/localY must already be
+  // in the section's own local, unrotated, untranslated plane - the
+  // same frame sectionBoundingBox()/getCorners() build their rectangle
+  // in.
+  boolean sectionInsideMask (float localX, float localY, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float p4x, float p4y) {
+    float[] xs = { p1x, p2x, p3x, p4x };
+    float[] ys = { p1y, p2y, p3y, p4y };
+    boolean inside = false;
+    for (int i = 0, j = xs.length - 1; i < xs.length; j = i++) {
+      if (((ys[i] > localY) != (ys[j] > localY)) &&
+          (localX < (xs[j] - xs[i]) * (localY - ys[i]) / (ys[j] - ys[i]) + xs[i])) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  // Zeroes alpha on every pixel of img (an ARGB section-texture image,
+  // ResX x ResY) that falls outside the mask polygon p1..p4 - a single
+  // post-process pass over the already-fully-baked image, reusing the
+  // same 4 points sectionBoundingBox()/sectionInsideMask() use.
+  // Deliberately NOT applied per-vertex inside castShadowsCurrentSection
+  // .pde's own hot loop (that stays rasterizing the plain bounding
+  // rectangle, unchanged, for performance - see f_data's own comment
+  // above) - this is the one place the crop actually happens, called
+  // once per baked image from solidImpacts.pde/solarImpacts.pde.
+  //
+  // (i/w - 0.5)*sizeX and -(j/h - 0.5)*sizeY mirror the exact same u/v
+  // convention the baking loops' own funcs.bilinear(A, B, C, D, i /
+  // ResX, 1 - j / ResY) calls use against this same axis-aligned
+  // rectangle (CORNER_LOCAL's own u/v columns) - i increasing with
+  // local X, j increasing as local Y DEcreases.
+  void applySectionMask (PImage img, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float p4x, float p4y) {
+    float[] box = sectionBoundingBox(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y);
+    float centerX = box[0];
+    float centerY = box[1];
+    float sizeX = box[2];
+    float sizeY = box[3];
+
+    if ((sizeX <= 0) || (sizeY <= 0)) return; // degenerate box - nothing to crop
+
+    int w = img.width;
+    int h = img.height;
+    img.loadPixels();
+    for (int j = 0; j < h; j++) {
+      float localY = centerY - sizeY * (j / float(h) - 0.5);
+      for (int i = 0; i < w; i++) {
+        float localX = centerX + sizeX * (i / float(w) - 0.5);
+        if (!sectionInsideMask(localX, localY, p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y)) {
+          img.pixels[i + j * w] = img.pixels[i + j * w] & 0x00FFFFFF; // alpha -> 0
+        }
+      }
+    }
+    img.updatePixels();
   }
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
@@ -397,6 +535,22 @@ class Sections {
 
     if (!funcs.isInside_Rectangle(P, A, B, C)) return miss;
 
+    // P lies within the section's own baked RECTANGLE (just checked
+    // above) but may still be outside its real mask polygon - a
+    // non-rectangular section's rectangle is bigger than its visible/
+    // selectable shape (f_data's own comment above). Convert the hit
+    // back into the section's own local plane and re-test there, the
+    // same way the mask crop in solidImpacts.pde's/solarImpacts.pde's
+    // baking loops does.
+    // f_data has no row for f when Vertices/Faces were populated some
+    // other way than the usual draw() pass (a few unit tests do this
+    // directly) - nothing to mask against then, so just keep today's
+    // plain-rectangle hit.
+    if (f < this.f_data.length) {
+      float[] local = arbitrarySection_pointWorldToLocal(X, Y, Z, this.getRotX(f), this.getRotY(f), this.getRotZ(f), this.getX(f), this.getY(f), this.getZ(f));
+      if (!sectionInsideMask(local[0], local[1], this.getP1X(f), this.getP1Y(f), this.getP2X(f), this.getP2Y(f), this.getP3X(f), this.getP3Y(f), this.getP4X(f), this.getP4Y(f))) return miss;
+    }
+
     return new float[] { X, Y, Z, dist2intersect };
   }
 
@@ -420,9 +574,21 @@ class Sections {
         txt += ",";
         txt += nf(this.getRotZ(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.getSizeX(i), 0, 4).replace(",", ".");
+        txt += nf(this.getP1X(i), 0, 4).replace(",", ".");
         txt += ",";
-        txt += nf(this.getSizeY(i), 0, 4).replace(",", ".");
+        txt += nf(this.getP1Y(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP2X(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP2Y(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP3X(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP3Y(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP4X(i), 0, 4).replace(",", ".");
+        txt += ",";
+        txt += nf(this.getP4Y(i), 0, 4).replace(",", ".");
         txt += ",";
         txt += nf(this.get_resX(i), 0);
         txt += ",";
@@ -477,7 +643,7 @@ class Sections {
   public void from_XML (XML xml) {    {
       XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = XML_getInt(parent, "ni");
-      this.f_data = new float[ni][8];
+      this.f_data = new float[ni][14];
       this.i_data = new int[ni][2];
       this.num = ni;
       XML[] children = parent.getChildren("item");
@@ -490,10 +656,16 @@ class Sections {
         this.setRotX(i, float(parts[3]));
         this.setRotY(i, float(parts[4]));
         this.setRotZ(i, float(parts[5]));
-        this.setSizeX(i, float(parts[6]));
-        this.setSizeY(i, float(parts[7]));
-        this.set_resX(i, int(parts[8]));
-        this.set_resY(i, int(parts[9]));
+        this.setP1X(i, float(parts[6]));
+        this.setP1Y(i, float(parts[7]));
+        this.setP2X(i, float(parts[8]));
+        this.setP2Y(i, float(parts[9]));
+        this.setP3X(i, float(parts[10]));
+        this.setP3Y(i, float(parts[11]));
+        this.setP4X(i, float(parts[12]));
+        this.setP4Y(i, float(parts[13]));
+        this.set_resX(i, int(parts[14]));
+        this.set_resY(i, int(parts[15]));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }
@@ -504,7 +676,7 @@ class Sections {
       XML[] children = parent.getChildren("item");
       for (int i = 0; i < ni; i++) {
         String TEXTURE_path = XML_getContent(children[i]);
-        this.SolidImpact[i] = createImage(2, 2, RGB); // empty and small
+        this.SolidImpact[i] = createImage(2, 2, ARGB); // empty and small
         if (!TEXTURE_path.equals("")) {
           println("Loading texture(" + i + "):", TEXTURE_path);
           // Only overwrites the placeholder above when loadImage() actually
@@ -532,7 +704,7 @@ class Sections {
         for (int j = 0; j < nj; j++) {
           for (int k = 0; k < nk; k++) {
             String TEXTURE_path = XML_getContent(children[(i * nj + j) * nk + k]);
-            this.SolarImpact[i][j][k] = createImage(2, 2, RGB); // empty and small
+            this.SolarImpact[i][j][k] = createImage(2, 2, ARGB); // empty and small
             if (!TEXTURE_path.equals("")) {
               println("Loading texture(" + i + "," + j + "," + k + "):", TEXTURE_path);
               // See SolidImpact's own loop above for why this check matters.

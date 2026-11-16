@@ -472,10 +472,18 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     exactly what a solid's own rotation does elsewhere in this app.
     `x`/`y`/`z` is the section's own center, rotated about its own
     center by `rx`/`ry`/`rz` and then translated there - not folded in
-    before rotating. `dx`/`dy` is the quad's own physical width/height
-    along its local X/Y axes (the same axes `rx`/`ry` rotate around),
-    and `resX`/`resY` is the pixel resolution of the baked solar/solid-
-    impact texture along those same two local axes.
+    before rotating. `p1x`/`p1y` through `p4x`/`p4y` are 4 independent
+    local (x,y) corners along the quad's local X/Y axes (the same axes
+    `rx`/`ry` rotate around) - `p1`/`p2`/`p3` default to 3 corners of a
+    20x20 rectangle, and `p4` defaults to `p1` when left out entirely,
+    closing a triangle back to its first point without needing to
+    duplicate it. The baked texture (`resX`/`resY` pixels along those
+    same two local axes) always covers the axis-aligned bounding
+    rectangle of those 4 points - a non-rectangular shape (triangle,
+    trapezoid, kite, arbitrary quad) is cropped out of that rectangle's
+    own alpha channel, and out of picking, rather than being a
+    different exported/rendered geometry: the section's own quad face
+    is always that bounding rectangle.
 
     Once created, a section can be rotated around any of its 3 axes the
     same way other objects are - `ROTATE`/`ROTATEX`/`ROTATEY`/`ROTATEZ`
@@ -483,7 +491,7 @@ Arc m=? tes=? lyr=? vsb=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?
     dragged/named axis picking which of rotX/rotY/rotZ actually changes.
 
 ```
-Section x=? y=? z=? rx=? ry=? rz=? dx=? dy=? resX=? resY=?
+Section x=? y=? z=? rx=? ry=? rz=? resX=? resY=? p1x=? p1y=? p2x=? p2y=? p3x=? p3y=? p4x=? p4y=?
 ```
 
 ------------------------------------------------------------------------

@@ -2551,14 +2551,19 @@ class ValueModifier {
     float out = 0;
     String command = "Solid Impacts SizeX";
     if (created == 0) {
+      // SizeX is now derived from the section's own 4 corners (no
+      // longer an independently stored field - see f_data's own
+      // comment, sections.pde), so this spinner's own setter scales
+      // every corner's X proportionally to hit the requested width,
+      // the same as scale3D.pde's own Sections() handling.
       putValueAction(command,
-        () -> allSolidImpacts.SizeX,
-        (v) -> { allSolidImpacts.SizeX = v; },
+        () -> allSolidImpacts.getSizeX(),
+        (v) -> { allSolidImpacts.setSizeX(v); },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts sizeX", allSolidImpacts.SizeX, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts sizeX", allSolidImpacts.getSizeX(), s1, s2, s3, s4);
     }
     return out;
   }
@@ -2576,13 +2581,13 @@ class ValueModifier {
     String command = "Solid Impacts SizeY";
     if (created == 0) {
       putValueAction(command,
-        () -> allSolidImpacts.SizeY,
-        (v) -> { allSolidImpacts.SizeY = v; },
+        () -> allSolidImpacts.getSizeY(),
+        (v) -> { allSolidImpacts.setSizeY(v); },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts sizeY", allSolidImpacts.SizeY, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts sizeY", allSolidImpacts.getSizeY(), s1, s2, s3, s4);
     }
     return out;
   }
