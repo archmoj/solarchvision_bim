@@ -573,6 +573,10 @@ class SectionParams {
 //    at allSolidImpacts' current defaults, matching the original code's
 //    "nothing happens" outcome for that case.
 SectionParams computeSectionParams (int f, float[] RxP) {
+  if (mouseButton == LEFT) {
+    return computeSectionParamsFromFace(f);
+  }
+
   SectionParams sp = new SectionParams();
 
   sp.X = allSolidImpacts.X;
@@ -586,147 +590,6 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 
   sp.ResX = allSolidImpacts.ResX;
   sp.ResY = allSolidImpacts.ResY;
-
-  if (mouseButton == LEFT) {
-
-    int n = allFaces.nodes[f].length;
-
-    if (n > 2) {
-
-      float min_Beta = 360;
-
-      for (int j = 0; j < n; j++) {
-
-        int j_next = (j + 1) % n;
-
-        float x1 = allPoints.getX(allFaces.nodes[f][j]);
-        float y1 = allPoints.getY(allFaces.nodes[f][j]);
-
-        float x2 = allPoints.getX(allFaces.nodes[f][j_next]);
-        float y2 = allPoints.getY(allFaces.nodes[f][j_next]);
-
-        float Beta = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
-
-        if (min_Beta > Beta) min_Beta = Beta;
-      }
-
-      float[][] tmpVertices = new float[n][3];
-
-      for (int j = 0; j < n; j++) {
-
-        float x1 = allPoints.getX(allFaces.nodes[f][j]);
-        float y1 = allPoints.getY(allFaces.nodes[f][j]);
-        float z1 = allPoints.getZ(allFaces.nodes[f][j]);
-
-        float x2 = x1 * funcs.cos_ang(-min_Beta) - y1 * funcs.sin_ang(-min_Beta);
-        float y2 = x1 * funcs.sin_ang(-min_Beta) + y1 * funcs.cos_ang(-min_Beta);
-        float z2 = z1;
-
-        tmpVertices[j][0] = x2;
-        tmpVertices[j][1] = y2;
-        tmpVertices[j][2] = z2;
-      }
-
-      float min_x = FLOAT_undefined;
-      float max_x = -FLOAT_undefined;
-      float min_y = FLOAT_undefined;
-      float max_y = -FLOAT_undefined;
-      float min_z = FLOAT_undefined;
-      float max_z = -FLOAT_undefined;
-
-      for (int j = 0; j < n; j++) {
-        float the_x = tmpVertices[j][0];
-        float the_y = tmpVertices[j][1];
-        float the_z = tmpVertices[j][2];
-
-        if (min_x > the_x) min_x = the_x;
-        if (max_x < the_x) max_x = the_x;
-        if (min_y > the_y) min_y = the_y;
-        if (max_y < the_y) max_y = the_y;
-        if (min_z > the_z) min_z = the_z;
-        if (max_z < the_z) max_z = the_z;
-      }
-
-      // World-frame centroid of the clicked face - this is the section's
-      // literal X/Y/Z position in the (now single, Euler-angle) model:
-      // rotate about the section's own center (rotX/rotY/rotZ below),
-      // THEN translate here. No further permutation/negation of this
-      // position is needed for either orientation below, unlike the old
-      // per-type math this replaced.
-      float[] G = {
-        0, 0, 0
-      };
-      for (int j = 0; j < n; j++) {
-        G[0] += allPoints.getX(allFaces.nodes[f][j]) / float(n);
-        G[1] += allPoints.getY(allFaces.nodes[f][j]) / float(n);
-        G[2] += allPoints.getZ(allFaces.nodes[f][j]) / float(n);
-      }
-
-      sp.X = G[0];
-      sp.Y = G[1];
-      sp.Z = G[2];
-
-      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-        // Horizontal: lies flat in its own local X-Y plane already, so
-        // only rotZ (around the normal) is needed.
-        sp.SizeX = max_x - min_x;
-        sp.SizeY = max_y - min_y;
-
-        sp.RotX = 0;
-        sp.RotY = 0;
-        sp.RotZ = min_Beta;
-      } else {
-        // Vertical: tipped upright by rotX=90 first (so local Y becomes
-        // world Z), then rotZ orients it within the vertical plane -
-        // measured from 90 - min_Beta the same way the old "Type 3"
-        // single-angle convention was, just expressed as a sign on rotZ
-        // here instead of a separate type.
-        sp.SizeX = max_y - min_y;
-        sp.SizeY = max_z - min_z;
-
-        sp.RotX = 90;
-        sp.RotY = 0;
-        sp.RotZ = min_Beta - 90;
-      }
-
-      PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);
-      PVector BG = new PVector(allPoints.getX(allFaces.nodes[f][1]) - G[0], allPoints.getY(allFaces.nodes[f][1]) - G[1], allPoints.getZ(allFaces.nodes[f][1]) - G[2]);
-
-      PVector GAxGB = AG.cross(BG);
-
-      float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.SizeX, sp.SizeY, sp.ResX, sp.ResY);
-
-      float[] SectionCorner_A = ImageVertex[1];
-      float[] SectionCorner_B = ImageVertex[2];
-      float[] SectionCorner_C = ImageVertex[3];
-      float[] SectionCorner_D = ImageVertex[4];
-
-      float[] ImageCenter = {
-        0, 0, 0
-      };
-      for (int j = 0; j < 3; j++) {
-        ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
-      }
-
-      PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);
-      PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
-
-      PVector GAxGB_other = AG_other.cross(BG_other);
-
-      float V = GAxGB_other.dot(GAxGB);
-
-      if (V < 0) {
-        // Flip face: reverse the plane's normal by rotating 180 degrees
-        // about its OWN local X axis - composed as the first (innermost)
-        // of the 3 Euler rotations, so this is valid regardless of
-        // rotY/rotZ above. Position (X/Y/Z) is untouched: it's already
-        // the literal world centroid, not something that needs undoing.
-        sp.RotX = sp.RotX + 180;
-      }
-
-      sp.createNew = true;
-    }
-  }
 
   if (mouseButton == RIGHT) {
 
@@ -742,6 +605,294 @@ SectionParams computeSectionParams (int f, float[] RxP) {
   }
 
   return sp;
+}
+
+// The mouseButton == LEFT half of computeSectionParams() above, pulled
+// out so faceToSection.pde's batch "Face >> Section" action can derive
+// the exact same plane (position, 3 Euler angles, and bounding SizeX/
+// SizeY) from a face without a live mouse click to dispatch on - this
+// function doesn't look at mouseButton at all, so it's just as valid
+// called from a menu action on a batch of already-selected faces as it
+// is from a single live click. computeSectionParams() above now simply
+// delegates its own LEFT-click case here, so the two never drift apart.
+SectionParams computeSectionParamsFromFace (int f) {
+  SectionParams sp = new SectionParams();
+
+  sp.X = allSolidImpacts.X;
+  sp.Y = allSolidImpacts.Y;
+  sp.Z = allSolidImpacts.Z;
+  sp.RotX = allSolidImpacts.RotX;
+  sp.RotY = allSolidImpacts.rotY;
+  sp.RotZ = allSolidImpacts.rotZ;
+  sp.SizeX = allSolidImpacts.getSizeX();
+  sp.SizeY = allSolidImpacts.getSizeY();
+
+  sp.ResX = allSolidImpacts.ResX;
+  sp.ResY = allSolidImpacts.ResY;
+
+  int n = allFaces.nodes[f].length;
+
+  if (n > 2) {
+
+    float min_Beta = 360;
+
+    for (int j = 0; j < n; j++) {
+
+      int j_next = (j + 1) % n;
+
+      float x1 = allPoints.getX(allFaces.nodes[f][j]);
+      float y1 = allPoints.getY(allFaces.nodes[f][j]);
+
+      float x2 = allPoints.getX(allFaces.nodes[f][j_next]);
+      float y2 = allPoints.getY(allFaces.nodes[f][j_next]);
+
+      float Beta = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
+
+      if (min_Beta > Beta) min_Beta = Beta;
+    }
+
+    float[][] tmpVertices = new float[n][3];
+
+    for (int j = 0; j < n; j++) {
+
+      float x1 = allPoints.getX(allFaces.nodes[f][j]);
+      float y1 = allPoints.getY(allFaces.nodes[f][j]);
+      float z1 = allPoints.getZ(allFaces.nodes[f][j]);
+
+      float x2 = x1 * funcs.cos_ang(-min_Beta) - y1 * funcs.sin_ang(-min_Beta);
+      float y2 = x1 * funcs.sin_ang(-min_Beta) + y1 * funcs.cos_ang(-min_Beta);
+      float z2 = z1;
+
+      tmpVertices[j][0] = x2;
+      tmpVertices[j][1] = y2;
+      tmpVertices[j][2] = z2;
+    }
+
+    float min_x = FLOAT_undefined;
+    float max_x = -FLOAT_undefined;
+    float min_y = FLOAT_undefined;
+    float max_y = -FLOAT_undefined;
+    float min_z = FLOAT_undefined;
+    float max_z = -FLOAT_undefined;
+
+    for (int j = 0; j < n; j++) {
+      float the_x = tmpVertices[j][0];
+      float the_y = tmpVertices[j][1];
+      float the_z = tmpVertices[j][2];
+
+      if (min_x > the_x) min_x = the_x;
+      if (max_x < the_x) max_x = the_x;
+      if (min_y > the_y) min_y = the_y;
+      if (max_y < the_y) max_y = the_y;
+      if (min_z > the_z) min_z = the_z;
+      if (max_z < the_z) max_z = the_z;
+    }
+
+    // World-frame centroid of the clicked face - this is the section's
+    // literal X/Y/Z position in the (now single, Euler-angle) model:
+    // rotate about the section's own center (rotX/rotY/rotZ below),
+    // THEN translate here. No further permutation/negation of this
+    // position is needed for either orientation below, unlike the old
+    // per-type math this replaced.
+    float[] G = {
+      0, 0, 0
+    };
+    for (int j = 0; j < n; j++) {
+      G[0] += allPoints.getX(allFaces.nodes[f][j]) / float(n);
+      G[1] += allPoints.getY(allFaces.nodes[f][j]) / float(n);
+      G[2] += allPoints.getZ(allFaces.nodes[f][j]) / float(n);
+    }
+
+    sp.X = G[0];
+    sp.Y = G[1];
+    sp.Z = G[2];
+
+    if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
+      // Horizontal: lies flat in its own local X-Y plane already, so
+      // only rotZ (around the normal) is needed.
+      sp.SizeX = max_x - min_x;
+      sp.SizeY = max_y - min_y;
+
+      sp.RotX = 0;
+      sp.RotY = 0;
+      sp.RotZ = min_Beta;
+    } else {
+      // Vertical: tipped upright by rotX=90 first (so local Y becomes
+      // world Z), then rotZ orients it within the vertical plane -
+      // measured from 90 - min_Beta the same way the old "Type 3"
+      // single-angle convention was, just expressed as a sign on rotZ
+      // here instead of a separate type.
+      sp.SizeX = max_y - min_y;
+      sp.SizeY = max_z - min_z;
+
+      sp.RotX = 90;
+      sp.RotY = 0;
+      sp.RotZ = min_Beta - 90;
+    }
+
+    PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);
+    PVector BG = new PVector(allPoints.getX(allFaces.nodes[f][1]) - G[0], allPoints.getY(allFaces.nodes[f][1]) - G[1], allPoints.getZ(allFaces.nodes[f][1]) - G[2]);
+
+    PVector GAxGB = AG.cross(BG);
+
+    float[][] ImageVertex = allSections.getCorners(sp.X, sp.Y, sp.Z, sp.RotX, sp.RotY, sp.RotZ, sp.SizeX, sp.SizeY, sp.ResX, sp.ResY);
+
+    float[] SectionCorner_A = ImageVertex[1];
+    float[] SectionCorner_B = ImageVertex[2];
+    float[] SectionCorner_C = ImageVertex[3];
+    float[] SectionCorner_D = ImageVertex[4];
+
+    float[] ImageCenter = {
+      0, 0, 0
+    };
+    for (int j = 0; j < 3; j++) {
+      ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
+    }
+
+    PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);
+    PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
+
+    PVector GAxGB_other = AG_other.cross(BG_other);
+
+    float V = GAxGB_other.dot(GAxGB);
+
+    if (V < 0) {
+      // Flip face: reverse the plane's normal by rotating 180 degrees
+      // about its OWN local X axis - composed as the first (innermost)
+      // of the 3 Euler rotations, so this is valid regardless of
+      // rotY/rotZ above. Position (X/Y/Z) is untouched: it's already
+      // the literal world centroid, not something that needs undoing.
+      sp.RotX = sp.RotX + 180;
+    }
+
+    // Everything above only ever chooses between exactly 2 discrete
+    // orientations - flat horizontal (RotX=0) or tipped fully vertical
+    // (RotX=90) - because it classifies by which single world axis
+    // (X, Y or Z) the face's own extent is smallest along. A genuinely
+    // sloped face (a tilted roof, say) isn't well served by either
+    // discrete choice: its own true plane sits somewhere in between,
+    // and forcing it into one of these 2 buckets produces a section
+    // whose plane doesn't match the face's real tilt at all. Detected
+    // here via the face's own Newell normal (newellNormal() below) -
+    // its Z component is exactly +-1 for a perfectly flat/vertical face
+    // (where the classification above is already exactly correct, so
+    // this leaves sp untouched) and strictly between for anything
+    // genuinely tilted, which gets its own general plane fit instead
+    // (fitTiltedSectionPlane() below, replacing RotX/RotY/RotZ/SizeX/
+    // SizeY - X/Y/Z/ResX/ResY/createNew above are unaffected either
+    // way).
+    float[] N = newellNormal(allFaces.nodes[f]);
+    float absNz = abs(N[2]);
+    if ((absNz > 0.001) && (absNz < 0.999)) {
+      float[] tilted = fitTiltedSectionPlane(allFaces.nodes[f], G, N);
+      sp.RotX = tilted[0];
+      sp.RotY = tilted[1];
+      sp.RotZ = tilted[2];
+      sp.SizeX = tilted[3];
+      sp.SizeY = tilted[4];
+    }
+
+    sp.createNew = true;
+  }
+
+  return sp;
+}
+
+// Newell's method: a robust normal for a (possibly non-convex) planar
+// polygon, summed over every one of its edges rather than just the
+// first two (contrast the AG/BG cross product computeSectionParamsFromFace()
+// uses just above, for its own narrower "is this horizontal section
+// built backwards" check) - needed here because a face can have any
+// number of sides, and a first-two-vertices-only cross product is more
+// vulnerable to a degenerate first edge than summing around the whole
+// polygon is. Returns a unit vector; a numerically-degenerate (zero-
+// area) face falls back to world +Z rather than returning a zero-length
+// vector no caller could normalize.
+float[] newellNormal (int[] nodes) {
+  int n = nodes.length;
+  float nx = 0, ny = 0, nz = 0;
+
+  for (int j = 0; j < n; j++) {
+    int jn = (j + 1) % n;
+
+    float x1 = allPoints.getX(nodes[j]);
+    float y1 = allPoints.getY(nodes[j]);
+    float z1 = allPoints.getZ(nodes[j]);
+
+    float x2 = allPoints.getX(nodes[jn]);
+    float y2 = allPoints.getY(nodes[jn]);
+    float z2 = allPoints.getZ(nodes[jn]);
+
+    nx += (y1 - y2) * (z1 + z2);
+    ny += (z1 - z2) * (x1 + x2);
+    nz += (x1 - x2) * (y1 + y2);
+  }
+
+  float len = sqrt(nx * nx + ny * ny + nz * nz);
+  if (len < 0.000001) return new float[] { 0, 0, 1 };
+
+  return new float[] { nx / len, ny / len, nz / len };
+}
+
+// General (non-axis-aligned) plane fit for a genuinely tilted face -
+// computeSectionParamsFromFace()'s own tilt check above is the only
+// caller. Returns {RotX, RotY, RotZ, SizeX, SizeY}, the same 5 fields
+// that function's horizontal/vertical branches already fill, just
+// derived from the face's real 3D plane (world normal N, already
+// computed by the caller) instead of forcing it into one of those 2
+// discrete orientations.
+float[] fitTiltedSectionPlane (int[] nodes, float[] G, float[] N) {
+
+  // A reference orientation (rotZ held at 0) whose own local Z axis
+  // (0, 0, 1) rotates to exactly this world normal N - solved directly
+  // from arbitrarySection_rotateLocalToWorld()'s own derivation
+  // (arbitrarySection.pde): with rotZ=0, that reduces to
+  // N.y = -sin(rotX), N.z = cos(rotX)*cos(rotY), N.x = cos(rotX)*sin(rotY).
+  // The roll (rotZ) actually used is fitted separately just below, from
+  // this reference frame's own in-plane 2D shape - exactly the same
+  // "rotate by each edge's own angle, keep the smallest" heuristic
+  // computeSectionParamsFromFace()'s horizontal case already uses, just
+  // applied to this tilted plane's local X/Y instead of world X/Y.
+  float refRotX = funcs.asin_ang(constrain(-N[1], -1, 1));
+  float cosRefRotX = funcs.cos_ang(refRotX);
+  // cosRefRotX == 0 means N is exactly +-world-Y - rotY is genuinely
+  // undetermined by N alone there (N.x and N.z both collapse to 0
+  // regardless of rotY), so 0 is as good a choice as any.
+  float refRotY = (abs(cosRefRotX) < 0.0001) ? 0 : funcs.atan2_ang(N[0], N[2]);
+
+  int n = nodes.length;
+  float[][] localXY = new float[n][2];
+  for (int j = 0; j < n; j++) {
+    float[] p = arbitrarySection_pointWorldToLocal(
+      allPoints.getX(nodes[j]), allPoints.getY(nodes[j]), allPoints.getZ(nodes[j]),
+      refRotX, refRotY, 0, G[0], G[1], G[2]);
+    localXY[j][0] = p[0];
+    localXY[j][1] = p[1];
+  }
+
+  float min_Beta = 360;
+  for (int j = 0; j < n; j++) {
+    int jn = (j + 1) % n;
+    float Beta = funcs.atan2_ang(localXY[jn][1] - localXY[j][1], localXY[jn][0] - localXY[j][0]) + 90;
+    if (min_Beta > Beta) min_Beta = Beta;
+  }
+
+  float minX = FLOAT_undefined;
+  float maxX = -FLOAT_undefined;
+  float minY = FLOAT_undefined;
+  float maxY = -FLOAT_undefined;
+
+  for (int j = 0; j < n; j++) {
+    float rx = localXY[j][0] * funcs.cos_ang(-min_Beta) - localXY[j][1] * funcs.sin_ang(-min_Beta);
+    float ry = localXY[j][0] * funcs.sin_ang(-min_Beta) + localXY[j][1] * funcs.cos_ang(-min_Beta);
+
+    if (minX > rx) minX = rx;
+    if (maxX < rx) maxX = rx;
+    if (minY > ry) minY = ry;
+    if (maxY < ry) maxY = ry;
+  }
+
+  return new float[] { refRotX, refRotY, min_Beta, maxX - minX, maxY - minY };
 }
 
 // Decides whether face `f`'s node order should be reversed (to flip

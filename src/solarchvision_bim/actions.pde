@@ -1784,6 +1784,12 @@ void build_allActions() {
     }
   });
 
+  putAction("Face >> Section", () -> {
+    convertSelectedFacesToSections();
+
+    view_changed();
+  });
+
   putAction("TerrainMesh >> Group", () -> {
     beginScene3DChange();
 

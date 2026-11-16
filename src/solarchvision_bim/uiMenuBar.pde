@@ -389,6 +389,7 @@ class UI_menuBar {
       "Spline",
       "Arc",
       ___divider___,
+      "Face >> Section",
       "TerrainMesh >> Group",
       "TerrainGap >> Group"
     }
