@@ -223,6 +223,240 @@ class LoadProjectTest {
     assertEquals(2, app.developLayerOption);
   }
 
+  // Rounding out the matrix: one real disk round trip per remaining
+  // member of each of the four groups, so a wiring mistake specific to
+  // any one of them (the wrong group argument passed in
+  // saveProject.pde/parseXmlVariables.pde) would fail its own test
+  // rather than go unnoticed because only one sibling per group was
+  // ever exercised through a real file.
+
+  // ----- geometry (solid, section, model1D, model2D, layer) -----
+
+  @Test
+  void loadProject_roundTripsASolid () throws IOException {
+    app.allSolids.create(0, 0, 0, 8, 1, 1, 1, 1, 1, 0, 0, 0, 0); // powX == 8
+
+    Path saved = saveToTempFile("load-project-solid-test");
+
+    app.allSolids.makeEmpty(0);
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(1, app.allSolids.DEF.length);
+    assertEquals(8f, app.allSolids.get_powX(0), 0.0001f);
+  }
+
+  @Test
+  void loadProject_roundTripsASection () throws IOException {
+    app.allSections.create(0, 0, 0, 5, 1, 1, 6, 6); // resX == resY == 6
+
+    Path saved = saveToTempFile("load-project-section-test");
+
+    app.allSections.makeEmpty(0);
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(1, app.allSections.num);
+    assertEquals(6, app.allSections.get_resX(0));
+    assertEquals(6, app.allSections.get_resY(0));
+  }
+
+  @Test
+  void loadProject_roundTripsAModel1D () throws IOException {
+    app.allModel1Ds.create(0, 0, 12, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0); // degreeMax == 12
+
+    Path saved = saveToTempFile("load-project-model1d-test");
+
+    app.allModel1Ds.makeEmpty(0);
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(1, app.allModel1Ds.num);
+  }
+
+  @Test
+  void loadProject_roundTripsAModel2D () throws IOException {
+    app.allModel2Ds.create("TREES", 2, 0, 0, 0, 1); // local file index 2
+
+    Path saved = saveToTempFile("load-project-model2d-test");
+
+    app.allModel2Ds.makeEmpty(0);
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(1, app.allModel2Ds.num);
+  }
+
+  @Test
+  void loadProject_roundTripsALayerField () throws IOException {
+    // Not a structural existence check like
+    // parseXmlVariables_stillLoadsGeometry_fromAPreGroupingSaveFile
+    // above - this confirms an actual LAYER field survives the real
+    // saveProject()/load_project() disk round trip under the new
+    // shared "layer" wrapper inside "geometry".
+    app.allLayers[0].name = "Round Trip Layer";
+
+    Path saved = saveToTempFile("load-project-layer-field-test");
+
+    app.allLayers[0].name = "";
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals("Round Trip Layer", app.allLayers[0].name);
+  }
+
+  // ----- environment (terrain, sky3D, tropo3D, moon3D, sun3D) -----
+
+  @Test
+  void loadProject_roundTripsATerrainSetting () throws IOException {
+    app.Terrain.loadTexture = true;
+
+    Path saved = saveToTempFile("load-project-terrain-test");
+
+    app.Terrain.loadTexture = false;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertTrue(app.Terrain.loadTexture);
+  }
+
+  @Test
+  void loadProject_roundTripsASky3DSetting () throws IOException {
+    app.Sky3D.displayTessellation = 6;
+
+    Path saved = saveToTempFile("load-project-sky3d-test");
+
+    app.Sky3D.displayTessellation = 3;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(6, app.Sky3D.displayTessellation);
+  }
+
+  @Test
+  void loadProject_roundTripsATropo3DSetting () throws IOException {
+    app.Tropo3D.displaySurface = true;
+
+    Path saved = saveToTempFile("load-project-tropo3d-test");
+
+    app.Tropo3D.displaySurface = false;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertTrue(app.Tropo3D.displaySurface);
+  }
+
+  @Test
+  void loadProject_roundTripsAMoon3DSetting () throws IOException {
+    // displayShadow (unlike this field) isn't actually written by
+    // Moon3D's own to_XML() - it's a runtime-only setting, not
+    // persisted at all, so it wouldn't be a valid round-trip target.
+    app.Moon3D.displaySurface = false;
+
+    Path saved = saveToTempFile("load-project-moon3d-test");
+
+    app.Moon3D.displaySurface = true;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertFalse(app.Moon3D.displaySurface);
+  }
+
+  @Test
+  void loadProject_roundTripsASun3DSetting () throws IOException {
+    app.Sun3D.activeColorScaleIndex = 9;
+
+    Path saved = saveToTempFile("load-project-sun3d-test");
+
+    app.Sun3D.activeColorScaleIndex = 15;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(9, app.Sun3D.activeColorScaleIndex);
+  }
+
+  // ----- view (camera, viewport3D, select3D) -----
+
+  @Test
+  void loadProject_roundTripsACameraSetting () throws IOException {
+    app.allCameras.displayAll = false;
+
+    Path saved = saveToTempFile("load-project-camera-test");
+
+    app.allCameras.displayAll = true;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertFalse(app.allCameras.displayAll);
+  }
+
+  @Test
+  void loadProject_roundTripsAViewport3DSetting () throws IOException {
+    app.WIN3D.cameraFieldOfView = 55.5f;
+
+    Path saved = saveToTempFile("load-project-viewport3d-test");
+
+    app.WIN3D.cameraFieldOfView = 0;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(55.5f, app.WIN3D.cameraFieldOfView, 0.001f);
+  }
+
+  @Test
+  void loadProject_roundTripsASelect3DSetting () throws IOException {
+    app.Select3D.positionVectorIndex = 1;
+
+    Path saved = saveToTempFile("load-project-select3d-test");
+
+    app.Select3D.positionVectorIndex = 2;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(1, app.Select3D.positionVectorIndex);
+  }
+
+  // ----- impacts (windFlow, solidImpact, solarImpact) -----
+
+  @Test
+  void loadProject_roundTripsAWindFlowSetting () throws IOException {
+    app.allWindFlows.displayAll = true;
+
+    Path saved = saveToTempFile("load-project-windflow-test");
+
+    app.allWindFlows.displayAll = false;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertTrue(app.allWindFlows.displayAll);
+  }
+
+  @Test
+  void loadProject_roundTripsASolidImpactSetting () throws IOException {
+    app.allSolidImpacts.rotX = 15;
+
+    Path saved = saveToTempFile("load-project-solidimpact-test");
+
+    app.allSolidImpacts.rotX = 0;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(15f, app.allSolidImpacts.rotX, 0.001f);
+  }
+
+  @Test
+  void loadProject_roundTripsASolarImpactSetting () throws IOException {
+    app.allSolarImpacts.rotX = 20;
+
+    Path saved = saveToTempFile("load-project-solarimpact-test");
+
+    app.allSolarImpacts.rotX = 0;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(20f, app.allSolarImpacts.rotX, 0.001f);
+  }
+
   // ================= load_project() with a missing/unreadable file =====
 
   @Test
