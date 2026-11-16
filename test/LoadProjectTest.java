@@ -136,6 +136,93 @@ class LoadProjectTest {
     assertEquals(7, app.impactDisplayDay);
   }
 
+  // The three tests below exercise the other groups the earlier
+  // grouping changes introduced (environment/view/impacts at the
+  // document root, climate/layer inside "variable") through the real
+  // saveProject()/load_project() disk round trip, the same way the
+  // three tests above already cover geometry (polylines), STATION, and
+  // "display"/ungrouped variable scalars (globalAlbedo/impactDisplayDay,
+  // SceneName). Each picks one plain, easy-to-check field from a class
+  // nobody else here already round-trips, specifically so a save/load
+  // mismatch in any one of these five groups would show up as a
+  // failure of its own test, not get masked by a passing one elsewhere.
+
+  @Test
+  void loadProject_roundTripsAnEnvironmentSetting () throws IOException {
+    // Earth3D.to_XML()/from_XML() themselves are unit-tested on their
+    // own (Earth3DTest.java); this confirms the setting still comes
+    // back correctly once Earth3D is one of several classes sharing
+    // the "environment" group rather than sitting alone on the root.
+    app.Earth3D.displaySurface = false;
+
+    Path saved = saveToTempFile("load-project-environment-test");
+
+    app.Earth3D.displaySurface = true;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertFalse(app.Earth3D.displaySurface);
+  }
+
+  @Test
+  void loadProject_roundTripsAViewSetting () throws IOException {
+    // Same reasoning as the environment test above, for the "view"
+    // group - User3D is normally tested on its own.
+    app.User3D.creatorMaterial = 3;
+
+    Path saved = saveToTempFile("load-project-view-test");
+
+    app.User3D.creatorMaterial = 7;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(3, app.User3D.creatorMaterial);
+  }
+
+  @Test
+  void loadProject_roundTripsAnImpactsSetting () throws IOException {
+    // Same reasoning again, for the "impacts" group - allWindRoses is
+    // normally tested on its own.
+    app.allWindRoses.imageResolution = 777;
+
+    Path saved = saveToTempFile("load-project-impacts-test");
+
+    app.allWindRoses.imageResolution = 400;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(777, app.allWindRoses.imageResolution);
+  }
+
+  @Test
+  void loadProject_roundTripsAClimateVariable () throws IOException {
+    // Covers the "climate" sub-element of "variable" - the scalars
+    // test above only exercises "display" and the ungrouped scalars.
+    app.climateBasedSolarForecast = 42;
+
+    Path saved = saveToTempFile("load-project-climate-test");
+
+    app.climateBasedSolarForecast = 0;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(42, app.climateBasedSolarForecast);
+  }
+
+  @Test
+  void loadProject_roundTripsALayerVariable () throws IOException {
+    // Covers the "layer" sub-element of "variable".
+    app.developLayerOption = 2;
+
+    Path saved = saveToTempFile("load-project-layer-test");
+
+    app.developLayerOption = 0;
+
+    loadExpectingTheKnownFrameLayoutNPE(saved);
+
+    assertEquals(2, app.developLayerOption);
+  }
+
   // ================= load_project() with a missing/unreadable file =====
 
   @Test
