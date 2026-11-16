@@ -1071,36 +1071,6 @@ class SolidImpacts {
     float deltaY = -this.WindSpeed * funcs.sin_ang(this.WindDirection);
     float deltaZ = 0;
 
-    /*
-
-     float Section_X = this.X[this.sectionType];
-     float Section_Y = this.Y[this.sectionType];
-     float Section_Z = this.Z[this.sectionType];
-     float Section_RotX = this.RotX[this.sectionType];
-     float Section_SizeX = this.SizeX[this.sectionType];
-     float Section_SizeY = this.SizeY[this.sectionType];
-
-     int Section_complex = this.sectionType;
-     int Section_ResX = this.ResX;
-     int Section_ResY = this.ResY;
-
-     float[][] ImageVertex = allSections.getCorners(Section_complex, Section_X, Section_Y, Section_Z, Section_RotX, Section_SizeX, Section_SizeY, Section_ResX, Section_ResY);
-
-     float[] SectionCorner_A = ImageVertex[1];
-     float[] SectionCorner_B = ImageVertex[2];
-     float[] SectionCorner_C = ImageVertex[3];
-     float[] SectionCorner_D = ImageVertex[4];
-
-     for (int i = 0; i < this.ResX; i += 10) {
-     for (int j = 0; j < this.ResY; j += 10) {
-
-     float x = funcs.bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(this.ResX), 1 - j / float(this.ResY));
-     float y = funcs.bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(this.ResX), 1 - j / float(this.ResY));
-     float z = funcs.bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(this.ResX), 1 - j / float(this.ResY));
-
-     */
-
-
     for (float z = 2.5; z <= 30; z += 5.0) {
       for (float y = -80; y <= 80; y += 5.0) {
         for (float x = -80; x <= 80; x += 5.0) {
