@@ -75,6 +75,17 @@ class AddDefaultModelRemainingTest {
     // sphere-shaped Solid groups.
     assertTrue(app.allFaces.nodes.length > 0);
     assertEquals(3, app.allSolids.DEF.length);
+
+    // Regression: this branch's own "Section ..." line used to pass
+    // its corners as named p1x=/p1y=/.../p4x=/p4y= tokens, a syntax
+    // __SECTION__'s parser (extraCommands.pde) never recognized - each
+    // one silently failed to match any known key and got dropped, so
+    // no points ever reached allSections.create() and the section fell
+    // back to its hardcoded 20x20 default instead of the intended
+    // 64x64 (-32..32) square. Pin the real size here so a future
+    // syntax drift in this call fails loudly instead of silently.
+    assertEquals(64f, app.allSections.getSizeX(0), 0.001f);
+    assertEquals(64f, app.allSections.getSizeY(0), 0.001f);
   }
 
   @Test
@@ -111,5 +122,11 @@ class AddDefaultModelRemainingTest {
     // collection, unlike n=7's Sphere groups (which do land in allFaces,
     // which is why that test's own analogous assertion passed).
     assertEquals(1, app.allSections.num);
+
+    // Regression: same named-p1x=/p1y=/... bug as n=7's own Section
+    // line - this one's intended size is 50x50 (-25..25), not the
+    // 20x20 fallback the dropped points used to leave it at.
+    assertEquals(50f, app.allSections.getSizeX(0), 0.001f);
+    assertEquals(50f, app.allSections.getSizeY(0), 0.001f);
   }
 }

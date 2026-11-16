@@ -2526,7 +2526,12 @@ class Create3D {
 
     if (n == 7) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
-      runScriptLine("Section x=0 y=0 z=0.1 rx=0 resX=400 resY=400 p1x=-32 p1y=-32 p2x=32 p2y=-32 p3x=32 p3y=32 p4x=-32 p4y=32");
+      // Point list is bare "x,y" tokens (see __SECTION__'s own parser,
+      // extraCommands.pde), not named p1x=/p1y=/... keys - those don't
+      // match any of __SECTION__'s recognized keys and get silently
+      // dropped, which previously left this section at its hardcoded
+      // 20x20 fallback instead of this intended 64x64 square.
+      runScriptLine("Section x=0 y=0 z=0.1 rx=0 resX=400 resY=400 -32,-32 32,-32 32,32 -32,32");
 
       {
         runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
@@ -2632,7 +2637,9 @@ class Create3D {
 
     if (n == 11) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
-      runScriptLine("Section x=0 y=0 z=0.1 rx=0 resX=200 resY=200 p1x=-25 p1y=-25 p2x=25 p2y=-25 p3x=25 p3y=25 p4x=-25 p4y=25");
+      // Same fix as n==7's Section line above - bare "x,y" point
+      // tokens, not named p1x=/p1y=/... keys.
+      runScriptLine("Section x=0 y=0 z=0.1 rx=0 resX=200 resY=200 -25,-25 25,-25 25,25 -25,25");
     }
 
 
