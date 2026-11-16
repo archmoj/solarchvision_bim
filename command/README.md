@@ -924,6 +924,7 @@ the user interface.
 | Command | What it sets | Range |
 |---|---|---|
 | `Overall Scale` | Overall display scale applied to placed objects | 0.0000001 to 1000000 |
+| `Face To Section Lift` | How far a face-converted section is lifted off its source face's plane | 0 to 10 |
 | `Interpolation Weight` | Weight applied when interpolating between data points | 0 to 5 |
 | `Develop Layer Angle Inclination` | Inclination angle (degrees) used for solid-impact analysis | 0 to 90 |
 | `Develop Layer Angle Orientation` | Orientation angle (degrees) used for solid-impact analysis | 0 to 360 |
