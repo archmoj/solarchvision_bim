@@ -861,7 +861,7 @@ class Select3DTest {
     original.pivotAlignmentZ = 0;
 
     original.faceDisplayEdges = true;
-    original.faceDisplayvertexSelection = true;
+    original.faceDisplayVertexSelection = true;
     original.polylineDisplayvertexSelection = false;
     original.vertexDisplayMarkers = true;
     original.polylineDisplayVertices = false;
@@ -909,7 +909,7 @@ class Select3DTest {
     assertEquals(0, fresh.pivotAlignmentZ);
 
     assertTrue(fresh.faceDisplayEdges);
-    assertTrue(fresh.faceDisplayvertexSelection);
+    assertTrue(fresh.faceDisplayVertexSelection);
     assertFalse(fresh.polylineDisplayvertexSelection);
     assertTrue(fresh.vertexDisplayMarkers);
     assertFalse(fresh.polylineDisplayVertices);

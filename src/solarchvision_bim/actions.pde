@@ -973,7 +973,7 @@ void build_allActions() {
   });
 
   putAction("Show/Hide Selected Faces Vertex Count", () -> {
-    Select3D.faceDisplayvertexSelection = !Select3D.faceDisplayvertexSelection;
+    Select3D.faceDisplayVertexSelection = !Select3D.faceDisplayVertexSelection;
 
     view_changed();
   });
@@ -2581,7 +2581,7 @@ void build_allActions() {
   putAction("Show Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = true; view_changed();});
   putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
-  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = true; view_changed();});
+  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexSelection = true; view_changed();});
   putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = true; view_changed();});
   putAction("Show Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = true; view_changed();});
   putAction("Show Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = true; view_changed();});
@@ -2597,7 +2597,7 @@ void build_allActions() {
   putAction("Hide Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = false; view_changed();});
   putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
-  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = false; view_changed();});
+  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexSelection = false; view_changed();});
   putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = false; view_changed();});
   putAction("Hide Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = false; view_changed();});
   putAction("Hide Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = false; view_changed();});

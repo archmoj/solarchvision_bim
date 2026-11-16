@@ -4223,13 +4223,13 @@ class ValueModifier {
     String command = "Face Display Vertex Selection";
     if (created == 0) {
       putValueAction(command,
-        () -> (Select3D.faceDisplayvertexSelection ? 1f : 0f),
-        (v) -> { Select3D.faceDisplayvertexSelection = (v >= 0.5f); },
+        () -> (Select3D.faceDisplayVertexSelection ? 1f : 0f),
+        (v) -> { Select3D.faceDisplayVertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Select3D.faceDisplayvertexSelection);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, Select3D.faceDisplayVertexSelection);
     }
     return out;
   }

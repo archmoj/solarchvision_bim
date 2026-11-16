@@ -961,7 +961,7 @@ void flipFaceOrientationIfNeeded (int f) {
 // the hit's x,y,z) becomes node 0, preserving winding order otherwise -
 // pulled out of mouseClicked()'s UITASK.FirstVertex handling, which ran
 // this exact block twice in a row: once against allFaces.nodes[f] (with
-// Select3D.faceSelection/faceDisplayvertexSelection) and once against
+// Select3D.faceSelection/faceDisplayVertexSelection) and once against
 // allPolylines.nodes[f] (with Select3D.polylineSelection/
 // polylineDisplayvertexSelection), confirmed identical modulo which array
 // before extracting. `nodeRow` is mutated directly (Java arrays are
@@ -1905,7 +1905,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
                 Select3D.faceSelection = new int [1];
                 Select3D.faceSelection[0] = f;
 
-                Select3D.faceDisplayvertexSelection = true;
+                Select3D.faceDisplayVertexSelection = true;
 
                 flipFaceOrientationIfNeeded(f);
               } else if (currentObjectCategory == ObjectCategory.GROUP) {
@@ -1927,7 +1927,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
                 Select3D.faceSelection = new int [1];
                 Select3D.faceSelection[0] = f;
 
-                Select3D.faceDisplayvertexSelection = true;
+                Select3D.faceDisplayVertexSelection = true;
 
                 rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
               } else if (currentObjectCategory == ObjectCategory.POLYLINE) {

@@ -521,7 +521,7 @@ class Overlay3D {
       }
 
 
-      if (Select3D.faceDisplayvertexSelection) {
+      if (Select3D.faceDisplayVertexSelection) {
 
         FACE_LABEL_STYLE.applyStyle();
 

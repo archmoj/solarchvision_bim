@@ -99,7 +99,7 @@ void applyRolloutUpdate() {
   pre_Selection_groupDisplayBox = Select3D.groupDisplayBox;
 
   pre_Selection_faceDisplayEdges = Select3D.faceDisplayEdges;
-  pre_Selection_faceDisplayvertexSelection = Select3D.faceDisplayvertexSelection;
+  pre_Selection_faceDisplayVertexSelection = Select3D.faceDisplayVertexSelection;
   pre_Selection_polylineDisplayvertexSelection = Select3D.polylineDisplayvertexSelection;
   pre_Selection_vertexDisplayMarkers = Select3D.vertexDisplayMarkers;
   pre_Selection_polylineDisplayVertices = Select3D.polylineDisplayVertices;
@@ -227,7 +227,7 @@ void applyRolloutUpdate() {
 
   react.viewChangedOnly.run(pre_Selection_faceDisplayEdges ? 1 : 0, Select3D.faceDisplayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_faceDisplayvertexSelection ? 1 : 0, Select3D.faceDisplayvertexSelection ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_faceDisplayVertexSelection ? 1 : 0, Select3D.faceDisplayVertexSelection ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_polylineDisplayvertexSelection ? 1 : 0, Select3D.polylineDisplayvertexSelection ? 1 : 0);
 
@@ -349,7 +349,7 @@ boolean pre_Selection_groupDisplayEdges;
 boolean pre_Selection_groupDisplayBox;
 
 boolean pre_Selection_faceDisplayEdges;
-boolean pre_Selection_faceDisplayvertexSelection;
+boolean pre_Selection_faceDisplayVertexSelection;
 boolean pre_Selection_polylineDisplayvertexSelection;
 boolean pre_Selection_vertexDisplayMarkers;
 boolean pre_Selection_polylineDisplayVertices;

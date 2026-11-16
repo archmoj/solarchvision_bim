@@ -22,7 +22,7 @@ class Select3D {
   boolean groupDisplayBox = true;
 
   boolean faceDisplayEdges = true;
-  boolean faceDisplayvertexSelection = false;
+  boolean faceDisplayVertexSelection = false;
   boolean polylineDisplayvertexSelection = false;
   boolean vertexDisplayMarkers = true;
   boolean polylineDisplayVertices = true;
@@ -2311,7 +2311,7 @@ class Select3D {
     XML_setInt(parent, "pivotAlignmentZ", this.pivotAlignmentZ);
 
     XML_setBoolean(parent, "faceDisplayEdges", this.faceDisplayEdges);
-    XML_setBoolean(parent, "faceDisplayvertexSelection", this.faceDisplayvertexSelection);
+    XML_setBoolean(parent, "faceDisplayVertexSelection", this.faceDisplayVertexSelection);
     XML_setBoolean(parent, "polylineDisplayvertexSelection", this.polylineDisplayvertexSelection);
     XML_setBoolean(parent, "vertexDisplayMarkers", this.vertexDisplayMarkers);
     XML_setBoolean(parent, "polylineDisplayVertices", this.polylineDisplayVertices);
@@ -2365,7 +2365,7 @@ class Select3D {
     this.groupDisplayEdges = XML_getBoolean(parent, "groupDisplayEdges");
     this.groupDisplayBox = XML_getBoolean(parent, "groupDisplayBox");
     this.faceDisplayEdges = XML_getBoolean(parent, "faceDisplayEdges");
-    this.faceDisplayvertexSelection = XML_getBoolean(parent, "faceDisplayvertexSelection");
+    this.faceDisplayVertexSelection = XML_getBoolean(parent, "faceDisplayVertexSelection");
     this.polylineDisplayvertexSelection = XML_getBoolean(parent, "polylineDisplayvertexSelection");
     this.vertexDisplayMarkers = XML_getBoolean(parent, "vertexDisplayMarkers");
     this.polylineDisplayVertices = XML_getBoolean(parent, "polylineDisplayVertices");
