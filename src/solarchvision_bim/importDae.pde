@@ -23,12 +23,17 @@
 // v1 scope, deliberately kept simple:
 //   - Only <triangles> and <polylist> primitives are read (the two
 //     common ways a COLLADA mesh represents polygon faces) - any other
-//     primitive type (<polygons>, <lines>, <linestrips>, <trifans>,
-//     <tristrips>) is skipped. Each polygon becomes one app-native face
-//     with however many corners it declares (<polylist>'s own <vcount>,
-//     or always 3 for <triangles>) - the same "whatever n-gon the file
-//     itself declares" choice importIfc.pde's/import
-//     Dxf.pde's/importPly.pde's own faces already make.
+//     primitive type (<polygons>, <trifans>, <tristrips>) is skipped.
+//     Each polygon becomes one app-native face with however many
+//     corners it declares (<polylist>'s own <vcount>, or always 3 for
+//     <triangles>) - the same "whatever n-gon the file itself declares"
+//     choice importIfc.pde's/import
+//     Dxf.pde's/importPly.pde's own faces already make. While
+//     daeImportCurves is true (off by default - see DAE_IMPORT_CURVES/
+//     daeImportCurves, below), <lines>/<linestrips> are ALSO read, each
+//     becoming one or more app-native Polylines (polylines.pde) -
+//     see daePrimitiveLines()'s/daePrimitiveLinestrips()'s own comments
+//     for exactly how.
 //   - Only a primitive's own VERTEX-semantic <input> (the position
 //     index) is read; any other input a primitive carries (NORMAL,
 //     TEXCOORD, COLOR, ...) only affects how its own interleaved index
@@ -54,6 +59,17 @@
 
 boolean daeImportShowOptionsDialog = false;
 
+// Whether to also read a <mesh>'s own <lines>/<linestrips> primitives as
+// Polylines - off by default, same "a constant for the starting value,
+// a variable for what's actually checked at import time" shape
+// IFC_IMPORT_CURVES/ifcImportCurves (importIfc.pde),
+// DXF_IMPORT_CURVES/dxfImportCurves (importDxf.pde),
+// OBJ_IMPORT_CURVES/objImportCurves (importObj.pde) and
+// GLB_IMPORT_CURVES/glbImportCurves (importGlb.pde) already use.
+final boolean DAE_IMPORT_CURVES = false;
+
+boolean daeImportCurves = DAE_IMPORT_CURVES;
+
 // Transform parameters and the material-cycling flag for the CURRENT
 // import_objects_DAE() call - same "a few fields shared across one whole
 // import" shape glb_cx/glb_cycleMaterial/... (importGlb.pde)
@@ -62,6 +78,7 @@ float dae_cx, dae_cy, dae_cz, dae_sx, dae_sy, dae_sz;
 boolean daeCycleMaterial;
 
 int daeFacesImported = 0;
+int daeCurvesImported = 0;
 
 int dae_totalGeometryInstances = 0;
 int dae_processedGeometryInstances = 0;
@@ -77,7 +94,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   // rather than earlier, and what a cancelled dialog does.
   if (daeImportShowOptionsDialog) {
     daeImportShowOptionsDialog = false;
-    if (!axisSwapShowImportOptionsDialog("DAE import options")) return;
+    if (!daeShowImportOptionsDialog()) return;
   }
 
   println("\nImporting DAE. Please wait...");
@@ -161,6 +178,7 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
   dae_processedGeometryInstances = 0;
   dae_printedProgress = 0;
   daeFacesImported = 0;
+  daeCurvesImported = 0;
   dae_aborted = false;
 
   dae_progressWindow = (showImportProgress && canShowProgressWindow()) ? new ProgressWindow("\nImporting DAE") : null;
@@ -177,8 +195,12 @@ void import_objects_DAE (String FileName, int m, int tes, int lyr, int vsb, int 
     dae_progressWindow = null;
   }
 
-  if (!dae_aborted && (daeFacesImported == 0)) {
-    println("\nDAE import: no faces were imported - this version only reads <triangles>/<polylist> primitives reachable from the scene's own node hierarchy");
+  if (!dae_aborted && (daeFacesImported == 0) && (daeCurvesImported == 0)) {
+    if (daeImportCurves) {
+      println("\nDAE import: no faces or line/curve geometry were imported - this version only reads <triangles>/<polylist>/<lines>/<linestrips> primitives reachable from the scene's own node hierarchy");
+    } else {
+      println("\nDAE import: no faces were imported - this version only reads <triangles>/<polylist> primitives reachable from the scene's own node hierarchy, and importing <lines>/<linestrips> is currently disabled");
+    }
   }
 
   if (!dae_aborted) {
@@ -423,10 +445,16 @@ void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix) {
       daePrimitiveFixed(prim, pointIndex, 3);
     } else if (tag.equals("polylist")) {
       daePrimitiveVariable(prim, pointIndex);
+    } else if (daeImportCurves && tag.equals("lines")) {
+      daePrimitiveLines(prim, pointIndex);
+    } else if (daeImportCurves && tag.equals("linestrips")) {
+      daePrimitiveLinestrips(prim, pointIndex);
     }
-    // "polygons"/"lines"/"linestrips"/"trifans"/"tristrips" and anything
-    // else (including "source"/"vertices" themselves): not supported in
-    // this version - see this file's own header comment.
+    // "polygons"/"trifans"/"tristrips" and anything else (including
+    // "source"/"vertices" themselves): not supported in this version -
+    // see this file's own header comment. "lines"/"linestrips" join
+    // that same "skipped" list right along with them while
+    // daeImportCurves is false (the default).
   }
 }
 
@@ -526,4 +554,98 @@ void daePrimitiveVariable (XML prim, int[] pointIndex) {
 
     pPos += n * stride;
   }
+}
+
+// <lines>: the exact same fixed-stride/shared-<p> shape daePrimitiveFixed()
+// (above) already reads for <triangles> - just 2 vertices per primitive
+// instead of 3, and every pair becomes its own disconnected 2-point
+// Polyline (polylines.pde) rather than a face, the same granularity
+// GLB's own LINES mode (importGlb.pde's glbEmitLinePrimitive()) and
+// DXF's own LINE entity (importDxf.pde) already get. Only called while
+// daeImportCurves is true (see its own comment above), from
+// daeProcessGeometry()'s own dispatch.
+void daePrimitiveLines (XML prim, int[] pointIndex) {
+  int[] strideInfo = daePrimitiveStride(prim);
+  int stride = strideInfo[0];
+  int vertexOffset = strideInfo[1];
+  if (vertexOffset < 0) return;
+
+  XML pEl = prim.getChild("p");
+  if (pEl == null) return;
+
+  String[] tokens = splitTokens(XML_getContent(pEl));
+  if (tokens == null) return;
+
+  int count = prim.getInt("count", 0);
+
+  int savedClosed = current_Closed;
+  current_Closed = 0; // a 2-point segment is never a closed loop
+
+  for (int line = 0; line < count; line++) {
+    int[] nodes = new int[2];
+    boolean ok = true;
+    for (int v = 0; v < 2; v++) {
+      int tokenPos = (line * 2 + v) * stride + vertexOffset;
+      if (tokenPos >= tokens.length) { ok = false; break; }
+      int vi = int(tokens[tokenPos]);
+      if ((vi < 0) || (vi >= pointIndex.length)) { ok = false; break; }
+      nodes[v] = pointIndex[vi];
+    }
+    if (ok) {
+      allPolylines.create(nodes);
+      daeCurvesImported += 1;
+    }
+  }
+
+  current_Closed = savedClosed;
+}
+
+// <linestrips>: unlike <triangles>/<polylist>/<lines> (one shared <p>
+// for the whole primitive, split by a fixed or <vcount>-declared
+// stride), a <linestrips> primitive carries its own separate <p> child
+// per strip, each with its own, independent vertex count - every <p>
+// becomes its own Polyline, through however many vertices it declares,
+// at whatever stride/offset this primitive's own <input>s say (same
+// daePrimitiveStride() every other primitive type here already reads).
+// COLLADA has no separate "closed" flag of its own for a line strip -
+// same auto-detect-and-dedup-the-repeated-vertex convention
+// objHandleLine() (importObj.pde)/dxfEmitPolyline() (importDxf.pde)/
+// ifcEmitCurve() (importIfc.pde) already use for their own formats.
+// Only called while daeImportCurves is true, from daeProcessGeometry()'s
+// own dispatch.
+void daePrimitiveLinestrips (XML prim, int[] pointIndex) {
+  int[] strideInfo = daePrimitiveStride(prim);
+  int stride = strideInfo[0];
+  int vertexOffset = strideInfo[1];
+  if (vertexOffset < 0) return;
+
+  int savedClosed = current_Closed;
+
+  for (XML pEl : prim.getChildren("p")) {
+    String[] tokens = splitTokens(XML_getContent(pEl));
+    if (tokens == null) continue;
+
+    int vertCount = tokens.length / stride;
+    if (vertCount < 2) continue;
+
+    int[] refs = new int[vertCount];
+    boolean ok = true;
+    for (int v = 0; v < vertCount; v++) {
+      int tokenPos = v * stride + vertexOffset;
+      int vi = int(tokens[tokenPos]);
+      if ((vi < 0) || (vi >= pointIndex.length)) { ok = false; break; }
+      refs[v] = pointIndex[vi];
+    }
+    if (!ok) continue;
+
+    boolean closed = (refs.length > 2) && (refs[0] == refs[refs.length - 1]);
+    int[] nodes = closed ? java.util.Arrays.copyOf(refs, refs.length - 1) : refs;
+    if (nodes.length < 2) continue;
+
+    current_Closed = closed ? 1 : 0;
+    allPolylines.create(nodes);
+    daeCurvesImported += 1;
+  }
+
+  current_Closed = savedClosed;
 }

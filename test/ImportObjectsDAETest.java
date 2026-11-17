@@ -341,10 +341,11 @@ class ImportObjectsDAETest {
   // ================= unsupported/skipped shapes ================================
 
   @Test
-  void importObjectsDAE_unsupportedPrimitiveType_isSkippedWithoutThrowing () throws IOException {
-    // <lines> is a real COLLADA primitive type, but not one this version
-    // reads (see this file's own header comment) - it should be skipped,
-    // not crash the whole import.
+  void importObjectsDAE_curvesOffByDefault_linesPrimitiveIsSkippedWithoutThrowing () throws IOException {
+    // <lines> is a real COLLADA primitive type, but daeImportCurves
+    // defaults to false, so it should still be skipped entirely, not
+    // crash the whole import - see the "withCurvesOn" tests below for
+    // the same document with the toggle flipped on.
     Path f = daeFile("dae-unsupported-primitive-test", """
         <COLLADA>
           <library_geometries>
@@ -382,6 +383,159 @@ class ImportObjectsDAETest {
     });
 
     assertEquals(0, app.allFaces.nodes.length, "a <lines> primitive carries no face geometry this importer reads");
+    assertEquals(0, app.allPolylines.nodes.length, "daeImportCurves defaults to false: nothing should land in allPolylines either");
+  }
+
+  // ================= <lines>/<linestrips> (daeImportCurves) ====================
+  // Mirrors ImportObjectsGLBTest.java's own "line primitives" section -
+  // see importDae.pde's own daePrimitiveLines()/daePrimitiveLinestrips()
+  // comments for exactly what each does and why.
+
+  @Test
+  void importObjectsDAE_lines_withCurvesOn_importsOneTwoPointPolylinePerPair () throws IOException {
+    app.daeImportCurves = true;
+
+    Path f = daeFile("dae-lines-test", """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="12">0 0 0 1 0 0 1 1 0 0 1 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <lines count="2">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2 3</p>
+                </lines>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node id="node1">
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """
+    );
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(2, app.allPolylines.nodes.length, "<lines> draws disconnected segments: one pair, one Polyline each");
+    assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
+    assertArrayEquals(new int[]{2, 3}, app.allPolylines.nodes[1]);
+    assertEquals(0, app.allPolylines.getClose(0));
+    assertEquals(0, app.allPolylines.getClose(1));
+  }
+
+  @Test
+  void importObjectsDAE_linestrips_withCurvesOn_importsOneOpenPolylinePerP () throws IOException {
+    app.daeImportCurves = true;
+
+    Path f = daeFile("dae-linestrips-test", """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="18">0 0 0 1 0 0 1 1 0 2 0 0 2 1 0 2 2 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <linestrips count="2">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2</p>
+                  <p>3 4 5</p>
+                </linestrips>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node id="node1">
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """
+    );
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allPolylines.nodes.length, "two <p> elements inside <linestrips> should each become their own Polyline");
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
+    assertArrayEquals(new int[]{3, 4, 5}, app.allPolylines.nodes[1]);
+    assertEquals(0, app.allPolylines.getClose(0));
+    assertEquals(0, app.allPolylines.getClose(1));
+  }
+
+  @Test
+  void importObjectsDAE_linestrip_repeatingTheFirstVertexAsTheLast_isReadAsAClosedLoop () throws IOException {
+    app.daeImportCurves = true;
+
+    Path f = daeFile("dae-linestrip-closed-test", """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="9">0 0 0 1 0 0 1 1 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <linestrips count="1">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2 0</p>
+                </linestrips>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node id="node1">
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """
+    );
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0], "the repeated closing vertex should be dropped, not kept as a 4th node");
+    assertEquals(1, app.allPolylines.getClose(0));
+  }
+
+  @Test
+  void importObjectsDAE_triangles_areStillReadAlongsideLinesWhenCurvesAreOn () throws IOException {
+    app.daeImportCurves = true;
+
+    Path f = daeFile("dae-triangles-and-lines-test", oneTriangleDocument());
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "turning curves on should not stop <triangles> from importing");
+    assertEquals(0, app.allPolylines.nodes.length);
   }
 
   @Test
