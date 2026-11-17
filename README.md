@@ -30,6 +30,7 @@ By combining spatial models with time-varying environmental data, SOLARCHVISION-
 - [Modeling and analysis workflow](#modeling-and-analysis-workflow)
 - [Keyboard shortcuts](#keyboard-shortcuts)
 - [Command bar, scripting, and exports](#command-bar-scripting-and-exports)
+- [Settings rollout panel](#settings-rollout-panel)
 - [The SOLARCHVISION approach](#the-solarchvision-approach)
 - [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)
 - [Method and publications](#method-and-publications)
@@ -470,6 +471,21 @@ RUN.SCRIPT
 ```
 
 See the [command reference](command/README.md) for complete syntax, arguments, and available commands. The [import documentation](import/README.md) describes the OSM and Overture building-context scripts and their generated files.
+
+## Settings rollout panel
+
+Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 6 parents and 25 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
+
+| Parent | Children | Covers |
+|---|---|---|
+| **Location & Data** | Station · Data Points | The project's site location, and which weather/climate data sources are shown |
+| **Time & Scenarios** | Time · Ranges · Filters | Calendar date, sampling ranges, and scenario/temporal filters |
+| **Geometry & Space** | Create · View · Modify · Entourage · Solids · Windrose · Environment · Solar System | Creating and editing 3D objects, camera/viewport behavior, and the celestial/terrain backdrop |
+| **Visualization Options** | 2D Layout · 2D Palette · Solar Palette · Spatial Palette · Selection · Visibility | Chart layout and color scales, selection indicators, and object visibility toggles |
+| **Export Options** | Model · Data · Content | 3D mesh export, 2D chart-data export, and image/PDF snapshot recording |
+| **Assessment Options** | Interpolation · Derived Data · Simulation | Interpolation weighting, derived analysis layers, and solar/wind impact-simulation setup |
+
+Every setting shown here is also reachable as a named command from the [command bar](#command-bar-scripting-and-exports)—the rollout panel and the command system are two views onto the same underlying settings.
 
 ## The SOLARCHVISION approach
 
