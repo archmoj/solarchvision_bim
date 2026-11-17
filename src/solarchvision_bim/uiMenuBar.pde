@@ -109,22 +109,6 @@ class UI_menuBar {
       "Clone Selection (Variation)"
     },
     {
-      "Delete",
-      "Delete Selection",
-      "Delete Scene Empty Groups",
-      "Delete Scene Isolated Vertices",
-      "Delete Selection Isolated Vertices",
-      "Delete All Model1Ds",
-      "Delete All Model2Ds",
-      "Delete All Groups",
-      "Delete All Solids",
-      "Delete All Sections",
-      "Delete All Cameras",
-      "Delete All Faces",
-      "Delete All Polylines",
-      "Delete All"
-    },
-    {
       "Location",
       "Update Station",
       ___divider___,
@@ -585,6 +569,22 @@ class UI_menuBar {
       "Change TreeBase",
       "Change TrunkSize",
       "Change LeafSize"
+    },
+    {
+      "Delete",
+      "Delete Selection",
+      "Delete Scene Empty Groups",
+      "Delete Scene Isolated Vertices",
+      "Delete Selection Isolated Vertices",
+      "Delete All Model1Ds",
+      "Delete All Model2Ds",
+      "Delete All Groups",
+      "Delete All Solids",
+      "Delete All Sections",
+      "Delete All Cameras",
+      "Delete All Faces",
+      "Delete All Polylines",
+      "Delete All"
     },
     {
       "Capture",
