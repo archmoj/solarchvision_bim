@@ -52,14 +52,13 @@ class UI_rollout {
     CHILD_GEOMETRY_MODIFY = pushChild("Modify");
     CHILD_GEOMETRY_SOLID = pushChild("Solid");
     CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Fractal Tree");
-    CHILD_GEOMETRY_VIEWPORT = pushChild("Viewport");
-    CHILD_GEOMETRY_OTHER = pushChild("Other");
+    CHILD_GEOMETRY_VIEWPORT = pushChild("View");
 
     PARENT_ILLUSTRATION = pushParent("Illustration Options");
-    CHILD_ILLUSTRATION_2D_LAYERS = pushChild("2D-Layers");
-    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D-Colors");
-    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("3D-Solar");
-    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("3D-Spatial");
+    CHILD_ILLUSTRATION_2D_LAYERS = pushChild("2D Layout");
+    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D Colors");
+    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("Solar Colors");
+    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("Spatial Colors");
     CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
     // Environment/Visibility used to live under Geometry & Space, but both
     // are about what is currently shown and how, not about creating or
@@ -68,8 +67,8 @@ class UI_rollout {
     CHILD_ILLUSTRATION_VISIBILITY = pushChild("Visibility");
 
     PARENT_EXPORT = pushParent("Export Products");
-    CHILD_EXPORT_DATA = pushChild("Data");
-    CHILD_EXPORT_MEDIA = pushChild("Media");
+    CHILD_EXPORT_DATA = pushChild("Model & Data");
+    CHILD_EXPORT_MEDIA = pushChild("Image & Report");
 
     PARENT_POSTPROCESS = pushParent("Post-Processing");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
@@ -92,7 +91,6 @@ class UI_rollout {
   int CHILD_GEOMETRY_SOLID;
   int CHILD_GEOMETRY_FRACTAL_TREE;
   int CHILD_GEOMETRY_VIEWPORT;
-  int CHILD_GEOMETRY_OTHER;
 
   int PARENT_ILLUSTRATION;
   int CHILD_ILLUSTRATION_2D_LAYERS;
@@ -639,11 +637,6 @@ class UI_rollout {
         WIN3D.currentCameraIndex = vm.currentCameraIndex(1);
         WIN3D.cameraClipNear = vm.cameraClipNear(1);
         WIN3D.cameraClipFar = vm.cameraClipFar(1);
-      }
-
-
-      if (this.child == CHILD_GEOMETRY_OTHER) {
-
         overallScale = vm.overallScale(1);
       }
 

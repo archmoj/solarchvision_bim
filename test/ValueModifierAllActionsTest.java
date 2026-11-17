@@ -198,7 +198,7 @@ class ValueModifierAllActionsTest {
       "Sun3D Display Texture", // Sun3DDisplayTexture
       "Sun3D Fit In Sky Dome", // Sun3DFitInSkyDome
       "Celestial Magnification", // celestialMagnification
-      "Overall Scale", // overallScale
+      "World Scale", // overallScale
       "Plot Layout Index", // plotLayoutIndex
       "Vertical Unit Scale", // verticalUnitScale
       "Show Raw Lines", // showRawLines

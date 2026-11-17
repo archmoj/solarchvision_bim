@@ -3092,7 +3092,7 @@ class ValueModifier {
     float s4 = 0.000001; //round
 
     float out = 0;
-    String command = "Overall Scale";
+    String command = "World Scale";
     if (created == 0) {
       putValueAction(command,
         () -> overallScale,

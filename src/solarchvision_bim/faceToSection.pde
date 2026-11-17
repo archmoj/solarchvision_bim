@@ -6,12 +6,12 @@
 // How far (world units) a converted section is lifted off its source
 // face's own plane, along the face's own normal. No longer a fixed
 // constant - exposed as its own spinner (valueModifier.pde's
-// faceToSectionLift(), drawn in the CHILD_GEOMETRY_OTHER rollout panel
-// right after Overall Scale - see uiRollout.pde) and saved to XML with
-// the rest of the "display" settings (saveProject.pde/
-// parseXmlVariables.pde), the same way Celestial Magnification and
-// Overall Scale already are, for a face/surface too thin or too
-// close-up for the 0.01 default to clear it without still z-fighting.
+// faceToSectionLift(), drawn in the CHILD_GEOMETRY_MODIFY rollout panel
+// - see uiRollout.pde) and saved to XML with the rest of the "display"
+// settings (saveProject.pde/parseXmlVariables.pde), the same way
+// Celestial Magnification and World Scale already are, for a
+// face/surface too thin or too close-up for the 0.01 default to clear
+// it without still z-fighting.
 float FACE_TO_SECTION_LIFT = 0.01;
 
 // Reuses computeSectionParamsFromFace() (mouseClicked.pde) for each
