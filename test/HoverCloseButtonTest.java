@@ -119,23 +119,42 @@ class HoverCloseButtonTest {
 
   // ================= hoverCloseButtonRect ==================================
   // Pure geometry, hand-computed from hover.pde's own constants
-  // (hoverSidePad=8, hoverCloseButtonSize=14, hoverStrokeInset=
-  // ceil(0.5*hoverStrokeWeight(4)+1)=3) - the one place this is computed,
-  // shared by the draw side (drawHover()/drawPaletteHover(), not covered
-  // here) and the hit-test side (hoverPointAtCloseButton(), below).
+  // (hoverCloseButtonSize=14, hoverStrokeInset=ceil(0.5*hoverStrokeWeight(4)+1)=3) -
+  // the one place this is computed, shared by the draw side (drawHover()/
+  // drawPaletteHover(), not covered here) and the hit-test side
+  // (hoverPointAtCloseButton(), below). box.w here is the box's own
+  // RESERVED width (queueHoverBox()'s own effectiveBoxW, which already
+  // includes room for this button) - flush with its right edge, so the
+  // button lands just past the box's own (narrower) drawn content border,
+  // outside it rather than inside.
 
   @Test
-  void hoverCloseButtonRect_isRightAlignedInsideTheBoxWithSidePadClearance () {
+  void hoverCloseButtonRect_isFlushWithTheBoxsOwnReservedRightEdge () {
     solarchvision_bim.PendingHoverBox box = pinnedBox(100, 200, 80, 40, new int[]{1, 1});
 
     float[] rect = app.hoverCloseButtonRect(box);
 
-    float expectedX = 100 + 80 - app.hoverSidePad - app.hoverCloseButtonSize; // 100+80-8-14 = 158
+    float expectedX = 100 + 80 - app.hoverCloseButtonSize; // 100+80-14 = 166
     float expectedY = 200 + app.hoverStrokeInset + 1; // 200+3+1 = 204
     assertEquals(expectedX, rect[0], 0.001f);
     assertEquals(expectedY, rect[1], 0.001f);
     assertEquals((float) app.hoverCloseButtonSize, rect[2], 0.001f);
     assertEquals((float) app.hoverCloseButtonSize, rect[3], 0.001f);
+  }
+
+  @Test
+  void hoverCloseButtonRect_sitsOutsideTheBoxsOwnDrawnContentBorder () {
+    // drawHover()'s own boxW (not box.w) is the content width actually
+    // drawn - box.w minus the reserved gap+button column. The button's
+    // own left edge must fall at or past that narrower content border's
+    // right edge, with the gap between them, never inside it.
+    solarchvision_bim.PendingHoverBox box = pinnedBox(100, 200, 80, 40, new int[]{1, 1});
+    float contentW = box.w - app.hoverCloseButtonGap - app.hoverCloseButtonSize;
+    float contentRightEdge = box.x + contentW;
+
+    float[] rect = app.hoverCloseButtonRect(box);
+
+    assertEquals(contentRightEdge + app.hoverCloseButtonGap, rect[0], 0.001f);
   }
 
   @Test
@@ -173,7 +192,7 @@ class HoverCloseButtonTest {
 
     app.queueHoverBox(10, 10, new String[]{"a"}, 50, 20, 0, 0, 1000, 1000, placedBoxes, pendingBoxes);
 
-    float expectedW = 50 + app.hoverSidePad + app.hoverCloseButtonSize;
+    float expectedW = 50 + app.hoverCloseButtonGap + app.hoverCloseButtonSize;
     assertEquals(expectedW, pendingBoxes.get(0).w, 0.001f);
     assertSame(row, pendingBoxes.get(0).sourceHoverPoint);
   }
@@ -190,7 +209,7 @@ class HoverCloseButtonTest {
 
     app.queueHoverBox(10, 10, new String[]{"a"}, 50, 20, 0, 0, 1000, 1000, placedBoxes, pendingBoxes);
 
-    float expectedW = 50 + app.hoverSidePad + app.hoverCloseButtonSize;
+    float expectedW = 50 + app.hoverCloseButtonGap + app.hoverCloseButtonSize;
     assertEquals(expectedW, placedBoxes.get(0)[2], 0.001f);
   }
 

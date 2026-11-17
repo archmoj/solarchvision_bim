@@ -453,18 +453,24 @@ final int hoverTopPad = 6;
 final int hoverBottomPad = 8;
 final int hoverSidePad = 8;
 final int hoverStrokeWeight = 4;
-// Side length of the little "x" close button drawn in a pinned box's own
-// top-right corner (drawHover()/drawPaletteHover(), further below) - only
-// for a box that actually belongs to a pin (box.sourceHoverPoint != null);
-// the live, mouse-following box never gets one, so it stays exactly the
-// width its own text needs. queueHoverBox() (further below) widens a
-// pinned box by hoverCloseButtonSize + hoverSidePad beyond what its text
-// alone needs, reserving a blank column on the right for this button
-// rather than drawing it on top of the text - hoverCloseButtonRect()
-// (further below) is the one place that turns that reserved column into
-// an actual rect, shared by both the draw side and mouseClicked.pde's own
-// hit-test side so the two can never drift apart.
+// Side length of the little "x" close button drawn OUTSIDE a pinned
+// box's own top-right corner (drawHover()/drawPaletteHover(), further
+// below) - only for a box that actually belongs to a pin
+// (box.sourceHoverPoint != null); the live, mouse-following box never
+// gets one, so it stays exactly the width its own text needs. Deliberately
+// drawn clear of the box's own border/fill rather than inside it (a
+// floating control next to the box, not a tab built into its frame) -
+// queueHoverBox() (further below) still reserves a hoverCloseButtonGap +
+// hoverCloseButtonSize column beyond what the text alone needs, so
+// nothing else placed this pass can overlap where the button will end up
+// even though the box's own rect is drawn narrower than that reservation
+// (see drawHover()/drawPaletteHover()'s own boxW, which subtracts this
+// same reserved column back out again before drawing the box itself).
 final int hoverCloseButtonSize = 14;
+// Gap between the box's own (narrower) drawn border and the close
+// button sitting just outside it - keeps the button visually separate
+// rather than touching the frame.
+final int hoverCloseButtonGap = 4;
 // Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
 // exactly at the overlay's own boundary would still stick out 1px past it.
 // hoverBoxPosition() below keeps the box this far clear of
@@ -887,8 +893,14 @@ void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float bo
   // drawHoverPinAt(), above) gets a close button, and so only it needs
   // the extra reserved width - widening every box, live point included,
   // would just add dead space to a box nothing can ever close this way.
+  // This reserved width is for COLLISION/CLAMPING purposes only - the
+  // box's own drawn border stays narrower than this (drawHover()/
+  // drawPaletteHover() subtract it back out), so the button itself ends
+  // up floating just outside that border rather than inside it, while
+  // still being accounted for as occupied screen space so nothing else
+  // placed this pass can land on top of it.
   boolean hasCloseButton = (currentHoverSourceRow != null);
-  float effectiveBoxW = hasCloseButton ? (boxW + hoverSidePad + hoverCloseButtonSize) : boxW;
+  float effectiveBoxW = hasCloseButton ? (boxW + hoverCloseButtonGap + hoverCloseButtonSize) : boxW;
 
   float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, effectiveBoxW, boxH, placedBoxes, currentHoverPreferredPosition);
   float boxX = boxPos[0];
@@ -927,24 +939,24 @@ void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float bo
 // was never widened for a button in the first place.
 float[] hoverCloseButtonRect (PendingHoverBox box) {
   float size = hoverCloseButtonSize;
-  float x = box.x + box.w - hoverSidePad - size;
+  float x = box.x + box.w - size; // flush with the box's own reserved (not drawn) right edge
   float y = box.y + hoverStrokeInset + 1;
   return new float[] { x, y, size, size };
 }
 
-// Draws the close button itself onto whatever box/swatch is already
-// underneath it - shared by drawHover()/drawPaletteHover() below, each of
-// which already knows what fill/stroke color reads against its own
-// background (plain white for drawHover(), swatchColor-dependent for
-// drawPaletteHover()). Only ever called once box.sourceHoverPoint != null
-// has already been checked by the caller.
-void drawHoverCloseButton (PendingHoverBox box, int strokeColor) {
+// Draws the close button itself - a small button of its own, filled so
+// it reads clearly regardless of what's behind it (the box's own content
+// border stops well short of here - see drawHover()/drawPaletteHover()'s
+// own boxW - so this can land over the panel's live content, not just
+// over the box's own fill). Shared by both; only ever called once
+// box.sourceHoverPoint != null has already been checked by the caller.
+void drawHoverCloseButton (PendingHoverBox box) {
   float[] btn = hoverCloseButtonRect(box);
   float bx = btn[0], by = btn[1], bw = btn[2], bh = btn[3];
 
-  noFill();
-  stroke(strokeColor);
+  stroke(0);
   strokeWeight(1);
+  fill(255, 230);
   rect(bx, by, bw, bh);
 
   float pad = bw * 0.28;
@@ -992,14 +1004,18 @@ int[] hoverPointAtCloseButtonIn (ArrayList<PendingHoverBox> queue, int mx, int m
 // section's own header comment (drawAllHovers()) for when this runs
 // relative to queueHover() itself.
 void drawHover (PendingHoverBox box) {
-  float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
+  float boxX = box.x, boxY = box.y, boxH = box.h;
   int xMouse = box.xMouse, yMouse = box.yMouse;
   String[] lines = box.lines;
-  // Only a pinned box (box.sourceHoverPoint != null - see
-  // queueHoverBox()'s own hasCloseButton) was ever widened to make room
-  // for a close button - the divider line below stops short of that
-  // reserved column so it doesn't appear to run underneath the button.
-  float contentRightEdge = boxX + boxW - hoverSidePad - ((box.sourceHoverPoint != null) ? (hoverSidePad + hoverCloseButtonSize) : 0);
+  // box.w is the full reserved width (queueHoverBox()'s own
+  // effectiveBoxW), which includes room for a close button that's drawn
+  // OUTSIDE this box's own border rather than inside it - so the box
+  // itself is drawn (and the divider/pointer-line geometry below all
+  // computed) at the narrower content width, same as if no button were
+  // reserved at all. drawHoverCloseButton() below reads box.w directly
+  // (not this local) to find the button's own place in that reserved-but-
+  // undrawn column.
+  float boxW = (box.sourceHoverPoint != null) ? (box.w - hoverCloseButtonGap - hoverCloseButtonSize) : box.w;
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
@@ -1045,8 +1061,8 @@ void drawHover (PendingHoverBox box) {
       stroke(0);
       strokeWeight(1);
       line(
-        boxX + hoverSidePad, y + lineHeight / 2,
-        contentRightEdge,    y + lineHeight / 2
+        boxX + hoverSidePad,        y + lineHeight / 2,
+        boxX + boxW - hoverSidePad, y + lineHeight / 2
       );
       noStroke();
       strokeWeight(0);
@@ -1055,7 +1071,7 @@ void drawHover (PendingHoverBox box) {
     }
   }
 
-  if (box.sourceHoverPoint != null) drawHoverCloseButton(box, 0);
+  if (box.sourceHoverPoint != null) drawHoverCloseButton(box);
 }
 
 
@@ -1074,10 +1090,14 @@ void queuePaletteHover (int xMouse, int yMouse, String[] lines, float destX, flo
 }
 
 void drawPaletteHover (PendingHoverBox box) {
-  float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
+  float boxX = box.x, boxY = box.y, boxH = box.h;
   int xMouse = box.xMouse, yMouse = box.yMouse;
   String[] lines = box.lines;
   float[] col = box.col;
+  // Same narrowing as drawHover()'s own boxW - see its comment: the
+  // close button lives outside this swatch's own border, in the column
+  // box.w reserves but this local deliberately excludes.
+  float boxW = (box.sourceHoverPoint != null) ? (box.w - hoverCloseButtonGap - hoverCloseButtonSize) : box.w;
 
   textSize(MessageSize);
 
@@ -1108,5 +1128,5 @@ void drawPaletteHover (PendingHoverBox box) {
   textAlign(LEFT, TOP);
   text(lines[0], boxX + hoverSidePad, boxY + hoverTopPad);
 
-  if (box.sourceHoverPoint != null) drawHoverCloseButton(box, useWhiteText ? 255 : 0);
+  if (box.sourceHoverPoint != null) drawHoverCloseButton(box);
 }
