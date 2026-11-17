@@ -53,7 +53,6 @@ class UI_rollout {
     CHILD_GEOMETRY_SOLID = pushChild("Solid");
     CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Fractal Tree");
     CHILD_GEOMETRY_VIEWPORT = pushChild("Viewport");
-    CHILD_GEOMETRY_SIMULATION = pushChild("Simulation");
     CHILD_GEOMETRY_OTHER = pushChild("Other");
 
     PARENT_ILLUSTRATION = pushParent("Illustration Options");
@@ -75,7 +74,14 @@ class UI_rollout {
     PARENT_POSTPROCESS = pushParent("Post-Processing");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
     CHILD_POSTPROCESS_DEVELOPED = pushChild("Developed");
-    CHILD_POSTPROCESS_IMPACTS = pushChild("Impacts");
+    // "Impact Layer" (pick which data layer feeds post-processing) and
+    // "Impact Simulation" (configure the solar/wind impact analysis itself,
+    // moved here from Geometry & Space - it's an analysis workflow, not
+    // object creation/editing) are deliberately named apart: both are
+    // "impacts", but a user choosing between tabs needs to tell at a
+    // glance which one just picks a layer and which one runs a simulation.
+    CHILD_POSTPROCESS_IMPACTS = pushChild("Impact Layer");
+    CHILD_POSTPROCESS_SIMULATION = pushChild("Impact Simulation");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -93,7 +99,6 @@ class UI_rollout {
   int CHILD_GEOMETRY_SOLID;
   int CHILD_GEOMETRY_FRACTAL_TREE;
   int CHILD_GEOMETRY_VIEWPORT;
-  int CHILD_GEOMETRY_SIMULATION;
   int CHILD_GEOMETRY_OTHER;
 
   int PARENT_ILLUSTRATION;
@@ -109,6 +114,7 @@ class UI_rollout {
   int CHILD_POSTPROCESS_INTERPOLATION;
   int CHILD_POSTPROCESS_DEVELOPED;
   int CHILD_POSTPROCESS_IMPACTS;
+  int CHILD_POSTPROCESS_SIMULATION;
 
   int PARENT_EXPORT;
   int CHILD_EXPORT_DATA;
@@ -611,6 +617,7 @@ class UI_rollout {
         Select3D.pivotAlignmentX = vm.pivotAlignmentX(1);
         Select3D.pivotAlignmentY = vm.pivotAlignmentY(1);
         Select3D.pivotAlignmentZ = vm.pivotAlignmentZ(1);
+        FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
@@ -642,34 +649,9 @@ class UI_rollout {
       }
 
 
-      if (this.child == CHILD_GEOMETRY_SIMULATION) {
-
-        impactDisplayDay = vm.impactDisplayDay(1);
-        allSolarImpacts.displayImage = vm.SolarImpactsDisplayImage(1);
-        allSolidImpacts.displayImage = vm.SolidImpactsDisplayImage(1);
-        allSolarImpacts.sectionType = vm.SolarImpacts_sectionType(1);
-        allSolidImpacts.sectionType = vm.SolidImpacts_sectionType(1);
-        allSolidImpacts.Grade = vm.SolidImpacts_grade(1);
-        allSolidImpacts.Power = vm.SolidImpacts_power(1);
-        allSolidImpacts.rotX = vm.SolidImpacts_rotX(1);
-        allSolidImpacts.Z = vm.SolidImpacts_z(1);
-        allSolidImpacts.positionStep = vm.SolidImpacts_positionStep(1);
-        allSolidImpacts.setSizeX(vm.SolidImpacts_sizeX(1));
-        allSolidImpacts.setSizeY(vm.SolidImpacts_sizeY(1));
-        allSolidImpacts.X = vm.SolidImpacts_x(1);
-        allSolidImpacts.Y = vm.SolidImpacts_y(1);
-        allSolidImpacts.WindSpeed = vm.SolidImpacts_windSpeed(1);
-        allSolidImpacts.WindDirection = vm.SolidImpacts_windDirection(1);
-        allSolidImpacts.Process_subDivisions = vm.SolidImpacts_processSubDivisions(1);
-        allSolidImpacts.displayPoints = vm.SolidImpactsDisplayPoints(1);
-        allSolidImpacts.displayLines = vm.SolidImpactsDisplayLines(1);
-      }
-
       if (this.child == CHILD_GEOMETRY_OTHER) {
 
-        celestialMagnification = vm.celestialMagnification(1);
         overallScale = vm.overallScale(1);
-        FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
     } else if (this.parent == PARENT_ILLUSTRATION) {
@@ -792,6 +774,7 @@ class UI_rollout {
         Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
         Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
         Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
+        celestialMagnification = vm.celestialMagnification(1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_VISIBILITY) {
@@ -833,6 +816,29 @@ class UI_rollout {
       if (this.child == CHILD_POSTPROCESS_IMPACTS) {
         currentDataSource = vm.currentDataSource(1);
         STUDY.impactLayerIndex = vm.impactLayerIndex(1);
+      }
+
+      if (this.child == CHILD_POSTPROCESS_SIMULATION) {
+
+        impactDisplayDay = vm.impactDisplayDay(1);
+        allSolarImpacts.displayImage = vm.SolarImpactsDisplayImage(1);
+        allSolidImpacts.displayImage = vm.SolidImpactsDisplayImage(1);
+        allSolarImpacts.sectionType = vm.SolarImpacts_sectionType(1);
+        allSolidImpacts.sectionType = vm.SolidImpacts_sectionType(1);
+        allSolidImpacts.Grade = vm.SolidImpacts_grade(1);
+        allSolidImpacts.Power = vm.SolidImpacts_power(1);
+        allSolidImpacts.rotX = vm.SolidImpacts_rotX(1);
+        allSolidImpacts.Z = vm.SolidImpacts_z(1);
+        allSolidImpacts.positionStep = vm.SolidImpacts_positionStep(1);
+        allSolidImpacts.setSizeX(vm.SolidImpacts_sizeX(1));
+        allSolidImpacts.setSizeY(vm.SolidImpacts_sizeY(1));
+        allSolidImpacts.X = vm.SolidImpacts_x(1);
+        allSolidImpacts.Y = vm.SolidImpacts_y(1);
+        allSolidImpacts.WindSpeed = vm.SolidImpacts_windSpeed(1);
+        allSolidImpacts.WindDirection = vm.SolidImpacts_windDirection(1);
+        allSolidImpacts.Process_subDivisions = vm.SolidImpacts_processSubDivisions(1);
+        allSolidImpacts.displayPoints = vm.SolidImpactsDisplayPoints(1);
+        allSolidImpacts.displayLines = vm.SolidImpactsDisplayLines(1);
       }
     } else if (this.parent == PARENT_EXPORT) {
 
