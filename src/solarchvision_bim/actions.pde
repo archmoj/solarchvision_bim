@@ -239,16 +239,16 @@ void build_allActions() {
   }
 
   // "^<Parent>" opens that top-level menu's dropdown, the same way
-  // clicking its tab would (UI_menuBar.openParentMenu(), uiMenuBar.pde) -
-  // one per entry in buildMenuItems(), kept in the same order. Lets each
-  // menu's dropdown rendering be driven and checked by an image test
-  // without a mouse; no test is added here, just the action itself.
-  String[] menuBarParentNames = {
-    "About", "File", "Edit", "Location", "Setup", "Layer", "Analysis",
-    "Shade", "View", "Visibility", "Create", "Select", "Selection",
-    "Convert", "Modify", "Match", "Transform", "Delete", "Capture"
-  };
-  for (String parentName : menuBarParentNames) {
+  // clicking its tab would (UI_menuBar.openParentMenu(), uiMenuBar.pde).
+  // Read directly off UI_menuBar.Items (built by buildMenuItems(), just
+  // populated for "Layer" above) rather than keeping a second, separate
+  // list of parent names here - adding, removing, or renaming a parent
+  // in buildMenuItems() is then the only place that needs to change; this
+  // loop picks it up automatically. Lets each menu's dropdown rendering
+  // be driven and checked by an image test without a mouse; no test is
+  // added here, just the action itself.
+  for (String[] menu : UI_menuBar.Items) {
+    String parentName = menu[0];
     putAction("^" + parentName, () -> {
       UI_menuBar.openParentMenu(parentName);
     });
