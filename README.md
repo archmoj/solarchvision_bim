@@ -31,6 +31,7 @@ By combining spatial models with time-varying environmental data, SOLARCHVISION-
 - [Keyboard shortcuts](#keyboard-shortcuts)
 - [Command bar, scripting, and exports](#command-bar-scripting-and-exports)
 - [Settings rollout panel](#settings-rollout-panel)
+- [Menu bar](#menu-bar)
 - [The SOLARCHVISION approach](#the-solarchvision-approach)
 - [Statistical scenarios, built from real data](#statistical-scenarios-built-from-real-data)
 - [Method and publications](#method-and-publications)
@@ -486,6 +487,20 @@ Most persistent settings—creation defaults, camera behavior, color scales, exp
 | **Assessment Options** | Interpolation · Derived Data · Simulation | Interpolation weighting, derived analysis layers, and solar/wind impact-simulation setup |
 
 Every setting shown here is also reachable as a named command from the [command bar](#command-bar-scripting-and-exports)—the rollout panel and the command system are two views onto the same underlying settings.
+
+## Menu bar
+
+If the settings rollout panel is a sprawling animal, the menu bar is the opposite kind of creature: a fast, lightweight bird perched along the very top of the screen. Click a parent tab and its children drop straight down—no resizing, no two-level hierarchy to manage, just a flat list one click away. It's grown to 19 parent tabs and over 420 menu items in all, not counting the Layer tab, which rebuilds its own list live from whatever data layers the current project has loaded.
+
+| Cluster | Parents | Covers |
+|---|---|---|
+| **App & history** | About · File · Edit | App info, project load/save, and global undo/redo, plus cloning the current selection |
+| **Project setup & analysis** | Location · Setup · Layer · Analysis · Shade | Site/weather data sources, scene presets, data layers, analysis configuration, and stepping through simulated time |
+| **Viewport** | View · Visibility | Camera navigation and standard views, and what's shown or hidden in the 3D scene |
+| **Build → pick → edit** | Create · Select · Selection · Convert · Modify · Match · Transform · Delete | Creating objects, selecting them (and seeing what's selected), converting between types, and modifying, matching, transforming, or deleting the selection |
+| **Capture** | Capture | Screenshots, recordings, and chart/graph exports |
+
+Most items here call into the same named-action system behind the [command bar](#command-bar-scripting-and-exports), so a lot of what you can click in the menu bar you can also type.
 
 ## The SOLARCHVISION approach
 
