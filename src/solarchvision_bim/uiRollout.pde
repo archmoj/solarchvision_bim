@@ -42,7 +42,7 @@ class UI_rollout {
     CHILD_LOCATION_POINT = pushChild("Station");
     CHILD_LOCATION_STATIONS = pushChild("Data Points");
 
-    PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
+    PARENT_PERIOD_SCENARIOS = pushParent("Time & Scenarios");
     CHILD_PERIOD_TIME = pushChild("Time");
     CHILD_PERIOD_RANGES = pushChild("Ranges");
     CHILD_PERIOD_FILTERS = pushChild("Filters");
@@ -50,15 +50,15 @@ class UI_rollout {
     PARENT_GEOMETRY = pushParent("Geometry & Space");
     CHILD_GEOMETRY_CREATE = pushChild("Create");
     CHILD_GEOMETRY_MODIFY = pushChild("Modify");
-    CHILD_GEOMETRY_SOLID = pushChild("Solid");
-    CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Fractal Tree");
+    CHILD_GEOMETRY_SOLID = pushChild("Solids");
+    CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Trees");
     CHILD_GEOMETRY_VIEWPORT = pushChild("View");
 
-    PARENT_ILLUSTRATION = pushParent("Illustration Options");
+    PARENT_ILLUSTRATION = pushParent("Visualization Options");
     CHILD_ILLUSTRATION_2D_LAYERS = pushChild("2D Layout");
-    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D Colors");
-    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("Solar Colors");
-    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("Spatial Colors");
+    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D Palette");
+    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("Solar Palette");
+    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("Spatial Palette");
     CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
     // Environment/Visibility used to live under Geometry & Space, but both
     // are about what is currently shown and how, not about creating or
@@ -66,13 +66,13 @@ class UI_rollout {
     CHILD_ILLUSTRATION_ENVIRONMENT = pushChild("Environment");
     CHILD_ILLUSTRATION_VISIBILITY = pushChild("Visibility");
 
-    PARENT_EXPORT = pushParent("Export Products");
+    PARENT_EXPORT = pushParent("Export Options");
     CHILD_EXPORT_DATA = pushChild("Model & Data");
-    CHILD_EXPORT_MEDIA = pushChild("Image & Report");
+    CHILD_EXPORT_MEDIA = pushChild("Images & Reports");
 
-    PARENT_POSTPROCESS = pushParent("Post-Processing");
+    PARENT_POSTPROCESS = pushParent("Assessment Options");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
-    CHILD_POSTPROCESS_DEVELOPED = pushChild("Developed");
+    CHILD_POSTPROCESS_DEVELOPED = pushChild("Derived Data");
     CHILD_POSTPROCESS_SIMULATION = pushChild("Simulation");
   }
 
