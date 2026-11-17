@@ -954,12 +954,20 @@ void drawHoverCloseButton (PendingHoverBox box) {
   float[] btn = hoverCloseButtonRect(box);
   float bx = btn[0], by = btn[1], bw = btn[2], bh = btn[3];
 
+  // Same green as the filled portion of ProgressWindow's own progress
+  // bar (progressWindow.pde's own paint(), g.setColor(new
+  // java.awt.Color(63, 191, 63))) - reused here by eye/value rather than
+  // through a shared constant, since that one lives on a java.awt.Color
+  // in an entirely different (AWT, not Processing-canvas) drawing path
+  // and isn't otherwise exposed as a reusable RGB triple.
   stroke(0);
   strokeWeight(1);
-  fill(255, 230);
+  fill(63, 191, 63);
   rect(bx, by, bw, bh);
 
-  float pad = bw * 0.28;
+  float pad = bw * 0.25;
+  strokeWeight(3);
+  stroke(255); // white "x" - reads clearly against this green, same as ProgressWindow's own white label text against it
   line(bx + pad, by + pad, bx + bw - pad, by + bh - pad);
   line(bx + bw - pad, by + pad, bx + pad, by + bh - pad);
 }
