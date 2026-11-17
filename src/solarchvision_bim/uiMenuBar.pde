@@ -637,6 +637,53 @@ class UI_menuBar {
     this.revise();
   }
 
+  // Alt+<letter> mnemonic for each parent tab - read by
+  // solarchvision_bim.pde's keyPressed() (via openParentMenuByKeyCode(),
+  // below) while Alt is held, so each tab is reachable from the keyboard
+  // the same way the "^<Parent>" command actions already reach it.
+  // Every letter here is unique across the whole bar and is a letter
+  // that's actually in that parent's own name - several needed a letter
+  // other than the first (e.g. Layer -> "Y" since "L" already went to
+  // Location, Shade -> "H" since "S" went to Select) to make that work
+  // out for all 19 without collisions or an arbitrary leftover letter.
+  final String[][] PARENT_SHORTCUTS = {
+    {"A", "About"},
+    {"F", "File"},
+    {"E", "Edit"},
+    {"L", "Location"},
+    {"U", "Setup"},
+    {"Y", "Layer"},
+    {"N", "Analysis"},
+    {"H", "Shade"},
+    {"V", "View"},
+    {"B", "Visibility"},
+    {"C", "Create"},
+    {"S", "Select"},
+    {"I", "Selection"},
+    {"R", "Convert"},
+    {"O", "Modify"},
+    {"M", "Match"},
+    {"T", "Transform"},
+    {"D", "Delete"},
+    {"P", "Capture"}
+  };
+
+  // Opens the parent tab whose Alt+<letter> shortcut (PARENT_SHORTCUTS,
+  // above) matches the given key code (e.g. 70 for 'F', same as the
+  // uppercase ASCII value - how java.awt.event.KeyEvent/Processing's
+  // KeyEvent report a letter key regardless of Shift). Returns whether a
+  // matching shortcut was found, so the caller (solarchvision_bim.pde's
+  // keyPressed()) knows whether to consume the keypress.
+  boolean openParentMenuByKeyCode(int keyCode) {
+    for (String[] entry : PARENT_SHORTCUTS) {
+      if (entry[0].charAt(0) == (char) keyCode) {
+        openParentMenu(entry[1]);
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
   String[] populateLayerMenu() {

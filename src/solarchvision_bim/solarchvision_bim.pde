@@ -369,6 +369,19 @@ void keyPressed (KeyEvent e) {
         }
       }
 
+      // Alt+<letter> opens a menu-bar parent tab's dropdown, same
+      // mnemonic table the menu bar itself exposes (uiMenuBar.pde's
+      // PARENT_SHORTCUTS) - e.g. Alt+F opens "File", Alt+S opens
+      // "Select". Guarded the same way Undo/Redo just above is, so it
+      // only fires outside an active spinner edit or typed command.
+      if (!wasEditingSpinner && (typeUserCommand == 0) &&
+          e.isAltDown() && !e.isControlDown()) {
+        if (UI_menuBar.openParentMenuByKeyCode(e.getKeyCode())) {
+          redraw();
+          return;
+        }
+      }
+
       // Whether THIS keypress is the one that's about to reach
       // UI_rollout.keyPressed(e) below AND is an Esc - i.e. whether an Esc
       // is about to cancel an in-progress spinner edit there (uiRollout.pde's
