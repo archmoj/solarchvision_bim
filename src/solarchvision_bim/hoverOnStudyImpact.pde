@@ -1,3 +1,122 @@
+// --- STUDY pin position tracking (zoom/pan) --------------------------------
+//
+// Maps a STUDY-sourced pinned point's own {x,y} row (hover.pde's own
+// allHoverPoints - object identity, not value, the same keying convention
+// hoverPointPreferredPosition/worldHoverPointGeo already use) to the
+// position it was pinned at, expressed in STUDY's own UNZOOMED/UNPANNED
+// local coordinate space - i.e. the position it would have been captured
+// at (UrbanThumbnailHoverInfo.centerX/centerY and the other hover-info
+// structs' own this.graphics.screenX()/screenY() calls, viewport2D.pde)
+// if STUDY.userZoom were 1 and STUDY.userPanX/userPanY were both 0. A row
+// with no entry here is a plain WIN3D-style pin, fixed in screen space
+// for good, same as before STUDY zoom/pan existed; a row WITH one is
+// instead kept in sync with it, every frame, by
+// syncStudyHoverPointPositions() below - so a STUDY pin tracks the same
+// spot ON THE GRAPH as the user zooms/pans STUDY, exactly the way
+// worldHoverPointGeo/syncWorldHoverPointPositions() (hoverOnWorldStations.pde)
+// already keep a WORLD pin tracking a place on the map rather than a
+// fixed screen pixel, rather than drifting onto whatever different
+// thumbnail/data point happens to land under that same pixel once the
+// graph is rescaled. Populated by mouseClicked.pde's own STUDY left-click
+// handling, right after the addHoverPoint() call that creates the row;
+// read (and pruned, for a pin that's since been dropped) only here.
+java.util.IdentityHashMap<int[], float[]> studyHoverPointLocal = new java.util.IdentityHashMap<int[], float[]>();
+
+// Converts a screen-space point (same space allHoverPoints/
+// placeHoversAt() already work in) into STUDY's own unzoomed/unpanned
+// local coordinate space, by way of the same screen -> this.graphics
+// device-pixel conversion studyUrbanHover_hitTest() (further below)
+// already uses, then undoing the userPanX/userZoom scale+offset
+// renderFrame() (viewport2D.pde) applies on top of that. Used once, at
+// pin time, to capture the base position studyHoverPointLocal stores for
+// a new STUDY pin - the inverse of studyScreenXFromLocal() just below.
+float studyLocalXFromScreen (float screenX) {
+  float graphicsX = (screenX - STUDY.cX) * STUDY.ImageScale;
+  return (graphicsX - STUDY.userPanX) / STUDY.userZoom;
+}
+
+float studyLocalYFromScreen (float screenY) {
+  float graphicsY = (screenY - STUDY.cY) * STUDY.ImageScale;
+  return (graphicsY - STUDY.userPanY) / STUDY.userZoom;
+}
+
+// The forward direction: given a position in STUDY's own unzoomed/
+// unpanned local coordinate space, returns where that same spot sits on
+// screen RIGHT NOW, under STUDY's CURRENT userZoom/userPanX/userPanY -
+// the exact inverse of studyLocalXFromScreen()/studyLocalYFromScreen()
+// above. This is what lets syncStudyHoverPointPositions() below
+// recompute a STUDY pin's own (x,y) fresh every frame, the same way
+// WORLD.projX()/projY() let syncWorldHoverPointPositions() do it for a
+// WORLD pin.
+float studyScreenXFromLocal (float localX) {
+  float graphicsX = STUDY.userPanX + STUDY.userZoom * localX;
+  return STUDY.cX + graphicsX / STUDY.ImageScale;
+}
+
+float studyScreenYFromLocal (float localY) {
+  float graphicsY = STUDY.userPanY + STUDY.userZoom * localY;
+  return STUDY.cY + graphicsY / STUDY.ImageScale;
+}
+
+// Keeps every STUDY-sourced pin (studyHoverPointLocal above) tracking the
+// same spot on the graph as the user zooms/pans STUDY, instead of
+// staying nailed to wherever it first landed on screen - called once per
+// pass, by drawAllHovers() (hover.pde), alongside
+// syncWorldHoverPointPositions(), before anything in that pass gets
+// resolved, for the exact same reason that function's own comment gives
+// (both this pass's own pin-position resolution and its
+// collision-avoidance "peek" need to see this pass's already-up-to-date
+// positions, not last frame's).
+//
+// For each STUDY-tracked row: re-derives its own screen position fresh
+// from studyScreenXFromLocal()/studyScreenYFromLocal() (which already
+// reflect this frame's own userZoom/userPanX/userPanY) - if the
+// recomputed position has since zoomed/panned outside STUDY's own
+// current panel rect, the pin no longer points at anything actually on
+// screen, so it's dropped (removeHoverPointAt(), hover.pde), the same
+// off-view treatment syncWorldHoverPointPositions() gives a WORLD pin.
+// Otherwise, if the recomputed position has moved since last frame, the
+// row's own x/y (mutated in place) is updated to the new position, AND,
+// if this pin already has its own remembered box position
+// (hoverPointPreferredPosition, hover.pde), that's shifted by the exact
+// same delta - same reasoning as syncWorldHoverPointPositions()'s own
+// comment for why.
+void syncStudyHoverPointPositions () {
+  if (allHoverPoints == null) return;
+  if (studyHoverPointLocal.isEmpty()) return;
+  if (!STUDY.include) return;
+
+  for (int i = allHoverPoints.length - 1; i >= 0; i--) {
+    int[] row = allHoverPoints[i];
+    float[] base = studyHoverPointLocal.get(row);
+    if (base == null) continue; // not a STUDY-tracked pin - leave it alone entirely
+
+    float newXf = studyScreenXFromLocal(base[0]);
+    float newYf = studyScreenYFromLocal(base[1]);
+
+    if (!isInside(newXf, newYf, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
+      removeHoverPointAt(i);
+      continue;
+    }
+
+    int newX = round(newXf);
+    int newY = round(newYf);
+
+    int dx = newX - row[0];
+    int dy = newY - row[1];
+    if ((dx == 0) && (dy == 0)) continue; // nothing actually moved since last frame
+
+    float[] preferred = hoverPointPreferredPosition.get(row);
+    if (preferred != null) {
+      preferred[0] += dx;
+      preferred[1] += dy;
+    }
+
+    row[0] = newX;
+    row[1] = newY;
+  }
+}
+
 // One thumbnail's worth of hover-relevant info, captured by plotImpact_
 // urban() (viewport2D.pde) at the moment it draws that thumbnail. daySnapshot
 // is a deep clone of whichever 4D [q][component][x][y] array (Matrix_ARGB

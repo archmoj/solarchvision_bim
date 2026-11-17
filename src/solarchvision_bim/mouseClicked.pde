@@ -2500,7 +2500,24 @@ void mouseClicked () {
           if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
             PendingHoverBox liveBox = findLiveHoverBox(studyPendingHoverBoxes);
             float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
-            addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+            int[] newRow = addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+
+            // Registers this exact row in studyHoverPointLocal
+            // (hoverOnStudyImpact.pde) against the position it was
+            // actually clicked at, expressed in STUDY's own unzoomed/
+            // unpanned local coordinate space, so
+            // syncStudyHoverPointPositions() (called once per frame from
+            // drawAllHovers()) keeps this pin tracking that same spot ON
+            // THE GRAPH - riding along as STUDY is zoomed/panned, and
+            // dropped outright once that spot zooms/pans outside STUDY's
+            // own current panel rect - rather than leaving it nailed to
+            // today's screen pixel the way a WIN3D pin stays nailed to
+            // theirs. Same pattern WORLD's own left-click handling above
+            // already uses for worldHoverPointGeo, just keyed to STUDY's
+            // zoom/pan instead of WORLD's lon/lat projection.
+            float localX = studyLocalXFromScreen(X_clicked);
+            float localY = studyLocalYFromScreen(Y_clicked);
+            studyHoverPointLocal.put(newRow, new float[]{ localX, localY });
           }
         }
 

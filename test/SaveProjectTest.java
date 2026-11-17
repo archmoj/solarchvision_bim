@@ -133,9 +133,11 @@ class SaveProjectTest {
     assertEquals(1, app.allHoverPoints.length);
     assertEquals(123, app.allHoverPoints[0][0]);
     assertEquals(456, app.allHoverPoints[0][1]);
-    // A plain (non-WORLD-sourced) pin has no geo entry at all - this
-    // confirms the round trip doesn't invent one out of thin air.
+    // A plain (non-WORLD/STUDY-sourced) pin has no geo/local entry at
+    // all - this confirms the round trip doesn't invent one out of thin
+    // air.
     assertFalse(app.worldHoverPointGeo.containsKey(app.allHoverPoints[0]));
+    assertFalse(app.studyHoverPointLocal.containsKey(app.allHoverPoints[0]));
   }
 
   @Test
@@ -155,6 +157,25 @@ class SaveProjectTest {
     assertNotNull(geo, "the restored row should carry its own geo entry, same object-identity convention as the live one");
     assertEquals(-73.5f, geo[0], 0.0001);
     assertEquals(45.5f, geo[1], 0.0001);
+  }
+
+  @Test
+  void fetchProject_afterHoldProject_restoresAStudySourcedHoverPointsLocalBasePosition () {
+    int[] row = app.addHoverPoint(100, 50);
+    app.studyHoverPointLocal.put(row, new float[]{ 12.5f, -34.25f });
+
+    app.holdProject();
+
+    app.allHoverPoints = null;
+    app.studyHoverPointLocal.clear();
+
+    assertDoesNotThrow(() -> app.fetchProject());
+
+    assertEquals(1, app.allHoverPoints.length);
+    float[] local = app.studyHoverPointLocal.get(app.allHoverPoints[0]);
+    assertNotNull(local, "the restored row should carry its own local-base entry, same object-identity convention as the live one");
+    assertEquals(12.5f, local[0], 0.0001);
+    assertEquals(-34.25f, local[1], 0.0001);
   }
 
   @Test
