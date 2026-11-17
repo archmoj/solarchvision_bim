@@ -4858,7 +4858,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     boolean out = false;
-    String command = "Record SolidImpact in JPG";
+    String command = "Record Solid Impact in JPG";
     if (created == 0) {
       putValueAction(command,
         () -> (allSolidImpacts.record_IMG ? 1f : 0f),

@@ -892,7 +892,7 @@ the user interface.
 | `Probabilities Exporter` | Toggle: also export the probability data as an ASCII text file | 0 or 1 |
 | `Normal Lines Exporter` | Toggle: also export the summary statistics as an ASCII text file | 0 or 1 |
 | `Record Solar Analysis in JPG` | Toggle: save each solar-analysis frame as a JPG | 0 to 1 |
-| `Record SolidImpact in JPG` | Toggle: save each solid-impact frame as a JPG | 0 to 1 |
+| `Record Solid Impact in JPG` | Toggle: save each solid-impact frame as a JPG | 0 to 1 |
 | `Record Solid Impact In PDF` | Toggle: save each solid-impact frame as a PDF | 0 to 1 |
 | `Plot Layout Index` | Layout preset used for the multi-panel diagram view | -2 to 8 |
 

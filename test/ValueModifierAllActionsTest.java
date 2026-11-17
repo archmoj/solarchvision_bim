@@ -282,7 +282,7 @@ class ValueModifierAllActionsTest {
       "Exporter Material Library", // exporterMaterialLibrary
       "Exporter Double Sided", // exporterDoubleSided
       "Exporter ColorScale Resolution", // exporterColorScaleResolution
-      "Record SolidImpact in JPG", // Record_SolidImpact_in_JPG
+      "Record Solid Impact in JPG", // Record_SolidImpact_in_JPG
       "Record Solid Impact In PDF", // Record_SolidImpact_in_PDF
       "Record Solar Analysis in JPG", // Record_Solar_Analysis_in_JPG
       "Wind Roses Image Resolution", // WindRoseImageResolution
