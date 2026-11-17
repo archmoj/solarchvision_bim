@@ -436,6 +436,9 @@ class STUDYTest {
     app.STUDY.probabilityHeightInterval = 16;
     app.STUDY.plotLayoutIndex = 4;
     app.STUDY.impactTypeIndex = app.Impact_PASSIVE;
+    app.STUDY.userZoom = 2.5f;
+    app.STUDY.userPanX = 11f;
+    app.STUDY.userPanY = -7f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.STUDY.to_XML(root);
@@ -463,6 +466,74 @@ class STUDYTest {
     assertEquals(16f, fresh.probabilityHeightInterval, 0.0001f);
     assertEquals(4, fresh.plotLayoutIndex);
     assertEquals(app.Impact_PASSIVE, fresh.impactTypeIndex);
+    assertEquals(2.5f, fresh.userZoom, 0.0001f);
+    assertEquals(11f, fresh.userPanX, 0.0001f);
+    assertEquals(-7f, fresh.userPanY, 0.0001f);
+  }
+
+  // mouseWheel.pde's own handleStudyWheel()/mouseDragged.pde's own
+  // handleStudyDrag() write userZoom/userPanX/userPanY, persisted above -
+  // this covers the one asymmetry between them: an older save file, from
+  // before this feature existed, has no "userZoom" attribute at all, and
+  // that must come back as 1 (never zoomed), not 0 (an invisible,
+  // zero-scale graph) - see XML_getFloat's own 3-arg overload
+  // (xmlHelpers.pde) and from_XML()'s own comment on why.
+  @Test
+  void fromXML_defaultsUserZoomToOne_whenLoadingAnOlderFileWithNoSuchAttribute () {
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.STUDY.CLASS_STAMP);
+    // Deliberately only setting the handful of attributes from_XML()
+    // itself requires to be present unconditionally (via the bare
+    // XML_getInt/XML_getBoolean wrappers, not the 3-arg fallback one) -
+    // an actual older file, not a hand-trimmed one.
+    parent.setInt("startHour", 0);
+    parent.setInt("endHour", 23);
+    parent.setInt("startDay", 1);
+    parent.setInt("endDay", 365);
+    parent.setFloat("dayIncrement", 1);
+    parent.setInt("daysMergedCount", 1);
+    parent.setFloat("strokeScale", 1);
+    parent.setFloat("horizontalUnitScale", 1);
+    parent.setInt("skyScenarioSetting", 0);
+    parent.setInt("temporalFilterSetting", 0);
+    parent.setString("rawLinesExporter", "false");
+    parent.setString("normalLinesExporter", "false");
+    parent.setString("probabilitiesExporter", "false");
+    parent.setInt("statisticalRangesColorScaleIndex", -1);
+    parent.setInt("statisticalRangesColorScaleDirection", -1);
+    parent.setFloat("statisticalRangesColorScaleFactor", 2);
+    parent.setInt("probabilitiesColorScaleIndex", -1);
+    parent.setInt("probabilitiesColorScaleDirection", 1);
+    parent.setFloat("probabilitiesColorScaleFactor", 0.5f);
+    parent.setInt("activeColorScaleIndex", 19);
+    parent.setInt("activeColorScaleDirection", 1);
+    parent.setFloat("activeColorScaleFactor", 0.5f);
+    parent.setInt("passiveColorScaleIndex", 1);
+    parent.setInt("passiveColorScaleDirection", 1);
+    parent.setFloat("passiveColorScaleFactor", 0.125f);
+    parent.setFloat("opacityPercentage", 100);
+    parent.setFloat("centralGraphScale", 1);
+    parent.setFloat("centralGraphOffsetX", 0);
+    parent.setInt("plotLayoutIndex", 0);
+    parent.setInt("impactTypeIndex", app.Impact_ACTIVE);
+    parent.setInt("impactLayerIndex", 0);
+    parent.setInt("impactGraphIndex", 0);
+    parent.setString("updateImpactGraph", "true");
+    parent.setString("showImpactSummary", "true");
+    parent.setString("showRawLines", "false");
+    parent.setString("showStatisticalRanges", "false");
+    parent.setString("showNormalLines", "false");
+    parent.setString("showProbabilities", "false");
+    parent.setInt("probabilityWidthInterval", 2);
+    parent.setFloat("probabilityHeightInterval", 8);
+    // no "userZoom"/"userPanX"/"userPanY" at all - the whole point
+
+    solarchvision_bim.STUDY fresh = app.new STUDY();
+    fresh.from_XML(root);
+
+    assertEquals(1f, fresh.userZoom, 0.0001f, "a missing attribute must default to 1 (never zoomed), not 0 (invisible)");
+    assertEquals(0f, fresh.userPanX, 0.0001f);
+    assertEquals(0f, fresh.userPanY, 0.0001f);
   }
 
   // ================= revise / updated ====================================

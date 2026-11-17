@@ -3833,6 +3833,14 @@ class STUDY {
     XML_setBoolean(parent, "showProbabilities", this.showProbabilities);
     XML_setInt(parent, "probabilityWidthInterval", this.probabilityWidthInterval);
     XML_setFloat(parent, "probabilityHeightInterval", this.probabilityHeightInterval);
+
+    // mouseWheel.pde's own handleStudyWheel()/mouseDragged.pde's own
+    // handleStudyDrag() - see userZoom's own comment (above) for why
+    // these deliberately persist across everything else but a brand
+    // new load, the same way WORLD.zoom/panOffsetLon/panOffsetLat do.
+    XML_setFloat(parent, "userZoom", this.userZoom);
+    XML_setFloat(parent, "userPanX", this.userPanX);
+    XML_setFloat(parent, "userPanY", this.userPanY);
   }
 
 
@@ -3891,6 +3899,18 @@ class STUDY {
     this.showProbabilities = XML_getBoolean(parent, "showProbabilities");
     this.probabilityWidthInterval = XML_getInt(parent, "probabilityWidthInterval");
     this.probabilityHeightInterval = XML_getFloat(parent, "probabilityHeightInterval");
+
+    // userZoom's own default (1, not 0) matters here specifically: an
+    // older save file, from before this field existed, has no
+    // "userZoom" attribute at all - XML_getFloat(parent, "userZoom")
+    // alone would silently read that as 0 (a zero-scale, invisible
+    // graph) instead of "never zoomed". userPanX/userPanY don't need
+    // the same treatment - 0 is already the correct "never panned"
+    // fallback, same value XML_getFloat's own bare overload already
+    // defaults a missing attribute to.
+    this.userZoom = XML_getFloat(parent, "userZoom", 1);
+    this.userPanX = XML_getFloat(parent, "userPanX");
+    this.userPanY = XML_getFloat(parent, "userPanY");
   }
 
 

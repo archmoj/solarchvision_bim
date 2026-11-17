@@ -21,6 +21,21 @@ float XML_getFloat(XML xml, String tag) {
  return result;
 }
 
+// Same as XML_getFloat(xml, tag) above, but falls back to defaultValue
+// when the attribute is missing entirely - wraps XML's own
+// getFloat(String, float) overload, rather than its bare single-arg one
+// (which silently defaults a missing attribute to 0). Needed for any
+// field whose correct "this was never saved" fallback ISN'T 0 - e.g.
+// STUDY.userZoom (viewport2D.pde), where 0 would mean an invisible,
+// zero-scale graph rather than "no zoom applied" - so an older save
+// file, from before that field existed at all, loads it as 1 instead.
+float XML_getFloat(XML xml, String tag, float defaultValue) {
+ if (diag_XML_input) print(tag + "=");
+ float result = xml.getFloat(tag, defaultValue);
+ if (diag_XML_input) println(result);
+ return result;
+}
+
 int XML_getInt(XML xml, String tag) {
  if (diag_XML_input) print(tag + "=");
  int result = xml.getInt(tag);
