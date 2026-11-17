@@ -2502,22 +2502,26 @@ void mouseClicked () {
             float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
             int[] newRow = addHoverPoint(X_clicked, Y_clicked, preferredPosition);
 
-            // Registers this exact row in studyHoverPointLocal
+            // Registers this exact row in studyHoverPointLocalFrac
             // (hoverOnStudyImpact.pde) against the position it was
             // actually clicked at, expressed in STUDY's own unzoomed/
-            // unpanned local coordinate space, so
+            // unpanned local coordinate space AND as a fraction of
+            // STUDY's own current panel size (dX/dY), so
             // syncStudyHoverPointPositions() (called once per frame from
             // drawAllHovers()) keeps this pin tracking that same spot ON
-            // THE GRAPH - riding along as STUDY is zoomed/panned, and
-            // dropped outright once that spot zooms/pans outside STUDY's
-            // own current panel rect - rather than leaving it nailed to
-            // today's screen pixel the way a WIN3D pin stays nailed to
-            // theirs. Same pattern WORLD's own left-click handling above
-            // already uses for worldHoverPointGeo, just keyed to STUDY's
-            // zoom/pan instead of WORLD's lon/lat projection.
-            float localX = studyLocalXFromScreen(X_clicked);
-            float localY = studyLocalYFromScreen(Y_clicked);
-            studyHoverPointLocal.put(newRow, new float[]{ localX, localY });
+            // THE GRAPH - riding along as STUDY is zoomed/panned, dropped
+            // outright once that spot zooms/pans outside STUDY's own
+            // current panel rect, and surviving a save/load onto a
+            // different screen size, since the fraction is independent
+            // of STUDY's own absolute panel pixel dimensions at pin
+            // time - rather than leaving it nailed to today's screen
+            // pixel the way a WIN3D pin stays nailed to theirs. Same
+            // pattern WORLD's own left-click handling above already uses
+            // for worldHoverPointGeo, just keyed to STUDY's zoom/pan and
+            // panel size instead of WORLD's lon/lat projection.
+            float localFracX = studyLocalFracXFromScreen(X_clicked);
+            float localFracY = studyLocalFracYFromScreen(Y_clicked);
+            studyHoverPointLocalFrac.put(newRow, new float[]{ localFracX, localFracY });
           }
         }
 
@@ -2548,20 +2552,25 @@ void mouseClicked () {
                 float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
                 int[] newRow = addHoverPoint(X_clicked, Y_clicked, preferredPosition);
 
-                // Registers this exact row in win3DHoverPointOffset
+                // Registers this exact row in win3DHoverPointOffsetFrac
                 // (hoverOnSolarImpactOverlay.pde) against its own offset
-                // from WIN3D's panel CENTER at pin time, so
+                // from WIN3D's panel CENTER at pin time, expressed as a
+                // FRACTION of WIN3D's own current panel size (dX/dY), so
                 // syncWin3DHoverPointPositions() (called once per frame
                 // from drawAllHovers()) keeps this pin centered the same
-                // way if the viewport is later enlarged/restored -
-                // rather than leaving it nailed to today's absolute
-                // screen pixel the way a plain pin stays nailed to
-                // theirs. Same pattern STUDY's/WORLD's own left-click
-                // handling already use, just keyed to WIN3D's own
-                // center instead of STUDY's zoom/pan or WORLD's lon/lat.
-                float offsetX = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
-                float offsetY = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
-                win3DHoverPointOffset.put(newRow, new float[]{ offsetX, offsetY });
+                // way if the viewport is later enlarged/restored, and
+                // surviving a save/load onto a different screen size,
+                // since the fraction is independent of WIN3D's own
+                // absolute panel pixel dimensions at pin time - rather
+                // than leaving it nailed to today's absolute screen
+                // pixel the way a plain pin stays nailed to theirs. Same
+                // pattern STUDY's/WORLD's own left-click handling
+                // already use, just keyed to WIN3D's own center and
+                // panel size instead of STUDY's zoom/pan or WORLD's
+                // lon/lat.
+                float offsetFracX = win3DOffsetFracXFromScreen(X_clicked);
+                float offsetFracY = win3DOffsetFracYFromScreen(Y_clicked);
+                win3DHoverPointOffsetFrac.put(newRow, new float[]{ offsetFracX, offsetFracY });
               }
             } else {
               float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);

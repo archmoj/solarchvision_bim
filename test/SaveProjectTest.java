@@ -137,7 +137,7 @@ class SaveProjectTest {
     // all - this confirms the round trip doesn't invent one out of thin
     // air.
     assertFalse(app.worldHoverPointGeo.containsKey(app.allHoverPoints[0]));
-    assertFalse(app.studyHoverPointLocal.containsKey(app.allHoverPoints[0]));
+    assertFalse(app.studyHoverPointLocalFrac.containsKey(app.allHoverPoints[0]));
   }
 
   @Test
@@ -160,39 +160,49 @@ class SaveProjectTest {
   }
 
   @Test
-  void fetchProject_afterHoldProject_restoresAStudySourcedHoverPointsLocalBasePosition () {
+  void fetchProject_afterHoldProject_restoresAStudySourcedHoverPointsLocalFracBasePosition () {
     int[] row = app.addHoverPoint(100, 50);
-    app.studyHoverPointLocal.put(row, new float[]{ 12.5f, -34.25f });
+    // Values here are just round-tripped, not computed from real screen
+    // math, but are understood as FRACTIONS of STUDY's own dX/dY (see
+    // studyHoverPointLocalFrac's own comment, hoverOnStudyImpact.pde) -
+    // this is what lets a restored STUDY pin survive being opened on a
+    // device with a differently-sized STUDY panel.
+    app.studyHoverPointLocalFrac.put(row, new float[]{ 12.5f, -34.25f });
 
     app.holdProject();
 
     app.allHoverPoints = null;
-    app.studyHoverPointLocal.clear();
+    app.studyHoverPointLocalFrac.clear();
 
     assertDoesNotThrow(() -> app.fetchProject());
 
     assertEquals(1, app.allHoverPoints.length);
-    float[] local = app.studyHoverPointLocal.get(app.allHoverPoints[0]);
-    assertNotNull(local, "the restored row should carry its own local-base entry, same object-identity convention as the live one");
+    float[] local = app.studyHoverPointLocalFrac.get(app.allHoverPoints[0]);
+    assertNotNull(local, "the restored row should carry its own local-fraction entry, same object-identity convention as the live one");
     assertEquals(12.5f, local[0], 0.0001);
     assertEquals(-34.25f, local[1], 0.0001);
   }
 
   @Test
-  void fetchProject_afterHoldProject_restoresAWin3DSourcedHoverPointsCenterOffset () {
+  void fetchProject_afterHoldProject_restoresAWin3DSourcedHoverPointsCenterOffsetFrac () {
     int[] row = app.addHoverPoint(150, 100);
-    app.win3DHoverPointOffset.put(row, new float[]{ -50.5f, 20.25f });
+    // Likewise, understood as a FRACTION of WIN3D's own dX/dY (see
+    // win3DHoverPointOffsetFrac's own comment,
+    // hoverOnSolarImpactOverlay.pde) - what lets a restored WIN3D pin
+    // survive being opened on a device with a differently-sized WIN3D
+    // viewport.
+    app.win3DHoverPointOffsetFrac.put(row, new float[]{ -50.5f, 20.25f });
 
     app.holdProject();
 
     app.allHoverPoints = null;
-    app.win3DHoverPointOffset.clear();
+    app.win3DHoverPointOffsetFrac.clear();
 
     assertDoesNotThrow(() -> app.fetchProject());
 
     assertEquals(1, app.allHoverPoints.length);
-    float[] offset = app.win3DHoverPointOffset.get(app.allHoverPoints[0]);
-    assertNotNull(offset, "the restored row should carry its own center-offset entry, same object-identity convention as the live one");
+    float[] offset = app.win3DHoverPointOffsetFrac.get(app.allHoverPoints[0]);
+    assertNotNull(offset, "the restored row should carry its own center-offset-fraction entry, same object-identity convention as the live one");
     assertEquals(-50.5f, offset[0], 0.0001);
     assertEquals(20.25f, offset[1], 0.0001);
   }

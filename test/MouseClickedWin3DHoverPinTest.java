@@ -4,10 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // Confirms mouseClicked()'s own WIN3D solar-impact-overlay left-click
 // branch (mouseClicked.pde) actually registers a new WIN3D pin's
-// win3DHoverPointOffset entry (hoverOnSolarImpactOverlay.pde) - not just
-// that addHoverPoint() itself works (already covered elsewhere), but
-// that the real click path computes the offset from WIN3D's own panel
-// center and stores it against the exact row it just created. Mirrors
+// win3DHoverPointOffsetFrac entry (hoverOnSolarImpactOverlay.pde) - not
+// just that addHoverPoint() itself works (already covered elsewhere),
+// but that the real click path computes the offset from WIN3D's own
+// panel center, AS A FRACTION of WIN3D's own current dX/dY, and stores
+// it against the exact row it just created. Mirrors
 // MouseClickedStudyHoverPinTest.java's own approach and its same bare-
 // construction pixel_A/pixel_B/pixel_C/pixel_D/pixel_H defaults for why
 // every earlier UI-panel guard in mouseClicked() provably can't match
@@ -63,22 +64,26 @@ class MouseClickedWin3DHoverPinTest {
     assertArrayEquals(new int[]{ 1010, 500 }, app.allHoverPoints[0]);
 
     int[] row = app.allHoverPoints[0];
-    float[] offset = app.win3DHoverPointOffset.get(row);
-    assertNotNull(offset, "a real WIN3D overlay click must register a win3DHoverPointOffset entry, not leave the pin screen-fixed");
+    float[] offset = app.win3DHoverPointOffsetFrac.get(row);
+    assertNotNull(offset, "a real WIN3D overlay click must register a win3DHoverPointOffsetFrac entry, not leave the pin screen-fixed");
 
-    // Center is (990+25, 490+25) = (1015, 515); click was (1010, 500).
-    assertEquals(-5, offset[0], 0.0001f);
-    assertEquals(-15, offset[1], 0.0001f);
+    // Center is (990+25, 490+25) = (1015, 515); click was (1010, 500) -
+    // a raw offset of (-5, -15), expressed as a fraction of dX=dY=50:
+    // -5/50 = -0.1, -15/50 = -0.3.
+    assertEquals(-0.1f, offset[0], 0.0001f);
+    assertEquals(-0.3f, offset[1], 0.0001f);
   }
 
   @Test
   void pinnedPoint_thenViewportEnlarged_trackedPositionMovesAccordingly () {
-    app.mouseClicked(); // pins at (1010, 500), offset (-5, -15) from center (1015, 515)
+    app.mouseClicked(); // pins at (1010, 500), fraction offset (-0.1, -0.3) from center (1015, 515)
 
     int[] row = app.allHoverPoints[0];
 
     // Simulate the panel being enlarged in place (center stays put, the
-    // panel just grows).
+    // panel doubles in size) - the fraction-based offset scales UP with
+    // it, unlike a plain absolute-pixel offset, which is the whole point
+    // of tracking a fraction of dX/dY rather than raw pixels.
     app.WIN3D.cX = 965;
     app.WIN3D.cY = 465;
     app.WIN3D.dX = 100;
@@ -86,9 +91,10 @@ class MouseClickedWin3DHoverPinTest {
 
     app.syncWin3DHoverPointPositions();
 
-    // New center (965+50, 465+50) = (1015, 515) - same as before, so the
-    // same offset lands back at the exact same spot.
-    assertEquals(1010, row[0]);
-    assertEquals(500, row[1]);
+    // New center (965+50, 465+50) = (1015, 515). The stored fraction
+    // (-0.1, -0.3) applied to the NEW dX/dY=100: offset (-10, -30),
+    // landing at (1015-10, 515-30) = (1005, 485).
+    assertEquals(1005, row[0]);
+    assertEquals(485, row[1]);
   }
 }

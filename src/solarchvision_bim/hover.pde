@@ -128,9 +128,9 @@ boolean removeLastHoverPoint () {
 // WORLD-sourced pin whose own geography has panned/zoomed outside the
 // map's current view. Cleans up every identity-keyed side table for that
 // EXACT row - hoverPointPreferredPosition here, worldHoverPointGeo
-// (hoverOnWorldStations.pde) for a WORLD-sourced one, studyHoverPointLocal
+// (hoverOnWorldStations.pde) for a WORLD-sourced one, studyHoverPointLocalFrac
 // (hoverOnStudyImpact.pde) for a STUDY-sourced one, and
-// win3DHoverPointOffset (hoverOnSolarImpactOverlay.pde) for a WIN3D-
+// win3DHoverPointOffsetFrac (hoverOnSolarImpactOverlay.pde) for a WIN3D-
 // sourced one - the same cleanup removeLastHoverPoint() above already did
 // for its own single row, now shared so neither path can drop a row
 // while leaving another table holding a stale entry keyed to an orphaned
@@ -142,8 +142,8 @@ void removeHoverPointAt (int index) {
   int[] row = allHoverPoints[index];
   hoverPointPreferredPosition.remove(row);
   worldHoverPointGeo.remove(row);
-  studyHoverPointLocal.remove(row);
-  win3DHoverPointOffset.remove(row);
+  studyHoverPointLocalFrac.remove(row);
+  win3DHoverPointOffsetFrac.remove(row);
 
   int[][] trimmed = new int[allHoverPoints.length - 1][];
   int j = 0;
@@ -1164,13 +1164,18 @@ void drawPaletteHover (PendingHoverBox box) {
 // point already does. So all that genuinely needs saving here is that
 // same raw (x,y) - and, for a WORLD-sourced pin (one with an entry in
 // worldHoverPointGeo, hoverOnWorldStations.pde), a STUDY-sourced one (an
-// entry in studyHoverPointLocal, hoverOnStudyImpact.pde), or a WIN3D-
-// sourced one (an entry in win3DHoverPointOffset,
+// entry in studyHoverPointLocalFrac, hoverOnStudyImpact.pde), or a WIN3D-
+// sourced one (an entry in win3DHoverPointOffsetFrac,
 // hoverOnSolarImpactOverlay.pde), the extra position it's actually
 // tracked against too - lon/lat for WORLD, STUDY's own unzoomed/unpanned
-// local x/y for STUDY, an offset from WIN3D's own panel center for
-// WIN3D. Any of those saved (x,y) is never actually depended on once
-// reloaded: syncWorldHoverPointPositions()/
+// local x/y expressed as a FRACTION of STUDY.dX/dY for STUDY, an offset
+// from WIN3D's own panel center expressed as a FRACTION of WIN3D.dX/dY
+// for WIN3D - the fraction, rather than an absolute pixel value, is what
+// lets a STUDY/WIN3D pin also survive a save/load onto a different
+// screen size (see studyHoverPointLocalFrac's/
+// win3DHoverPointOffsetFrac's own top comments for why). Any of those
+// saved (x,y) is never actually depended on once reloaded:
+// syncWorldHoverPointPositions()/
 // syncStudyHoverPointPositions()/syncWin3DHoverPointPositions() overwrite
 // that pin's own (x,y) from its tracked position every single frame,
 // before anything else gets a chance to resolve against it (see
@@ -1201,16 +1206,16 @@ void hoverPoints_to_XML (XML xml) {
       XML_setFloat(child, "lat", geo[1]);
     }
 
-    float[] studyLocal = studyHoverPointLocal.get(row);
+    float[] studyLocal = studyHoverPointLocalFrac.get(row);
     if (studyLocal != null) {
-      XML_setFloat(child, "studyLocalX", studyLocal[0]);
-      XML_setFloat(child, "studyLocalY", studyLocal[1]);
+      XML_setFloat(child, "studyLocalFracX", studyLocal[0]);
+      XML_setFloat(child, "studyLocalFracY", studyLocal[1]);
     }
 
-    float[] win3DOffset = win3DHoverPointOffset.get(row);
+    float[] win3DOffset = win3DHoverPointOffsetFrac.get(row);
     if (win3DOffset != null) {
-      XML_setFloat(child, "win3DOffsetX", win3DOffset[0]);
-      XML_setFloat(child, "win3DOffsetY", win3DOffset[1]);
+      XML_setFloat(child, "win3DOffsetFracX", win3DOffset[0]);
+      XML_setFloat(child, "win3DOffsetFracY", win3DOffset[1]);
     }
   }
 }
@@ -1227,8 +1232,8 @@ void hoverPoints_from_XML (XML xml) {
   allHoverPoints = null;
   hoverPointPreferredPosition.clear();
   worldHoverPointGeo.clear();
-  studyHoverPointLocal.clear();
-  win3DHoverPointOffset.clear();
+  studyHoverPointLocalFrac.clear();
+  win3DHoverPointOffsetFrac.clear();
 
   XML parent = xml.getChild("HoverPoints");
   if (parent == null) return; // older save file, predating this feature - nothing to restore, same as a brand new project
@@ -1248,16 +1253,16 @@ void hoverPoints_from_XML (XML xml) {
       worldHoverPointGeo.put(row, new float[]{ lon, lat });
     }
 
-    if (children[i].hasAttribute("studyLocalX") && children[i].hasAttribute("studyLocalY")) {
-      float studyLocalX = XML_getFloat(children[i], "studyLocalX");
-      float studyLocalY = XML_getFloat(children[i], "studyLocalY");
-      studyHoverPointLocal.put(row, new float[]{ studyLocalX, studyLocalY });
+    if (children[i].hasAttribute("studyLocalFracX") && children[i].hasAttribute("studyLocalFracY")) {
+      float studyLocalFracX = XML_getFloat(children[i], "studyLocalFracX");
+      float studyLocalFracY = XML_getFloat(children[i], "studyLocalFracY");
+      studyHoverPointLocalFrac.put(row, new float[]{ studyLocalFracX, studyLocalFracY });
     }
 
-    if (children[i].hasAttribute("win3DOffsetX") && children[i].hasAttribute("win3DOffsetY")) {
-      float win3DOffsetX = XML_getFloat(children[i], "win3DOffsetX");
-      float win3DOffsetY = XML_getFloat(children[i], "win3DOffsetY");
-      win3DHoverPointOffset.put(row, new float[]{ win3DOffsetX, win3DOffsetY });
+    if (children[i].hasAttribute("win3DOffsetFracX") && children[i].hasAttribute("win3DOffsetFracY")) {
+      float win3DOffsetX = XML_getFloat(children[i], "win3DOffsetFracX");
+      float win3DOffsetY = XML_getFloat(children[i], "win3DOffsetFracY");
+      win3DHoverPointOffsetFrac.put(row, new float[]{ win3DOffsetX, win3DOffsetY });
     }
   }
 }

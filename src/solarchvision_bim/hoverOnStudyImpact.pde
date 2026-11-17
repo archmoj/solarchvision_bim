@@ -1,11 +1,13 @@
-// --- STUDY pin position tracking (zoom/pan) --------------------------------
+// --- STUDY pin position tracking (zoom/pan, and panel size) ----------------
 //
 // Maps a STUDY-sourced pinned point's own {x,y} row (hover.pde's own
 // allHoverPoints - object identity, not value, the same keying convention
 // hoverPointPreferredPosition/worldHoverPointGeo already use) to the
-// position it was pinned at, expressed in STUDY's own UNZOOMED/UNPANNED
-// local coordinate space - i.e. the position it would have been captured
-// at (UrbanThumbnailHoverInfo.centerX/centerY and the other hover-info
+// position it was pinned at, expressed as a FRACTION of STUDY's own panel
+// size (STUDY.dX/STUDY.dY), within STUDY's own UNZOOMED/UNPANNED local
+// coordinate space - i.e. the fraction-of-panel-size position
+// corresponding to where the point would have been captured
+// (UrbanThumbnailHoverInfo.centerX/centerY and the other hover-info
 // structs' own this.graphics.screenX()/screenY() calls, viewport2D.pde)
 // if STUDY.userZoom were 1 and STUDY.userPanX/userPanY were both 0. A row
 // with no entry here is a plain WIN3D-style pin, fixed in screen space
@@ -17,19 +19,35 @@
 // already keep a WORLD pin tracking a place on the map rather than a
 // fixed screen pixel, rather than drifting onto whatever different
 // thumbnail/data point happens to land under that same pixel once the
-// graph is rescaled. Populated by mouseClicked.pde's own STUDY left-click
-// handling, right after the addHoverPoint() call that creates the row;
-// read (and pruned, for a pin that's since been dropped) only here.
-java.util.IdentityHashMap<int[], float[]> studyHoverPointLocal = new java.util.IdentityHashMap<int[], float[]>();
+// graph is rescaled.
+//
+// Storing a FRACTION of STUDY.dX/dY, rather than an absolute local pixel
+// position, is what also makes a STUDY pin survive a save/load onto a
+// different screen size: this app launches fullScreen() by default (see
+// settings(), solarchvision_bim.pde), so STUDY's own panel pixel
+// dimensions (derived from pixel_W/pixel_H, in turn derived from the
+// real screen's own width/height) genuinely differ across devices.
+// STUDY's own plot layout (setupPlot() and friends, viewport2D.pde)
+// already scales its content to fill whatever dX/dY it's given each
+// session, so a position expressed as a fraction of the CURRENT dX/dY
+// lands on the same relative spot on the graph regardless of which
+// device's own panel size that turns out to be - an absolute pixel
+// position captured on one device's panel size would not.
+//
+// Populated by mouseClicked.pde's own STUDY left-click handling, right
+// after the addHoverPoint() call that creates the row; read (and
+// pruned, for a pin that's since been dropped) only here.
+java.util.IdentityHashMap<int[], float[]> studyHoverPointLocalFrac = new java.util.IdentityHashMap<int[], float[]>();
 
 // Converts a screen-space point (same space allHoverPoints/
 // placeHoversAt() already work in) into STUDY's own unzoomed/unpanned
 // local coordinate space, by way of the same screen -> this.graphics
 // device-pixel conversion studyUrbanHover_hitTest() (further below)
 // already uses, then undoing the userPanX/userZoom scale+offset
-// renderFrame() (viewport2D.pde) applies on top of that. Used once, at
-// pin time, to capture the base position studyHoverPointLocal stores for
-// a new STUDY pin - the inverse of studyScreenXFromLocal() just below.
+// renderFrame() (viewport2D.pde) applies on top of that - the inverse of
+// studyScreenXFromLocal() just below. NOT itself scaled by panel size -
+// see studyLocalFracXFromScreen()/studyScreenXFromLocalFrac() further
+// below for the panel-size-independent fraction built on top of this.
 float studyLocalXFromScreen (float screenX) {
   float graphicsX = (screenX - STUDY.cX) * STUDY.ImageScale;
   return (graphicsX - STUDY.userPanX) / STUDY.userZoom;
@@ -44,10 +62,7 @@ float studyLocalYFromScreen (float screenY) {
 // unpanned local coordinate space, returns where that same spot sits on
 // screen RIGHT NOW, under STUDY's CURRENT userZoom/userPanX/userPanY -
 // the exact inverse of studyLocalXFromScreen()/studyLocalYFromScreen()
-// above. This is what lets syncStudyHoverPointPositions() below
-// recompute a STUDY pin's own (x,y) fresh every frame, the same way
-// WORLD.projX()/projY() let syncWorldHoverPointPositions() do it for a
-// WORLD pin.
+// above.
 float studyScreenXFromLocal (float localX) {
   float graphicsX = STUDY.userPanX + STUDY.userZoom * localX;
   return STUDY.cX + graphicsX / STUDY.ImageScale;
@@ -58,10 +73,38 @@ float studyScreenYFromLocal (float localY) {
   return STUDY.cY + graphicsY / STUDY.ImageScale;
 }
 
-// Keeps every STUDY-sourced pin (studyHoverPointLocal above) tracking the
-// same spot on the graph as the user zooms/pans STUDY, instead of
-// staying nailed to wherever it first landed on screen - called once per
-// pass, by drawAllHovers() (hover.pde), alongside
+// Panel-size-independent wrappers around the two pairs above - divides/
+// multiplies by STUDY's own CURRENT dX/dY, so the fraction captured at
+// pin time (studyLocalFracXFromScreen()) and the one resolved every
+// frame afterward (studyScreenXFromLocalFrac(), by
+// syncStudyHoverPointPositions() below) each use whatever dX/dY applies
+// at their own point in time - the pin time and resolve time are
+// normally the same device/dX in a single session, but can differ
+// across a save/load onto another screen size, which is exactly the
+// case this is for. These are what studyHoverPointLocalFrac above
+// actually stores/reads, never the raw, panel-size-dependent local
+// values from studyLocalXFromScreen()/studyScreenXFromLocal() directly.
+float studyLocalFracXFromScreen (float screenX) {
+  return studyLocalXFromScreen(screenX) / STUDY.dX;
+}
+
+float studyLocalFracYFromScreen (float screenY) {
+  return studyLocalYFromScreen(screenY) / STUDY.dY;
+}
+
+float studyScreenXFromLocalFrac (float fracX) {
+  return studyScreenXFromLocal(fracX * STUDY.dX);
+}
+
+float studyScreenYFromLocalFrac (float fracY) {
+  return studyScreenYFromLocal(fracY * STUDY.dY);
+}
+
+// Keeps every STUDY-sourced pin (studyHoverPointLocalFrac above)
+// tracking the same spot on the graph as the user zooms/pans STUDY (or
+// reopens the project on a different screen size), instead of staying
+// nailed to wherever it first landed on screen - called once per pass,
+// by drawAllHovers() (hover.pde), alongside
 // syncWorldHoverPointPositions(), before anything in that pass gets
 // resolved, for the exact same reason that function's own comment gives
 // (both this pass's own pin-position resolution and its
@@ -69,30 +112,30 @@ float studyScreenYFromLocal (float localY) {
 // positions, not last frame's).
 //
 // For each STUDY-tracked row: re-derives its own screen position fresh
-// from studyScreenXFromLocal()/studyScreenYFromLocal() (which already
-// reflect this frame's own userZoom/userPanX/userPanY) - if the
-// recomputed position has since zoomed/panned outside STUDY's own
-// current panel rect, the pin no longer points at anything actually on
-// screen, so it's dropped (removeHoverPointAt(), hover.pde), the same
-// off-view treatment syncWorldHoverPointPositions() gives a WORLD pin.
-// Otherwise, if the recomputed position has moved since last frame, the
-// row's own x/y (mutated in place) is updated to the new position, AND,
-// if this pin already has its own remembered box position
-// (hoverPointPreferredPosition, hover.pde), that's shifted by the exact
-// same delta - same reasoning as syncWorldHoverPointPositions()'s own
-// comment for why.
+// from studyScreenXFromLocalFrac()/studyScreenYFromLocalFrac() (which
+// already reflect this frame's own userZoom/userPanX/userPanY AND
+// dX/dY) - if the recomputed position has since zoomed/panned/resized
+// outside STUDY's own current panel rect, the pin no longer points at
+// anything actually on screen, so it's dropped (removeHoverPointAt(),
+// hover.pde), the same off-view treatment syncWorldHoverPointPositions()
+// gives a WORLD pin. Otherwise, if the recomputed position has moved
+// since last frame, the row's own x/y (mutated in place) is updated to
+// the new position, AND, if this pin already has its own remembered box
+// position (hoverPointPreferredPosition, hover.pde), that's shifted by
+// the exact same delta - same reasoning as
+// syncWorldHoverPointPositions()'s own comment for why.
 void syncStudyHoverPointPositions () {
   if (allHoverPoints == null) return;
-  if (studyHoverPointLocal.isEmpty()) return;
+  if (studyHoverPointLocalFrac.isEmpty()) return;
   if (!STUDY.include) return;
 
   for (int i = allHoverPoints.length - 1; i >= 0; i--) {
     int[] row = allHoverPoints[i];
-    float[] base = studyHoverPointLocal.get(row);
+    float[] base = studyHoverPointLocalFrac.get(row);
     if (base == null) continue; // not a STUDY-tracked pin - leave it alone entirely
 
-    float newXf = studyScreenXFromLocal(base[0]);
-    float newYf = studyScreenYFromLocal(base[1]);
+    float newXf = studyScreenXFromLocalFrac(base[0]);
+    float newYf = studyScreenYFromLocalFrac(base[1]);
 
     if (!isInside(newXf, newYf, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
       removeHoverPointAt(i);

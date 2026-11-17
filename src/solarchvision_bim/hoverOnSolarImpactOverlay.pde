@@ -2,54 +2,98 @@ void place_WIN3D_hover (int xMouse, int yMouse) {
   drawSolarImpactHover(xMouse, yMouse);
 }
 
-// --- WIN3D pin position tracking (viewport resize/enlarge) -----------------
+// --- WIN3D pin position tracking (viewport resize/enlarge, and panel size) -
 //
 // Maps a WIN3D-sourced pinned point's own {x,y} row (hover.pde's own
 // allHoverPoints - object identity, not value, the same keying convention
-// hoverPointPreferredPosition/worldHoverPointGeo/studyHoverPointLocal
+// hoverPointPreferredPosition/worldHoverPointGeo/studyHoverPointLocalFrac
 // already use) to the position it was pinned at, expressed as an offset
 // from WIN3D's own panel CENTER (WIN3D.cX + WIN3D.dX/2, WIN3D.cY +
-// WIN3D.dY/2) at pin time, rather than its own absolute screen position.
-// A row with no entry here is a plain screen-fixed pin, same as before
-// this existed; a row WITH one is instead kept in sync with it, every
-// frame, by syncWin3DHoverPointPositions() below - so a WIN3D pin stays
-// centered the same way relative to the viewport when it's enlarged or
-// restored (Enlarge 3D Viewport, Display All Viewports -
+// WIN3D.dY/2), itself expressed as a FRACTION of WIN3D's own panel size
+// (offset / WIN3D.dX, offset / WIN3D.dY) rather than an absolute pixel
+// offset. A row with no entry here is a plain screen-fixed pin, same as
+// before this existed; a row WITH one is instead kept in sync with it,
+// every frame, by syncWin3DHoverPointPositions() below - so a WIN3D pin
+// stays centered the same way relative to the viewport when it's
+// enlarged or restored (Enlarge 3D Viewport, Display All Viewports -
 // update_frame_layout(), updateFrameLayout.pde), rather than drifting
 // toward whichever corner happens to end up closest once the panel's own
 // cX/cY/dX/dY change.
 //
-// Deliberately a plain recentering, with NO attempt to also rescale the
-// offset by how much the panel itself grew or shrank (unlike STUDY's own
-// userZoom-aware tracking, studyHoverPointLocal/
-// syncStudyHoverPointPositions(), hoverOnStudyImpact.pde) - the 3D
-// viewport has no userZoom/userPanX/userPanY of its own to read a scale
-// factor from, and reprojecting the original 3D point through the
-// camera's own projection matrix after a resize would be a much bigger
-// change for comparatively little gain over just recentering. Good
-// enough for the common case (enlarging/restoring a fixed set of preset
-// layouts) - not a true camera-aware reprojection of the original point.
+// Storing a FRACTION of WIN3D.dX/dY, rather than an absolute pixel
+// offset, is what also makes a WIN3D pin survive a save/load onto a
+// different screen size: this app launches fullScreen() by default (see
+// settings(), solarchvision_bim.pde), so WIN3D's own panel pixel
+// dimensions genuinely differ across devices. A perspective camera with
+// the same field of view, rendered into a differently-sized pixel
+// buffer, still places a given 3D feature at the SAME fraction of the
+// viewport's own width/height (NDC-to-pixel mapping scales with the
+// viewport's own dimensions) - so a fixed FRACTION of dX/dY tracks the
+// same feature across screen sizes where a fixed absolute pixel offset
+// would not.
+//
+// Deliberately still just a center-relative tracking, with no attempt at
+// a true camera-aware reprojection of the original 3D point through the
+// camera's own projection matrix (the 3D viewport has no userZoom/
+// userPanX/userPanY of its own the way STUDY does, so there's no simple
+// transform to invert the way studyHoverPointLocalFrac/
+// syncStudyHoverPointPositions(), hoverOnStudyImpact.pde, do) - good
+// enough for the common case (enlarging/restoring a preset layout, or
+// reopening on another screen), not a guarantee against every possible
+// camera change.
 //
 // Populated by mouseClicked.pde's own WIN3D left-click handling (while
 // the solar-impact overlay is showing), right after the addHoverPoint()
 // call that creates the row; read (and pruned, for a pin that's since
 // been dropped) only here.
-java.util.IdentityHashMap<int[], float[]> win3DHoverPointOffset = new java.util.IdentityHashMap<int[], float[]>();
+java.util.IdentityHashMap<int[], float[]> win3DHoverPointOffsetFrac = new java.util.IdentityHashMap<int[], float[]>();
 
-// Keeps every WIN3D-sourced pin (win3DHoverPointOffset above) centered on
-// the same spot in the viewport as its own cX/cY/dX/dY change - called
-// once per pass, by drawAllHovers() (hover.pde), alongside
-// syncWorldHoverPointPositions()/syncStudyHoverPointPositions(), before
-// anything in that pass gets resolved, for the exact same reason those
-// functions' own comments give (both this pass's own pin-position
+// Converts a screen-space point (same space allHoverPoints/
+// placeHoversAt() already work in) into its own offset from WIN3D's
+// panel center, expressed as a FRACTION of WIN3D's CURRENT dX/dY - the
+// inverse of win3DScreenXFromOffsetFrac()/win3DScreenYFromOffsetFrac()
+// just below. Used once, at pin time, to capture the base position
+// win3DHoverPointOffsetFrac stores for a new WIN3D pin.
+float win3DOffsetFracXFromScreen (float screenX) {
+  return (screenX - (WIN3D.cX + 0.5 * WIN3D.dX)) / WIN3D.dX;
+}
+
+float win3DOffsetFracYFromScreen (float screenY) {
+  return (screenY - (WIN3D.cY + 0.5 * WIN3D.dY)) / WIN3D.dY;
+}
+
+// The forward direction: given an offset-from-center fraction, returns
+// where that same fraction of WIN3D's CURRENT panel lands on screen
+// right now - the exact inverse of win3DOffsetFracXFromScreen()/
+// win3DOffsetFracYFromScreen() above. This is what lets
+// syncWin3DHoverPointPositions() below recompute a WIN3D pin's own (x,y)
+// fresh every frame (or after a save/load onto a different screen
+// size), the same way studyScreenXFromLocalFrac()/
+// studyScreenYFromLocalFrac() (hoverOnStudyImpact.pde) do for a STUDY
+// pin.
+float win3DScreenXFromOffsetFrac (float fracX) {
+  return WIN3D.cX + 0.5 * WIN3D.dX + fracX * WIN3D.dX;
+}
+
+float win3DScreenYFromOffsetFrac (float fracY) {
+  return WIN3D.cY + 0.5 * WIN3D.dY + fracY * WIN3D.dY;
+}
+
+// Keeps every WIN3D-sourced pin (win3DHoverPointOffsetFrac above)
+// centered on the same spot in the viewport as its own cX/cY/dX/dY
+// change - called once per pass, by drawAllHovers() (hover.pde),
+// alongside syncWorldHoverPointPositions()/syncStudyHoverPointPositions(),
+// before anything in that pass gets resolved, for the exact same reason
+// those functions' own comments give (both this pass's own pin-position
 // resolution and its collision-avoidance "peek" need to see this pass's
 // already-up-to-date positions, not last frame's).
 //
 // For each WIN3D-tracked row: re-derives its own screen position fresh
-// from WIN3D's CURRENT center plus the row's own remembered offset - if
-// the recomputed position now falls outside WIN3D's own current panel
-// rect, the pin no longer points at anything actually on screen, so it's
-// dropped (removeHoverPointAt(), hover.pde), the same off-view treatment
+// from win3DScreenXFromOffsetFrac()/win3DScreenYFromOffsetFrac() (which
+// already reflect this frame's own cX/cY/dX/dY) - if the recomputed
+// position now falls outside WIN3D's own current panel rect, the pin no
+// longer points at anything actually on screen, so it's dropped
+// (removeHoverPointAt(), hover.pde), the same off-view treatment
 // syncWorldHoverPointPositions()/syncStudyHoverPointPositions() give
 // their own pins. Otherwise, if the recomputed position has moved since
 // last frame, the row's own x/y (mutated in place) is updated to the new
@@ -59,19 +103,16 @@ java.util.IdentityHashMap<int[], float[]> win3DHoverPointOffset = new java.util.
 // why.
 void syncWin3DHoverPointPositions () {
   if (allHoverPoints == null) return;
-  if (win3DHoverPointOffset.isEmpty()) return;
+  if (win3DHoverPointOffsetFrac.isEmpty()) return;
   if (!WIN3D.include) return;
-
-  float centerX = WIN3D.cX + WIN3D.dX / 2.0;
-  float centerY = WIN3D.cY + WIN3D.dY / 2.0;
 
   for (int i = allHoverPoints.length - 1; i >= 0; i--) {
     int[] row = allHoverPoints[i];
-    float[] offset = win3DHoverPointOffset.get(row);
+    float[] offset = win3DHoverPointOffsetFrac.get(row);
     if (offset == null) continue; // not a WIN3D-tracked pin - leave it alone entirely
 
-    float newXf = centerX + offset[0];
-    float newYf = centerY + offset[1];
+    float newXf = win3DScreenXFromOffsetFrac(offset[0]);
+    float newYf = win3DScreenYFromOffsetFrac(offset[1]);
 
     if (!isInside(newXf, newYf, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
       removeHoverPointAt(i);

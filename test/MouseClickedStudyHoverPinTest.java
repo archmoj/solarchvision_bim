@@ -3,11 +3,12 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Confirms mouseClicked()'s own STUDY left-click branch (mouseClicked.pde)
-// actually registers a new STUDY pin's studyHoverPointLocal entry
+// actually registers a new STUDY pin's studyHoverPointLocalFrac entry
 // (hoverOnStudyImpact.pde) - not just that addHoverPoint() itself works
 // (already covered elsewhere, e.g. HoverPointsTest.java), but that the
-// real click path reaches studyLocalXFromScreen()/studyLocalYFromScreen()
-// and stores the result against the exact row it just created. Mirrors
+// real click path reaches studyLocalFracXFromScreen()/
+// studyLocalFracYFromScreen() and stores the result against the exact
+// row it just created. Mirrors
 // MouseClickedCreateMoveTest.java's own "confirm the real click path
 // reaches the thing under test" approach, and its same bare-construction
 // pixel_A/pixel_B/pixel_C/pixel_D/pixel_H defaults (all effectively empty
@@ -61,10 +62,10 @@ class MouseClickedStudyHoverPinTest {
     assertArrayEquals(new int[]{ 1000, 500 }, app.allHoverPoints[0]);
 
     int[] row = app.allHoverPoints[0];
-    float[] local = app.studyHoverPointLocal.get(row);
-    assertNotNull(local, "a real STUDY click must register a studyHoverPointLocal entry, not leave the pin screen-fixed");
-    assertEquals(app.studyLocalXFromScreen(1000), local[0], 0.0001f);
-    assertEquals(app.studyLocalYFromScreen(500), local[1], 0.0001f);
+    float[] local = app.studyHoverPointLocalFrac.get(row);
+    assertNotNull(local, "a real STUDY click must register a studyHoverPointLocalFrac entry, not leave the pin screen-fixed");
+    assertEquals(app.studyLocalFracXFromScreen(1000), local[0], 0.0001f);
+    assertEquals(app.studyLocalFracYFromScreen(500), local[1], 0.0001f);
   }
 
   @Test
