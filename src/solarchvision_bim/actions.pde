@@ -1696,6 +1696,45 @@ void build_allActions() {
     requestStudyRedraw();
   });
 
+  // Ctrl+Q / Ctrl+Shift+Q (viewport2D.pde's own handleCtrlCharKey()) -
+  // one keypress reads as one mouse-wheel "click" towards/away from the
+  // graph: same runScriptLine("+StudyZoom ...") path handleStudyWheel()
+  // (mouseWheel.pde) itself calls, so __$STUDYZOOM__'s own clamping and
+  // pow(2.0, wheelValue) step live in exactly one place either way.
+  putAction("Zoom In Study", () -> {
+    runScriptLine("+StudyZoom 1");
+  });
+
+  putAction("Zoom Out Study", () -> {
+    runScriptLine("+StudyZoom -1");
+  });
+
+  // Ctrl+Shift+Arrow (viewport2D.pde's own handleCtrlCodedKey()) - reuses
+  // panStudyView() (mouseDragged.pde) directly, the same function
+  // handleStudyDrag() itself calls, so one keypress reads as one small
+  // drag in that direction (STUDY.panKeyStep, viewport2D.pde) rather
+  // than duplicating its own runScriptLine("+StudyPan ...") call here.
+  // Sign convention matches an actual mouse drag in the same direction -
+  // e.g. "Up" moves the content up, the same way dragging the mouse up
+  // already does (handleStudyDrag()'s own dy ends up negative there too) -
+  // not the opposite "viewport moves, content stays" convention some
+  // other tools use.
+  putAction("Pan Study Up", () -> {
+    panStudyView(0, -STUDY.panKeyStep);
+  });
+
+  putAction("Pan Study Down", () -> {
+    panStudyView(0, STUDY.panKeyStep);
+  });
+
+  putAction("Pan Study Left", () -> {
+    panStudyView(-STUDY.panKeyStep, 0);
+  });
+
+  putAction("Pan Study Right", () -> {
+    panStudyView(STUDY.panKeyStep, 0);
+  });
+
   putAction("Increase Vertical Scale", () -> {
     STUDY.verticalUnitScale *= sqrt(2.0);
     requestStudyRedraw();

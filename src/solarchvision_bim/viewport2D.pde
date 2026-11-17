@@ -45,6 +45,13 @@ class STUDY {
   float userPanX = 0;
   float userPanY = 0;
 
+  // Ctrl+Shift+Arrow's own per-keypress nudge amount (actions.pde's own
+  // "Pan Study Up/Down/Left/Right", keyPressed() further below) - same
+  // device-pixel units handleStudyDrag() itself already resolves a
+  // mouse-drag delta into before calling panStudyView(), so one keypress
+  // reads as roughly one small mouse nudge, not a huge jump.
+  float panKeyStep = 25;
+
   // --- Skin Potential hover support (studyImpactHover.pde) -----------------
   // Appended to by plotImpact_urban() itself, each time it actually
   // redraws - one entry per thumbnail actually drawn, holding its center
@@ -404,6 +411,35 @@ class STUDY {
   // See actions.pde's own viewport2D.pde-key-shortcuts section (right after
   // the WIN3D one) for the full explanation of these action names
   void handleCtrlCodedKey (KeyEvent e) {
+    // Ctrl+Shift+Arrow pans the graph (actions.pde's own "Pan Study
+    // Up/Down/Left/Right") - checked, and returned from, BEFORE the
+    // plain Ctrl+Arrow layer/graph-index navigation below, since that
+    // switch's own arrow-key cases have no Shift guard of their own
+    // (unlike PAGE_UP_KEYCODE/PAGE_DOWN_KEYCODE just below them, which
+    // already did): without this early return, Ctrl+Shift+Up would
+    // have silently changed layers instead of panning, exactly the
+    // ambiguity those two cases were already written to avoid.
+    if (e.isShiftDown()) {
+      switch (keyCode) {
+        case UP :
+          callAction("Pan Study Up");
+          break;
+
+        case DOWN :
+          callAction("Pan Study Down");
+          break;
+
+        case LEFT :
+          callAction("Pan Study Left");
+          break;
+
+        case RIGHT :
+          callAction("Pan Study Right");
+          break;
+      }
+      return;
+    }
+
     switch (keyCode) {
       case UP :
         callAction("Next Layer");
@@ -422,15 +458,11 @@ class STUDY {
         break;
 
       case PAGE_UP_KEYCODE :
-        if (!e.isShiftDown()) {
-          callAction("Next Plot Layout");
-        }
+        callAction("Next Plot Layout");
         break;
 
       case PAGE_DOWN_KEYCODE :
-        if (!e.isShiftDown()) {
-          callAction("Previous Plot Layout");
-        }
+        callAction("Previous Plot Layout");
         break;
     }
   }
@@ -447,6 +479,16 @@ class STUDY {
 
       case '\'' :
         callAction("Decrease Vertical Scale");
+        break;
+
+      // Ctrl+Q / Ctrl+Shift+Q - same unshifted/Shifted-character pairing
+      // already used just above for Increase/Decrease Vertical Scale.
+      case 'q' :
+        callAction("Zoom In Study");
+        break;
+
+      case 'Q' :
+        callAction("Zoom Out Study");
         break;
     }
   }

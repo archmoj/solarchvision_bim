@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import processing.event.KeyEvent;
 
 class STUDYTest {
 
@@ -377,18 +378,39 @@ class STUDYTest {
     assertEquals((float) (100 * Math.sqrt(2.0)), app.STUDY.verticalUnitScale, 0.01f);
   }
 
+  @Test
+  void handleCtrlCharKey_q_zoomsInAndShiftQZoomsOut () {
+    app.STUDY.userZoom = 1;
+
+    app.key = 'q'; // Ctrl+Q
+    app.STUDY.handleCtrlCharKey();
+    assertEquals((float) Math.pow(2.0, 1), app.STUDY.userZoom, 0.0001f);
+
+    app.key = 'Q'; // Ctrl+Shift+Q
+    app.STUDY.handleCtrlCharKey();
+    assertEquals(1f, app.STUDY.userZoom, 0.0001f); // back to where it started
+  }
+
   // ================= handleCtrlCodedKey ==================================
+
+  // Shift-not-held KeyEvent, standing in for a plain Ctrl+Arrow - every
+  // handleCtrlCodedKey() case below now checks e.isShiftDown() before
+  // falling through to these (viewport2D.pde's own comment on why), so
+  // null no longer works the way it used to for UP/DOWN/LEFT/RIGHT.
+  private KeyEvent noShiftKeyEvent () {
+    return new KeyEvent(null, 0, KeyEvent.PRESS, 0, (char) 0, 0, false);
+  }
 
   @Test
   void handleCtrlCodedKey_cyclesTheCurrentLayerForwardAndBackward () {
     app.currentLayerId = 0;
 
     app.keyCode = app.UP;
-    app.STUDY.handleCtrlCodedKey(null); // isShiftDown() isn't reached for UP/DOWN/LEFT/RIGHT
+    app.STUDY.handleCtrlCodedKey(noShiftKeyEvent());
     assertEquals(1, app.currentLayerId);
 
     app.keyCode = app.DOWN;
-    app.STUDY.handleCtrlCodedKey(null);
+    app.STUDY.handleCtrlCodedKey(noShiftKeyEvent());
     assertEquals(0, app.currentLayerId);
   }
 
@@ -397,9 +419,52 @@ class STUDYTest {
     app.STUDY.impactGraphIndex = app.STUDY.PLOT_IMPACTS_MODE_COUNT - 1; // at the top end
 
     app.keyCode = app.RIGHT;
-    app.STUDY.handleCtrlCodedKey(null);
+    app.STUDY.handleCtrlCodedKey(noShiftKeyEvent());
 
     assertEquals(0, app.STUDY.impactGraphIndex); // wrapped back to 0
+  }
+
+  private KeyEvent shiftKeyEvent () {
+    return new KeyEvent(null, 0, KeyEvent.PRESS, processing.event.Event.SHIFT, (char) 0, 0, false);
+  }
+
+  @Test
+  void handleCtrlCodedKey_shiftArrowPansInsteadOfChangingLayerOrGraphIndex () {
+    // This is the exact ambiguity the early-return in viewport2D.pde's
+    // own handleCtrlCodedKey() exists to resolve - before this feature,
+    // the UP/DOWN/LEFT/RIGHT cases had no Shift guard at all, so
+    // Ctrl+Shift+Up would have silently changed layers instead.
+    app.currentLayerId = 0;
+    app.STUDY.impactGraphIndex = 0;
+    app.STUDY.userPanX = 0;
+    app.STUDY.userPanY = 0;
+
+    app.keyCode = app.UP;
+    app.STUDY.handleCtrlCodedKey(shiftKeyEvent());
+
+    assertEquals(0, app.currentLayerId); // did NOT change layer
+    assertEquals(-app.STUDY.panKeyStep, app.STUDY.userPanY, 0.0001f); // panned instead
+
+    app.STUDY.userPanX = 0;
+    app.keyCode = app.RIGHT;
+    app.STUDY.handleCtrlCodedKey(shiftKeyEvent());
+
+    assertEquals(0, app.STUDY.impactGraphIndex); // did NOT change graph index
+    assertEquals(app.STUDY.panKeyStep, app.STUDY.userPanX, 0.0001f); // panned instead
+  }
+
+  @Test
+  void handleCtrlCodedKey_shiftArrowPansInAllFourDirections () {
+    app.STUDY.userPanX = 0;
+    app.STUDY.userPanY = 0;
+
+    app.keyCode = app.DOWN;
+    app.STUDY.handleCtrlCodedKey(shiftKeyEvent());
+    assertEquals(app.STUDY.panKeyStep, app.STUDY.userPanY, 0.0001f);
+
+    app.keyCode = app.LEFT;
+    app.STUDY.handleCtrlCodedKey(shiftKeyEvent());
+    assertEquals(-app.STUDY.panKeyStep, app.STUDY.userPanX, 0.0001f);
   }
 
   // ================= to_XML / from_XML round trip ========================
