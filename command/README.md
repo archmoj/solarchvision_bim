@@ -946,6 +946,21 @@ These correspond to menu items and toolbar buttons rather than numeric
 values - type the name shown (spaces are fine) and press `Enter`; none of
 them take an argument.
 
+### Open a menu-bar tab
+
+Prefixing a top-level menu-bar parent's name with `^` opens its dropdown,
+the same way clicking that tab would - useful for scripting a screenshot
+of a specific menu, or for an image test that checks a dropdown renders
+correctly, without driving the mouse:
+
+`^About`, `^File`, `^Edit`, `^Location`, `^Setup`, `^Layer`, `^Analysis`,
+`^Shade`, `^View`, `^Visibility`, `^Create`, `^Select`, `^Selection`,
+`^Convert`, `^Modify`, `^Match`, `^Transform`, `^Delete`, `^Capture`
+
+For example, `^Select` opens the `Select` dropdown, after which any of
+its items (`Pick Select`, `Select All`, ...) can be run as its own
+command, exactly as if you'd clicked it.
+
 ### Switch to a click-to-create tool
 
 Running one of these switches the active tool; you then click (and for

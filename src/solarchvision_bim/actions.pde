@@ -238,6 +238,22 @@ void build_allActions() {
     }
   }
 
+  // "^<Parent>" opens that top-level menu's dropdown, the same way
+  // clicking its tab would (UI_menuBar.openParentMenu(), uiMenuBar.pde) -
+  // one per entry in buildMenuItems(), kept in the same order. Lets each
+  // menu's dropdown rendering be driven and checked by an image test
+  // without a mouse; no test is added here, just the action itself.
+  String[] menuBarParentNames = {
+    "About", "File", "Edit", "Location", "Setup", "Layer", "Analysis",
+    "Shade", "View", "Visibility", "Create", "Select", "Selection",
+    "Convert", "Modify", "Match", "Transform", "Delete", "Capture"
+  };
+  for (String parentName : menuBarParentNames) {
+    putAction("^" + parentName, () -> {
+      UI_menuBar.openParentMenu(parentName);
+    });
+  }
+
   putAction("SOLARCHVISION-BIM6D", () -> {
     link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");
   });

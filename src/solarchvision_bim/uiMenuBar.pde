@@ -611,6 +611,32 @@ class UI_menuBar {
   };
   }
 
+  // Opens a parent tab's dropdown by name, the same way clicking that tab
+  // would (drawParentTab(), above) - used by the "^<Parent>" command
+  // actions (actions.pde's build_allActions()) so every top-level menu is
+  // reachable, and its dropdown rendering exercisable by an image test,
+  // without driving the mouse. Mirrors drawParentTab()'s own open logic:
+  // only grab pre_screen when actually going from closed to open, so
+  // calling this while a (possibly different) parent is already open
+  // doesn't stomp the snapshot taken when that one was first opened.
+  void openParentMenu(String parentName) {
+    int index = -1;
+    for (int i = 0; i < this.Items.length; i++) {
+      if (this.Items[i][0].equals(parentName)) {
+        index = i;
+        break;
+      }
+    }
+    if (index == -1) return; // unknown parent name - nothing to open
+
+    if (this.selected_parent == -1) {
+      pre_screen = get(0, pixel_A, width, height - pixel_A);
+    }
+    this.selected_parent = index;
+    this.selected_child = 0;
+    this.revise();
+  }
+
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
   String[] populateLayerMenu() {
