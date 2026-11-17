@@ -228,6 +228,8 @@ String ___executeScriptLine___ (String lineSTR) {
     case "V_SHADE": return  __V_SHADE__(parts);
     case "+MAPZOOM": return  __$MAPZOOM__(parts);
     case "+PANVIEW": return  __$PANVIEW__(parts);
+    case "+STUDYPAN": return  __$STUDYPAN__(parts);
+    case "+STUDYZOOM": return  __$STUDYZOOM__(parts);
     case "1D>GROUP": return  __1D$GROUP__(parts);
     case "2D>GROUP": return  __2D$GROUP__(parts);
     case "CYLINDER": return  __CYLINDER__(parts);

@@ -19,6 +19,23 @@ void mouseWheel(MouseEvent event) {
     handleWorldZoomWheel(Wheel_Value);
   }
   handleWin3DWheel(Wheel_Value);
+  handleStudyWheel(Wheel_Value);
+}
+
+
+// Zooms STUDY's own graph in/out around its current center - same
+// exponential-step shape as handleViewportWheel()'s own zoomWin3DViewport()
+// ("+Zoom", further below), not a cursor-centered zoom: STUDY's layout
+// (positionX/positionY) is already a fixed, centered one with no
+// existing notion of "where the cursor is pointing" the way WIN3D's own
+// pivot-aware tools do, so matching that simpler existing precedent
+// (scale around the panel's own fixed center) rather than introducing
+// cursor-tracking math found nowhere else in this file.
+void handleStudyWheel (float wheelValue) {
+  if (!STUDY.include) return;
+  if (!isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) return;
+
+  runScriptLine("+StudyZoom " + wheelValue);
 }
 
 

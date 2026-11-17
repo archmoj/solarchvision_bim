@@ -469,6 +469,76 @@ class MouseWheelTest {
     assertEquals((float) Math.sin(Math.toRadians(-5)), app.allPoints.getY(0), 0.0001f);
   }
 
+  // ================= handleStudyWheel ========================================
+
+  @Test
+  void handleStudyWheel_zoomsInOnPositiveWheelWhenOverStudy () {
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.X_clicked = 100;
+    app.Y_clicked = 100;
+    app.STUDY.userZoom = 1;
+
+    app.handleStudyWheel(1);
+
+    assertEquals((float) Math.pow(2.0, 1), app.STUDY.userZoom, 0.0001f);
+  }
+
+  @Test
+  void handleStudyWheel_isANoOpWhenTheClickIsOutsideStudy () {
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.X_clicked = 9999; // outside
+    app.Y_clicked = 9999;
+    app.STUDY.userZoom = 1;
+
+    app.handleStudyWheel(1);
+
+    assertEquals(1f, app.STUDY.userZoom, 0.0001f);
+  }
+
+  @Test
+  void handleStudyWheel_isANoOpWhenStudyIsNotIncluded () {
+    app.STUDY.include = false;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.X_clicked = 100;
+    app.Y_clicked = 100;
+    app.STUDY.userZoom = 1;
+
+    app.handleStudyWheel(1);
+
+    assertEquals(1f, app.STUDY.userZoom, 0.0001f);
+  }
+
+  @Test
+  void handleStudyWheel_clampsToTheConfiguredZoomRange () {
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.X_clicked = 100;
+    app.Y_clicked = 100;
+    app.STUDY.userZoom = 19;
+
+    app.handleStudyWheel(1); // would push userZoom to 38
+
+    assertEquals(20f, app.STUDY.userZoom, 0.0001f);
+  }
+
   @Test
   void handleScaleWheel_scalesTheSelectedVertexFromTheGivenPivot () {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;

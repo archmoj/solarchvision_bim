@@ -28,6 +28,10 @@ void mouseDragged() {
   if (WORLD.include) {
     handleWorldDrag();
   }
+
+  if (STUDY.include) {
+    handleStudyDrag();
+  }
 }
 
 // Begins a 2D marquee drag the first time we see movement.
@@ -84,6 +88,41 @@ void handleWorldDrag() {
   WORLD.panOffsetLat += dyPixels * latPerPixel; // screen Y grows downward, latitude grows upward
 
   WORLD.revise();
+}
+
+// Pans STUDY's own graph by dragging - same "move with the cursor"
+// convention as handleWorldDrag() above, and like that one, not gated
+// on which mouse button is held (unlike WIN3D's own per-button/per-task
+// dispatchWin3DTaskDrag() dispatch): STUDY has no competing drag-based
+// tool of its own to disambiguate against, the same reason WORLD's own
+// handler doesn't check mouseButton either.
+void handleStudyDrag () {
+  boolean wasInside = isInside(pmouseX, pmouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale);
+  boolean isNowInside = isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale);
+  if (!wasInside || !isNowInside) return;
+
+  if (dragging_started == 0) {
+    X_click1 = pmouseX;
+    Y_click1 = pmouseY;
+    dragging_started = 1;
+  }
+
+  // STUDY.ImageScale converts from this main window's own mouseX/mouseY
+  // pixels into this.graphics' own device-pixel space - the exact same
+  // conversion every hoverOnStudy*.pde file already applies to a mouse
+  // position before comparing it against anything drawn inside that
+  // buffer (see e.g. hoverOnStudyImpact.pde's own graphicsX/graphicsY) -
+  // needed here for the same reason: userPanX/userPanY (viewport2D.pde)
+  // are applied inside that same buffer's own transform, in its own
+  // device-pixel units, not this window's.
+  float dx = (mouseX - pmouseX) * STUDY.ImageScale;
+  float dy = (mouseY - pmouseY) * STUDY.ImageScale;
+
+  panStudyView(dx, dy);
+}
+
+void panStudyView (float dx, float dy) {
+  runScriptLine("+StudyPan dx=" + dx + " dy=" + dy);
 }
 
 void dispatchWin3DTaskDrag(float dx, float dy) {

@@ -746,6 +746,49 @@ String __$ZOOM__ (String[] parts) {
     return hint;
 }
 
+// mouseWheel.pde's own handleStudyWheel() - same exponential-step shape
+// as __$ZOOM__ above (WIN3D's own viewport zoom), scaled around STUDY's
+// panel center via STUDY.userZoom (viewport2D.pde's own renderFrame()).
+// Clamped to a generous but bounded range so neither a long scroll nor
+// a stray huge wheelValue (e.g. from a script) can zoom the graph down
+// to nothing or out past any legible scale.
+String __$STUDYZOOM__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    float wheelValue = float(parts[1]);
+    STUDY.userZoom *= pow(2.0, wheelValue);
+    STUDY.userZoom = constrain(STUDY.userZoom, 0.1, 20);
+    STUDY.revise();
+    }
+    else {
+    hint = "+StudyZoom ?";
+    }
+    return hint;
+}
+
+// mouseDragged.pde's own handleStudyDrag() - pans STUDY's own graph by
+// accumulating into STUDY.userPanX/userPanY (viewport2D.pde's own
+// renderFrame()), the same dx/dy-accumulation shape __$PANVIEW__ above
+// already uses for WIN3D's own positionX/positionY, just without that
+// one's own positionStep/overallScale factors - STUDY.ImageScale (device-
+// pixel space) is already resolved into dx/dy by handleStudyDrag() itself
+// before this ever runs, so there's nothing left to scale here.
+String __$STUDYPAN__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    HashMap<String,String> p = parseParams(parts);
+    float dx = getF(p, "dx", 0);
+    float dy = getF(p, "dy", 0);
+    STUDY.userPanX += dx;
+    STUDY.userPanY += dy;
+    STUDY.revise();
+    }
+    else {
+    hint = "+StudyPan dx=? dy=?";
+    }
+    return hint;
+}
+
 String __$ELEVATION__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {

@@ -133,6 +133,73 @@ class MouseDraggedTest {
     assertEquals(-10f, app.WORLD.panOffsetLat, 0.01f);
   }
 
+  // ================= handleStudyDrag =======================================
+
+  @Test
+  void handleStudyDrag_isANoOpWhenTheDragStartedOutsideStudy () {
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.pmouseX = -50; // started outside
+    app.pmouseY = 100;
+    app.mouseX = 100;
+    app.mouseY = 100;
+    app.dragging_started = 0;
+    float beforeX = app.STUDY.userPanX;
+
+    app.handleStudyDrag();
+
+    assertEquals(0, app.dragging_started); // never started
+    assertEquals(beforeX, app.STUDY.userPanX, 0.0001f);
+  }
+
+  @Test
+  void handleStudyDrag_accumulatesPanByTheDeviceScaledDelta () {
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 2;
+    app.STUDY.userPanX = 0;
+    app.STUDY.userPanY = 0;
+    app.pmouseX = 100;
+    app.pmouseY = 100;
+    app.mouseX = 140; // +40px right
+    app.mouseY = 90;  // -10px up
+    app.dragging_started = 0;
+
+    app.handleStudyDrag();
+
+    assertEquals(1, app.dragging_started);
+    assertEquals(100, app.X_click1);
+    assertEquals(100, app.Y_click1);
+    // dx = (140-100)*2 = 80, dy = (90-100)*2 = -20
+    assertEquals(80f, app.STUDY.userPanX, 0.01f);
+    assertEquals(-20f, app.STUDY.userPanY, 0.01f);
+  }
+
+  @Test
+  void handleStudyDrag_pansOnEveryButtonUnlikeWin3DsOwnPerButtonDispatch () {
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.STUDY.userPanX = 0;
+    app.pmouseX = 100;
+    app.pmouseY = 100;
+    app.mouseX = 110;
+    app.mouseY = 100;
+    app.dragging_started = 0;
+    app.mouseButton = app.RIGHT;
+
+    app.handleStudyDrag();
+
+    assertEquals(10f, app.STUDY.userPanX, 0.01f);
+  }
+
   // ================= dispatchWin3DTaskDrag =================================
 
   @Test
@@ -344,5 +411,22 @@ class MouseDraggedTest {
 
     assertEquals(-3f, app.WIN3D.rotationX, 0.01f); // orbitXOnly(dy=0.3) ran
     assertEquals(0f, app.WIN3D.rotationZ, 0.0001f); // orbitZOnly did NOT run
+  }
+
+  // ================= panStudyView ==========================================
+  // Same "call the helper directly" round trip as panBothAxes above - it
+  // builds and runs "+StudyPan dx=? dy=?" itself, so this also exercises
+  // __$STUDYPAN__ (extraCommands.pde) and its runScript.pde dispatch
+  // case end to end, not just panStudyView()'s own string-building.
+
+  @Test
+  void panStudyView_accumulatesIntoUserPanXAndY () {
+    app.STUDY.userPanX = 5;
+    app.STUDY.userPanY = -5;
+
+    app.panStudyView(0.5f, -0.5f);
+
+    assertEquals(5.5f, app.STUDY.userPanX, 0.0001f);
+    assertEquals(-5.5f, app.STUDY.userPanY, 0.0001f);
   }
 }

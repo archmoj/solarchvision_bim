@@ -26,6 +26,25 @@ class STUDY {
   float view_R = float(dY) / float(dX);
   float view_S;
 
+  // User-driven zoom/pan on top of this panel's own fixed view_S/
+  // positionX/positionY layout math - mouseWheel.pde's own handleStudyWheel()
+  // (wheel = zoom, same pow(2.0, wheelValue) exponential step WIN3D.zoom
+  // already uses) and mouseDragged.pde's own handleStudyDrag() (drag =
+  // pan, in this.graphics' own device-pixel space) are the only two
+  // writers. Applied in renderFrame() below as one extra scale()/
+  // translate() wrapped around the existing layout transform, inside its
+  // own pushMatrix()/popMatrix() pair so it can never leak into whatever
+  // (if anything) draws after setupPlot() once this panel's own fixed
+  // layout math has done its own translate-there-and-back. Deliberately
+  // NOT reset by anything else in this file (not even a full data
+  // refresh) - a person who zoomed/panned to look closely at one part of
+  // the graph almost certainly wants that framing to survive whatever
+  // triggered the redraw, the same reasoning WORLD.zoom/panOffsetLon/
+  // panOffsetLat already apply to its own map.
+  float userZoom = 1;
+  float userPanX = 0;
+  float userPanY = 0;
+
   // --- Skin Potential hover support (studyImpactHover.pde) -----------------
   // Appended to by plotImpact_urban() itself, each time it actually
   // redraws - one entry per thumbnail actually drawn, holding its center
@@ -2140,6 +2159,17 @@ class STUDY {
 
     this.graphics.strokeWeight(0);
 
+    // userZoom/userPanX/userPanY's own comment (above) explains the
+    // push/popMatrix scoping - this guarantees neither this new
+    // zoom/pan nor the existing translate-there-and-back pair below it
+    // can leak into whatever draws after setupPlot() once this block
+    // ends, regardless of whether that pair's own two translate() calls
+    // actually cancel out.
+    this.graphics.pushMatrix();
+
+    this.graphics.translate(this.userPanX, this.userPanY);
+    this.graphics.scale(this.userZoom);
+
     //this.graphics.translate(this.positionX * -0.25, this.positionY * 0.5);
     this.graphics.translate(this.positionX * -0.425, this.positionY * 0.5);
 
@@ -2147,6 +2177,8 @@ class STUDY {
 
     //this.graphics.translate(this.positionX * 0.25, this.positionY * 0.5);
     this.graphics.translate(this.positionX * 0.425, this.positionY * 0.5);
+
+    this.graphics.popMatrix();
 
     this.graphics.strokeWeight(this.strokeScale * 1);
 
