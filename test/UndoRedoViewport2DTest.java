@@ -402,7 +402,7 @@ class UndoRedoViewport2DTest {
     assertEquals(stationLatitude, app.STATION.getLatitude(), 0.0001f, "a Viewport2D undo must leave the station exactly as it was");
   }
 
-  // ================= wired as actions (Tools menu) ===========================
+  // ================= wired as actions (Edit menu) ============================
 
   @Test
   void undoViewport2DChangeAction_isRegisteredAndMatchesTheDirectCall () {
@@ -438,7 +438,7 @@ class UndoRedoViewport2DTest {
   // ================= menu bar wiring ==========================================
 
   @Test
-  void menuBar_toolsMenuListsUndoAndRedoViewport2DChange () {
+  void menuBar_editMenuListsUndoAndRedoViewport2DChange () {
     // uiMenuBar.pde's own Items array, not actions.pde's allActions map -
     // this is what actually proves the menu entry exists for a person to
     // click, not just that the backing action is callable.
@@ -447,7 +447,7 @@ class UndoRedoViewport2DTest {
     boolean foundUndo = false;
     boolean foundRedo = false;
     for (String[] menu : items) {
-      if ((menu.length > 0) && "Tools".equals(menu[0])) {
+      if ((menu.length > 0) && "Edit".equals(menu[0])) {
         // Some entries here are null on a bare, just-constructed app
         // instance (divider slots - a separate, pre-existing field-init-
         // order issue unrelated to this feature - see
@@ -461,7 +461,7 @@ class UndoRedoViewport2DTest {
       }
     }
 
-    assertTrue(foundUndo, "\"Undo Viewport2D Change\" should be listed in the Tools menu");
-    assertTrue(foundRedo, "\"Redo Viewport2D Change\" should be listed in the Tools menu");
+    assertTrue(foundUndo, "\"Undo Viewport2D Change\" should be listed in the Edit menu");
+    assertTrue(foundRedo, "\"Redo Viewport2D Change\" should be listed in the Edit menu");
   }
 }

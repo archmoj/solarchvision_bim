@@ -416,7 +416,7 @@ class UndoRedoStationTest {
     assertEquals(42f, app.WIN3D.cameraX, 0.0001f, "a station undo must leave the viewport exactly as it was");
   }
 
-  // ================= wired as actions (Tools menu) ========================
+  // ================= wired as actions (Edit menu) =========================
 
   @Test
   void undoStationChangeAction_isRegisteredAndMatchesTheDirectCall () {
@@ -452,7 +452,7 @@ class UndoRedoStationTest {
   // ================= menu bar wiring ======================================
 
   @Test
-  void menuBar_toolsMenuListsUndoAndRedoStationChange () {
+  void menuBar_editMenuListsUndoAndRedoStationChange () {
     // uiMenuBar.pde's own Items array, not actions.pde's allActions map -
     // this is what actually proves the menu entry exists for a person to
     // click, not just that the backing action is callable.
@@ -461,7 +461,7 @@ class UndoRedoStationTest {
     boolean foundUndo = false;
     boolean foundRedo = false;
     for (String[] menu : items) {
-      if ((menu.length > 0) && "Tools".equals(menu[0])) {
+      if ((menu.length > 0) && "Edit".equals(menu[0])) {
         // Some entries here are null on a bare, just-constructed app
         // instance (divider slots - a separate, pre-existing field-init-
         // order issue unrelated to this feature), so this checks each
@@ -473,7 +473,7 @@ class UndoRedoStationTest {
       }
     }
 
-    assertTrue(foundUndo, "\"Undo Station Change\" should be listed in the Tools menu");
-    assertTrue(foundRedo, "\"Redo Station Change\" should be listed in the Tools menu");
+    assertTrue(foundUndo, "\"Undo Station Change\" should be listed in the Edit menu");
+    assertTrue(foundRedo, "\"Redo Station Change\" should be listed in the Edit menu");
   }
 }

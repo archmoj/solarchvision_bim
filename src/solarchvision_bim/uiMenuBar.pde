@@ -94,7 +94,7 @@ class UI_menuBar {
     }
     ,
     {
-      "Tools",
+      "Edit",
       "Undo Scene3D Change",
       "Redo Scene3D Change",
       ___divider___,
@@ -105,15 +105,11 @@ class UI_menuBar {
       "Redo Station Change",
       ___divider___,
       "Undo Viewport2D Change",
-      "Redo Viewport2D Change",
-      ___divider___,
-      "Save JPG Time Graph",
-      "Save PDF Time Graph",
-      "Save JPG Map Graph",
-      "Save PDF Map Graph",
-      "Save JPG 3D Graph",
-      "Save JPG 3D Graph (Full-Period)",
-      ___divider___,
+      "Redo Viewport2D Change"
+    }
+    ,
+    {
+      "Capture",
       "Screenshot",
       "Click Screenshot",
       "Drag Screenshot",
@@ -124,12 +120,12 @@ class UI_menuBar {
       "Record Solid Graph",
       "Stop Recording",
       ___divider___,
-      "Add People on Land",
-      "Add 2D-Trees on Land",
-      "Add 1D-Trees on Land",
-      ___divider___,
-      "Clone Selection (Identical)",
-      "Clone Selection (Variation)"
+      "Save JPG Time Graph",
+      "Save PDF Time Graph",
+      "Save JPG Map Graph",
+      "Save PDF Map Graph",
+      "Save JPG 3D Graph",
+      "Save JPG 3D Graph (Full-Period)"
     }
     ,
     {
@@ -308,10 +304,12 @@ class UI_menuBar {
       "Show/Hide Terrain Texture",
       "Show/Hide Terrain Vertices",
       "Show/Hide Terrain Depth",
+      ___divider___,
       "Show/Hide Vertices",
       "Show/Hide Edges",
       "Show/Hide Normals",
       "Show/Hide Leaves",
+      ___divider___,
       "Show/Hide Model1Ds",
       "Show/Hide Model2Ds",
       "Show/Hide Polylines",
@@ -319,6 +317,7 @@ class UI_menuBar {
       "Show/Hide Solids",
       "Show/Hide Cameras",
       "Show/Hide Sections",
+      ___divider___,
       "Show/Hide Sky",
       "Show/Hide Sun Grid",
       "Show/Hide Sun Path",
@@ -327,23 +326,31 @@ class UI_menuBar {
       "Show/Hide Moon Surface",
       "Show/Hide Troposphere",
       "Show/Hide Earth Surface",
+      ___divider___,
       "Show/Hide Solar Section",
       "Show/Hide Solid Section",
-      "Show/Hide Wind Flow",
+      "Show/Hide Wind Flow"
+    }
+    ,
+    {
+      "Selection Display",
       "Show/Hide Selected Solids",
       "Show/Hide Selected Sections",
       "Show/Hide Selected Cameras",
       "Show/Hide Selected Terrain Vertices",
       "Show/Hide Selected Faces",
+      ___divider___,
       "Show/Hide Selected Faces Vertex Count",
       "Show/Hide Selected Polylines Vertex Count",
+      ___divider___,
       "Show/Hide Selected Vertices",
       "Show/Hide Selected REF Pivot",
       "Show/Hide Selected Group Pivot",
       "Show/Hide Selected Group Edges",
       "Show/Hide Selected Group Box",
+      ___divider___,
       "Show/Hide Selected 2D Edges",
-      "Show/Hide Selected 1D Edges",
+      "Show/Hide Selected 1D Edges"
     }
     ,
     {
@@ -357,6 +364,10 @@ class UI_menuBar {
       "1D-Tree",
       "2D-Tree",
       "Person",
+      ___divider___,
+      "Add People on Land",
+      "Add 2D-Trees on Land",
+      "Add 1D-Trees on Land",
       ___divider___,
       "Box",
       "Cone",
@@ -432,7 +443,10 @@ class UI_menuBar {
       "Select All Terrain Vertices",
       ___divider___,
       "Select Near Selected Vertices",
-      "Select Scene Isolated Vertices"
+      "Select Scene Isolated Vertices",
+      ___divider___,
+      "Clone Selection (Identical)",
+      "Clone Selection (Variation)"
     }
     ,
     {
@@ -692,21 +706,21 @@ class UI_menuBar {
     map.put(toggleKey("Visibility", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
     map.put(toggleKey("Visibility", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
 
-    map.put(toggleKey("Visibility", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
-    map.put(toggleKey("Visibility", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
-    map.put(toggleKey("Visibility", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
-    map.put(toggleKey("Visibility", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
-    map.put(toggleKey("Visibility", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
+    map.put(toggleKey("Selection Display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
 
     return map;
   }
@@ -762,7 +776,7 @@ class UI_menuBar {
     Y_clicked = -1;
   }
 
-  // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
+  // Draws a single top-level tab (e.g. "File", "Edit", ...) and updates
   // selection state when the mouse is hovering over it.
   void drawParentTab(int i, float cx, float cy, float cr) {
     if (!this.deselecting && !isHoverSuppressed() && isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
