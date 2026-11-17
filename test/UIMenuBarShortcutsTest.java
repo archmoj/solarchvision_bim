@@ -239,6 +239,26 @@ class UIMenuBarShortcutsTest {
   }
 
   @Test
+  void altFLetterKeypress_stillOpensTheMenuWhileTheConsoleBarIsActiveForTyping () {
+    // Regression test: the mnemonic-letter highlight (altHeld) already lit
+    // up while a command was being typed (typeUserCommand == 1), but the
+    // shortcut itself used to be gated on typeUserCommand == 0 and so
+    // silently did nothing - Alt+<letter> must actually open the menu
+    // here too, not just highlight the letter.
+    app.control = app.USER_GUI;
+    app.frameCount = 100;
+    app.typeUserCommand = 1; // console bar is active, mid-typed-command
+    app.UI_consoleBar.editText = "some partial command";
+    app.UI_menuBar.selected_parent = indexOf("Edit"); // already open - avoids get()
+
+    app.keyPressed(new KeyEvent(null, 0, KeyEvent.PRESS, Event.ALT, 'f', (int) 'F', false));
+
+    assertEquals(indexOf("File"), app.UI_menuBar.selected_parent);
+    // and it must not have leaked an 'f' character into the command line
+    assertEquals("some partial command", app.UI_consoleBar.editText);
+  }
+
+  @Test
   void keyReleased_clearsAltHeldWhenAltComesUp () {
     app.UI_menuBar.altHeld = true;
     app.UI_menuBar.updated();

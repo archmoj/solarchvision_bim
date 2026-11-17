@@ -382,9 +382,17 @@ void keyPressed (KeyEvent e) {
       // Alt+<letter> opens a menu-bar parent tab's dropdown, same
       // mnemonic table the menu bar itself exposes (uiMenuBar.pde's
       // PARENT_SHORTCUTS) - e.g. Alt+F opens "File", Alt+S opens
-      // "Select". Guarded the same way Undo/Redo just above is, so it
-      // only fires outside an active spinner edit or typed command.
-      if (!wasEditingSpinner && (typeUserCommand == 0) &&
+      // "Select". Deliberately NOT gated on typeUserCommand (unlike
+      // Undo/Redo just above): the mnemonic-letter highlight
+      // (drawParentTab(), via UI_menuBar.altHeld) already lights up while
+      // the console bar is active for typing a command, so the shortcut
+      // itself must still open the menu then too, or Alt would highlight
+      // letters that don't actually do anything. Safe to fire regardless -
+      // UI_consoleBar.keyPressed() (called below for a typed command)
+      // ignores every Alt-held key itself (uiConsoleBar.pde), so this
+      // can't end up typing a stray character into the command line.
+      // Still skipped during an active spinner edit, same as Undo/Redo.
+      if (!wasEditingSpinner &&
           e.isAltDown() && !e.isControlDown()) {
         if (UI_menuBar.openParentMenuByKeyCode(e.getKeyCode())) {
           redraw();
