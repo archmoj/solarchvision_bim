@@ -235,7 +235,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-shade",
+      "Shade",
       "Shade Viewport",
       "Unshade Viewport",
       ___divider___,
@@ -254,7 +254,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-view",
+      "View",
       "Viewport >> Camera",
       "Camera >> Viewport",
       ___divider___,
@@ -303,7 +303,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-display",
+      "Visibility",
       "Show/Hide Terrain Mesh",
       "Show/Hide Terrain Texture",
       "Show/Hide Terrain Vertices",
@@ -347,7 +347,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-create",
+      "Create",
       "Begin New Group at Origin",
       "Begin New Group at Pivot",
       ___divider___,
@@ -395,7 +395,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-select",
+      "Select",
       "Pick Select",
       "Pick Select+",
       "Pick Select-",
@@ -436,7 +436,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-access",
+      "Convert",
       "Groups >> Faces",
       "Groups >> Vertices",
       "Groups >> Model1Ds",
@@ -459,7 +459,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-modify",
+      "Modify",
       "Attach to Last Group",
       "Dettach from Groups Selection",
       ___divider___,
@@ -506,7 +506,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-match",
+      "Match",
       "Save Current ReferenceBox",
       "Reset Saved ReferenceBox",
       "Use Selection ReferenceBox",
@@ -553,7 +553,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-alter",
+      "Transform",
       "Move",
       "MoveX",
       "MoveY",
@@ -594,7 +594,7 @@ class UI_menuBar {
     }
     ,
     {
-      "3D-delete",
+      "Delete",
       "Delete Selection",
       "Delete Scene Empty Groups",
       "Delete Scene Isolated Vertices",
@@ -664,49 +664,49 @@ class UI_menuBar {
     map.put(toggleKey("Location", "Show/Hide Climate Typical Year Stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
     map.put(toggleKey("Location", "Show/Hide Climate Typical Year Nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
 
-    // "3D-display" menu
-    map.put(toggleKey("3D-display", "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Terrain Texture"),  () -> !Terrain.displayTexture);
-    map.put(toggleKey("3D-display", "Show/Hide Terrain Vertices"),   () -> !Terrain.displayPoints);
-    map.put(toggleKey("3D-display", "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
-    map.put(toggleKey("3D-display", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Normals"),       () -> !allFaces.showNormalLines);
-    map.put(toggleKey("3D-display", "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
-    map.put(toggleKey("3D-display", "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Polylines"),     () -> !allPolylines.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Faces"),         () -> !allFaces.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Solids"),        () -> !allSolids.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Sections"),      () -> !allSections.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Cameras"),       () -> !allCameras.displayAll);
-    map.put(toggleKey("3D-display", "Show/Hide Sky"),           () -> !Sky3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Sun Grid"),      () -> !Sun3D.displayGrid);
-    map.put(toggleKey("3D-display", "Show/Hide Sun Path"),      () -> !Sun3D.displayPath);
-    map.put(toggleKey("3D-display", "Show/Hide Sun Pattern"),   () -> !Sun3D.displayPattern);
-    map.put(toggleKey("3D-display", "Show/Hide Sun Surface"),   () -> !Sun3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Moon Surface"),  () -> !Moon3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Earth Surface"), () -> !Earth3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Troposphere"),   () -> !Tropo3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Solar Section"), () -> !allSolarImpacts.displayImage);
-    map.put(toggleKey("3D-display", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
-    map.put(toggleKey("3D-display", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
+    // "Visibility" menu
+    map.put(toggleKey("Visibility", "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Terrain Texture"),  () -> !Terrain.displayTexture);
+    map.put(toggleKey("Visibility", "Show/Hide Terrain Vertices"),   () -> !Terrain.displayPoints);
+    map.put(toggleKey("Visibility", "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
+    map.put(toggleKey("Visibility", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
+    map.put(toggleKey("Visibility", "Show/Hide Normals"),       () -> !allFaces.showNormalLines);
+    map.put(toggleKey("Visibility", "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
+    map.put(toggleKey("Visibility", "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Polylines"),     () -> !allPolylines.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Faces"),         () -> !allFaces.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Solids"),        () -> !allSolids.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Sections"),      () -> !allSections.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Cameras"),       () -> !allCameras.displayAll);
+    map.put(toggleKey("Visibility", "Show/Hide Sky"),           () -> !Sky3D.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Sun Grid"),      () -> !Sun3D.displayGrid);
+    map.put(toggleKey("Visibility", "Show/Hide Sun Path"),      () -> !Sun3D.displayPath);
+    map.put(toggleKey("Visibility", "Show/Hide Sun Pattern"),   () -> !Sun3D.displayPattern);
+    map.put(toggleKey("Visibility", "Show/Hide Sun Surface"),   () -> !Sun3D.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Moon Surface"),  () -> !Moon3D.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Earth Surface"), () -> !Earth3D.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Troposphere"),   () -> !Tropo3D.displaySurface);
+    map.put(toggleKey("Visibility", "Show/Hide Solar Section"), () -> !allSolarImpacts.displayImage);
+    map.put(toggleKey("Visibility", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
+    map.put(toggleKey("Visibility", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
 
-    map.put(toggleKey("3D-display", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
-    map.put(toggleKey("3D-display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
-    map.put(toggleKey("3D-display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
-    map.put(toggleKey("3D-display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
+    map.put(toggleKey("Visibility", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
+    map.put(toggleKey("Visibility", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
+    map.put(toggleKey("Visibility", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
+    map.put(toggleKey("Visibility", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
 
     return map;
   }
