@@ -357,7 +357,7 @@ class ImportObjectsGLBTest {
           ],
           "buffers": [{"byteLength": 42}]
         }
-        """; // mode 1 = LINES, not the TRIANGLES (4) this importer supports
+        """; // mode 1 = LINES - skipped by default since glbImportCurves defaults to false
 
     Path f = glbFile("glb-non-triangles-test", glb(json, bin));
 
@@ -366,6 +366,124 @@ class ImportObjectsGLBTest {
     });
 
     assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(0, app.allPolylines.nodes.length, "glbImportCurves defaults to false: a LINES primitive should still be skipped entirely");
+  }
+
+  // ================= line primitives (glbImportCurves) ===========================
+  // Mirrors ImportObjectsDXFTest.java's/ImportObjectsOBJTest.java's own
+  // "curves"/"l directive" sections - see importGlb.pde's own
+  // glbEmitLinePrimitive() comment for exactly what each mode does and
+  // why.
+
+  @Test
+  void importObjectsGLB_linesMode_withCurvesOn_importsOneTwoPointPolylinePerIndexPair () throws IOException {
+    app.glbImportCurves = true;
+
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0} };
+    int[] indices = { 0, 1, 2, 3 }; // two disconnected segments: (0,1) and (2,3)
+    byte[] bin = triangleBin(verts, indices);
+
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0}],
+          "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 1}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 4, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 4, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 48},
+            {"buffer": 0, "byteOffset": 48, "byteLength": 8}
+          ],
+          "buffers": [{"byteLength": 56}]
+        }
+        """;
+
+    Path f = glbFile("glb-lines-mode-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(2, app.allPolylines.nodes.length, "LINES draws disconnected segments: one index pair, one Polyline each");
+    assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
+    assertArrayEquals(new int[]{2, 3}, app.allPolylines.nodes[1]);
+    assertEquals(0, app.allPolylines.getClose(0));
+    assertEquals(0, app.allPolylines.getClose(1));
+  }
+
+  @Test
+  void importObjectsGLB_lineStripMode_withCurvesOn_importsOneOpenPolylineThroughEveryIndex () throws IOException {
+    app.glbImportCurves = true;
+
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0} };
+    int[] indices = { 0, 1, 2 };
+    byte[] bin = triangleBin(verts, indices);
+
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0}],
+          "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 3}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6}
+          ],
+          "buffers": [{"byteLength": 42}]
+        }
+        """;
+
+    Path f = glbFile("glb-line-strip-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
+    assertEquals(0, app.allPolylines.getClose(0), "LINE_STRIP is an open chain, not a closed loop");
+  }
+
+  @Test
+  void importObjectsGLB_lineLoopMode_withCurvesOn_importsOneClosedPolylineThroughEveryIndex () throws IOException {
+    app.glbImportCurves = true;
+
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0} };
+    int[] indices = { 0, 1, 2 };
+    byte[] bin = triangleBin(verts, indices);
+
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0}],
+          "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 2}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6}
+          ],
+          "buffers": [{"byteLength": 42}]
+        }
+        """;
+
+    Path f = glbFile("glb-line-loop-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0], "LINE_LOOP implicitly closes back to the first index - no repeated 4th index of its own to dedup");
+    assertEquals(1, app.allPolylines.getClose(0));
   }
 
   @Test

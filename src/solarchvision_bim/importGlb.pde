@@ -11,11 +11,20 @@
 //     below), the same way a "different objects: different materials"
 //     commented-out alternative sits unused in importObj.pde.
 //   - Each primitive must be an indexed triangle list (mode 4, glTF's
-//     own default - the overwhelmingly common case; every other
-//     primitive mode is skipped with a console message) with a POSITION
+//     own default - the overwhelmingly common case) with a POSITION
 //     accessor of type VEC3/FLOAT and an indices accessor of type
 //     SCALAR/UNSIGNED_BYTE/UNSIGNED_SHORT/UNSIGNED_INT - covers the
-//     large majority of real-world exports.
+//     large majority of real-world exports. While glbImportCurves is
+//     true (off by default - see GLB_IMPORT_CURVES/glbImportCurves,
+//     below), modes 1/2/3 (LINES/LINE_LOOP/LINE_STRIP) are ALSO read,
+//     each becoming one or more app-native Polylines (polylines.pde) -
+//     LINES as one disconnected 2-point Polyline per index pair,
+//     LINE_LOOP/LINE_STRIP as one Polyline through every index in
+//     order, closed or open to match. Every other primitive mode
+//     (0 = POINTS, 5 = TRIANGLE_STRIP, 6 = TRIANGLE_FAN) is skipped
+//     with a console message either way - see glbEmitMesh()'s own
+//     comment for exactly why those three aren't worth the added
+//     complexity here.
 //   - Only the embedded, self-contained binary buffer (buffer 0, the BIN
 //     chunk every "single .glb file" carries) is read - no external or
 //     data-URI buffers, no sparse accessors.
@@ -60,6 +69,23 @@ final int GLB_COMPONENT_UNSIGNED_SHORT = 5123;
 final int GLB_COMPONENT_UNSIGNED_INT   = 5125;
 final int GLB_COMPONENT_FLOAT          = 5126;
 
+// glTF's own primitive "mode" constants - only the subset this importer
+// actually reads.
+final int GLB_MODE_LINES       = 1;
+final int GLB_MODE_LINE_LOOP   = 2;
+final int GLB_MODE_LINE_STRIP  = 3;
+final int GLB_MODE_TRIANGLES   = 4;
+
+// Whether to also read a primitive's mode 1/2/3 (LINES/LINE_LOOP/
+// LINE_STRIP) geometry as Polylines - off by default, same "a constant
+// for the starting value, a variable for what's actually checked at
+// import time" shape IFC_IMPORT_CURVES/ifcImportCurves (importIfc.pde),
+// DXF_IMPORT_CURVES/dxfImportCurves (importDxf.pde) and
+// OBJ_IMPORT_CURVES/objImportCurves (importObj.pde) already use.
+final boolean GLB_IMPORT_CURVES = false;
+
+boolean glbImportCurves = GLB_IMPORT_CURVES;
+
 // One-shot: whether the very next import_objects_GLB() call should open
 // axisSwapShowImportOptionsDialog() (fileSelected.pde) before doing
 // anything else - armed only by selectFile_ImportGlb(), the real,
@@ -80,7 +106,7 @@ void import_objects_GLB (String FileName, int m, int tes, int lyr, int vsb, int 
   // anything below - as if import_objects_GLB() had never been called.
   if (glbImportShowOptionsDialog) {
     glbImportShowOptionsDialog = false;
-    if (!axisSwapShowImportOptionsDialog("GLB import options")) return;
+    if (!glbShowImportOptionsDialog()) return;
   }
 
   println("\nImporting GLB. Please wait...");
@@ -365,9 +391,10 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
   for (int p = 0; p < primitives.size(); p++) {
     JSONObject prim = primitives.getJSONObject(p);
 
-    int mode = prim.hasKey("mode") ? prim.getInt("mode") : 4; // glTF's own default: 4 = TRIANGLES
-    if (mode != 4) {
-      println("\nGLB import: skipping a primitive with mode " + mode + " (only triangle lists are supported in this version)");
+    int mode = prim.hasKey("mode") ? prim.getInt("mode") : GLB_MODE_TRIANGLES; // glTF's own default
+    boolean isLineMode = (mode == GLB_MODE_LINES) || (mode == GLB_MODE_LINE_LOOP) || (mode == GLB_MODE_LINE_STRIP);
+    if ((mode != GLB_MODE_TRIANGLES) && !(glbImportCurves && isLineMode)) {
+      println("\nGLB import: skipping a primitive with mode " + mode + " (only triangle lists" + (glbImportCurves ? ", and LINES/LINE_LOOP/LINE_STRIP," : "") + " are supported in this version)");
       continue;
     }
 
@@ -427,15 +454,55 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
       pointIndex[i] = allPoints.create(finalX, finalY, finalZ);
     }
 
-    for (int i = 0; i + 2 < indices.length; i += 3) {
-      int[] newFace = {
-        pointIndex[indices[i]],
-        pointIndex[indices[i + 1]],
-        pointIndex[indices[i + 2]]
-      };
-      allFaces.create(newFace);
+    if (mode == GLB_MODE_TRIANGLES) {
+      for (int i = 0; i + 2 < indices.length; i += 3) {
+        int[] newFace = {
+          pointIndex[indices[i]],
+          pointIndex[indices[i + 1]],
+          pointIndex[indices[i + 2]]
+        };
+        allFaces.create(newFace);
+      }
+    } else {
+      glbEmitLinePrimitive(mode, indices, pointIndex);
     }
   }
+}
+
+// Turns one LINES/LINE_LOOP/LINE_STRIP primitive's own indices (already
+// resolved to real allPoints indices via pointIndex, same array
+// glbEmitMesh()'s own TRIANGLES branch indexes into) into one or more
+// app-native Polylines (polylines.pde) - only ever called while
+// glbImportCurves is true, from glbEmitMesh() above, right after it
+// decided this primitive's mode qualifies.
+//
+// LINES has no single connected shape at all - glTF defines it as
+// disconnected 2-point segments, index pair (0,1), (2,3), (4,5), ... -
+// so each pair becomes its OWN 2-point Polyline, the same granularity
+// DXF's own LINE entity (importDxf.pde) already gets. LINE_LOOP/
+// LINE_STRIP are each already one connected sequence through every
+// index in order, so each becomes exactly one Polyline spanning the
+// whole primitive, closed for LINE_LOOP (glTF defines it as implicitly
+// closing back to the first vertex - no repeated closing index of its
+// own to detect/dedup, unlike OBJ's "l" or DXF's LWPOLYLINE) and open
+// for LINE_STRIP.
+void glbEmitLinePrimitive (int mode, int[] indices, int[] pointIndex) {
+  int savedClosed = current_Closed;
+
+  if (mode == GLB_MODE_LINES) {
+    current_Closed = 0;
+    for (int i = 0; i + 1 < indices.length; i += 2) {
+      allPolylines.create(new int[]{ pointIndex[indices[i]], pointIndex[indices[i + 1]] });
+    }
+  } else if (indices.length >= 2) {
+    int[] nodes = new int[indices.length];
+    for (int i = 0; i < indices.length; i++) nodes[i] = pointIndex[indices[i]];
+
+    current_Closed = (mode == GLB_MODE_LINE_LOOP) ? 1 : 0;
+    allPolylines.create(nodes);
+  }
+
+  current_Closed = savedClosed;
 }
 
 // Reads a VEC3/FLOAT accessor (the shape POSITION always has) into a
