@@ -51,17 +51,46 @@ class UI_menuBar {
   // Data setup
   // ---------------------------------------------------------------------
 
+  // Canonical parent-tab names. Defined once so every place that needs
+  // to recognize a specific tab - buildMenuItems() itself, the
+  // Alt+<letter> table (PARENT_SHORTCUTS, below), and the
+  // Location/Visibility/Selection toggleKey() calls in
+  // buildDisabledStateLookup() - reads the same constant instead of a
+  // second, separately-typed copy of the literal that could drift out
+  // of sync with a rename. A plain String literal is still a compile-time
+  // constant expression, so these can be static even though this is a
+  // non-static inner class (unlike PARENT_SHORTCUTS's array, just below).
+  static final String PARENT_ABOUT      = "About";
+  static final String PARENT_FILE       = "File";
+  static final String PARENT_EDIT       = "Edit";
+  static final String PARENT_LOCATION   = "Location";
+  static final String PARENT_SETUP      = "Setup";
+  static final String PARENT_LAYER      = "Layer";
+  static final String PARENT_ANALYSIS   = "Analysis";
+  static final String PARENT_SHADE      = "Shade";
+  static final String PARENT_VIEW       = "View";
+  static final String PARENT_VISIBILITY = "Visibility";
+  static final String PARENT_CREATE     = "Create";
+  static final String PARENT_SELECT     = "Select";
+  static final String PARENT_SELECTION  = "Selection";
+  static final String PARENT_CONVERT    = "Convert";
+  static final String PARENT_MODIFY     = "Modify";
+  static final String PARENT_MATCH      = "Match";
+  static final String PARENT_TRANSFORM  = "Transform";
+  static final String PARENT_DELETE     = "Delete";
+  static final String PARENT_CAPTURE    = "Capture";
+
   String[][] buildMenuItems() {
     return new String[][] {
     {
-      "About",
+      PARENT_ABOUT,
       "SOLARCHVISION-BIM6D",
       "Designed & developed by",
       "Mojtaba Samimi",
       "www.solarchvision.com"
     },
     {
-      "File",
+      PARENT_FILE,
       "Hold",
       "Fetch",
       ___divider___,
@@ -92,7 +121,7 @@ class UI_menuBar {
       "Quit"
     },
     {
-      "Edit",
+      PARENT_EDIT,
       "Undo Scene3D Change",
       "Redo Scene3D Change",
       ___divider___,
@@ -109,7 +138,7 @@ class UI_menuBar {
       "Clone Selection (Variation)"
     },
     {
-      "Location",
+      PARENT_LOCATION,
       "Update Station",
       ___divider___,
       "Use Climate Typical Year",
@@ -147,7 +176,7 @@ class UI_menuBar {
       "Show/Hide Ensemble Forecast Nearest"
     },
     {
-      "Setup",
+      PARENT_SETUP,
       "Display All Viewports",
       "Enlarge 3D Viewport",
       "Enlarge Map Viewport",
@@ -178,11 +207,11 @@ class UI_menuBar {
       "3D-model 11"
     },
     {
-      "Layer"
+      PARENT_LAYER
       // Parameters are added here later in the process.
     },
     {
-      "Analysis",
+      PARENT_ANALYSIS,
       "Prebake Viewport",
       "Prebake Selected Sections",
       ___divider___,
@@ -207,7 +236,7 @@ class UI_menuBar {
       "Process Passive Impact on Selected Sections"
     },
     {
-      "Shade",
+      PARENT_SHADE,
       "Shade Viewport",
       "Unshade Viewport",
       ___divider___,
@@ -225,7 +254,7 @@ class UI_menuBar {
       "Shade Vertex Elevation"
     },
     {
-      "View",
+      PARENT_VIEW,
       "Camera View",
       ___divider___,
       "Top",
@@ -270,7 +299,7 @@ class UI_menuBar {
       "SkydomeSize"
     },
     {
-      "Visibility",
+      PARENT_VISIBILITY,
       "Show/Hide Terrain Mesh",
       "Show/Hide Terrain Texture",
       "Show/Hide Terrain Vertices",
@@ -303,7 +332,7 @@ class UI_menuBar {
       "Show/Hide Wind Flow"
     },
     {
-      "Create",
+      PARENT_CREATE,
       "Begin New Group at Origin",
       "Begin New Group at Pivot",
       ___divider___,
@@ -350,7 +379,7 @@ class UI_menuBar {
       "Add 1D-Trees on Land"
     },
     {
-      "Select",
+      PARENT_SELECT,
       "Pick Select",
       "Pick Select+",
       "Pick Select-",
@@ -390,7 +419,7 @@ class UI_menuBar {
       "Select Scene Isolated Vertices"
     },
     {
-      "Selection",
+      PARENT_SELECTION,
       "Show/Hide Selected Solids",
       "Show/Hide Selected Sections",
       "Show/Hide Selected Cameras",
@@ -410,7 +439,7 @@ class UI_menuBar {
       "Show/Hide Selected 1D Edges"
     },
     {
-      "Convert",
+      PARENT_CONVERT,
       "Groups >> Faces",
       "Groups >> Vertices",
       "Groups >> Model1Ds",
@@ -439,7 +468,7 @@ class UI_menuBar {
       "TerrainGap >> Group"
     },
     {
-      "Modify",
+      PARENT_MODIFY,
       "Attach to Last Group",
       "Dettach from Groups Selection",
       ___divider___,
@@ -485,7 +514,7 @@ class UI_menuBar {
       "Unhide All Polylines"
     },
     {
-      "Match",
+      PARENT_MATCH,
       "Save Current ReferenceBox",
       "Reset Saved ReferenceBox",
       "Use Selection ReferenceBox",
@@ -531,7 +560,7 @@ class UI_menuBar {
       "Get dXY"
     },
     {
-      "Transform",
+      PARENT_TRANSFORM,
       "Move",
       "MoveX",
       "MoveY",
@@ -571,7 +600,7 @@ class UI_menuBar {
       "Change LeafSize"
     },
     {
-      "Delete",
+      PARENT_DELETE,
       "Delete Selection",
       ___divider___,
       "Delete Scene Empty Groups",
@@ -590,7 +619,7 @@ class UI_menuBar {
       "Delete All"
     },
     {
-      "Capture",
+      PARENT_CAPTURE,
       "Screenshot",
       "Click Screenshot",
       "Drag Screenshot",
@@ -647,25 +676,25 @@ class UI_menuBar {
   // Location, Shade -> "H" since "S" went to Select) to make that work
   // out for all 19 without collisions or an arbitrary leftover letter.
   final String[][] PARENT_SHORTCUTS = {
-    {"A", "About"},
-    {"F", "File"},
-    {"E", "Edit"},
-    {"L", "Location"},
-    {"U", "Setup"},
-    {"Y", "Layer"},
-    {"N", "Analysis"},
-    {"H", "Shade"},
-    {"V", "View"},
-    {"B", "Visibility"},
-    {"C", "Create"},
-    {"S", "Select"},
-    {"I", "Selection"},
-    {"R", "Convert"},
-    {"O", "Modify"},
-    {"M", "Match"},
-    {"T", "Transform"},
-    {"D", "Delete"},
-    {"P", "Capture"}
+    {"A", PARENT_ABOUT},
+    {"F", PARENT_FILE},
+    {"E", PARENT_EDIT},
+    {"L", PARENT_LOCATION},
+    {"U", PARENT_SETUP},
+    {"Y", PARENT_LAYER},
+    {"N", PARENT_ANALYSIS},
+    {"H", PARENT_SHADE},
+    {"V", PARENT_VIEW},
+    {"B", PARENT_VISIBILITY},
+    {"C", PARENT_CREATE},
+    {"S", PARENT_SELECT},
+    {"I", PARENT_SELECTION},
+    {"R", PARENT_CONVERT},
+    {"O", PARENT_MODIFY},
+    {"M", PARENT_MATCH},
+    {"T", PARENT_TRANSFORM},
+    {"D", PARENT_DELETE},
+    {"P", PARENT_CAPTURE}
   };
 
   // Opens the parent tab whose Alt+<letter> shortcut (PARENT_SHORTCUTS,
@@ -689,14 +718,14 @@ class UI_menuBar {
   String[] populateLayerMenu() {
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
-      if (this.Items[i][0].equals("Layer")) {
+      if (this.Items[i][0].equals(PARENT_LAYER)) {
         LayersID_in_Bar = i;
         break;
       }
     }
 
     this.Items[LayersID_in_Bar] = new String[allLayers.length + numberOfDevelopedLayers + 1]; // +1 for the divider
-    this.Items[LayersID_in_Bar][0] = "Layer";
+    this.Items[LayersID_in_Bar][0] = PARENT_LAYER;
 
     for (int i = 0; i < allLayers.length; i++) {
       this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
@@ -725,60 +754,60 @@ class UI_menuBar {
     HashMap<String, java.util.function.BooleanSupplier> map = new HashMap<String, java.util.function.BooleanSupplier>();
 
     // "Location" menu
-    map.put(toggleKey("Location", "Show/Hide Ensemble Observation Stations"),   () -> WORLD.ensembleObservationDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Observation Nearest"),    () -> !WORLD.ensembleObservationDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast Stations"),  () -> WORLD.ensembleForecastDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast Nearest"),   () -> !WORLD.ensembleForecastDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Engineering Stations"), () -> WORLD.climateEngineeringDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Engineering Nearest"),  () -> !WORLD.climateEngineeringDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Archive Stations"), () -> WORLD.climateArchiveDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Archive Nearest"),  () -> !WORLD.climateArchiveDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Typical Year Stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Typical Year Nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Ensemble Observation Stations"),   () -> WORLD.ensembleObservationDisplayAll == 0);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Ensemble Observation Nearest"),    () -> !WORLD.ensembleObservationDisplayNear);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Ensemble Forecast Stations"),  () -> WORLD.ensembleForecastDisplayAll == 0);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Ensemble Forecast Nearest"),   () -> !WORLD.ensembleForecastDisplayNear);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Engineering Stations"), () -> WORLD.climateEngineeringDisplayAll == 0);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Engineering Nearest"),  () -> !WORLD.climateEngineeringDisplayNear);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Archive Stations"), () -> WORLD.climateArchiveDisplayAll == 0);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Archive Nearest"),  () -> !WORLD.climateArchiveDisplayNear);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Typical Year Stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
+    map.put(toggleKey(PARENT_LOCATION, "Show/Hide Climate Typical Year Nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
 
     // "Visibility" menu
-    map.put(toggleKey("Visibility", "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Terrain Texture"),  () -> !Terrain.displayTexture);
-    map.put(toggleKey("Visibility", "Show/Hide Terrain Vertices"),   () -> !Terrain.displayPoints);
-    map.put(toggleKey("Visibility", "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
-    map.put(toggleKey("Visibility", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
-    map.put(toggleKey("Visibility", "Show/Hide Normals"),       () -> !allFaces.showNormalLines);
-    map.put(toggleKey("Visibility", "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
-    map.put(toggleKey("Visibility", "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Polylines"),     () -> !allPolylines.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Faces"),         () -> !allFaces.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Solids"),        () -> !allSolids.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Sections"),      () -> !allSections.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Cameras"),       () -> !allCameras.displayAll);
-    map.put(toggleKey("Visibility", "Show/Hide Sky"),           () -> !Sky3D.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Sun Grid"),      () -> !Sun3D.displayGrid);
-    map.put(toggleKey("Visibility", "Show/Hide Sun Path"),      () -> !Sun3D.displayPath);
-    map.put(toggleKey("Visibility", "Show/Hide Sun Pattern"),   () -> !Sun3D.displayPattern);
-    map.put(toggleKey("Visibility", "Show/Hide Sun Surface"),   () -> !Sun3D.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Moon Surface"),  () -> !Moon3D.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Earth Surface"), () -> !Earth3D.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Troposphere"),   () -> !Tropo3D.displaySurface);
-    map.put(toggleKey("Visibility", "Show/Hide Solar Section"), () -> !allSolarImpacts.displayImage);
-    map.put(toggleKey("Visibility", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
-    map.put(toggleKey("Visibility", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Terrain Texture"),  () -> !Terrain.displayTexture);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Terrain Vertices"),   () -> !Terrain.displayPoints);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Vertices"),      () -> !allPoints.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Edges"),         () -> !allFaces.displayEdges);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Normals"),       () -> !allFaces.showNormalLines);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Polylines"),     () -> !allPolylines.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Faces"),         () -> !allFaces.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Solids"),        () -> !allSolids.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sections"),      () -> !allSections.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Cameras"),       () -> !allCameras.displayAll);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sky"),           () -> !Sky3D.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sun Grid"),      () -> !Sun3D.displayGrid);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sun Path"),      () -> !Sun3D.displayPath);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sun Pattern"),   () -> !Sun3D.displayPattern);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Sun Surface"),   () -> !Sun3D.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Moon Surface"),  () -> !Moon3D.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Earth Surface"), () -> !Earth3D.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Troposphere"),   () -> !Tropo3D.displaySurface);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Solar Section"), () -> !allSolarImpacts.displayImage);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
+    map.put(toggleKey(PARENT_VISIBILITY, "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
 
-    map.put(toggleKey("Selection", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
-    map.put(toggleKey("Selection", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
-    map.put(toggleKey("Selection", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
-    map.put(toggleKey("Selection", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
-    map.put(toggleKey("Selection", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
-    map.put(toggleKey("Selection", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
-    map.put(toggleKey("Selection", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
-    map.put(toggleKey("Selection", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
-    map.put(toggleKey("Selection", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
-    map.put(toggleKey("Selection", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
-    map.put(toggleKey("Selection", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
-    map.put(toggleKey("Selection", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
-    map.put(toggleKey("Selection", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
-    map.put(toggleKey("Selection", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
-    map.put(toggleKey("Selection", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
 
     return map;
   }
