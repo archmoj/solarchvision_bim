@@ -1180,6 +1180,23 @@ around.
 -   `+PositionX`, `+PositionY`: pan the viewport
 -   `+RotationX`, `+RotationZ`: rotate the viewport directly (no
     reverseTransform, unlike `+TargetRollXYZ`)
+-   `+StudyZoom`: zooms the study graph in (positive value) or out
+    (negative value) - scrolled over it with the mouse wheel, or
+    triggered a fixed step at a time by `Ctrl+Q`/`Ctrl+Shift+Q`. Result
+    is clamped to `[0.1, 20]` and saved with the project
+
+```
++StudyZoom ?
+```
+
+-   `+StudyPan dx=? dy=?`: pans the study graph by a screen-pixel delta
+    - the mouse-drag counterpart to `+StudyZoom`, called continuously
+    while dragging over the graph, or stepped a fixed amount at a time
+    by `Ctrl+Shift+Arrows`. Saved with the project
+
+```
++StudyPan dx=? dy=?
+```
 
 ### Screenshots and recording
 
@@ -1246,6 +1263,15 @@ triggering a computation:
 -   `Next Plot Layout`, `Previous Plot Layout`
 -   `Next Sky Scenario`, `Previous Sky Scenario`
 -   `Toggle Impact Summary`
+-   `Zoom In Study`, `Zoom Out Study`: `Ctrl+Q`/`Ctrl+Shift+Q` - same
+    `+StudyZoom` action the mouse wheel drives (see
+    [mouse-wheel commands](#mouse-wheel-commands) above), one fixed
+    step at a time
+-   `Pan Study Up`, `Pan Study Down`, `Pan Study Left`, `Pan Study Right`:
+    `Ctrl+Shift+Arrows` - same `+StudyPan` action a mouse drag over the
+    study graph drives (see
+    [drag-based view navigation](#drag-based-view-navigation) above),
+    one fixed step at a time
 -   `Increase Vertical Scale`, `Decrease Vertical Scale`
 -   `Widen Join Window`, `Narrow Join Window`
 -   `Extend Date Range`, `Shrink Date Range`

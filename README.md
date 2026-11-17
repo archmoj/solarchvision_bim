@@ -298,7 +298,7 @@ The World view's map responds to the mouse directly, without going through a men
 - **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
 - **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map.
 
-A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point.
+A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point. Pinned hover points are saved and restored along with the project, by both the regular Save/Open workflow and the in-session Hold/Fetch scene snapshot.
 
 ## Weather, climate, and geographic data
 
@@ -371,9 +371,9 @@ These options are not interchangeable: choose the statistic or scenario selectio
 
 ### Save and export
 
-Use the application's project save/load functions to retain supported scene and study information. Available export workflows include:
+Use the application's project save/load functions to retain supported scene and study information, including pinned hover points and the study graph's zoom/pan view. Available export workflows include:
 
-- **OBJ:** Export scene geometry.
+- **OBJ:** Export scene geometry, including polylines as `l` (line) elements—closed polylines repeat their first vertex to close the loop.
 - **OBJ time-series:** Export geometry at different hours.
 - **OBJ date-series:** Export geometry at different days.
 - **LAS:** Export the positions of points in the scene as a point cloud.
@@ -452,6 +452,10 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `b` / `B` | Show or hide probabilities on the hourly graph |
 | `n` / `N` | Show or hide statistics on the hourly graph |
 | `m` / `M` | Show or hide sorted values on the hourly graph |
+| `Ctrl+Q` / `Ctrl+Shift+Q` | Zoom the study graph in or out |
+| `Ctrl+Shift+UP` / `Ctrl+Shift+DOWN` / `Ctrl+Shift+LEFT` / `Ctrl+Shift+RIGHT` | Pan the study graph |
+
+The study graph also responds directly to the mouse: scroll the wheel over it to zoom in or out, or click and drag to pan—no modifier key needed for either. Both the zoom level and the pan offset are saved with the project.
 
 ## Command bar, scripting, and exports
 
@@ -616,9 +620,9 @@ The geographic subsystem supports latitude/longitude positioning, map projection
 
 ### Projects, commands, and exchange
 
-Project persistence uses structured XML for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts or text files for repeatable operations.
+Project persistence uses structured XML for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, object properties, pinned hover points, and the study graph's zoom/pan view. The command system supports interactive entry and scripts or text files for repeatable operations.
 
-Export options include OBJ, time-series/date-series OBJ, LAS, RAD, SCR, HTML, and viewport image capture. The import and export capabilities are described in the [command reference](command/README.md).
+Export options include OBJ, time-series/date-series OBJ, LAS, RAD, SCR, HTML, and viewport image capture. OBJ export includes polylines as `l` (line) elements alongside faces. The import and export capabilities are described in the [command reference](command/README.md).
 
 A typical supported workflow is:
 
