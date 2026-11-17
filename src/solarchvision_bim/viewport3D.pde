@@ -664,24 +664,28 @@ class WIN3D {
   }
 
   void handleAltArrowKeys (int keyCode) {
+    // RIGHT/UP and LEFT/DOWN are swapped from what their directions would
+    // suggest (RIGHT -> day, not hour; UP -> hour, not day) - a
+    // deliberate choice, not an oversight, so don't "fix" this back to
+    // RIGHT/LEFT=hour, UP/DOWN=day without checking first.
     switch (keyCode) {
       case RIGHT:
-        runScriptLine("Shade Next Hour");
-        this.revise();
-        break;
-
-      case LEFT:
-        runScriptLine("Shade Previous Hour");
-        this.revise();
-        break;
-
-      case UP:
         runScriptLine("Shade Next Day");
         this.revise();
         break;
 
-      case DOWN:
+      case LEFT:
         runScriptLine("Shade Previous Day");
+        this.revise();
+        break;
+
+      case UP:
+        runScriptLine("Shade Next Hour");
+        this.revise();
+        break;
+
+      case DOWN:
+        runScriptLine("Shade Previous Hour");
         this.revise();
         break;
     }

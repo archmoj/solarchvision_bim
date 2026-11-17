@@ -753,8 +753,9 @@ class UI_caseBarTest {
     app.STUDY.endHour = 23;
     app.SHADE_HOUR_ANGLE = 10;
     // Dead center of cell 2 (x: 157.5..292.5, same y band as cell 0) -
-    // "Shade Previous Hour" ("<"), the same action Alt+Left and 'T'
-    // already use.
+    // "Shade Previous Hour" ("<"), the same action Alt+Down and 'T'
+    // already use (handleAltArrowKeys()'s own comment - RIGHT/UP and
+    // LEFT/DOWN are swapped there, so it's Down that drives the hour).
     app.X_clicked = 225;
     app.Y_clicked = -75;
 
@@ -771,8 +772,9 @@ class UI_caseBarTest {
     app.STUDY.endHour = 23;
     app.SHADE_HOUR_ANGLE = 10;
     // Dead center of cell 3 (see impactControlsCellBounds_cellThree_...
-    // above) - "Shade Next Hour" (">"), the same action Alt+Right and
-    // 't' already use.
+    // above) - "Shade Next Hour" (">"), the same action Alt+Up and
+    // 't' already use (handleAltArrowKeys()'s own comment - RIGHT/UP and
+    // LEFT/DOWN are swapped there, so it's Up that drives the hour).
     app.X_clicked = 375;
     app.Y_clicked = -75;
 

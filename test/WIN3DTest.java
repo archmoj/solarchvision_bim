@@ -565,7 +565,7 @@ class WIN3DTest {
     app.WIN3D.navKeyCoded = true;
     app.WIN3D.navKeyAlt = true;
     app.WIN3D.navKeyShift = false;
-    app.WIN3D.navKeyCode = app.RIGHT; // handleAltArrowKeys(RIGHT) -> "Shade Next Hour"
+    app.WIN3D.navKeyCode = app.UP; // handleAltArrowKeys(UP) -> "Shade Next Hour" (RIGHT/UP and LEFT/DOWN are swapped there - see that method's own comment; UP is used here, not RIGHT, because "Shade Next Day" moves SHADE_DATE_ANGLE by calendar-day math rather than a plain +1, which wouldn't make as simple an assertion below)
     app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
     app.WIN3D.navKeyRepeating = false;
     app.SHADE_HOUR_ANGLE = 0;
@@ -1290,10 +1290,11 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_tAndCapitalT_stepSHADE_HOUR_ANGLE_sameAsAltRightLeft () {
+  void handleCommandKey_tAndCapitalT_stepSHADE_HOUR_ANGLE_sameAsAltUpDown () {
     // 't'/'T' call "Shade Next/Previous Hour" directly now - the exact
-    // same actions Alt+Right/Left use (handleAltArrowKeys()'s own
-    // comment) - so this just confirms that wiring, not the hour-
+    // same actions Alt+Up/Down use (handleAltArrowKeys()'s own
+    // comment - RIGHT/UP and LEFT/DOWN are swapped there) - so this just
+    // confirms that wiring, not the hour-
     // stepping/wrap logic itself (nextShadeHour()/previousShadeHour()'s
     // own tests, and WIN3DActionsTest.java's "Advance/Rewind Troposphere
     // Time" tests, already cover that in detail). Tropo3D.i_Map()

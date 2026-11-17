@@ -299,8 +299,10 @@ class WIN3DActionsTest {
   // these tests go through SHADE_HOUR_ANGLE and nextShadeHour()/
   // previousShadeHour()'s own wrap behavior (STUDY.isInHourlyRange(),
   // SHADE_FIRST_HOUR/SHADE_LAST_HOUR) - the same thing the equivalent
-  // Alt+Right/Left tests already exercise - rather than a troposphere-
-  // specific clamp-and-revert that no longer exists.
+  // Alt+Up/Down tests already exercise (handleAltArrowKeys()'s own
+  // comment - RIGHT/UP and LEFT/DOWN are swapped there, so it's Up/Down
+  // that drive the hour now, not Right/Left) - rather than a
+  // troposphere-specific clamp-and-revert that no longer exists.
 
   @Test
   void keyT_advancesSHADE_HOUR_ANGLEAndTropo3DsIMapTogether () {
@@ -316,7 +318,7 @@ class WIN3DActionsTest {
   }
 
   @Test
-  void keyT_wrapsPastTheLastHourBackToTheFirst_sameAsAltRight () {
+  void keyT_wrapsPastTheLastHourBackToTheFirst_sameAsAltUp () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
     app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
@@ -341,7 +343,7 @@ class WIN3DActionsTest {
   }
 
   @Test
-  void keyShiftT_wrapsBeforeTheFirstHourBackToTheLastHourInRange_sameAsAltLeft () {
+  void keyShiftT_wrapsBeforeTheFirstHourBackToTheLastHourInRange_sameAsAltDown () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
@@ -354,7 +356,7 @@ class WIN3DActionsTest {
     // in [0, 23]), so previousShadeHour() keeps decrementing past it down
     // to 23, the real last hour in range - the exact same wrap
     // previousShadeHour()'s own existing WIN3DTest.java coverage already
-    // establishes for Alt+Left.
+    // establishes for Alt+Down.
     assertEquals(23, app.SHADE_HOUR_ANGLE);
     assertEquals(23, app.Tropo3D.i_Map());
   }
