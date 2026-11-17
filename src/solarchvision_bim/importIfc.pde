@@ -160,6 +160,16 @@
 //     ifcImportUncutOpeningCount, separately from
 //     ifcImportSkippedCount, since this is real, imported geometry,
 //     not something left out of the import.
+//   - Standalone line/arc/curve ("annotation") geometry - an
+//     IfcPolyline, IfcCircle, IfcTrimmedCurve, IfcCompositeCurve or
+//     IfcIndexedPolyCurve that's itself a representation item, rather
+//     than a wall/slab/extrusion's own swept-area profile curve -
+//     imports as one of this app's own native Polylines (straight
+//     segments; an arc/circle is tessellated into short chords, not
+//     drawn as a true circle) while ifcImportCurves is true - off by
+//     default, since this is annotation, not building fabric. See
+//     IFC_IMPORT_CURVES' own comment, and ifcCurveLocalPoints()'s own
+//     comment for exactly which curve types/shapes are read this way.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -430,6 +440,43 @@ final boolean IFC_IMPORT_OUTDOOR_SPACE = false;
 
 boolean ifcImportIndoorSpace = IFC_IMPORT_INDOOR_SPACE;
 boolean ifcImportOutdoorSpace = IFC_IMPORT_OUTDOOR_SPACE;
+
+// Whether to import standalone line/arc/curve geometry at all - off by
+// default. This is NOT the same thing as a wall/slab/extrusion's own
+// swept-area profile curve (IfcArbitraryClosedProfileDef's own
+// IfcPolyline/IfcIndexedPolyCurve, read by ifcProfilePoints() further
+// down, unconditionally, the same as always) - it's an IfcPolyline,
+// IfcCircle, IfcTrimmedCurve, IfcCompositeCurve or IfcIndexedPolyCurve
+// that appears as its own representation item (commonly an
+// IfcAnnotation's 2D/3D drafting geometry - a dimension line, a grid
+// line, a property-boundary sketch - or wrapped in an
+// IfcGeometricCurveSet/IfcGeometricSet alongside others like it),
+// carrying no building fabric of its own. Every one of those entity
+// types, with no toggle to opt in, used to just fall through
+// ifcProcessRepresentationItem()'s own final ifcNoteSkipped(e.type) -
+// "swept curves, etc." - the same as a genuinely unsupported item
+// (IfcRevolvedAreaSolid, say); turning this on instead reads the
+// curve's own real shape (straight run, tessellated circle/arc, or a
+// IfcCompositeCurve chaining several of those together - see
+// ifcCurveLocalPoints() below for exactly which types) and imports it
+// as one of this app's own native Polylines (polylines.pde) - open or
+// closed, straight-segment (an arc/circle is itself tessellated into
+// short straight chords, not drawn via Polylines' own true-circle
+// add_Arc(), since that primitive only supports a circle in a
+// horizontal plane, and nothing here guarantees an IFC curve lies in
+// one - see ifcArcThroughThreePoints()'s and ifcCircleLocalPoints()'s
+// own comments). Off by default because this geometry is annotation,
+// not building fabric - exactly the same "it exists, but it isn't what
+// this app is primarily for" reasoning IFC_IMPORT_FURNITURE's own
+// comment gives, and, like that toggle, user-facing via the IFC import
+// options dialog (see ifcShowImportOptionsDialog() in fileSelected.pde).
+//
+// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's
+// own comment above for why, and ifcImportCurves below for what's
+// actually checked at import time.
+final boolean IFC_IMPORT_CURVES = false;
+
+boolean ifcImportCurves = IFC_IMPORT_CURVES;
 
 // One-shot: whether the very next import_objects_IFC() call should open
 // ifcShowImportOptionsDialog() (fileSelected.pde) before doing anything
@@ -1413,6 +1460,43 @@ int ifcBaseFaceCount = 0;
 // the scene.
 int ifcBaseModel2DCount = 0;
 
+// Pending line/arc/curve ("annotation") geometry - see IFC_IMPORT_CURVES'
+// own comment for what this is and ifcEmitCurve()'s for how it gets
+// here. Deliberately a THIRD staging layer, separate from
+// ifcPendingPoints/ifcPendingFaceNodes/ifcPendingFaceOptions above, not
+// folded into them: a Polyline isn't a Face (wrong shape of data -
+// allPolylines.add_Polyline() takes a plain world-space point list,
+// not a face's queued-point-index/options pair), and, more importantly,
+// it's built by calling allPolylines.add_Polyline() - which itself
+// calls allPoints.create() DIRECTLY, growing the real allVertices array
+// one point at a time - the instant any curve is processed. Doing that
+// mid-import, the same way every other product's geometry is handled,
+// would corrupt the import: ifcFlushPendingGeometry() (see its own
+// comment) doesn't append to allVertices, it REPLACES it wholesale with
+// a freshly sized array built from ifcBasePointCount's own (pre-import)
+// prefix plus every point queued in ifcPendingPoints - so any point
+// add_Polyline() had already appended past ifcBasePointCount, mid-loop,
+// would simply be thrown away the moment that replacement happened,
+// leaving every Polyline's own stored node indices pointing at
+// whatever ends up at those same slots afterward instead. So a curve's
+// own points are staged here - as a plain world-space point list, the
+// transform (productFrame + cx/cy/cz/sx/sy/sz) already fully applied,
+// exactly like a face's points are by the time ifcEmitFace() queues
+// them - and only actually turned into real Polylines, by calling
+// allPolylines.add_Polyline() for each one, after
+// ifcFlushPendingGeometry() has already rebuilt allVertices for this
+// import's own faces (see import_objects_IFC()'s own call to both, in
+// that order).
+ArrayList<float[][]> ifcPendingCurvePoints = new ArrayList<float[][]>();
+// Parallel to ifcPendingCurvePoints, one row per curve: {material,
+// tessellation, layer, visibility, weight, closed(0/1)} - the same six
+// values add_Polyline()'s own m/tes/lyr/vsb/wgt/clz parameters take,
+// in that order; see ifcEmitCurve()'s own comment for where closed
+// actually comes from (not the product-level clz passed through
+// ifcProcessRepresentationItem() - that one means something different
+// for a face/solid, a curve decides its own).
+ArrayList<int[]> ifcPendingCurveOptions = new ArrayList<int[]>();
+
 // A second, per-product staging layer in front of the one above: every
 // point/face a product's own geometry produces lands here first, with
 // purely local (0-based within this one product) indices, rather than
@@ -1840,6 +1924,454 @@ ArrayList<float[]> ifcIndexedPolyCurvePoints (HashMap<Integer, StepEntity> ents,
   return ifcClosePolygon2D(pts);
 }
 
+// ---------------------------------------------------------------------
+// Standalone line/arc/curve ("annotation") geometry - read only while
+// ifcImportCurves (see IFC_IMPORT_CURVES's own comment) is true. Unlike
+// ifcProfilePoints()/ifcIndexedPolyCurvePoints() just above - which
+// build a flat 2D profile, local to the profile's own placement, for a
+// solid's swept-area - everything below builds a full 3D point list,
+// still local to the *product* (the same "local to the product, not
+// world yet" convention ifcProcessExtrudedAreaSolid()'s own solidFrame.
+// toWorldPoint() calls already use), since a standalone curve item -
+// unlike a profile - isn't guaranteed to lie flat in any one plane at
+// all once placement is taken into account, and has no extrusion depth
+// to otherwise give its third dimension meaning.
+// ---------------------------------------------------------------------
+
+// A point already in the SAME local coordinate system a frame's own
+// origin/axes live in (e.g. a product-local point and a circle's own
+// placement frame, both before productFrame has been applied) expressed
+// instead as that frame's own local (x,y,z) coordinates - the inverse
+// of IfcFrame.toWorldPoint(). Used to project an IfcTrimmedCurve's own
+// cartesian trim point (see ifcTrimCircleAngle() below) back onto the
+// circle it trims, to recover the angle a parameter-based trim would
+// otherwise have given directly.
+PVector ifcFrameToLocal (IfcFrame frame, PVector p) {
+  PVector rel = PVector.sub(p, frame.origin);
+  return new PVector(rel.dot(frame.xAxis), rel.dot(frame.yAxis), rel.dot(frame.zAxis));
+}
+
+// IfcCircle's own Position (IfcAxis2Placement2D or IfcAxis2Placement3D -
+// a bare IfcCircle used as a profile def would only ever carry the 2D
+// variant, but a standalone one, embedded directly as a curve
+// representation item, commonly carries the 3D one instead, letting the
+// circle's own plane tilt away from horizontal) resolved to one common
+// IfcFrame either way, so every caller below can treat the two
+// identically. The 2D case is lifted into 3D the same way
+// ifcProfilePoints()'s own 2D profile points are - origin.z = 0, zAxis
+// = local +Z - since an IfcAxis2Placement2D never specifies anything
+// past its own X/Y.
+IfcFrame ifcCurvePlacementToFrame (HashMap<Integer, StepEntity> ents, String token) {
+  StepEntity e = ifcResolve(ents, token);
+  if (e != null && e.type.equals("IFCAXIS2PLACEMENT3D")) {
+    return ifcAxis2Placement3DToFrame(ents, e);
+  }
+  float[] p2 = ifcAxis2Placement2D(ents, token); // {originX, originY, unitX, unitY} - identity if token isn't a placement at all
+  PVector origin = new PVector(p2[0], p2[1], 0);
+  PVector xAxis = new PVector(p2[2], p2[3], 0);
+  PVector zAxis = new PVector(0, 0, 1);
+  PVector yAxis = zAxis.cross(xAxis);
+  return new IfcFrame(origin, xAxis, yAxis, zAxis);
+}
+
+// Tessellates the arc of the given circle (already-resolved IFCCIRCLE,
+// Position(0)/Radius(1)) running from startDeg to endDeg, inclusive,
+// going counterclockwise around the circle's own local Z - a full
+// circle when the two angles are 360 degrees apart, same as any smaller
+// arc otherwise. A chord roughly every 6 degrees, uncapped by this
+// app's own Tessellation setting (unlike Polylines' own true-circle
+// add_Arc() - see IFC_IMPORT_CURVES' own comment for why this doesn't
+// call that instead): fine enough to read as round at any reasonable
+// zoom without the segment count ballooning for a large-radius arc,
+// since - unlike add_Arc()'s own re-sampling-on-every-draw-call - this
+// is baked in once, at import time, as an ordinary straight-segment
+// Polyline. Returns null for a non-positive or unreadable radius.
+ArrayList<PVector> ifcCircleLocalPoints (HashMap<Integer, StepEntity> ents, StepEntity circle, float startDeg, float endDeg) {
+  if (circle.attrs.length < 2) return null;
+  IfcFrame circleFrame = ifcCurvePlacementToFrame(ents, circle.attrs[0]);
+  float r = ifcFloat(circle.attrs[1]) * ifcLengthUnitScale;
+  if (r <= 0) return null;
+
+  float sweep = endDeg - startDeg;
+  while (sweep <= 0) sweep += 360;
+  while (sweep > 360) sweep -= 360;
+
+  int n = max(3, ceil(sweep / 6));
+  ArrayList<PVector> pts = new ArrayList<PVector>();
+  for (int i = 0; i <= n; i++) {
+    float t = startDeg + sweep * i / float(n);
+    pts.add(circleFrame.toWorldPoint(r * cos(radians(t)), r * sin(radians(t)), 0));
+  }
+  return pts;
+}
+
+// Degrees from "from" to "to", going counterclockwise (increasing
+// angle), normalized into [0, 360) - used only by
+// ifcArcThroughThreePoints() below to pick which of the two directions
+// around a fitted circle actually passes through its own middle point.
+float ifcAngleDiffCCW (float from, float to) {
+  float d = (to - from) % 360;
+  if (d < 0) d += 360;
+  return d;
+}
+
+// Fits the unique circle through three (assumed non-collinear) points -
+// an IFCARCINDEX segment's own three indices (see
+// ifcIndexedPolyCurveLocalPoints() below): a start, a point the arc
+// actually passes through, and an end, the IFC4 spec's own way of
+// defining an arc without a separate center/radius the way IfcCircle
+// has - and returns a tessellated run of points from the first, through
+// the second, to the third (same ~6-degrees-per-chord density as
+// ifcCircleLocalPoints() above). Builds its own local 2D basis in the
+// three points' own common plane (u along p0->p1, v completing a
+// right-handed in-plane pair with the plane's own normal) rather than
+// assuming any particular global plane, so this works for an arc tilted
+// at any angle, not just a horizontal one. Returns null for three
+// (near-)collinear points, which have no well-defined circle - in
+// practice, a genuinely straight run the file happened to still mark
+// IFCARCINDEX; the caller has no straight-segment fallback for that
+// (unlike an actual IFCLINEINDEX segment), so this is simply dropped,
+// same as any other curve this importer can't resolve.
+ArrayList<PVector> ifcArcThroughThreePoints (PVector p0, PVector p1, PVector p2) {
+  PVector u = PVector.sub(p1, p0);
+  float uLen = u.mag();
+  if (uLen < 0.0001) return null;
+  u.normalize();
+
+  PVector w = PVector.sub(p2, p0);
+  PVector n = u.cross(w);
+  if (n.mag() < 0.0001) return null; // (near-)collinear: no well-defined circle
+  n.normalize();
+  PVector v = n.cross(u);
+  v.normalize();
+
+  float p1x = uLen;
+  float p2x = w.dot(u), p2y = w.dot(v);
+  if (abs(p2y) < 0.000001) return null; // (near-)collinear after all
+
+  // Circumcenter of the three points in this local 2D basis - p0 at the
+  // origin and p1 on the local X axis by construction above, which is
+  // exactly what makes this short-form solution (rather than the
+  // general 3x3 linear solve) valid: see this function's own derivation
+  // in importIfc.pde's own development notes (the standard
+  // perpendicular-bisector result, specialized for those two points).
+  float cx = p1x / 2;
+  float cy = ((p2x * p2x + p2y * p2y) - p2x * p1x) / (2 * p2y);
+  float r = sqrt(cx * cx + cy * cy);
+  if (r < 0.0001) return null;
+
+  float a0 = degrees(atan2(0 - cy, 0 - cx));
+  float a1 = degrees(atan2(0 - cy, p1x - cx));
+  float a2 = degrees(atan2(p2y - cy, p2x - cx));
+
+  // Sweep from a0 toward a2 the way that actually passes through a1 -
+  // whichever of the two directions around the circle has a1 strictly
+  // between a0 and a2 - rather than always taking the shorter arc,
+  // which would silently draw the wrong (reflex) side whenever the true
+  // arc is itself the major one.
+  float sweepCCW = ifcAngleDiffCCW(a0, a2);
+  float a1CCW = ifcAngleDiffCCW(a0, a1);
+  float sweep = (a1CCW <= sweepCCW) ? sweepCCW : -(360 - sweepCCW);
+
+  PVector center = PVector.add(p0, PVector.add(PVector.mult(u, cx), PVector.mult(v, cy)));
+
+  int n_seg = max(2, ceil(abs(sweep) / 6));
+  ArrayList<PVector> pts = new ArrayList<PVector>();
+  for (int i = 0; i <= n_seg; i++) {
+    float t = a0 + sweep * i / float(n_seg);
+    pts.add(PVector.add(center, PVector.add(PVector.mult(u, r * cos(radians(t))), PVector.mult(v, r * sin(radians(t))))));
+  }
+  return pts;
+}
+
+// IfcIndexedPolyCurve, read as a standalone 3D curve rather than a flat
+// profile (contrast ifcIndexedPolyCurvePoints() above, which drops z
+// and gives up the moment it sees an IFCARCINDEX segment): the shared
+// point list (Points(0), an IfcCartesianPointList2D/3D - 2D entries
+// come back with z=0, same as ifcPointFromCoords() always gives) kept
+// in full 3D, and this time an IFCARCINDEX segment is actually
+// tessellated (via ifcArcThroughThreePoints() above) rather than
+// bailing out. Segments(1) omitted means the same implicit
+// straight-through-every-point polyline as the profile reader assumes.
+ArrayList<PVector> ifcIndexedPolyCurveLocalPoints (HashMap<Integer, StepEntity> ents, StepEntity curve) {
+  if (curve.attrs.length == 0) return null;
+  StepEntity pointList = ifcResolve(ents, curve.attrs[0]);
+  if (pointList == null || pointList.attrs.length == 0) return null;
+
+  String[] rows = ifcListTokens(pointList.attrs[0]);
+  PVector[] pool = new PVector[rows.length];
+  for (int i = 0; i < rows.length; i++) pool[i] = ifcPointFromCoords(rows[i]);
+
+  String segmentsAttr = (curve.attrs.length > 1) ? curve.attrs[1].trim() : "";
+  if (segmentsAttr.length() == 0 || segmentsAttr.equals("$") || segmentsAttr.equals("()")) {
+    ArrayList<PVector> pts = new ArrayList<PVector>();
+    for (PVector p : pool) pts.add(p);
+    return pts;
+  }
+
+  ArrayList<PVector> pts = new ArrayList<PVector>();
+  for (String segTok : ifcListTokens(segmentsAttr)) {
+    String trimmed = segTok.trim();
+    String upper = trimmed.toUpperCase();
+    int parenStart = trimmed.indexOf('(');
+    if (parenStart < 0) return null; // unrecognized segment type
+
+    int[] idx = null;
+    try {
+      String[] idxToks = ifcListTokens(ifcStripParens(trimmed.substring(parenStart)));
+      idx = new int[idxToks.length];
+      for (int i = 0; i < idxToks.length; i++) {
+        idx[i] = (int) ifcFloat(idxToks[i]) - 1; // 1-based in the file
+        if (idx[i] < 0 || idx[i] >= pool.length) return null;
+      }
+    }
+    catch (Exception ex) {
+      return null;
+    }
+
+    if (upper.startsWith("IFCLINEINDEX")) {
+      for (int i : idx) {
+        PVector p = pool[i];
+        if (pts.size() > 0 && PVector.dist(pts.get(pts.size() - 1), p) < 0.0001) continue; // shared boundary point between consecutive segments
+        pts.add(p);
+      }
+    } else if (upper.startsWith("IFCARCINDEX") && idx.length == 3) {
+      ArrayList<PVector> arcPts = ifcArcThroughThreePoints(pool[idx[0]], pool[idx[1]], pool[idx[2]]);
+      if (arcPts == null) return null;
+      for (PVector p : arcPts) {
+        if (pts.size() > 0 && PVector.dist(pts.get(pts.size() - 1), p) < 0.0001) continue;
+        pts.add(p);
+      }
+    } else {
+      return null; // unrecognized segment type
+    }
+  }
+  return pts;
+}
+
+// IfcVector's own Orientation, as a plain unit direction - IfcLine's own
+// Dir (see ifcTrimmedCurveLocalPoints() below). IfcVector.Magnitude is
+// deliberately not applied here (it's instead folded into the trim's
+// own parameter value, at the one place that actually gets scaled to
+// metres - see ifcTrimLinePoint() below): real-world exports checked
+// against this importer's own existing conventions almost always leave
+// it at 1, and treating it as a bare direction, with the trim parameter
+// itself carrying the only length that matters, avoids silently
+// double-scaling in the far rarer case it isn't.
+PVector ifcLineUnitDirection (HashMap<Integer, StepEntity> ents, String token) {
+  StepEntity v = ifcResolve(ents, token);
+  if (v == null || !v.type.equals("IFCVECTOR") || v.attrs.length < 1) return null;
+  PVector dir = ifcDirection3(ents, v.attrs[0]);
+  if (dir.mag() < 0.0001) return null;
+  dir.normalize();
+  return dir;
+}
+
+// Parses an IfcParameterValue/IfcLengthMeasure/IfcPlaneAngleMeasure-style
+// SELECT token - "IFCPARAMETERVALUE(30.)", or occasionally just a bare
+// "30." - into its own plain numeric value, or null for anything that
+// isn't one (a "#ref" cartesian point, "$"/"*", ...), used by both of
+// an IfcTrimmedCurve's own Trim1/Trim2 readers below to tell a
+// parameter-form trim apart from a cartesian-point-form one.
+Float ifcParameterValue (String tok) {
+  String t = tok.trim();
+  if (t.length() == 0 || t.startsWith("#") || t.equals("$") || t.equals("*")) return null;
+  int parenStart = t.indexOf('(');
+  String numPart = (parenStart >= 0 && t.endsWith(")")) ? t.substring(parenStart + 1, t.length() - 1) : t;
+  try {
+    return Float.parseFloat(numPart.trim());
+  }
+  catch (Exception ex) {
+    return null;
+  }
+}
+
+// One of an IfcTrimmedCurve's own Trim1/Trim2 attributes (each a SET of
+// one or two items - a "#ref" cartesian point, a parameter-value token,
+// or both together) resolved to an actual point on the given line,
+// preferring an explicit cartesian point when the trim gives one (exact,
+// and what MasterRepresentation .CARTESIAN. means anyway) and falling
+// back to Pnt + param*unitDir - the line's own natural parametrization -
+// otherwise. Returns null if the trim gives neither.
+PVector ifcTrimLinePoint (HashMap<Integer, StepEntity> ents, String trimAttr, PVector pnt, PVector unitDir) {
+  for (String tok : ifcListTokens(trimAttr)) {
+    if (tok.trim().startsWith("#")) return ifcPoint3(ents, tok.trim());
+  }
+  for (String tok : ifcListTokens(trimAttr)) {
+    Float param = ifcParameterValue(tok);
+    if (param != null) return PVector.add(pnt, PVector.mult(unitDir, param * ifcLengthUnitScale));
+  }
+  return null;
+}
+
+// The circle-parametrization counterpart of ifcTrimLinePoint() above -
+// returns the angle (degrees, this importer's own existing convention
+// for every angle it reads or writes - see funcs.cos_ang()/add_Arc()'s
+// own TotalAngle) a Trim1/Trim2 attribute picks out on the given
+// circle, preferring an explicit parameter-value token (exact, and
+// already in the circle's own degrees) and otherwise projecting an
+// explicit cartesian trim point back onto the circle's own local plane
+// (via ifcFrameToLocal() above) and reading its angle off that.
+Float ifcTrimCircleAngle (HashMap<Integer, StepEntity> ents, String trimAttr, IfcFrame circleFrame) {
+  for (String tok : ifcListTokens(trimAttr)) {
+    Float param = ifcParameterValue(tok);
+    if (param != null) return param;
+  }
+  for (String tok : ifcListTokens(trimAttr)) {
+    if (tok.trim().startsWith("#")) {
+      PVector local = ifcFrameToLocal(circleFrame, ifcPoint3(ents, tok.trim()));
+      return degrees(atan2(local.y, local.x));
+    }
+  }
+  return null;
+}
+
+// IfcTrimmedCurve: BasisCurve(0), Trim1(1), Trim2(2), SenseAgreement(3),
+// MasterRepresentation(4) - a bounded run of an otherwise-unbounded
+// IfcLine (a straight segment between two points) or IfcCircle (an arc
+// between two angles), the common way IFC actually represents either
+// one as real, finite curve geometry (an un-trimmed IfcLine on its own
+// is infinite - see ifcCurveLocalPoints()'s own comment on why that
+// case, alone, still isn't supported). SenseAgreement false reverses
+// the direction the curve is traversed (Trim2 toward Trim1, not Trim1
+// toward Trim2) - for a line this only swaps which endpoint is stored
+// first (visually identical either way); for a circle it instead
+// decides which of the two possible arcs between the same two angles
+// actually gets drawn, so it has to be honored there. Any other
+// BasisCurve (an ellipse, a B-spline, another trimmed/offset curve,
+// ...), or a trim this importer can't resolve to either a point or a
+// parameter, returns null - not approximated, same as every other
+// curve type this importer doesn't evaluate.
+ArrayList<PVector> ifcTrimmedCurveLocalPoints (HashMap<Integer, StepEntity> ents, StepEntity tc) {
+  if (tc.attrs.length < 4) return null;
+  StepEntity basis = ifcResolve(ents, tc.attrs[0]);
+  if (basis == null) return null;
+  boolean senseAgreement = !tc.attrs[3].trim().equals(".F.");
+
+  if (basis.type.equals("IFCLINE") && basis.attrs.length >= 2) {
+    PVector pnt = ifcPoint3(ents, basis.attrs[0]);
+    PVector unitDir = ifcLineUnitDirection(ents, basis.attrs[1]);
+    if (unitDir == null) return null;
+
+    PVector p1 = ifcTrimLinePoint(ents, tc.attrs[1], pnt, unitDir);
+    PVector p2 = ifcTrimLinePoint(ents, tc.attrs[2], pnt, unitDir);
+    if (p1 == null || p2 == null) return null;
+
+    ArrayList<PVector> pts = new ArrayList<PVector>();
+    if (senseAgreement) { pts.add(p1); pts.add(p2); } else { pts.add(p2); pts.add(p1); }
+    return pts;
+  }
+
+  if (basis.type.equals("IFCCIRCLE") && basis.attrs.length >= 2) {
+    IfcFrame circleFrame = ifcCurvePlacementToFrame(ents, basis.attrs[0]);
+
+    Float a1 = ifcTrimCircleAngle(ents, tc.attrs[1], circleFrame);
+    Float a2 = ifcTrimCircleAngle(ents, tc.attrs[2], circleFrame);
+    if (a1 == null || a2 == null) return null;
+
+    float startDeg = senseAgreement ? a1 : a2;
+    float endDeg = senseAgreement ? a2 : a1;
+    return ifcCircleLocalPoints(ents, basis, startDeg, endDeg);
+  }
+
+  return null; // trimmed ellipse/B-spline/offset/another trimmed curve/...: not supported
+}
+
+// The one dispatcher every standalone-curve code path above funnels
+// through - IfcCompositeCurve's own Segments chain this recursively
+// (depth-capped the same defensive way ifcProcessMappedItem()'s own
+// ifcMappedItemDepth/ifcProcessRepresentationItem()'s own
+// ifcBooleanResultDepth are, against a pathological/cyclic file).
+// Returns null - not approximated - for anything this importer doesn't
+// evaluate: an un-trimmed IfcLine (truly unbounded - there is no
+// reasonable finite curve to draw for one on its own, unlike every
+// other case here), IfcEllipse, IfcBSplineCurve, IfcOffsetCurve2D/3D,
+// IfcPcurve, IfcSurfaceCurve, or a trimmed/composite curve built from
+// any of those.
+ArrayList<PVector> ifcCurveLocalPoints (HashMap<Integer, StepEntity> ents, StepEntity curve, int depth) {
+  if (curve == null || depth > 25) return null;
+
+  if (curve.type.equals("IFCPOLYLINE")) {
+    if (curve.attrs.length == 0) return null;
+    ArrayList<PVector> pts = new ArrayList<PVector>();
+    for (String ptRef : ifcListTokens(curve.attrs[0])) pts.add(ifcPoint3(ents, ptRef));
+    return pts;
+  }
+
+  if (curve.type.equals("IFCINDEXEDPOLYCURVE")) {
+    return ifcIndexedPolyCurveLocalPoints(ents, curve);
+  }
+
+  if (curve.type.equals("IFCCIRCLE")) {
+    return ifcCircleLocalPoints(ents, curve, 0, 360);
+  }
+
+  if (curve.type.equals("IFCTRIMMEDCURVE")) {
+    return ifcTrimmedCurveLocalPoints(ents, curve);
+  }
+
+  if (curve.type.equals("IFCCOMPOSITECURVE")) {
+    if (curve.attrs.length == 0) return null;
+    ArrayList<PVector> pts = new ArrayList<PVector>();
+    for (String segRef : ifcListTokens(curve.attrs[0])) {
+      StepEntity seg = ifcResolve(ents, segRef);
+      if (seg == null || !seg.type.equals("IFCCOMPOSITECURVESEGMENT") || seg.attrs.length < 3) return null;
+      boolean sameSense = !seg.attrs[1].trim().equals(".F.");
+      ArrayList<PVector> segPts = ifcCurveLocalPoints(ents, ifcResolve(ents, seg.attrs[2]), depth + 1);
+      if (segPts == null || segPts.size() == 0) return null;
+      if (!sameSense) java.util.Collections.reverse(segPts);
+      if (pts.size() > 0 && PVector.dist(pts.get(pts.size() - 1), segPts.get(0)) < 0.0001) {
+        pts.addAll(segPts.subList(1, segPts.size()));
+      } else {
+        pts.addAll(segPts);
+      }
+    }
+    return pts;
+  }
+
+  return null; // an un-trimmed IfcLine, or a curve type this importer doesn't evaluate - see this function's own comment
+}
+
+// Cleans a curve's own local points (drops zero-length runs, same as
+// ifcEmitFace() does for a face) and stages them - already transformed
+// all the way to world space via productFrame + cx/cy/cz/sx/sy/sz, the
+// same as ifcEmitFace() leaves a face's own points - into
+// ifcPendingCurvePoints/ifcPendingCurveOptions for
+// import_objects_IFC()'s own post-flush loop to actually turn into a
+// real Polyline (see those two lists' own comment for exactly why that
+// has to wait). "Closed" is decided here, from the curve's own
+// points (an explicit, non-degenerate loop - this importer's own
+// existing convention, same as ifcClosePolygon2D() already uses for a
+// profile) - NOT from clz, the product-level "closed" option
+// import_objects_IFC() was itself called with, which means something
+// different for a face/solid and has no bearing on whether a drafted
+// line happens to loop back on itself.
+void ifcEmitCurve (ArrayList<PVector> localPts, IfcFrame productFrame,
+  float cx, float cy, float cz, float sx, float sy, float sz,
+  int m, int tes, int lyr, int vsb, int wgt) {
+
+  ArrayList<PVector> cleaned = new ArrayList<PVector>();
+  for (PVector p : localPts) {
+    if (cleaned.size() == 0 || PVector.dist(cleaned.get(cleaned.size() - 1), p) > 0.00001) {
+      cleaned.add(p);
+    }
+  }
+  if (cleaned.size() < 2) return; // nothing left to draw a line between
+
+  boolean closed = (cleaned.size() > 2) && (PVector.dist(cleaned.get(0), cleaned.get(cleaned.size() - 1)) < 0.00001);
+  if (closed) cleaned.remove(cleaned.size() - 1);
+  if (cleaned.size() < 2) return;
+
+  float[][] worldPts = new float[cleaned.size()][3];
+  for (int i = 0; i < cleaned.size(); i++) {
+    PVector world = productFrame.toWorldPoint(cleaned.get(i));
+    worldPts[i] = new float[]{cx + sx * world.x, cy + sy * world.y, cz + sz * world.z};
+  }
+
+  ifcPendingCurvePoints.add(worldPts);
+  ifcPendingCurveOptions.add(new int[]{m, tes, lyr, vsb, wgt, closed ? 1 : 0});
+}
+
 void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity e, IfcFrame productFrame,
   float cx, float cy, float cz, float sx, float sy, float sz,
   int m, int tes, int lyr, int vsb, int wgt, int clz) {
@@ -1988,6 +2520,22 @@ void ifcProcessRepresentationItem (HashMap<Integer, StepEntity> ents, int itemId
       ifcNoteSkipped(e.type);
     }
     return;
+  }
+
+  // A standalone line/arc/curve ("annotation") representation item -
+  // see IFC_IMPORT_CURVES' own comment for what this covers and why
+  // it's off by default. Checked last, after every real-geometry case
+  // above, so turning this on never changes how any of those are
+  // handled - only what happens to a type none of them already claimed.
+  // ifcEmitCurve() stages the result rather than importing it straight
+  // away - see ifcPendingCurvePoints' own comment for why that has to
+  // wait until after this import's own faces are flushed.
+  if (ifcImportCurves) {
+    ArrayList<PVector> curvePts = ifcCurveLocalPoints(ents, e, 0);
+    if (curvePts != null) {
+      ifcEmitCurve(curvePts, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt);
+      return;
+    }
   }
 
   ifcNoteSkipped(e.type); // swept curves, etc. - see file header
@@ -2672,16 +3220,25 @@ int[] ifcRangeIdsFrom (int start, int count) {
 // currentObjectCategory and the FACE/MODEL2D selections to do its own
 // rotation, then restores whatever was selected before it ran, so this
 // is invisible to the user's own current selection afterward.
-void ifcRotateImportedModelToTrueNorth (float angleDegrees, int baseFaceCount, int baseModel2DCount) {
+void ifcRotateImportedModelToTrueNorth (float angleDegrees, int baseFaceCount, int baseModel2DCount, int basePolylineCount) {
   if (angleDegrees == 0) return; // Don't rotate if the angle is zero.
 
   int newFaceCount = allFaces.nodes.length - baseFaceCount;
   int newModel2DCount = allModel2Ds.num - baseModel2DCount;
-  if (newFaceCount <= 0 && newModel2DCount <= 0) return; // nothing was actually imported
+  // allPolylines.nodes.length - basePolylineCount: any line/arc/curve
+  // geometry this import just added (see ifcPendingCurvePoints' own
+  // comment for why those only land in allPolylines, as real Polylines,
+  // well after this import's own faces/model2Ds already have) -
+  // deliberately a THIRD count here, not folded into newFaceCount,
+  // since a Polyline is its own ObjectCategory/Select3D selection, not
+  // a Face one.
+  int newPolylineCount = allPolylines.nodes.length - basePolylineCount;
+  if (newFaceCount <= 0 && newModel2DCount <= 0 && newPolylineCount <= 0) return; // nothing was actually imported
 
   int savedCategory = currentObjectCategory;
   int[] savedFaceSelection = Select3D.faceSelection;
   int[] savedModel2DSelection = Select3D.model2DSelection;
+  int[] savedPolylineSelection = Select3D.polylineSelection;
 
   if (newFaceCount > 0) {
     currentObjectCategory = ObjectCategory.FACE;
@@ -2695,9 +3252,16 @@ void ifcRotateImportedModelToTrueNorth (float angleDegrees, int baseFaceCount, i
     Rotate3D.selection(0, 0, 0, angleDegrees, 2);
   }
 
+  if (newPolylineCount > 0) {
+    currentObjectCategory = ObjectCategory.POLYLINE;
+    Select3D.polylineSelection = ifcRangeIdsFrom(basePolylineCount, newPolylineCount);
+    Rotate3D.selection(0, 0, 0, angleDegrees, 2);
+  }
+
   currentObjectCategory = savedCategory;
   Select3D.faceSelection = savedFaceSelection;
   Select3D.model2DSelection = savedModel2DSelection;
+  Select3D.polylineSelection = savedPolylineSelection;
 }
 
 // ---------------------------------------------------------------------
@@ -2751,6 +3315,8 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcPendingPoints.clear();
   ifcPendingFaceNodes.clear();
   ifcPendingFaceOptions.clear();
+  ifcPendingCurvePoints.clear();
+  ifcPendingCurveOptions.clear();
   ifcBasePointCount = allPoints.getLength();
   ifcBaseFaceCount = allFaces.nodes.length;
   ifcBaseModel2DCount = allModel2Ds.num;
@@ -3101,16 +3667,36 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int importedFaceCount = ifcPendingFaceNodes.size();
   ifcFlushPendingGeometry();
 
+  // Every line/arc/curve queued above (see ifcEmitCurve()) only
+  // actually becomes a real Polyline here, now that allVertices has
+  // already been rebuilt by the flush just above -
+  // allPolylines.add_Polyline() itself calls allPoints.create()
+  // directly, which only lands correctly once that rebuild has already
+  // happened; see ifcPendingCurvePoints' own comment for the full
+  // reasoning. ifcBasePolylineCount captured first, before any of
+  // this import's own Polylines exist yet, so
+  // ifcRotateImportedModelToTrueNorth() below knows exactly which ones
+  // (if any) are its to rotate.
+  int ifcBasePolylineCount = allPolylines.nodes.length;
+  for (int i = 0; i < ifcPendingCurvePoints.size(); i++) {
+    int[] opt = ifcPendingCurveOptions.get(i);
+    allPolylines.add_Polyline(opt[0], opt[1], opt[2], opt[3], opt[4], opt[5], ifcPendingCurvePoints.get(i));
+  }
+  int importedCurveCount = ifcPendingCurvePoints.size();
+  ifcPendingCurvePoints.clear();
+  ifcPendingCurveOptions.clear();
+
   // Only meaningful once the geometry it rotates actually exists in
-  // allFaces/allModel2Ds - see ifcRotateImportedModelToTrueNorth()'s own
-  // comment for why this runs here, after the flush, rather than
-  // earlier alongside where ifcImportNorthRotationAngle itself was
+  // allFaces/allModel2Ds/allPolylines - see
+  // ifcRotateImportedModelToTrueNorth()'s own comment for why this runs
+  // here, after the flush (and the Polyline loop just above), rather
+  // than earlier alongside where ifcImportNorthRotationAngle itself was
   // computed. A zero angle (ifcImportOrient off, no IfcSite, or an
   // unrotated one) is a no-op inside that function too, but checked
   // here as well so a zero-angle import never even touches
   // currentObjectCategory/the selection.
   if (ifcImportNorthRotationAngle != 0) {
-    ifcRotateImportedModelToTrueNorth(ifcImportNorthRotationAngle, ifcBaseFaceCount, ifcBaseModel2DCount);
+    ifcRotateImportedModelToTrueNorth(ifcImportNorthRotationAngle, ifcBaseFaceCount, ifcBaseModel2DCount, ifcBasePolylineCount);
   }
 
   endScene3DChange();
@@ -3125,6 +3711,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
     if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
     if (ifcImportSpaceCount > 0) summary += ", " + ifcImportSpaceCount + " space(s) added";
+    if (importedCurveCount > 0) summary += ", " + importedCurveCount + " line/arc/curve(s) imported";
     if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
     if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
     if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";

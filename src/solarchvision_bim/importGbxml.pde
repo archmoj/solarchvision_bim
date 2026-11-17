@@ -569,6 +569,12 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   // in the scene.
   int baseFaceCount = allFaces.nodes.length;
   int baseModel2DCount = allModel2Ds.num;
+  // This importer never creates a Polyline of its own - captured only
+  // so the shared ifcRotateImportedModelToTrueNorth() (its own newer
+  // third parameter, added for importIfc.pde's own line/arc/curve
+  // import) always sees a zero new-Polyline count here, the same as
+  // before that parameter existed.
+  int basePolylineCount = allPolylines.nodes.length;
 
   int effectiveMaterial = (m == -1) ? 0 : m;
 
@@ -673,7 +679,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
   // created, rather than earlier alongside where
   // gbxmlImportNorthRotationAngle was itself computed.
   if (gbxmlImportNorthRotationAngle != 0) {
-    ifcRotateImportedModelToTrueNorth(gbxmlImportNorthRotationAngle, baseFaceCount, baseModel2DCount);
+    ifcRotateImportedModelToTrueNorth(gbxmlImportNorthRotationAngle, baseFaceCount, baseModel2DCount, basePolylineCount);
   }
 
   if (!aborted) {

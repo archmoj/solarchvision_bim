@@ -3512,6 +3512,293 @@ class ImportObjectsIFCTest {
     assertEquals(1, app.allModel2Ds.num);
   }
 
+  // ================= standalone line/arc/curve ("annotation") geometry =====
+  // ifcImportCurves (importIfc.pde's own IFC_IMPORT_CURVES) - off by
+  // default, see that constant's own comment - lets a standalone
+  // IfcPolyline/IfcCircle/IfcTrimmedCurve/IfcCompositeCurve/
+  // IfcIndexedPolyCurve representation item (commonly an IfcAnnotation's
+  // own drafting geometry) import as one of this app's own native
+  // Polylines instead of just being skipped-and-counted as unsupported.
+  // This is a completely separate code path from this same curve's own
+  // use as a solid's swept-area profile (ifcProfilePoints()/
+  // ifcIndexedPolyCurvePoints(), exercised by the IfcArbitraryClosed-
+  // ProfileDef tests further up) - every test below uses an
+  // IfcAnnotation whose Representation goes straight to the curve item
+  // itself, never through a profile/extrusion.
+
+  @Test
+  void importObjectsIFC_curves_offByDefault_standalonePolylineIsSkippedNotImported () throws IOException {
+    Path f = ifcFile("ifc-curves-off-by-default-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCPOLYLINE((#1,#2));
+        #4=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCANNOTATION('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    assertFalse(app.ifcImportCurves, "off by default");
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allPolylines.nodes.length, "curves import is off by default: nothing should land in allPolylines");
+    assertEquals(1, app.ifcImportSkippedCount);
+    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCPOLYLINE"));
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_standalonePolylineImportsAsAnOpenPolyline () throws IOException {
+    Path f = ifcFile("ifc-curves-polyline-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCPOLYLINE((#1,#2,#3));
+        #5=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#4));
+        #6=IFCPRODUCTDEFINITIONSHAPE($,$,(#5));
+        #7=IFCANNOTATION('guid-1',$,$,$,$,$,#6);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 2, 0, 0, 1, 3, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount, "a straight IfcPolyline curve item should be read now, not skipped");
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length);
+    assertEquals(0, app.allPolylines.getClose(0), "an explicit, non-repeating 3-point run isn't a closed loop");
+    assertEquals(2, app.allPolylines.getMaterial(0), "the product's own material should carry through to the Polyline");
+    assertEquals(3, app.allPolylines.getWeight(0), "the product's own weight should carry through to the Polyline");
+
+    float[][] expected = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
+    for (int i = 0; i < 3; i++) {
+      int n = app.allPolylines.nodes[0][i];
+      assertEquals(expected[i][0], app.allPoints.getX(n), 0.0001f, "point " + i);
+      assertEquals(expected[i][1], app.allPoints.getY(n), 0.0001f, "point " + i);
+      assertEquals(expected[i][2], app.allPoints.getZ(n), 0.0001f, "point " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_standaloneCircleImportsAsAClosedTessellatedPolyline () throws IOException {
+    Path f = ifcFile("ifc-curves-circle-test", """
+        #1=IFCCIRCLE($,2.);
+        #2=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#1));
+        #3=IFCPRODUCTDEFINITIONSHAPE($,$,(#2));
+        #4=IFCANNOTATION('guid-1',$,$,$,$,$,#3);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allPolylines.getClose(0), "a full 360-degree sweep should come back as a closed loop");
+
+    int[] nodes = app.allPolylines.nodes[0];
+    assertTrue(nodes.length > 8, "a tessellated circle should have more than just a handful of points");
+
+    // Every point should sit on the circle itself: radius 2, centered
+    // at the world origin (Position was $, i.e. identity).
+    for (int node : nodes) {
+      float x = app.allPoints.getX(node), y = app.allPoints.getY(node), z = app.allPoints.getZ(node);
+      assertEquals(0f, z, 0.0001f, "the circle's own Position ($) is identity: it lies in the local Z=0 plane");
+      assertEquals(2f, (float) Math.sqrt(x * x + y * y), 0.001f, "every point should be exactly radius 2 from the center");
+    }
+
+    // The first point is always angle 0 - see ifcCircleLocalPoints()'s
+    // own loop, which starts at startDeg (0 here).
+    assertEquals(2f, app.allPoints.getX(nodes[0]), 0.001f);
+    assertEquals(0f, app.allPoints.getY(nodes[0]), 0.001f);
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_trimmedCurveOverLine_cartesianTrim_importsAsATwoPointSegment () throws IOException {
+    Path f = ifcFile("ifc-curves-trimmedline-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCDIRECTION((1.,0.,0.));
+        #3=IFCVECTOR(#2,1.);
+        #4=IFCLINE(#1,#3);
+        #5=IFCCARTESIANPOINT((1.,0.,0.));
+        #6=IFCCARTESIANPOINT((4.,0.,0.));
+        #7=IFCTRIMMEDCURVE(#4,(#5),(#6),.T.,.CARTESIAN.);
+        #8=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#7));
+        #9=IFCPRODUCTDEFINITIONSHAPE($,$,(#8));
+        #10=IFCANNOTATION('guid-1',$,$,$,$,$,#9);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(2, app.allPolylines.nodes[0].length);
+
+    float[][] expected = {{1, 0, 0}, {4, 0, 0}};
+    for (int i = 0; i < 2; i++) {
+      int n = app.allPolylines.nodes[0][i];
+      assertEquals(expected[i][0], app.allPoints.getX(n), 0.0001f, "point " + i);
+      assertEquals(expected[i][1], app.allPoints.getY(n), 0.0001f, "point " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_trimmedCurveOverCircle_parameterTrim_importsAQuarterArc () throws IOException {
+    Path f = ifcFile("ifc-curves-trimmedcircle-test", """
+        #1=IFCCIRCLE($,2.);
+        #2=IFCTRIMMEDCURVE(#1,(IFCPARAMETERVALUE(0.)),(IFCPARAMETERVALUE(90.)),.T.,.PARAMETER.);
+        #3=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#2));
+        #4=IFCPRODUCTDEFINITIONSHAPE($,$,(#3));
+        #5=IFCANNOTATION('guid-1',$,$,$,$,$,#4);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(0, app.allPolylines.getClose(0), "a quarter-circle arc is open, not a closed loop");
+
+    int[] nodes = app.allPolylines.nodes[0];
+    assertTrue(nodes.length > 3, "a 90-degree arc should still be tessellated into several chords");
+
+    // Start at angle 0 (2,0,0), end at angle 90 (0,2,0) - the two
+    // IFCPARAMETERVALUE trims above, in degrees (this importer's own
+    // existing angle convention - see funcs.cos_ang()/add_Arc()'s own
+    // TotalAngle).
+    assertEquals(2f, app.allPoints.getX(nodes[0]), 0.001f);
+    assertEquals(0f, app.allPoints.getY(nodes[0]), 0.001f);
+    assertEquals(0f, app.allPoints.getX(nodes[nodes.length - 1]), 0.001f);
+    assertEquals(2f, app.allPoints.getY(nodes[nodes.length - 1]), 0.001f);
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_compositeCurve_chainsSegmentsIntoOnePolyline () throws IOException {
+    Path f = ifcFile("ifc-curves-compositecurve-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCDIRECTION((1.,0.,0.));
+        #3=IFCVECTOR(#2,1.);
+        #4=IFCLINE(#1,#3);
+        #5=IFCCARTESIANPOINT((0.,0.,0.));
+        #6=IFCCARTESIANPOINT((2.,0.,0.));
+        #7=IFCTRIMMEDCURVE(#4,(#5),(#6),.T.,.CARTESIAN.);
+        #8=IFCCARTESIANPOINT((2.,0.,0.));
+        #9=IFCDIRECTION((0.,1.,0.));
+        #10=IFCVECTOR(#9,1.);
+        #11=IFCLINE(#8,#10);
+        #12=IFCCARTESIANPOINT((2.,0.,0.));
+        #13=IFCCARTESIANPOINT((2.,3.,0.));
+        #14=IFCTRIMMEDCURVE(#11,(#12),(#13),.T.,.CARTESIAN.);
+        #15=IFCCOMPOSITECURVESEGMENT(.CONTINUOUS.,.T.,#7);
+        #16=IFCCOMPOSITECURVESEGMENT(.CONTINUOUS.,.T.,#14);
+        #17=IFCCOMPOSITECURVE((#15,#16),.F.);
+        #18=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#17));
+        #19=IFCPRODUCTDEFINITIONSHAPE($,$,(#18));
+        #20=IFCANNOTATION('guid-1',$,$,$,$,$,#19);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length, "the two segments share one point ((2,0,0)) - deduplicated into a single continuous 3-point run");
+
+    float[][] expected = {{0, 0, 0}, {2, 0, 0}, {2, 3, 0}};
+    for (int i = 0; i < 3; i++) {
+      int n = app.allPolylines.nodes[0][i];
+      assertEquals(expected[i][0], app.allPoints.getX(n), 0.0001f, "point " + i);
+      assertEquals(expected[i][1], app.allPoints.getY(n), 0.0001f, "point " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_standaloneIndexedPolyCurve_arcIndexIsTessellated () throws IOException {
+    Path f = ifcFile("ifc-curves-indexedpolycurve-arc-test", """
+        #1=IFCCARTESIANPOINTLIST3D(((0.,0.,0.),(1.,1.,0.),(2.,0.,0.)));
+        #2=IFCINDEXEDPOLYCURVE(#1,(IFCARCINDEX((1,2,3))),.F.);
+        #3=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#2));
+        #4=IFCPRODUCTDEFINITIONSHAPE($,$,(#3));
+        #5=IFCANNOTATION('guid-1',$,$,$,$,$,#4);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount, "unlike the swept-area-profile reader, a standalone curve's own IFCARCINDEX should be tessellated, not skipped");
+    assertEquals(1, app.allPolylines.nodes.length);
+
+    int[] nodes = app.allPolylines.nodes[0];
+    assertTrue(nodes.length > 3, "the arc between the three given points should be tessellated into more than just those three");
+
+    // Endpoints should still be exactly the first/last given points.
+    assertEquals(0f, app.allPoints.getX(nodes[0]), 0.0001f);
+    assertEquals(0f, app.allPoints.getY(nodes[0]), 0.0001f);
+    assertEquals(2f, app.allPoints.getX(nodes[nodes.length - 1]), 0.0001f);
+    assertEquals(0f, app.allPoints.getY(nodes[nodes.length - 1]), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_geometricCurveSet_importsEachElementAsItsOwnPolyline () throws IOException {
+    Path f = ifcFile("ifc-curves-geometriccurveset-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCPOLYLINE((#1,#2));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCCARTESIANPOINT((1.,1.,0.));
+        #6=IFCPOLYLINE((#4,#5));
+        #7=IFCGEOMETRICCURVESET((#3,#6));
+        #8=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#7));
+        #9=IFCPRODUCTDEFINITIONSHAPE($,$,(#8));
+        #10=IFCANNOTATION('guid-1',$,$,$,$,$,#9);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSkippedCount);
+    assertEquals(2, app.allPolylines.nodes.length, "each curve wrapped in the IfcGeometricCurveSet should become its own Polyline");
+  }
+
+  @Test
+  void importObjectsIFC_curves_on_trueNorthRotation_alsoRotatesImportedCurves () throws IOException {
+    Path f = ifcFile("ifc-curves-truenorth-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCPOLYLINE((#1,#2));
+        #4=IFCSHAPEREPRESENTATION($,'Annotation','Curve3D',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCANNOTATION('guid-1',$,$,$,$,$,#5);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
+        """
+    );
+
+    app.ifcImportCurves = true;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
+    assertEquals(1, app.allPolylines.nodes.length);
+
+    // A 90-degree rotation about Z around the world origin sends
+    // (x,y,0) to (-y,x,0) - same expectation as
+    // importObjectsIFC_trueNorth_rotatesImportedFacesAroundTheWorldOrigin()'s
+    // own, just for a Polyline instead of a Face.
+    int[] nodes = app.allPolylines.nodes[0];
+    float[][] expected = {{0, 0, 0}, {0, 1, 0}};
+    for (int i = 0; i < 2; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(nodes[i]), 0.001f, "point " + i + " x");
+      assertEquals(expected[i][1], app.allPoints.getY(nodes[i]), 0.001f, "point " + i + " y");
+    }
+  }
+
   // ================= progress window headless-safety =======================
   // import_objects_IFC() now shows a ProgressWindow (preBakeViewport3D.pde) -
   // a real java.awt.Frame - while showImportProgress (globals.pde) is on,

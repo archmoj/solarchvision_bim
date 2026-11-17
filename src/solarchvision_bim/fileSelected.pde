@@ -131,11 +131,11 @@ boolean axisSwapShowImportOptionsDialog (String title) {
 
 // Lets the person importing check/uncheck ifcImportFurniture/
 // ifcImportOrient/ifcImportRelocate/ifcImportIndoorSpace/
-// ifcImportOutdoorSpace (see importIfc.pde's own
+// ifcImportOutdoorSpace/ifcImportCurves (see importIfc.pde's own
 // IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/IFC_IMPORT_GOTO_LATLON/
-// IFC_IMPORT_INDOOR_SPACE/IFC_IMPORT_OUTDOOR_SPACE - these five
-// variables are what actually gets checked at import time, those
-// constants are only their starting values). Called from
+// IFC_IMPORT_INDOOR_SPACE/IFC_IMPORT_OUTDOOR_SPACE/IFC_IMPORT_CURVES -
+// these six variables are what actually gets checked at import time,
+// those constants are only their starting values). Called from
 // import_objects_IFC() itself, not from here - see
 // ifcImportShowOptionsDialog's own comment in importIfc.pde
 // for exactly when, and why that's after a file's already been picked
@@ -154,6 +154,7 @@ boolean ifcShowImportOptionsDialog () {
   javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", ifcImportRelocate);
   javax.swing.JCheckBox indoorSpaceBox = new javax.swing.JCheckBox("Import indoor spaces (rooms/zones)", ifcImportIndoorSpace);
   javax.swing.JCheckBox outdoorSpaceBox = new javax.swing.JCheckBox("Import outdoor spaces (courtyards, terraces)", ifcImportOutdoorSpace);
+  javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines, arcs and curves (annotation geometry)", ifcImportCurves);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(furnitureBox);
@@ -161,6 +162,7 @@ boolean ifcShowImportOptionsDialog () {
   panel.add(relocateBox);
   panel.add(indoorSpaceBox);
   panel.add(outdoorSpaceBox);
+  panel.add(curvesBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "IFC import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -175,6 +177,7 @@ boolean ifcShowImportOptionsDialog () {
   ifcImportRelocate = relocateBox.isSelected();
   ifcImportIndoorSpace = indoorSpaceBox.isSelected();
   ifcImportOutdoorSpace = outdoorSpaceBox.isSelected();
+  ifcImportCurves = curvesBox.isSelected();
 
   return true;
 }
