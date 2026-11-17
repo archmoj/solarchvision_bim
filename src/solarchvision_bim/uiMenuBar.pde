@@ -310,14 +310,6 @@ class UI_menuBar {
       "Section",
       "Camera",
       ___divider___,
-      "1D-Tree",
-      "2D-Tree",
-      "Person",
-      ___divider___,
-      "Add People on Land",
-      "Add 2D-Trees on Land",
-      "Add 1D-Trees on Land",
-      ___divider___,
       "Box",
       "Cone",
       "Cushion",
@@ -347,7 +339,15 @@ class UI_menuBar {
       "Point",
       "Polyline",
       "Spline",
-      "Arc"
+      "Arc",
+      ___divider___,
+      "1D-Tree",
+      "2D-Tree",
+      "Person",
+      ___divider___,
+      "Add People on Land",
+      "Add 2D-Trees on Land",
+      "Add 1D-Trees on Land"
     },
     {
       "Select",
@@ -573,9 +573,11 @@ class UI_menuBar {
     {
       "Delete",
       "Delete Selection",
+      ___divider___,
       "Delete Scene Empty Groups",
       "Delete Scene Isolated Vertices",
       "Delete Selection Isolated Vertices",
+      ___divider___,
       "Delete All Model1Ds",
       "Delete All Model2Ds",
       "Delete All Groups",
@@ -584,6 +586,7 @@ class UI_menuBar {
       "Delete All Cameras",
       "Delete All Faces",
       "Delete All Polylines",
+      ___divider___,
       "Delete All"
     },
     {
