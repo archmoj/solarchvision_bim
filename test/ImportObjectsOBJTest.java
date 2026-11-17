@@ -227,4 +227,91 @@ class ImportObjectsOBJTest {
       app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
     });
   }
+
+  // ================= "l" line statements (objImportCurves) =====================
+  // Mirrors ImportObjectsDXFTest.java's/ImportObjectsIFCTest.java's own
+  // "curves" sections - see importObj.pde's own objHandleLine() comment
+  // for exactly what this does and why OBJ gets only lines, no arcs/
+  // curves (it has no such concept of its own at all, unlike IFC/DXF).
+
+  @Test
+  void importObjectsOBJ_curvesOffByDefault_lDirectiveIsSkipped () throws IOException {
+    Path objFile = Files.createTempFile("import-l-off-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl 1 2 3\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allPolylines.nodes.length, "objImportCurves defaults to false: nothing should land in allPolylines");
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_withCurvesOn_importsAnOpenPolylineThroughExistingVertices () throws IOException {
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-open-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl 1 2 3\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0], "l 1 2 3 should reference the same already-imported points f 1 2 3 would, not create new ones");
+    assertEquals(0, app.allPolylines.getClose(0), "no repeated first/last vertex - not a closed loop");
+    assertEquals(3, app.allPoints.getLength(), "the line should reuse the file's own 3 vertices, not create any new allPoints entries");
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_repeatingTheFirstVertexAsTheLast_isReadAsAClosedLoop () throws IOException {
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-closed-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl 1 2 3 1\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0], "the repeated closing vertex should be dropped, not kept as a 4th node");
+    assertEquals(1, app.allPolylines.getClose(0));
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_resolvesNegativeRelativeIndicesTheSameWayFDoes () throws IOException {
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-negative-index-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl -3 -2 -1\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allPolylines.nodes[0]);
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_doesNotInterfereWithFaceImport () throws IOException {
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-and-f-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\nl 1 2\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_withOnlyOneVertex_isSkipped () throws IOException {
+    // Not even one real segment - objHandleLine()'s own "count < 2"
+    // guard should bail out before ever calling allPolylines.create().
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-single-vertex-test", ".obj");
+    Files.writeString(objFile, "g g1\nv 0 0 0\nl 1\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allPolylines.nodes.length);
+  }
 }

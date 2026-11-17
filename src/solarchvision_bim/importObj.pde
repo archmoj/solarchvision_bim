@@ -9,6 +9,20 @@
 // ever see a dialog pop up.
 boolean objImportShowOptionsDialog = false;
 
+// Whether to also read OBJ's own "l v1 v2 ..." line statement as a
+// Polyline (polylines.pde) - off by default, same "a constant for the
+// starting value, a variable for what's actually checked at import
+// time" shape IFC_IMPORT_CURVES/ifcImportCurves (importIfc.pde) and
+// DXF_IMPORT_CURVES/dxfImportCurves (importDxf.pde) already use. OBJ
+// has no arc/curve concept of its own at all (unlike DXF's CIRCLE/ARC) -
+// just this one line-segment-chain statement, referencing vertices the
+// file's own "v" lines already defined - so "lines, arcs, curves" for
+// OBJ means exactly this one statement; see objHandleLine()'s own
+// comment, below, for exactly what it does with it.
+final boolean OBJ_IMPORT_CURVES = false;
+
+boolean objImportCurves = OBJ_IMPORT_CURVES;
+
 void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Consumed (reset) here regardless of whether the dialog is shown or
   // how the person answers it - see ifcImportShowOptionsDialog's own
@@ -19,7 +33,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   // below - as if import_objects_OBJ() had never been called at all.
   if (objImportShowOptionsDialog) {
     objImportShowOptionsDialog = false;
-    if (!axisSwapShowImportOptionsDialog("OBJ import options")) return;
+    if (!objShowImportOptionsDialog()) return;
   }
 
   println("\nImporting OBJ. Please wait...");
@@ -118,9 +132,12 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
         } // vertexNumber == 0: leave as default (0)
       }
       allFaces.create(newFace);
+    } else if (objImportCurves && tag.equalsIgnoreCase("l")) {
+      objHandleLine(parts, importVerticeNumber);
     }
-    // any other tag (vt, vn, usemtl, mtllib, #comment, ...) is intentionally
-    // ignored.
+    // any other tag (vt, vn, usemtl, mtllib, #comment, ...) is
+    // intentionally ignored - and, while objImportCurves is false
+    // (the default), "l" is ignored right along with them.
     }
   } finally {
     if (importProgressWindow != null) importProgressWindow.dispose();
@@ -134,4 +151,60 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
 
   isImportingInProgress = false;
   showArrowCursor();
+}
+
+// Reads one "l v1 v2 v3 ..." line statement as a single Polyline
+// (polylines.pde) through the file's own already-imported vertices,
+// only called while objImportCurves is true (see its own comment
+// above). Unlike add_Polyline()/add_Spline() (which each take raw
+// float[][] points and create brand-new allPoints entries for them),
+// this resolves each reference the exact same way the "f" tag's own
+// branch above already does - through importVerticeNumber for a
+// positive (1-based) index, or allPoints.getLength() - abs(n) for a
+// negative (relative-to-the-current-end-of-file) one - since an "l"
+// statement's vertices are never new points of their own, only
+// references into the ones "v" already created, so allPolylines.
+// create(int[]) (an existing point-index array, no new allPoints
+// entries) is the right primitive here, not add_Polyline().
+//
+// OBJ has no separate "closed" flag anywhere in its own "l" syntax -
+// some writers close a loop by simply repeating the first vertex as
+// the last one, so that repetition (not current_Closed, the global
+// set once for the whole import from this call's own clz parameter)
+// is what actually decides it here, the same auto-detect-and-dedup
+// convention dxfEmitPolyline() (importDxf.pde) and ifcEmitCurve()
+// (importIfc.pde) each already use for their own formats.
+void objHandleLine (String[] parts, IntList importVerticeNumber) {
+
+  int count = parts.length - 1;
+  if (count < 2) return; // not even one real segment
+
+  int[] refs = new int[count];
+  for (int n = 0; n < count; n++) {
+    String[] the_numbers = split(parts[n + 1], '/');
+    int vertexNumber = int(the_numbers[0]);
+    if (vertexNumber > 0) {
+      refs[n] = importVerticeNumber.get(vertexNumber);
+    } else if (vertexNumber < 0) { // negative (relative) indexing
+      refs[n] = allPoints.getLength() - abs(vertexNumber);
+    } // vertexNumber == 0: leave as default (0), same as the "f" branch above
+  }
+
+  boolean closed = (refs.length > 2) && (refs[0] == refs[refs.length - 1]);
+  int[] nodes = closed ? java.util.Arrays.copyOf(refs, refs.length - 1) : refs;
+  if (nodes.length < 2) return;
+
+  // allPolylines.create(int[]) (polylines.pde) reads current_Material/
+  // Tessellation/Layer/Visibility/Weight/Closed/CurveType/IsArc off
+  // their own globals at call time - all of them already set, for this
+  // whole import, right above this function's own caller (m/tes/lyr/
+  // vsb/wgt - current_Closed too, from this call's own clz parameter) -
+  // except current_Closed, which this one Polyline's own detected
+  // closedness overrides just for this call, then restores, so a later
+  // "l" statement (or anything else reading current_Closed) still sees
+  // whatever this whole import's own clz parameter actually said.
+  int savedClosed = current_Closed;
+  current_Closed = closed ? 1 : 0;
+  allPolylines.create(nodes);
+  current_Closed = savedClosed;
 }

@@ -99,19 +99,19 @@ void selectFile_ImportDae () {
 // importer silently guessing.
 boolean importSwapAxisYZ = false;
 
-// Shared by OBJ/GLB/STL/PLY/DAE (one option, one checkbox) since that's
+// Shared by GLB/STL/PLY/DAE (one option, one checkbox) since that's
 // exactly the axis convention they already agree to share - see import
-// Obj.pde's/importGlb.pde's/importStl.pde's/import
-// Ply.pde's/import_objects_DAE.pde's own objImportShowOptionsDialog/
-// glbImportShowOptionsDialog/stlImportShowOptionsDialog/
-// plyImportShowOptionsDialog/daeImportShowOptionsDialog for how each
-// arms this the same way ifcImportShowOptionsDialog (below) arms IFC's
-// own five-option version of the same dialog. DXF reuses this same
-// checkbox too, but through its own dxfShowImportOptionsDialog()
-// further down instead of this shared function directly - the same
-// "one extra option beside the swap checkbox" reason
-// lasShowImportOptionsDialog()'s own comment gives for why LAS isn't
-// here either.
+// Glb.pde's/importStl.pde's/importPly.pde's/
+// import_objects_DAE.pde's own glbImportShowOptionsDialog/
+// stlImportShowOptionsDialog/plyImportShowOptionsDialog/
+// daeImportShowOptionsDialog for how each arms this the same way
+// ifcImportShowOptionsDialog (below) arms IFC's own five-option
+// version of the same dialog. OBJ and DXF each reuse this same
+// checkbox too, but through their own objShowImportOptionsDialog()/
+// dxfShowImportOptionsDialog() further down instead of this shared
+// function directly - the same "one extra option beside the swap
+// checkbox" reason lasShowImportOptionsDialog()'s own comment gives
+// for why LAS isn't here either.
 boolean axisSwapShowImportOptionsDialog (String title) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
@@ -164,6 +164,40 @@ boolean dxfShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   dxfImportCurves = curvesBox.isSelected();
+
+  return true;
+}
+
+// Lets the person importing check/uncheck the same importSwapAxisYZ
+// checkbox axisSwapShowImportOptionsDialog() above offers GLB/STL/PLY/
+// DAE, alongside objImportCurves (see importObj.pde's own
+// OBJ_IMPORT_CURVES/objImportCurves - same constant-for-the-starting-
+// value, variable-for-what's-actually-checked shape as dxfImportCurves
+// just above). OBJ needs its own dialog (not that shared one) for the
+// same "one extra option beside the swap checkbox" reason
+// dxfShowImportOptionsDialog() just above does. Called from
+// import_objects_OBJ() itself (importObj.pde), not from here - same
+// reasoning, and the same "a cancelled dialog must never half-apply a
+// choice" behavior, as dxfShowImportOptionsDialog()'s own comment above.
+boolean objShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
+  javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines", objImportCurves);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(swapAxisBox);
+  panel.add(curvesBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "OBJ import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where they were unless this dialog's own OK button is
+  // actually pressed - a cancelled dialog must never half-apply a
+  // choice.
+  importSwapAxisYZ = swapAxisBox.isSelected();
+  objImportCurves = curvesBox.isSelected();
 
   return true;
 }
@@ -276,12 +310,15 @@ void selectFile_ImportGbxml () {
 // same "a constant for the starting value, a variable for what's
 // actually checked at import time" shape IFC_IMPORT_FURNITURE/
 // ifcImportFurniture already use), alongside the same Y/Z-swap checkbox
-// axisSwapShowImportOptionsDialog() above already offers OBJ/GLB/STL/
-// DXF/PLY/DAE - LAS needs its own dialog (not that shared one) purely
-// because it has this one extra option beside the swap checkbox, the
-// same reason ifcShowImportOptionsDialog()'s/gbxmlShowImportOptionsDialog()'s
-// own dialogs just above are each their own function instead of reusing
-// it. Called from import_objects_LAS() itself (importLas.pde), not
+// axisSwapShowImportOptionsDialog() above already offers GLB/STL/PLY/
+// DAE (OBJ and DXF each have their own dialog for the same reason, see
+// objShowImportOptionsDialog()'s/dxfShowImportOptionsDialog()'s own
+// comments above) - LAS needs its own dialog (not that shared one)
+// purely because it has this one extra option beside the swap
+// checkbox, the same reason ifcShowImportOptionsDialog()'s/
+// gbxmlShowImportOptionsDialog()'s own dialogs just above are each
+// their own function instead of reusing it. Called from
+// import_objects_LAS() itself (importLas.pde), not
 // from here - same reasoning, and the same "a cancelled dialog must
 // never half-apply a choice" behavior, as ifcShowImportOptionsDialog()'s
 // own comment above.
