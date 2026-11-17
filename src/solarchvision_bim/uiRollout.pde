@@ -39,8 +39,8 @@ class UI_rollout {
   void buildAllRollouts () {
 
     PARENT_LOCATION = pushParent("Location & Data");
-    CHILD_LOCATION_POINT = pushChild("Point");
-    CHILD_LOCATION_STATIONS = pushChild("Stations");
+    CHILD_LOCATION_POINT = pushChild("Station");
+    CHILD_LOCATION_STATIONS = pushChild("Data Points");
 
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
     CHILD_PERIOD_TIME = pushChild("Time");
@@ -74,14 +74,7 @@ class UI_rollout {
     PARENT_POSTPROCESS = pushParent("Post-Processing");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
     CHILD_POSTPROCESS_DEVELOPED = pushChild("Developed");
-    // "Impact Layer" (pick which data layer feeds post-processing) and
-    // "Impact Simulation" (configure the solar/wind impact analysis itself,
-    // moved here from Geometry & Space - it's an analysis workflow, not
-    // object creation/editing) are deliberately named apart: both are
-    // "impacts", but a user choosing between tabs needs to tell at a
-    // glance which one just picks a layer and which one runs a simulation.
-    CHILD_POSTPROCESS_IMPACTS = pushChild("Impact Layer");
-    CHILD_POSTPROCESS_SIMULATION = pushChild("Impact Simulation");
+    CHILD_POSTPROCESS_SIMULATION = pushChild("Simulation");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -113,7 +106,6 @@ class UI_rollout {
   int PARENT_POSTPROCESS;
   int CHILD_POSTPROCESS_INTERPOLATION;
   int CHILD_POSTPROCESS_DEVELOPED;
-  int CHILD_POSTPROCESS_IMPACTS;
   int CHILD_POSTPROCESS_SIMULATION;
 
   int PARENT_EXPORT;
@@ -571,6 +563,7 @@ class UI_rollout {
         WORLD.ensembleObservationDisplayNear = vm.ensembleObservationDisplayNear(1);
         WORLD.ensembleForecastDisplayAll = vm.ensembleForecastDisplayAll(1);
         WORLD.ensembleForecastDisplayNear = vm.ensembleForecastDisplayNear(1);
+        currentDataSource = vm.currentDataSource(1);
       }
     } else if (this.parent == PARENT_GEOMETRY) {
       if (this.child == CHILD_GEOMETRY_CREATE) {
@@ -813,13 +806,9 @@ class UI_rollout {
         developLayerAngleInclination = vm.developLayerAngleInclination(1);
         developLayerAngleOrientation = vm.developLayerAngleOrientation(1);
       }
-      if (this.child == CHILD_POSTPROCESS_IMPACTS) {
-        currentDataSource = vm.currentDataSource(1);
-        STUDY.impactLayerIndex = vm.impactLayerIndex(1);
-      }
-
       if (this.child == CHILD_POSTPROCESS_SIMULATION) {
 
+        STUDY.impactLayerIndex = vm.impactLayerIndex(1);
         impactDisplayDay = vm.impactDisplayDay(1);
         allSolarImpacts.displayImage = vm.SolarImpactsDisplayImage(1);
         allSolidImpacts.displayImage = vm.SolidImpactsDisplayImage(1);
