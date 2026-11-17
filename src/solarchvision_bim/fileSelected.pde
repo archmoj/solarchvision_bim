@@ -99,16 +99,19 @@ void selectFile_ImportDae () {
 // importer silently guessing.
 boolean importSwapAxisYZ = false;
 
-// Shared by OBJ/GLB/STL/DXF/PLY/DAE (one option, one checkbox) since
-// that's exactly the axis convention they already agree to share - see
-// importObj.pde's/importGlb.pde's/importStl.
-// pde's/importDxf.pde's/importPly.pde's/import_
-// objects_DAE.pde's own objImportShowOptionsDialog/
+// Shared by OBJ/GLB/STL/PLY/DAE (one option, one checkbox) since that's
+// exactly the axis convention they already agree to share - see import
+// Obj.pde's/importGlb.pde's/importStl.pde's/import
+// Ply.pde's/import_objects_DAE.pde's own objImportShowOptionsDialog/
 // glbImportShowOptionsDialog/stlImportShowOptionsDialog/
-// dxfImportShowOptionsDialog/plyImportShowOptionsDialog/
-// daeImportShowOptionsDialog for how each arms this the same way
-// ifcImportShowOptionsDialog (below) arms IFC's own five-option version
-// of the same dialog.
+// plyImportShowOptionsDialog/daeImportShowOptionsDialog for how each
+// arms this the same way ifcImportShowOptionsDialog (below) arms IFC's
+// own five-option version of the same dialog. DXF reuses this same
+// checkbox too, but through its own dxfShowImportOptionsDialog()
+// further down instead of this shared function directly - the same
+// "one extra option beside the swap checkbox" reason
+// lasShowImportOptionsDialog()'s own comment gives for why LAS isn't
+// here either.
 boolean axisSwapShowImportOptionsDialog (String title) {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
@@ -125,6 +128,42 @@ boolean axisSwapShowImportOptionsDialog (String title) {
   // actually pressed - a cancelled dialog must never half-apply a choice
   // (same reasoning as ifcShowImportOptionsDialog's own comment below).
   importSwapAxisYZ = swapAxisBox.isSelected();
+
+  return true;
+}
+
+// Lets the person importing check/uncheck the same importSwapAxisYZ
+// checkbox axisSwapShowImportOptionsDialog() above offers OBJ/GLB/STL/
+// PLY/DAE, alongside dxfImportCurves (see importDxf.pde's own
+// DXF_IMPORT_CURVES/dxfImportCurves - a constant for the starting
+// value, a variable for what's actually checked at import time, the
+// same shape IFC_IMPORT_FURNITURE/ifcImportFurniture above already
+// use). DXF needs its own dialog (not that shared one) purely because
+// it has this one extra option beside the swap checkbox - the same
+// reason lasShowImportOptionsDialog()'s own comment gives for why LAS
+// isn't there either. Called from import_objects_DXF() itself
+// (importDxf.pde), not from here - same reasoning, and the same "a
+// cancelled dialog must never half-apply a choice" behavior, as
+// ifcShowImportOptionsDialog()'s own comment below.
+boolean dxfShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
+  javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines, arcs and curves", dxfImportCurves);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(swapAxisBox);
+  panel.add(curvesBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "DXF import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where they were unless this dialog's own OK button is
+  // actually pressed - a cancelled dialog must never half-apply a
+  // choice.
+  importSwapAxisYZ = swapAxisBox.isSelected();
+  dxfImportCurves = curvesBox.isSelected();
 
   return true;
 }

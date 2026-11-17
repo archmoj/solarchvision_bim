@@ -35,22 +35,59 @@
 //     SEQEND - DXF's older, AutoCAD-native equivalent of an indexed
 //     mesh (its own MESH entity, introduced far later/ AutoCAD 2010+,
 //     isn't read in this version). A plain/2D POLYLINE (the 64 bit not
-//     set) is skipped instead - its own VERTEX/SEQEND run is still
-//     consumed so the main loop's own cursor stays in sync, just
-//     without building anything from it.
-// Every other entity type - LINE, LWPOLYLINE, CIRCLE, ARC, SPLINE, MESH,
-// TEXT/MTEXT, DIMENSION, HATCH, SOLID, POINT, INSERT (block references),
-// ... - is intentionally skipped: not solid 3D face geometry (or, for
-// INSERT/MESH, a kind this version doesn't build).
+//     set) is read as a line/arc/curve instead - see the next bullet.
+//   - LINE, LWPOLYLINE, a plain/2D POLYLINE (bit 64 NOT set - the one
+//     exception to the previous bullet), CIRCLE and ARC - while
+//     dxfImportCurves (below) is true, off by default: this is drafting
+//     geometry (dimension lines, centerlines, a site-boundary sketch,
+//     ...), not solid building fabric, the same reasoning import
+//     Ifc.pde's own IFC_IMPORT_CURVES gives for its own, directly
+//     analogous toggle. Each imports as one of this app's own native
+//     Polylines (polylines.pde) - straight segments for LINE/
+//     LWPOLYLINE/POLYLINE (an LWPOLYLINE's own per-vertex bulge, group
+//     42 - an arc bulging that one segment - is read nowhere in this
+//     version: every LWPOLYLINE segment comes in straight, bulge or
+//     not), a tessellated true circle/arc for CIRCLE/ARC (see
+//     dxfArcPoints() below - DXF's own always-counterclockwise-from-
+//     start-to-end angle convention, same as this app's own funcs.
+//     cos_ang()/add_Arc()). LWPOLYLINE/POLYLINE's own "closed" flag
+//     (group 70, bit 1) decides whether the resulting Polyline is
+//     closed; LINE/ARC always come in open, CIRCLE always closed.
+// Every other entity type - SPLINE, MESH, TEXT/MTEXT, DIMENSION, HATCH,
+// SOLID, POINT, ELLIPSE, INSERT (block references), ... - is
+// intentionally skipped, with or without dxfImportCurves: not solid 3D
+// face geometry (or, for INSERT/MESH, a kind this version doesn't
+// build), and, for SPLINE/ELLIPSE specifically, a curve shape this
+// importer doesn't evaluate even as a line/arc (same "not approximated"
+// stance importIfc.pde's own curve reader takes for a B-spline/
+// ellipse).
 //
 // Each entity's own layer (group code 8, "0" if absent) becomes this
 // importer's own group/material-cycling boundary - the natural DXF
 // equivalent of importObj.pde's own "g" tag/importStl.
 // pde's own "solid" block, since CAD users already organize a drawing's
 // own geometry by layer far more consistently than by any other
-// grouping DXF offers.
+// grouping DXF offers. Applies to LINE/LWPOLYLINE/POLYLINE/CIRCLE/ARC
+// the same way it already does to 3DFACE/POLYLINE, while
+// dxfImportCurves is true (a layer change those entities can't
+// actually produce while it's false - there's no geometry to attach a
+// new group to yet).
 
 boolean dxfImportShowOptionsDialog = false;
+
+// Whether to import standalone line/arc/curve ("drafting") geometry at
+// all - off by default. See this file's own header comment, just
+// above, for exactly which entity types this covers (LINE, LWPOLYLINE,
+// a plain/2D POLYLINE, CIRCLE, ARC) and how each one is read; directly
+// analogous to importIfc.pde's own IFC_IMPORT_CURVES/ifcImportCurves -
+// same "a constant for the starting value, a variable for what's
+// actually checked at import time" shape, and the same reasoning for
+// starting off (drafting geometry, not building fabric). User-facing
+// via dxfShowImportOptionsDialog() (fileSelected.pde), the same way
+// IFC's own toggle is.
+final boolean DXF_IMPORT_CURVES = false;
+
+boolean dxfImportCurves = DXF_IMPORT_CURVES;
 
 // Transform parameters, the material-cycling flag, and the running
 // polyface-mesh/layer state for the CURRENT import_objects_DXF() call -
@@ -61,6 +98,18 @@ boolean dxfCycleMaterial;
 String dxfCurrentLayer = null;
 boolean dxfPolyfaceActive = false;
 IntList dxfPolyfaceLocalPoints = new IntList(); // allPoints indices, in the order this polyface mesh's own coordinate VERTEX records declared them
+// A plain/2D POLYLINE's own running VERTEX collection - the "curve"
+// counterpart of dxfPolyfaceActive/dxfPolyfaceLocalPoints just above,
+// and mutually exclusive with them (see dxfHandlePolylineStart()'s own
+// comment): already-transformed WORLD points (not allPoints indices -
+// this is only ever turned into a real Polyline by dxfEmitPolyline(),
+// at SEQEND, which itself creates the points, the same "world-space
+// point list in, allPolylines.add_Polyline() creates the points" shape
+// importIfc.pde's own ifcPendingCurvePoints uses), since a plain
+// POLYLINE is only ever read at all while dxfImportCurves is true.
+boolean dxfPlainPolylineActive = false;
+boolean dxfPlainPolylineClosed = false;
+ArrayList<float[]> dxfPlainPolylinePoints = new ArrayList<float[]>();
 int dxfEntitiesImported = 0;
 
 void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
@@ -71,7 +120,7 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
   // dialog does.
   if (dxfImportShowOptionsDialog) {
     dxfImportShowOptionsDialog = false;
-    if (!axisSwapShowImportOptionsDialog("DXF import options")) return;
+    if (!dxfShowImportOptionsDialog()) return;
   }
 
   println("\nImporting DXF. Please wait...");
@@ -94,6 +143,9 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
   dxfCurrentLayer = null;
   dxfPolyfaceActive = false;
   dxfPolyfaceLocalPoints.clear();
+  dxfPlainPolylineActive = false;
+  dxfPlainPolylineClosed = false;
+  dxfPlainPolylinePoints.clear();
   dxfEntitiesImported = 0;
 
   importedObjectName = OPESYS.getFilenameFromPath(FileName);
@@ -198,7 +250,11 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   if (!aborted && (dxfEntitiesImported == 0)) {
-    println("\nDXF import: no 3DFACE or polyface-mesh POLYLINE entities found - this version doesn't read any other entity type's geometry (LWPOLYLINE, MESH, block/INSERT references, ...)");
+    if (dxfImportCurves) {
+      println("\nDXF import: no 3DFACE/polyface-mesh POLYLINE geometry or LINE/LWPOLYLINE/POLYLINE/CIRCLE/ARC curve geometry found - this version doesn't read any other entity type's geometry (SPLINE, MESH, block/INSERT references, ...)");
+    } else {
+      println("\nDXF import: no 3DFACE or polyface-mesh POLYLINE entities found - this version doesn't read any other entity type's geometry (LWPOLYLINE, MESH, block/INSERT references, ...), and importing lines/arcs/curves is currently disabled");
+    }
   }
 
   if (!aborted) {
@@ -211,22 +267,28 @@ void import_objects_DXF (String FileName, int m, int tes, int lyr, int vsb, int 
   showArrowCursor();
 }
 
-// One point, carried through cx/cy/cz/sx/sy/sz and importSwapAxisYZ
-// (fileSelected.pde, shared with importObj.pde/import
-// Glb.pde/importStl.pde) the same way those three importers'
-// own per-vertex code already does.
-int dxfCreatePoint (float x, float y, float z) {
-  float finalX, finalY, finalZ;
+// The transform cx/cy/cz/sx/sy/sz and importSwapAxisYZ (fileSelected.pde,
+// shared with importObj.pde/importGlb.pde/importStl.pde) apply to every
+// coordinate this importer reads, as a plain {x,y,z} array rather than
+// an already-created Point - dxfCreatePoint() below is this, immediately
+// turned into one, for 3DFACE/polyface-mesh geometry; dxfEmitPolyline()
+// (further down) instead collects several of these and hands them, as
+// a whole float[][], to allPolylines.add_Polyline() - which creates
+// every one of ITS OWN points itself - for line/arc/curve geometry, the
+// same "world-space point list in, the Polylines/Faces class itself
+// creates the actual Points" split importIfc.pde's own ifcEmitFace()/
+// ifcEmitCurve() already make.
+float[] dxfTransformPoint (float x, float y, float z) {
   if (importSwapAxisYZ) {
-    finalX = dxf_cx + dxf_sx * x;
-    finalY = dxf_cy + dxf_sy * (-z);
-    finalZ = dxf_cz + dxf_sz * y;
+    return new float[]{ dxf_cx + dxf_sx * x, dxf_cy + dxf_sy * (-z), dxf_cz + dxf_sz * y };
   } else {
-    finalX = dxf_cx + dxf_sx * x;
-    finalY = dxf_cy + dxf_sy * y;
-    finalZ = dxf_cz + dxf_sz * z;
+    return new float[]{ dxf_cx + dxf_sx * x, dxf_cy + dxf_sy * y, dxf_cz + dxf_sz * z };
   }
-  return allPoints.create(finalX, finalY, finalZ);
+}
+
+int dxfCreatePoint (float x, float y, float z) {
+  float[] p = dxfTransformPoint(x, y, z);
+  return allPoints.create(p[0], p[1], p[2]);
 }
 
 // The value for group code `code` within one entity's own collected
@@ -253,12 +315,17 @@ float dxfFindFloat (IntList eCodes, StringList eValues, int code, float defaultV
 // this file's own header comment for exactly which types are handled.
 void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
   // A layer change starts a new group here (see this file's own header
-  // comment for why) - only for the two entity types that can actually
-  // start new geometry: an individual VERTEX's own layer (if it somehow
-  // differs from its POLYLINE header's) isn't meaningful for the
-  // polyface mesh it's building, so layer tracking is deliberately not
-  // applied there.
-  if (entityType.equals("3DFACE") || entityType.equals("POLYLINE")) {
+  // comment for why) - for 3DFACE/POLYLINE unconditionally, and for
+  // LINE/LWPOLYLINE/CIRCLE/ARC too while dxfImportCurves is true (see
+  // IFC_IMPORT_CURVES' own comment for the reasoning this toggle
+  // mirrors) - the entity types that can actually start new geometry.
+  // An individual VERTEX's own layer (if it somehow differs from its
+  // POLYLINE header's) isn't meaningful for the polyface mesh/plain
+  // curve it's building, so layer tracking is deliberately not applied
+  // there either way.
+  boolean canStartGeometry = entityType.equals("3DFACE") || entityType.equals("POLYLINE")
+    || (dxfImportCurves && (entityType.equals("LINE") || entityType.equals("LWPOLYLINE") || entityType.equals("CIRCLE") || entityType.equals("ARC")));
+  if (canStartGeometry) {
     String layer = dxfFind(eCodes, eValues, 8, "0");
     if (!layer.equals(dxfCurrentLayer)) {
       dxfCurrentLayer = layer;
@@ -274,11 +341,29 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
   } else if (entityType.equals("VERTEX")) {
     dxfHandleVertex(eCodes, eValues);
   } else if (entityType.equals("SEQEND")) {
+    // Finalizes a plain/2D POLYLINE's own run of VERTEX records (the
+    // polyface-mesh case has nothing left to do here - every one of
+    // its own faces was already created, VERTEX by VERTEX, as it was
+    // read) - see dxfHandlePolylineStart()'s/dxfHandleVertex()'s own
+    // comments.
+    if (dxfPlainPolylineActive && dxfPlainPolylinePoints.size() >= 2) {
+      dxfEmitPolyline(dxfPlainPolylinePoints.toArray(new float[0][]), dxfPlainPolylineClosed);
+      dxfEntitiesImported += 1;
+    }
     dxfPolyfaceActive = false;
+    dxfPlainPolylineActive = false;
+  } else if (dxfImportCurves && entityType.equals("LINE")) {
+    dxfHandleLine(eCodes, eValues);
+  } else if (dxfImportCurves && entityType.equals("LWPOLYLINE")) {
+    dxfHandleLwPolyline(eCodes, eValues);
+  } else if (dxfImportCurves && entityType.equals("CIRCLE")) {
+    dxfHandleCircle(eCodes, eValues);
+  } else if (dxfImportCurves && entityType.equals("ARC")) {
+    dxfHandleArc(eCodes, eValues);
   }
-  // every other entity type (LINE, LWPOLYLINE, CIRCLE, ARC, SPLINE,
-  // TEXT, MTEXT, DIMENSION, INSERT, HATCH, SOLID, POINT, ELLIPSE,
-  // MESH, ...) is intentionally skipped - see this file's own header
+  // every other entity type (SPLINE, TEXT, MTEXT, DIMENSION, INSERT,
+  // HATCH, SOLID, POINT, ELLIPSE, MESH, ...) is intentionally skipped,
+  // with or without dxfImportCurves - see this file's own header
   // comment.
 }
 
@@ -323,23 +408,50 @@ void dxfHandlePolylineStart (IntList eCodes, StringList eValues) {
   int flags = (int) dxfFindFloat(eCodes, eValues, 70, 0);
   dxfPolyfaceActive = ((flags & 64) != 0); // bit 64: "polyface mesh" - see this file's own header comment
   dxfPolyfaceLocalPoints.clear();
+
+  // A plain/2D POLYLINE (bit 64 NOT set) - DXF's older, pre-LWPOLYLINE
+  // way of drawing a straight-segment line/curve - only read while
+  // dxfImportCurves is true (see that toggle's own comment); mutually
+  // exclusive with dxfPolyfaceActive above, since bit 64 alone decides
+  // which of the two this POLYLINE actually is. Bit 1 ("closed") is the
+  // same flag LWPOLYLINE's own group 70 uses.
+  dxfPlainPolylineActive = dxfImportCurves && !dxfPolyfaceActive;
+  dxfPlainPolylineClosed = (flags & 1) != 0;
+  dxfPlainPolylinePoints.clear();
 }
 
-// A VERTEX entity belonging to the POLYLINE currently being read (if
-// any - dxfPolyfaceActive). A polyface mesh's own vertex run is really
-// two different kinds of record sharing the one VERTEX entity type: its
-// shared point list comes first (plain x/y/z coordinates, groups
-// 10/20/30), then its face list (each one's groups 71/72/73/74 holding
-// up to four 1-based indices INTO that point list, in the order its own
-// coordinate records appeared - a negative index marks that edge
-// invisible, which this importer doesn't track, so just the absolute
-// value is used). Telling the two apart by whether ANY of 71-74 are
-// present (rather than trying to parse this VERTEX's own group-70 flags
-// bit-for-bit) is deliberately the more robust signal: real-world
-// exporters are far more consistent about always writing 71+ on a face
-// record and never on a coordinate record than about which exact flag-
-// 70 bit combination they use for either kind.
+// A VERTEX entity belonging to the POLYLINE currently being read, if
+// any - either a polyface mesh's (dxfPolyfaceActive) or a plain/2D
+// one's (dxfPlainPolylineActive), the two being mutually exclusive (see
+// dxfHandlePolylineStart()'s own comment). A polyface mesh's own vertex
+// run is really two different kinds of record sharing the one VERTEX
+// entity type: its shared point list comes first (plain x/y/z
+// coordinates, groups 10/20/30), then its face list (each one's groups
+// 71/72/73/74 holding up to four 1-based indices INTO that point list,
+// in the order its own coordinate records appeared - a negative index
+// marks that edge invisible, which this importer doesn't track, so
+// just the absolute value is used). Telling the two apart by whether
+// ANY of 71-74 are present (rather than trying to parse this VERTEX's
+// own group-70 flags bit-for-bit) is deliberately the more robust
+// signal: real-world exporters are far more consistent about always
+// writing 71+ on a face record and never on a coordinate record than
+// about which exact flag-70 bit combination they use for either kind.
+// A plain/2D POLYLINE's own VERTEX run never carries 71-74 at all - it
+// has no face list to speak of - so it's read as a straight run of
+// plain x/y/z coordinates, same as the polyface mesh's own point-list
+// half, just collected as already-transformed WORLD points
+// (dxfPlainPolylinePoints) rather than allPoints indices, for
+// SEQEND (dxfHandleEntity()) to hand to dxfEmitPolyline() once the
+// whole run is in.
 void dxfHandleVertex (IntList eCodes, StringList eValues) {
+  if (dxfPlainPolylineActive) {
+    float x = dxfFindFloat(eCodes, eValues, 10, 0);
+    float y = dxfFindFloat(eCodes, eValues, 20, 0);
+    float z = dxfFindFloat(eCodes, eValues, 30, 0);
+    dxfPlainPolylinePoints.add(dxfTransformPoint(x, y, z));
+    return;
+  }
+
   if (!dxfPolyfaceActive) return;
 
   boolean isFaceDef = eCodes.hasValue(71) || eCodes.hasValue(72) || eCodes.hasValue(73) || eCodes.hasValue(74);
@@ -366,4 +478,131 @@ void dxfHandleVertex (IntList eCodes, StringList eValues) {
     float z = dxfFindFloat(eCodes, eValues, 30, 0);
     dxfPolyfaceLocalPoints.append(dxfCreatePoint(x, y, z));
   }
+}
+
+// Stages a line/arc/curve entity's own already-transformed WORLD points
+// as one real Polyline (polylines.pde), via allPolylines.add_Polyline()
+// - unlike dxfHandle3DFace()/dxfHandleVertex() above, there's no
+// "pending, flushed later" staging layer to worry about here the way
+// importIfc.pde's own ifcPendingCurvePoints needs (see that one's own
+// comment for why IT has to wait): this importer builds every Face's
+// own points immediately, via dxfCreatePoint() -> allPoints.create(),
+// the same call add_Polyline() itself makes for a Polyline's own points
+// - so there's no "a later bulk-flush will discard this" hazard to
+// avoid, and nothing stops a curve's own points from being created the
+// same way, right away, as every other point in this importer already
+// is. Drops a trailing point that exactly repeats the first - an
+// explicitly closed loop (a full CIRCLE's own 360-degree tessellation
+// naturally ends exactly where it started) - same reasoning import
+// Ifc.pde's own ifcEmitCurve() already applies.
+void dxfEmitPolyline (float[][] worldPts, boolean closed) {
+  int n = worldPts.length;
+  if (closed && (n > 2) && dxfPointsEqual(worldPts[0], worldPts[n - 1])) {
+    n -= 1;
+  }
+  if (n < 2) return;
+
+  float[][] pts = (n == worldPts.length) ? worldPts : java.util.Arrays.copyOf(worldPts, n);
+  allPolylines.add_Polyline(current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, closed ? 1 : 0, pts);
+}
+
+boolean dxfPointsEqual (float[] a, float[] b) {
+  return (abs(a[0] - b[0]) < 0.00001) && (abs(a[1] - b[1]) < 0.00001) && (abs(a[2] - b[2]) < 0.00001);
+}
+
+void dxfHandleLine (IntList eCodes, StringList eValues) {
+  float x1 = dxfFindFloat(eCodes, eValues, 10, 0);
+  float y1 = dxfFindFloat(eCodes, eValues, 20, 0);
+  float z1 = dxfFindFloat(eCodes, eValues, 30, 0);
+  float x2 = dxfFindFloat(eCodes, eValues, 11, 0);
+  float y2 = dxfFindFloat(eCodes, eValues, 21, 0);
+  float z2 = dxfFindFloat(eCodes, eValues, 31, 0);
+
+  dxfEmitPolyline(new float[][]{ dxfTransformPoint(x1, y1, z1), dxfTransformPoint(x2, y2, z2) }, false);
+  dxfEntitiesImported += 1;
+}
+
+// LWPOLYLINE: group 90 (vertex count - informational only, not read
+// here), 70 (flags - bit 1 "closed", same as a plain POLYLINE's own),
+// then one run of groups per vertex (10/20 - the vertex's own X/Y, a
+// shared 38 "elevation" for every vertex's Z, since LWPOLYLINE itself
+// has no per-vertex Z - plus optional 40/41 start/end width and 42
+// bulge, none of which this importer reads: every segment comes in
+// straight, bulge or not - see this file's own header comment). Groups
+// 10 and 20 repeat once per vertex, strictly in vertex order per the
+// DXF spec, which is what lets this walk eCodes/eValues once and treat
+// each new 10 as starting a fresh vertex, rather than needing to know
+// the vertex count up front.
+void dxfHandleLwPolyline (IntList eCodes, StringList eValues) {
+  int flags = (int) dxfFindFloat(eCodes, eValues, 70, 0);
+  boolean closed = (flags & 1) != 0;
+  float elevation = dxfFindFloat(eCodes, eValues, 38, 0);
+
+  ArrayList<float[]> localPts = new ArrayList<float[]>();
+  float curX = 0;
+  boolean haveX = false;
+  for (int i = 0; i < eCodes.size(); i++) {
+    int code = eCodes.get(i);
+    if (code == 10) {
+      curX = float(eValues.get(i));
+      haveX = true;
+    } else if ((code == 20) && haveX) {
+      float curY = float(eValues.get(i));
+      localPts.add(dxfTransformPoint(curX, curY, elevation));
+      haveX = false;
+    }
+  }
+
+  if (localPts.size() < 2) return;
+  dxfEmitPolyline(localPts.toArray(new float[0][]), closed);
+  dxfEntitiesImported += 1;
+}
+
+void dxfHandleCircle (IntList eCodes, StringList eValues) {
+  float cx = dxfFindFloat(eCodes, eValues, 10, 0);
+  float cy = dxfFindFloat(eCodes, eValues, 20, 0);
+  float cz = dxfFindFloat(eCodes, eValues, 30, 0);
+  float r = dxfFindFloat(eCodes, eValues, 40, 0);
+  if (r <= 0) return;
+
+  dxfEmitPolyline(dxfArcPoints(cx, cy, cz, r, 0, 360), true);
+  dxfEntitiesImported += 1;
+}
+
+void dxfHandleArc (IntList eCodes, StringList eValues) {
+  float cx = dxfFindFloat(eCodes, eValues, 10, 0);
+  float cy = dxfFindFloat(eCodes, eValues, 20, 0);
+  float cz = dxfFindFloat(eCodes, eValues, 30, 0);
+  float r = dxfFindFloat(eCodes, eValues, 40, 0);
+  float startDeg = dxfFindFloat(eCodes, eValues, 50, 0);
+  float endDeg = dxfFindFloat(eCodes, eValues, 51, 0);
+  if (r <= 0) return;
+
+  dxfEmitPolyline(dxfArcPoints(cx, cy, cz, r, startDeg, endDeg), false);
+  dxfEntitiesImported += 1;
+}
+
+// Tessellates, into already-transformed WORLD points, the run of a
+// CIRCLE/ARC's own circle from startDeg to endDeg - DXF's own
+// documented convention (group 50/51's own "Start/end angle") is always
+// counterclockwise from start to end, wrapping past 360 if needed, the
+// same direction-and-degrees convention this app's own funcs.cos_ang()/
+// Polylines.add_Arc() already use, and the exact same tessellation
+// density (one chord roughly every 6 degrees) importIfc.pde's own
+// ifcCircleLocalPoints() uses for the same reason - fine enough to read
+// as round without the segment count ballooning for a large-radius
+// arc. A CIRCLE (startDeg=0, endDeg=360) is simply the one case where
+// the sweep comes out to the full 360.
+float[][] dxfArcPoints (float cx, float cy, float cz, float r, float startDeg, float endDeg) {
+  float sweep = endDeg - startDeg;
+  while (sweep <= 0) sweep += 360;
+  while (sweep > 360) sweep -= 360;
+
+  int n = max(3, ceil(sweep / 6));
+  float[][] pts = new float[n + 1][];
+  for (int i = 0; i <= n; i++) {
+    float t = startDeg + sweep * i / float(n);
+    pts[i] = dxfTransformPoint(cx + r * cos(radians(t)), cy + r * sin(radians(t)), cz);
+  }
+  return pts;
 }

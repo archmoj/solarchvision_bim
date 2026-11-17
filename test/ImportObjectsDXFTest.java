@@ -339,4 +339,223 @@ class ImportObjectsDXFTest {
       app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
     });
   }
+
+  // ================= standalone line/arc/curve geometry (dxfImportCurves) ======
+  // Mirrors ImportObjectsIFCTest.java's own "standalone line/arc/curve
+  // ('annotation') geometry" section - see this file's own header
+  // comment and importDxf.pde's own header comment for exactly which
+  // group codes/entity types each path below corresponds to.
+
+  @Test
+  void importObjectsDXF_curvesOffByDefault_lineLwpolylineCircleArcPolyline_areAllSkipped () throws IOException {
+    Path f = dxfFile("dxf-curves-off-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "LINE", "8", "0", "10", "0", "20", "0", "30", "0", "11", "1", "21", "0", "31", "0",
+        "0", "LWPOLYLINE", "8", "0", "90", "2", "70", "0", "10", "0", "20", "0", "10", "1", "20", "0",
+        "0", "CIRCLE", "8", "0", "10", "0", "20", "0", "30", "0", "40", "5",
+        "0", "ARC", "8", "0", "10", "0", "20", "0", "30", "0", "40", "5", "50", "0", "51", "90",
+        "0", "POLYLINE", "8", "0", "70", "0",
+        "0", "VERTEX", "8", "0", "10", "0", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "1", "20", "0", "30", "0",
+        "0", "SEQEND",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allPolylines.nodes.length, "dxfImportCurves defaults to false: nothing should land in allPolylines");
+  }
+
+  @Test
+  void importObjectsDXF_line_withCurvesOn_importsAnOpenTwoPointPolyline () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-line-curve-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "LINE", "8", "0", "10", "0", "20", "0", "30", "0", "11", "3", "21", "4", "31", "0",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(2, app.allPolylines.nodes[0].length);
+    assertEquals(0, app.allPolylines.getClose(0), "a single straight segment is never a closed loop");
+
+    int p0 = app.allPolylines.nodes[0][0];
+    int p1 = app.allPolylines.nodes[0][1];
+    assertEquals(0, app.allPoints.getX(p0), 0.0001);
+    assertEquals(0, app.allPoints.getY(p0), 0.0001);
+    assertEquals(3, app.allPoints.getX(p1), 0.0001);
+    assertEquals(4, app.allPoints.getY(p1), 0.0001);
+  }
+
+  @Test
+  void importObjectsDXF_lwPolyline_open_usesTheSharedElevationForEveryVertexZ () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-lwpolyline-open-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "LWPOLYLINE", "8", "0", "90", "3", "70", "0", "38", "2",
+        "10", "0", "20", "0",
+        "10", "2", "20", "0",
+        "10", "2", "20", "2",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length);
+    assertEquals(0, app.allPolylines.getClose(0));
+
+    for (int n : app.allPolylines.nodes[0]) {
+      assertEquals(2, app.allPoints.getZ(n), 0.0001, "the shared group-38 elevation should become every vertex's own Z");
+    }
+  }
+
+  @Test
+  void importObjectsDXF_lwPolyline_closedFlag_isReadAsAClosedLoop () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-lwpolyline-closed-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "LWPOLYLINE", "8", "0", "90", "3", "70", "1",
+        "10", "0", "20", "0",
+        "10", "2", "20", "0",
+        "10", "2", "20", "2",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length, "flag bit 1 (closed) is metadata, not a repeated 4th vertex");
+    assertEquals(1, app.allPolylines.getClose(0));
+  }
+
+  @Test
+  void importObjectsDXF_plainTwoDPolyline_withCurvesOn_isReadAsAnOpenPolyline () throws IOException {
+    // Same body as importObjectsDXF_plainTwoDPolyline_withoutTheMeshFlag_isSkipped()
+    // above, just with dxfImportCurves turned on - flags 70 = 0 (bit 64
+    // clear) is what tells this apart from a polyface mesh either way.
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-plain-polyline-curve-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "POLYLINE", "8", "0", "70", "0",
+        "0", "VERTEX", "8", "0", "10", "0", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "1", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "1", "20", "1", "30", "0",
+        "0", "SEQEND",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "still no solid geometry - a plain polyline is a curve, not a face");
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(3, app.allPolylines.nodes[0].length);
+    assertEquals(0, app.allPolylines.getClose(0));
+  }
+
+  @Test
+  void importObjectsDXF_polyfaceMeshPolyline_withCurvesOn_isStillReadAsAFaceNotACurve () throws IOException {
+    // flags 70 = 64 (the polyface-mesh bit) must keep taking priority
+    // over dxfImportCurves - this is the same body as
+    // importObjectsDXF_polyfaceMeshPolyline_importsAQuadFaceFromItsOwnVertexRecords()
+    // above, just with the toggle on, to pin down that it changes nothing here.
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-polyface-quad-curves-on-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "POLYLINE", "8", "0", "70", "64",
+        "0", "VERTEX", "8", "0", "10", "0", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "1", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "1", "20", "1", "30", "0",
+        "0", "VERTEX", "8", "0", "10", "0", "20", "1", "30", "0",
+        "0", "VERTEX", "8", "0", "71", "1", "72", "2", "73", "3", "74", "4",
+        "0", "SEQEND",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(0, app.allPolylines.nodes.length, "a polyface mesh never becomes a Polyline, with or without dxfImportCurves");
+  }
+
+  @Test
+  void importObjectsDXF_circle_withCurvesOn_importsAClosedLoopThroughItsRadius () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-circle-curve-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "CIRCLE", "8", "0", "10", "0", "20", "0", "30", "0", "40", "5",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(1, app.allPolylines.getClose(0), "a full 360-degree sweep should come back as a closed loop");
+
+    int[] nodes = app.allPolylines.nodes[0];
+    boolean foundRadiusPoint = false;
+    for (int n : nodes) {
+      if ((Math.abs(app.allPoints.getX(n) - 5) < 0.01) && (Math.abs(app.allPoints.getY(n)) < 0.01)) foundRadiusPoint = true;
+    }
+    assertTrue(foundRadiusPoint, "the circle's own start point, at (radius, 0, centerZ), should be among its vertices");
+  }
+
+  @Test
+  void importObjectsDXF_arc_withCurvesOn_importsAnOpenQuarterCircle () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-arc-curve-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "ARC", "8", "0", "10", "0", "20", "0", "30", "0", "40", "5", "50", "0", "51", "90",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals(0, app.allPolylines.getClose(0), "a quarter-circle arc is open, not a closed loop");
+
+    int[] nodes = app.allPolylines.nodes[0];
+    int first = nodes[0];
+    int last = nodes[nodes.length - 1];
+    assertEquals(5, app.allPoints.getX(first), 0.01);
+    assertEquals(0, app.allPoints.getY(first), 0.01);
+    assertEquals(0, app.allPoints.getX(last), 0.01);
+    assertEquals(5, app.allPoints.getY(last), 0.01);
+  }
+
+  @Test
+  void importObjectsDXF_curveEntities_startNewGroupsOnLayerChangeTheSameWayFacesDo () throws IOException {
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-curve-layer-change-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "LINE", "8", "WALLS", "10", "0", "20", "0", "30", "0", "11", "1", "21", "0", "31", "0",
+        "0", "LINE", "8", "ROOF", "10", "0", "20", "0", "30", "1", "11", "1", "21", "0", "31", "1",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allGroups.num, "each distinct layer should start its own group, same as 3DFACE entities do");
+    assertEquals(1, app.allPolylines.getMaterial(0), "m == -1 cycles once per layer change, starting at 1");
+    assertEquals(2, app.allPolylines.getMaterial(1));
+  }
 }
