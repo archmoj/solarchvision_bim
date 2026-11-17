@@ -51,6 +51,25 @@ class ExportObjectsOBJTest {
     app.import_objects_OBJ(objFile.toString(), material, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
   }
 
+  // objHandleLine() (importObj.pde) is the simplest way to get a real
+  // allPolylines entry into a fresh instance with the exact
+  // current_Material/Tessellation/Layer/Visibility/Weight/Closed globals
+  // already set the way a real import call would leave them - same
+  // reasoning importOneTriangle() above already follows for allFaces.
+  private void importOnePolyline (boolean closed) throws IOException {
+    app.objImportCurves = true;
+    Path objFile = Files.createTempFile("export-test-polyline-source", ".obj");
+    String body = closed
+      ? "g line1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl 1 2 3 1\n"
+      : "g line1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nl 1 2 3\n";
+    Files.writeString(objFile, body);
+    // (FileName, m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz) - vsb=1
+    // so this Polyline is actually visible (current_Visibility would
+    // otherwise default to 0, and the new OBJ3D export branch skips
+    // invisible polylines just like a real one would).
+    app.import_objects_OBJ(objFile.toString(), 5, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+  }
+
   @Test
   void exportObj_createsARealObjFileAtTheExpectedPath () throws IOException {
     importOneTriangle(5);
@@ -127,5 +146,103 @@ class ExportObjectsOBJTest {
     assertFalse(content.contains("usemtl"), content);
     assertFalse(Files.exists(Path.of(app.Folder_Export3D, app.ProjectName + "_nomtl.mtl")),
         "no .mtl file should be written at all when the material library is disabled");
+  }
+
+  // allPolylines was entirely absent from exportObj.pde's own list of
+  // .draw(TypeWindow.OBJ3D) calls before this feature, and Polylines.draw()
+  // itself only ever had a WIN3D branch - these tests cover the new OBJ3D
+  // branch added to polylines.pde alongside it.
+
+  @Test
+  void exportObj_writesLLine_forAnOpenImportedPolyline () throws IOException {
+    importOnePolyline(false);
+
+    app.exportObj("_polyline_open");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_open.obj"));
+    long lLines = content.lines().filter(l -> l.startsWith("l ")).count();
+    assertEquals(1, lLines, content);
+
+    // Only 3 vertices exist in the whole file (no faces exported here),
+    // so this Polyline's own "v" lines are numbered 1..3 and its "l" line
+    // should reference exactly those three, in order, with no repeat.
+    String lLine = content.lines().filter(l -> l.startsWith("l ")).findFirst().get();
+    assertEquals("l 1 2 3", lLine.strip(), content);
+  }
+
+  @Test
+  void exportObj_repeatsFirstVertex_forAClosedImportedPolyline () throws IOException {
+    importOnePolyline(true);
+
+    app.exportObj("_polyline_closed");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_closed.obj"));
+    String lLine = content.lines().filter(l -> l.startsWith("l ")).findFirst().get();
+
+    // Closed loop: the first vertex index (1) is repeated at the end,
+    // matching objHandleLine()'s own convention for reading this back in.
+    assertEquals("l 1 2 3 1", lLine.strip(), content);
+  }
+
+  @Test
+  void exportObj_writesLinesGroupTag_whenExporterMaintainPolygonsIsOn () throws IOException {
+    // User3D.exporterMaintainPolygons defaults to 1 (user3D.pde), so a
+    // fresh instance should produce the "g Object3D_..._lines" tag with
+    // no explicit setting needed.
+    importOnePolyline(false);
+
+    app.exportObj("_polyline_grouptag");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_grouptag.obj"));
+    assertTrue(content.lines().anyMatch(l -> l.startsWith("g Object3D_") && l.endsWith("_lines")), content);
+  }
+
+  @Test
+  void exportObj_omitsLinesGroupTag_whenExporterMaintainPolygonsIsOff () throws IOException {
+    app.User3D.exporterMaintainPolygons = 0;
+    importOnePolyline(false);
+
+    app.exportObj("_polyline_nogrouptag");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_nogrouptag.obj"));
+    assertFalse(content.lines().anyMatch(l -> l.startsWith("g Object3D_") && l.endsWith("_lines")), content);
+    // The line itself should still be written either way.
+    assertTrue(content.lines().anyMatch(l -> l.startsWith("l ")), content);
+  }
+
+  @Test
+  void exportObj_omitsInvisiblePolyline_fromExport () throws IOException {
+    importOnePolyline(false);
+    // allPolylines.nodes.length - 1 is the just-created polyline's own row.
+    app.allPolylines.setVisibility(app.allPolylines.nodes.length - 1, 0);
+
+    app.exportObj("_polyline_invisible");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_invisible.obj"));
+    assertFalse(content.lines().anyMatch(l -> l.startsWith("l ")), content);
+  }
+
+  @Test
+  void exportObj_continuesVertexNumbering_afterAnAlreadyExportedFace () throws IOException {
+    // allFaces.draw(TypeWindow.OBJ3D) runs before allPolylines.draw(...)
+    // in exportObj.pde, so the running obj_lastVertexNumber counter
+    // should already sit at 3 (the triangle's own 3 vertices) by the
+    // time the polyline's own "v"/"l" lines are written - this pins that
+    // shared-counter interaction down explicitly.
+    importOneTriangle(5);
+    importOnePolyline(false);
+
+    app.exportObj("_polyline_afterface");
+
+    String content = Files.readString(Path.of(app.Folder_Export3D, app.ProjectName + "_polyline_afterface.obj"));
+    String lLine = content.lines().filter(l -> l.startsWith("l ")).findFirst().get();
+
+    // The triangle contributes vertices 1-3 (written once per side, so
+    // really 1-3 then 4-6 for the double-sided export) - whichever count
+    // it ends at, the polyline's own 3 new vertices should be numbered
+    // starting right after it, with no gap or overlap.
+    long vLines = content.lines().filter(l -> l.startsWith("v ")).count();
+    String expected = "l " + (vLines - 2) + " " + (vLines - 1) + " " + vLines;
+    assertEquals(expected, lLine.strip(), content);
   }
 }

@@ -538,6 +538,64 @@ class Polylines {
 
         WIN3D.graphics.strokeWeight(0);
       }
+
+      // OBJ export - each Polyline becomes one "l v1 v2 ... vn" line
+      // statement, the exact same shape import_objects_OBJ()'s own
+      // "l" reader (importObj.pde's objHandleLine()) already expects
+      // back. Unlike the WIN3D branch above, this does NOT tessellate
+      // a CURVE_SPLINE/Arc Polyline into its smooth curve shape - it
+      // writes out this Polyline's own raw, authored vertices
+      // (this.nodes[f]) exactly as stored, always as straight
+      // segments between them. That's not a shortcut taken only here:
+      // OBJ's own "l" statement has no arc/curve concept of its own
+      // at all (see importObj.pde's own OBJ_IMPORT_CURVES/
+      // objImportCurves comment), so a true round-trip through this
+      // format was never on the table either way - exporting the
+      // control points plainly, the same way a closed loop is written
+      // back out by literally repeating its first vertex as its last
+      // (objHandleLine()'s own convention for reading one back in), is
+      // the simplest faithful choice open to this file format.
+      if (target_window == TypeWindow.OBJ3D) {
+
+        for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
+
+          if (allGroups.getStart_Polyline(OBJ_ID) <= allGroups.getStop_Polyline(OBJ_ID)) {
+
+            if (User3D.exporterMaintainPolygons == 1) {
+              obj_lastGroupNumber += 1;
+              objOutput.println("g Object3D_" + nf(OBJ_ID, 0) + "_lines");
+            }
+
+            // "&& (f < this.nodes.length)" guard: same staleness
+            // precaution faces.pde's own OBJ3D export already takes
+            // for allGroups' own stored start/stop against this live
+            // array - see that file's own comment on it.
+            for (int f = allGroups.getStart_Polyline(OBJ_ID); (f <= allGroups.getStop_Polyline(OBJ_ID)) && (f < this.nodes.length); f++) {
+
+              if (this.getVisibility(f) == 0) continue;
+
+              int n = this.nodes[f].length;
+              if (n < 2) continue; // not even one real segment - shouldn't happen, but a line needs 2+ points same as objHandleLine()'s own guard
+
+              for (int j = 0; j < n; j++) {
+                int vNo = this.nodes[f][j];
+                OBJprintVertex(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+              }
+
+              objOutput.print("l");
+              for (int j = 1; j <= n; j++) {
+                objOutput.print(" " + nf(obj_lastVertexNumber + j, 0));
+              }
+              if (this.getClose(f) == 1) {
+                objOutput.print(" " + nf(obj_lastVertexNumber + 1, 0)); // repeat the first vertex to close the loop - objHandleLine()'s own convention for reading this back in
+              }
+              objOutput.println("");
+
+              obj_lastVertexNumber += n;
+            }
+          }
+        }
+      }
     }
   }
 

@@ -47,6 +47,8 @@ void exportObj (String suffix) {
 
   allFaces.draw(TypeWindow.OBJ3D);
 
+  allPolylines.draw(TypeWindow.OBJ3D);
+
   allWindFlows.draw(TypeWindow.OBJ3D);
 
   Sky3D.draw(TypeWindow.OBJ3D);
