@@ -59,8 +59,7 @@ class UI_menuBar {
       "Designed & developed by",
       "Mojtaba Samimi",
       "www.solarchvision.com"
-    }
-    ,
+    },
     {
       "File",
       "Hold",
@@ -91,8 +90,7 @@ class UI_menuBar {
       "Export 3D > LAS",
       ___divider___,
       "Quit"
-    }
-    ,
+    },
     {
       "Edit",
       "Undo Scene3D Change",
@@ -105,29 +103,27 @@ class UI_menuBar {
       "Redo Station Change",
       ___divider___,
       "Undo Viewport2D Change",
-      "Redo Viewport2D Change"
-    }
-    ,
+      "Redo Viewport2D Change",
+      ___divider___,
+      "Clone Selection (Identical)",
+      "Clone Selection (Variation)"
+    },
     {
-      "Capture",
-      "Screenshot",
-      "Click Screenshot",
-      "Drag Screenshot",
-      ___divider___,
-      "Record Screenshot",
-      "Record Time Graph",
-      "Record Map Graph",
-      "Record Solid Graph",
-      "Stop Recording",
-      ___divider___,
-      "Save JPG Time Graph",
-      "Save PDF Time Graph",
-      "Save JPG Map Graph",
-      "Save PDF Map Graph",
-      "Save JPG 3D Graph",
-      "Save JPG 3D Graph (Full-Period)"
-    }
-    ,
+      "Delete",
+      "Delete Selection",
+      "Delete Scene Empty Groups",
+      "Delete Scene Isolated Vertices",
+      "Delete Selection Isolated Vertices",
+      "Delete All Model1Ds",
+      "Delete All Model2Ds",
+      "Delete All Groups",
+      "Delete All Solids",
+      "Delete All Sections",
+      "Delete All Cameras",
+      "Delete All Faces",
+      "Delete All Polylines",
+      "Delete All"
+    },
     {
       "Location",
       "Update Station",
@@ -165,8 +161,7 @@ class UI_menuBar {
       "Show/Hide Ensemble Observation Nearest",
       "Show/Hide Ensemble Forecast Stations",
       "Show/Hide Ensemble Forecast Nearest"
-    }
-    ,
+    },
     {
       "Setup",
       "Display All Viewports",
@@ -197,13 +192,11 @@ class UI_menuBar {
       "3D-model 9",
       "3D-model 10",
       "3D-model 11"
-    }
-    ,
+    },
     {
       "Layer"
       // Parameters are added here later in the process.
-    }
-    ,
+    },
     {
       "Analysis",
       "Prebake Viewport",
@@ -228,8 +221,7 @@ class UI_menuBar {
       "Process Solid Impact on Selected Sections",
       "Process Active Impact on Selected Sections",
       "Process Passive Impact on Selected Sections"
-    }
-    ,
+    },
     {
       "Shade",
       "Shade Viewport",
@@ -247,13 +239,9 @@ class UI_menuBar {
       ___divider___,
       "Shade Vertex Solid",
       "Shade Vertex Elevation"
-    }
-    ,
+    },
     {
       "View",
-      "Viewport >> Camera",
-      "Camera >> Viewport",
-      ___divider___,
       "Camera View",
       ___divider___,
       "Top",
@@ -296,8 +284,7 @@ class UI_menuBar {
       "CameraDistance",
       "3DModelSize",
       "SkydomeSize"
-    }
-    ,
+    },
     {
       "Visibility",
       "Show/Hide Terrain Mesh",
@@ -330,29 +317,7 @@ class UI_menuBar {
       "Show/Hide Solar Section",
       "Show/Hide Solid Section",
       "Show/Hide Wind Flow"
-    }
-    ,
-    {
-      "Selection Display",
-      "Show/Hide Selected Solids",
-      "Show/Hide Selected Sections",
-      "Show/Hide Selected Cameras",
-      "Show/Hide Selected Terrain Vertices",
-      "Show/Hide Selected Faces",
-      ___divider___,
-      "Show/Hide Selected Faces Vertex Count",
-      "Show/Hide Selected Polylines Vertex Count",
-      ___divider___,
-      "Show/Hide Selected Vertices",
-      "Show/Hide Selected REF Pivot",
-      "Show/Hide Selected Group Pivot",
-      "Show/Hide Selected Group Edges",
-      "Show/Hide Selected Group Box",
-      ___divider___,
-      "Show/Hide Selected 2D Edges",
-      "Show/Hide Selected 1D Edges"
-    }
-    ,
+    },
     {
       "Create",
       "Begin New Group at Origin",
@@ -398,13 +363,8 @@ class UI_menuBar {
       "Point",
       "Polyline",
       "Spline",
-      "Arc",
-      ___divider___,
-      "Face >> Section",
-      "TerrainMesh >> Group",
-      "TerrainGap >> Group"
-    }
-    ,
+      "Arc"
+    },
     {
       "Select",
       "Pick Select",
@@ -443,12 +403,28 @@ class UI_menuBar {
       "Select All Terrain Vertices",
       ___divider___,
       "Select Near Selected Vertices",
-      "Select Scene Isolated Vertices",
+      "Select Scene Isolated Vertices"
+    },
+    {
+      "Selection",
+      "Show/Hide Selected Solids",
+      "Show/Hide Selected Sections",
+      "Show/Hide Selected Cameras",
+      "Show/Hide Selected Terrain Vertices",
+      "Show/Hide Selected Faces",
       ___divider___,
-      "Clone Selection (Identical)",
-      "Clone Selection (Variation)"
-    }
-    ,
+      "Show/Hide Selected Faces Vertex Count",
+      "Show/Hide Selected Polylines Vertex Count",
+      ___divider___,
+      "Show/Hide Selected Vertices",
+      "Show/Hide Selected REF Pivot",
+      "Show/Hide Selected Group Pivot",
+      "Show/Hide Selected Group Edges",
+      "Show/Hide Selected Group Box",
+      ___divider___,
+      "Show/Hide Selected 2D Edges",
+      "Show/Hide Selected 1D Edges"
+    },
     {
       "Convert",
       "Groups >> Faces",
@@ -469,9 +445,15 @@ class UI_menuBar {
       "Model1Ds >> Groups",
       "Model2Ds >> Groups",
       "Solids >> Groups",
-      "Polylines >> Groups"
-    }
-    ,
+      "Polylines >> Groups",
+      ___divider___,
+      "Viewport >> Camera",
+      "Camera >> Viewport",
+      ___divider___,
+      "Face >> Section",
+      "TerrainMesh >> Group",
+      "TerrainGap >> Group"
+    },
     {
       "Modify",
       "Attach to Last Group",
@@ -517,8 +499,7 @@ class UI_menuBar {
       "Hide Selected Polylines",
       "Unhide Selected Polylines",
       "Unhide All Polylines"
-    }
-    ,
+    },
     {
       "Match",
       "Save Current ReferenceBox",
@@ -564,8 +545,7 @@ class UI_menuBar {
       "Get dZ",
       "Get dXYZ",
       "Get dXY"
-    }
-    ,
+    },
     {
       "Transform",
       "Move",
@@ -605,23 +585,25 @@ class UI_menuBar {
       "Change TreeBase",
       "Change TrunkSize",
       "Change LeafSize"
-    }
-    ,
+    },
     {
-      "Delete",
-      "Delete Selection",
-      "Delete Scene Empty Groups",
-      "Delete Scene Isolated Vertices",
-      "Delete Selection Isolated Vertices",
-      "Delete All Model1Ds",
-      "Delete All Model2Ds",
-      "Delete All Groups",
-      "Delete All Solids",
-      "Delete All Sections",
-      "Delete All Cameras",
-      "Delete All Faces",
-      "Delete All Polylines",
-      "Delete All"
+      "Capture",
+      "Screenshot",
+      "Click Screenshot",
+      "Drag Screenshot",
+      ___divider___,
+      "Record Screenshot",
+      "Record Time Graph",
+      "Record Map Graph",
+      "Record Solid Graph",
+      "Stop Recording",
+      ___divider___,
+      "Save JPG Time Graph",
+      "Save PDF Time Graph",
+      "Save JPG Map Graph",
+      "Save PDF Map Graph",
+      "Save JPG 3D Graph",
+      "Save JPG 3D Graph (Full-Period)"
     }
   };
   }
@@ -706,21 +688,21 @@ class UI_menuBar {
     map.put(toggleKey("Visibility", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
     map.put(toggleKey("Visibility", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
 
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
-    map.put(toggleKey("Selection Display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
+    map.put(toggleKey("Selection", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
+    map.put(toggleKey("Selection", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
+    map.put(toggleKey("Selection", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
+    map.put(toggleKey("Selection", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
+    map.put(toggleKey("Selection", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
+    map.put(toggleKey("Selection", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey("Selection", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
+    map.put(toggleKey("Selection", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
+    map.put(toggleKey("Selection", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
+    map.put(toggleKey("Selection", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
+    map.put(toggleKey("Selection", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
+    map.put(toggleKey("Selection", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
+    map.put(toggleKey("Selection", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
+    map.put(toggleKey("Selection", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
+    map.put(toggleKey("Selection", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
 
     return map;
   }
