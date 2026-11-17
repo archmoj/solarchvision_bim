@@ -179,6 +179,25 @@ class SaveProjectTest {
   }
 
   @Test
+  void fetchProject_afterHoldProject_restoresAWin3DSourcedHoverPointsCenterOffset () {
+    int[] row = app.addHoverPoint(150, 100);
+    app.win3DHoverPointOffset.put(row, new float[]{ -50.5f, 20.25f });
+
+    app.holdProject();
+
+    app.allHoverPoints = null;
+    app.win3DHoverPointOffset.clear();
+
+    assertDoesNotThrow(() -> app.fetchProject());
+
+    assertEquals(1, app.allHoverPoints.length);
+    float[] offset = app.win3DHoverPointOffset.get(app.allHoverPoints[0]);
+    assertNotNull(offset, "the restored row should carry its own center-offset entry, same object-identity convention as the live one");
+    assertEquals(-50.5f, offset[0], 0.0001);
+    assertEquals(20.25f, offset[1], 0.0001);
+  }
+
+  @Test
   void fetchProject_withNoPriorPins_leavesHoverPointsNull () {
     assertNull(app.allHoverPoints, "sanity check: no pin added in this test");
 

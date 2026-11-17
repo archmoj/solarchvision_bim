@@ -2546,7 +2546,22 @@ void mouseClicked () {
                 // pin starts out exactly there.
                 PendingHoverBox liveBox = findLiveHoverBox(win3DPendingHoverBoxes);
                 float[] preferredPosition = (liveBox != null) ? new float[]{ liveBox.x, liveBox.y } : null;
-                addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+                int[] newRow = addHoverPoint(X_clicked, Y_clicked, preferredPosition);
+
+                // Registers this exact row in win3DHoverPointOffset
+                // (hoverOnSolarImpactOverlay.pde) against its own offset
+                // from WIN3D's panel CENTER at pin time, so
+                // syncWin3DHoverPointPositions() (called once per frame
+                // from drawAllHovers()) keeps this pin centered the same
+                // way if the viewport is later enlarged/restored -
+                // rather than leaving it nailed to today's absolute
+                // screen pixel the way a plain pin stays nailed to
+                // theirs. Same pattern STUDY's/WORLD's own left-click
+                // handling already use, just keyed to WIN3D's own
+                // center instead of STUDY's zoom/pan or WORLD's lon/lat.
+                float offsetX = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
+                float offsetY = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
+                win3DHoverPointOffset.put(newRow, new float[]{ offsetX, offsetY });
               }
             } else {
               float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
