@@ -14,6 +14,13 @@ class UI_menuBar {
   int selected_parent = -1;
   int selected_child = 0;
 
+  // Whether Alt is currently held down - kept in sync by
+  // solarchvision_bim.pde's keyPressed()/keyReleased() (not by this
+  // class itself, which has no KeyEvent of its own once Alt alone is
+  // pressed/released with no other key). drawParentTab(), below, reads
+  // this to highlight each tab's Alt+<letter> mnemonic while it's true.
+  boolean altHeld = false;
+
   // ---------------------------------------------------------------------
   // Layout constants
   // ---------------------------------------------------------------------
@@ -713,6 +720,21 @@ class UI_menuBar {
     return false;
   }
 
+  // Where parentName's own Alt+<letter> mnemonic (PARENT_SHORTCUTS,
+  // above) falls within parentName itself (case-insensitive), or -1 if
+  // parentName isn't a registered parent - used only by drawParentTab(),
+  // below, to split a tab's label for highlighting; never to decide
+  // which shortcut fires (openParentMenuByKeyCode does that by letter,
+  // not by position).
+  int mnemonicIndexIn(String parentName) {
+    for (String[] entry : PARENT_SHORTCUTS) {
+      if (entry[1].equals(parentName)) {
+        return parentName.toUpperCase().indexOf(entry[0]);
+      }
+    }
+    return -1;
+  }
+
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
   String[] populateLayerMenu() {
@@ -886,14 +908,50 @@ class UI_menuBar {
           r, r, r, r // round corners
       );
     }
-    stroke(255);
-    fill(255);
+    String label = this.Items[i][0];
+    float textY = cy - 0.125 * MessageSize;
 
-    if (this.selected_parent == i) {
-      stroke(0);
-      fill(0);
+    // While Alt is held and this tab isn't the one already open (that
+    // one already renders black-on-blue, distinct enough on its own),
+    // pick out its Alt+<letter> mnemonic in black within the otherwise-
+    // white label, the way an underlined access key is normally shown -
+    // so the shortcuts PARENT_SHORTCUTS/openParentMenuByKeyCode actually
+    // handle are visible at a glance, not just documented. Reverts to
+    // the single-color label below the moment Alt is released
+    // (solarchvision_bim.pde's keyPressed()/keyReleased() keep altHeld,
+    // above, in sync and call revise() on every change).
+    int mnemonicIndex = (this.altHeld && (this.selected_parent != i)) ? mnemonicIndexIn(label) : -1;
+
+    if (mnemonicIndex != -1) {
+      String before = label.substring(0, mnemonicIndex);
+      String letter = label.substring(mnemonicIndex, mnemonicIndex + 1);
+      String after = label.substring(mnemonicIndex + 1);
+
+      float x = cx + padParentWidth;
+
+      stroke(255);
+      fill(255);
+      text(before, x, textY);
+      x += textWidth(before);
+
+      stroke(0, 0, 255);
+      fill(0, 0, 255);
+      text(letter, x, textY);
+      x += textWidth(letter);
+
+      stroke(255);
+      fill(255);
+      text(after, x, textY);
+    } else {
+      stroke(255);
+      fill(255);
+
+      if (this.selected_parent == i) {
+        stroke(0);
+        fill(0);
+      }
+      text(label, cx + padParentWidth, textY);
     }
-    text(this.Items[i][0], cx + padParentWidth, cy - 0.125 * MessageSize);
   }
 
   final float padParentWidth = 0.75 * MessageSize;

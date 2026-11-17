@@ -313,6 +313,16 @@ void keyPressed (KeyEvent e) {
         return;
       }
 
+      // Keeps UI_menuBar.altHeld in step with the real modifier state on
+      // every keypress (including the Alt key's own keyPressed, which
+      // already reports isAltDown() true) - drawParentTab() reads it to
+      // highlight each tab's mnemonic letter while Alt is down. Only
+      // forces a redraw on an actual change, not on every single
+      // keystroke while Alt happens to already be (or not be) held.
+      boolean altWasHeld = UI_menuBar.altHeld;
+      UI_menuBar.altHeld = e.isAltDown();
+      if (UI_menuBar.altHeld != altWasHeld) UI_menuBar.revise();
+
       if (e.isControlDown()) {
         if (!addNewSelectionToPreviousSelection_isOverridden) {
           addNewSelectionToPreviousSelection_beforeModifierKey = addNewSelectionToPreviousSelection;
@@ -486,6 +496,17 @@ void keyReleased () {
   if ((key == CODED) && ((keyCode == CONTROL) || (keyCode == ALT))) {
     addNewSelectionToPreviousSelection = addNewSelectionToPreviousSelection_beforeModifierKey;
     addNewSelectionToPreviousSelection_isOverridden = false;
+
+    // Releasing Alt itself (as opposed to some other key while Alt
+    // happens to still be held) fires no further keyPressed event, so
+    // the altWasHeld/altHeld tracking in keyPressed(), above, never
+    // sees this transition - it has to be caught here instead, the
+    // same way this method already singles out keyCode == ALT for
+    // addNewSelectionToPreviousSelection just above.
+    if (keyCode == ALT) {
+      UI_menuBar.altHeld = false;
+      UI_menuBar.revise();
+    }
   } else {
     addNewSelectionToPreviousSelection = 0;
   }
