@@ -161,6 +161,10 @@ class ImportObjectsPLYTest {
 
   @Test
   void importObjectsPLY_ascii_unrecognizedElementType_isSkippedWithoutThrowing () throws IOException {
+    // plyImportCurves defaults to false, so "edge" should still be
+    // skipped entirely, not crash the whole import - see the
+    // "withCurvesOn" tests below for the same shape with the toggle
+    // flipped on.
     Path f = plyFile("ply-ascii-unknown-element-test", """
         ply
         format ascii 1.0
@@ -183,6 +187,106 @@ class ImportObjectsPLYTest {
     });
 
     assertEquals(2, app.allPoints.getLength(), "the edge element should have been skipped, not thrown, and the vertex cursor stayed in sync");
+    assertEquals(0, app.allPolylines.nodes.length, "plyImportCurves defaults to false: nothing should land in allPolylines either");
+  }
+
+  // ================= "edge" element (plyImportCurves) ==========================
+  // Mirrors ImportObjectsDAETest.java's/ImportObjectsGLBTest.java's own
+  // "curves"/"line primitives" sections - see importPly.pde's own
+  // plyEmitEdge() comment for exactly what it does and why.
+
+  @Test
+  void importObjectsPLY_ascii_edge_withCurvesOn_importsOneTwoPointPolyline () throws IOException {
+    app.plyImportCurves = true;
+
+    Path f = plyFile("ply-ascii-edge-test", """
+        ply
+        format ascii 1.0
+        element vertex 3
+        property float x
+        property float y
+        property float z
+        element edge 1
+        property int vertex1
+        property int vertex2
+        end_header
+        0 0 0
+        1 0 0
+        1 1 0
+        0 2
+        """
+    );
+
+    app.import_objects_PLY(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, app.allPoints.getLength());
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 2}, app.allPolylines.nodes[0]);
+    assertEquals(0, app.allPolylines.getClose(0), "a 2-point edge is never a closed loop");
+  }
+
+  @Test
+  void importObjectsPLY_ascii_edge_v1v2PropertyNames_areAlsoRead () throws IOException {
+    // "v1"/"v2" is a less common, but real-world, alternative to the
+    // spec's own "vertex1"/"vertex2" naming - see plyEmitEdge()'s own
+    // comment (importPly.pde) for why both are matched.
+    app.plyImportCurves = true;
+
+    Path f = plyFile("ply-ascii-edge-v1v2-test", """
+        ply
+        format ascii 1.0
+        element vertex 2
+        property float x
+        property float y
+        property float z
+        element edge 1
+        property int v1
+        property int v2
+        end_header
+        0 0 0
+        1 0 0
+        0 1
+        """
+    );
+
+    app.import_objects_PLY(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
+  }
+
+  @Test
+  void importObjectsPLY_ascii_facesAndEdges_areBothReadWhenCurvesAreOn () throws IOException {
+    app.plyImportCurves = true;
+
+    Path f = plyFile("ply-ascii-face-and-edge-test", """
+        ply
+        format ascii 1.0
+        element vertex 3
+        property float x
+        property float y
+        property float z
+        element face 1
+        property list uchar int vertex_indices
+        element edge 1
+        property int vertex1
+        property int vertex2
+        end_header
+        0 0 0
+        1 0 0
+        1 1 0
+        3 0 1 2
+        0 1
+        """
+    );
+
+    app.import_objects_PLY(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 1}, app.allPolylines.nodes[0]);
   }
 
   // ================= binary (little-endian) ====================================
@@ -237,6 +341,45 @@ class ImportObjectsPLYTest {
     assertEquals(1f, app.allPoints.getX(1), 0.0001f);
     assertEquals(1, app.allFaces.nodes.length);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+  }
+
+  @Test
+  void importObjectsPLY_binaryLittleEndian_edge_withCurvesOn_importsOneTwoPointPolyline () throws IOException {
+    app.plyImportCurves = true;
+
+    String header = """
+        ply
+        format binary_little_endian 1.0
+        element vertex 3
+        property float x
+        property float y
+        property float z
+        element edge 1
+        property int vertex1
+        property int vertex2
+        end_header
+        """;
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    out.writeBytes(header.getBytes(StandardCharsets.UTF_8));
+
+    float[][] verts = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
+    for (float[] v : verts) {
+      writeFloatLE(out, v[0]);
+      writeFloatLE(out, v[1]);
+      writeFloatLE(out, v[2]);
+    }
+
+    writeU32LE(out, 0); // vertex1
+    writeU32LE(out, 2); // vertex2
+
+    Path f = plyBinaryFile("ply-binary-edge-test", out.toByteArray());
+
+    app.import_objects_PLY(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, app.allPoints.getLength());
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertArrayEquals(new int[]{0, 2}, app.allPolylines.nodes[0]);
   }
 
   @Test

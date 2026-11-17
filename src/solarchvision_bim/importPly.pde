@@ -38,10 +38,21 @@
 //     file itself declares, not forced into triangles" choice
 //     importIfc.pde's own n-gon faces and importDxf.
 //     pde's own 3DFACE/polyface-mesh faces already make.
-//   - Any OTHER element (e.g. "edge", or a custom one some tool adds) is
-//     skipped entirely, its own instances still correctly walked
-//     property by property so the shared byte/line cursor stays in sync
-//     for whatever comes after it.
+//   - "edge" (PLY's own native line-segment element, less common than
+//     "vertex"/"face" but part of the actual spec - a pair of scalar
+//     properties, conventionally named "vertex1"/"vertex2", each a
+//     0-based index into the same whole-file "vertex" list "face"'s own
+//     index list already references) is read as a Polyline
+//     (polylines.pde) ONLY while plyImportCurves is true (off by
+//     default - see PLY_IMPORT_CURVES/plyImportCurves, below); its own
+//     property names are matched case-insensitively, and as "v1"/"v2"
+//     too (a less common but real-world alternative naming) - see
+//     plyEmitEdge()'s own comment.
+//   - Any OTHER element (e.g. a custom one some tool adds) is skipped
+//     entirely, its own instances still correctly walked property by
+//     property so the shared byte/line cursor stays in sync for
+//     whatever comes after it - "edge" itself joins that same "skipped"
+//     treatment while plyImportCurves is false.
 //
 // No OBJ "g"/STL "solid"/DXF "layer"-style natural sub-object boundary
 // exists in PLY at all - its own element list is just a small, fixed set
@@ -49,6 +60,17 @@
 // implicit solid - so the whole imported file is always a single group.
 
 boolean plyImportShowOptionsDialog = false;
+
+// Whether to also read an "edge" element as Polylines - off by
+// default, same "a constant for the starting value, a variable for
+// what's actually checked at import time" shape IFC_IMPORT_CURVES/
+// ifcImportCurves (importIfc.pde), DXF_IMPORT_CURVES/dxfImportCurves
+// (importDxf.pde), OBJ_IMPORT_CURVES/objImportCurves (importObj.pde),
+// GLB_IMPORT_CURVES/glbImportCurves (importGlb.pde) and
+// DAE_IMPORT_CURVES/daeImportCurves (importDae.pde) already use.
+final boolean PLY_IMPORT_CURVES = false;
+
+boolean plyImportCurves = PLY_IMPORT_CURVES;
 
 // Transform parameters for the CURRENT import_objects_PLY() call - same
 // "a few fields shared across one whole import" shape glb_cx/... (import
@@ -73,6 +95,7 @@ class PlyElement {
 ArrayList<PlyElement> plyElements = new ArrayList<PlyElement>();
 
 int plyFacesImported = 0;
+int plyCurvesImported = 0;
 
 long ply_totalInstances = 0;
 long ply_processedInstances = 0;
@@ -88,7 +111,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   // what a cancelled dialog does.
   if (plyImportShowOptionsDialog) {
     plyImportShowOptionsDialog = false;
-    if (!axisSwapShowImportOptionsDialog("PLY import options")) return;
+    if (!plyShowImportOptionsDialog()) return;
   }
 
   println("\nImporting PLY. Please wait...");
@@ -132,6 +155,7 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
   ply_processedInstances = 0;
   ply_printedProgress = 0;
   plyFacesImported = 0;
+  plyCurvesImported = 0;
   ply_aborted = false;
 
   progressBarHeader();
@@ -154,8 +178,12 @@ void import_objects_PLY (String FileName, int m, int tes, int lyr, int vsb, int 
     ply_progressWindow = null;
   }
 
-  if (!ply_aborted && (plyFacesImported == 0)) {
-    println("\nPLY import: no faces were imported - this version only reads the 'vertex' element's own x/y/z and the 'face' element's own first list property (its vertex-index list)");
+  if (!ply_aborted && (plyFacesImported == 0) && (plyCurvesImported == 0)) {
+    if (plyImportCurves) {
+      println("\nPLY import: no faces or edges were imported - this version only reads the 'vertex' element's own x/y/z, the 'face' element's own first list property (its vertex-index list), and the 'edge' element's own vertex1/vertex2 (or v1/v2) properties");
+    } else {
+      println("\nPLY import: no faces were imported - this version only reads the 'vertex' element's own x/y/z and the 'face' element's own first list property (its vertex-index list), and importing 'edge' elements is currently disabled");
+    }
   }
 
   if (!ply_aborted) {
@@ -347,6 +375,7 @@ void plyImportAscii (byte[] raw, int dataStartByteOffset) {
   for (PlyElement element : plyElements) {
     boolean isVertex = element.name.equals("vertex");
     boolean isFace = element.name.equals("face");
+    boolean isEdge = plyImportCurves && element.name.equals("edge");
 
     for (int n = 0; n < element.count; n++) {
       plyReportProgress();
@@ -363,6 +392,7 @@ void plyImportAscii (byte[] raw, int dataStartByteOffset) {
 
       int tokenIdx = 0;
       float x = 0, y = 0, z = 0;
+      int edgeV1 = -1, edgeV2 = -1;
       IntList faceIndices = null;
 
       for (PlyProperty prop : element.properties) {
@@ -390,6 +420,9 @@ void plyImportAscii (byte[] raw, int dataStartByteOffset) {
             if (prop.name.equalsIgnoreCase("x")) x = float(tok);
             else if (prop.name.equalsIgnoreCase("y")) y = float(tok);
             else if (prop.name.equalsIgnoreCase("z")) z = float(tok);
+          } else if (isEdge) {
+            if (prop.name.equalsIgnoreCase("vertex1") || prop.name.equalsIgnoreCase("v1")) edgeV1 = int(tok);
+            else if (prop.name.equalsIgnoreCase("vertex2") || prop.name.equalsIgnoreCase("v2")) edgeV2 = int(tok);
           }
         }
       }
@@ -398,6 +431,8 @@ void plyImportAscii (byte[] raw, int dataStartByteOffset) {
         vertexGlobalIndex.append(plyCreatePoint(x, y, z));
       } else if (isFace) {
         plyEmitFace(faceIndices, vertexGlobalIndex);
+      } else if (isEdge) {
+        plyEmitEdge(edgeV1, edgeV2, vertexGlobalIndex);
       }
     }
   }
@@ -411,12 +446,14 @@ void plyImportBinary (byte[] raw, int dataStartByteOffset, boolean littleEndian)
   for (PlyElement element : plyElements) {
     boolean isVertex = element.name.equals("vertex");
     boolean isFace = element.name.equals("face");
+    boolean isEdge = plyImportCurves && element.name.equals("edge");
 
     for (int n = 0; n < element.count; n++) {
       plyReportProgress();
       if (ply_aborted) return; // partial import is fine - see plyReportProgress()'s own comment
 
       float x = 0, y = 0, z = 0;
+      int edgeV1 = -1, edgeV2 = -1;
       IntList faceIndices = null;
       boolean truncatedOrUnsupported = false;
 
@@ -455,6 +492,10 @@ void plyImportBinary (byte[] raw, int dataStartByteOffset, boolean littleEndian)
             if (prop.name.equalsIgnoreCase("x")) x = (float) v;
             else if (prop.name.equalsIgnoreCase("y")) y = (float) v;
             else if (prop.name.equalsIgnoreCase("z")) z = (float) v;
+          } else if (isEdge) {
+            double v = plyReadNumber(raw, pos, prop.valueType, littleEndian);
+            if (prop.name.equalsIgnoreCase("vertex1") || prop.name.equalsIgnoreCase("v1")) edgeV1 = (int) v;
+            else if (prop.name.equalsIgnoreCase("vertex2") || prop.name.equalsIgnoreCase("v2")) edgeV2 = (int) v;
           }
           pos += valueSize;
         }
@@ -469,6 +510,8 @@ void plyImportBinary (byte[] raw, int dataStartByteOffset, boolean littleEndian)
         vertexGlobalIndex.append(plyCreatePoint(x, y, z));
       } else if (isFace) {
         plyEmitFace(faceIndices, vertexGlobalIndex);
+      } else if (isEdge) {
+        plyEmitEdge(edgeV1, edgeV2, vertexGlobalIndex);
       }
     }
   }
@@ -492,4 +535,31 @@ void plyEmitFace (IntList faceIndices, IntList vertexGlobalIndex) {
 
   allFaces.create(face);
   plyFacesImported += 1;
+}
+
+// Builds one app-native, open 2-point Polyline (polylines.pde) from an
+// "edge" element instance's own already-read vertex1/vertex2 (or v1/v2)
+// property values, mapping each one through vertexGlobalIndex the exact
+// same way plyEmitFace() above already does for a face's own index
+// list - shared by plyImportAscii()/plyImportBinary(), only ever called
+// while plyImportCurves is true (see this file's own header comment).
+// An "edge" is always exactly 2 vertices, so unlike plyEmitFace() there
+// is no variable-length index list to walk, and - PLY having no
+// separate "closed" flag or concept of its own here - nothing to
+// auto-detect a loop from either: every edge is just its own open
+// segment, the same granularity GLB's own LINES mode
+// (importGlb.pde's glbEmitLinePrimitive()), DXF's own LINE entity
+// (importDxf.pde) and COLLADA's own <lines> (importDae.pde's
+// daePrimitiveLines()) already use for their own formats' disconnected-
+// segment primitives.
+void plyEmitEdge (int v1, int v2, IntList vertexGlobalIndex) {
+  if ((v1 < 0) || (v1 >= vertexGlobalIndex.size())) return;
+  if ((v2 < 0) || (v2 >= vertexGlobalIndex.size())) return;
+
+  int savedClosed = current_Closed;
+  current_Closed = 0;
+  allPolylines.create(new int[]{ vertexGlobalIndex.get(v1), vertexGlobalIndex.get(v2) });
+  current_Closed = savedClosed;
+
+  plyCurvesImported += 1;
 }
