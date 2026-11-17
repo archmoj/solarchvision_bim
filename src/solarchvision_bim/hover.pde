@@ -33,6 +33,18 @@ java.util.IdentityHashMap<int[], float[]> hoverPointPreferredPosition = new java
 // actually used.
 float[] currentHoverPreferredPosition = null;
 
+// Same GLOBAL-during-one-resolution pattern as currentHoverPreferredPosition
+// just above, carrying a different piece of information: the EXACT row
+// (object identity, from allHoverPoints) that's currently being resolved,
+// so queueHoverBox() (further below) can tag the PendingHoverBox it
+// builds with box.sourceHoverPoint - which pin (if any) that box belongs
+// to. Set by drawHoverPinAt() right before each pin's own placeHoversAt()
+// call, cleared again right after - always null while resolving the
+// live, mouse-following point, which isn't a pin and so never gets a
+// close button (see queueHoverBox()'s own use of this, and drawHover()/
+// drawPaletteHover()'s box.sourceHoverPoint != null checks).
+int[] currentHoverSourceRow = null;
+
 // Pins a new hover point at (x, y) - screen coordinates, the same space
 // placeHoversAt() below (and the live, mouse-following call at the bottom
 // of drawAllHovers()) already works in - onto the end of allHoverPoints,
@@ -135,6 +147,28 @@ void removeHoverPointAt (int index) {
     trimmed[j++] = allHoverPoints[i];
   }
   allHoverPoints = (trimmed.length == 0) ? null : trimmed;
+}
+
+// Removes the pinned point matching `row` BY IDENTITY (the exact
+// int[]{x,y} addHoverPoint() returned for it), delegating to
+// removeHoverPointAt() above once it's located - same full cleanup
+// (hoverPointPreferredPosition/worldHoverPointGeo included), just reached
+// by identity rather than by index. Used by mouseClicked.pde's own close-
+// button handling, where only the row reference a PendingHoverBox's own
+// sourceHoverPoint carries is known, not its current index into
+// allHoverPoints (and that index can shift between frames as other pins
+// come and go, so remembering an index instead wouldn't be safe here).
+// Returns true if a matching point was actually found and removed.
+boolean removeHoverPoint (int[] row) {
+  if ((allHoverPoints == null) || (row == null)) return false;
+
+  for (int i = 0; i < allHoverPoints.length; i++) {
+    if (allHoverPoints[i] == row) { // object identity, not value equality
+      removeHoverPointAt(i);
+      return true;
+    }
+  }
+  return false;
 }
 
 // Erases whatever STUDY hover box the previous pass left on screen (see
@@ -284,7 +318,9 @@ void drawAllHovers () {
 // never actually going to use.
 void drawHoverPinAt (int[] row) {
   currentHoverPreferredPosition = hoverPointPreferredPosition.get(row);
+  currentHoverSourceRow = row;
   placeHoversAt(row[0], row[1]);
+  currentHoverSourceRow = null;
   currentHoverPreferredPosition = null;
 }
 
@@ -417,6 +453,18 @@ final int hoverTopPad = 6;
 final int hoverBottomPad = 8;
 final int hoverSidePad = 8;
 final int hoverStrokeWeight = 4;
+// Side length of the little "x" close button drawn in a pinned box's own
+// top-right corner (drawHover()/drawPaletteHover(), further below) - only
+// for a box that actually belongs to a pin (box.sourceHoverPoint != null);
+// the live, mouse-following box never gets one, so it stays exactly the
+// width its own text needs. queueHoverBox() (further below) widens a
+// pinned box by hoverCloseButtonSize + hoverSidePad beyond what its text
+// alone needs, reserving a blank column on the right for this button
+// rather than drawing it on top of the text - hoverCloseButtonRect()
+// (further below) is the one place that turns that reserved column into
+// an actual rect, shared by both the draw side and mouseClicked.pde's own
+// hit-test side so the two can never drift apart.
+final int hoverCloseButtonSize = 14;
 // Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
 // exactly at the overlay's own boundary would still stick out 1px past it.
 // hoverBoxPosition() below keeps the box this far clear of
@@ -496,6 +544,7 @@ class PendingHoverBox {
   String[] lines;
   float[] col;
   boolean isLivePoint; // true only for the box queued while resolving the live, mouse-following point (resolvingLiveHoverPoint below) - lets findLiveHoverBox() find it reliably regardless of where it ends up in the queue, rather than assuming it's always a particular index (which only holds if the live point actually hit something hoverable that same frame - otherwise index 0 could just as easily be a pin's box).
+  int[] sourceHoverPoint; // the exact allHoverPoints row (object identity) this box belongs to, from currentHoverSourceRow (above) - null for the live point, which isn't a pin and gets no close button. drawHover()/drawPaletteHover() draw the close button only when this is non-null; mouseClicked.pde's hoverPointAtCloseButton() reads it back to know which pin to remove.
 }
 
 ArrayList<PendingHoverBox> studyPendingHoverBoxes = new ArrayList<PendingHoverBox>();
@@ -834,25 +883,109 @@ void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float bo
 }
 
 void queueHoverBox (int xMouse, int yMouse, String[] lines, float boxW, float boxH, float destX, float destY, float destW, float destH, float[] col, ArrayList<float[]> placedBoxes, ArrayList<PendingHoverBox> pendingBoxes) {
-  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, boxW, boxH, placedBoxes, currentHoverPreferredPosition);
+  // Only a pinned point's own box (currentHoverSourceRow set by
+  // drawHoverPinAt(), above) gets a close button, and so only it needs
+  // the extra reserved width - widening every box, live point included,
+  // would just add dead space to a box nothing can ever close this way.
+  boolean hasCloseButton = (currentHoverSourceRow != null);
+  float effectiveBoxW = hasCloseButton ? (boxW + hoverSidePad + hoverCloseButtonSize) : boxW;
+
+  float[] boxPos = resolveHoverBoxPosition(xMouse, yMouse, destX, destY, destW, destH, effectiveBoxW, boxH, placedBoxes, currentHoverPreferredPosition);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
-  if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, boxW, boxH });
+  if (placedBoxes != null) placedBoxes.add(new float[] { boxX, boxY, effectiveBoxW, boxH });
 
   if (pendingBoxes != null) {
     PendingHoverBox box = new PendingHoverBox();
     box.x = boxX;
     box.y = boxY;
-    box.w = boxW;
+    box.w = effectiveBoxW;
     box.h = boxH;
     box.xMouse = xMouse;
     box.yMouse = yMouse;
     box.lines = lines;
     box.col = col;
     box.isLivePoint = resolvingLiveHoverPoint;
+    box.sourceHoverPoint = currentHoverSourceRow;
     pendingBoxes.add(box);
   }
+}
+
+// {x, y, w, h} of a pinned box's own close button, in the same screen
+// space as the box's own x/y/w/h - the blank column queueHoverBox()
+// (above) reserved on the right whenever it widened the box
+// (hasCloseButton there) is exactly where this lands, right-aligned
+// inside it with hoverSidePad clearance from the box's own right edge.
+// Pure/no drawing (same reasoning as hoverBoxPosition() and
+// resolveHoverBoxPosition(), above): the one place this geometry is
+// computed, shared by drawHover()/drawPaletteHover() (which call it to
+// draw the button) and mouseClicked.pde's own hoverPointAtCloseButton()
+// (which calls it to hit-test a click against), so the drawn button and
+// the clickable area can never drift apart. Meaningless (and never
+// called) for a box whose own sourceHoverPoint is null - the live point
+// was never widened for a button in the first place.
+float[] hoverCloseButtonRect (PendingHoverBox box) {
+  float size = hoverCloseButtonSize;
+  float x = box.x + box.w - hoverSidePad - size;
+  float y = box.y + hoverStrokeInset + 1;
+  return new float[] { x, y, size, size };
+}
+
+// Draws the close button itself onto whatever box/swatch is already
+// underneath it - shared by drawHover()/drawPaletteHover() below, each of
+// which already knows what fill/stroke color reads against its own
+// background (plain white for drawHover(), swatchColor-dependent for
+// drawPaletteHover()). Only ever called once box.sourceHoverPoint != null
+// has already been checked by the caller.
+void drawHoverCloseButton (PendingHoverBox box, int strokeColor) {
+  float[] btn = hoverCloseButtonRect(box);
+  float bx = btn[0], by = btn[1], bw = btn[2], bh = btn[3];
+
+  noFill();
+  stroke(strokeColor);
+  strokeWeight(1);
+  rect(bx, by, bw, bh);
+
+  float pad = bw * 0.28;
+  line(bx + pad, by + pad, bx + bw - pad, by + bh - pad);
+  line(bx + bw - pad, by + pad, bx + pad, by + bh - pad);
+}
+
+// Finds whichever pinned point (if any) owns the close button a click at
+// (mx, my) landed on - checked against the exact PendingHoverBox queues
+// the last drawAllHovers() pass left behind (studyPendingHoverBoxes/
+// win3DPendingHoverBoxes/worldPendingHoverBoxes, hover.pde's own pass-1
+// state), the same queues mouseClicked.pde's own findLiveHoverBox() calls
+// already read from there - so this follows an established pattern
+// rather than introducing a new one. Returns the matching row (suitable
+// for removeHoverPoint(), above), or null if the click didn't land on
+// any box's close button. Checked by mouseClicked.pde BEFORE its own
+// "click anywhere in this panel pins a NEW point here" handling, so a
+// click meant to close an existing pin can never also be read as placing
+// a brand new one in the same spot.
+int[] hoverPointAtCloseButton (int mx, int my) {
+  int[] found = hoverPointAtCloseButtonIn(studyPendingHoverBoxes, mx, my);
+  if (found != null) return found;
+
+  found = hoverPointAtCloseButtonIn(win3DPendingHoverBoxes, mx, my);
+  if (found != null) return found;
+
+  return hoverPointAtCloseButtonIn(worldPendingHoverBoxes, mx, my);
+}
+
+int[] hoverPointAtCloseButtonIn (ArrayList<PendingHoverBox> queue, int mx, int my) {
+  if (queue == null) return null;
+
+  for (PendingHoverBox box : queue) {
+    if (box.sourceHoverPoint == null) continue; // the live point has no close button
+
+    float[] btn = hoverCloseButtonRect(box);
+    if (isInside(mx, my, btn[0], btn[1], btn[0] + btn[2], btn[1] + btn[3])) {
+      return box.sourceHoverPoint;
+    }
+  }
+  return null;
 }
 
 // Paints a box queueHover() already resolved and queued - see this
@@ -862,6 +995,11 @@ void drawHover (PendingHoverBox box) {
   float boxX = box.x, boxY = box.y, boxW = box.w, boxH = box.h;
   int xMouse = box.xMouse, yMouse = box.yMouse;
   String[] lines = box.lines;
+  // Only a pinned box (box.sourceHoverPoint != null - see
+  // queueHoverBox()'s own hasCloseButton) was ever widened to make room
+  // for a close button - the divider line below stops short of that
+  // reserved column so it doesn't appear to run underneath the button.
+  float contentRightEdge = boxX + boxW - hoverSidePad - ((box.sourceHoverPoint != null) ? (hoverSidePad + hoverCloseButtonSize) : 0);
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
@@ -907,8 +1045,8 @@ void drawHover (PendingHoverBox box) {
       stroke(0);
       strokeWeight(1);
       line(
-        boxX + hoverSidePad,        y + lineHeight / 2,
-        boxX + boxW - hoverSidePad, y + lineHeight / 2
+        boxX + hoverSidePad, y + lineHeight / 2,
+        contentRightEdge,    y + lineHeight / 2
       );
       noStroke();
       strokeWeight(0);
@@ -916,6 +1054,8 @@ void drawHover (PendingHoverBox box) {
       text(lines[i], boxX + hoverSidePad, y);
     }
   }
+
+  if (box.sourceHoverPoint != null) drawHoverCloseButton(box, 0);
 }
 
 
@@ -967,4 +1107,6 @@ void drawPaletteHover (PendingHoverBox box) {
   fill(useWhiteText ? 255 : 0);
   textAlign(LEFT, TOP);
   text(lines[0], boxX + hoverSidePad, boxY + hoverTopPad);
+
+  if (box.sourceHoverPoint != null) drawHoverCloseButton(box, useWhiteText ? 255 : 0);
 }

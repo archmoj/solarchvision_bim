@@ -2381,6 +2381,25 @@ void mouseClicked () {
           UI_rollout.revise();
         }
 
+        // A left click on a pinned hover box's own close button (hover.pde's
+        // drawHoverCloseButton()) removes just that one pin - checked here,
+        // before any of STUDY/WIN3D/WORLD's own "click anywhere in this
+        // panel pins a NEW point here" handling just below, so the same
+        // click can never be read as both closing an existing pin AND
+        // placing a brand new one on top of it. Returns outright once
+        // handled: nothing else a plain click would otherwise also do here
+        // (picking a row, placing STATION, editing the 3D scene, pinning
+        // a new point) should also happen for a click that was actually
+        // aimed at this button.
+        if (mouseButton == LEFT) {
+          int[] closedPoint = hoverPointAtCloseButton(X_clicked, Y_clicked);
+          if (closedPoint != null) {
+            removeHoverPoint(closedPoint);
+            redraw();
+            return;
+          }
+        }
+
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
