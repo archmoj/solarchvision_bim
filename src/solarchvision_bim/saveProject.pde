@@ -191,6 +191,8 @@ XML buildProjectSnapshot (boolean copyTexturesAlongside) {
 
   STUDY.to_XML(xml);
 
+  hoverPoints_to_XML(viewGroup);
+
   allWindRoses.to_XML(impactsGroup);
 
   allWindFlows.to_XML(impactsGroup);

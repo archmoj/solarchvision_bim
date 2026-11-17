@@ -1138,3 +1138,86 @@ void drawPaletteHover (PendingHoverBox box) {
 
   if (box.sourceHoverPoint != null) drawHoverCloseButton(box);
 }
+
+// Persists every pinned hover point (allHoverPoints) into the project
+// file - called by buildProjectSnapshot() (saveProject.pde) alongside
+// WORLD.to_XML()/STUDY.to_XML(), read back by hoverPoints_from_XML()
+// below (parse_XML_variables(), parseXmlVariables.pde). Deliberately
+// NOT part of the undo/redo snapshot (buildUndoSnapshot(),
+// undoRedoScene3D.pde) - buildProjectSnapshot()'s own comment already
+// explains that narrower stack only ever covers 3D-modeling content,
+// and a pinned hover is a UI aid, not that.
+//
+// allHoverPoints itself is a flat list of {x,y} pairs with no per-pin
+// "kind" tag at all (see this file's own top comment on
+// hoverPointPreferredPosition) - placeHoversAt() finds out what, if
+// anything, a pin resolves to purely by hit-testing its raw screen
+// position fresh every frame, the exact same way a live, not-yet-pinned
+// point already does. So all that genuinely needs saving here is that
+// same raw (x,y) - and, only for a WORLD-sourced pin (one with an entry
+// in worldHoverPointGeo, hoverOnWorldStations.pde), its lon/lat too.
+// That one's saved (x,y) is never actually depended on once reloaded:
+// syncWorldHoverPointPositions() overwrites a WORLD pin's own (x,y)
+// from its geo every single frame, before anything else gets a chance
+// to resolve against it (see drawAllHovers()'s own call to it, right
+// before this file's main hover-resolving pass) - so the saved (x,y)
+// for one of those is only ever a momentary placeholder until that
+// first post-load frame runs.
+//
+// hoverPointPreferredPosition is deliberately left out - that cache is
+// pure per-frame visual smoothing (see its own comment, above), not
+// real state: a freshly-loaded pin resolves its own preferred position
+// for the very first time exactly the same way a brand new one does.
+void hoverPoints_to_XML (XML xml) {
+
+  XML parent = xml.addChild("HoverPoints");
+
+  int count = (allHoverPoints == null) ? 0 : allHoverPoints.length;
+  XML_setInt(parent, "n", count);
+
+  for (int i = 0; i < count; i++) {
+    XML child = parent.addChild("item");
+    int[] row = allHoverPoints[i];
+    XML_setInt(child, "x", row[0]);
+    XML_setInt(child, "y", row[1]);
+
+    float[] geo = worldHoverPointGeo.get(row);
+    if (geo != null) {
+      XML_setFloat(child, "lon", geo[0]);
+      XML_setFloat(child, "lat", geo[1]);
+    }
+  }
+}
+
+// Reverses hoverPoints_to_XML() above - called by parse_XML_variables()
+// (parseXmlVariables.pde) alongside WORLD.from_XML()/STUDY.from_XML().
+// Starts from a clean slate, same reasoning as every other from_XML()
+// in this app: Open/Fetch wholesale-replaces whatever was live before,
+// it doesn't merge into it - any pin left over from whatever project
+// was open before this one is gone the moment a different one loads,
+// same as every other piece of state parse_XML_variables() touches.
+void hoverPoints_from_XML (XML xml) {
+
+  allHoverPoints = null;
+  hoverPointPreferredPosition.clear();
+  worldHoverPointGeo.clear();
+
+  XML parent = xml.getChild("HoverPoints");
+  if (parent == null) return; // older save file, predating this feature - nothing to restore, same as a brand new project
+
+  int count = XML_getInt(parent, "n");
+  XML[] children = parent.getChildren("item");
+
+  for (int i = 0; (i < count) && (i < children.length); i++) {
+    int x = children[i].getInt("x");
+    int y = children[i].getInt("y");
+
+    int[] row = addHoverPoint(x, y);
+
+    if (children[i].hasAttribute("lon") && children[i].hasAttribute("lat")) {
+      float lon = XML_getFloat(children[i], "lon");
+      float lat = XML_getFloat(children[i], "lat");
+      worldHoverPointGeo.put(row, new float[]{ lon, lat });
+    }
+  }
+}

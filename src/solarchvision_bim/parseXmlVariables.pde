@@ -198,6 +198,8 @@ void parse_XML_variables (XML xml, boolean desired_diag, boolean restoreViewport
 
   STUDY.from_XML(xml);
 
+  hoverPoints_from_XML(viewGroup);
+
   allWindRoses.from_XML(impactsGroup);
 
   allWindFlows.from_XML(impactsGroup);

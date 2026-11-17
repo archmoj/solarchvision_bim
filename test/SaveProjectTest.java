@@ -111,4 +111,60 @@ class SaveProjectTest {
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(3, app.allPoints.getLength());
   }
+
+  // ================= pinned hover points (hover.pde) ===================================
+
+  @Test
+  void fetchProject_afterHoldProject_restoresAPlainPinnedHoverPoint () {
+    app.addHoverPoint(123, 456);
+    assertEquals(1, app.allHoverPoints.length, "setup check, not the point of this test");
+
+    app.holdProject();
+
+    // Same wipe-before-restore reasoning as
+    // fetchProject_afterHoldProject_restoresTheHeldGeometry() above - a
+    // pass here can only mean fetchProject() actually restored this
+    // from the file, not that it was simply never cleared.
+    app.allHoverPoints = null;
+
+    assertDoesNotThrow(() -> app.fetchProject());
+
+    assertNotNull(app.allHoverPoints);
+    assertEquals(1, app.allHoverPoints.length);
+    assertEquals(123, app.allHoverPoints[0][0]);
+    assertEquals(456, app.allHoverPoints[0][1]);
+    // A plain (non-WORLD-sourced) pin has no geo entry at all - this
+    // confirms the round trip doesn't invent one out of thin air.
+    assertFalse(app.worldHoverPointGeo.containsKey(app.allHoverPoints[0]));
+  }
+
+  @Test
+  void fetchProject_afterHoldProject_restoresAWorldSourcedHoverPointsGeo () {
+    int[] row = app.addHoverPoint(10, 20);
+    app.worldHoverPointGeo.put(row, new float[]{ -73.5f, 45.5f });
+
+    app.holdProject();
+
+    app.allHoverPoints = null;
+    app.worldHoverPointGeo.clear();
+
+    assertDoesNotThrow(() -> app.fetchProject());
+
+    assertEquals(1, app.allHoverPoints.length);
+    float[] geo = app.worldHoverPointGeo.get(app.allHoverPoints[0]);
+    assertNotNull(geo, "the restored row should carry its own geo entry, same object-identity convention as the live one");
+    assertEquals(-73.5f, geo[0], 0.0001);
+    assertEquals(45.5f, geo[1], 0.0001);
+  }
+
+  @Test
+  void fetchProject_withNoPriorPins_leavesHoverPointsNull () {
+    assertNull(app.allHoverPoints, "sanity check: no pin added in this test");
+
+    app.holdProject();
+
+    assertDoesNotThrow(() -> app.fetchProject());
+
+    assertNull(app.allHoverPoints, "an empty pin list should round-trip as empty, not as a stray zero-length pin");
+  }
 }
