@@ -42,38 +42,40 @@ class UI_rollout {
     CHILD_LOCATION_POINT = pushChild("Station");
     CHILD_LOCATION_STATIONS = pushChild("Data Points");
 
+    PARENT_ILLUSTRATION = pushParent("Visualization Options");
+    CHILD_ILLUSTRATION_2D_LAYERS = pushChild("2D Layout");
+    CHILD_ILLUSTRATION_VISIBILITY = pushChild("Visibility");
+    CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
+    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D Palette");
+    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("Spatial Palette");
+    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("Solar Palette");
+
+
     PARENT_PERIOD_SCENARIOS = pushParent("Time & Scenarios");
     CHILD_PERIOD_TIME = pushChild("Time");
     CHILD_PERIOD_RANGES = pushChild("Ranges");
     CHILD_PERIOD_FILTERS = pushChild("Filters");
 
-    PARENT_GEOMETRY = pushParent("Geometry & Space");
-    CHILD_GEOMETRY_CREATE = pushChild("Create");
-    CHILD_GEOMETRY_MODIFY = pushChild("Modify");
-    CHILD_GEOMETRY_SOLID = pushChild("Solids");
-    CHILD_GEOMETRY_FRACTAL_TREE = pushChild("Trees");
-    CHILD_GEOMETRY_VIEWPORT = pushChild("View");
-
-    PARENT_ILLUSTRATION = pushParent("Visualization Options");
-    CHILD_ILLUSTRATION_2D_LAYERS = pushChild("2D Layout");
-    CHILD_ILLUSTRATION_2D_COLORS = pushChild("2D Palette");
-    CHILD_ILLUSTRATION_3D_SOLAR = pushChild("Solar Palette");
-    CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("Spatial Palette");
-    CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
-    // Environment/Visibility used to live under Geometry & Space, but both
-    // are about what is currently shown and how, not about creating or
-    // editing objects - which is what Illustration Options is for.
-    CHILD_ILLUSTRATION_ENVIRONMENT = pushChild("Environment");
-    CHILD_ILLUSTRATION_VISIBILITY = pushChild("Visibility");
-
-    PARENT_EXPORT = pushParent("Export Options");
-    CHILD_EXPORT_DATA = pushChild("Model & Data");
-    CHILD_EXPORT_MEDIA = pushChild("Images & Reports");
-
     PARENT_POSTPROCESS = pushParent("Assessment Options");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
     CHILD_POSTPROCESS_DEVELOPED = pushChild("Derived Data");
     CHILD_POSTPROCESS_SIMULATION = pushChild("Simulation");
+
+
+    PARENT_GEOMETRY = pushParent("Geometry & Space");
+    CHILD_GEOMETRY_CREATE = pushChild("Create");
+    CHILD_GEOMETRY_VIEWPORT = pushChild("View");
+    CHILD_GEOMETRY_MODIFY = pushChild("Modify");
+    CHILD_GEOMETRY_ENTOURAGE = pushChild("Entourage");
+    CHILD_GEOMETRY_SOLID = pushChild("Solids");
+    CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
+    CHILD_GEOMETRY_ENVIRONMENT = pushChild("Environment");
+    CHILD_GEOMETRY_SOLARSYSTEM = pushChild("Solar System");
+
+    PARENT_EXPORT = pushParent("Export Options");
+    CHILD_EXPORT_MODEL = pushChild("Model");
+    CHILD_EXPORT_DATA = pushChild("Data");
+    CHILD_EXPORT_CONTENT = pushChild("Content");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -89,8 +91,11 @@ class UI_rollout {
   int CHILD_GEOMETRY_CREATE;
   int CHILD_GEOMETRY_MODIFY;
   int CHILD_GEOMETRY_SOLID;
-  int CHILD_GEOMETRY_FRACTAL_TREE;
+  int CHILD_GEOMETRY_ENTOURAGE;
   int CHILD_GEOMETRY_VIEWPORT;
+  int CHILD_GEOMETRY_WINDROSE;
+  int CHILD_GEOMETRY_ENVIRONMENT;
+  int CHILD_GEOMETRY_SOLARSYSTEM;
 
   int PARENT_ILLUSTRATION;
   int CHILD_ILLUSTRATION_2D_LAYERS;
@@ -98,7 +103,6 @@ class UI_rollout {
   int CHILD_ILLUSTRATION_3D_SOLAR;
   int CHILD_ILLUSTRATION_3D_SPATIAL;
   int CHILD_ILLUSTRATION_SELECTION;
-  int CHILD_ILLUSTRATION_ENVIRONMENT;
   int CHILD_ILLUSTRATION_VISIBILITY;
 
   int PARENT_POSTPROCESS;
@@ -107,8 +111,9 @@ class UI_rollout {
   int CHILD_POSTPROCESS_SIMULATION;
 
   int PARENT_EXPORT;
+  int CHILD_EXPORT_MODEL;
   int CHILD_EXPORT_DATA;
-  int CHILD_EXPORT_MEDIA;
+  int CHILD_EXPORT_CONTENT;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -459,7 +464,7 @@ class UI_rollout {
           textSize(12.5 * this.view_S);
         }
 
-        text(nf(i + 1, 0) + ":" + allRollouts.get(i).get(0), cx, cy);
+        text(allRollouts.get(i).get(0), cx, cy);
 
         if (i % 2 == 1) Y_control += 15 * this.view_S;
       }
@@ -499,7 +504,7 @@ class UI_rollout {
           textSize(11 * this.view_S);
         }
 
-        text("[" + nf(i, 0) + "]" + allRollouts.get(this.parent).get(i), cx, cy);
+        text(" " + allRollouts.get(this.parent).get(i), cx, cy);
 
         if (i % 3 == 0) Y_control += 15 * this.view_S;
       }
@@ -584,8 +589,6 @@ class UI_rollout {
         User3D.creatorConeDegree = vm.creatorConeDegree(1);
         User3D.creatorPolygonDegree = vm.creatorPolygonDegree(1);
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
-        User3D.creatorPersonTypeIndex = vm.creatorPersonTypeIndex(1);
-        User3D.creatorPlantTypeIndex = vm.creatorPlantTypeIndex(1);
       }
 
       if (this.child == CHILD_GEOMETRY_MODIFY) {
@@ -619,7 +622,9 @@ class UI_rollout {
       }
 
 
-      if (this.child == CHILD_GEOMETRY_FRACTAL_TREE) {
+      if (this.child == CHILD_GEOMETRY_ENTOURAGE) {
+        User3D.creatorPersonTypeIndex = vm.creatorPersonTypeIndex(1);
+        User3D.creatorPlantTypeIndex = vm.creatorPlantTypeIndex(1);
 
         User3D.creatorModel1DTypeIndex = vm.creatorModel1DTypeIndex(1);
         User3D.creatorModel1DDegreeMax = vm.creatorModel1DDegreeMax(1);
@@ -638,6 +643,46 @@ class UI_rollout {
         WIN3D.cameraClipNear = vm.cameraClipNear(1);
         WIN3D.cameraClipFar = vm.cameraClipFar(1);
         overallScale = vm.overallScale(1);
+      }
+
+
+      if (this.child == CHILD_GEOMETRY_WINDROSE) {
+        allWindRoses.displayImage = vm.WindRoseDisplayImage(1);
+        allWindRoses.planeSize = vm.WindRosePlaneSize(1);
+        allWindRoses.imageResolution = vm.WindRoseImageResolution(1);
+      }
+
+      if (this.child == CHILD_GEOMETRY_SOLARSYSTEM) {
+        celestialMagnification = vm.celestialMagnification(1);
+        Sun3D.displayPath = vm.Sun3DDisplayPath(1);
+        Sun3D.displayPattern = vm.Sun3DDisplayPattern(1);
+        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
+        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
+        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
+        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
+        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
+        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
+      }
+
+      if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
+        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
+        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
+        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
+        Earth3D.recomputeLevelOfDetailDependents();
+        Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
+        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
+        Sky3D.radius = vm.Sky3DRadius(1);
+        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
+        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
+        Terrain.loadMesh = vm.TerrainLoadMesh(1);
+        Terrain.loadTexture = vm.TerrainLoadTextures(1);
+        Terrain.displaySurface = vm.TerrainDisplaySurface(1);
+        Terrain.displayTexture = vm.TerrainDisplayTexture(1);
+        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
+        Terrain.displayPoints = vm.TerrainDisplayPoints(1);
+        Terrain.skipStart = vm.TerrainSkipStart(1);
+        Terrain.skipEnd = vm.TerrainSkipEnd(1);
+        Terrain.displayDepth = vm.TerrainDisplayDepth(1);
       }
 
     } else if (this.parent == PARENT_ILLUSTRATION) {
@@ -728,41 +773,6 @@ class UI_rollout {
         Select3D.terrainDisplayVertices = vm.terrainDisplayVertices(1);
       }
 
-      if (this.child == CHILD_ILLUSTRATION_ENVIRONMENT) {
-
-        Terrain.loadTexture = vm.TerrainLoadTextures(1);
-        Terrain.loadMesh = vm.TerrainLoadMesh(1);
-        Terrain.skipStart = vm.TerrainSkipStart(1);
-        Terrain.skipEnd = vm.TerrainSkipEnd(1);
-        Terrain.displaySurface = vm.TerrainDisplaySurface(1);
-        Terrain.displayTexture = vm.TerrainDisplayTexture(1);
-        Terrain.displayPoints = vm.TerrainDisplayPoints(1);
-        Terrain.displayDepth = vm.TerrainDisplayDepth(1);
-        allWindRoses.displayImage = vm.WindRoseDisplayImage(1);
-        allWindRoses.planeSize = vm.WindRosePlaneSize(1);
-        allWindRoses.imageResolution = vm.WindRoseImageResolution(1);
-
-        Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
-        Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
-        Sky3D.radius = vm.Sky3DRadius(1);
-        Sun3D.displayPath = vm.Sun3DDisplayPath(1);
-        Sun3D.displayPattern = vm.Sun3DDisplayPattern(1);
-        Sun3D.displaySurface = vm.Sun3DDisplaySurface(1);
-        Sun3D.displayTexture = vm.Sun3DDisplayTexture(1);
-        Sun3D.fitInSkyDome = vm.Sun3DFitInSkyDome(1);
-        Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
-        Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
-        Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
-        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
-        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
-        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
-        Earth3D.recomputeLevelOfDetailDependents();
-        Moon3D.displaySurface = vm.Moon3DDisplaySurface(1);
-        Moon3D.displayTexture = vm.Moon3DDisplayTexture(1);
-        Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
-        celestialMagnification = vm.celestialMagnification(1);
-      }
-
       if (this.child == CHILD_ILLUSTRATION_VISIBILITY) {
 
         // Every plain "show/hide this category of object" toggle that has
@@ -829,6 +839,10 @@ class UI_rollout {
         STUDY.rawLinesExporter = vm.rawLinesExporter(1);
         STUDY.normalLinesExporter = vm.normalLinesExporter(1);
         STUDY.probabilitiesExporter = vm.probabilitiesExporter(1);
+      }
+
+      if (this.child == CHILD_EXPORT_MODEL) {
+
         User3D.exporterScale = vm.exporterScale(1);
         User3D.exporterYaxisUp = vm.exporterYaxisUp(1);
         User3D.exporterPrecisionVertex = vm.exporterPrecisionVertex(1);
@@ -839,7 +853,7 @@ class UI_rollout {
         User3D.exporterColorScaleResolution = vm.exporterColorScaleResolution(1);
       }
 
-      if (this.child == CHILD_EXPORT_MEDIA) {
+      if (this.child == CHILD_EXPORT_CONTENT) {
 
         allSolidImpacts.record_IMG = vm.Record_SolidImpact_in_JPG(1);
         allSolidImpacts.record_PDF = vm.Record_SolidImpact_in_PDF(1);
