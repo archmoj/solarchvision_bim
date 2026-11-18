@@ -583,17 +583,19 @@ class UI_keyboardMap {
 
     ArrayList<String> lines = describeHoveredKey(hovered);
     if (lines.size() > 0) {
-      // Laid out in up to 3 columns rather than one long column, so a
+      // Laid out in up to 2 columns rather than one long column, so a
       // key with many bindings (Shift/Ctrl/Alt, say) never overflows
       // past the overlay's own bottom edge: a column only holds as many
       // lines as actually fit above that edge, and the next line spills
-      // into the next column instead of past the bottom.
+      // into the next column instead of past the bottom. 2 wider
+      // columns instead of 3 narrower ones avoids combo/description
+      // text overlapping into the next column.
       float hintTextSize = 0.45 * keyUnit();
       float lineHeight = 1.4 * hintTextSize;
       float boxTop = mainClusterBottom(keys) + 0.5 * keyUnit();
       float bottomLimit = box[3] - 0.25 * keyUnit();
       int linesPerColumn = max(1, (int) floor((bottomLimit - boxTop) / lineHeight));
-      int columnCount = 3;
+      int columnCount = 2;
       float firstColumnX = box[0] + keyUnit();
       float columnWidth = (box[2] - firstColumnX) / columnCount;
 
