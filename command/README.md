@@ -1182,8 +1182,10 @@ around.
     reverseTransform, unlike `+TargetRollXYZ`)
 -   `+StudyZoom`: zooms the study graph in (positive value) or out
     (negative value) - scrolled over it with the mouse wheel, or
-    triggered a fixed step at a time by `Ctrl+Q`/`Ctrl+Shift+Q`. Result
-    is clamped to `[0.1, 20]` and saved with the project
+    triggered a fixed step at a time by `Ctrl+=`/`Ctrl+-`. Result
+    is clamped to `[0.1, 20]` and saved with the project. `=` alone (no
+    Ctrl) resets both the zoom and the pan back to the graph's own
+    default view
 
 ```
 +StudyZoom ?
@@ -1263,10 +1265,12 @@ triggering a computation:
 -   `Next Plot Layout`, `Previous Plot Layout`
 -   `Next Sky Scenario`, `Previous Sky Scenario`
 -   `Toggle Impact Summary`
--   `Zoom In Study`, `Zoom Out Study`: `Ctrl+Q`/`Ctrl+Shift+Q` - same
+-   `Zoom In Study`, `Zoom Out Study`: `Ctrl+=`/`Ctrl+-` - same
     `+StudyZoom` action the mouse wheel drives (see
     [mouse-wheel commands](#mouse-wheel-commands) above), one fixed
     step at a time
+-   `Reset Study View`: `=` (no Ctrl) - resets `userZoom` to `1` and
+    `userPanX`/`userPanY` to `0`, the graph's own default view
 -   `Pan Study Up`, `Pan Study Down`, `Pan Study Left`, `Pan Study Right`:
     `Ctrl+Shift+Arrows` - same `+StudyPan` action a mouse drag over the
     study graph drives (see

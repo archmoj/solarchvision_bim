@@ -148,7 +148,7 @@ class StudyHoverPinZoomPanTest {
     float localFracY = app.studyLocalFracYFromScreen(50);
     app.studyHoverPointLocalFrac.put(row, new float[]{ localFracX, localFracY });
 
-    // Simulate zooming in 2x, as Ctrl+Q/the mouse wheel would have
+    // Simulate zooming in 2x, as Ctrl+=/the mouse wheel would have
     // already applied before drawAllHovers() runs this same frame (see
     // syncStudyHoverPointPositions()'s own comment on that ordering).
     app.STUDY.userZoom = 2;

@@ -757,7 +757,7 @@ String __$ZOOM__ (String[] parts) {
 // handleStudyWheel() sets these to the live mouseX/mouseY right before
 // dispatching here, so for the ordinary mouse-wheel path this is
 // "wherever the cursor is pointing right now". For a STUDY zoom
-// triggered some other way (Ctrl+Q/Ctrl+Shift+Q, or a script's own
+// triggered some other way (Ctrl+=/Ctrl+-, or a script's own
 // "+StudyZoom" line) X_clicked/Y_clicked instead holds whatever the
 // last click/wheel/hover position happened to leave there, which is
 // just as often stale or -1 ("nothing recorded yet") as it is

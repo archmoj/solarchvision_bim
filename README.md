@@ -452,7 +452,8 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `b` / `B` | Show or hide probabilities on the hourly graph |
 | `n` / `N` | Show or hide statistics on the hourly graph |
 | `m` / `M` | Show or hide sorted values on the hourly graph |
-| `Ctrl+Q` / `Ctrl+Shift+Q` | Zoom the study graph in or out |
+| `Ctrl+=` / `Ctrl+-` | Zoom the study graph in or out |
+| `=` | Reset the study graph's zoom and pan to the initial view |
 | `Ctrl+Shift+UP` / `Ctrl+Shift+DOWN` / `Ctrl+Shift+LEFT` / `Ctrl+Shift+RIGHT` | Pan the study graph |
 
 The study graph also responds directly to the mouse: scroll the wheel over it to zoom in or out, or click and drag to pan—no modifier key needed for either. Both the zoom level and the pan offset are saved with the project.

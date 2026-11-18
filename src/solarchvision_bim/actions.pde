@@ -1696,17 +1696,40 @@ void build_allActions() {
     requestStudyRedraw();
   });
 
-  // Ctrl+Q / Ctrl+Shift+Q (viewport2D.pde's own handleCtrlCharKey()) -
-  // one keypress reads as one mouse-wheel "click" towards/away from the
-  // graph: same runScriptLine("+StudyZoom ...") path handleStudyWheel()
-  // (mouseWheel.pde) itself calls, so __$STUDYZOOM__'s own clamping and
-  // pow(2.0, wheelValue) step live in exactly one place either way.
+  // Ctrl+= / Ctrl+- (viewport2D.pde's own handleCtrlCharKey()) - the
+  // same universal zoom-in/zoom-out pairing already used in just about
+  // every browser and editor, echoing the plain "+"/"-" WIN3D's own
+  // handleCommandKey() uses for 3D-view zoom (viewport3D.pde), just with
+  // Ctrl for the Study-graph version. (Previously Ctrl+Q/Ctrl+Shift+Q -
+  // moved off Q/Shift+Q since Ctrl+Q is "Quit" on many desktop apps and
+  // window managers, risking an accidental app close while trying to
+  // zoom a graph.) One keypress reads as one mouse-wheel "click"
+  // towards/away from the graph: same runScriptLine("+StudyZoom ...")
+  // path handleStudyWheel() (mouseWheel.pde) itself calls, so
+  // __$STUDYZOOM__'s own clamping and pow(2.0, wheelValue) step live in
+  // exactly one place either way.
   putAction("Zoom In Study", () -> {
     runScriptLine("+StudyZoom 1");
   });
 
   putAction("Zoom Out Study", () -> {
     runScriptLine("+StudyZoom -1");
+  });
+
+  // Plain "=" (no Ctrl) - viewport2D.pde's own handlePlainCharKey().
+  // Resets both userZoom and userPanX/userPanY back to their own
+  // declared defaults (viewport2D.pde, right where they're declared) -
+  // the same "centered, unzoomed" view the graph starts in before any
+  // scroll/drag/Ctrl+=/Ctrl+Shift+Arrow ever touches it. "=" rather than
+  // "0" (which is already Camera and view navigation's own "move the
+  // camera closer") or a Shift/Ctrl combo of the zoom keys above - it
+  // sits right next to them on a US keyboard and reads naturally as
+  // "zoom to the default (1x)".
+  putAction("Reset Study View", () -> {
+    STUDY.userZoom = 1;
+    STUDY.userPanX = 0;
+    STUDY.userPanY = 0;
+    requestStudyRedraw();
   });
 
   // Ctrl+Shift+Arrow (viewport2D.pde's own handleCtrlCodedKey()) - reuses

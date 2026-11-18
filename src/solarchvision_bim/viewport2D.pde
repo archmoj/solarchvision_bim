@@ -481,13 +481,14 @@ class STUDY {
         callAction("Decrease Vertical Scale");
         break;
 
-      // Ctrl+Q / Ctrl+Shift+Q - same unshifted/Shifted-character pairing
-      // already used just above for Increase/Decrease Vertical Scale.
-      case 'q' :
+      // Ctrl+= / Ctrl+- - the universal zoom-in/zoom-out pairing (see
+      // actions.pde's own comment on "Zoom In Study"/"Zoom Out Study"
+      // for why this replaced Ctrl+Q/Ctrl+Shift+Q).
+      case '=' :
         callAction("Zoom In Study");
         break;
 
-      case 'Q' :
+      case '-' :
         callAction("Zoom Out Study");
         break;
     }
@@ -495,6 +496,12 @@ class STUDY {
 
   void handlePlainCharKey () {
     switch (key) {
+
+      // No modifier - resets the graph back to its own default view
+      // (actions.pde's own "Reset Study View").
+      case '=' :
+        callAction("Reset Study View");
+        break;
 
       case '>' :
         callAction("Widen Join Window");

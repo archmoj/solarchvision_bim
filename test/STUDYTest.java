@@ -379,16 +379,32 @@ class STUDYTest {
   }
 
   @Test
-  void handleCtrlCharKey_q_zoomsInAndShiftQZoomsOut () {
+  void handleCtrlCharKey_equalsZoomsInAndMinusZoomsOut () {
     app.STUDY.userZoom = 1;
 
-    app.key = 'q'; // Ctrl+Q
+    app.key = '='; // Ctrl+=
     app.STUDY.handleCtrlCharKey();
     assertEquals((float) Math.pow(2.0, 1), app.STUDY.userZoom, 0.0001f);
 
-    app.key = 'Q'; // Ctrl+Shift+Q
+    app.key = '-'; // Ctrl+-
     app.STUDY.handleCtrlCharKey();
     assertEquals(1f, app.STUDY.userZoom, 0.0001f); // back to where it started
+  }
+
+  // ================= handlePlainCharKey - "=" resets the view ===========
+
+  @Test
+  void handlePlainCharKey_equals_resetsZoomAndPanToTheirDefaults () {
+    app.STUDY.userZoom = 5.5f;
+    app.STUDY.userPanX = 123;
+    app.STUDY.userPanY = -45;
+
+    app.key = '='; // no Ctrl - plain "="
+    app.STUDY.handlePlainCharKey();
+
+    assertEquals(1f, app.STUDY.userZoom, 0.0001f);
+    assertEquals(0f, app.STUDY.userPanX, 0.0001f);
+    assertEquals(0f, app.STUDY.userPanY, 0.0001f);
   }
 
   // ================= handleCtrlCodedKey ==================================
