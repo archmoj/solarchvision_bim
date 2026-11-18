@@ -407,17 +407,17 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 
 | Shortcut | Action |
 | --- | --- |
-| `` ` `` / `~` | Cycle through world-view zoom levels |
-| `+` / `-` | Zoom the 3D view in or out |
-| `Ctrl+,` / `Ctrl+.` | Move the camera closer to or farther from the selection |
-| `,` / `.` | Move the camera closer or farther |
+| `` ` `` / `~` ([backtick] / [tilde]) | Cycle through world-view zoom levels |
+| `+` / `-` ([plus] / [dash]) | Zoom the 3D view in or out |
+| `Ctrl+,` / `Ctrl+.` (Ctrl+[comma] / Ctrl+[dot]) | Move the camera closer to or farther from the selection |
+| `,` / `.` ([comma] / [dot]) | Move the camera closer or farther |
 | `2` / `8` | Rotate the camera up or down |
 | `4` / `6` | Rotate the camera left or right |
 | `1` / `3` | Move the camera left or right |
 | `7` / `9` | Move the camera up or down |
 | `5` | Aim the camera at the selection, or the origin if nothing is selected |
 | `0` | Move the camera closer |
-| `/` / `*` | Move the camera toward or away from the selection |
+| `/` / `*` ([slash] / [asterisk]) | Move the camera toward or away from the selection |
 | Arrow keys | Rotate the camera around the selection |
 
 ### Selection, model, and time
@@ -443,18 +443,18 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Ctrl+UP` / `Ctrl+DOWN` | Change the weather layer in the hourly graph |
 | `Ctrl+LEFT` / `Ctrl+RIGHT` | Change the impact layer in the daily graph |
 | `Ctrl+PAGE_UP` / `Ctrl+PAGE_DOWN` | Switch among numbered layouts available in `Setup` |
-| `Ctrl+;` | Show or hide the impact summary |
-| `Ctrl+'` / `Ctrl+"` | Adjust the hourly graph's vertical scale factor |
-| `<` / `>` | Change the number of joined days |
-| `(` / `)` | Change the number of displayed days |
-| `[` / `]` | Change the horizontal interval of the probability graph |
-| `{` / `}` | Change the vertical interval of the probability graph |
+| `Ctrl+;` (Ctrl+[semicolon]) | Show or hide the impact summary |
+| `Ctrl+'` / `Ctrl+"` (Ctrl+[apostrophe] / Ctrl+[quote]) | Adjust the hourly graph's vertical scale factor |
+| `<` / `>` ([less than] / [greater than]) | Change the number of joined days |
+| `(` / `)` ([open paren] / [close paren]) | Change the number of displayed days |
+| `[` / `]` ([left bracket] / [right bracket]) | Change the horizontal interval of the probability graph |
+| `{` / `}` ([left brace] / [right brace]) | Change the vertical interval of the probability graph |
 | `v` / `V` | Show or hide raw **V**alues on the hourly graph |
 | `b` / `B` | Show or hide proba**B**ilities on the hourly graph |
 | `n` / `N` | Show or hide the averaged "**N**ormal" line on the hourly graph |
 | `m` / `M` | Show or hide the **M**in/**M**edian/**M**ax statistical range bands on the hourly graph |
-| `Ctrl+=` / `Ctrl+-` | Zoom the study graph in or out |
-| `=` | Reset the study graph's zoom and pan to the initial view |
+| `Ctrl+=` / `Ctrl+-` (Ctrl+[equals] / Ctrl+[dash]) | Zoom the study graph in or out |
+| `=` ([equals]) | Reset the study graph's zoom and pan to the initial view |
 | `Ctrl+Shift+UP` / `Ctrl+Shift+DOWN` / `Ctrl+Shift+LEFT` / `Ctrl+Shift+RIGHT` | Pan the study graph |
 
 The study graph also responds directly to the mouse: scroll the wheel over it to zoom in or out, click and drag to pan, or right-click to reset the zoom and pan to the initial view—no modifier key needed for any of these. Both the zoom level and the pan offset are saved with the project.
