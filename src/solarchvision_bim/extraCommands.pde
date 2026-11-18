@@ -747,17 +747,55 @@ String __$ZOOM__ (String[] parts) {
 }
 
 // mouseWheel.pde's own handleStudyWheel() - same exponential-step shape
-// as __$ZOOM__ above (WIN3D's own viewport zoom), scaled around STUDY's
-// panel center via STUDY.userZoom (viewport2D.pde's own renderFrame()).
-// Clamped to a generous but bounded range so neither a long scroll nor
-// a stray huge wheelValue (e.g. from a script) can zoom the graph down
-// to nothing or out past any legible scale.
+// as __$ZOOM__ above (WIN3D's own viewport zoom), via STUDY.userZoom
+// (viewport2D.pde's own renderFrame()). Clamped to a generous but
+// bounded range so neither a long scroll nor a stray huge wheelValue
+// (e.g. from a script) can zoom the graph down to nothing or out past
+// any legible scale.
+//
+// Zooms around X_clicked/Y_clicked - mouseWheel.pde's own
+// handleStudyWheel() sets these to the live mouseX/mouseY right before
+// dispatching here, so for the ordinary mouse-wheel path this is
+// "wherever the cursor is pointing right now". For a STUDY zoom
+// triggered some other way (Ctrl+Q/Ctrl+Shift+Q, or a script's own
+// "+StudyZoom" line) X_clicked/Y_clicked instead holds whatever the
+// last click/wheel/hover position happened to leave there, which is
+// just as often stale or -1 ("nothing recorded yet") as it is
+// meaningful - so this only actually anchors to it when that position
+// falls inside STUDY's own current panel rect (same bounds check
+// handleStudyWheel() itself already uses before ever calling this),
+// and otherwise falls back to the previous behavior of zooming around
+// STUDY's own fixed transform origin.
+//
+// The anchoring math itself solves for the new userPanX/userPanY that
+// keeps the SAME graph point under that screen position after the
+// zoom: studyLocalXFromScreen()'s own inverse (hoverOnStudyImpact.pde)
+// says a screen point's local-space x is (graphicsX - userPanX) /
+// userZoom, where graphicsX = (screenX - cX) * ImageScale is itself
+// independent of userZoom/userPanX - i.e. fixed here, since the mouse
+// doesn't move during a single zoom step. Requiring that local x stay
+// identical before and after - (graphicsX - oldPanX)/oldZoom ==
+// (graphicsX - newPanX)/newZoom - and solving for newPanX given the
+// ACTUAL ratio actually applied (newZoom/oldZoom, which can be less
+// than the raw pow(2, wheelValue) step once clamped to [0.1, 20]) gives
+// newPanX = graphicsX * (1 - factor) + factor * oldPanX; same for Y.
 String __$STUDYZOOM__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
     float wheelValue = float(parts[1]);
+
+    float oldZoom = STUDY.userZoom;
     STUDY.userZoom *= pow(2.0, wheelValue);
     STUDY.userZoom = constrain(STUDY.userZoom, 0.1, 20);
+    float factor = STUDY.userZoom / oldZoom; // the ratio actually applied, after clamping
+
+    if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
+      float graphicsX = (X_clicked - STUDY.cX) * STUDY.ImageScale;
+      float graphicsY = (Y_clicked - STUDY.cY) * STUDY.ImageScale;
+      STUDY.userPanX = graphicsX * (1 - factor) + factor * STUDY.userPanX;
+      STUDY.userPanY = graphicsY * (1 - factor) + factor * STUDY.userPanY;
+    }
+
     STUDY.revise();
     }
     else {

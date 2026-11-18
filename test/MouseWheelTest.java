@@ -499,10 +499,14 @@ class MouseWheelTest {
     app.X_clicked = 9999; // outside
     app.Y_clicked = 9999;
     app.STUDY.userZoom = 1;
+    app.STUDY.userPanX = 0;
+    app.STUDY.userPanY = 0;
 
     app.handleStudyWheel(1);
 
     assertEquals(1f, app.STUDY.userZoom, 0.0001f);
+    assertEquals(0f, app.STUDY.userPanX, 0.0001f); // untouched - the whole wheel event is a no-op
+    assertEquals(0f, app.STUDY.userPanY, 0.0001f);
   }
 
   @Test
@@ -537,6 +541,96 @@ class MouseWheelTest {
     app.handleStudyWheel(1); // would push userZoom to 38
 
     assertEquals(20f, app.STUDY.userZoom, 0.0001f);
+  }
+
+  // Cursor-anchored zoom: the graph point under X_clicked/Y_clicked at
+  // the moment of the wheel event (mouseWheel.pde's own own
+  // handleStudyWheel() sets these to the live mouseX/mouseY right
+  // before calling here) should still resolve to that exact same screen
+  // position after userZoom changes - not drift toward STUDY's own
+  // fixed transform origin the way a plain, non-anchored zoom would.
+  // studyLocalXFromScreen()/studyScreenXFromLocal()
+  // (hoverOnStudyImpact.pde) are the same zoom/pan-aware conversions
+  // STUDY's own pinned-hover-point tracking already uses - reused here
+  // just to express "the point currently under the cursor" and check it
+  // maps back to the same screen spot once the dust settles.
+
+  @Test
+  void handleStudyWheel_keepsTheGraphPointUnderTheCursorFixedOnScreen () {
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.STUDY.userZoom = 1;
+    app.STUDY.userPanX = 20;
+    app.STUDY.userPanY = -10;
+
+    app.X_clicked = 150;
+    app.Y_clicked = 80;
+
+    float localXBefore = app.studyLocalXFromScreen(150);
+    float localYBefore = app.studyLocalYFromScreen(80);
+
+    app.handleStudyWheel(1); // zooms in 2x (well within the clamp range)
+
+    assertEquals((float) Math.pow(2.0, 1), app.STUDY.userZoom, 0.0001f);
+    assertEquals(150, app.studyScreenXFromLocal(localXBefore), 0.01f);
+    assertEquals(80, app.studyScreenYFromLocal(localYBefore), 0.01f);
+  }
+
+  @Test
+  void handleStudyWheel_keepsTheCursorAnchored_evenWhenTheZoomStepClamps () {
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.STUDY.userZoom = 19; // one more doubling would exceed the configured cap (20)
+    app.STUDY.userPanX = 5;
+    app.STUDY.userPanY = 3;
+
+    app.X_clicked = 250;
+    app.Y_clicked = 120;
+
+    float localXBefore = app.studyLocalXFromScreen(250);
+    float localYBefore = app.studyLocalYFromScreen(120);
+
+    app.handleStudyWheel(1); // would push userZoom to 38, clamped to 20 - a smaller actual ratio than pow(2,1)
+
+    assertEquals(20f, app.STUDY.userZoom, 0.0001f);
+    // Anchoring uses the ACTUAL ratio applied (20/19), not the raw
+    // pow(2,1) step, so the cursor stays fixed even once clamped.
+    assertEquals(250, app.studyScreenXFromLocal(localXBefore), 0.01f);
+    assertEquals(120, app.studyScreenYFromLocal(localYBefore), 0.01f);
+  }
+
+  @Test
+  void handleStudyWheel_doesNotAnchorToAStaleClickOutsideStudy_whenTheMouseIsElsewhere () {
+    // A STUDY zoom triggered some other way (keyboard shortcut, script
+    // command) with X_clicked/Y_clicked left over from an earlier,
+    // unrelated click - should fall back to the old, non-anchored
+    // behavior rather than anchoring to a meaningless stale position.
+    app.STUDY.include = true;
+    app.STUDY.cX = 0;
+    app.STUDY.cY = 0;
+    app.STUDY.dX = 400;
+    app.STUDY.dY = 300;
+    app.STUDY.ImageScale = 1;
+    app.STUDY.userZoom = 1;
+    app.STUDY.userPanX = 20;
+    app.STUDY.userPanY = -10;
+
+    app.X_clicked = -1; // nothing recorded - globalVariables.pde's own default
+    app.Y_clicked = -1;
+
+    app.runScriptLine("+StudyZoom 1");
+
+    assertEquals((float) Math.pow(2.0, 1), app.STUDY.userZoom, 0.0001f);
+    assertEquals(20f, app.STUDY.userPanX, 0.0001f); // untouched
+    assertEquals(-10f, app.STUDY.userPanY, 0.0001f);
   }
 
   @Test
