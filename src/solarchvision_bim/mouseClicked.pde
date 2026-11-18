@@ -2474,20 +2474,28 @@ void mouseClicked () {
           }
         }
 
-        // STUDY has no click behavior of its own - unlike WIN3D below,
-        // which stays fully committed to click-to-act whenever its own
-        // solar-impact overlay isn't showing, and unlike WORLD's own
-        // right click above, which still places STATION at the clicked
-        // location - so a LEFT click anywhere inside STUDY is free to
-        // mean "pin a hover point here" (same thing WORLD's own left
-        // click above now does too), added to allHoverPoints (hover.pde)
-        // alongside whatever STUDY graph happens to be showing, same
-        // screen coordinates placeHoversAt() already uses for the live,
-        // mouse-following one. Pinning even where nothing's actually
-        // hoverable is harmless: place_STUDY_hover() already shows
-        // nothing there today for the interactive point, same as it will
-        // for this one. A right click inside STUDY simply does nothing -
-        // STUDY has no other click behavior of its own to fall back to.
+        // STUDY has no click-to-act behavior of its own on its model -
+        // unlike WIN3D below, which stays fully committed to click-to-act
+        // whenever its own solar-impact overlay isn't showing, and
+        // unlike WORLD's own right click above, which still places
+        // STATION at the clicked location - so a LEFT click anywhere
+        // inside STUDY is free to mean "pin a hover point here" (same
+        // thing WORLD's own left click above now does too), added to
+        // allHoverPoints (hover.pde) alongside whatever STUDY graph
+        // happens to be showing, same screen coordinates placeHoversAt()
+        // already uses for the live, mouse-following one. Pinning even
+        // where nothing's actually hoverable is harmless:
+        // place_STUDY_hover() already shows nothing there today for the
+        // interactive point, same as it will for this one.
+        //
+        // A RIGHT click inside STUDY instead calls "Reset Study View"
+        // (actions.pde) - the same thing the plain "=" key does
+        // (viewport2D.pde's own handlePlainCharKey()) - resetting
+        // userZoom/userPanX/userPanY back to their own defaults. Chosen
+        // over right-click-to-pin (or some other meaning) because
+        // "right click to reset the view" is itself already a familiar
+        // convention from other pan/zoom graph widgets, and because
+        // STUDY otherwise has nothing else for a right click to do here.
         //
         // findLiveHoverBox() looks up whatever box the live point was
         // ACTUALLY showing (if any) right before this click, so the new
@@ -2522,6 +2530,10 @@ void mouseClicked () {
             float localFracX = studyLocalFracXFromScreen(X_clicked);
             float localFracY = studyLocalFracYFromScreen(Y_clicked);
             studyHoverPointLocalFrac.put(newRow, new float[]{ localFracX, localFracY });
+          }
+        } else if (STUDY.include && (mouseButton == RIGHT)) {
+          if (isInside(X_clicked, Y_clicked, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
+            callAction("Reset Study View");
           }
         }
 

@@ -1269,7 +1269,8 @@ triggering a computation:
     `+StudyZoom` action the mouse wheel drives (see
     [mouse-wheel commands](#mouse-wheel-commands) above), one fixed
     step at a time
--   `Reset Study View`: `=` (no Ctrl) - resets `userZoom` to `1` and
+-   `Reset Study View`: `=` (no Ctrl), or a right click anywhere inside
+    the study graph (mouseClicked.pde) - resets `userZoom` to `1` and
     `userPanX`/`userPanY` to `0`, the graph's own default view
 -   `Pan Study Up`, `Pan Study Down`, `Pan Study Left`, `Pan Study Right`:
     `Ctrl+Shift+Arrows` - same `+StudyPan` action a mouse drag over the

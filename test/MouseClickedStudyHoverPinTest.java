@@ -83,4 +83,48 @@ class MouseClickedStudyHoverPinTest {
     assertEquals(1010, row[0]);
     assertEquals(510, row[1]);
   }
+
+  // ================= right click - "Reset Study View" ===================
+
+  @Test
+  void rightClickInsideStudy_resetsZoomAndPan () {
+    app.STUDY.userZoom = 5.5f;
+    app.STUDY.userPanX = 123;
+    app.STUDY.userPanY = -45;
+    app.mouseButton = app.RIGHT;
+
+    app.mouseClicked();
+
+    assertEquals(1f, app.STUDY.userZoom, 0.0001f);
+    assertEquals(0f, app.STUDY.userPanX, 0.0001f);
+    assertEquals(0f, app.STUDY.userPanY, 0.0001f);
+  }
+
+  @Test
+  void rightClickInsideStudy_doesNotPinAHoverPoint () {
+    app.mouseButton = app.RIGHT;
+
+    app.mouseClicked();
+
+    // Unlike a left click, a right click inside STUDY resets the view
+    // instead of pinning a new point - nothing should land in
+    // allHoverPoints.
+    assertNull(app.allHoverPoints);
+  }
+
+  @Test
+  void rightClickOutsideStudy_doesNothing () {
+    app.STUDY.userZoom = 5.5f;
+    app.STUDY.userPanX = 123;
+    app.STUDY.userPanY = -45;
+    app.mouseX = 9999; // outside STUDY's own rect (cX=990, cY=490, dX=dY=50)
+    app.mouseY = 9999;
+    app.mouseButton = app.RIGHT;
+
+    app.mouseClicked();
+
+    assertEquals(5.5f, app.STUDY.userZoom, 0.0001f);
+    assertEquals(123f, app.STUDY.userPanX, 0.0001f);
+    assertEquals(-45f, app.STUDY.userPanY, 0.0001f);
+  }
 }

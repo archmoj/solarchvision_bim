@@ -456,7 +456,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `=` | Reset the study graph's zoom and pan to the initial view |
 | `Ctrl+Shift+UP` / `Ctrl+Shift+DOWN` / `Ctrl+Shift+LEFT` / `Ctrl+Shift+RIGHT` | Pan the study graph |
 
-The study graph also responds directly to the mouse: scroll the wheel over it to zoom in or out, or click and drag to pan—no modifier key needed for either. Both the zoom level and the pan offset are saved with the project.
+The study graph also responds directly to the mouse: scroll the wheel over it to zoom in or out, click and drag to pan, or right-click to reset the zoom and pan to the initial view—no modifier key needed for any of these. Both the zoom level and the pan offset are saved with the project.
 
 ## Command bar, scripting, and exports
 
