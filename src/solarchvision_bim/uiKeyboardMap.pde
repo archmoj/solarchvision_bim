@@ -87,7 +87,7 @@ class UI_keyboardMap {
       case "SHIFT_R": return 4f;       // row3: 12 + 4 = 16
       case "CTRL_L": case "CTRL_R": case "ALT_L": case "ALT_R": return 2f; // matches SHIFT_L
       case "SPACE": return 8f;         // row4: 2+2+8+2+2 = 16, so right-Ctrl's right edge = 16 too
-      case "ESC": return 1.25f;
+      case "ESC": return 2f;           // matches Shift/Ctrl/Alt's width
       default: return 1f;
     }
   }
@@ -109,23 +109,17 @@ class UI_keyboardMap {
     {"LEFT", "DOWN", "RIGHT"}
   };
 
-  // Insert/Home/Page Up on top, Delete/End/Page Down below - the block
-  // that sits directly above the arrow cluster, same 3 columns, same
-  // real-keyboard arrangement.
+  // Insert/Delete, Home/PageUp, End/PageDown - 3 rows of 2 (not 2 rows of
+  // 3 any more), the block that sits directly above the arrow cluster.
+  // 2 wider columns instead of 3 narrower ones gives each label (full
+  // words like "Insert"/"Delete") room to fit at a normal text size - no
+  // more need for the smaller narrow-column font the old 3-column
+  // version needed.
   final String[][] NAV_BLOCK_ROWS = {
-    {"INSERT", "HOME", "PAGE_UP"},
-    {"DELETE", "END", "PAGE_DOWN"}
+    {"INSERT", "DELETE"},
+    {"HOME", "PAGE_UP"},
+    {"END", "PAGE_DOWN"}
   };
-
-  // A handful of nav-block labels print a full word in a column only 1
-  // unit wide, so they get a smaller font than an ordinary single-char
-  // key - see draw().
-  boolean isNarrowNavBlockLabel (String label) {
-    switch (label) {
-      case "INSERT": case "HOME": case "DELETE": case "END": return true;
-      default: return false;
-    }
-  }
 
   // Shift-vs-base symbol pairs, keyed by the UNSHIFTED character as it
   // appears on MAIN_ROWS - every key here (and only these; letters are
@@ -363,21 +357,25 @@ class UI_keyboardMap {
     return keys;
   }
 
-  // Insert/Home/PageUp over Delete/End/PageDown, 3 columns wide, sat
-  // directly on top of the arrow cluster (touching, same column
-  // positions) - built explicitly for the same reason the numpad is:
-  // a uniform grid is all it needs, but it has to line up with a
-  // specific caller-chosen column set (the arrow cluster's), not its
+  // Insert/Delete, Home/PageUp, End/PageDown - 3 rows of 2, sat directly
+  // on top of the arrow cluster, its own left/right edges matching the
+  // arrow cluster's (same total span, 3 unit-wide columns, just now
+  // split into 2 wider columns instead of 3 narrower ones - each column
+  // is 1.5 units wide, so 2 * 1.5 = 3, same span as the arrow cluster's
+  // 3 one-unit columns). Built explicitly for the same reason the
+  // numpad is: a uniform grid is all it needs, but it has to line up
+  // with a specific caller-chosen span (the arrow cluster's), not its
   // own independent one.
   ArrayList<LaidOutKey> buildNavBlockLayout (float left, float top) {
     ArrayList<LaidOutKey> keys = new ArrayList<LaidOutKey>();
     float unit = keyUnit();
+    float colWidth = 1.5 * unit;
     float y = top;
     for (String[] row : NAV_BLOCK_ROWS) {
       float x = left;
       for (String label : row) {
-        keys.add(new LaidOutKey(label, x, y, unit, unit));
-        x += unit;
+        keys.add(new LaidOutKey(label, x, y, colWidth, unit));
+        x += colWidth;
       }
       y += unit;
     }
@@ -419,9 +417,10 @@ class UI_keyboardMap {
       }
     }
 
-    // Insert/Home/PageUp + Delete/End/PageDown, directly on top of the
-    // arrow cluster (same columns, touching - no gap).
-    keys.addAll(buildNavBlockLayout(clusterLeft, arrowTop - 2 * unit));
+    // Insert/Delete + Home/PageUp + End/PageDown, 3 rows tall now,
+    // directly on top of the arrow cluster (same left/right span,
+    // touching - no gap).
+    keys.addAll(buildNavBlockLayout(clusterLeft, arrowTop - 3 * unit));
 
     // Numpad, to the right of the arrow cluster, starting level with the
     // main typing block (not the Esc/F-row).
@@ -507,14 +506,18 @@ class UI_keyboardMap {
         text(shifted, k.x + k.w / 2, k.y + k.h * 0.32);
         text(disp, k.x + k.w / 2, k.y + k.h * 0.68);
       } else if (disp.indexOf("\n") >= 0) {
-        // A plain two-line label (Page Up / Page Down) in a narrow
-        // 1-unit column - smaller font, stacked top/bottom.
+        // A plain two-line label (Page Up / Page Down) - smaller font,
+        // stacked top/bottom.
         String[] parts = disp.split("\n");
         textSize(0.26 * keyUnit());
         text(parts[0], k.x + k.w / 2, k.y + k.h * 0.32);
         text(parts[1], k.x + k.w / 2, k.y + k.h * 0.68);
+      } else if (k.label.equals("NUM_ENTER") || k.label.equals("NUM_LOCK")) {
+        // Smaller font for the numpad's own "Enter"/"Num" caps.
+        textSize(0.28 * keyUnit());
+        text(disp, k.x + k.w / 2, k.y + k.h / 2);
       } else {
-        textSize((isNarrowNavBlockLabel(k.label) ? 0.22 : 0.4) * keyUnit());
+        textSize(0.4 * keyUnit());
         text(disp, k.x + k.w / 2, k.y + k.h / 2);
       }
     }

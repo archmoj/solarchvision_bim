@@ -137,34 +137,47 @@ class UIKeyboardMapTest {
 
   @Test
   void buildLayout_navBlockSitsDirectlyAboveTheArrowCluster_touchingNoGap () {
+    // Now 3 rows of 2 (Insert/Delete, Home/PageUp, End/PageDown) instead
+    // of 2 rows of 3 - 2 wider columns so each full-word label fits.
     ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
     java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
     for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
 
     solarchvision_bim.UI_keyboardMap.LaidOutKey insert = byLabel.get("INSERT");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey deleteKey = byLabel.get("DELETE");
     solarchvision_bim.UI_keyboardMap.LaidOutKey home = byLabel.get("HOME");
     solarchvision_bim.UI_keyboardMap.LaidOutKey pageUp = byLabel.get("PAGE_UP");
-    solarchvision_bim.UI_keyboardMap.LaidOutKey delete = byLabel.get("DELETE");
     solarchvision_bim.UI_keyboardMap.LaidOutKey end = byLabel.get("END");
     solarchvision_bim.UI_keyboardMap.LaidOutKey pageDown = byLabel.get("PAGE_DOWN");
-    solarchvision_bim.UI_keyboardMap.LaidOutKey blankAboveUp = null; // ARROW_ROWS[0][1] == "UP"
-    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) if (k.label.equals("UP")) blankAboveUp = k;
+    solarchvision_bim.UI_keyboardMap.LaidOutKey leftOfUp = null, up = null;
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) {
+      if (k.label.equals("UP")) up = k;
+      if (k.label.equals("LEFT")) leftOfUp = k; // ARROW_ROWS' left column
+    }
 
-    assertNotNull(insert); assertNotNull(home); assertNotNull(pageUp);
-    assertNotNull(delete); assertNotNull(end); assertNotNull(pageDown);
-    assertNotNull(blankAboveUp, "the arrow cluster's UP key must be laid out");
+    assertNotNull(insert); assertNotNull(deleteKey); assertNotNull(home);
+    assertNotNull(pageUp); assertNotNull(end); assertNotNull(pageDown);
+    assertNotNull(up, "the arrow cluster's UP key must be laid out");
+    assertNotNull(leftOfUp, "the arrow cluster's LEFT key must be laid out");
 
-    // Same 3 columns as the arrow cluster.
-    assertEquals(insert.x, delete.x, 0.001f, "Insert/Delete share a column");
-    assertEquals(home.x, end.x, 0.001f, "Home/End share a column");
-    assertEquals(pageUp.x, pageDown.x, 0.001f, "PageUp/PageDown share a column");
-    assertEquals(home.x, blankAboveUp.x, 0.001f, "the middle column lines up with the arrow cluster's UP key");
+    // Row pairs share an x (left column: Insert/Home/End; right column:
+    // Delete/PageUp/PageDown).
+    assertEquals(insert.x, home.x, 0.001f);
+    assertEquals(insert.x, end.x, 0.001f);
+    assertEquals(deleteKey.x, pageUp.x, 0.001f);
+    assertEquals(deleteKey.x, pageDown.x, 0.001f);
 
-    // Insert/Home/PageUp above Delete/End/PageDown, which sits directly
-    // (touching, no gap) above the arrow cluster's top row.
-    assertEquals(insert.y + insert.h, delete.y, 0.001f);
-    assertEquals(delete.y + delete.h, blankAboveUp.y, 0.001f,
-      "the nav block's bottom row must touch the arrow cluster's top row");
+    // Its own left/right edges still match the arrow cluster's (which
+    // spans 3 one-unit columns starting at leftOfUp.x).
+    assertEquals(leftOfUp.x, insert.x, 0.001f, "nav block's left edge must match the arrow cluster's left edge");
+    assertEquals(leftOfUp.x + 3 * up.w, deleteKey.x + deleteKey.w, 0.001f,
+      "nav block's right edge must match the arrow cluster's right edge");
+
+    // 3 rows, stacked with no gap, bottom row touching the arrow
+    // cluster's top row.
+    assertEquals(insert.y + insert.h, home.y, 0.001f, "row 1 touches row 2");
+    assertEquals(home.y + home.h, end.y, 0.001f, "row 2 touches row 3");
+    assertEquals(end.y + end.h, up.y, 0.001f, "the nav block's bottom row must touch the arrow cluster's top row");
   }
 
   @Test
@@ -310,6 +323,13 @@ class UIKeyboardMapTest {
     assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("CTRL_R"), 0.001f);
     assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("ALT_L"), 0.001f);
     assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("ALT_R"), 0.001f);
+  }
+
+  @Test
+  void keyWidthUnits_escMatchesShiftAndAltWidth () {
+    float shiftLWidth = app.UI_keyboardMap.keyWidthUnits("SHIFT_L");
+    assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("ESC"), 0.001f);
+    assertEquals(app.UI_keyboardMap.keyWidthUnits("ALT_L"), app.UI_keyboardMap.keyWidthUnits("ESC"), 0.001f);
   }
 
   @Test
