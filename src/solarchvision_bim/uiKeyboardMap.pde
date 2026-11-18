@@ -44,16 +44,24 @@ class UI_keyboardMap {
   // anyway (globalVariables.pde's own UI_keyboardMap singleton), so this
   // costs nothing.
 
-  // Esc + function row + Home/End/Insert/Delete + Page Up/Down, all on
-  // one line, same as a real keyboard's top row.
+  // Esc + F1-F12, grouped visually into 3 groups of 4 (F1-F4, F5-F8,
+  // F9-F12) by a small gap after F4 and after F8 - see
+  // keyGapUnitsAfter(). Insert/Home/PageUp/Delete/End/PageDown used to
+  // sit on this same line; they now live in their own block directly
+  // above the arrow cluster instead (buildNavBlockLayout()), matching
+  // where a real keyboard puts them - so they appear here only once,
+  // never duplicated.
   final String[][] F_ROW = {
-    {"ESC","F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12",
-     "HOME","END","INSERT","DELETE","PAGE_UP","PAGE_DOWN"}
+    {"ESC","F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"}
   };
 
   // CapsLock sits before "a" on the home row - every key after it on
   // that row shifts right automatically, since layoutRows() lays a row
-  // out left-to-right by accumulating each key's own width.
+  // out left-to-right by accumulating each key's own width. Backspace,
+  // "\", Enter and right-Shift are all deliberately widened (see
+  // keyWidthUnits()) so their four right edges land on the exact same
+  // column - every one of these 5 rows (this one included, via
+  // Ctrl/Alt/Space/Ctrl on the bottom row) is exactly 16 units wide.
   final String[][] MAIN_ROWS = {
     {"`","1","2","3","4","5","6","7","8","9","0","-","=","BACKSPACE"},
     {"TAB","q","w","e","r","t","y","u","i","o","p","[","]","\\"},
@@ -64,33 +72,34 @@ class UI_keyboardMap {
 
   // Relative widths (in "units", 1 unit = one ordinary key) for the few
   // keys that aren't a plain single-unit square - everything not listed
-  // here defaults to 1.
+  // here defaults to 1. Backspace/"\"/Enter/right-Shift are sized so
+  // their row's total is exactly 16 units (their four right edges
+  // align); Ctrl/Alt/AltGr all match left-Shift's width; Space is sized
+  // so right-Ctrl's right edge lands on that same 16-unit column.
   float keyWidthUnits (String label) {
     switch (label) {
-      case "BACKSPACE": return 2f;
+      case "BACKSPACE": return 3f;     // row0: 13 + 3 = 16
+      case "\\": return 2.5f;          // row1: 13.5 + 2.5 = 16
       case "TAB": return 1.5f;
       case "CAPSLOCK": return 1.75f;
-      case "ENTER": return 2f;
-      case "SHIFT_L": case "SHIFT_R": return 2f;
-      case "CTRL_L": case "CTRL_R": case "ALT_L": return 1.25f;
-      case "ALT_R": return 1.6f; // a bit wider - "AltGr" is a longer label
-      case "SPACE": return 6f;
+      case "ENTER": return 3.25f;      // row2: 12.75 + 3.25 = 16
+      case "SHIFT_L": return 2f;       // unchanged - the sizing reference for Ctrl/Alt below
+      case "SHIFT_R": return 4f;       // row3: 12 + 4 = 16
+      case "CTRL_L": case "CTRL_R": case "ALT_L": case "ALT_R": return 2f; // matches SHIFT_L
+      case "SPACE": return 8f;         // row4: 2+2+8+2+2 = 16, so right-Ctrl's right edge = 16 too
       case "ESC": return 1.25f;
-      case "HOME": case "END": case "INSERT": case "DELETE": return 1.25f;
-      case "PAGE_UP": case "PAGE_DOWN": return 1.25f;
       default: return 1f;
     }
   }
 
-  // Esc/F-row has a small gap between Esc, the F-key block, the
-  // Home/End/Insert/Delete block and the Page Up/Down pair - modelled
-  // the same way real keyboards group them, by inserting a gap after
-  // the last key of each group.
+  // Esc/F-row groups F1-F12 into 3 groups of 4 (F1-F4 | F5-F8 | F9-F12)
+  // with a small gap after F4 and after F8 - same technique real
+  // keyboards use, by inserting a gap after the last key of each group.
   float keyGapUnitsAfter (String label) {
     switch (label) {
       case "ESC": return 0.5f;
-      case "F12": return 0.5f;
-      case "DELETE": return 0.5f;
+      case "F4": return 0.5f;
+      case "F8": return 0.5f;
       default: return 0f;
     }
   }
@@ -99,6 +108,24 @@ class UI_keyboardMap {
     {"", "UP", ""},
     {"LEFT", "DOWN", "RIGHT"}
   };
+
+  // Insert/Home/Page Up on top, Delete/End/Page Down below - the block
+  // that sits directly above the arrow cluster, same 3 columns, same
+  // real-keyboard arrangement.
+  final String[][] NAV_BLOCK_ROWS = {
+    {"INSERT", "HOME", "PAGE_UP"},
+    {"DELETE", "END", "PAGE_DOWN"}
+  };
+
+  // A handful of nav-block labels print a full word in a column only 1
+  // unit wide, so they get a smaller font than an ordinary single-char
+  // key - see draw().
+  boolean isNarrowNavBlockLabel (String label) {
+    switch (label) {
+      case "INSERT": case "HOME": case "DELETE": case "END": return true;
+      default: return false;
+    }
+  }
 
   // Shift-vs-base symbol pairs, keyed by the UNSHIFTED character as it
   // appears on MAIN_ROWS - every key here (and only these; letters are
@@ -138,10 +165,11 @@ class UI_keyboardMap {
   // glyphs - the Unicode glyphs silently failed to render (missing glyph
   // in the font actually used at draw time), leaving the key caps blank.
   // Not used for a key that has a keyShiftedVariant() - draw() prints
-  // those as two lines instead of calling this.
+  // those as two lines instead of calling this. A "\n" in the returned
+  // text (Page Up/Page Down) means draw() stacks it as two lines too.
   String keyDisplayText (String label) {
     switch (label) {
-      case "BACKSPACE": return "Bksp";
+      case "BACKSPACE": return "Backspace";
       case "TAB": return "Tab";
       case "CAPSLOCK": return "Caps";
       case "ENTER": case "NUM_ENTER": return "Enter";
@@ -151,12 +179,12 @@ class UI_keyboardMap {
       case "ALT_R": return "AltGr";
       case "SPACE": return "";
       case "ESC": return "Esc";
-      case "DELETE": return "Del";
-      case "INSERT": return "Ins";
+      case "DELETE": return "Delete";
+      case "INSERT": return "Insert";
       case "HOME": return "Home";
       case "END": return "End";
-      case "PAGE_UP": return "PgUp";
-      case "PAGE_DOWN": return "PgDn";
+      case "PAGE_UP": return "Page\nUp";
+      case "PAGE_DOWN": return "Page\nDown";
       case "NUM_LOCK": return "Num";
       case "NUM_DIV": return "/";
       case "NUM_MUL": return "*";
@@ -278,7 +306,7 @@ class UI_keyboardMap {
     return isInside(x, y, box[0], box[1], box[2], box[3]);
   }
 
-  // 125% of the original size, per the earlier request to make the
+  // 125% of the original size, per an earlier request to make the
   // keyboard, its text, and its hover labels 25% larger.
   float keyUnit () {
     return 1.25 * 2.2 * MessageSize;
@@ -335,6 +363,27 @@ class UI_keyboardMap {
     return keys;
   }
 
+  // Insert/Home/PageUp over Delete/End/PageDown, 3 columns wide, sat
+  // directly on top of the arrow cluster (touching, same column
+  // positions) - built explicitly for the same reason the numpad is:
+  // a uniform grid is all it needs, but it has to line up with a
+  // specific caller-chosen column set (the arrow cluster's), not its
+  // own independent one.
+  ArrayList<LaidOutKey> buildNavBlockLayout (float left, float top) {
+    ArrayList<LaidOutKey> keys = new ArrayList<LaidOutKey>();
+    float unit = keyUnit();
+    float y = top;
+    for (String[] row : NAV_BLOCK_ROWS) {
+      float x = left;
+      for (String label : row) {
+        keys.add(new LaidOutKey(label, x, y, unit, unit));
+        x += unit;
+      }
+      y += unit;
+    }
+    return keys;
+  }
+
   ArrayList<LaidOutKey> buildLayout () {
     ArrayList<LaidOutKey> keys = new ArrayList<LaidOutKey>();
     float unit = keyUnit();
@@ -344,20 +393,24 @@ class UI_keyboardMap {
     float mainLeft = box[0] + padding;
     float mainTop = box[1] + padding;
 
-    // Esc + F1-F12 + Home/End/Insert/Delete + PgUp/PgDn, top-left corner
-    // of the overlay, above everything else.
+    // Esc + F1-F12 (3 groups of 4), top-left corner of the overlay,
+    // above everything else.
     keys.addAll(layoutRows(F_ROW, mainLeft, mainTop));
 
     float rowsTop = mainTop + 1.5 * unit;
     keys.addAll(layoutRows(MAIN_ROWS, mainLeft, rowsTop));
 
-    // Widest MAIN_ROWS row is the top number row: ` 1-9 0 - = (13 single
-    // units) + Backspace (2 units) = 15 units.
-    float mainWidthUnits = 15f;
+    // Every MAIN_ROWS row is exactly 16 units wide now (Backspace/"\"/
+    // Enter/right-Shift/the Ctrl+Alt+Space+Alt+Ctrl row all land on the
+    // same right edge - see keyWidthUnits()).
+    float mainWidthUnits = 16f;
     float clusterLeft = mainLeft + mainWidthUnits * unit + 0.5 * unit;
 
-    // Arrow cluster, roughly level with the main block's lower rows.
-    float arrowTop = rowsTop + 3.5 * unit;
+    // Arrow cluster (2 rows), bottom edge aligned with Space's bottom
+    // edge: Space sits on MAIN_ROWS' last row (index 4), whose bottom is
+    // rowsTop + 5*unit, so the 2-row-tall arrow cluster must start at
+    // rowsTop + 3*unit.
+    float arrowTop = rowsTop + 3 * unit;
     for (int r = 0; r < ARROW_ROWS.length; r++) {
       for (int c = 0; c < ARROW_ROWS[r].length; c++) {
         String label = ARROW_ROWS[r][c];
@@ -365,6 +418,10 @@ class UI_keyboardMap {
         keys.add(new LaidOutKey(label, clusterLeft + c * unit, arrowTop + r * unit, unit, unit));
       }
     }
+
+    // Insert/Home/PageUp + Delete/End/PageDown, directly on top of the
+    // arrow cluster (same columns, touching - no gap).
+    keys.addAll(buildNavBlockLayout(clusterLeft, arrowTop - 2 * unit));
 
     // Numpad, to the right of the arrow cluster, starting level with the
     // main typing block (not the Esc/F-row).
@@ -442,15 +499,23 @@ class UI_keyboardMap {
 
       fill(255);
       String shifted = keyShiftedVariant(k.label);
+      String disp = keyDisplayText(k.label);
       if (shifted != null) {
         // Shift-variant on top, base character on the bottom - same
         // arrangement a real key cap uses.
         textSize(0.32 * keyUnit());
         text(shifted, k.x + k.w / 2, k.y + k.h * 0.32);
-        text(keyDisplayText(k.label), k.x + k.w / 2, k.y + k.h * 0.68);
+        text(disp, k.x + k.w / 2, k.y + k.h * 0.68);
+      } else if (disp.indexOf("\n") >= 0) {
+        // A plain two-line label (Page Up / Page Down) in a narrow
+        // 1-unit column - smaller font, stacked top/bottom.
+        String[] parts = disp.split("\n");
+        textSize(0.26 * keyUnit());
+        text(parts[0], k.x + k.w / 2, k.y + k.h * 0.32);
+        text(parts[1], k.x + k.w / 2, k.y + k.h * 0.68);
       } else {
-        textSize(0.4 * keyUnit());
-        text(keyDisplayText(k.label), k.x + k.w / 2, k.y + k.h / 2);
+        textSize((isNarrowNavBlockLabel(k.label) ? 0.22 : 0.4) * keyUnit());
+        text(disp, k.x + k.w / 2, k.y + k.h / 2);
       }
     }
 

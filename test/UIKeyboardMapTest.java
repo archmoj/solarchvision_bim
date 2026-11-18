@@ -67,8 +67,8 @@ class UIKeyboardMapTest {
     assertTrue(labels.contains("CAPSLOCK"));
     assertTrue(labels.contains("UP"));
     assertTrue(labels.contains("DELETE"));
-    // Top row: Esc + F1-F12 + Home/End/Insert/Delete + PgUp/PgDn, all on
-    // one line.
+    // Top row is now just Esc + F1-F12 - Home/End/Insert/Delete/PgUp/PgDn
+    // moved into their own block directly above the arrow cluster.
     assertTrue(labels.contains("F1"));
     assertTrue(labels.contains("F12"));
     assertTrue(labels.contains("HOME"));
@@ -116,20 +116,68 @@ class UIKeyboardMapTest {
   }
 
   @Test
-  void buildLayout_pageUpDownSitOnTheSameLineAsEscAndTheFKeys () {
+  void buildLayout_fRowHasAGapAfterF4AndAfterF8_groupingIntoThreesOfFour () {
     ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
-    solarchvision_bim.UI_keyboardMap.LaidOutKey esc = null, f1 = null, pageUp = null, pageDown = null;
+    java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
+
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f4 = byLabel.get("F4");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f5 = byLabel.get("F5");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f8 = byLabel.get("F8");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f9 = byLabel.get("F9");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f1 = byLabel.get("F1");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f2 = byLabel.get("F2");
+
+    // Within a group of 4, consecutive keys touch (no gap).
+    assertEquals(f1.x + f1.w, f2.x, 0.001f, "F1 and F2 must be adjacent, no gap within a group");
+    // Between groups, there's a gap bigger than a plain touching seam.
+    assertTrue(f5.x > f4.x + f4.w + 0.001f, "there must be a gap between F4 and F5");
+    assertTrue(f9.x > f8.x + f8.w + 0.001f, "there must be a gap between F8 and F9");
+  }
+
+  @Test
+  void buildLayout_navBlockSitsDirectlyAboveTheArrowCluster_touchingNoGap () {
+    ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
+    java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
+
+    solarchvision_bim.UI_keyboardMap.LaidOutKey insert = byLabel.get("INSERT");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey home = byLabel.get("HOME");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey pageUp = byLabel.get("PAGE_UP");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey delete = byLabel.get("DELETE");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey end = byLabel.get("END");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey pageDown = byLabel.get("PAGE_DOWN");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey blankAboveUp = null; // ARROW_ROWS[0][1] == "UP"
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) if (k.label.equals("UP")) blankAboveUp = k;
+
+    assertNotNull(insert); assertNotNull(home); assertNotNull(pageUp);
+    assertNotNull(delete); assertNotNull(end); assertNotNull(pageDown);
+    assertNotNull(blankAboveUp, "the arrow cluster's UP key must be laid out");
+
+    // Same 3 columns as the arrow cluster.
+    assertEquals(insert.x, delete.x, 0.001f, "Insert/Delete share a column");
+    assertEquals(home.x, end.x, 0.001f, "Home/End share a column");
+    assertEquals(pageUp.x, pageDown.x, 0.001f, "PageUp/PageDown share a column");
+    assertEquals(home.x, blankAboveUp.x, 0.001f, "the middle column lines up with the arrow cluster's UP key");
+
+    // Insert/Home/PageUp above Delete/End/PageDown, which sits directly
+    // (touching, no gap) above the arrow cluster's top row.
+    assertEquals(insert.y + insert.h, delete.y, 0.001f);
+    assertEquals(delete.y + delete.h, blankAboveUp.y, 0.001f,
+      "the nav block's bottom row must touch the arrow cluster's top row");
+  }
+
+  @Test
+  void buildLayout_arrowClusterBottomAlignsWithSpaceBottom () {
+    ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
+    solarchvision_bim.UI_keyboardMap.LaidOutKey space = null, down = null;
     for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) {
-      if (k.label.equals("ESC")) esc = k;
-      if (k.label.equals("F1")) f1 = k;
-      if (k.label.equals("PAGE_UP")) pageUp = k;
-      if (k.label.equals("PAGE_DOWN")) pageDown = k;
+      if (k.label.equals("SPACE")) space = k;
+      if (k.label.equals("DOWN")) down = k; // ARROW_ROWS' bottom row
     }
-    assertNotNull(pageUp, "Page Up must be laid out");
-    assertNotNull(pageDown, "Page Down must be laid out");
-    assertEquals(esc.y, f1.y, 0.001f);
-    assertEquals(esc.y, pageUp.y, 0.001f, "Page Up must be on the same line as Esc/F1-F12");
-    assertEquals(esc.y, pageDown.y, 0.001f, "Page Down must be on the same line as Esc/F1-F12");
+    assertNotNull(space); assertNotNull(down);
+    assertEquals(space.y + space.h, down.y + down.h, 0.001f,
+      "the arrow cluster's bottom row must end on the same line as Space");
   }
 
   @Test
@@ -223,6 +271,59 @@ class UIKeyboardMapTest {
   void keyDisplayText_altRIsLabelledAltGr_distinctFromTheLeftAlt () {
     assertEquals("Alt", app.UI_keyboardMap.keyDisplayText("ALT_L"));
     assertEquals("AltGr", app.UI_keyboardMap.keyDisplayText("ALT_R"));
+  }
+
+  @Test
+  void keyDisplayText_namedKeysUseTheirFullWord () {
+    assertEquals("Backspace", app.UI_keyboardMap.keyDisplayText("BACKSPACE"));
+    assertEquals("Insert", app.UI_keyboardMap.keyDisplayText("INSERT"));
+    assertEquals("Delete", app.UI_keyboardMap.keyDisplayText("DELETE"));
+    assertEquals("Page\nUp", app.UI_keyboardMap.keyDisplayText("PAGE_UP"));
+    assertEquals("Page\nDown", app.UI_keyboardMap.keyDisplayText("PAGE_DOWN"));
+  }
+
+  @Test
+  void buildLayout_backspaceBackslashEnterAndRightShift_shareTheSameRightEdge () {
+    // Backspace, "\", Enter and right-Shift are each the last key of
+    // their own row, and are each sized so that row totals exactly 16
+    // units - their four right edges must land on the same column.
+    ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
+    java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
+
+    solarchvision_bim.UI_keyboardMap.LaidOutKey backspace = byLabel.get("BACKSPACE");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey backslash = byLabel.get("\\");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey enter = byLabel.get("ENTER");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey shiftR = byLabel.get("SHIFT_R");
+    assertNotNull(backspace); assertNotNull(backslash); assertNotNull(enter); assertNotNull(shiftR);
+
+    float rightEdge = backspace.x + backspace.w;
+    assertEquals(rightEdge, backslash.x + backslash.w, 0.001f, "\\'s right edge must match Backspace's");
+    assertEquals(rightEdge, enter.x + enter.w, 0.001f, "Enter's right edge must match Backspace's");
+    assertEquals(rightEdge, shiftR.x + shiftR.w, 0.001f, "right-Shift's right edge must match Backspace's");
+  }
+
+  @Test
+  void keyWidthUnits_ctrlAndAltAllMatchLeftShift () {
+    float shiftLWidth = app.UI_keyboardMap.keyWidthUnits("SHIFT_L");
+    assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("CTRL_L"), 0.001f);
+    assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("CTRL_R"), 0.001f);
+    assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("ALT_L"), 0.001f);
+    assertEquals(shiftLWidth, app.UI_keyboardMap.keyWidthUnits("ALT_R"), 0.001f);
+  }
+
+  @Test
+  void buildLayout_rightCtrlRightEdge_alignsWithTheBackspaceGroup () {
+    ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
+    java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
+
+    solarchvision_bim.UI_keyboardMap.LaidOutKey backspace = byLabel.get("BACKSPACE");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey ctrlR = byLabel.get("CTRL_R");
+    assertNotNull(backspace); assertNotNull(ctrlR);
+
+    assertEquals(backspace.x + backspace.w, ctrlR.x + ctrlR.w, 0.001f,
+      "right-Ctrl's right edge must align with the Backspace/\\/Enter/right-Shift group");
   }
 
   @Test
