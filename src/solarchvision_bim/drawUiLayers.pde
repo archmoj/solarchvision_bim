@@ -20,4 +20,5 @@ void draw_UI_layers () {
   // mouse needs to track mouseX/mouseY continuously, not just on the
   // frames something else happened to flag a redraw.
   if (UI_keyboardMap.visible) UI_keyboardMap.draw();
+  if (UI_mouseGuide.visible) UI_mouseGuide.draw();
 }
