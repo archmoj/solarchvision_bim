@@ -2332,6 +2332,17 @@ void mouseClicked () {
 
     if (control == USER_GUI) {
 
+      // The keyboard map (uiKeyboardMap.pde) swallows every click while
+      // open: inside its own bounds does nothing (there's no click-to-
+      // fire in this version, just hover), outside closes it - either
+      // way nothing beneath it should also react to this same click.
+      if (UI_keyboardMap.visible) {
+        if (!UI_keyboardMap.isInsideBounds(mouseX, mouseY)) {
+          UI_keyboardMap.hide();
+        }
+        return;
+      }
+
       if (FRAME_click_IMG) {
 
         RecordFrame();

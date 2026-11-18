@@ -86,6 +86,7 @@ class UI_menuBar {
   static final String PARENT_TRANSFORM  = "Transform";
   static final String PARENT_DELETE     = "Delete";
   static final String PARENT_CAPTURE    = "Capture";
+  static final String PARENT_GUIDE      = "Guide";
 
   String[][] buildMenuItems() {
     return new String[][] {
@@ -643,6 +644,10 @@ class UI_menuBar {
       "Save PDF Map Graph",
       "Save JPG 3D Graph",
       "Save JPG 3D Graph (Full-Period)"
+    },
+    {
+      PARENT_GUIDE,
+      "Show Keyboard Map"
     }
   };
   }
@@ -701,7 +706,8 @@ class UI_menuBar {
     {"M", PARENT_MATCH},
     {"T", PARENT_TRANSFORM},
     {"D", PARENT_DELETE},
-    {"P", PARENT_CAPTURE}
+    {"P", PARENT_CAPTURE},
+    {"G", PARENT_GUIDE}
   };
 
   // Opens the parent tab whose Alt+<letter> shortcut (PARENT_SHORTCUTS,

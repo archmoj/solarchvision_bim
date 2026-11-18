@@ -2706,6 +2706,12 @@ void build_allActions() {
 
   UI_rollout.registerSpinnerActions();
 
+  // Opens the keyboard map overlay (uiKeyboardMap.pde) - same thing '?'
+  // does (solarchvision_bim.pde's keyPressed()), reachable here too so
+  // it's also callable from the "Guide" menu and the command line, same
+  // as every other action.
+  putAction("Show Keyboard Map", () -> UI_keyboardMap.show());
+
   //allActions.keySet().stream().sorted().forEach(System.out::println);
 }
 

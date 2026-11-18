@@ -78,6 +78,7 @@ void setup () {
   UI_toolBar = new UI_toolBar();
   UI_caseBar = new UI_caseBar();
   UI_consoleBar = new UI_consoleBar();
+  UI_keyboardMap = new UI_keyboardMap();
   WIN3D = new WIN3D();
   WORLD = new WORLD();
   STUDY = new STUDY();
@@ -307,6 +308,30 @@ void keyPressed (KeyEvent e) {
       X_clicked = -1;
       Y_clicked = -1;
 
+      // The keyboard map (uiKeyboardMap.pde) is dismissed by ANY key, not
+      // just Esc - checked, and returned from, before everything else
+      // (including UI_menuBar's own dropdown-arrow-key handling just
+      // below), so that while it's open no key can do anything else: it
+      // only ever closes the overlay, the same way a click outside it
+      // (mouseClicked.pde) only ever closes it too. By the time this
+      // method is reached again on a later keypress, UI_keyboardMap.visible
+      // is guaranteed false, so the '?' check further down can never
+      // re-open something already open.
+      //
+      // Dismissing with Esc specifically must also zero `key` - same fix,
+      // same reason, as the isInProgress() branch above and the ordinary
+      // Esc-cascade branch further below: Processing's own default Esc
+      // behavior (quitting the whole sketch) runs AFTER this method
+      // returns, as part of PApplet's own key-event dispatch, and knows
+      // nothing about the keyboard map being open. Without this, Esc
+      // closed the overlay AND exited the program in the same keypress.
+      if (UI_keyboardMap.visible) {
+        if (key == ESC) key = 0;
+        UI_keyboardMap.hide();
+        redraw();
+        return;
+      }
+
       // Arrow keys and Enter drive the open menu and must not reach other elements
       if (UI_menuBar.keyPressed(e)) {
         redraw();
@@ -377,6 +402,19 @@ void keyPressed (KeyEvent e) {
           redraw();
           return;
         }
+      }
+
+      // '?' opens the keyboard map (uiKeyboardMap.pde) - same
+      // not-while-typing/editing guard as Undo/Redo just above, so it
+      // doesn't fire while '?' is actually meant to be typed into the
+      // command line or a spinner. UI_keyboardMap.visible is already
+      // guaranteed false here (the close-on-any-key check at the very
+      // top of this method already returned if it wasn't).
+      if (!wasEditingSpinner && (typeUserCommand == 0) &&
+          !e.isControlDown() && !e.isAltDown() && (key == '?')) {
+        UI_keyboardMap.show();
+        redraw();
+        return;
       }
 
       // Alt+<letter> opens a menu-bar parent tab's dropdown, same

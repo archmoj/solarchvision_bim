@@ -142,8 +142,10 @@ class UIMenuBarShortcutsTest {
   // ================= PARENT_SHORTCUTS self-consistency ====================
 
   @Test
-  void parentShortcuts_hasExactlyNineteenEntries () {
-    assertEquals(19, app.UI_menuBar.PARENT_SHORTCUTS.length);
+  void parentShortcuts_hasExactlyTwentyEntries () {
+    // 19 + "G" for the new "Guide" menu (uiKeyboardMap.pde's own
+    // UIKeyboardMapTest.java covers that one specifically).
+    assertEquals(20, app.UI_menuBar.PARENT_SHORTCUTS.length);
   }
 
   @Test

@@ -398,6 +398,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Ctrl+Y` | Redo model change |
 | `Ctrl+Shift+Z` | Undo viewport change |
 | `Ctrl+Shift+Y` | Redo viewport change |
+| `?` | Show the keyboard map: a full on-screen keyboard overlay (also reachable from the new **G**uide menu). Hover any key to see what it does; click outside it or press any key to dismiss |
 | `a` / `A` | Switch between **a**ctive and passive impact views in the 3D view |
 | `s` / `S` | Change the **s**ky scenario: all data, sunny, partly cloudy, or cloudy |
 | `d` / `D` | Change the impact-display **d**ay in the 3D view |
@@ -495,7 +496,7 @@ Every setting shown here is also reachable as a named command from the [command 
 
 ## Menu bar
 
-If the settings rollout panel is a sprawling animal, the menu bar is the opposite kind of creature: a fast, lightweight bird perched along the very top of the screen. Click a parent tab and its children drop straight down—no resizing, no two-level hierarchy to manage, just a flat list one click away. It's grown to 19 parent tabs and over 420 menu items in all, not counting the Layer tab, which rebuilds its own list live from whatever data layers the current project has loaded.
+If the settings rollout panel is a sprawling animal, the menu bar is the opposite kind of creature: a fast, lightweight bird perched along the very top of the screen. Click a parent tab and its children drop straight down—no resizing, no two-level hierarchy to manage, just a flat list one click away. It's grown to 20 parent tabs and over 420 menu items in all, not counting the Layer tab, which rebuilds its own list live from whatever data layers the current project has loaded.
 
 | Cluster | Parents | Covers |
 |---|---|---|
@@ -504,6 +505,7 @@ If the settings rollout panel is a sprawling animal, the menu bar is the opposit
 | **Viewport** | View · Visibility | Camera navigation and standard views, and what's shown or hidden in the 3D scene |
 | **Build → pick → edit** | Create · Select · Selection · Convert · Modify · Match · Transform · Delete | Creating objects, selecting them (and seeing what's selected), converting between types, and modifying, matching, transforming, or deleting the selection |
 | **Capture** | Capture | Screenshots, recordings, and chart/graph exports |
+| **Guide** | Guide | The on-screen keyboard map (also opened with `?`), with room for other reference material later |
 
 Most items here call into the same named-action system behind the [command bar](#command-bar-scripting-and-exports), so a lot of what you can click in the menu bar you can also type.
 

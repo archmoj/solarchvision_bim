@@ -955,11 +955,24 @@ correctly, without driving the mouse:
 
 `^About`, `^File`, `^Edit`, `^Location`, `^Setup`, `^Layer`, `^Analysis`,
 `^Shade`, `^View`, `^Visibility`, `^Create`, `^Select`, `^Selection`,
-`^Convert`, `^Modify`, `^Match`, `^Transform`, `^Delete`, `^Capture`
+`^Convert`, `^Modify`, `^Match`, `^Transform`, `^Delete`, `^Capture`,
+`^Guide`
 
 For example, `^Select` opens the `Select` dropdown, after which any of
 its items (`Pick Select`, `Select All`, ...) can be run as its own
 command, exactly as if you'd clicked it.
+
+### Keyboard map
+
+-   `Show Keyboard Map`: `?` (uiKeyboardMap.pde), or the `Guide` menu's
+    only item - opens a full-screen, hover-only reference overlay
+    drawing the whole keyboard (and numpad). Hovering any key lists
+    every binding on it; hovering the left Shift/Ctrl/Alt key lists
+    every binding anywhere that uses that modifier (the right-side
+    copies are drawn but inert - a legend distinction only, since the
+    real key handling never distinguishes left/right). There's no
+    click-to-fire - clicking outside the keyboard, or pressing any key,
+    just closes it again.
 
 ### Switch to a click-to-create tool
 
