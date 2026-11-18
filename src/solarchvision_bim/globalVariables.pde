@@ -560,6 +560,8 @@ UI_caseBar UI_caseBar = new UI_caseBar();
 
 UI_keyboardMap UI_keyboardMap = new UI_keyboardMap();
 
+UI_mouseGuide UI_mouseGuide = new UI_mouseGuide();
+
 int typeUserCommand = 0;
 
 float userPointSize = 0.0;

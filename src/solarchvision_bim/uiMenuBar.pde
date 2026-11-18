@@ -647,7 +647,8 @@ class UI_menuBar {
     },
     {
       PARENT_GUIDE,
-      "Show Keyboard Map"
+      "Show Keyboard Map",
+      "Show Mouse Guide"
     }
   };
   }

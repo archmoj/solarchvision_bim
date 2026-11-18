@@ -297,6 +297,8 @@ The World view's map responds to the mouse directly, without going through a men
 - **Hover** over the map to see the short name of whichever weather or climate station(s) are nearby, without clicking. When zoomed out over a dataset with many stations, the list is automatically kept short, with a note of how many additional nearby stations were left out rather than listing them all.
 - **Right-click** sets the project location to the clicked point and zooms in to confirm exactly where it landed.
 - **Left-click** pins that same nearby-station list in place instead of it following the mouse, so you can look elsewhere while it stays visible. A pinned list stays attached to the real-world location it was pinned at as the map is panned or zoomed, rather than to a fixed spot on screen, and is removed automatically once that location is no longer part of the visible map.
+- **Drag** pans the map once zoomed in past the initial view.
+- **Scroll** zooms the map in or out.
 
 A left-click pins a hover point the same way on a study graph, and in the 3D view while the solar-impact overlay is showing; a right-click never pins one in any of these. Press `ESC` to remove the most recently pinned point. Pinned hover points are saved and restored along with the project, by both the regular Save/Open workflow and the in-session Hold/Fetch scene snapshot.
 
@@ -399,6 +401,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Ctrl+Shift+Z` | Undo viewport change |
 | `Ctrl+Shift+Y` | Redo viewport change |
 | `?` | Show the keyboard map: a full on-screen keyboard overlay (also reachable from the new **G**uide menu). Hover any key to see what it does; click outside it or press any key to dismiss |
+| `Ctrl+?` | Show the mouse guide: an on-screen overlay with a touchpad diagram for each main view (World map, Study graph, 3D view, also reachable from the **G**uide menu). Hover a touchpad to see everything its left-click, right-click, drag, and scroll do in that view; click outside it or press any key to dismiss |
 | `a` / `A` | Switch between **a**ctive and passive impact views in the 3D view |
 | `s` / `S` | Change the **s**ky scenario: all data, sunny, partly cloudy, or cloudy |
 | `d` / `D` | Change the impact-display **d**ay in the 3D view |
@@ -419,6 +422,8 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `0` | Move the camera closer |
 | `/` / `*` ([slash] / [asterisk]) | Move the camera toward or away from the selection |
 | Arrow keys | Rotate the camera around the selection |
+
+The 3D view's own mouse behavior (what left-drag, right-drag, and scroll each do) depends on which navigation tool is currently active, so it isn't one fixed table the way a keyboard shortcut is—press `Ctrl+?` for the full, always-current mouse guide instead.
 
 ### Selection, model, and time
 
@@ -505,7 +510,7 @@ If the settings rollout panel is a sprawling animal, the menu bar is the opposit
 | **Viewport** | View · Visibility | Camera navigation and standard views, and what's shown or hidden in the 3D scene |
 | **Build → pick → edit** | Create · Select · Selection · Convert · Modify · Match · Transform · Delete | Creating objects, selecting them (and seeing what's selected), converting between types, and modifying, matching, transforming, or deleting the selection |
 | **Capture** | Capture | Screenshots, recordings, and chart/graph exports |
-| **Guide** | Guide | The on-screen keyboard map (also opened with `?`), with room for other reference material later |
+| **Guide** | Guide | The on-screen keyboard map (also opened with `?`) and mouse guide (also opened with `Ctrl+?`), with room for other reference material later |
 
 Most items here call into the same named-action system behind the [command bar](#command-bar-scripting-and-exports), so a lot of what you can click in the menu bar you can also type.
 

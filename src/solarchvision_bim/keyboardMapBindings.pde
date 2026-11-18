@@ -111,7 +111,8 @@ void buildKeyboardMapBindingsIfNeeded () {
     {"y", "Ctrl+Shift", "Redo Viewport3D Change"},
     {"TAB", "", "Show or hide the command bar"},
     {"ESC", "", "Cancel an in-progress edit, or close whatever is open (menu, pick list, shading preview, pinned hover point)"},
-    {"/", "Shift", "Show this keyboard map"} // '?' is Shift+/
+    {"/", "Shift", "Show this keyboard map"}, // '?' is Shift+/
+    {"/", "Ctrl+Shift", "Show the mouse guide"} // Ctrl+'?' is Ctrl+Shift+/
   };
   for (String[] row : fixed) keyboardMapBindings.add(row);
 

@@ -79,6 +79,7 @@ void setup () {
   UI_caseBar = new UI_caseBar();
   UI_consoleBar = new UI_consoleBar();
   UI_keyboardMap = new UI_keyboardMap();
+  UI_mouseGuide = new UI_mouseGuide();
   WIN3D = new WIN3D();
   WORLD = new WORLD();
   STUDY = new STUDY();
@@ -332,6 +333,17 @@ void keyPressed (KeyEvent e) {
         return;
       }
 
+      // UI_mouseGuide (uiMouseGuide.pde) is dismissed by ANY key the
+      // exact same way UI_keyboardMap just above is - see that block's
+      // own comment for why this has to run before everything else, and
+      // why Esc specifically has to also zero `key`.
+      if (UI_mouseGuide.visible) {
+        if (key == ESC) key = 0;
+        UI_mouseGuide.hide();
+        redraw();
+        return;
+      }
+
       // Arrow keys and Enter drive the open menu and must not reach other elements
       if (UI_menuBar.keyPressed(e)) {
         redraw();
@@ -413,6 +425,22 @@ void keyPressed (KeyEvent e) {
       if (!wasEditingSpinner && (typeUserCommand == 0) &&
           !e.isControlDown() && !e.isAltDown() && (key == '?')) {
         UI_keyboardMap.show();
+        redraw();
+        return;
+      }
+
+      // Ctrl+? (Ctrl+Shift+/) opens the mouse guide (uiMouseGuide.pde) -
+      // same not-while-typing/editing guard as '?' just above, but
+      // requiring Control down instead of excluding it, so the two
+      // overlays each get their own unclaimed chord off the same '?'
+      // key. The actual chord match is isMouseGuideOpenChord() (below),
+      // split out of this condition purely so it's unit-testable without
+      // going through this whole dispatch chain - see that function's
+      // own comment. UI_mouseGuide.visible is already guaranteed false
+      // here, for the same reason noted on the '?' check above.
+      if (!wasEditingSpinner && (typeUserCommand == 0) &&
+          isMouseGuideOpenChord(key, e.isControlDown(), e.isAltDown(), e.isShiftDown())) {
+        UI_mouseGuide.show();
         redraw();
         return;
       }
@@ -529,6 +557,26 @@ void keyPressed (KeyEvent e) {
       if ((STUDY.update) || (WORLD.update) || (WIN3D.update) || (UI_rollout.update)) redraw();
     }
   }
+}
+
+// Whether a keypress is the Ctrl+? (Ctrl+Shift+/) chord that opens the
+// mouse guide (uiMouseGuide.pde) - split out of keyPressed()'s own
+// condition purely so the chord-matching logic is unit-testable without
+// going through keyPressed()'s whole dispatch chain, which would
+// otherwise require either an already-open UI_mouseGuide (sidestepping
+// this exact check via its own close-on-any-key branch) or a real
+// show() call that touches real graphics (get()/image()) - the same
+// untestable-under-the-fallback-harness category UIKeyboardMapTest.java's
+// own header comment documents for UI_keyboardMap.show() itself.
+//
+// Matched as keyChar=='?' OR (shiftDown AND keyChar=='/') - on at least
+// some platforms, holding Ctrl alongside Shift+/ suppresses the
+// shifted-character translation and the event reports the bare '/'
+// instead of '?' even though Shift is genuinely down; checking
+// shiftDown directly alongside '/' catches that case too, without
+// depending on which one a given platform actually delivers.
+boolean isMouseGuideOpenChord (char keyChar, boolean ctrlDown, boolean altDown, boolean shiftDown) {
+  return ctrlDown && !altDown && (keyChar == '?' || (shiftDown && keyChar == '/'));
 }
 
 void keyReleased () {

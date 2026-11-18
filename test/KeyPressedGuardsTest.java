@@ -168,4 +168,42 @@ class KeyPressedGuardsTest {
       win.dispose();
     }
   }
+
+  // ================= isMouseGuideOpenChord() ==================================
+  // Split out of keyPressed()'s own Ctrl+? condition (solarchvision_bim.pde)
+  // purely so this chord-matching logic is testable on its own - going
+  // through keyPressed() itself would need either an already-open
+  // UI_mouseGuide (which sidesteps this exact check via its own close-
+  // on-any-key branch - see UIMouseGuideTest.java) or a real show() call
+  // that touches real graphics. Pure logic, no Processing graphics calls.
+
+  @Test
+  void isMouseGuideOpenChord_matchesCtrlQuestionMark () {
+    assertTrue(app.isMouseGuideOpenChord('?', true, false, false));
+  }
+
+  @Test
+  void isMouseGuideOpenChord_matchesCtrlShiftSlashFallback () {
+    // The platform-quirk fallback: Ctrl can suppress Shift+/'s own
+    // shifted-character translation on some platforms, reporting the
+    // bare '/' even though Shift is genuinely held.
+    assertTrue(app.isMouseGuideOpenChord('/', true, false, true));
+  }
+
+  @Test
+  void isMouseGuideOpenChord_requiresControl () {
+    assertFalse(app.isMouseGuideOpenChord('?', false, false, false));
+  }
+
+  @Test
+  void isMouseGuideOpenChord_bareSlashWithoutShift_doesNotMatch () {
+    // Ctrl+/ alone (no Shift) is a different, unclaimed chord - must not
+    // be swallowed by the mouse guide's own '/' fallback.
+    assertFalse(app.isMouseGuideOpenChord('/', true, false, false));
+  }
+
+  @Test
+  void isMouseGuideOpenChord_altDown_doesNotMatch () {
+    assertFalse(app.isMouseGuideOpenChord('?', true, true, false));
+  }
 }

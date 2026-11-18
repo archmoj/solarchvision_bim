@@ -558,12 +558,32 @@ class UIKeyboardMapTest {
   }
 
   @Test
-  void keyPressed_ctrlQuestionMark_doesNotOpenIt () {
+  void keyPressed_ctrlQuestionMark_doesNotOpenTheKeyboardMap () {
     // Guards on !e.isControlDown() specifically so a real Ctrl-combo
     // that happens to also produce '?' on some layout can never
-    // accidentally open this instead of whatever Ctrl+<key> does.
+    // accidentally open this instead of Ctrl+? (UI_mouseGuide,
+    // uiMouseGuide.pde) - wired up alongside this one in
+    // solarchvision_bim.pde's keyPressed(), via isMouseGuideOpenChord()
+    // (KeyPressedGuardsTest.java covers that chord-matching logic in
+    // isolation).
+    //
+    // UI_mouseGuide already visible here so ITS OWN close-on-any-key
+    // branch (which runs before the Ctrl+? open-check, same ordering as
+    // this overlay's own close-branch just above) fires instead of
+    // show() - show() would otherwise reach real get()/image() calls
+    // from closed, the same untestable-under-this-harness category this
+    // file's own header comment already documents for
+    // UI_keyboardMap.show() itself. So this deliberately exercises "the
+    // mouse guide was already open and any key (including this chord)
+    // closes it", not "Ctrl+? opens it from closed" - that path stays
+    // untested here for the same reason UI_keyboardMap's own '?'-from-
+    // closed path is.
+    app.UI_mouseGuide.visible = true;
+
     assertDoesNotThrow(() -> app.keyPressed(keyEvent('?', Event.CTRL)));
-    assertFalse(app.UI_keyboardMap.visible);
+
+    assertFalse(app.UI_keyboardMap.visible, "Ctrl+? must not open the keyboard map");
+    assertFalse(app.UI_mouseGuide.visible, "the mouse guide's own close-on-any-key branch must have fired instead");
   }
 
   // ================= mouseClicked() wiring ===================================

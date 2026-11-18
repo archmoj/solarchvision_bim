@@ -2712,6 +2712,11 @@ void build_allActions() {
   // as every other action.
   putAction("Show Keyboard Map", () -> UI_keyboardMap.show());
 
+  // Opens the mouse guide overlay (uiMouseGuide.pde) - same thing
+  // Ctrl+? does (solarchvision_bim.pde's keyPressed()), reachable here
+  // too for the same reasons as "Show Keyboard Map" just above.
+  putAction("Show Mouse Guide", () -> UI_mouseGuide.show());
+
   //allActions.keySet().stream().sorted().forEach(System.out::println);
 }
 

@@ -2343,6 +2343,16 @@ void mouseClicked () {
         return;
       }
 
+      // The mouse guide (uiMouseGuide.pde) swallows every click while
+      // open, same as the keyboard map just above and for the same
+      // reason.
+      if (UI_mouseGuide.visible) {
+        if (!UI_mouseGuide.isInsideBounds(mouseX, mouseY)) {
+          UI_mouseGuide.hide();
+        }
+        return;
+      }
+
       if (FRAME_click_IMG) {
 
         RecordFrame();
