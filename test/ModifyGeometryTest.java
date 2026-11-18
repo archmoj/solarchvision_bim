@@ -1069,4 +1069,217 @@ class ModifyGeometryTest {
     app.Modify3D.appendNewFaceSelection(new ArrayList<Integer>());
     assertArrayEquals(new int[]{5}, app.Select3D.faceSelection);
   }
+
+  // --- faceNormalUnit --------------------------------------------------
+
+  @Test
+  void faceNormalUnit_ofAFlatSquare_pointsStraightUp () {
+    // CCW-from-above square in the XY plane - same +Z-outward winding
+    // convention as the extrude test above.
+    float[][] square = {{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    float[] normal = app.Modify3D.faceNormalUnit(square);
+    assertArrayEquals(new float[]{0, 0, 1}, normal, 0.0001f);
+  }
+
+  // --- thickenFaces_Selection (a full integration test) ----------------
+  //
+  // Driven with the exact same single-triangle scene as the extrude
+  // test above, specifically to show how the two differ: this one does
+  // NOT duplicate the base corners (the walls reuse the original face's
+  // own vertex indices for their base edge), so the same selection
+  // produces fewer new points - only the offset ("back") copy is new.
+
+  @Test
+  void thickenFaces_singleTriangle_addsOnlyTheOffsetCopyNotDuplicateBasePoints () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}}; // flat triangle, facing +Z
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierOpeningDepth = 1f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.thickenFaces_Selection();
+
+    // original (untouched) + 3 walls + 1 back face; only 3 new points
+    // (the offset copy of each of the 3 original corners), not 6.
+    assertEquals(5, app.allFaces.nodes.length);
+    assertEquals(6, app.allVertices.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+
+    // The 3 new points are each the matching original corner pushed up
+    // by the +Z normal - same positions the extrude test's top points
+    // land on, just not duplicated per-wall.
+    float[][] expectedOffsets = {{0, 0, 1}, {2, 0, 1}, {0, 2, 1}};
+    for (float[] expected : expectedOffsets) {
+      boolean found = false;
+      for (int v = 3; v < app.allVertices.length; v++) {
+        if (dist(expected, app.allVertices[v]) < 0.0001f) found = true;
+      }
+      assertTrue(found, "missing offset point for " + expected[0] + "," + expected[1] + "," + expected[2]);
+    }
+
+    // The back face is added first (index 1, right after the untouched
+    // original), followed by its 3 walls (indices 2-4) - a triangle
+    // built entirely from the 3 new (offset) points.
+    int[] backFace = app.allFaces.nodes[1];
+    assertEquals(3, backFace.length);
+    for (int v : backFace) assertTrue(v >= 3, "back face should only reference new offset points");
+
+    // The 3 side walls are quads, each mixing 2 original and 2 offset points.
+    for (int f = 2; f <= 4; f++) {
+      assertEquals(4, app.allFaces.nodes[f].length);
+    }
+
+    // A brand-new group was created, spanning the 4 new faces.
+    assertEquals(2, app.allGroups.num);
+    assertArrayEquals(new int[]{1, 4}, app.allGroups.Faces[1]);
+
+    // Every new face (back face + all 3 walls) ends up selected.
+    assertArrayEquals(new int[]{1, 2, 3, 4}, app.Select3D.faceSelection);
+  }
+
+  private float dist (float[] a, float[] b) {
+    float dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+    return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+  }
+
+  @Test
+  void thickenFaces_twoAdjacentQuads_shareOneOffsetVertexAndSkipTheSharedWall () {
+    // Two coplanar unit squares sharing the edge between vertex 1 and
+    // vertex 2 (vertex indices, not just matching positions - this is
+    // what lets thickenFaces_Selection recognize them as connected).
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // square A's own corners (0-3)
+      {2, 0, 0}, {2, 1, 0}                         // square B's own extra corners (4-5)
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2, 3}, // square A
+      {1, 4, 5, 2}  // square B - shares the 1-2 edge with square A
+    };
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
+    };
+    app.User3D.modifierOpeningDepth = 1f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1}; // one group spanning both faces
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.thickenFaces_Selection();
+
+    // 6 unique original vertices -> exactly 6 new offset points, not 8
+    // (which duplicating per-face, the way Extrude Face Edges would if
+    // simply run twice, would have produced).
+    assertEquals(12, app.allVertices.length);
+
+    // 2 original faces + 2 back faces + 6 walls (3 boundary edges per
+    // square; the shared 1-2 edge is excluded from both, so NOT 4+4=8).
+    assertEquals(10, app.allFaces.nodes.length);
+  }
+
+  // --- fillHoles_Selection (a full integration test) --------------------
+
+  @Test
+  void fillHoles_capsTheOneMissingFaceOfAnOpenToppedBox () {
+    // An axis-aligned unit box with all 4 side faces but no top (the
+    // top face, at z=1, is the "hole"). Bottom is left off too - this
+    // object has two holes, top and bottom, confirming fillHoles_Selection
+    // finds and fills both from a single call, not just the first one.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // bottom corners 0-3
+      {0, 0, 1}, {1, 0, 1}, {1, 1, 1}, {0, 1, 1}  // top corners 4-7
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 5, 4}, // y=0 side, facing -Y outward
+      {1, 2, 6, 5}, // x=1 side, facing +X outward
+      {2, 3, 7, 6}, // y=1 side, facing +Y outward
+      {3, 0, 4, 7}  // x=0 side, facing -X outward
+    };
+    app.allFaces.options = new int[][]{
+      {7, 0, 0, 0, 0, 0}, {7, 0, 0, 0, 0, 0}, {7, 0, 0, 0, 0, 0}, {7, 0, 0, 0, 0, 0}
+    };
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.fillHoles_Selection();
+
+    // One new cap for the top hole, one for the bottom hole.
+    assertEquals(6, app.allFaces.nodes.length);
+
+    boolean sawTopCap = false, sawBottomCap = false;
+    for (int f = 4; f < app.allFaces.nodes.length; f++) {
+      int[] nodes = app.allFaces.nodes[f];
+      assertEquals(4, nodes.length);
+
+      // Every node is one of the 4 top points, or one of the 4 bottom
+      // points, with none repeated - a clean, non-degenerate quad.
+      java.util.HashSet<Integer> unique = new java.util.HashSet<Integer>();
+      for (int v : nodes) unique.add(v);
+      assertEquals(4, unique.size());
+
+      boolean allTop = true, allBottom = true;
+      for (int v : nodes) {
+        if (v < 4) allTop = false;
+        if (v >= 4) allBottom = false;
+      }
+      assertTrue(allTop || allBottom, "cap should be entirely top points or entirely bottom points");
+
+      float[] normal = app.Modify3D.faceNormalUnit(app.Modify3D.faceBaseVertices(f));
+      if (allTop) {
+        sawTopCap = true;
+        assertArrayEquals(new float[]{0, 0, 1}, normal, 0.0001f); // outward = up, matching the side faces' convention
+        assertEquals(7, app.allFaces.getMaterial(f)); // inherited from a neighboring side face
+      } else {
+        sawBottomCap = true;
+        assertArrayEquals(new float[]{0, 0, -1}, normal, 0.0001f); // outward = down
+      }
+    }
+    assertTrue(sawTopCap, "should have filled the top hole");
+    assertTrue(sawBottomCap, "should have filled the bottom hole");
+  }
+
+  @Test
+  void fillHoles_doesNothingToAnAlreadyClosedSolid () {
+    // A tetrahedron: every one of its 6 edges is shared by exactly 2 of
+    // its 4 faces, so there's no naked edge anywhere to fill.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}
+    };
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
+    };
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.fillHoles_Selection();
+
+    assertEquals(4, app.allFaces.nodes.length); // unchanged
+    assertEquals(4, app.allVertices.length);    // unchanged
+  }
+
+  @Test
+  void fillHoles_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.Modify3D.fillHoles_Selection();
+
+    assertEquals(1, app.allFaces.nodes.length); // isGroupOrFaceCategorySelected() guard short-circuited before any work
+  }
 }

@@ -1081,6 +1081,313 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // Same corner-normal estimate extrudeFaceEdges_Selection() computes per
+  // vertex (U = next corner - this corner, V = previous corner - this
+  // corner, W = unit(U x V)), just evaluated once at corner 0 instead of
+  // once per vertex - good enough as a single representative normal for a
+  // face, which is all thickenFaces_Selection() below needs it for.
+  float[] faceNormalUnit (float[][] base_Vertices) {
+    int n = base_Vertices.length;
+    PVector U = new PVector(base_Vertices[1][0] - base_Vertices[0][0], base_Vertices[1][1] - base_Vertices[0][1], base_Vertices[1][2] - base_Vertices[0][2]);
+    PVector V = new PVector(base_Vertices[n - 1][0] - base_Vertices[0][0], base_Vertices[n - 1][1] - base_Vertices[0][1], base_Vertices[n - 1][2] - base_Vertices[0][2]);
+    PVector UV = U.cross(V);
+    float[] W = { UV.x, UV.y, UV.z };
+    return funcs.vec3_unit(W);
+  }
+
+  // Gives every selected face a parallel offset copy (its own averaged
+  // per-vertex normal x User3D.modifierOpeningDepth, same signed-depth
+  // convention as Extrude Face Edges above) and walls only the naked
+  // (boundary) edges of the selection - the edges used by exactly one
+  // selected face - so a connected patch of faces thickens into one
+  // shared shell instead of each face getting its own disconnected little
+  // box the way repeatedly running Extrude Face Edges over the same
+  // faces would. Like Extrude Face Edges, the original selected faces are
+  // left exactly as they were; only the offset copy and the boundary
+  // walls are new. Vertices that aren't shared with any other selected
+  // face (an isolated single-face selection) still get a sensible result:
+  // every one of that face's own edges is then, correctly, a boundary
+  // edge, so it comes out walled on all sides - the same single-face box
+  // Extrude Face Edges itself would produce.
+  void thickenFaces_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    int[] primary_list = Select3D.faceSelection;
+
+    Select3D.deselect_Faces();
+
+    int baseLen = allFaces.nodes.length;
+    int runningCount = 0;
+    ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
+    ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+    ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+
+      ArrayList<Integer> groupFaces_L = new ArrayList<Integer>();
+      for (int q = 0; q < primary_list.length; q++) {
+        int f = primary_list[q];
+        if (isFaceInGroupRange(f, OBJ_ID)) groupFaces_L.add(f);
+      }
+      if (groupFaces_L.size() == 0) continue;
+
+      int[] groupFaces = new int[groupFaces_L.size()];
+      for (int i = 0; i < groupFaces.length; i++) groupFaces[i] = groupFaces_L.get(i);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+      // pass 1: average unit face-normal per unique vertex, across every
+      // selected face in this group that uses it - this is what keeps the
+      // offset copy a single connected shell rather than one disconnected
+      // box per face
+      HashMap<Integer, float[]> normalSum = new HashMap<Integer, float[]>();
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int f = groupFaces[fi];
+        if (allFaces.nodes[f].length < 3) continue;
+
+        float[] n = faceNormalUnit(faceBaseVertices(f));
+        for (int s = 0; s < allFaces.nodes[f].length; s++) {
+          int vNo = allFaces.nodes[f][s];
+          float[] acc = normalSum.get(vNo);
+          if (acc == null) {
+            acc = new float[] { 0, 0, 0 };
+            normalSum.put(vNo, acc);
+          }
+          acc[0] += n[0];
+          acc[1] += n[1];
+          acc[2] += n[2];
+        }
+      }
+
+      // pass 2: one offset vertex per unique original vertex
+      HashMap<Integer, Integer> offsetVertexMap = new HashMap<Integer, Integer>();
+      for (Integer vNo : normalSum.keySet()) {
+        float[] nUnit = funcs.vec3_unit(normalSum.get(vNo));
+        float px = allPoints.getX(vNo) + nUnit[0] * User3D.modifierOpeningDepth;
+        float py = allPoints.getY(vNo) + nUnit[1] * User3D.modifierOpeningDepth;
+        float pz = allPoints.getZ(vNo) + nUnit[2] * User3D.modifierOpeningDepth;
+        offsetVertexMap.put(vNo, allPoints.create(px, py, pz));
+      }
+
+      // pass 3: undirected-edge usage count across this group's selected
+      // faces only - an edge used by exactly one of them is a boundary
+      // edge of the selection and needs a wall; one shared between two
+      // selected faces is interior and must stay open
+      HashMap<String, Integer> edgeCount = new HashMap<String, Integer>();
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int f = groupFaces[fi];
+        int n = allFaces.nodes[f].length;
+        if (n < 3) continue; // kept out of normalSum/offsetVertexMap above too - not enough vertices for a normal
+
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+          int a = allFaces.nodes[f][s];
+          int b = allFaces.nodes[f][s_next];
+          String key = min(a, b) + "_" + max(a, b);
+          Integer prevCount = edgeCount.get(key);
+          edgeCount.put(key, (prevCount == null ? 0 : prevCount) + 1);
+        }
+      }
+
+      // pass 4: the offset copy of every selected face (same winding as
+      // the original, same convention Extrude Face Edges' own cap uses),
+      // plus one wall per boundary edge found above
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int f = groupFaces[fi];
+        int n = allFaces.nodes[f].length;
+        if (n < 3) continue; // no offset vertices exist for this face's own nodes - see pass 1/3's own guard
+
+        int[] faceOptions = { allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f) };
+
+        int[] backFace_nodes = new int[n];
+        for (int s = 0; s < n; s++) backFace_nodes[s] = offsetVertexMap.get(allFaces.nodes[f][s]);
+        newFace_nodes_all.add(backFace_nodes);
+        newFace_options_all.add(faceOptions);
+        runningCount++;
+        int lastFaceIndex = baseLen + runningCount - 1;
+        newfaceSelection_L.add(lastFaceIndex);
+        allGroups.Faces[allGroups.num - 1][1] = lastFaceIndex;
+
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+          int a = allFaces.nodes[f][s];
+          int b = allFaces.nodes[f][s_next];
+          String key = min(a, b) + "_" + max(a, b);
+          if (edgeCount.get(key) != 1) continue; // interior edge shared with another selected face - no wall
+
+          int aTop = offsetVertexMap.get(a);
+          int bTop = offsetVertexMap.get(b);
+
+          int[] wall_nodes;
+          if (User3D.modifierOpeningDepth < 0) { // reverse direction for negative thickness, same as Extrude Face Edges
+            wall_nodes = new int[] { a, aTop, bTop, b };
+          } else {
+            wall_nodes = new int[] { a, b, bTop, aTop };
+          }
+
+          newFace_nodes_all.add(wall_nodes);
+          newFace_options_all.add(faceOptions);
+          runningCount++;
+          lastFaceIndex = baseLen + runningCount - 1;
+          newfaceSelection_L.add(lastFaceIndex);
+          allGroups.Faces[allGroups.num - 1][1] = lastFaceIndex;
+        }
+      }
+    }
+
+    if (newFace_nodes_all.size() > 0) {
+      int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
+      int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+
+      allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
+      allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+
+      appendNewFaceSelection(newfaceSelection_L);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
+  // Closes any hole in a selected object's own surface - any boundary
+  // loop of edges that are each used by exactly one of the GROUP's faces
+  // (not just the selected ones; selecting any face of the object, or the
+  // object itself, is enough to find and fill every hole it has) - with
+  // one new face per loop.
+  //
+  // The boundary loop is first walked in the direction its one owning
+  // face's own edge already runs in, which is the SAME rotational sense
+  // as that face's own winding - but using that order directly for the
+  // new cap face would point the cap's normal the wrong way. Worked
+  // example: an open-topped unit box missing only its top face has four
+  // top boundary edges, one per side face, each directed the way that
+  // side face's own winding carries it; chaining them head-to-tail (each
+  // edge's "to" vertex is the next edge's "from" vertex) walks the loop
+  // in one consistent direction - but a face built from THAT vertex order
+  // comes out normal-down (into the box). Reversing the walked order
+  // before building the cap gives normal-up (out of the box), matching
+  // the side faces' own outward convention - so the loop is reversed
+  // below, once walking finds a clean closed loop.
+  void fillHoles_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+
+    Select3D.deselect_Faces();
+
+    int baseLen = allFaces.nodes.length;
+    int runningCount = 0;
+    ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
+    ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+    ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+      int startFace = allGroups.getStart_Face(OBJ_ID);
+      int endFace = allGroups.getStop_Face(OBJ_ID);
+      if (endFace < startFace) continue; // this object currently has no faces at all
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+      // undirected-edge usage count across every face this object
+      // currently has, remembering one directed occurrence (+ its owning
+      // face, for the new cap's material/tessellation/etc) for every edge
+      // used exactly once - the boundary of any hole in this object
+      HashMap<String, Integer> edgeCount = new HashMap<String, Integer>();
+      HashMap<String, int[]> edgeDirected = new HashMap<String, int[]>(); // key -> {fromVertex, toVertex, ownerFace}
+
+      for (int f = startFace; f <= endFace; f++) {
+        int n = allFaces.nodes[f].length;
+        if (n < 3) continue;
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+          int a = allFaces.nodes[f][s];
+          int b = allFaces.nodes[f][s_next];
+          String key = min(a, b) + "_" + max(a, b);
+          Integer prevCount = edgeCount.get(key);
+          edgeCount.put(key, (prevCount == null ? 0 : prevCount) + 1);
+          edgeDirected.put(key, new int[] { a, b, f });
+        }
+      }
+
+      // one naked edge, by its "from" vertex, maps to where it leads and
+      // which face it came from
+      HashMap<Integer, int[]> nextFromVertex = new HashMap<Integer, int[]>(); // fromVertex -> {toVertex, ownerFace}
+      for (String key : edgeCount.keySet()) {
+        if (edgeCount.get(key) != 1) continue;
+        int[] d = edgeDirected.get(key);
+        nextFromVertex.put(d[0], new int[] { d[1], d[2] });
+      }
+
+      HashSet<Integer> consumedStarts = new HashSet<Integer>();
+
+      for (Integer startVertex : nextFromVertex.keySet()) {
+        if (consumedStarts.contains(startVertex)) continue;
+
+        ArrayList<Integer> loop_L = new ArrayList<Integer>();
+        int ownerFaceForOptions = -1;
+        int current = startVertex;
+        boolean closed = false;
+
+        for (int guard = 0; guard <= nextFromVertex.size(); guard++) {
+          if (consumedStarts.contains(current) && current != startVertex) break; // walked into another loop already in progress - not a clean boundary, bail
+
+          loop_L.add(current);
+          consumedStarts.add(current);
+
+          int[] nxt = nextFromVertex.get(current);
+          if (nxt == null) break; // dead end - not a closed loop, bail
+
+          if (ownerFaceForOptions == -1) ownerFaceForOptions = nxt[1];
+          current = nxt[0];
+
+          if (current == startVertex) {
+            closed = true;
+            break;
+          }
+        }
+
+        if (!closed || loop_L.size() < 3) continue; // not a real, closed hole boundary
+
+        int[] capFace_nodes = new int[loop_L.size()]; // reversed - see this method's own comment above
+        for (int i = 0; i < loop_L.size(); i++) capFace_nodes[i] = loop_L.get(loop_L.size() - 1 - i);
+
+        int[] capFace_options;
+        if (ownerFaceForOptions >= 0) {
+          capFace_options = new int[] { allFaces.getMaterial(ownerFaceForOptions), allFaces.getTessellation(ownerFaceForOptions), allFaces.getLayer(ownerFaceForOptions), allFaces.getVisibility(ownerFaceForOptions), allFaces.getWeight(ownerFaceForOptions), allFaces.getClose(ownerFaceForOptions) };
+        } else {
+          capFace_options = new int[] { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+        }
+
+        newFace_nodes_all.add(capFace_nodes);
+        newFace_options_all.add(capFace_options);
+        runningCount++;
+        int lastFaceIndex = baseLen + runningCount - 1;
+        newfaceSelection_L.add(lastFaceIndex);
+        allGroups.Faces[allGroups.num - 1][1] = lastFaceIndex;
+      }
+    }
+
+    if (newFace_nodes_all.size() > 0) {
+      int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
+      int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+
+      allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
+      allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+
+      appendNewFaceSelection(newfaceSelection_L);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
   void autoNormalFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

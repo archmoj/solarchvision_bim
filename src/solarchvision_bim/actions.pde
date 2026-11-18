@@ -2284,6 +2284,14 @@ void build_allActions() {
     Modify3D.extrudeFaceEdges_Selection();
   });
 
+  putAction("Thicken Selected Faces", () -> {
+    Modify3D.thickenFaces_Selection();
+  });
+
+  putAction("Fill Holes", () -> {
+    Modify3D.fillHoles_Selection();
+  });
+
   putAction("Offset(above) Vertices", () -> {
     Modify3D.offsetVertices_Selection(0, abs(User3D.modifierOffsetAmount));
   });
