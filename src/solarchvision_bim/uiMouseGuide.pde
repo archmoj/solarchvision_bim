@@ -25,7 +25,7 @@ class UI_mouseGuide {
   boolean visible = false;
   PImage mouseGuide_pre_screen = null;
 
-  final float OVERLAY_PADDING = 50;
+  final float OVERLAY_PADDING = 10;
 
   // One row per laid-out touchpad illustration: {viewport, x, y, w, h} -
   // same shape as UI_keyboardMap.LaidOutKey, just one rect per viewport

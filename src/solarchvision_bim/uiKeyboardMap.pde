@@ -28,7 +28,7 @@ class UI_keyboardMap {
 
   // How far inside the WORLD+WIN3D+STUDY panel union the overlay's
   // scrim/click-region is inset, on all four sides.
-  final float OVERLAY_PADDING = 50;
+  final float OVERLAY_PADDING = 10;
 
   // One row per laid-out key: {label, x, y, w, h}. Rebuilt fresh on
   // every call (cheap - a few dozen rows) rather than cached, so it's
