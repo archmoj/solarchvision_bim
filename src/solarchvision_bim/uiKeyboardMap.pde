@@ -588,8 +588,9 @@ class UI_keyboardMap {
       // past the overlay's own bottom edge: a column only holds as many
       // lines as actually fit above that edge, and the next line spills
       // into the next column instead of past the bottom.
+      float hintTextSize = 0.45 * keyUnit();
+      float lineHeight = 1.4 * hintTextSize;
       float boxTop = mainClusterBottom(keys) + 0.5 * keyUnit();
-      float lineHeight = 0.5 * keyUnit();
       float bottomLimit = box[3] - 0.25 * keyUnit();
       int linesPerColumn = max(1, (int) floor((bottomLimit - boxTop) / lineHeight));
       int columnCount = 3;
@@ -597,15 +598,34 @@ class UI_keyboardMap {
       float columnWidth = (box[2] - firstColumnX) / columnCount;
 
       textAlign(LEFT, TOP);
-      textSize(0.35 * keyUnit());
+      textSize(hintTextSize);
       fill(255);
+      // No bold variant of the overlay's own font is loaded (font.pde
+      // only ever loads one weight), so the combo ("Ctrl+[dot]", say)
+      // is faux-bolded by drawing it twice, offset by roughly a device
+      // pixel - thickens every stroke enough to read as bold without a
+      // second font file.
+      float boldOffset = max(1, 0.04 * hintTextSize);
       int maxLines = min(lines.size(), linesPerColumn * columnCount);
       for (int i = 0; i < maxLines; i++) {
         int col = i / linesPerColumn;
         int row = i % linesPerColumn;
         float tx = firstColumnX + col * columnWidth;
         float ty = boxTop + row * lineHeight;
-        text(lines.get(i), tx, ty);
+
+        // keyboardMapSplitLineForDisplay() also swaps the combo's tiny,
+        // easily-confused punctuation (".", ",", "'", ...) for a
+        // readable bracketed name, e.g. "Ctrl+.: ..." renders as
+        // "Ctrl+[dot]: ..." - see that function's own comment
+        // (keyboardMapBindings.pde) for why the underlying data/lookup
+        // table itself is left untouched.
+        String[] parts = keyboardMapSplitLineForDisplay(lines.get(i));
+        String combo = parts[0];
+        String description = parts[1];
+
+        text(combo, tx, ty);
+        text(combo, tx + boldOffset, ty);
+        text(": " + description, tx + textWidth(combo) + boldOffset, ty);
       }
     }
   }

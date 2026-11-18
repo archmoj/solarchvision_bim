@@ -103,4 +103,77 @@ class KeyboardMapBindingsTest {
     assertTrue(app.keyboardMapModifierFieldRequires("Ctrl+Shift", "Shift"));
     assertFalse(app.keyboardMapModifierFieldRequires("Ctrl+Shift", "Alt"));
   }
+
+  // ================= display-only readability helpers =======================
+  // keyboardMapReadableSymbol()/keyboardMapSplitLineForDisplay() are
+  // purely for how UI_keyboardMap.pde's draw() renders a hint line - they
+  // must never change what keyboardMapDescribeKey()/
+  // keyboardMapDescribeModifier() themselves return (confirmed above
+  // already using the exact ": " text), so they're tested separately here.
+
+  @Test
+  void readableSymbol_tinyPunctuationMarksGetABracketedName () {
+    assertEquals("[dot]", app.keyboardMapReadableSymbol("."));
+    assertEquals("[comma]", app.keyboardMapReadableSymbol(","));
+    assertEquals("[apostrophe]", app.keyboardMapReadableSymbol("'"));
+    assertEquals("[backtick]", app.keyboardMapReadableSymbol("`"));
+    assertEquals("[semicolon]", app.keyboardMapReadableSymbol(";"));
+    assertEquals("[left bracket]", app.keyboardMapReadableSymbol("["));
+    assertEquals("[right bracket]", app.keyboardMapReadableSymbol("]"));
+    assertEquals("[backslash]", app.keyboardMapReadableSymbol("\\"));
+    assertEquals("[slash]", app.keyboardMapReadableSymbol("/"));
+    assertEquals("[dash]", app.keyboardMapReadableSymbol("-"));
+    assertEquals("[equals]", app.keyboardMapReadableSymbol("="));
+  }
+
+  @Test
+  void readableSymbol_lettersDigitsAndWordyLabels_passThroughUnchanged () {
+    assertEquals("s", app.keyboardMapReadableSymbol("s"));
+    assertEquals("9", app.keyboardMapReadableSymbol("9"));
+    assertEquals("ENTER", app.keyboardMapReadableSymbol("ENTER"));
+    assertEquals("UP", app.keyboardMapReadableSymbol("UP"));
+  }
+
+  @Test
+  void splitLineForDisplay_modifierPlusTinySymbol_rewritesOnlyTheKeyPart () {
+    String[] parts = app.keyboardMapSplitLineForDisplay("Ctrl+.: Nudge Away from Selection");
+    assertEquals("Ctrl+[dot]", parts[0]);
+    assertEquals("Nudge Away from Selection", parts[1]);
+  }
+
+  @Test
+  void splitLineForDisplay_bareTinySymbolWithNoModifier_stillRewrites () {
+    String[] parts = app.keyboardMapSplitLineForDisplay("=: Reset Study View");
+    assertEquals("[equals]", parts[0]);
+    assertEquals("Reset Study View", parts[1]);
+  }
+
+  @Test
+  void splitLineForDisplay_multiModifierCombo_keepsTheFullModifierPrefix () {
+    String[] parts = app.keyboardMapSplitLineForDisplay("Ctrl+Shift+z: Undo Viewport3D Change");
+    assertEquals("Ctrl+Shift+z", parts[0]);
+    assertEquals("Undo Viewport3D Change", parts[1]);
+  }
+
+  @Test
+  void splitLineForDisplay_ordinaryLetterKey_isUnaffected () {
+    String[] parts = app.keyboardMapSplitLineForDisplay("Alt+s: Open \"Select\" menu");
+    assertEquals("Alt+s", parts[0]);
+    assertEquals("Open \"Select\" menu", parts[1]);
+  }
+
+  @Test
+  void splitLineForDisplay_everyRealHintLine_roundTripsBackToTheOriginalDescription () {
+    // Every line keyboardMapDescribeKey()/keyboardMapDescribeModifier()
+    // can actually produce must survive the split with its description
+    // untouched and its combo recognizable (same text minus a rewritten
+    // key part) - guards against the ": " split ever accidentally
+    // eating into a description that happens to contain its own colon.
+    app.buildKeyboardMapBindingsIfNeeded();
+    for (String[] row : app.keyboardMapBindings) {
+      String line = app.keyboardMapFormatLine(row);
+      String[] parts = app.keyboardMapSplitLineForDisplay(line);
+      assertEquals(row[2], parts[1], "description must be preserved for: " + line);
+    }
+  }
 }

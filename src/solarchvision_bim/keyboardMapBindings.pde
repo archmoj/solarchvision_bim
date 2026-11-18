@@ -142,6 +142,60 @@ String keyboardMapFormatLine (String[] row) {
   return combo + ": " + description;
 }
 
+// A bare punctuation key label, swapped for a readable bracketed name
+// for DISPLAY ONLY - e.g. "." -> "[dot]". Returns keyLabel unchanged for
+// anything not in this list - letters, digits, and already-wordy labels
+// like "ENTER"/"UP" need no help. Covers exactly the tiny, easily-
+// confused punctuation marks MAIN_ROWS actually has (uiKeyboardMap.pde) -
+// the same marks keyShiftedVariant() there already prints two-up on the
+// keycap itself for the same "too small/ambiguous at a glance" reason.
+// Never applied to keyboardMapBindings' own stored data (keyLabel stays
+// the bare character there, as every lookup above requires) - only to
+// a combo string already built by keyboardMapFormatLine(), via
+// keyboardMapSplitLineForDisplay() below.
+String keyboardMapReadableSymbol (String keyLabel) {
+  switch (keyLabel) {
+    case ".": return "[dot]";
+    case ",": return "[comma]";
+    case "'": return "[apostrophe]";
+    case "`": return "[backtick]";
+    case ";": return "[semicolon]";
+    case "[": return "[left bracket]";
+    case "]": return "[right bracket]";
+    case "\\": return "[backslash]";
+    case "/": return "[slash]";
+    case "-": return "[dash]";
+    case "=": return "[equals]";
+    default: return keyLabel;
+  }
+}
+
+// Splits one hint line (keyboardMapFormatLine()'s own "combo: description"
+// format, as returned by keyboardMapDescribeKey()/keyboardMapDescribeModifier())
+// back into its two pieces for display, rewriting the combo's trailing
+// bare key label - the part after the last "+", or the whole combo when
+// there's no modifier - through keyboardMapReadableSymbol() first. E.g.
+// "Ctrl+.: Nudge Away from Selection" comes back as
+// {"Ctrl+[dot]", "Nudge Away from Selection"}.
+//
+// uiKeyboardMap.pde's draw() renders the two returned pieces separately
+// (combo in bold, then ": " + description in normal weight) rather than
+// changing keyboardMapFormatLine()'s own output, so the underlying data
+// layer - and every test that checks its exact text, e.g.
+// KeyboardMapBindingsTest.java - stays untouched.
+String[] keyboardMapSplitLineForDisplay (String line) {
+  int colon = line.indexOf(": ");
+  String combo = (colon == -1) ? line : line.substring(0, colon);
+  String description = (colon == -1) ? "" : line.substring(colon + 2);
+
+  int plus = combo.lastIndexOf('+');
+  String modifierPrefix = (plus == -1) ? "" : combo.substring(0, plus + 1);
+  String keyPart = (plus == -1) ? combo : combo.substring(plus + 1);
+
+  String displayCombo = modifierPrefix + keyboardMapReadableSymbol(keyPart);
+  return new String[]{ displayCombo, description };
+}
+
 // Every binding on the given physical (unshifted) key label, regardless
 // of modifier - what hovering an ordinary key shows.
 ArrayList<String> keyboardMapDescribeKey (String keyLabel) {
