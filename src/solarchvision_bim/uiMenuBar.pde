@@ -491,6 +491,7 @@ class UI_menuBar {
       "Insert Parallel Openings",
       "Insert Rotated Openings",
       "Insert Edge Openings",
+      "Inset Faces",
       ___divider___,
       "Offset(above) Vertices",
       "Offset(below) Vertices",

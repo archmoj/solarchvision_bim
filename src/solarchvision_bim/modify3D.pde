@@ -508,6 +508,135 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // Where line1 (P1 + t*D1) and line2 (P2 + t*D2) cross, assuming they're
+  // coplanar (as any two edges - or their inward offsets - of the same
+  // flat face always are) and not parallel. Returns null for parallel/
+  // near-collinear lines (no unique crossing point) rather than dividing
+  // by ~0. Derived from cross(P1 + t*D1 - P2, D2) = 0 (true exactly when
+  // P1 + t*D1 lies on line2): writing Q = P2 - P1, that's
+  // cross(t*D1 - Q, D2) = 0, i.e. t*cross(D1, D2) = cross(Q, D2); dotting
+  // both sides with cross(D1, D2) turns that into the scalar equation
+  // solved for t below.
+  float[] lineIntersection3D (float[] P1, float[] D1, float[] P2, float[] D2) {
+    PVector pD1 = new PVector(D1[0], D1[1], D1[2]);
+    PVector pD2 = new PVector(D2[0], D2[1], D2[2]);
+    PVector cross12 = pD1.cross(pD2);
+    float denom = cross12.magSq();
+    if (denom < FLOAT_tiny * FLOAT_tiny) return null; // parallel / collinear - no unique intersection
+
+    PVector Q = new PVector(P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]);
+    PVector crossQD2 = Q.cross(pD2);
+    float t = crossQD2.dot(cross12) / denom;
+
+    return new float[] { P1[0] + t * D1[0], P1[1] + t * D1[1], P1[2] + t * D1[2] };
+  }
+
+  // Shrinks each selected face inward by User3D.modifierInsetDepth, a
+  // plain in-plane distance rather than Insert Parallel Openings' own
+  // area-ratio shrink, and walls the gap with one clean quad per edge -
+  // not that tool's own 2-quads-per-edge bevel ring. Each new inner
+  // corner is found the standard "polygon inset" way: offset every edge
+  // inward, in the face's own plane, by modifierInsetDepth, then
+  // intersect each pair of edges meeting at a corner to find where that
+  // corner's own two offset edges now cross. (A corner where both edges
+  // run the same direction - a redundant straight-through vertex - has
+  // no such crossing; lineIntersection3D() returns null for it, and the
+  // corner is just nudged inward by the averaged offset direction
+  // instead.) Like Insert Parallel Openings, the original face becomes
+  // the new, smaller inner face in place, and the ring is spliced in
+  // around it - so this can self-intersect on a concave face, or on any
+  // face asked to inset further than its own narrowest point, the same
+  // way a plain straight-edge-offset inset always can; it isn't guarded
+  // against here.
+  void insetFaces_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    int[] primary_list = Select3D.faceSelection;
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+
+      for (int q = primary_list.length - 1; q >= 0; q--) {
+        int f = primary_list[q];
+        if (!isFaceInGroupRange(f, OBJ_ID)) continue;
+
+        int n = allFaces.nodes[f].length;
+        if (n < 3) {
+          primary_list = this.remove_item_from_primary_list(q, primary_list);
+          continue;
+        }
+
+        allGroups.inserted_nFaces(OBJ_ID, f, n); // because adding the faces also changes the end pointer of the same object
+
+        ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+        midList_Faces_nodes_L.add(allFaces.nodes[f]); // same reference as before - mutated in place below
+        ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+        midList_Faces_options_L.add(allFaces.options[f]);
+
+        float[][] base_Vertices = faceBaseVertices(f);
+        float[] faceNormal = faceNormalUnit(base_Vertices);
+
+        float[][] edgeDir = new float[n][];
+        float[][] inwardPerp = new float[n][];
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+          float[] d = { base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2] };
+          edgeDir[s] = funcs.vec3_unit(d);
+
+          PVector N = new PVector(faceNormal[0], faceNormal[1], faceNormal[2]);
+          PVector D = new PVector(edgeDir[s][0], edgeDir[s][1], edgeDir[s][2]);
+          PVector perp = N.cross(D); // in-plane, pointing inward - see this method's own comment for why
+          inwardPerp[s] = funcs.vec3_unit(new float[] { perp.x, perp.y, perp.z });
+        }
+
+        int[] innerVertexSelection = new int[n];
+        for (int s = 0; s < n; s++) {
+          int s_prev = (s + n - 1) % n;
+
+          float[] P1 = { base_Vertices[s_prev][0] + inwardPerp[s_prev][0] * User3D.modifierInsetDepth, base_Vertices[s_prev][1] + inwardPerp[s_prev][1] * User3D.modifierInsetDepth, base_Vertices[s_prev][2] + inwardPerp[s_prev][2] * User3D.modifierInsetDepth };
+          float[] P2 = { base_Vertices[s][0] + inwardPerp[s][0] * User3D.modifierInsetDepth, base_Vertices[s][1] + inwardPerp[s][1] * User3D.modifierInsetDepth, base_Vertices[s][2] + inwardPerp[s][2] * User3D.modifierInsetDepth };
+
+          float[] innerPoint = lineIntersection3D(P1, edgeDir[s_prev], P2, edgeDir[s]);
+          if (innerPoint == null) { // a straight-through vertex (both edges run the same direction) - no crossing to find, so just nudge the corner itself inward
+            float[] avg = { inwardPerp[s_prev][0] + inwardPerp[s][0], inwardPerp[s_prev][1] + inwardPerp[s][1], inwardPerp[s_prev][2] + inwardPerp[s][2] };
+            float[] avgUnit = funcs.vec3_unit(avg);
+            innerPoint = new float[] { base_Vertices[s][0] + avgUnit[0] * User3D.modifierInsetDepth, base_Vertices[s][1] + avgUnit[1] * User3D.modifierInsetDepth, base_Vertices[s][2] + avgUnit[2] * User3D.modifierInsetDepth };
+          }
+
+          innerVertexSelection[s] = allPoints.create(innerPoint[0], innerPoint[1], innerPoint[2]);
+        }
+
+        current_Material = allFaces.getMaterial(f);
+        current_Tessellation = allFaces.getTessellation(f);
+        current_Layer = allFaces.getLayer(f);
+        current_Visibility = allFaces.getVisibility(f);
+
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+
+          int[] ringFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], innerVertexSelection[s_next], innerVertexSelection[s] };
+          int[] ringFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+          midList_Faces_nodes_L.add(ringFace_nodes);
+          midList_Faces_options_L.add(ringFace_options);
+        }
+
+        // modifying the base face to shrink it down to the new inner boundary
+        for (int s = 0; s < n; s++) {
+          allFaces.nodes[f][s] = innerVertexSelection[s];
+        }
+
+        spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+        primary_list = this.remove_item_from_primary_list(q, primary_list);
+      }
+    }
+
+    switch_category(ObjectCategory.FACE);
+    endScene3DChange();
+  }
+
   void insertRotatedOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

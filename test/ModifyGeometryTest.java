@@ -1439,4 +1439,109 @@ class ModifyGeometryTest {
 
     assertEquals(1, app.allFaces.nodes.length);
   }
+
+  // --- lineIntersection3D ------------------------------------------------
+
+  @Test
+  void lineIntersection3D_findsTheCrossingOfTwoNonParallelCoplanarLines () {
+    // Line 1: through (0.5, 3, 0), running in -Y. Line 2: through
+    // (0, 0.5, 0), running in +X. They cross at (0.5, 0.5, 0).
+    float[] result = app.Modify3D.lineIntersection3D(
+      new float[]{0.5f, 3, 0}, new float[]{0, -1, 0},
+      new float[]{0, 0.5f, 0}, new float[]{1, 0, 0}
+    );
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, result, 0.0001f);
+  }
+
+  @Test
+  void lineIntersection3D_returnsNullForParallelLines () {
+    float[] result = app.Modify3D.lineIntersection3D(
+      new float[]{0, 0, 0}, new float[]{1, 0, 0},
+      new float[]{0, 1, 0}, new float[]{1, 0, 0}
+    );
+    assertNull(result);
+  }
+
+  // --- insetFaces_Selection (a full integration test) --------------------
+
+  @Test
+  void insetFaces_squareInsetByAPlainDistance_shrinksSymmetricallyAndRingsTheEdges () {
+    // Same 2x2 square used by insertCornerOpenings' own test - a
+    // distance inset of 0.5 happens to land on the exact same inner
+    // corners that tool's area-ratio shrink (sqrt(0.25) = 0.5) does for
+    // this particular symmetric square, which is a handy independent
+    // cross-check of the new math.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierInsetDepth = 0.5f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.insetFaces_Selection();
+
+    assertEquals(5, app.allFaces.nodes.length); // the inset base face + 4 new ring quads
+    assertEquals(8, app.allVertices.length);    // 4 original + 4 new inset corners
+
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, app.allVertices[4], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 0.5f, 0}, app.allVertices[5], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 1.5f, 0}, app.allVertices[6], 0.0001f);
+    assertArrayEquals(new float[]{0.5f, 1.5f, 0}, app.allVertices[7], 0.0001f);
+
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[0]); // the inset base face
+
+    // One clean quad per original edge - not Insert Parallel Openings'
+    // own 2-quads-per-edge bevel ring - each pairing that edge's 2
+    // ORIGINAL corners with the matching 2 new inset corners.
+    assertArrayEquals(new int[]{0, 1, 5, 4}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{1, 2, 6, 5}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{2, 3, 7, 6}, app.allFaces.nodes[3]);
+    assertArrayEquals(new int[]{3, 0, 4, 7}, app.allFaces.nodes[4]);
+
+    assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection); // left untouched, same as the Insert ...Openings family
+  }
+
+  @Test
+  void insetFaces_rightTriangle_preservesEachEdgesOwnDirection () {
+    // A 3-4-5 right triangle - unlike the square above, its 3 edges
+    // aren't symmetric, so this exercises the general line-intersection
+    // path (not just the lucky square case). Figures hand-derived: a
+    // uniform inward offset keeps every edge's direction unchanged, just
+    // moved inward, which is exactly what's checked below.
+    app.allVertices = new float[][]{{0, 0, 0}, {4, 0, 0}, {0, 3, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierInsetDepth = 0.5f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.insetFaces_Selection();
+
+    assertEquals(4, app.allFaces.nodes.length); // the inset base face + 3 new ring quads
+    assertEquals(6, app.allVertices.length);    // 3 original + 3 new inset corners
+
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, app.allVertices[3], 0.0001f);
+    assertArrayEquals(new float[]{2.5f, 0.5f, 0}, app.allVertices[4], 0.0001f);
+    assertArrayEquals(new float[]{0.5f, 2.0f, 0}, app.allVertices[5], 0.0001f);
+  }
+
+  @Test
+  void insetFaces_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.Modify3D.insetFaces_Selection();
+
+    assertEquals(1, app.allFaces.nodes.length);
+  }
 }

@@ -51,6 +51,7 @@ class User3D {
   float modifierOpeningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings)
   float modifierOpeningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
   float modifierOffsetAmount = 1.0; // 1 = 1m
+  float modifierInsetDepth = 0.1; // 0.1 = 10cm inward, in-plane, from every edge
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -113,6 +114,7 @@ class User3D {
     XML_setFloat(parent, "modifierOpeningDeviation", this.modifierOpeningDeviation);
     XML_setFloat(parent, "modifierWeldThreshold", this.modifierWeldThreshold);
     XML_setFloat(parent, "modifierOffsetAmount", this.modifierOffsetAmount);
+    XML_setFloat(parent, "modifierInsetDepth", this.modifierInsetDepth);
 
     XML_setFloat(parent, "exporterScale", this.exporterScale);
     XML_setInt(parent, "exporterYaxisUp", this.exporterYaxisUp);
@@ -177,6 +179,7 @@ class User3D {
     this.modifierOpeningDeviation = XML_getFloat(parent, "modifierOpeningDeviation");
     this.modifierWeldThreshold = XML_getFloat(parent, "modifierWeldThreshold");
     this.modifierOffsetAmount = XML_getFloat(parent, "modifierOffsetAmount");
+    this.modifierInsetDepth = XML_getFloat(parent, "modifierInsetDepth", 0.1); // older save files never had this field - 0 would mean "no inset at all", not a useful fallback
 
     this.exporterScale = XML_getFloat(parent, "exporterScale");
     this.exporterYaxisUp = XML_getInt(parent, "exporterYaxisUp");

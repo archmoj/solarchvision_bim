@@ -2264,6 +2264,10 @@ void build_allActions() {
     Modify3D.insertEdgeOpenings_Selection();
   });
 
+  putAction("Inset Faces", () -> {
+    Modify3D.insetFaces_Selection();
+  });
+
   putAction("Optimize Faces", () -> {
     Modify3D.optimizeFace_Selection();
   });

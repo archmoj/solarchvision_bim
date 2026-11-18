@@ -222,6 +222,7 @@ class UI_rollout {
     vm.modifierTessellateRows(0);
     vm.modifierTessellateColumns(0);
     vm.modifierOffsetAmount(0);
+    vm.modifierInsetDepth(0);
     vm.modifierWeldThreshold(0);
     vm.softSelectionFalloffPower(0);
     vm.softSelectionFalloffRadius(0);
@@ -599,6 +600,7 @@ class UI_rollout {
         User3D.modifierTessellateRows = vm.modifierTessellateRows(1);
         User3D.modifierTessellateColumns = vm.modifierTessellateColumns(1);
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
+        User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
         Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
         Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);

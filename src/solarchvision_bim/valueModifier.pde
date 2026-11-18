@@ -1254,6 +1254,28 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierInsetDepth (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 25; //stop
+    float s3 = 0.001; //step
+
+    float out = 0;
+    String command = "Modifier Inset Depth";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierInsetDepth,
+        (v) -> { User3D.modifierInsetDepth = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierInsetDepth, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
