@@ -2005,12 +2005,21 @@ ArrayList<PVector> ifcCircleLocalPoints (HashMap<Integer, StepEntity> ents, Step
   return pts;
 }
 
-// Degrees from "from" to "to", going counterclockwise (increasing
+// Degrees from "fromDeg" to "toDeg", going counterclockwise (increasing
 // angle), normalized into [0, 360) - used only by
 // ifcArcThroughThreePoints() below to pick which of the two directions
 // around a fitted circle actually passes through its own middle point.
-float ifcAngleDiffCCW (float from, float to) {
-  float d = (to - from) % 360;
+//
+// Parameters are named fromDeg/toDeg rather than the shorter from/to
+// because "to" is a reserved word in Processing 4.5.x's own rewritten
+// CLI preprocessor (it added a newer ANTLR Java grammar with Java
+// 9+ module-declaration support - module-info.java's own "exports ...
+// to ..." syntax - which makes "to" a lexer keyword, not a plain
+// identifier, even outside an actual module declaration). Processing
+// 4.4.x's own (older) grammar has no such reservation, so this only
+// breaks on 4.5.x+.
+float ifcAngleDiffCCW (float fromDeg, float toDeg) {
+  float d = (toDeg - fromDeg) % 360;
   if (d < 0) d += 360;
   return d;
 }
