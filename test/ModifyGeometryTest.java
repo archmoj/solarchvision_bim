@@ -1282,4 +1282,161 @@ class ModifyGeometryTest {
 
     assertEquals(1, app.allFaces.nodes.length); // isGroupOrFaceCategorySelected() guard short-circuited before any work
   }
+
+  // --- isCoplanarFace ---------------------------------------------------
+
+  @Test
+  void isCoplanarFace_trueOnlyForSameFacingPointsOnTheSamePlane () {
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, // face 0: flat at z=0, facing +Z
+      {0, 0, 0}, {0, 1, 0}, {1, 0, 0}, // face 1: same plane, OPPOSITE winding (facing -Z)
+      {0, 0, 5}, {1, 0, 5}, {0, 1, 5}  // face 2: parallel plane, offset to z=5
+    };
+    app.allFaces.nodes = new int[][]{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
+
+    float[] refNormal = {0, 0, 1};
+    float[] refPoint = {0, 0, 0};
+
+    assertTrue(app.Modify3D.isCoplanarFace(0, refNormal, refPoint));
+    assertFalse(app.Modify3D.isCoplanarFace(1, refNormal, refPoint), "opposite-facing - not the same surface to merge");
+    assertFalse(app.Modify3D.isCoplanarFace(2, refNormal, refPoint), "parallel but on a different plane");
+  }
+
+  // --- mergeCoplanarFaces_Selection (a full integration test) -----------
+
+  @Test
+  void mergeCoplanar_recombinesTwoTrianglesSplitFromAQuadBackIntoOneFace () {
+    // The same 2x2 square used by the tessellate tests above, but
+    // already split along its 0-2 diagonal into 2 triangles - exactly
+    // what tessellateTriangular_Selection (or an import) might leave
+    // behind, and exactly what this operation should undo.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2}, // triangle A
+      {0, 2, 3}  // triangle B - shares the 0-2 diagonal with A
+    };
+    app.allFaces.options = new int[][]{
+      {3, 0, 0, 0, 0, 0}, {3, 0, 0, 0, 0, 0} // same material on both, so the merged face's own material is unambiguous either way
+    };
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.mergeCoplanarFaces_Selection();
+
+    // The 2 triangles become 1 face - no new vertices, since the merge
+    // only ever reuses the existing boundary's own vertices.
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(4, app.allVertices.length);
+    assertArrayEquals(new int[]{0, 0}, app.allGroups.Faces[0]);
+    assertArrayEquals(new int[]{3, 0, 0, 0, 0, 0}, app.allFaces.options[0]);
+
+    // The walk can start at any of the 4 boundary vertices depending on
+    // HashMap iteration order, so the result is only guaranteed to be
+    // SOME cyclic rotation of the original quad {0,1,2,3} - check this
+    // via its edge set and winding (outward normal) instead of a single
+    // fixed vertex order.
+    int[] merged = app.allFaces.nodes[0];
+    assertEquals(4, merged.length);
+    java.util.HashSet<String> edges = new java.util.HashSet<String>();
+    for (int s = 0; s < merged.length; s++) {
+      int a = merged[s], b = merged[(s + 1) % merged.length];
+      edges.add(Math.min(a, b) + "_" + Math.max(a, b));
+    }
+    assertEquals(new java.util.HashSet<String>(java.util.Arrays.asList("0_1", "1_2", "2_3", "0_3")), edges);
+
+    float[] normal = app.Modify3D.faceNormalUnit(app.Modify3D.faceBaseVertices(0));
+    assertArrayEquals(new float[]{0, 0, 1}, normal, 0.0001f); // same outward winding as the 2 originals, not reversed
+
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection);
+  }
+
+  @Test
+  void mergeCoplanar_leavesATiltedNeighborAloneAndKeepsItSelected () {
+    // Face 0 is flat at z=0. Face 1 shares face 0's 1-2 edge but tilts
+    // upward (like a shed roof meeting a flat base) - edge-connected,
+    // but not coplanar, so nothing should merge.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}, // face 0's own corners
+      {2, 4, 3}, {0, 4, 3}                         // face 1's own extra corners, well above the z=0 plane
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2, 3}, // flat base
+      {1, 4, 5, 2}  // tilted - shares the 1-2 edge, but not coplanar with face 0
+    };
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
+    };
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.mergeCoplanarFaces_Selection();
+
+    // Nothing merged - both faces, and the vertex count, are unchanged.
+    assertEquals(2, app.allFaces.nodes.length);
+    assertEquals(6, app.allVertices.length);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{1, 4, 5, 2}, app.allFaces.nodes[1]);
+
+    // Both faces stay selected, exactly as the user had them.
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.faceSelection);
+  }
+
+  @Test
+  void mergeCoplanar_mergesOnlyTheCoplanarPairAndKeepsAnUnrelatedSelectedFaceSelected () {
+    // 2 coplanar triangles (A, B - same diagonal split as the first test
+    // above) plus a 3rd, entirely separate flat face (C) elsewhere in
+    // the same object, also selected but not touching A or B at all.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}, // A, B's corners
+      {10, 10, 0}, {11, 10, 0}, {10, 11, 0}        // C's own corners, unconnected
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2}, // A
+      {0, 2, 3}, // B
+      {4, 5, 6}  // C - disconnected from A/B, should be left alone
+    };
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
+    };
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 2};
+
+    app.Select3D.faceSelection = new int[]{0, 1, 2};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.mergeCoplanarFaces_Selection();
+
+    // A+B merge into 1 new face; C survives untouched. 3 faces -> 2.
+    assertEquals(2, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1}, app.allGroups.Faces[0]);
+
+    // C (originally index 2) shifts down to index 0, since both faces
+    // deleted ahead of it (A=0, B=1) were smaller indices; the new
+    // merged face lands at index 1 (appended at index 3, minus the 2
+    // deletions, both of which are smaller indices).
+    assertArrayEquals(new int[]{4, 5, 6}, app.allFaces.nodes[0]);
+    assertEquals(4, app.allFaces.nodes[1].length);
+
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.faceSelection);
+  }
+
+  @Test
+  void mergeCoplanar_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.Modify3D.mergeCoplanarFaces_Selection();
+
+    assertEquals(1, app.allFaces.nodes.length);
+  }
 }

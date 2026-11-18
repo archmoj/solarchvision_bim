@@ -1388,6 +1388,280 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // True when face f's own plane - its normal and its distance from the
+  // origin along that normal - matches (refNormal, refPoint) closely
+  // enough to be treated as the same plane: same facing direction (not
+  // just parallel - two coplanar faces pointing opposite ways are each
+  // other's back side, not one surface to merge), within about 2.5
+  // degrees, and within FLOAT_tiny of lying on it.
+  boolean isCoplanarFace (int f, float[] refNormal, float[] refPoint) {
+    float[][] base_Vertices = faceBaseVertices(f);
+    float[] n = faceNormalUnit(base_Vertices);
+
+    float dot = n[0] * refNormal[0] + n[1] * refNormal[1] + n[2] * refNormal[2];
+    if (dot < 0.999) return false;
+
+    float[] p = base_Vertices[0];
+    float distToPlane = (p[0] - refPoint[0]) * refNormal[0] + (p[1] - refPoint[1]) * refNormal[1] + (p[2] - refPoint[2]) * refNormal[2];
+    return abs(distToPlane) < FLOAT_tiny;
+  }
+
+  // Collapses each edge-connected, mutually coplanar cluster of selected
+  // faces into one new face spanning the cluster's own outer boundary -
+  // the complement to Force Triangulate/Tessellate, for cleaning up a
+  // surface that ended up split into more faces than it needs (after a
+  // tessellate, an import, or a Boolean-style edit elsewhere).
+  //
+  // Unlike every other operation in this file, the faces being merged
+  // can't just be left in place the way Extrude/Thicken leave their
+  // source faces alone - keeping both the old pieces AND the new merged
+  // face would double up the surface. So the new face is appended and
+  // folded into its own source faces' existing group (extending that
+  // group's own face range, not spinning up a new one - this is a
+  // simplification of existing geometry, not new geometry), and the
+  // consumed originals are then removed through Delete3D.faceSelection()
+  // - the same face-deletion primitive "Delete Selection" itself uses,
+  // which already knows how to shrink every group's face range and
+  // compact allFaces.nodes/options correctly. Since every newly
+  // appended face's index is necessarily higher than every original
+  // index being deleted (appending only ever adds to the end), each
+  // new face's final index after that compaction is simply its
+  // just-appended index minus the total number of faces removed - no
+  // need to track the shift any more carefully than that.
+  //
+  // The cluster's outer boundary is found with the exact same
+  // naked-edge walk fillHoles_Selection() above uses, but - unlike
+  // there - the walked order is used AS WALKED, not reversed: these
+  // faces already have their own correct, mutually consistent winding
+  // (that's part of what "coplanar AND same-facing" verified above), so
+  // retracing their shared boundary in the direction it already runs
+  // reproduces that same correct winding directly. (Worked example: a
+  // quad {0,1,2,3} split by its 0-2 diagonal into triangles {0,1,2} and
+  // {0,2,3} has naked boundary edges 0->1, 1->2 [from the first
+  // triangle] and 2->3, 3->0 [from the second] - chaining them head to
+  // tail walks 0,1,2,3, exactly the original quad's own order.)
+  void mergeCoplanarFaces_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    int[] primary_list = Select3D.faceSelection;
+
+    Select3D.deselect_Faces();
+
+    ArrayList<Integer> newFacePreDeleteIndex_L = new ArrayList<Integer>(); // each new face's own index right after it's appended, before any deletion shifts it
+    ArrayList<Integer> toDelete_L = new ArrayList<Integer>(); // original faces consumed by some merge, everywhere in the whole selection
+    ArrayList<Integer> keptOriginal_L = new ArrayList<Integer>(); // originally-selected faces left untouched - no coplanar neighbor, or a cluster the boundary walk couldn't close
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+
+      ArrayList<Integer> groupFaces_L = new ArrayList<Integer>();
+      for (int q = 0; q < primary_list.length; q++) {
+        int f = primary_list[q];
+        if (isFaceInGroupRange(f, OBJ_ID)) groupFaces_L.add(f);
+      }
+      if (groupFaces_L.size() == 0) continue;
+
+      int[] groupFaces = new int[groupFaces_L.size()];
+      for (int i = 0; i < groupFaces.length; i++) groupFaces[i] = groupFaces_L.get(i);
+
+      HashMap<Integer, Integer> faceToIndex = new HashMap<Integer, Integer>();
+      for (int fi = 0; fi < groupFaces.length; fi++) faceToIndex.put(groupFaces[fi], fi);
+
+      // every undirected edge used by this group's selected faces, and
+      // which of those faces use it - needed to find each face's
+      // selected neighbors (an edge used by exactly 2 of them)
+      HashMap<String, ArrayList<Integer>> edgeFaces = new HashMap<String, ArrayList<Integer>>();
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int f = groupFaces[fi];
+        int n = allFaces.nodes[f].length;
+        if (n < 3) continue;
+        for (int s = 0; s < n; s++) {
+          int s_next = (s + 1) % n;
+          int a = allFaces.nodes[f][s];
+          int b = allFaces.nodes[f][s_next];
+          String key = min(a, b) + "_" + max(a, b);
+          ArrayList<Integer> owners = edgeFaces.get(key);
+          if (owners == null) {
+            owners = new ArrayList<Integer>();
+            edgeFaces.put(key, owners);
+          }
+          owners.add(f);
+        }
+      }
+
+      // flood-fill this group's selected faces into clusters of
+      // edge-connected faces that are all coplanar with the cluster's
+      // own first (reference) face
+      boolean[] visited = new boolean[groupFaces.length];
+
+      for (int startFi = 0; startFi < groupFaces.length; startFi++) {
+        if (visited[startFi]) continue;
+
+        int startFace = groupFaces[startFi];
+        if (allFaces.nodes[startFace].length < 3) {
+          visited[startFi] = true;
+          continue;
+        }
+
+        float[][] startBase_Vertices = faceBaseVertices(startFace);
+        float[] refNormal = faceNormalUnit(startBase_Vertices);
+        float[] refPoint = startBase_Vertices[0];
+
+        ArrayList<Integer> cluster_L = new ArrayList<Integer>();
+        ArrayList<Integer> queue = new ArrayList<Integer>();
+        queue.add(startFi);
+        visited[startFi] = true;
+
+        while (queue.size() > 0) {
+          int curFi = queue.remove(queue.size() - 1);
+          int curFace = groupFaces[curFi];
+          cluster_L.add(curFace);
+
+          int n = allFaces.nodes[curFace].length;
+          for (int s = 0; s < n; s++) {
+            int s_next = (s + 1) % n;
+            int a = allFaces.nodes[curFace][s];
+            int b = allFaces.nodes[curFace][s_next];
+            String key = min(a, b) + "_" + max(a, b);
+            ArrayList<Integer> owners = edgeFaces.get(key);
+            if (owners == null || owners.size() != 2) continue; // not shared with exactly one other selected face
+
+            for (int oF : owners) {
+              if (oF == curFace) continue;
+              Integer neighborFi = faceToIndex.get(oF);
+              if (neighborFi == null || visited[neighborFi]) continue;
+              if (allFaces.nodes[oF].length < 3) continue;
+              if (!isCoplanarFace(oF, refNormal, refPoint)) continue;
+
+              visited[neighborFi] = true;
+              queue.add(neighborFi);
+            }
+          }
+        }
+
+        boolean mergedAny = false;
+
+        if (cluster_L.size() >= 2) {
+          // the cluster's own outer boundary: undirected edges used by
+          // exactly one face WITHIN this cluster
+          HashMap<String, Integer> clusterEdgeCount = new HashMap<String, Integer>();
+          HashMap<String, int[]> clusterEdgeDirected = new HashMap<String, int[]>(); // key -> {fromVertex, toVertex, ownerFace}
+
+          for (int cf : cluster_L) {
+            int n = allFaces.nodes[cf].length;
+            for (int s = 0; s < n; s++) {
+              int s_next = (s + 1) % n;
+              int a = allFaces.nodes[cf][s];
+              int b = allFaces.nodes[cf][s_next];
+              String key = min(a, b) + "_" + max(a, b);
+              Integer prevCount = clusterEdgeCount.get(key);
+              clusterEdgeCount.put(key, (prevCount == null ? 0 : prevCount) + 1);
+              clusterEdgeDirected.put(key, new int[] { a, b, cf });
+            }
+          }
+
+          HashMap<Integer, int[]> nextFromVertex = new HashMap<Integer, int[]>(); // fromVertex -> {toVertex, ownerFace}
+          for (String key : clusterEdgeCount.keySet()) {
+            if (clusterEdgeCount.get(key) != 1) continue;
+            int[] d = clusterEdgeDirected.get(key);
+            nextFromVertex.put(d[0], new int[] { d[1], d[2] });
+          }
+
+          HashSet<Integer> consumedStarts = new HashSet<Integer>();
+
+          for (Integer startVertex : nextFromVertex.keySet()) {
+            if (consumedStarts.contains(startVertex)) continue;
+
+            ArrayList<Integer> loop_L = new ArrayList<Integer>();
+            int ownerFaceForOptions = -1;
+            int current = startVertex;
+            boolean closed = false;
+
+            for (int guard = 0; guard <= nextFromVertex.size(); guard++) {
+              if (consumedStarts.contains(current) && current != startVertex) break; // walked into another loop already in progress - not a clean boundary, bail
+
+              loop_L.add(current);
+              consumedStarts.add(current);
+
+              int[] nxt = nextFromVertex.get(current);
+              if (nxt == null) break; // dead end - not a closed loop, bail
+
+              if (ownerFaceForOptions == -1) ownerFaceForOptions = nxt[1];
+              current = nxt[0];
+
+              if (current == startVertex) {
+                closed = true;
+                break;
+              }
+            }
+
+            if (!closed || loop_L.size() < 3) continue; // not a real, closed boundary
+
+            int[] mergedFace_nodes = new int[loop_L.size()]; // NOT reversed - see this method's own comment above
+            for (int i = 0; i < loop_L.size(); i++) mergedFace_nodes[i] = loop_L.get(i);
+
+            int[] mergedFace_options = { allFaces.getMaterial(ownerFaceForOptions), allFaces.getTessellation(ownerFaceForOptions), allFaces.getLayer(ownerFaceForOptions), allFaces.getVisibility(ownerFaceForOptions), allFaces.getWeight(ownerFaceForOptions), allFaces.getClose(ownerFaceForOptions) };
+
+            allFaces.nodes = (int[][]) concat(allFaces.nodes, new int[][] { mergedFace_nodes });
+            allFaces.options = (int[][]) concat(allFaces.options, new int[][] { mergedFace_options });
+            int newIndex = allFaces.nodes.length - 1;
+
+            newFacePreDeleteIndex_L.add(newIndex);
+            if (allGroups.getStop_Face(OBJ_ID) < newIndex) allGroups.setStop_Face(OBJ_ID, newIndex);
+
+            mergedAny = true;
+          }
+        }
+
+        // whether this cluster was a lone face, had no coplanar neighbor,
+        // or (rare/degenerate) never closed a boundary loop above - every
+        // face in it is left exactly as it was, and should stay selected
+        if (mergedAny) {
+          for (int cf : cluster_L) toDelete_L.add(cf);
+        } else {
+          for (int cf : cluster_L) keptOriginal_L.add(cf);
+        }
+      }
+    }
+
+    int[] toDelete = new int[toDelete_L.size()];
+    for (int i = 0; i < toDelete.length; i++) toDelete[i] = toDelete_L.get(i);
+    toDelete = sort(toDelete);
+
+    if (toDelete.length > 0) {
+      Select3D.faceSelection = toDelete;
+      Delete3D.faceSelection(); // shrinks every group's face range and compacts allFaces.nodes/options
+    }
+
+    // every surviving face of interest - new merges and untouched
+    // originals alike - shifts down by however many deleted indices
+    // came before it; new faces are necessarily appended after every
+    // deleted index, but a kept original can sit anywhere relative to
+    // them, so each one gets counted individually rather than assuming
+    // a single shared shift
+    int[] finalSelection = new int[newFacePreDeleteIndex_L.size() + keptOriginal_L.size()];
+    int selOut = 0;
+    for (int preIdx : newFacePreDeleteIndex_L) finalSelection[selOut++] = preIdx - countLessThan(toDelete, preIdx);
+    for (int keptIdx : keptOriginal_L) finalSelection[selOut++] = keptIdx - countLessThan(toDelete, keptIdx);
+    Select3D.faceSelection = sort(finalSelection);
+
+    selection_changed();
+    endScene3DChange();
+  }
+
+  // How many of sortedValues are strictly less than value - used by
+  // mergeCoplanarFaces_Selection() above to work out how far a
+  // surviving face's own index shifts down once every deleted index is
+  // actually removed.
+  int countLessThan (int[] sortedValues, int value) {
+    int count = 0;
+    for (int v : sortedValues) if (v < value) count++;
+    return count;
+  }
+
   void autoNormalFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

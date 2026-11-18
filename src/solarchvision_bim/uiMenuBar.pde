@@ -502,6 +502,7 @@ class UI_menuBar {
       "Optimize Faces",
       "Auto-Normal Selected Faces",
       "Force Triangulate Selected Faces",
+      "Merge Coplanar Faces",
       ___divider___,
       "Fill Holes",
       ___divider___,

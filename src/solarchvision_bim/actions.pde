@@ -2288,6 +2288,10 @@ void build_allActions() {
     Modify3D.thickenFaces_Selection();
   });
 
+  putAction("Merge Coplanar Faces", () -> {
+    Modify3D.mergeCoplanarFaces_Selection();
+  });
+
   putAction("Fill Holes", () -> {
     Modify3D.fillHoles_Selection();
   });
