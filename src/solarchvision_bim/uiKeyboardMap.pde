@@ -70,12 +70,20 @@ class UI_keyboardMap {
     {"CTRL_L","ALT_L","SPACE","ALT_R","CTRL_R"}
   };
 
+  // F1-F12's width, chosen so F12's right edge lands on the same 16-unit
+  // column as Backspace/"\"/Enter/right-Shift/right-Ctrl: the F-row is
+  // Esc (2 units) + a 0.5-unit gap + 12 F-keys + 2 more 0.5-unit gaps
+  // (after F4 and after F8) = 2 + 0.5 + 12*w + 1.0 = 16, so
+  // w = (16 - 3.5) / 12.
+  final float FKEY_WIDTH = (16f - 3.5f) / 12f;
+
   // Relative widths (in "units", 1 unit = one ordinary key) for the few
   // keys that aren't a plain single-unit square - everything not listed
   // here defaults to 1. Backspace/"\"/Enter/right-Shift are sized so
   // their row's total is exactly 16 units (their four right edges
   // align); Ctrl/Alt/AltGr all match left-Shift's width; Space is sized
-  // so right-Ctrl's right edge lands on that same 16-unit column.
+  // so right-Ctrl's right edge lands on that same 16-unit column; F1-F12
+  // are sized so F12's right edge lands there too (see FKEY_WIDTH).
   float keyWidthUnits (String label) {
     switch (label) {
       case "BACKSPACE": return 3f;     // row0: 13 + 3 = 16
@@ -88,6 +96,9 @@ class UI_keyboardMap {
       case "CTRL_L": case "CTRL_R": case "ALT_L": case "ALT_R": return 2f; // matches SHIFT_L
       case "SPACE": return 8f;         // row4: 2+2+8+2+2 = 16, so right-Ctrl's right edge = 16 too
       case "ESC": return 2f;           // matches Shift/Ctrl/Alt's width
+      case "F1": case "F2": case "F3": case "F4": case "F5": case "F6":
+      case "F7": case "F8": case "F9": case "F10": case "F11": case "F12":
+        return FKEY_WIDTH;
       default: return 1f;
     }
   }
@@ -120,6 +131,17 @@ class UI_keyboardMap {
     {"HOME", "PAGE_UP"},
     {"END", "PAGE_DOWN"}
   };
+
+  // All 6 of this block's labels (one-line or two-line alike) share one
+  // text size - see draw().
+  boolean isNavBlockLabel (String label) {
+    switch (label) {
+      case "INSERT": case "DELETE": case "HOME": case "END":
+      case "PAGE_UP": case "PAGE_DOWN":
+        return true;
+      default: return false;
+    }
+  }
 
   // Shift-vs-base symbol pairs, keyed by the UNSHIFTED character as it
   // appears on MAIN_ROWS - every key here (and only these; letters are
@@ -417,10 +439,11 @@ class UI_keyboardMap {
       }
     }
 
-    // Insert/Delete + Home/PageUp + End/PageDown, 3 rows tall now,
-    // directly on top of the arrow cluster (same left/right span,
-    // touching - no gap).
-    keys.addAll(buildNavBlockLayout(clusterLeft, arrowTop - 3 * unit));
+    // Insert/Delete + Home/PageUp + End/PageDown, 3 rows tall, same
+    // left/right span as the arrow cluster below it - moved up one more
+    // row, leaving a 1-unit gap above the arrow cluster instead of
+    // touching it.
+    keys.addAll(buildNavBlockLayout(clusterLeft, arrowTop - 4 * unit));
 
     // Numpad, to the right of the arrow cluster, starting level with the
     // main typing block (not the Esc/F-row).
@@ -505,13 +528,17 @@ class UI_keyboardMap {
         textSize(0.32 * keyUnit());
         text(shifted, k.x + k.w / 2, k.y + k.h * 0.32);
         text(disp, k.x + k.w / 2, k.y + k.h * 0.68);
-      } else if (disp.indexOf("\n") >= 0) {
-        // A plain two-line label (Page Up / Page Down) - smaller font,
-        // stacked top/bottom.
-        String[] parts = disp.split("\n");
-        textSize(0.26 * keyUnit());
-        text(parts[0], k.x + k.w / 2, k.y + k.h * 0.32);
-        text(parts[1], k.x + k.w / 2, k.y + k.h * 0.68);
+      } else if (isNavBlockLabel(k.label)) {
+        // Insert/Delete/Home/End/PageUp/PageDown all share one text
+        // size, one-line or two-line alike.
+        textSize(0.28 * keyUnit());
+        if (disp.indexOf("\n") >= 0) {
+          String[] parts = disp.split("\n");
+          text(parts[0], k.x + k.w / 2, k.y + k.h * 0.32);
+          text(parts[1], k.x + k.w / 2, k.y + k.h * 0.68);
+        } else {
+          text(disp, k.x + k.w / 2, k.y + k.h / 2);
+        }
       } else if (k.label.equals("NUM_ENTER") || k.label.equals("NUM_LOCK")) {
         // Smaller font for the numpad's own "Enter"/"Num" caps.
         textSize(0.28 * keyUnit());
@@ -524,15 +551,29 @@ class UI_keyboardMap {
 
     ArrayList<String> lines = describeHoveredKey(hovered);
     if (lines.size() > 0) {
+      // Laid out in up to 3 columns rather than one long column, so a
+      // key with many bindings (Shift/Ctrl/Alt, say) never overflows
+      // past the overlay's own bottom edge: a column only holds as many
+      // lines as actually fit above that edge, and the next line spills
+      // into the next column instead of past the bottom.
       float boxTop = mainClusterBottom(keys) + 0.5 * keyUnit();
       float lineHeight = 0.5 * keyUnit();
+      float bottomLimit = box[3] - 0.25 * keyUnit();
+      int linesPerColumn = max(1, (int) floor((bottomLimit - boxTop) / lineHeight));
+      int columnCount = 3;
+      float firstColumnX = box[0] + keyUnit();
+      float columnWidth = (box[2] - firstColumnX) / columnCount;
+
       textAlign(LEFT, TOP);
       textSize(0.35 * keyUnit());
       fill(255);
-      float ty = boxTop;
-      for (String line : lines) {
-        text(line, box[0] + keyUnit(), ty);
-        ty += lineHeight;
+      int maxLines = min(lines.size(), linesPerColumn * columnCount);
+      for (int i = 0; i < maxLines; i++) {
+        int col = i / linesPerColumn;
+        int row = i % linesPerColumn;
+        float tx = firstColumnX + col * columnWidth;
+        float ty = boxTop + row * lineHeight;
+        text(lines.get(i), tx, ty);
       }
     }
   }

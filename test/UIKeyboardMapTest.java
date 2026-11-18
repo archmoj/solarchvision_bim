@@ -136,9 +136,11 @@ class UIKeyboardMapTest {
   }
 
   @Test
-  void buildLayout_navBlockSitsDirectlyAboveTheArrowCluster_touchingNoGap () {
+  void buildLayout_navBlockSitsAboveTheArrowCluster_withAOneUnitGap () {
     // Now 3 rows of 2 (Insert/Delete, Home/PageUp, End/PageDown) instead
-    // of 2 rows of 3 - 2 wider columns so each full-word label fits.
+    // of 2 rows of 3 - 2 wider columns so each full-word label fits. And
+    // now moved up one more row, leaving a 1-unit gap above the arrow
+    // cluster instead of touching it.
     ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
     java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
     for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
@@ -173,11 +175,36 @@ class UIKeyboardMapTest {
     assertEquals(leftOfUp.x + 3 * up.w, deleteKey.x + deleteKey.w, 0.001f,
       "nav block's right edge must match the arrow cluster's right edge");
 
-    // 3 rows, stacked with no gap, bottom row touching the arrow
-    // cluster's top row.
+    // 3 rows, stacked with no gap between themselves, but now a 1-unit
+    // gap between the nav block's bottom row and the arrow cluster.
     assertEquals(insert.y + insert.h, home.y, 0.001f, "row 1 touches row 2");
     assertEquals(home.y + home.h, end.y, 0.001f, "row 2 touches row 3");
-    assertEquals(end.y + end.h, up.y, 0.001f, "the nav block's bottom row must touch the arrow cluster's top row");
+    assertEquals(end.y + end.h + end.h, up.y, 0.001f,
+      "there must be a 1-unit (one row height) gap between the nav block and the arrow cluster");
+  }
+
+  @Test
+  void keyWidthUnits_fKeysAlignF12sRightEdgeWithBackspace () {
+    ArrayList<solarchvision_bim.UI_keyboardMap.LaidOutKey> keys = app.UI_keyboardMap.buildLayout();
+    java.util.Map<String, solarchvision_bim.UI_keyboardMap.LaidOutKey> byLabel = new java.util.HashMap<>();
+    for (solarchvision_bim.UI_keyboardMap.LaidOutKey k : keys) byLabel.put(k.label, k);
+
+    solarchvision_bim.UI_keyboardMap.LaidOutKey f12 = byLabel.get("F12");
+    solarchvision_bim.UI_keyboardMap.LaidOutKey backspace = byLabel.get("BACKSPACE");
+    assertNotNull(f12); assertNotNull(backspace);
+
+    assertEquals(backspace.x + backspace.w, f12.x + f12.w, 0.001f,
+      "F12's right edge must align with Backspace's right edge");
+  }
+
+  @Test
+  void isNavBlockLabel_coversExactlyTheSixNavBlockKeys () {
+    for (String label : new String[]{"INSERT", "DELETE", "HOME", "END", "PAGE_UP", "PAGE_DOWN"}) {
+      assertTrue(app.UI_keyboardMap.isNavBlockLabel(label), label + " must be a nav-block label");
+    }
+    for (String label : new String[]{"ESC", "UP", "F1", "CAPSLOCK", "NUM_LOCK"}) {
+      assertFalse(app.UI_keyboardMap.isNavBlockLabel(label), label + " must NOT be a nav-block label");
+    }
   }
 
   @Test
