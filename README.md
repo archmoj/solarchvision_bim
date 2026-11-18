@@ -398,9 +398,9 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Ctrl+Y` | Redo model change |
 | `Ctrl+Shift+Z` | Undo viewport change |
 | `Ctrl+Shift+Y` | Redo viewport change |
-| `a` / `A` | Switch between active and passive impact views in the 3D view |
-| `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
-| `d` / `D` | Change the impact-display day in the 3D view |
+| `a` / `A` | Switch between **a**ctive and passive impact views in the 3D view |
+| `s` / `S` | Change the **s**ky scenario: all data, sunny, partly cloudy, or cloudy |
+| `d` / `D` | Change the impact-display **d**ay in the 3D view |
 
 ### Camera and view navigation
 
@@ -425,7 +425,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | --- | --- |
 | `DELETE` | Delete selected items |
 | `Shift+UP` / `Shift+DOWN` | Move, rotate, scale, or adjust selection properties, depending on the active control |
-| `c` / `C` | Switch to available cameras in the scene |
+| `c` / `C` | Switch to available **c**ameras in the scene |
 | `ENTER` | Rebuild global and vertex solar-energy/impact data |
 | `SPACE` | Advance time and shade the view |
 | `BACKSPACE` | Move time backward and shade the view |
@@ -433,7 +433,7 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `Alt+LEFT` | Rewind month |
 | `Alt+UP` | Advance time |
 | `Alt+DOWN` | Rewind time |
-| `t` / `T` | Change the forecast hour used for atmospheric visualization |
+| `t` / `T` | Change the forecast **t**ime used for atmospheric visualization |
 
 ### Time graphs and layouts
 
@@ -448,10 +448,10 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `(` / `)` | Change the number of displayed days |
 | `[` / `]` | Change the horizontal interval of the probability graph |
 | `{` / `}` | Change the vertical interval of the probability graph |
-| `v` / `V` | Show or hide raw values on the hourly graph |
-| `b` / `B` | Show or hide probabilities on the hourly graph |
-| `n` / `N` | Show or hide statistics on the hourly graph |
-| `m` / `M` | Show or hide sorted values on the hourly graph |
+| `v` / `V` | Show or hide raw **V**alues on the hourly graph |
+| `b` / `B` | Show or hide proba**B**ilities on the hourly graph |
+| `n` / `N` | Show or hide the averaged "**N**ormal" line on the hourly graph |
+| `m` / `M` | Show or hide the **M**in/**M**edian/**M**ax statistical range bands on the hourly graph |
 | `Ctrl+=` / `Ctrl+-` | Zoom the study graph in or out |
 | `=` | Reset the study graph's zoom and pan to the initial view |
 | `Ctrl+Shift+UP` / `Ctrl+Shift+DOWN` / `Ctrl+Shift+LEFT` / `Ctrl+Shift+RIGHT` | Pan the study graph |
