@@ -448,6 +448,37 @@ class UIKeyboardMapTest {
     assertNull(app.UI_keyboardMap.keyboardMap_pre_screen, "must not have captured anything");
   }
 
+  // menuDropdownStillOnScreen() is show()'s own guard for the "opened via
+  // the 'Show Keyboard Map' menu item while the dropdown is still the
+  // last thing actually painted on screen" bug: runSelectedItem() (which
+  // fires this action) runs before UI_menuBar.deselect() restores the
+  // screen, so selected_parent != -1 at the moment show() is called.
+  // Split out of show() specifically so this condition is checkable
+  // without going anywhere near the real get()/image() calls show()
+  // itself can't be exercised through here (see this file's own header
+  // comment).
+
+  @Test
+  void menuDropdownStillOnScreen_falseWhenNoMenuIsOpen () {
+    app.UI_menuBar.selected_parent = -1;
+    app.pre_screen = app.createImage(1, 1, app.RGB);
+    assertFalse(app.UI_keyboardMap.menuDropdownStillOnScreen());
+  }
+
+  @Test
+  void menuDropdownStillOnScreen_falseWhenMenuOpenButNoPreScreenCapturedYet () {
+    app.UI_menuBar.selected_parent = 0;
+    app.pre_screen = null;
+    assertFalse(app.UI_keyboardMap.menuDropdownStillOnScreen());
+  }
+
+  @Test
+  void menuDropdownStillOnScreen_trueWhenAMenuIsOpenAndPreScreenIsCaptured () {
+    app.UI_menuBar.selected_parent = 0;
+    app.pre_screen = app.createImage(1, 1, app.RGB);
+    assertTrue(app.UI_keyboardMap.menuDropdownStillOnScreen());
+  }
+
   @Test
   void hide_withNoCapturedPreScreen_justClearsVisible_andNeverReachesImage () {
     app.UI_keyboardMap.visible = true;

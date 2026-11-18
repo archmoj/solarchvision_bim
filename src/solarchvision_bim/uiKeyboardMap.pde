@@ -16,6 +16,11 @@
 // studyHover_pre_screen and hoverOnWorldStations.pde's
 // worldHover_pre_screen already use for the same "restore, then redraw a
 // temporary overlay on top, every frame it's open" need.
+//
+// show() does briefly READ (never write) UI_menuBar's own `pre_screen`
+// global - see show()'s own comment below for why: opening this overlay
+// via the "Show Keyboard Map" menu item would otherwise bake the still-
+// open dropdown's pixels into keyboardMap_pre_screen forever.
 class UI_keyboardMap {
 
   boolean visible = false;
@@ -263,9 +268,36 @@ class UI_keyboardMap {
   // were starting a `module`/`open module` declaration, even completely
   // outside any module syntax. Processing 4.4.x has no such reservation,
   // but this avoids depending on which CLI version actually runs it.
+  // True exactly when UI_menuBar's dropdown is still the last thing
+  // actually painted on screen: reached via "Show Keyboard Map" in the
+  // menu, the click/Enter handler (mouseClicked.pde /
+  // UI_menuBar.keyPressed()) runs this action's show() BEFORE calling
+  // UI_menuBar.deselect() - so at that exact moment the dropdown is
+  // still on screen even though selected_parent != -1 is the only trace
+  // of it left in state. Split out from show() purely so this condition
+  // is itself unit-testable without touching real graphics (show()'s
+  // own image()/get() calls aren't, see show()'s comment below).
+  boolean menuDropdownStillOnScreen () {
+    return (UI_menuBar.selected_parent != -1) && (pre_screen != null);
+  }
+
   void show () {
     if (this.visible) return;
     buildKeyboardMapBindingsIfNeeded();
+
+    // If we captured our own pre_screen while that dropdown was still
+    // on screen, it would be baked into keyboardMap_pre_screen forever
+    // - the dropdown itself will have long since closed by the time
+    // hide() restores that capture, so nothing would ever repaint over
+    // it. Repainting UI_menuBar's own pre_screen first erases the
+    // dropdown from the actual screen (exactly what UI_menuBar.
+    // deselect() itself would do), so our capture below is clean
+    // either way - whether we were opened via the menu or via "?"
+    // (where selected_parent is already -1 and this is a no-op).
+    if (menuDropdownStillOnScreen()) {
+      image(pre_screen, 0, pixel_A);
+    }
+
     this.keyboardMap_pre_screen = get(0, 0, width, height);
     this.visible = true;
     redraw();
