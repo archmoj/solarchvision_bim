@@ -1094,6 +1094,35 @@ class Select3DTest {
     assertEquals(0, app.Select3D.softSelectionFalloff.length);
   }
 
+  // ============ clampSoftSelectionToCurrentData ========================
+  //
+  // softSelection/softSelectionFalloff are a parallel pair. Using the
+  // plain clampIds() on softSelection alone (as clampSelectionsToCurrentData
+  // used to) drops stale ids from softSelection but leaves
+  // softSelectionFalloff's length and contents untouched - once anything
+  // in the MIDDLE is dropped, every weight after it ends up paired with
+  // the wrong vertex. This confirms the dedicated parallel-clamp fixes that.
+
+  @Test
+  void clampSelectionsToCurrentData_keepsSoftSelectionAndItsFalloffPaired () {
+    // id 5 is invalid (only vertices 0,1,2 exist) and sits in the middle -
+    // exactly the case that shifts every later weight when the two
+    // arrays aren't clamped together.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {2, 0, 0}};
+    app.allFaces.nodes = new int[0][];
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(0);
+    app.Select3D.softSelection = new int[]{0, 5, 2};
+    app.Select3D.softSelectionFalloff = new float[]{1.0f, 0.5f, 0.2f};
+
+    app.Select3D.clampSelectionsToCurrentData();
+
+    assertArrayEquals(new int[]{0, 2}, app.Select3D.softSelection);
+    // Vertex 2 must keep its OWN weight (0.2), not inherit vertex 5's
+    // weight (0.5) just because 5 was removed from in front of it.
+    assertArrayEquals(new float[]{1.0f, 0.2f}, app.Select3D.softSelectionFalloff, 0.0001f);
+  }
+
   // ============ deselect_softSelection ================================
 
   @Test

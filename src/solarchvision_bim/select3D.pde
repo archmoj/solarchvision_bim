@@ -193,7 +193,7 @@ class Select3D {
     this.sectionSelection = clampIds(this.sectionSelection, allSections.num);
     this.cameraSelection = clampIds(this.cameraSelection, allCameras.num);
     this.vertexSelection = clampIds(this.vertexSelection, allPoints.getLength());
-    this.softSelection = clampIds(this.softSelection, allPoints.getLength());
+    clampSoftSelectionToCurrentData(allPoints.getLength());
     this.terrainVertexSelection = clampIds(this.terrainVertexSelection, Terrain.rowCount * Terrain.columnCount);
     this.groupSelection = clampIds(this.groupSelection, allGroups.num);
 
@@ -206,6 +206,26 @@ class Select3D {
       if ((ids[i] >= 0) && (ids[i] < validLength)) kept.append(ids[i]);
     }
     return kept.array();
+  }
+
+  // softSelection/softSelectionFalloff are a parallel pair (id[i] <-> weight[i]),
+  // unlike every other selection array here - clampIds() alone would drop
+  // stale ids from softSelection but leave softSelectionFalloff untouched,
+  // shifting every weight after the first dropped id onto the wrong vertex.
+  // This drops both entries together so the pairing survives the clamp.
+  void clampSoftSelectionToCurrentData (int validLength) {
+    IntList keptIds = new IntList();
+    FloatList keptWeights = new FloatList();
+    int n = min(this.softSelection.length, this.softSelectionFalloff.length);
+    for (int i = 0; i < n; i++) {
+      int id = this.softSelection[i];
+      if ((id >= 0) && (id < validLength)) {
+        keptIds.append(id);
+        keptWeights.append(this.softSelectionFalloff[i]);
+      }
+    }
+    this.softSelection = keptIds.array();
+    this.softSelectionFalloff = keptWeights.array();
   }
 
   int[] idsFromXML (String txt) {
