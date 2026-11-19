@@ -2354,6 +2354,10 @@ void build_allActions() {
     Modify3D.relaxVertices_Selection();
   });
 
+  putAction("Skew Selected Vertices", () -> {
+    Modify3D.skewVertices_Selection();
+  });
+
   putAction("Add People on Land", () -> {
     Create3D.add_onTerrain(1); // 1 = people
   });

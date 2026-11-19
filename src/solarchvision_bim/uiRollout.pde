@@ -224,6 +224,9 @@ class UI_rollout {
     vm.modifierOffsetAmount(0);
     vm.modifierInsetDepth(0);
     vm.modifierRelaxAmount(0);
+    vm.modifierSkewXY(0);
+    vm.modifierSkewXZ(0);
+    vm.modifierSkewYZ(0);
     vm.modifierWeldThreshold(0);
     vm.softSelectionFalloffPower(0);
     vm.softSelectionFalloffRadius(0);
@@ -603,6 +606,9 @@ class UI_rollout {
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierRelaxAmount = vm.modifierRelaxAmount(1);
+        User3D.modifierSkewXY = vm.modifierSkewXY(1);
+        User3D.modifierSkewXZ = vm.modifierSkewXZ(1);
+        User3D.modifierSkewYZ = vm.modifierSkewYZ(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
         Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
         Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);

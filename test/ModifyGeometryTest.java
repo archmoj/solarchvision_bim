@@ -1660,4 +1660,80 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
   }
+
+  // --- skewVertices_Selection -------------------------------------------
+  //
+  // Shears each selected vertex by its OWN y/z offset from the selection's
+  // bounding-box center (found in a read-only pass first, so moving one
+  // vertex never changes another's pivot): dx = kXY*(y-cy) + kXZ*(z-cz),
+  // dy = kYZ*(z-cz). No modifier touches the z coordinate itself.
+
+  @Test
+  void skewVertices_allThreeFactorsCombine_perTheFormula () {
+    // 3 selected points spanning y in [0,10] and z in [0,10] -> pivot
+    // (cy, cz) = (5, 5). Each point isolates a different axis offset.
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}, {0, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1, 2};
+    app.User3D.modifierSkewXY = 0.5f;
+    app.User3D.modifierSkewXZ = 0.2f;
+    app.User3D.modifierSkewYZ = 0.3f;
+
+    app.Modify3D.skewVertices_Selection();
+
+    // v0 (0,0,0): dx = 0.5*(0-5) + 0.2*(0-5) = -3.5; dy = 0.3*(0-5) = -1.5
+    assertArrayEquals(new float[]{-3.5f, -1.5f, 0}, app.allVertices[0], 0.0001f);
+    // v1 (0,10,0): dx = 0.5*(10-5) + 0.2*(0-5) = 1.5; dy = 0.3*(0-5) = -1.5
+    assertArrayEquals(new float[]{1.5f, 8.5f, 0}, app.allVertices[1], 0.0001f);
+    // v2 (0,0,10): dx = 0.5*(0-5) + 0.2*(10-5) = -1.5; dy = 0.3*(10-5) = 1.5
+    assertArrayEquals(new float[]{-1.5f, 1.5f, 10}, app.allVertices[2], 0.0001f);
+  }
+
+  @Test
+  void skewVertices_zeroFactors_isANoOp () {
+    app.allVertices = new float[][]{{1, 2, 3}, {4, 5, 6}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierSkewXY = 0;
+    app.User3D.modifierSkewXZ = 0;
+    app.User3D.modifierSkewYZ = 0;
+
+    app.Modify3D.skewVertices_Selection();
+
+    assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{4, 5, 6}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void skewVertices_singleSelectedVertex_isItsOwnPivot_soNothingMoves () {
+    // min == max on both y and z for a single point, so (y-cy) and
+    // (z-cz) are both exactly 0 regardless of the skew factors.
+    app.allVertices = new float[][]{{3, 7, 9}};
+    app.allFaces.nodes = new int[0][];
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierSkewXY = 2f;
+    app.User3D.modifierSkewXZ = 2f;
+    app.User3D.modifierSkewYZ = 2f;
+
+    app.Modify3D.skewVertices_Selection();
+
+    assertArrayEquals(new float[]{3, 7, 9}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void skewVertices_isANoOpWhenCategoryIsNotAPolymeshOne () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierSkewXY = 1f;
+
+    app.Modify3D.skewVertices_Selection();
+
+    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
+  }
 }

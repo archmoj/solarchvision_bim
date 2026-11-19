@@ -53,6 +53,9 @@ class User3D {
   float modifierOffsetAmount = 1.0; // 1 = 1m
   float modifierInsetDepth = 0.1; // 0.1 = 10cm inward, in-plane, from every edge
   float modifierRelaxAmount = 0.5; // 0-1, 0 = no change, 1 = each vertex fully snaps to its own neighbors' average position
+  float modifierSkewXY = 0; // shear factor: offsets X by this much per 1m of Y, relative to the selection's own bounding-box center
+  float modifierSkewXZ = 0; // shear factor: offsets X by this much per 1m of Z, relative to the selection's own bounding-box center
+  float modifierSkewYZ = 0; // shear factor: offsets Y by this much per 1m of Z, relative to the selection's own bounding-box center
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -117,6 +120,9 @@ class User3D {
     XML_setFloat(parent, "modifierOffsetAmount", this.modifierOffsetAmount);
     XML_setFloat(parent, "modifierInsetDepth", this.modifierInsetDepth);
     XML_setFloat(parent, "modifierRelaxAmount", this.modifierRelaxAmount);
+    XML_setFloat(parent, "modifierSkewXY", this.modifierSkewXY);
+    XML_setFloat(parent, "modifierSkewXZ", this.modifierSkewXZ);
+    XML_setFloat(parent, "modifierSkewYZ", this.modifierSkewYZ);
 
     XML_setFloat(parent, "exporterScale", this.exporterScale);
     XML_setInt(parent, "exporterYaxisUp", this.exporterYaxisUp);
@@ -183,6 +189,9 @@ class User3D {
     this.modifierOffsetAmount = XML_getFloat(parent, "modifierOffsetAmount");
     this.modifierInsetDepth = XML_getFloat(parent, "modifierInsetDepth", 0.1); // older save files never had this field - 0 would mean "no inset at all", not a useful fallback
     this.modifierRelaxAmount = XML_getFloat(parent, "modifierRelaxAmount", 0.5); // older save files never had this field - 0 would mean "relax does nothing", not a useful fallback
+    this.modifierSkewXY = XML_getFloat(parent, "modifierSkewXY", 0);
+    this.modifierSkewXZ = XML_getFloat(parent, "modifierSkewXZ", 0);
+    this.modifierSkewYZ = XML_getFloat(parent, "modifierSkewYZ", 0);
 
     this.exporterScale = XML_getFloat(parent, "exporterScale");
     this.exporterYaxisUp = XML_getInt(parent, "exporterYaxisUp");

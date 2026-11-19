@@ -1298,6 +1298,72 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierSkewXY (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -5; //start
+    float s2 = 5; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Skew XY";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierSkewXY,
+        (v) -> { User3D.modifierSkewXY = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierSkewXY, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierSkewXZ (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -5; //start
+    float s2 = 5; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Skew XZ";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierSkewXZ,
+        (v) -> { User3D.modifierSkewXZ = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierSkewXZ, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierSkewYZ (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -5; //start
+    float s2 = 5; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Skew YZ";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierSkewYZ,
+        (v) -> { User3D.modifierSkewYZ = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierSkewYZ, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

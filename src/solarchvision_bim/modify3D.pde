@@ -359,6 +359,55 @@ class Modify3D {
     endScene3DChange();
   }
 
+  void skewVertices_Selection () {
+    if (!isPolymeshCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectVertices_fromCurrentSelection();
+
+    int n = Select3D.vertexSelection.length;
+
+    // Snapshot-first: the pivot is the selection's own bounding-box
+    // center, found from a read-only pass before anything moves - so
+    // the shear is centered on what's selected (and doesn't also
+    // translate it), independent of any object-level pivot-alignment
+    // setting elsewhere in Select3D.
+    float minY = 0, maxY = 0, minZ = 0, maxZ = 0;
+    for (int o = 0; o < n; o++) {
+      int vNo = Select3D.vertexSelection[o];
+      float y = allPoints.getY(vNo);
+      float z = allPoints.getZ(vNo);
+      if (o == 0) {
+        minY = y; maxY = y;
+        minZ = z; maxZ = z;
+      } else {
+        minY = min(minY, y); maxY = max(maxY, y);
+        minZ = min(minZ, z); maxZ = max(maxZ, z);
+      }
+    }
+    float cy = (minY + maxY) / 2;
+    float cz = (minZ + maxZ) / 2;
+
+    float kXY = User3D.modifierSkewXY;
+    float kXZ = User3D.modifierSkewXZ;
+    float kYZ = User3D.modifierSkewYZ;
+
+    for (int o = 0; o < n; o++) {
+      int vNo = Select3D.vertexSelection[o];
+      float y = allPoints.getY(vNo);
+      float z = allPoints.getZ(vNo);
+
+      float dx = kXY * (y - cy) + kXZ * (z - cz);
+      float dy = kYZ * (z - cz);
+
+      allPoints.move(vNo, dx, dy, 0);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
   void separateVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 
