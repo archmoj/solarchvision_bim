@@ -408,6 +408,77 @@ class Modify3D {
     endScene3DChange();
   }
 
+  void twistVertices_Selection () {
+    if (!isPolymeshCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectVertices_fromCurrentSelection();
+
+    int n = Select3D.vertexSelection.length;
+
+    // Pivot: the selection's own bounding-box center, found in a
+    // read-only pass before anything moves - same reasoning as
+    // skewVertices_Selection(), and reused here too rather than any
+    // object-level pivot-alignment setting.
+    float minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
+    for (int o = 0; o < n; o++) {
+      int vNo = Select3D.vertexSelection[o];
+      float x = allPoints.getX(vNo);
+      float y = allPoints.getY(vNo);
+      float z = allPoints.getZ(vNo);
+      if (o == 0) {
+        minX = x; maxX = x;
+        minY = y; maxY = y;
+        minZ = z; maxZ = z;
+      } else {
+        minX = min(minX, x); maxX = max(maxX, x);
+        minY = min(minY, y); maxY = max(maxY, y);
+        minZ = min(minZ, z); maxZ = max(maxZ, z);
+      }
+    }
+    float cx = (minX + maxX) / 2;
+    float cy = (minY + maxY) / 2;
+    float cz = (minZ + maxZ) / 2;
+
+    float degPerMeterX = User3D.modifierTwistX; // rotation around X, driven by each vertex's own X offset from cx
+    float degPerMeterY = User3D.modifierTwistY; // rotation around Y, driven by each vertex's own Y offset from cy
+    float degPerMeterZ = User3D.modifierTwistZ; // rotation around Z, driven by each vertex's own Z offset from cz
+
+    for (int o = 0; o < n; o++) {
+      int vNo = Select3D.vertexSelection[o];
+      float oldX = allPoints.getX(vNo);
+      float oldY = allPoints.getY(vNo);
+      float oldZ = allPoints.getZ(vNo);
+
+      float x = oldX - cx;
+      float y = oldY - cy;
+      float z = oldZ - cz;
+
+      // Each axis's own rotation amount comes from this vertex's ORIGINAL
+      // (pre-twist) offset along that same axis, computed once up front -
+      // then the three rotations are applied in a fixed X -> Y -> Z order
+      // to the evolving point, the same composition order Select3D's own
+      // object-level rotX/rotY/rotZ triple uses.
+      float rX = radians(degPerMeterX * x);
+      float rY = radians(degPerMeterY * y);
+      float rZ = radians(degPerMeterZ * z);
+
+      float[] afterX = Rotate3D.rotateAroundVector(x, y, z, rX, 0);
+      float[] afterY = Rotate3D.rotateAroundVector(afterX[0], afterX[1], afterX[2], rY, 1);
+      float[] afterZ = Rotate3D.rotateAroundVector(afterY[0], afterY[1], afterY[2], rZ, 2);
+
+      float newX = cx + afterZ[0];
+      float newY = cy + afterZ[1];
+      float newZ = cz + afterZ[2];
+
+      allPoints.move(vNo, newX - oldX, newY - oldY, newZ - oldZ);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
   void separateVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 

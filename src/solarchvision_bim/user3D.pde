@@ -56,6 +56,9 @@ class User3D {
   float modifierSkewXY = 0; // shear factor: offsets X by this much per 1m of Y, relative to the selection's own bounding-box center
   float modifierSkewXZ = 0; // shear factor: offsets X by this much per 1m of Z, relative to the selection's own bounding-box center
   float modifierSkewYZ = 0; // shear factor: offsets Y by this much per 1m of Z, relative to the selection's own bounding-box center
+  float modifierTwistX = 0; // degrees of rotation around X, per 1m of X offset from the selection's own bounding-box center
+  float modifierTwistY = 0; // degrees of rotation around Y, per 1m of Y offset from the selection's own bounding-box center
+  float modifierTwistZ = 0; // degrees of rotation around Z, per 1m of Z offset from the selection's own bounding-box center
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -123,6 +126,9 @@ class User3D {
     XML_setFloat(parent, "modifierSkewXY", this.modifierSkewXY);
     XML_setFloat(parent, "modifierSkewXZ", this.modifierSkewXZ);
     XML_setFloat(parent, "modifierSkewYZ", this.modifierSkewYZ);
+    XML_setFloat(parent, "modifierTwistX", this.modifierTwistX);
+    XML_setFloat(parent, "modifierTwistY", this.modifierTwistY);
+    XML_setFloat(parent, "modifierTwistZ", this.modifierTwistZ);
 
     XML_setFloat(parent, "exporterScale", this.exporterScale);
     XML_setInt(parent, "exporterYaxisUp", this.exporterYaxisUp);
@@ -192,6 +198,9 @@ class User3D {
     this.modifierSkewXY = XML_getFloat(parent, "modifierSkewXY", 0);
     this.modifierSkewXZ = XML_getFloat(parent, "modifierSkewXZ", 0);
     this.modifierSkewYZ = XML_getFloat(parent, "modifierSkewYZ", 0);
+    this.modifierTwistX = XML_getFloat(parent, "modifierTwistX", 0);
+    this.modifierTwistY = XML_getFloat(parent, "modifierTwistY", 0);
+    this.modifierTwistZ = XML_getFloat(parent, "modifierTwistZ", 0);
 
     this.exporterScale = XML_getFloat(parent, "exporterScale");
     this.exporterYaxisUp = XML_getInt(parent, "exporterYaxisUp");

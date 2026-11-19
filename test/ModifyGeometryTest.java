@@ -1736,4 +1736,105 @@ class ModifyGeometryTest {
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
   }
+
+  // --- twistVertices_Selection -------------------------------------------
+  //
+  // Each axis's own rotation amount (degrees per meter) is driven by each
+  // vertex's ORIGINAL offset along that same axis from the selection's
+  // bounding-box center, applied via Rotate3D.rotateAroundVector() in a
+  // fixed X -> Y -> Z order (same composition order as Select3D's own
+  // object-level rotX/rotY/rotZ triple). These isolate one axis at a
+  // time (the other two factors at 0, so those steps are the identity),
+  // with offsets of +/-5m and 18 deg/m chosen so the angle works out to
+  // a clean +/-90 degrees.
+
+  @Test
+  void twistVertices_aroundZOnly_rotatesTheXYPlaneByAngleProportionalToZOffset () {
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistZ = 18; // cz=5 -> offsets -5/+5 -> +/-90 degrees
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 1, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_aroundXOnly_rotatesTheYZPlaneByAngleProportionalToXOffset () {
+    app.allVertices = new float[][]{{0, -1, 0}, {10, 1, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistX = 18; // cx=5 -> offsets -5/+5 -> +/-90 degrees
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{0, 0, 1}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{10, 0, 1}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_aroundYOnly_rotatesTheXZPlaneByAngleProportionalToYOffset () {
+    app.allVertices = new float[][]{{5, -5, 0}, {-5, 5, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistY = 18; // cy=0 -> offsets -5/+5 -> +/-90 degrees
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{0, -5, 5}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 5, 5}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_zeroFactors_isANoOp () {
+    app.allVertices = new float[][]{{1, 2, 3}, {4, 5, 6}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistX = 0;
+    app.User3D.modifierTwistY = 0;
+    app.User3D.modifierTwistZ = 0;
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{4, 5, 6}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_singleSelectedVertex_isItsOwnPivot_soNothingMoves () {
+    // min == max on every axis for a single point, so every offset from
+    // the pivot is exactly 0 - every rotation angle is 0 regardless of
+    // the twist factors.
+    app.allVertices = new float[][]{{3, 7, 9}};
+    app.allFaces.nodes = new int[0][];
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierTwistX = 45f;
+    app.User3D.modifierTwistY = 45f;
+    app.User3D.modifierTwistZ = 45f;
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{3, 7, 9}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_isANoOpWhenCategoryIsNotAPolymeshOne () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistZ = 18;
+
+    app.Modify3D.twistVertices_Selection();
+
+    assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{1, 0, 10}, app.allVertices[1], 0.0001f);
+  }
 }

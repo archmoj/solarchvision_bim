@@ -513,6 +513,7 @@ class UI_menuBar {
       "Flatten Selected Terrain Vertices",
       "Relax Selected Vertices",
       "Skew Selected Vertices",
+      "Twist Selected Vertices",
       ___divider___,
       "Reverse Visibility of All Faces",
       "Hide All Faces",
