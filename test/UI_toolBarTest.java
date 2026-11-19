@@ -165,7 +165,11 @@ class UI_toolBarTest {
   void buildingType_icosahedron_reusesIcosahedronCommand () {
     items("", "Icosahedron");
     app.UI_toolBar.performAction("Building Type", 0, 1);
-    assertEquals(app.CREATE.SuperOBJ, app.CreateObject);
+    // Icosahedron has its own dedicated CREATE constant now (not
+    // CREATE.SuperOBJ) - fixing a bug where it was indistinguishable
+    // from Octahedron's own (1,1,1) superellipsoid-power preset and
+    // always created an Octahedron instead.
+    assertEquals(app.CREATE.Icosahedron, app.CreateObject);
   }
 
   @Test

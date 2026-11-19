@@ -2047,6 +2047,18 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
           } else if (CreateObject == CREATE.Cone) {
 
             runScriptLine("Cone" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " deg=" + User3D.creatorConeDegree);
+          } else if (CreateObject == CREATE.Icosahedron) {
+
+            // Routes to the same "Icosahedron" script command the
+            // toolbar button already uses correctly (extraCommands.pde),
+            // which calls the dedicated, working Create3D.add_Icosahedron()
+            // - fixing the Create-menu item previously aliasing Octahedron.
+            // Unlike Box/Cone/Octahedron, the "Icosahedron" command takes
+            // a single "d" (diameter, halved internally) rather than
+            // dx/dy/dz, so boxLikeCommandArgs() doesn't apply here.
+            runScriptLine("Icosahedron" + creatorCommandArgs() +
+              " x=" + x + " y=" + y + " z=" + z +
+              " d=" + (2 * rx) + " r=" + rot);
           } else if (CreateObject == CREATE.Pyramid) {
 
             runScriptLine("Pyramid" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));

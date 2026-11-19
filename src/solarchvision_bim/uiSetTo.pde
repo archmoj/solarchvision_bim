@@ -222,11 +222,18 @@ void UI_setTo_Create_Box () {
 void UI_setTo_Create_Icosahedron () {
   UI_setTo_Create_Nothing();
 
-  CreateObject = CREATE.SuperOBJ;
-
-  User3D.creatorSuperellipsoidPowerX = 1;
-  User3D.creatorSuperellipsoidPowerY = 1;
-  User3D.creatorSuperellipsoidPowerZ = 1;
+  // Icosahedron has no dedicated CREATE.SuperOBJ power-triple:
+  // an icosahedron isn't representable as a superquadric at any
+  // power (unlike Octahedron, which legitimately is the L1-ball
+  // at power=1). Using CREATE.SuperOBJ with (1,1,1) here used to
+  // make this item indistinguishable from Octahedron's own
+  // (1,1,1) preset in mouseClicked.pde's classifySuperOBJShape(),
+  // so clicking "Icosahedron" always created an Octahedron. This
+  // now routes through its own CREATE constant instead, straight
+  // to the dedicated, already-working add_Icosahedron() function
+  // (via the "Icosahedron" script command, same path the toolbar
+  // button already uses correctly).
+  CreateObject = CREATE.Icosahedron;
 
   switch_category(ObjectCategory.GROUP);
 }

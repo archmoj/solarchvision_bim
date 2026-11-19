@@ -286,25 +286,27 @@ class UiSetToCreateTest {
   }
 
   @Test
-  void createIcosahedronAndCreateOctahedron_leaveIdenticalSuperellipsoidPowers () {
-    // Pinned down deliberately, not an oversight in this test: both
-    // functions set exactly the same three powers (1, 1, 1) - confirmed
-    // directly in uiSetTo.pde's own source, not just inferred here.
-    // Whatever currently visually distinguishes an icosahedron from an
-    // octahedron in this app, it is NOT either button's own choice of
-    // exponents - those come out identical. Worth a second look if
-    // that's not intentional.
+  void createIcosahedron_noLongerSharesOctahedronsSuperellipsoidPowers () {
+    // This used to pin down a real bug: both functions set identical
+    // (1, 1, 1) superellipsoid powers and both routed through
+    // CREATE.SuperOBJ, so mouseClicked.pde's classifySuperOBJShape()
+    // could not tell them apart and clicking "Icosahedron" always
+    // created an Octahedron. Icosahedron now has its own dedicated
+    // CREATE constant and leaves the superellipsoid powers alone -
+    // an icosahedron isn't representable as a superquadric at any
+    // power, unlike Octahedron, which legitimately is the L1-ball at
+    // power=1.
     app.UI_setTo_Create_Icosahedron();
-    float icoX = app.User3D.creatorSuperellipsoidPowerX;
-    float icoY = app.User3D.creatorSuperellipsoidPowerY;
-    float icoZ = app.User3D.creatorSuperellipsoidPowerZ;
+
+    assertEquals(app.CREATE.Icosahedron, app.CreateObject);
+    assertNotEquals(app.CREATE.SuperOBJ, app.CreateObject);
 
     app.UI_setTo_Create_Octahedron();
 
-    assertEquals(icoX, app.User3D.creatorSuperellipsoidPowerX, 0.0001f);
-    assertEquals(icoY, app.User3D.creatorSuperellipsoidPowerY, 0.0001f);
-    assertEquals(icoZ, app.User3D.creatorSuperellipsoidPowerZ, 0.0001f);
+    assertEquals(app.CREATE.SuperOBJ, app.CreateObject);
     assertEquals(1f, app.User3D.creatorSuperellipsoidPowerX, 0.0001f);
+    assertEquals(1f, app.User3D.creatorSuperellipsoidPowerY, 0.0001f);
+    assertEquals(1f, app.User3D.creatorSuperellipsoidPowerZ, 0.0001f);
   }
 
   // ================= every Create_* always resets through Nothing first ==
