@@ -67,6 +67,7 @@ class UI_rollout {
     CHILD_GEOMETRY_VIEWPORT = pushChild("View");
     CHILD_GEOMETRY_MODIFY = pushChild("Modify");
     CHILD_GEOMETRY_DEFORM = pushChild("Deform");
+    CHILD_GEOMETRY_SELECT = pushChild("Select");
     CHILD_GEOMETRY_ENTOURAGE = pushChild("Entourage");
     CHILD_GEOMETRY_SOLID = pushChild("Solids");
     CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
@@ -92,6 +93,7 @@ class UI_rollout {
   int CHILD_GEOMETRY_CREATE;
   int CHILD_GEOMETRY_MODIFY;
   int CHILD_GEOMETRY_DEFORM;
+  int CHILD_GEOMETRY_SELECT;
   int CHILD_GEOMETRY_SOLID;
   int CHILD_GEOMETRY_ENTOURAGE;
   int CHILD_GEOMETRY_VIEWPORT;
@@ -614,17 +616,6 @@ class UI_rollout {
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
-        Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
-        Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);
-        Select3D.positionVectorIndex = vm.positionVectorIndex(1);
-        Select3D.rotationVectorIndex = vm.rotationVectorIndex(1);
-        Select3D.scaleVectorIndex = vm.scaleVectorIndex(1);
-        Select3D.position = vm.positionSelection(1);
-        Select3D.rotation = vm.rotationSelection(1);
-        Select3D.scale = vm.scaleSelection(1);
-        Select3D.pivotAlignmentX = vm.pivotAlignmentX(1);
-        Select3D.pivotAlignmentY = vm.pivotAlignmentY(1);
-        Select3D.pivotAlignmentZ = vm.pivotAlignmentZ(1);
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
@@ -638,6 +629,10 @@ class UI_rollout {
       // fixed for the Modify *menu* (see uiMenuBar.pde's own Visibility
       // split). Registration (the vm.xxx(0) calls above) is flat and
       // child-agnostic, so only this draw/read-back half needed to move.
+      // Soft-selection falloff (power/radius) joined it here too - it's
+      // what controls how far a deformer's effect spreads from the
+      // pivot, so it reads as part of "deforming", not "modifying" or
+      // "selecting".
       if (this.child == CHILD_GEOMETRY_DEFORM) {
 
         User3D.modifierRelaxAmount = vm.modifierRelaxAmount(1);
@@ -650,6 +645,28 @@ class UI_rollout {
         User3D.modifierBendXY = vm.modifierBendXY(1);
         User3D.modifierBendXZ = vm.modifierBendXZ(1);
         User3D.modifierBendYZ = vm.modifierBendYZ(1);
+        Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
+        Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);
+      }
+
+      // The other half of Modify's original split: these are all
+      // Select3D fields driving the current selection's own position/
+      // rotation/scale and pivot alignment (command/README.md already
+      // documents them separately, under "Selection tools (3D-select)",
+      // not "Modify tools (3D-modify)") - they never belonged alongside
+      // the face/mesh-editing tools Modify keeps, they just ended up
+      // there historically.
+      if (this.child == CHILD_GEOMETRY_SELECT) {
+
+        Select3D.positionVectorIndex = vm.positionVectorIndex(1);
+        Select3D.rotationVectorIndex = vm.rotationVectorIndex(1);
+        Select3D.scaleVectorIndex = vm.scaleVectorIndex(1);
+        Select3D.position = vm.positionSelection(1);
+        Select3D.rotation = vm.rotationSelection(1);
+        Select3D.scale = vm.scaleSelection(1);
+        Select3D.pivotAlignmentX = vm.pivotAlignmentX(1);
+        Select3D.pivotAlignmentY = vm.pivotAlignmentY(1);
+        Select3D.pivotAlignmentZ = vm.pivotAlignmentZ(1);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
