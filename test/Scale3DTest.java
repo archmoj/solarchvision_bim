@@ -77,6 +77,17 @@ class Scale3DTest {
     assertArrayEquals(new float[]{7, 0, 0}, app.allVertices[0], 0.0001f); // x0 + sx*(x-x0) = 1+3*2
   }
 
+  @Test
+  void softSelection_zeroWeight_leavesThatVertexExactlyInPlace () {
+    app.allVertices = new float[][]{{3, 0, 0}};
+    app.Select3D.softSelection = new int[]{0};
+    app.Select3D.softSelectionFalloff = new float[]{0f};
+
+    app.Scale3D.softSelection(1, 0, 0, 3, 1, 1);
+
+    assertArrayEquals(new float[]{3, 0, 0}, app.allVertices[0], 0.0001f); // 0 scale contribution
+  }
+
   // ================= Vertices =========================================
 
   @Test

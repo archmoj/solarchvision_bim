@@ -65,6 +65,17 @@ class Move3DTest {
     assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[1], 0.0001f);   // half weight
   }
 
+  @Test
+  void softSelection_zeroWeight_leavesThatVertexExactlyInPlace () {
+    app.allVertices = new float[][]{{3, 3, 3}};
+    app.Select3D.softSelection = new int[]{0};
+    app.Select3D.softSelectionFalloff = new float[]{0f};
+
+    app.Move3D.softSelection(10, 10, 10);
+
+    assertArrayEquals(new float[]{3, 3, 3}, app.allVertices[0], 0.0001f);
+  }
+
   // ================= Vertices ========================================
 
   @Test

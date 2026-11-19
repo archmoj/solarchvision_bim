@@ -992,4 +992,162 @@ class Select3DTest {
     // (pivot X 0), since the loop dropped the last id (group 1) entirely.
     assertEquals(2f, app.Select3D.BoundingBox[1][0], 0.0001f);
   }
+
+  // ============ softSelectionFunction - additional falloff shapes ======
+  //
+  // softSelectionFunction_fallsOffFromOneAtZeroToZeroAtTheRadius (above)
+  // only ever exercises the default power=1. These two pin down the
+  // other two knobs the UI exposes for it: a non-default power actually
+  // changing the curve's shape (not just its radius), and the radius=0
+  // edge case, which the function's own guard (`d_min < radius`) turns
+  // into "always zero, even at distance zero" rather than a 0/0 NaN.
+
+  @Test
+  void softSelectionFunction_respectsANonDefaultFalloffPower () {
+    app.Select3D.softSelectionFalloffPower = 2; // default radius=2 stays
+
+    float cos45 = (float) Math.cos(Math.toRadians(45));
+
+    // Same distance (1) as the power=1 case above, but now squared -
+    // a different number, proving the live field is actually read,
+    // not a power=1 baked into the formula.
+    assertEquals(cos45 * cos45, app.Select3D.softSelectionFunction(1), 0.0001f);
+  }
+
+  @Test
+  void softSelectionFunction_zeroRadius_isAlwaysZeroEvenAtDistanceZero () {
+    app.Select3D.softSelectionFalloffRadius = 0;
+
+    // The guard is `d_min < radius`; at radius=0 that's never true, even
+    // for d_min=0, so this never reaches `90 * 0/0` (which would be NaN) -
+    // confirming the guard order protects against that, not luck.
+    assertEquals(0f, app.Select3D.softSelectionFunction(0), 0.0001f);
+    assertEquals(0f, app.Select3D.softSelectionFunction(5), 0.0001f);
+  }
+
+  // ============ convert_Vertex_to_softSelection - additional cases =====
+
+  @Test
+  void convertVertexToSoftSelection_multipleSeeds_usesDistanceToTheNearestOne () {
+    // 4 collinear points; two of them (0 and 2) are hard-selected, 3m
+    // apart from each other. Point 1 is close to BOTH seeds (distance 1
+    // from seed 0, distance 2 from seed 2) - its weight must come from
+    // the nearer one (1), not the farther one, and not an average.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {3, 0, 0}, {10, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+
+    app.Select3D.vertexSelection = new int[]{0, 2}; // two seeds
+
+    app.Select3D.convert_Vertex_to_softSelection();
+
+    assertArrayEquals(new int[]{0, 2}, app.Select3D.vertexSelection); // hard selection restored
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.softSelection);
+
+    // Point 1: nearest seed is 0 at distance 1, not seed 2 at distance 2.
+    assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelectionFalloff[1], 0.0001f);
+    // Point 3 (at x=10): nearest seed is 2 at distance 7, past radius=2.
+    assertEquals(0f, app.Select3D.softSelectionFalloff[3], 0.0001f);
+  }
+
+  @Test
+  void convertVertexToSoftSelection_doesNotLeakIntoAnUnselectedGroup () {
+    // Two separate groups, two vertices each. Only group 0's vertex 0 is
+    // hard-selected; the bake expands to group 0's own vertices (0, 1)
+    // but must not pick up group 1's vertices (2, 3) at all, however
+    // close they might otherwise be in space.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {1, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}, {2, 3}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Faces[1] = new int[]{1, 1};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+    app.allGroups.Polylines[1] = new int[]{0, -1};
+
+    app.Select3D.vertexSelection = new int[]{0};
+
+    app.Select3D.convert_Vertex_to_softSelection();
+
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.softSelection);
+  }
+
+  @Test
+  void convertVertexToSoftSelection_withNoHardSelection_producesAnEmptySoftSelection () {
+    // No seeds at all - exercises the otherwise-untested zero-selection
+    // path through convert_Vertices_to_Groups/convert_Groups_to_Vertices
+    // without hitting the FLOAT_undefined-as-d_min branch (the per-vertex
+    // loop simply never runs when there's nothing to expand to).
+    app.allVertices = new float[][]{{0, 0, 0}};
+    app.allFaces.nodes = new int[0][];
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(0);
+
+    app.Select3D.vertexSelection = new int[0];
+
+    app.Select3D.convert_Vertex_to_softSelection();
+
+    assertEquals(0, app.Select3D.softSelection.length);
+    assertEquals(0, app.Select3D.softSelectionFalloff.length);
+  }
+
+  // ============ deselect_softSelection ================================
+
+  @Test
+  void deselectSoftSelection_clearsOnlyTheSoftSelectionArrays () {
+    app.Select3D.softSelection = new int[]{1, 2};
+    app.Select3D.softSelectionFalloff = new float[]{0.5f, 0.8f};
+    app.Select3D.vertexSelection = new int[]{3}; // a different selection - must survive untouched
+
+    app.Select3D.deselect_softSelection();
+
+    assertEquals(0, app.Select3D.softSelection.length);
+    assertEquals(0, app.Select3D.softSelectionFalloff.length);
+    assertArrayEquals(new int[]{3}, app.Select3D.vertexSelection);
+  }
+
+  // ============ to_XML / from_XML round trip ==========================
+  //
+  // Select3D's own persistence had no coverage at all before this -
+  // soft selection's four fields included. A baked soft selection is
+  // meant to survive a save/load cycle (unlike the transient per-frame
+  // overlay markers that merely read it), so this is the thing that
+  // actually guarantees that.
+
+  @Test
+  void toXMLThenFromXML_roundTripsSoftSelectionAndItsFalloffSettings () {
+    app.Select3D.softSelection = new int[]{2, 5, 9};
+    app.Select3D.softSelectionFalloff = new float[]{1f, 0.5f, 0f};
+    app.Select3D.softSelectionFalloffPower = 3;
+    app.Select3D.softSelectionFalloffRadius = 7.5f;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.Select3D.to_XML(root);
+
+    solarchvision_bim.Select3D fresh = app.new Select3D();
+    fresh.from_XML(root);
+
+    assertArrayEquals(new int[]{2, 5, 9}, fresh.softSelection);
+    assertArrayEquals(new float[]{1f, 0.5f, 0f}, fresh.softSelectionFalloff, 0.0001f);
+    assertEquals(3f, fresh.softSelectionFalloffPower, 0.0001f);
+    assertEquals(7.5f, fresh.softSelectionFalloffRadius, 0.0001f);
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsAnEmptySoftSelection () {
+    app.Select3D.softSelection = new int[0];
+    app.Select3D.softSelectionFalloff = new float[0];
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.Select3D.to_XML(root);
+
+    solarchvision_bim.Select3D fresh = app.new Select3D();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.softSelection.length);
+    assertEquals(0, fresh.softSelectionFalloff.length);
+  }
 }

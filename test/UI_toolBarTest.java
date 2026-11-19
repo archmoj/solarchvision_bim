@@ -554,4 +554,41 @@ class UI_toolBarTest {
     assertNotEquals(0f, app.WIN3D.rotationX);
     assertNotEquals(0f, app.WIN3D.rotationZ);
   }
+
+  // ================= Layer Type / Soft (OBJECTTYPE.SOFTVERTEX=6) ========
+  //
+  // The toolbar's own entry point into Soft Selection - no existing test
+  // reached this (every softSelection() test elsewhere sets up the
+  // baked arrays by hand and skips straight to the consumer). This is
+  // the actual code path a user triggers by clicking "Soft": a plain
+  // category switch for every OTHER layer type, but this one also bakes
+  // the current hard selection via Select3D.convert_Vertex_to_softSelection()
+  // as a side effect (uiToolBar.pde's own "Layer Type" case).
+
+  @Test
+  void layerType_soft_switchesCategoryAndBakesTheSoftSelection () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+    app.Select3D.vertexSelection = new int[]{0};
+
+    app.UI_toolBar.performAction("Layer Type", 0, 7); // j-1=6 -> OBJECTTYPE.SOFTVERTEX
+
+    assertEquals(app.ObjectCategory.SOFTVERTEX, app.currentObjectCategory);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.softSelection); // baked, not left empty
+  }
+
+  @Test
+  void layerType_vertex_doesNotBakeASoftSelection () {
+    // Confirms the bake is specific to the Soft case, not something
+    // every "Layer Type" switch does as a side effect.
+    app.Select3D.softSelection = new int[]{9}; // pre-existing, should be left alone
+    app.UI_toolBar.performAction("Layer Type", 0, 6); // j-1=5 -> OBJECTTYPE.VERTEX
+
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+    assertArrayEquals(new int[]{9}, app.Select3D.softSelection);
+  }
 }

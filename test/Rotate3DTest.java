@@ -66,6 +66,28 @@ class Rotate3DTest {
       app.allVertices[0], 0.0001f);
   }
 
+  @Test
+  void softSelection_zeroWeight_leavesThatVertexExactlyInPlace () {
+    app.allVertices = new float[][]{{1, 0, 0}};
+    app.Select3D.softSelection = new int[]{0};
+    app.Select3D.softSelectionFalloff = new float[]{0f};
+
+    app.Rotate3D.softSelection(0, 0, 0, HALF_PI, 2);
+
+    assertArrayEquals(new float[]{1, 0, 0}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void softSelection_fullWeightMatchesAFullRotation () {
+    app.allVertices = new float[][]{{1, 0, 0}};
+    app.Select3D.softSelection = new int[]{0};
+    app.Select3D.softSelectionFalloff = new float[]{1f};
+
+    app.Rotate3D.softSelection(0, 0, 0, HALF_PI, 2);
+
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[0], 0.0001f);
+  }
+
   // ================= Terrain Vertices / Vertices / Polylines / Faces =========
 
   @Test
