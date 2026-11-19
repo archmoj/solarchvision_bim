@@ -1006,7 +1006,20 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Show/Hide Selected Polylines", () -> {
+  // Named "...Polylines Vertices" (matching polylineDisplayVertices'
+  // own field name), not the bare "Show/Hide Selected Polylines" this
+  // used to be registered under - that exact caption collided with the
+  // Modify menu's own "Hide/Unhide Selected Polylines" (a geometry
+  // visibility change, Modify3D.changeVisibilityPolylines_Selection()),
+  // the identical bug CommandRegistryTest.java was written to catch for
+  // "Hide Selected Faces" - but the Faces pair avoided it by using
+  // distinct captions ("...Faces Edges" for the overlay) from the
+  // start, so CommandRegistryTest's duplicate-key scan (which only
+  // flags the SAME caption registered twice) never saw this one: there
+  // was only ONE putAction for "Hide Selected Polylines" (this one),
+  // silently serving both menu items - the Modify menu's own entry was
+  // never actually missing, just invisibly bound to the wrong handler.
+  putAction("Show/Hide Selected Polylines Vertices", () -> {
     Select3D.polylineDisplayVertices = !Select3D.polylineDisplayVertices;
 
     view_changed();
@@ -2098,7 +2111,8 @@ void build_allActions() {
 
   putAction("Select All Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
 
-  putAction("Select All Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
+  putAction("Select All Vertices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
+  putAction("Select All Terrain Vertices", () -> selectAllOfCategory(ObjectCategory.TERRAIN));
 
   putAction("Select All Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
 
@@ -2346,6 +2360,35 @@ void build_allActions() {
 
   putAction("Unhide Selected Faces", () -> {
     Modify3D.changeVisibilityFaces_Selection(1);
+  });
+
+  // The Faces quintet's own exact polyline counterpart - Modify3D already
+  // had changeVisibilityPolylines_Selection()/changeVisibilityPolylines_Scene()/
+  // reverseVisibilityPolylines_Scene() fully implemented (isolate_Selection()
+  // itself already calls two of them), but none of the 5 were ever wired to
+  // a putAction - the Modify menu's "Reverse Visibility of All Polylines"/
+  // "Hide All Polylines"/"Unhide Selected Polylines"/"Unhide All Polylines"
+  // menu items were dead clicks (allActions.get() returned null), and
+  // "Hide Selected Polylines" silently ran the WRONG handler - see
+  // "Show/Hide Selected Polylines Vertices"'s own comment above for why.
+  putAction("Reverse Visibility of All Polylines", () -> {
+    Modify3D.reverseVisibilityPolylines_Scene();
+  });
+
+  putAction("Hide All Polylines", () -> {
+    Modify3D.changeVisibilityPolylines_Scene(0);
+  });
+
+  putAction("Unhide All Polylines", () -> {
+    Modify3D.changeVisibilityPolylines_Scene(1);
+  });
+
+  putAction("Hide Selected Polylines", () -> {
+    Modify3D.changeVisibilityPolylines_Selection(0);
+  });
+
+  putAction("Unhide Selected Polylines", () -> {
+    Modify3D.changeVisibilityPolylines_Selection(1);
   });
 
   putAction("Isolate Selection", () -> {
@@ -2698,7 +2741,7 @@ void build_allActions() {
   putAction("Show Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = true; view_changed();});
   putAction("Show Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = true; view_changed();});
-  putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
+  putAction("Show Selected Polylines Vertices",     () -> {Select3D.polylineDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexSelection = true; view_changed();});
   putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexSelection = true; view_changed();});
   putAction("Show Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = true; view_changed();});
@@ -2715,7 +2758,7 @@ void build_allActions() {
   putAction("Hide Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = false; view_changed();});
   putAction("Hide Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = false; view_changed();});
-  putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
+  putAction("Hide Selected Polylines Vertices",     () -> {Select3D.polylineDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexSelection = false; view_changed();});
   putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexSelection = false; view_changed();});
   putAction("Hide Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = false; view_changed();});

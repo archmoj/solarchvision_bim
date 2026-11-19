@@ -836,7 +836,7 @@ class UI_menuBar {
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
-    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Polylines Vertices"),     () -> !Select3D.polylineDisplayVertices);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexSelection);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexSelection);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
