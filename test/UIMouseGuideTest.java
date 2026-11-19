@@ -227,4 +227,95 @@ class UIMouseGuideTest {
     }
     assertTrue(found, "no \"Guide\" parent found in UI_menuBar.Items");
   }
+
+  // ================= button-row thirds / scroll wheel / subZoneAt() ==========
+  // Covers the per-touchpad sub-zones added for per-button hover
+  // filtering: a left/middle/right-click button row and a scroll wheel
+  // recentered over the middle button, same "pure geometry, no graphics
+  // calls" reasoning as the layout tests above.
+
+  @Test
+  void buttonThirdRect_threeThirds_tileTheButtonRowExactlyWithNoGapOrOverlap () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] left = app.UI_mouseGuide.buttonThirdRect(p, 0);
+    float[] middle = app.UI_mouseGuide.buttonThirdRect(p, 1);
+    float[] right = app.UI_mouseGuide.buttonThirdRect(p, 2);
+
+    assertEquals(left[2], middle[0], 0.001, "left/middle must share an edge");
+    assertEquals(middle[2], right[0], 0.001, "middle/right must share an edge");
+    assertEquals(p.x, left[0], 0.001);
+    assertEquals(p.x + p.w, right[2], 0.001);
+    // All three thirds span the same button-row band, flush with the
+    // pad's own top edge (the button row sits at the top, not along
+    // the bottom).
+    assertEquals(left[1], middle[1], 0.001);
+    assertEquals(middle[1], right[1], 0.001);
+    assertEquals(p.y, left[1], 0.001);
+  }
+
+  @Test
+  void scrollZoneRect_isHorizontallyCenteredOverTheMiddleThird_andSitsBelowTheButtonRow () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] middle = app.UI_mouseGuide.buttonThirdRect(p, 1);
+    float[] scroll = app.UI_mouseGuide.scrollZoneRect(p);
+
+    float middleCenterX = (middle[0] + middle[2]) / 2;
+    float scrollCenterX = (scroll[0] + scroll[2]) / 2;
+    assertEquals(middleCenterX, scrollCenterX, 0.001, "scroll wheel must be centered over the middle-click third");
+    // Button row is now at the pad's top edge, so the scroll wheel -
+    // directly below it - must start at or after the button row's own
+    // bottom edge, not overlap it.
+    assertTrue(scroll[1] >= middle[3], "scroll wheel must sit below the button row, not overlap it");
+  }
+
+  @Test
+  void subZoneAt_pointInLeftThird_returnsLEFT () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] left = app.UI_mouseGuide.buttonThirdRect(p, 0);
+    float cx = (left[0] + left[2]) / 2;
+    float cy = (left[1] + left[3]) / 2;
+    assertEquals("LEFT", app.UI_mouseGuide.subZoneAt(p, cx, cy));
+  }
+
+  @Test
+  void subZoneAt_pointInMiddleThird_returnsMIDDLE () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] middle = app.UI_mouseGuide.buttonThirdRect(p, 1);
+    float cx = (middle[0] + middle[2]) / 2;
+    float cy = middle[3] - 1; // just above the button row's own bottom edge, clear of the scroll wheel below
+    assertEquals("MIDDLE", app.UI_mouseGuide.subZoneAt(p, cx, cy));
+  }
+
+  @Test
+  void subZoneAt_pointInRightThird_returnsRIGHT () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] right = app.UI_mouseGuide.buttonThirdRect(p, 2);
+    float cx = (right[0] + right[2]) / 2;
+    float cy = (right[1] + right[3]) / 2;
+    assertEquals("RIGHT", app.UI_mouseGuide.subZoneAt(p, cx, cy));
+  }
+
+  @Test
+  void subZoneAt_pointOnTheScrollWheel_returnsSCROLL () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    float[] scroll = app.UI_mouseGuide.scrollZoneRect(p);
+    float cx = (scroll[0] + scroll[2]) / 2;
+    float cy = (scroll[1] + scroll[3]) / 2;
+    assertEquals("SCROLL", app.UI_mouseGuide.subZoneAt(p, cx, cy));
+  }
+
+  @Test
+  void subZoneAt_pointOnTheBodyBelowTheScrollWheel_returnsGENERAL () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    // Near the pad's own bottom edge - below the scroll wheel and below
+    // the (now top-mounted) button row, so none of those more specific
+    // zones match.
+    assertEquals("GENERAL", app.UI_mouseGuide.subZoneAt(p, p.x + p.w / 2, p.y + p.h - 1));
+  }
+
+  @Test
+  void subZoneAt_pointOutsideThePad_returnsNull () {
+    solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
+    assertNull(app.UI_mouseGuide.subZoneAt(p, p.x - 10000, p.y - 10000));
+  }
 }
