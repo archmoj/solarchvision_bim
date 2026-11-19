@@ -613,16 +613,6 @@ class UI_rollout {
         User3D.modifierTessellateColumns = vm.modifierTessellateColumns(1);
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
-        User3D.modifierRelaxAmount = vm.modifierRelaxAmount(1);
-        User3D.modifierSkewXY = vm.modifierSkewXY(1);
-        User3D.modifierSkewXZ = vm.modifierSkewXZ(1);
-        User3D.modifierSkewYZ = vm.modifierSkewYZ(1);
-        User3D.modifierTwistX = vm.modifierTwistX(1);
-        User3D.modifierTwistY = vm.modifierTwistY(1);
-        User3D.modifierTwistZ = vm.modifierTwistZ(1);
-        User3D.modifierBendXY = vm.modifierBendXY(1);
-        User3D.modifierBendXZ = vm.modifierBendXZ(1);
-        User3D.modifierBendYZ = vm.modifierBendYZ(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
         Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
         Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);
@@ -636,6 +626,30 @@ class UI_rollout {
         Select3D.pivotAlignmentY = vm.pivotAlignmentY(1);
         Select3D.pivotAlignmentZ = vm.pivotAlignmentZ(1);
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
+      }
+
+      // Split out of CHILD_GEOMETRY_MODIFY above: the Relax/Skew/Twist/
+      // Bend vertex-deformer trio (9 fields) grew into its own cohesive
+      // feature set (see modify3D.pde's relaxVertices_Selection()/
+      // skewVertices_Selection()/twistVertices_Selection()/
+      // bendVertices_Selection()) and was crowding Modify's one column
+      // alongside unrelated face/mesh-editing and selection-transform
+      // tools - same "everything piled into one place" pattern already
+      // fixed for the Modify *menu* (see uiMenuBar.pde's own Visibility
+      // split). Registration (the vm.xxx(0) calls above) is flat and
+      // child-agnostic, so only this draw/read-back half needed to move.
+      if (this.child == CHILD_GEOMETRY_DEFORM) {
+
+        User3D.modifierRelaxAmount = vm.modifierRelaxAmount(1);
+        User3D.modifierSkewXY = vm.modifierSkewXY(1);
+        User3D.modifierSkewXZ = vm.modifierSkewXZ(1);
+        User3D.modifierSkewYZ = vm.modifierSkewYZ(1);
+        User3D.modifierTwistX = vm.modifierTwistX(1);
+        User3D.modifierTwistY = vm.modifierTwistY(1);
+        User3D.modifierTwistZ = vm.modifierTwistZ(1);
+        User3D.modifierBendXY = vm.modifierBendXY(1);
+        User3D.modifierBendXZ = vm.modifierBendXZ(1);
+        User3D.modifierBendYZ = vm.modifierBendYZ(1);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
