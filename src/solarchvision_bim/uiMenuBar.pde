@@ -444,7 +444,9 @@ class UI_menuBar {
       "Show/Hide Selected Group Box",
       ___divider___,
       "Show/Hide Selected 2D Edges",
-      "Show/Hide Selected 1D Edges"
+      "Show/Hide Selected 1D Edges",
+      ___divider___,
+      "Show/Hide Modifier Bounding Box"
     },
     {
       PARENT_CONVERT,
@@ -844,6 +846,7 @@ class UI_menuBar {
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
     map.put(toggleKey(PARENT_SELECTION, "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
+    map.put(toggleKey(PARENT_SELECTION, "Show/Hide Modifier Bounding Box"),           () -> !Select3D.modifierDisplayBoundingBox);
 
     return map;
   }

@@ -369,25 +369,14 @@ class Modify3D {
     int n = Select3D.vertexSelection.length;
 
     // Snapshot-first: the pivot is the selection's own bounding-box
-    // center, found from a read-only pass before anything moves - so
-    // the shear is centered on what's selected (and doesn't also
-    // translate it), independent of any object-level pivot-alignment
-    // setting elsewhere in Select3D.
-    float minY = 0, maxY = 0, minZ = 0, maxZ = 0;
-    for (int o = 0; o < n; o++) {
-      int vNo = Select3D.vertexSelection[o];
-      float y = allPoints.getY(vNo);
-      float z = allPoints.getZ(vNo);
-      if (o == 0) {
-        minY = y; maxY = y;
-        minZ = z; maxZ = z;
-      } else {
-        minY = min(minY, y); maxY = max(maxY, y);
-        minZ = min(minZ, z); maxZ = max(maxZ, z);
-      }
-    }
-    float cy = (minY + maxY) / 2;
-    float cz = (minZ + maxZ) / 2;
+    // center (Select3D.vertexIdsExtents(), shared with twistVertices_
+    // Selection() and the Skew/Twist overlay gizmo), found from a
+    // read-only pass before anything moves - so the shear is centered
+    // on what's selected (and doesn't also translate it), independent
+    // of any object-level pivot-alignment setting elsewhere in Select3D.
+    float[] extents = Select3D.vertexIdsExtents(Select3D.vertexSelection);
+    float cy = (extents[1] + extents[4]) / 2;
+    float cz = (extents[2] + extents[5]) / 2;
 
     float kXY = User3D.modifierSkewXY;
     float kXZ = User3D.modifierSkewXZ;
@@ -417,29 +406,16 @@ class Modify3D {
 
     int n = Select3D.vertexSelection.length;
 
-    // Pivot: the selection's own bounding-box center, found in a
-    // read-only pass before anything moves - same reasoning as
-    // skewVertices_Selection(), and reused here too rather than any
-    // object-level pivot-alignment setting.
-    float minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
-    for (int o = 0; o < n; o++) {
-      int vNo = Select3D.vertexSelection[o];
-      float x = allPoints.getX(vNo);
-      float y = allPoints.getY(vNo);
-      float z = allPoints.getZ(vNo);
-      if (o == 0) {
-        minX = x; maxX = x;
-        minY = y; maxY = y;
-        minZ = z; maxZ = z;
-      } else {
-        minX = min(minX, x); maxX = max(maxX, x);
-        minY = min(minY, y); maxY = max(maxY, y);
-        minZ = min(minZ, z); maxZ = max(maxZ, z);
-      }
-    }
-    float cx = (minX + maxX) / 2;
-    float cy = (minY + maxY) / 2;
-    float cz = (minZ + maxZ) / 2;
+    // Pivot: the selection's own bounding-box center
+    // (Select3D.vertexIdsExtents(), shared with skewVertices_Selection()
+    // and the Skew/Twist overlay gizmo), found in a read-only pass
+    // before anything moves - same reasoning as skewVertices_Selection(),
+    // and reused here too rather than any object-level pivot-alignment
+    // setting.
+    float[] extents = Select3D.vertexIdsExtents(Select3D.vertexSelection);
+    float cx = (extents[0] + extents[3]) / 2;
+    float cy = (extents[1] + extents[4]) / 2;
+    float cz = (extents[2] + extents[5]) / 2;
 
     float degPerMeterX = User3D.modifierTwistX; // rotation around X, driven by each vertex's own X offset from cx
     float degPerMeterY = User3D.modifierTwistY; // rotation around Y, driven by each vertex's own Y offset from cy

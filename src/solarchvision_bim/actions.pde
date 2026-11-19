@@ -1042,6 +1042,12 @@ void build_allActions() {
     view_changed();
   });
 
+  putAction("Show/Hide Modifier Bounding Box", () -> {
+    Select3D.modifierDisplayBoundingBox = !Select3D.modifierDisplayBoundingBox;
+
+    view_changed();
+  });
+
   putAction("Show/Hide Selected 1D Edges", () -> {
     Select3D.model1DDisplayBounds = !Select3D.model1DDisplayBounds;
 
@@ -2702,6 +2708,7 @@ void build_allActions() {
   putAction("Show Selected Group Box",              () -> {Select3D.groupDisplayBox = true; view_changed();});
   putAction("Show Selected 2D Edges",               () -> {Select3D.model2DDisplayBounds = true; view_changed();});
   putAction("Show Selected 1D Edges",               () -> {Select3D.model1DDisplayBounds = true; view_changed();});
+  putAction("Show Modifier Bounding Box",           () -> {Select3D.modifierDisplayBoundingBox = true; view_changed();});
 
   putAction("Hide Selected Solids",                 () -> {Select3D.solidDisplayEdges = false; view_changed();});
   putAction("Hide Selected Sections",               () -> {Select3D.sectionDisplayEdges = false; view_changed();});
@@ -2718,6 +2725,7 @@ void build_allActions() {
   putAction("Hide Selected Group Box",              () -> {Select3D.groupDisplayBox = false; view_changed();});
   putAction("Hide Selected 2D Edges",               () -> {Select3D.model2DDisplayBounds = false; view_changed();});
   putAction("Hide Selected 1D Edges",               () -> {Select3D.model1DDisplayBounds = false; view_changed();});
+  putAction("Hide Modifier Bounding Box",           () -> {Select3D.modifierDisplayBoundingBox = false; view_changed();});
 
   for (int n = -2; n <= 8; n++) {
     final int layoutIndex = n;

@@ -14,6 +14,7 @@ class Overlay3D {
   final DrawStyle GROUP_EDGE_STYLE     = new DrawStyle(2, color(127), color(0, 15));
   final DrawStyle GROUP_BOX_STYLE      = new DrawStyle(4, color(0, 127, 0, 127), color(0, 15));
   final DrawStyle GROUP_PIVOT_STYLE    = new DrawStyle(2, color(255, 127, 0, 127));
+  final DrawStyle MODIFIER_BOX_STYLE   = new DrawStyle(4, color(0, 191, 255, 127), color(0, 15));
   final DrawStyle AXIS_X_STYLE         = new DrawStyle(2, color(255, 0, 0));
   final DrawStyle AXIS_Y_STYLE         = new DrawStyle(2, color(0, 0, 255));
   final DrawStyle AXIS_Z_STYLE         = new DrawStyle(2, color(0, 255, 0));
@@ -612,6 +613,124 @@ class Overlay3D {
           }
         }
 
+      }
+
+      // Skew/Twist's own pivot, shown live while editing: the exact
+      // same box - Select3D.vertexIdsExtents(Select3D.vertexSelection) -
+      // skewVertices_Selection()/twistVertices_Selection() pivot off
+      // of, so this can never silently disagree with what those
+      // modifiers actually do (see vertexIdsExtents()'s own comment).
+      // Only meaningful with 2+ selected vertices (a single point's
+      // box is degenerate - nothing to shear/twist relative to).
+      if (Select3D.modifierDisplayBoundingBox && (Select3D.vertexSelection.length >= 2)) {
+
+        float[] extents = Select3D.vertexIdsExtents(Select3D.vertexSelection);
+        float minX = extents[0], minY = extents[1], minZ = extents[2];
+        float maxX = extents[3], maxY = extents[4], maxZ = extents[5];
+
+        if ((minX != maxX) || (minY != maxY) || (minZ != maxZ)) { // not degenerate on every axis at once
+
+          MODIFIER_BOX_STYLE.applyStyle();
+
+          float[][] BoundingBox_Vertices = {
+            { minX, minY, minZ },
+            { maxX, minY, minZ },
+            { maxX, maxY, minZ },
+            { minX, maxY, minZ },
+            { minX, minY, maxZ },
+            { maxX, minY, maxZ },
+            { maxX, maxY, maxZ },
+            { minX, maxY, maxZ }
+          };
+
+          int[][] BoundingBox_Faces = {
+            { 3, 2, 1, 0 }
+            , { 0, 1, 5, 4 }
+            , { 1, 2, 6, 5 }
+            , { 2, 3, 7, 6 }
+            , { 3, 0, 4, 7 }
+            , { 4, 5, 6, 7 }
+          };
+
+          ArrayList<float[][]> boxEdgeBatch = new ArrayList<float[][]>();
+
+          for (int f = 0; f < BoundingBox_Faces.length; f++) {
+
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
+
+            for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
+
+              int vNo = BoundingBox_Faces[f][g];
+
+              float x = BoundingBox_Vertices[vNo][0] * overallScale;
+              float y = BoundingBox_Vertices[vNo][1] * overallScale;
+              float z = BoundingBox_Vertices[vNo][2] * overallScale;
+
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
+            }
+
+            drawClosedShape(camVertices, MODIFIER_BOX_STYLE, boxEdgeBatch);
+          }
+
+          drawEdgeBatch(boxEdgeBatch, MODIFIER_BOX_STYLE);
+
+          // The pivot itself, as a plain axis-aligned triad centered on
+          // the box - deliberately NOT routed through
+          // computePivotAxisVertices()/translateInside_ReferencePivot(),
+          // which apply a DIFFERENT selection's rotation/scale (the
+          // object-level GROUP pivot-alignment state); this box has no
+          // rotation of its own at all, so that transform would be
+          // wrong here, not just unnecessary.
+          float cx = (minX + maxX) / 2;
+          float cy = (minY + maxY) / 2;
+          float cz = (minZ + maxZ) / 2;
+          float r = 0.1 * max(0.0001, max(maxX - minX, max(maxY - minY, maxZ - minZ))); // never a zero-length triad
+
+          float[][] Triad_Vertices = {
+            { cx, cy, cz },
+            { cx + r, cy, cz },
+            { cx, cy + r, cz },
+            { cx, cy, cz + r }
+          };
+
+          int[][] Triad_Lines = {
+            { 0, 1 }
+            , { 0, 2 }
+            , { 0, 3 }
+          };
+
+          for (int f = 0; f < Triad_Lines.length; f++) {
+
+            DrawStyle axisStyle;
+            if (f == 0) axisStyle = AXIS_X_STYLE;
+            else if (f == 1) axisStyle = AXIS_Y_STYLE;
+            else axisStyle = AXIS_Z_STYLE;
+
+            axisStyle.applyStyle();
+
+            int a = Triad_Lines[f][0];
+            int b = Triad_Lines[f][1];
+
+            float x1 = Triad_Vertices[a][0] * overallScale;
+            float y1 = Triad_Vertices[a][1] * overallScale;
+            float z1 = Triad_Vertices[a][2] * overallScale;
+
+            float x2 = Triad_Vertices[b][0] * overallScale;
+            float y2 = Triad_Vertices[b][1] * overallScale;
+            float z2 = Triad_Vertices[b][2] * overallScale;
+
+            float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
+            float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
+
+            if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) {
+              if (isInside(Image_XYZa[0], Image_XYZa[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
+                if (isInside(Image_XYZb[0], Image_XYZb[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
+                  line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
+                }
+              }
+            }
+          }
+        }
       }
     }
 

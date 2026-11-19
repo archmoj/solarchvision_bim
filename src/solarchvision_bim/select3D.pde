@@ -26,6 +26,7 @@ class Select3D {
   boolean polylineDisplayVertexSelection = false;
   boolean vertexDisplayMarkers = true;
   boolean polylineDisplayVertices = true;
+  boolean modifierDisplayBoundingBox = true; // Skew/Twist's shared pivot box + axis triad, drawn while VERTEX category is active
 
 
   boolean model2DDisplayBounds = true;
@@ -1073,7 +1074,34 @@ class Select3D {
     return return_array;
   }
 
-
+  // Returns {minX,minY,minZ,maxX,maxY,maxZ} for the given vertex ids -
+  // the bounding box skewVertices_Selection()/twistVertices_Selection()
+  // pivot off of (Modify3D), and the same box their overlay gizmo draws
+  // (Overlay3D). Kept as ONE shared source on purpose, so the preview
+  // can never silently drift from what the modifier actually pivots
+  // around - the softSelection/softSelectionFalloff clamp bug fixed
+  // earlier this session was exactly this kind of drift between two
+  // things meant to stay in lockstep. Returns all-zero extents for an
+  // empty id array (the caller decides what "empty" means to it).
+  float[] vertexIdsExtents (int[] ids) {
+    float minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
+    for (int o = 0; o < ids.length; o++) {
+      int vNo = ids[o];
+      float x = allPoints.getX(vNo);
+      float y = allPoints.getY(vNo);
+      float z = allPoints.getZ(vNo);
+      if (o == 0) {
+        minX = x; maxX = x;
+        minY = y; maxY = y;
+        minZ = z; maxZ = z;
+      } else {
+        minX = min(minX, x); maxX = max(maxX, x);
+        minY = min(minY, y); maxY = max(maxY, y);
+        minZ = min(minZ, z); maxZ = max(maxZ, z);
+      }
+    }
+    return new float[]{ minX, minY, minZ, maxX, maxY, maxZ };
+  }
 
   void selectPick (float[] RxP) {
 

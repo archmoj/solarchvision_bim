@@ -1094,6 +1094,41 @@ class Select3DTest {
     assertEquals(0, app.Select3D.softSelectionFalloff.length);
   }
 
+  // ============ vertexIdsExtents =======================================
+  //
+  // Shared by skewVertices_Selection()/twistVertices_Selection() (their
+  // own pivot) and the Skew/Twist overlay gizmo, on purpose - see this
+  // method's own comment in select3D.pde.
+
+  @Test
+  void vertexIdsExtents_returnsMinAndMaxPerAxisAcrossTheGivenIds () {
+    app.allVertices = new float[][]{{-1, 5, 0}, {3, -2, 10}, {1, 1, 1}};
+
+    float[] extents = app.Select3D.vertexIdsExtents(new int[]{0, 1, 2});
+
+    assertArrayEquals(
+      new float[]{-1, -2, 0, 3, 5, 10}, // minX,minY,minZ, maxX,maxY,maxZ
+      extents, 0.0001f);
+  }
+
+  @Test
+  void vertexIdsExtents_singleId_collapsesToThatVertexOnEveryAxis () {
+    app.allVertices = new float[][]{{3, 7, 9}};
+
+    float[] extents = app.Select3D.vertexIdsExtents(new int[]{0});
+
+    assertArrayEquals(new float[]{3, 7, 9, 3, 7, 9}, extents, 0.0001f);
+  }
+
+  @Test
+  void vertexIdsExtents_emptyIds_isAllZero () {
+    app.allVertices = new float[][]{{3, 7, 9}}; // present but not referenced
+
+    float[] extents = app.Select3D.vertexIdsExtents(new int[0]);
+
+    assertArrayEquals(new float[]{0, 0, 0, 0, 0, 0}, extents, 0.0001f);
+  }
+
   // ============ clampSoftSelectionToCurrentData ========================
   //
   // softSelection/softSelectionFalloff are a parallel pair. Using the
