@@ -378,23 +378,31 @@ class Modify3D {
     float cy = (extents[1] + extents[4]) / 2;
     float cz = (extents[2] + extents[5]) / 2;
 
-    float kXY = User3D.modifierSkewXY;
-    float kXZ = User3D.modifierSkewXZ;
-    float kYZ = User3D.modifierSkewYZ;
-
     for (int o = 0; o < n; o++) {
       int vNo = Select3D.vertexSelection[o];
       float y = allPoints.getY(vNo);
       float z = allPoints.getZ(vNo);
 
-      float dx = kXY * (y - cy) + kXZ * (z - cz);
-      float dy = kYZ * (z - cz);
+      float[] d = skewDelta(y - cy, z - cz);
 
-      allPoints.move(vNo, dx, dy, 0);
+      allPoints.move(vNo, d[0], d[1], 0);
     }
 
     selection_changed();
     endScene3DChange();
+  }
+
+  // The {dx,dy} skewVertices_Selection()'s own loop used to compute
+  // inline, now shared with the overlay gizmo's own deformed-preview
+  // cage (Overlay3D.draw()'s previewModifierDeformation() call) - one
+  // source on purpose, so the preview can never silently show a
+  // different shear than committing the operation would actually
+  // produce (the same reasoning vertexIdsExtents()'s own comment gives
+  // for the pivot itself).
+  float[] skewDelta (float y0, float z0) {
+    float dx = User3D.modifierSkewXY * y0 + User3D.modifierSkewXZ * z0;
+    float dy = User3D.modifierSkewYZ * z0;
+    return new float[]{ dx, dy };
   }
 
   void twistVertices_Selection () {
@@ -417,10 +425,6 @@ class Modify3D {
     float cy = (extents[1] + extents[4]) / 2;
     float cz = (extents[2] + extents[5]) / 2;
 
-    float degPerMeterX = User3D.modifierTwistX; // rotation around X, driven by each vertex's own X offset from cx
-    float degPerMeterY = User3D.modifierTwistY; // rotation around Y, driven by each vertex's own Y offset from cy
-    float degPerMeterZ = User3D.modifierTwistZ; // rotation around Z, driven by each vertex's own Z offset from cz
-
     for (int o = 0; o < n; o++) {
       int vNo = Select3D.vertexSelection[o];
       float oldX = allPoints.getX(vNo);
@@ -431,18 +435,7 @@ class Modify3D {
       float y = oldY - cy;
       float z = oldZ - cz;
 
-      // Each axis's own rotation amount comes from this vertex's ORIGINAL
-      // (pre-twist) offset along that same axis, computed once up front -
-      // then the three rotations are applied in a fixed X -> Y -> Z order
-      // to the evolving point, the same composition order Select3D's own
-      // object-level rotX/rotY/rotZ triple uses.
-      float rX = radians(degPerMeterX * x);
-      float rY = radians(degPerMeterY * y);
-      float rZ = radians(degPerMeterZ * z);
-
-      float[] afterX = Rotate3D.rotateAroundVector(x, y, z, rX, 0);
-      float[] afterY = Rotate3D.rotateAroundVector(afterX[0], afterX[1], afterX[2], rY, 1);
-      float[] afterZ = Rotate3D.rotateAroundVector(afterY[0], afterY[1], afterY[2], rZ, 2);
+      float[] afterZ = twistedPoint(x, y, z);
 
       float newX = cx + afterZ[0];
       float newY = cy + afterZ[1];
@@ -453,6 +446,27 @@ class Modify3D {
 
     selection_changed();
     endScene3DChange();
+  }
+
+  // The rotation twistVertices_Selection()'s own loop used to compute
+  // inline, now shared with the overlay gizmo's own deformed-preview
+  // cage - see skewDelta()'s own comment for why. Each axis's own
+  // rotation amount comes from the point's ORIGINAL (pre-twist) offset
+  // along that same axis, then the three rotations are applied in a
+  // fixed X -> Y -> Z order to the evolving point, the same composition
+  // order Select3D's own object-level rotX/rotY/rotZ triple uses.
+  // Returns the new PIVOT-RELATIVE point (not a delta - a rotation has
+  // no additive "delta" the way skew/bend's shear/arc do).
+  float[] twistedPoint (float x0, float y0, float z0) {
+    float rX = radians(User3D.modifierTwistX * x0);
+    float rY = radians(User3D.modifierTwistY * y0);
+    float rZ = radians(User3D.modifierTwistZ * z0);
+
+    float[] afterX = Rotate3D.rotateAroundVector(x0, y0, z0, rX, 0);
+    float[] afterY = Rotate3D.rotateAroundVector(afterX[0], afterX[1], afterX[2], rY, 1);
+    float[] afterZ = Rotate3D.rotateAroundVector(afterY[0], afterY[1], afterY[2], rZ, 2);
+
+    return afterZ;
   }
 
   // The third of the Twist/Skew/Bend trio - a true circular arc rather
@@ -503,23 +517,58 @@ class Modify3D {
     float cy = (extents[1] + extents[4]) / 2;
     float cz = (extents[2] + extents[5]) / 2;
 
-    float kXY = User3D.modifierBendXY; // bends X, driven by each vertex's own Y offset from cy
-    float kXZ = User3D.modifierBendXZ; // bends X, driven by each vertex's own Z offset from cz
-    float kYZ = User3D.modifierBendYZ; // bends Y, driven by each vertex's own Z offset from cz
-
     for (int o = 0; o < n; o++) {
       int vNo = Select3D.vertexSelection[o];
       float y = allPoints.getY(vNo);
       float z = allPoints.getZ(vNo);
 
-      float dx = bendOffset(kXY, y - cy) + bendOffset(kXZ, z - cz);
-      float dy = bendOffset(kYZ, z - cz);
+      float[] d = bendDelta(y - cy, z - cz);
 
-      allPoints.move(vNo, dx, dy, 0);
+      allPoints.move(vNo, d[0], d[1], 0);
     }
 
     selection_changed();
     endScene3DChange();
+  }
+
+  // The {dx,dy} bendVertices_Selection()'s own loop used to compute
+  // inline, now shared with the overlay gizmo's own deformed-preview
+  // cage - see skewDelta()'s own comment for why.
+  float[] bendDelta (float y0, float z0) {
+    float dx = bendOffset(User3D.modifierBendXY, y0) + bendOffset(User3D.modifierBendXZ, z0);
+    float dy = bendOffset(User3D.modifierBendYZ, z0);
+    return new float[]{ dx, dy };
+  }
+
+  // Previews what Skew, then Twist, then Bend, applied in that order
+  // with whatever values currently sit in User3D's nine modifier
+  // fields, would do to one pivot-relative point - exactly what three
+  // sequential real commits (Skew Selected Vertices, then Twist
+  // Selected Vertices, then Bend Selected Vertices) would produce,
+  // since each of those three, applied for real, always reads the
+  // vertex's then-CURRENT position as its own "original" (none of them
+  // remembers an earlier, pre-chain position). Used only by the overlay
+  // gizmo's deformed-preview cage - none of the three apply methods
+  // above call this themselves, since each of them deliberately applies
+  // ONLY its own factor when invoked on its own, ignoring whatever the
+  // other two modifiers' fields currently hold.
+  float[] previewModifierDeformation (float x0, float y0, float z0) {
+    float[] skew = skewDelta(y0, z0);
+    float x1 = x0 + skew[0];
+    float y1 = y0 + skew[1];
+    float z1 = z0;
+
+    float[] twisted = twistedPoint(x1, y1, z1);
+    float x2 = twisted[0];
+    float y2 = twisted[1];
+    float z2 = twisted[2];
+
+    float[] bend = bendDelta(y2, z2);
+    float x3 = x2 + bend[0];
+    float y3 = y2 + bend[1];
+    float z3 = z2;
+
+    return new float[]{ x3, y3, z3 };
   }
 
   void separateVertices_Selection () {

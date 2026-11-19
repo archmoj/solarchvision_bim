@@ -632,6 +632,18 @@ class Overlay3D {
 
           MODIFIER_BOX_STYLE.applyStyle();
 
+          // The pivot itself - deliberately NOT routed through
+          // computePivotAxisVertices()/translateInside_ReferencePivot(),
+          // which apply a DIFFERENT selection's rotation/scale (the
+          // object-level GROUP pivot-alignment state); this box has no
+          // rotation of its own at all, so that transform would be
+          // wrong here, not just unnecessary. Hoisted above the box's
+          // own drawing below too, since the box now needs it for its
+          // own pivot-relative preview math.
+          float cx = (minX + maxX) / 2;
+          float cy = (minY + maxY) / 2;
+          float cz = (minZ + maxZ) / 2;
+
           float[][] BoundingBox_Vertices = {
             { minX, minY, minZ },
             { maxX, minY, minZ },
@@ -643,47 +655,67 @@ class Overlay3D {
             { minX, maxY, maxZ }
           };
 
-          int[][] BoundingBox_Faces = {
-            { 3, 2, 1, 0 }
-            , { 0, 1, 5, 4 }
-            , { 1, 2, 6, 5 }
-            , { 2, 3, 7, 6 }
-            , { 3, 0, 4, 7 }
-            , { 4, 5, 6, 7 }
+          // The box's 12 edges, each a plain (corner, corner) pair - no
+          // face-fill/shared-edge bookkeeping needed, since each is now
+          // walked and drawn exactly once as its own subdivided polyline
+          // below, not as a quad's outline.
+          int[][] BoundingBox_Edges = {
+            { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 } // bottom face
+            , { 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 4 } // top face
+            , { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 } // the 4 verticals joining them
           };
 
-          ArrayList<float[][]> boxEdgeBatch = new ArrayList<float[][]>();
+          // Sample each edge at 12 segments (13 points) along its own
+          // straight corner-to-corner line, run each sample through
+          // Modify3D.previewModifierDeformation() with the Skew/Twist/
+          // Bend fields' CURRENT values, and draw the resulting polyline
+          // instead of the original straight edge - a live cage preview
+          // of what committing those modifiers (in sequence) would
+          // actually do, not just this bounding box's own undeformed
+          // shape. When all nine fields are 0, every sample point's
+          // deformation is 0 too, so this collapses back to exactly the
+          // plain straight-edge box it replaces - no separate "nothing
+          // is being edited" case to maintain.
+          int SEGMENTS = 12;
 
-          for (int f = 0; f < BoundingBox_Faces.length; f++) {
+          for (int e = 0; e < BoundingBox_Edges.length; e++) {
 
-            ArrayList<float[]> camVertices = new ArrayList<float[]>();
+            float[] A = BoundingBox_Vertices[BoundingBox_Edges[e][0]];
+            float[] B = BoundingBox_Vertices[BoundingBox_Edges[e][1]];
 
-            for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
+            float[] prevImage = null;
 
-              int vNo = BoundingBox_Faces[f][g];
+            for (int s = 0; s <= SEGMENTS; s++) {
 
-              float x = BoundingBox_Vertices[vNo][0] * overallScale;
-              float y = BoundingBox_Vertices[vNo][1] * overallScale;
-              float z = BoundingBox_Vertices[vNo][2] * overallScale;
+              float t = (float) s / SEGMENTS;
 
-              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
+              float x0 = lerp(A[0], B[0], t) - cx;
+              float y0 = lerp(A[1], B[1], t) - cy;
+              float z0 = lerp(A[2], B[2], t) - cz;
+
+              float[] deformed = Modify3D.previewModifierDeformation(x0, y0, z0);
+
+              float x = (cx + deformed[0]) * overallScale;
+              float y = (cy + deformed[1]) * overallScale;
+              float z = (cz + deformed[2]) * overallScale;
+
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
+
+              if (Image_XYZ[2] > 0) {
+                if (isInside(Image_XYZ[0], Image_XYZ[1], MODIFIER_BOX_STYLE.innerWinX1, MODIFIER_BOX_STYLE.innerWinY1, MODIFIER_BOX_STYLE.innerWinX2, MODIFIER_BOX_STYLE.innerWinY2)) {
+                  if (prevImage != null) {
+                    line(prevImage[0], prevImage[1], Image_XYZ[0], Image_XYZ[1]);
+                  }
+                  prevImage = Image_XYZ;
+                } else {
+                  prevImage = null; // this sample fell outside the clip window - don't bridge across it
+                }
+              } else {
+                prevImage = null;
+              }
             }
-
-            drawClosedShape(camVertices, MODIFIER_BOX_STYLE, boxEdgeBatch);
           }
 
-          drawEdgeBatch(boxEdgeBatch, MODIFIER_BOX_STYLE);
-
-          // The pivot itself, as a plain axis-aligned triad centered on
-          // the box - deliberately NOT routed through
-          // computePivotAxisVertices()/translateInside_ReferencePivot(),
-          // which apply a DIFFERENT selection's rotation/scale (the
-          // object-level GROUP pivot-alignment state); this box has no
-          // rotation of its own at all, so that transform would be
-          // wrong here, not just unnecessary.
-          float cx = (minX + maxX) / 2;
-          float cy = (minY + maxY) / 2;
-          float cz = (minZ + maxZ) / 2;
           float r = 0.1 * max(0.0001, max(maxX - minX, max(maxY - minY, maxZ - minZ))); // never a zero-length triad
 
           float[][] Triad_Vertices = {

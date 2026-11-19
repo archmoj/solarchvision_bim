@@ -1960,4 +1960,83 @@ class ModifyGeometryTest {
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
   }
+
+  // --- previewModifierDeformation -----------------------------------------
+  //
+  // The overlay gizmo's deformed-preview cage (Overlay3D.draw()) calls
+  // this directly on each of its 12 edges' sample points - it's never
+  // reached through a vertex-selection loop the way skewVertices_
+  // Selection()/twistVertices_Selection()/bendVertices_Selection() are,
+  // so it needs its own direct tests. It composes Skew, then Twist,
+  // then Bend using the SAME skewDelta()/twistedPoint()/bendDelta()
+  // helpers those three methods were refactored to call (a pure
+  // extraction - see each helper's own comment), so what these tests
+  // guard against is the WIRING here (right order, right intermediate
+  // values passed through), not the formulas themselves - those are
+  // already covered by skewVertices_Selection's/twistVertices_
+  // Selection's/bendVertices_Selection's own tests above.
+
+  @Test
+  void previewModifierDeformation_allNineFieldsZero_isIdentity () {
+    float[] result = app.Modify3D.previewModifierDeformation(2, -3, 4);
+
+    assertArrayEquals(new float[]{2, -3, 4}, result, 0.0001f);
+  }
+
+  @Test
+  void previewModifierDeformation_composesSkewThenTwistThenBend_inThatFixedOrder () {
+    app.User3D.modifierSkewXY = 1.1f;
+    app.User3D.modifierSkewXZ = -2.2f;
+    app.User3D.modifierSkewYZ = 3.3f;
+    app.User3D.modifierTwistX = 5f;
+    app.User3D.modifierTwistY = -10f;
+    app.User3D.modifierTwistZ = 15f;
+    app.User3D.modifierBendXY = 4f;
+    app.User3D.modifierBendXZ = -6f;
+    app.User3D.modifierBendYZ = 8f;
+
+    float x0 = 2, y0 = -3, z0 = 4;
+
+    // Independently re-derive the expected result from the same three
+    // shared helpers, composed by hand here rather than inside the
+    // method under test - this is what pins down the ORDER and the
+    // hand-off between stages (Twist's own "original" must be the
+    // post-skew point; Bend's own "original" must be the post-twist
+    // point), not the formulas themselves.
+    float[] skew = app.Modify3D.skewDelta(y0, z0);
+    float x1 = x0 + skew[0];
+    float y1 = y0 + skew[1];
+    float z1 = z0;
+
+    float[] twisted = app.Modify3D.twistedPoint(x1, y1, z1);
+    float x2 = twisted[0];
+    float y2 = twisted[1];
+    float z2 = twisted[2];
+
+    float[] bend = app.Modify3D.bendDelta(y2, z2);
+    float expectedX = x2 + bend[0];
+    float expectedY = y2 + bend[1];
+    float expectedZ = z2;
+
+    float[] result = app.Modify3D.previewModifierDeformation(x0, y0, z0);
+
+    assertArrayEquals(new float[]{expectedX, expectedY, expectedZ}, result, 0.0001f);
+  }
+
+  @Test
+  void previewModifierDeformation_onlyBendSet_leavesXZeroOffsetUnaffected () {
+    // A sanity cross-check independent of the helper re-derivation
+    // above: with Skew and Twist both entirely zero, the point passed
+    // in should flow through untouched until Bend's own additive
+    // dx/dy - i.e. this should equal x0 plus bendDelta(y0,z0) exactly,
+    // with no rotation or shear contribution sneaking in from a wiring
+    // mistake (e.g. accidentally rotating around the wrong vector, or
+    // reading Twist's fields instead of Bend's in the final stage).
+    app.User3D.modifierBendXY = 18f;
+
+    float[] result = app.Modify3D.previewModifierDeformation(0, 5, 0); // cy-relative offset of 5, matching the 18deg/m -> r=10/PI tests above
+
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{r, 5, 0}, result, 0.0001f);
+  }
 }
