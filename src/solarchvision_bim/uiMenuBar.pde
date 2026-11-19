@@ -516,6 +516,7 @@ class UI_menuBar {
       "Relax Selected Vertices",
       "Skew Selected Vertices",
       "Twist Selected Vertices",
+      "Bend Selected Vertices",
       ___divider___,
       "Reverse Visibility of All Faces",
       "Hide All Faces",

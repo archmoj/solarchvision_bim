@@ -61,6 +61,9 @@ class User3DTest {
     app.User3D.modifierTwistX = 45f;
     app.User3D.modifierTwistY = -90f;
     app.User3D.modifierTwistZ = 180f;
+    app.User3D.modifierBendXY = 12.5f;
+    app.User3D.modifierBendXZ = -22.5f;
+    app.User3D.modifierBendYZ = 33.5f;
     app.User3D.modifierWeldThreshold = 0.2f;
 
     app.User3D.exporterScale = 0.5f;
@@ -115,6 +118,9 @@ class User3DTest {
     assertEquals(45f, fresh.modifierTwistX, 0.0001f);
     assertEquals(-90f, fresh.modifierTwistY, 0.0001f);
     assertEquals(180f, fresh.modifierTwistZ, 0.0001f);
+    assertEquals(12.5f, fresh.modifierBendXY, 0.0001f);
+    assertEquals(-22.5f, fresh.modifierBendXZ, 0.0001f);
+    assertEquals(33.5f, fresh.modifierBendYZ, 0.0001f);
     assertEquals(0.2f, fresh.modifierWeldThreshold, 0.0001f);
 
     assertEquals(0.5f, fresh.exporterScale, 0.0001f);
@@ -130,8 +136,8 @@ class User3DTest {
   @Test
   void fromXML_missingSkewAndTwistFields_fallBackToZero () {
     // Simulates an older save file whose own user3D node predates these
-    // six fields entirely (a bare child with none of its own attributes,
-    // rather than a full to_XML() dump with these six stripped out) -
+    // nine fields entirely (a bare child with none of its own attributes,
+    // rather than a full to_XML() dump with these nine stripped out) -
     // the 3-arg XML_getFloat(parent, name, 0) default path in
     // User3D.from_XML should leave every one of them at 0 (no
     // shear/twist), not throw or silently read garbage.
@@ -147,5 +153,8 @@ class User3DTest {
     assertEquals(0f, fresh.modifierTwistX, 0.0001f);
     assertEquals(0f, fresh.modifierTwistY, 0.0001f);
     assertEquals(0f, fresh.modifierTwistZ, 0.0001f);
+    assertEquals(0f, fresh.modifierBendXY, 0.0001f);
+    assertEquals(0f, fresh.modifierBendXZ, 0.0001f);
+    assertEquals(0f, fresh.modifierBendYZ, 0.0001f);
   }
 }

@@ -1837,4 +1837,127 @@ class ModifyGeometryTest {
     assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{1, 0, 10}, app.allVertices[1], 0.0001f);
   }
+
+  // --- bendOffset / bendVertices_Selection --------------------------------
+  //
+  // The third of the Twist/Skew/Bend trio: a true circular-arc sagitta,
+  // r*(1-cos(k*offset)) with k = radians(degPerMeter), r = 1/k - the
+  // perpendicular distance a point at `offset` along the rod's own
+  // original straight length lands from that original straight line once
+  // the rod is curved into an arc of radius r. Unlike skewVertices_
+  // Selection()'s linear k*offset (sign-preserving, asymmetric either
+  // side of the pivot), cos() is an even function: bendOffset(rate, +d)
+  // and bendOffset(rate, -d) are IDENTICAL - both sides of the pivot
+  // bulge toward the same side, the same shape a real ruler takes when
+  // bent into a shallow arc (a smile, not an S), not a sign-dependent
+  // shear. 18 deg/m and a +/-5m offset are chosen the same way as
+  // twistVertices' own tests - they resolve to a clean k*offset = 90
+  // degrees, so r*(1-cos(90deg)) = r*(1-0) = r = 1/radians(18) = 10/PI.
+
+  @Test
+  void bendOffset_matchesTheArcSagittaFormula_andIsEvenInOffsetSign () {
+    float r = (float) (10 / Math.PI); // 1 / radians(18)
+
+    assertEquals(r, app.Modify3D.bendOffset(18, 5), 0.0001f);
+    assertEquals(r, app.Modify3D.bendOffset(18, -5), 0.0001f, "same magnitude on either side of the pivot - a bend bulges one way, it doesn't shear");
+  }
+
+  @Test
+  void bendOffset_zeroDegPerMeter_isZeroRegardlessOfOffset_noDivideByZero () {
+    assertEquals(0, app.Modify3D.bendOffset(0, 5), 0.0001f);
+    assertEquals(0, app.Modify3D.bendOffset(0, -5), 0.0001f);
+    assertEquals(0, app.Modify3D.bendOffset(0, 0), 0.0001f);
+  }
+
+  @Test
+  void bendVertices_xyOnly_curvesXByArcProportionalToYOffset () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}}; // cy=5, cz=0 (trivial)
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 18; // cy=5 -> offsets -5/+5 -> 90 degrees each
+
+    app.Modify3D.bendVertices_Selection();
+
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{r, 10, 0}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void bendVertices_xzOnly_curvesXByArcProportionalToZOffset () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 10}}; // cz=5, cy=0 (trivial)
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXZ = 18;
+
+    app.Modify3D.bendVertices_Selection();
+
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{r, 0, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void bendVertices_yzOnly_curvesYByArcProportionalToZOffset () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 10}}; // cz=5, cy=0 (trivial)
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendYZ = 18;
+
+    app.Modify3D.bendVertices_Selection();
+
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{0, r, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, r, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void bendVertices_zeroFactors_isANoOp () {
+    app.allVertices = new float[][]{{1, 2, 3}, {4, 5, 6}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 0;
+    app.User3D.modifierBendXZ = 0;
+    app.User3D.modifierBendYZ = 0;
+
+    app.Modify3D.bendVertices_Selection();
+
+    assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{4, 5, 6}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void bendVertices_singleSelectedVertex_isItsOwnPivot_soNothingMoves () {
+    // min == max on both y and z for a single point, so (y-cy) and
+    // (z-cz) are both exactly 0 - k*0 = 0 regardless of the bend factors.
+    app.allVertices = new float[][]{{3, 7, 9}};
+    app.allFaces.nodes = new int[0][];
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierBendXY = 45f;
+    app.User3D.modifierBendXZ = 45f;
+    app.User3D.modifierBendYZ = 45f;
+
+    app.Modify3D.bendVertices_Selection();
+
+    assertArrayEquals(new float[]{3, 7, 9}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void bendVertices_isANoOpWhenCategoryIsNotAPolymeshOne () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 18;
+
+    app.Modify3D.bendVertices_Selection();
+
+    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
+  }
 }

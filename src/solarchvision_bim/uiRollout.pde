@@ -230,6 +230,9 @@ class UI_rollout {
     vm.modifierTwistX(0);
     vm.modifierTwistY(0);
     vm.modifierTwistZ(0);
+    vm.modifierBendXY(0);
+    vm.modifierBendXZ(0);
+    vm.modifierBendYZ(0);
     vm.modifierWeldThreshold(0);
     vm.softSelectionFalloffPower(0);
     vm.softSelectionFalloffRadius(0);
@@ -615,6 +618,9 @@ class UI_rollout {
         User3D.modifierTwistX = vm.modifierTwistX(1);
         User3D.modifierTwistY = vm.modifierTwistY(1);
         User3D.modifierTwistZ = vm.modifierTwistZ(1);
+        User3D.modifierBendXY = vm.modifierBendXY(1);
+        User3D.modifierBendXZ = vm.modifierBendXZ(1);
+        User3D.modifierBendYZ = vm.modifierBendYZ(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
         Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
         Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);

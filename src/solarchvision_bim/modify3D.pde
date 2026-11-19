@@ -455,6 +455,73 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // The third of the Twist/Skew/Bend trio - a true circular arc rather
+  // than Twist's in-place rotation or Skew's linear shear, but kept at
+  // the same level of simplicity as both: each of the three factors
+  // reads ONLY its own one axis-pair's original offset and writes ONLY
+  // its own one axis, independently and additively, the same shape
+  // skewVertices_Selection()'s own dx/dy formula already uses (no
+  // arc-length foreshortening of the parametrizing axis itself, and no
+  // cross-section rotation along the arc's own tangent - both of which
+  // a "real" bend modifier would add, but neither of which Skew or
+  // Twist attempt either for their own analogous simplifications).
+  //
+  // bendOffset()'s own r*(1-cos(k*offset)) is the classic circular-arc
+  // sagitta formula: treating the bend as a rod curving into a circle
+  // of radius r = 1/k (k in radians per meter - degPerMeter converted
+  // via radians()), a point at distance `offset` along the rod's own
+  // original straight length sweeps arc angle k*offset around that
+  // circle's center, and r*(1-cos(...)) is exactly how far it lands
+  // from the rod's original straight line, perpendicular to it.
+  // degPerMeter == 0 is handled as its own explicit no-op (0 contribution)
+  // rather than falling through 1/radians(0) - the same divide-by-zero
+  // every other value-modifier here already guards against its own
+  // degenerate input.
+  float bendOffset (float degPerMeter, float offset) {
+    if (degPerMeter == 0) return 0;
+
+    float k = radians(degPerMeter);
+    float r = 1 / k;
+    return r * (1 - cos(k * offset));
+  }
+
+  void bendVertices_Selection () {
+    if (!isPolymeshCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectVertices_fromCurrentSelection();
+
+    int n = Select3D.vertexSelection.length;
+
+    // Pivot: the selection's own bounding-box center on Y/Z only - same
+    // scope as skewVertices_Selection() (dx/dy below never read x0
+    // either), via Select3D.vertexIdsExtents(), shared with Skew/Twist
+    // and the overlay gizmo - see skewVertices_Selection()'s own comment
+    // for the full reasoning.
+    float[] extents = Select3D.vertexIdsExtents(Select3D.vertexSelection);
+    float cy = (extents[1] + extents[4]) / 2;
+    float cz = (extents[2] + extents[5]) / 2;
+
+    float kXY = User3D.modifierBendXY; // bends X, driven by each vertex's own Y offset from cy
+    float kXZ = User3D.modifierBendXZ; // bends X, driven by each vertex's own Z offset from cz
+    float kYZ = User3D.modifierBendYZ; // bends Y, driven by each vertex's own Z offset from cz
+
+    for (int o = 0; o < n; o++) {
+      int vNo = Select3D.vertexSelection[o];
+      float y = allPoints.getY(vNo);
+      float z = allPoints.getZ(vNo);
+
+      float dx = bendOffset(kXY, y - cy) + bendOffset(kXZ, z - cz);
+      float dy = bendOffset(kYZ, z - cz);
+
+      allPoints.move(vNo, dx, dy, 0);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
   void separateVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 

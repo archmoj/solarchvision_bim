@@ -2411,6 +2411,10 @@ void build_allActions() {
     Modify3D.twistVertices_Selection();
   });
 
+  putAction("Bend Selected Vertices", () -> {
+    Modify3D.bendVertices_Selection();
+  });
+
   putAction("Add People on Land", () -> {
     Create3D.add_onTerrain(1); // 1 = people
   });

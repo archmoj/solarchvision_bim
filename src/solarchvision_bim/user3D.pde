@@ -59,6 +59,9 @@ class User3D {
   float modifierTwistX = 0; // degrees of rotation around X, per 1m of X offset from the selection's own bounding-box center
   float modifierTwistY = 0; // degrees of rotation around Y, per 1m of Y offset from the selection's own bounding-box center
   float modifierTwistZ = 0; // degrees of rotation around Z, per 1m of Z offset from the selection's own bounding-box center
+  float modifierBendXY = 0; // degrees of circular-arc bend in X, per 1m of Y offset from the selection's own bounding-box center
+  float modifierBendXZ = 0; // degrees of circular-arc bend in X, per 1m of Z offset from the selection's own bounding-box center
+  float modifierBendYZ = 0; // degrees of circular-arc bend in Y, per 1m of Z offset from the selection's own bounding-box center
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -129,6 +132,9 @@ class User3D {
     XML_setFloat(parent, "modifierTwistX", this.modifierTwistX);
     XML_setFloat(parent, "modifierTwistY", this.modifierTwistY);
     XML_setFloat(parent, "modifierTwistZ", this.modifierTwistZ);
+    XML_setFloat(parent, "modifierBendXY", this.modifierBendXY);
+    XML_setFloat(parent, "modifierBendXZ", this.modifierBendXZ);
+    XML_setFloat(parent, "modifierBendYZ", this.modifierBendYZ);
 
     XML_setFloat(parent, "exporterScale", this.exporterScale);
     XML_setInt(parent, "exporterYaxisUp", this.exporterYaxisUp);
@@ -201,6 +207,9 @@ class User3D {
     this.modifierTwistX = XML_getFloat(parent, "modifierTwistX", 0);
     this.modifierTwistY = XML_getFloat(parent, "modifierTwistY", 0);
     this.modifierTwistZ = XML_getFloat(parent, "modifierTwistZ", 0);
+    this.modifierBendXY = XML_getFloat(parent, "modifierBendXY", 0);
+    this.modifierBendXZ = XML_getFloat(parent, "modifierBendXZ", 0);
+    this.modifierBendYZ = XML_getFloat(parent, "modifierBendYZ", 0);
 
     this.exporterScale = XML_getFloat(parent, "exporterScale");
     this.exporterYaxisUp = XML_getInt(parent, "exporterYaxisUp");

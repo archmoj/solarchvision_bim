@@ -1430,6 +1430,72 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierBendXY (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -360; //start
+    float s2 = 360; //stop
+    float s3 = 0.1; //step
+
+    float out = 0;
+    String command = "Modifier Bend XY";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierBendXY,
+        (v) -> { User3D.modifierBendXY = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierBendXY, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierBendXZ (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -360; //start
+    float s2 = 360; //stop
+    float s3 = 0.1; //step
+
+    float out = 0;
+    String command = "Modifier Bend XZ";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierBendXZ,
+        (v) -> { User3D.modifierBendXZ = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierBendXZ, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierBendYZ (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -360; //start
+    float s2 = 360; //stop
+    float s3 = 0.1; //step
+
+    float out = 0;
+    String command = "Modifier Bend YZ";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierBendYZ,
+        (v) -> { User3D.modifierBendYZ = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierBendYZ, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
