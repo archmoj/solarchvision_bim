@@ -337,7 +337,20 @@ class UI_menuBar {
       ___divider___,
       "Show/Hide Solar Section",
       "Show/Hide Solid Section",
-      "Show/Hide Wind Flow"
+      "Show/Hide Wind Flow",
+      ___divider___,
+      "Reverse Visibility of All Faces",
+      "Hide All Faces",
+      "Hide Selected Faces",
+      "Unhide Selected Faces",
+      "Unhide All Faces",
+      "Isolate Selection",
+      ___divider___,
+      "Reverse Visibility of All Polylines",
+      "Hide All Polylines",
+      "Hide Selected Polylines",
+      "Unhide Selected Polylines",
+      "Unhide All Polylines"
     },
     {
       PARENT_CREATE,
@@ -521,20 +534,7 @@ class UI_menuBar {
       "Relax Selected Group",
       "Skew Selected Group",
       "Twist Selected Group",
-      "Bend Selected Group",
-      ___divider___,
-      "Reverse Visibility of All Faces",
-      "Hide All Faces",
-      "Hide Selected Faces",
-      "Unhide Selected Faces",
-      "Unhide All Faces",
-      "Isolate Selection",
-      ___divider___,
-      "Reverse Visibility of All Polylines",
-      "Hide All Polylines",
-      "Hide Selected Polylines",
-      "Unhide Selected Polylines",
-      "Unhide All Polylines"
+      "Bend Selected Group"
     },
     {
       PARENT_MATCH,
