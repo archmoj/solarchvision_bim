@@ -1349,6 +1349,15 @@ under [Shading and rendering](#shading-and-rendering) above)
     same Skew-then-Twist-then-Bend math, without touching the real
     vertices until the command actually runs; the gizmo's own axis
     triad is never deformed, only the box
+-   `Relax Selected Group`, `Skew Selected Group`, `Twist Selected Group`,
+    `Bend Selected Group`: the same four modifiers as above, but for a
+    selection still at the GROUP level - each runs `Groups >> Vertices`
+    first (see [Groups](#groups) below) to expand the group's own faces
+    and polylines into their vertices, then applies the matching
+    modifier to that vertex selection, so a group never needs to be
+    converted to vertices by hand first. The selection ends up at the
+    VERTEX level afterward, same as running `Groups >> Vertices` on its
+    own would leave it.
 -   `Flip Normal`, `Set-In Normal`, `Set-Out Normal`,
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,

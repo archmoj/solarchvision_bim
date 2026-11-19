@@ -2039,4 +2039,117 @@ class ModifyGeometryTest {
     float r = (float) (10 / Math.PI);
     assertArrayEquals(new float[]{r, 5, 0}, result, 0.0001f);
   }
+
+  // --- "Relax/Skew/Twist/Bend Selected Group" actions ---------------------
+  //
+  // actions.pde wires each of these to the existing "Groups >> Vertices"
+  // conversion (Select3D.convert_Groups_to_Vertices(), already covered by
+  // Select3DTest's own convertGroupsToVertices_* tests) immediately
+  // followed by the matching real vertex modifier - so a GROUP-category
+  // selection can be relaxed/skewed/twisted/bent directly, without first
+  // running "Groups >> Vertices" by hand. These exercise that wiring
+  // end-to-end through runScriptLine() (the same entry point the menu
+  // bar's own click handling uses), reusing each modifier's own
+  // already-proven vertex math (see skewVertices_Selection's/
+  // twistVertices_Selection's/bendVertices_Selection's tests above) by
+  // picking a single-face group whose face's own node list matches that
+  // test's vertexSelection exactly - so the expected numbers are identical
+  // to those tests, with the group-to-vertex conversion as the only new
+  // step being verified.
+
+  @Test
+  void twistSelectedGroup_convertsToVerticesThenTwists_aroundZ () {
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1}; // empty
+    app.Select3D.groupSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+    app.User3D.modifierTwistZ = 18; // same 18deg/m as twistVertices_aroundZOnly_... above
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Twist Selected Group");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory, "selection should end up at VERTEX category, same as a plain Groups >> Vertices");
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.vertexSelection, "the group's own face should have been expanded to its vertices first");
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 1, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void skewSelectedGroup_convertsToVerticesThenSkews_allThreeFactors () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}, {0, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+    app.Select3D.groupSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+    app.User3D.modifierSkewXY = 0.5f;
+    app.User3D.modifierSkewXZ = 0.2f;
+    app.User3D.modifierSkewYZ = 0.3f;
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Skew Selected Group");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.vertexSelection);
+    // Same expected values as skewVertices_allThreeFactorsCombine_perTheFormula above.
+    assertArrayEquals(new float[]{-3.5f, -1.5f, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 8.5f, 0}, app.allVertices[1], 0.0001f);
+    assertArrayEquals(new float[]{-1.5f, 1.5f, 10}, app.allVertices[2], 0.0001f);
+  }
+
+  @Test
+  void bendSelectedGroup_convertsToVerticesThenBends_xyOnly () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+    app.Select3D.groupSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+    app.User3D.modifierBendXY = 18;
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Bend Selected Group");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.vertexSelection);
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{r, 10, 0}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void relaxSelectedGroup_convertsToVerticesThenRelaxes () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.Polylines[0] = new int[]{0, -1};
+    app.Select3D.groupSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+    app.User3D.modifierRelaxAmount = 1.0f;
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Relax Selected Group");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.vertexSelection, "the whole face's vertices, not just one, should have been carried into the vertex selection");
+    // Not re-deriving relaxVertices_Selection's own math here (already
+    // covered by relaxVertices_fullAmount_... above) - just confirming
+    // the wiring actually ran it: vertex 0 must have moved off its
+    // original (0,0,0).
+    assertNotEquals(0f, app.allVertices[0][0], "vertex should have moved toward its neighbors' average, not been left in place");
+  }
 }

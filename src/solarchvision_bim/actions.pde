@@ -2415,6 +2415,36 @@ void build_allActions() {
     Modify3D.bendVertices_Selection();
   });
 
+  // Relax/Skew/Twist/Bend all read their pivot/extents from
+  // Select3D.vertexSelection (see modify3D.pde), so running one of them
+  // directly against a GROUP-category selection is a silent no-op -
+  // there's nothing in vertexSelection to act on. These four wrap the
+  // existing "Groups >> Vertices" conversion (actions.pde, above) around
+  // the matching vertex modifier, so a group selected at the group level
+  // can be relaxed/skewed/twisted/bent in one step, without first
+  // switching to vertex selection by hand. Selection ends up at VERTEX
+  // category afterward, same as "Groups >> Vertices" on its own would
+  // leave it.
+  putAction("Relax Selected Group", () -> {
+    convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX);
+    Modify3D.relaxVertices_Selection();
+  });
+
+  putAction("Skew Selected Group", () -> {
+    convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX);
+    Modify3D.skewVertices_Selection();
+  });
+
+  putAction("Twist Selected Group", () -> {
+    convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX);
+    Modify3D.twistVertices_Selection();
+  });
+
+  putAction("Bend Selected Group", () -> {
+    convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX);
+    Modify3D.bendVertices_Selection();
+  });
+
   putAction("Add People on Land", () -> {
     Create3D.add_onTerrain(1); // 1 = people
   });
