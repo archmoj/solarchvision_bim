@@ -53,6 +53,14 @@ class User3DTest {
     app.User3D.modifierOpeningArea = 0.3f;
     app.User3D.modifierOpeningDeviation = 0.6f;
     app.User3D.modifierOffsetAmount = 1.5f;
+    app.User3D.modifierInsetDepth = 0.4f;
+    app.User3D.modifierRelaxAmount = 0.7f;
+    app.User3D.modifierSkewXY = 1.1f;
+    app.User3D.modifierSkewXZ = -2.2f;
+    app.User3D.modifierSkewYZ = 3.3f;
+    app.User3D.modifierTwistX = 45f;
+    app.User3D.modifierTwistY = -90f;
+    app.User3D.modifierTwistZ = 180f;
     app.User3D.modifierWeldThreshold = 0.2f;
 
     app.User3D.exporterScale = 0.5f;
@@ -99,6 +107,14 @@ class User3DTest {
     assertEquals(0.3f, fresh.modifierOpeningArea, 0.0001f);
     assertEquals(0.6f, fresh.modifierOpeningDeviation, 0.0001f);
     assertEquals(1.5f, fresh.modifierOffsetAmount, 0.0001f);
+    assertEquals(0.4f, fresh.modifierInsetDepth, 0.0001f);
+    assertEquals(0.7f, fresh.modifierRelaxAmount, 0.0001f);
+    assertEquals(1.1f, fresh.modifierSkewXY, 0.0001f);
+    assertEquals(-2.2f, fresh.modifierSkewXZ, 0.0001f);
+    assertEquals(3.3f, fresh.modifierSkewYZ, 0.0001f);
+    assertEquals(45f, fresh.modifierTwistX, 0.0001f);
+    assertEquals(-90f, fresh.modifierTwistY, 0.0001f);
+    assertEquals(180f, fresh.modifierTwistZ, 0.0001f);
     assertEquals(0.2f, fresh.modifierWeldThreshold, 0.0001f);
 
     assertEquals(0.5f, fresh.exporterScale, 0.0001f);
@@ -109,5 +125,27 @@ class User3DTest {
     assertFalse(fresh.exporterMaterialLibrary);
     assertFalse(fresh.exporterDoubleSided);
     assertEquals(128, fresh.exporterColorScaleResolution);
+  }
+
+  @Test
+  void fromXML_missingSkewAndTwistFields_fallBackToZero () {
+    // Simulates an older save file whose own user3D node predates these
+    // six fields entirely (a bare child with none of its own attributes,
+    // rather than a full to_XML() dump with these six stripped out) -
+    // the 3-arg XML_getFloat(parent, name, 0) default path in
+    // User3D.from_XML should leave every one of them at 0 (no
+    // shear/twist), not throw or silently read garbage.
+    processing.data.XML root = new processing.data.XML("root");
+    root.addChild(app.User3D.CLASS_STAMP);
+
+    solarchvision_bim.User3D fresh = app.new User3D();
+    fresh.from_XML(root);
+
+    assertEquals(0f, fresh.modifierSkewXY, 0.0001f);
+    assertEquals(0f, fresh.modifierSkewXZ, 0.0001f);
+    assertEquals(0f, fresh.modifierSkewYZ, 0.0001f);
+    assertEquals(0f, fresh.modifierTwistX, 0.0001f);
+    assertEquals(0f, fresh.modifierTwistY, 0.0001f);
+    assertEquals(0f, fresh.modifierTwistZ, 0.0001f);
   }
 }
