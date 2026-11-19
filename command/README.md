@@ -38,7 +38,7 @@ This page has two parts:
    arguments as `key=value` pairs on the same line.
 2. **[Spinner and toggle value commands](#spinner-and-toggle-value-commands)** -
    one command per numeric or on/off control in the user interface (dates,
-   camera settings, palettes, latitude/longitude, and 234 more). Each
+   camera settings, palettes, latitude/longitude, and 245 more). Each
    takes a single value: `command_name value`.
 
 ------------------------------------------------------------------------
@@ -586,7 +586,7 @@ Includes commands such as:
 ## Spinner and toggle value commands
 
 Nearly every numeric or on/off spinner in the user interface has a
-matching command - 234 of them. They all work the same way:
+matching command - 245 of them. They all work the same way:
 
 ```
 command_name value
@@ -762,6 +762,16 @@ the user interface.
 | `Modifier Tessellate Rows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
 | `Modifier Tessellate Columns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
 | `Modifier Weld Threshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
+| `Modifier Relax Amount` | How strongly `Relax Selected Vertices` pulls each vertex toward its neighbors' average position (0 = no change, 1 = fully snaps) | 0 to 1 |
+| `Modifier Skew XY` | Shear factor for `Skew Selected Vertices`: offsets X per 1m of Y from the selection's bounding-box center | -5 to 5 |
+| `Modifier Skew XZ` | Shear factor for `Skew Selected Vertices`: offsets X per 1m of Z from the selection's bounding-box center | -5 to 5 |
+| `Modifier Skew YZ` | Shear factor for `Skew Selected Vertices`: offsets Y per 1m of Z from the selection's bounding-box center | -5 to 5 |
+| `Modifier Twist X` | Rotation (degrees) around X per 1m of X offset from the selection's bounding-box center, used by `Twist Selected Vertices` | -360 to 360 |
+| `Modifier Twist Y` | Rotation (degrees) around Y per 1m of Y offset from the selection's bounding-box center, used by `Twist Selected Vertices` | -360 to 360 |
+| `Modifier Twist Z` | Rotation (degrees) around Z per 1m of Z offset from the selection's bounding-box center, used by `Twist Selected Vertices` | -360 to 360 |
+| `Modifier Bend XY` | Circular-arc bend (degrees per meter) in X driven by Y offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
+| `Modifier Bend XZ` | Circular-arc bend (degrees per meter) in X driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
+| `Modifier Bend YZ` | Circular-arc bend (degrees per meter) in Y driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 
 ### Export defaults (3D-export)
 
@@ -1017,7 +1027,7 @@ subtract modes.
 -   `Select All`, `Select All Cameras`, `Select All Faces`,
     `Select All Groups`, `Select All Model1Ds`, `Select All Model2Ds`,
     `Select All Polylines`, `Select All Sections`, `Select All Solids`,
-    `Select All Verices`
+    `Select All Vertices`, `Select All Terrain Vertices`
 -   `Select Camera`, `Select Face`, `Select Group`, `Select TerrainVertex`,
     `Select Model1Ds`, `Select Model2Ds`, `Select Polyline`,
     `Select Section`, `Select Solid`, `Select Vertex`
@@ -1061,7 +1071,7 @@ Most viewable elements have up to three related commands: `Show <X>`
 `Polylines`, `Sections`, `Selected 1D Edges`, `Selected 2D Edges`,
 `Selected Cameras`, `Selected Faces Edges`, `Selected Faces Vertex Count`,
 `Selected Group Box`, `Selected Group Edges`, `Selected Group Pivot`,
-`Selected Terrain Vertices`, `Selected Polylines`,
+`Selected Terrain Vertices`, `Selected Polylines Vertices`,
 `Selected Polylines Vertex Count`, `Selected Ref Pivot`,
 `Selected Sections`, `Selected Solids`, `Selected Vertices`, `Sky`,
 `Solar Section`, `Solid Section`, `Solids`, `Sun Grid`, `Sun Path`,
@@ -1070,7 +1080,12 @@ Most viewable elements have up to three related commands: `Show <X>`
 `Wind Flow`
 
 `Unhide All Faces` and `Unhide Selected Faces` also exist as one-way
-opposites of `Hide All Faces`/`Hide Selected Faces`.
+opposites of `Hide All Faces`/`Hide Selected Faces`. The same pattern
+exists for polylines specifically: `Hide All Polylines`,
+`Unhide All Polylines`, `Hide Selected Polylines`,
+`Unhide Selected Polylines`, and `Reverse Visibility of All Polylines`
+(flips every polyline's visibility at once, rather than forcing it to
+one state).
 
 ### Camera and view navigation
 
@@ -1321,6 +1336,19 @@ under [Shading and rendering](#shading-and-rendering) above)
 -   `Weld Objects Selected Vertices`, `Weld Scene Selected Vertices`,
     `Separate Selected Vertices`
 -   `Reposition Selected Vertices`, `Flatten Selected Terrain Vertices`
+-   `Relax Selected Vertices`: pulls each selected vertex toward its
+    neighbors' average position, by `Modifier Relax Amount`
+-   `Skew Selected Vertices`, `Twist Selected Vertices`,
+    `Bend Selected Vertices`: shear, rotate, or circular-arc-bend the
+    selection around its own bounding-box center/extents, by the
+    matching `Modifier Skew */Modifier Twist */Modifier Bend *`
+    values above - while any of these three have a nonzero value set,
+    the selection's bounding-box gizmo (see `Group Display Box`/
+    `Pivot Display Reference` above) previews the combined effect by
+    deforming its own 12 edges (sampled into segments) through the
+    same Skew-then-Twist-then-Bend math, without touching the real
+    vertices until the command actually runs; the gizmo's own axis
+    triad is never deformed, only the box
 -   `Flip Normal`, `Set-In Normal`, `Set-Out Normal`,
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,
