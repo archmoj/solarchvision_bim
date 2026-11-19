@@ -162,3 +162,42 @@ ArrayList<String> mouseMapDescribeViewport (String viewport) {
   }
   return lines;
 }
+
+// Which sub-region of a touchpad a binding's action belongs to, for the
+// per-button hover filtering UI_mouseGuide.pde's draw() applies (same
+// "show only what's relevant to what you're pointing at" idea as
+// UI_keyboardMap's own per-key hover) - "LEFT"/"RIGHT" for anything
+// that's specifically a left- or right-button action (every such action
+// in the fixed table above already starts with "Left"/"Right", prefix
+// or no mode-suffix alike), "SCROLL" for the scroll wheel ("Scroll",
+// with or without a WIN3D mode suffix), and "GENERAL" for the two
+// actions that aren't tied to any one button - "Hover" and the
+// unprefixed "Drag" rows (WORLD/STUDY's pan, which fires on whichever
+// button is held - see handleWorldDrag(), mouseDragged.pde). There is
+// no "MIDDLE" case: nothing in the app currently binds to a middle
+// click, so the illustration's own middle button (added purely to
+// match a real mouse's look) always comes up empty, same as hovering
+// any key with no bindings in UI_keyboardMap.
+String mouseMapZoneForAction (String action) {
+  if (action.startsWith("Left")) return "LEFT";
+  if (action.startsWith("Right")) return "RIGHT";
+  if (action.startsWith("Scroll")) return "SCROLL";
+  return "GENERAL";
+}
+
+// Every binding for the given viewport AND touchpad sub-region ("LEFT",
+// "MIDDLE", "RIGHT", "SCROLL", or "GENERAL") - what hovering that one
+// part of a viewport's touchpad drawing shows, rather than the whole
+// viewport's list at once the way mouseMapDescribeViewport() above
+// does. "MIDDLE" is a valid zone to ask for, it simply never matches
+// anything (see mouseMapZoneForAction()'s own comment).
+ArrayList<String> mouseMapDescribeViewportZone (String viewport, String zone) {
+  buildMouseMapBindingsIfNeeded();
+  ArrayList<String> lines = new ArrayList<String>();
+  for (String[] row : mouseMapBindings) {
+    if (!row[0].equals(viewport)) continue;
+    if (!mouseMapZoneForAction(row[1]).equals(zone)) continue;
+    lines.add(mouseMapFormatLine(row));
+  }
+  return lines;
+}

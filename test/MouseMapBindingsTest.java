@@ -104,4 +104,103 @@ class MouseMapBindingsTest {
           "unexpected viewport: " + row[0]);
     }
   }
+
+  // ================= mouseMapZoneForAction() / mouseMapDescribeViewportZone() ================
+  // Covers the per-button hover filtering UI_mouseGuide.pde's draw() now
+  // applies - introduced alongside the illustration's own left/middle/
+  // right-click button row and recentered scroll wheel.
+
+  @Test
+  void zoneForAction_leftPrefixed_isLEFT () {
+    assertEquals("LEFT", app.mouseMapZoneForAction("Left-click"));
+    assertEquals("LEFT", app.mouseMapZoneForAction("Left-drag (Terrain Orbit)"));
+  }
+
+  @Test
+  void zoneForAction_rightPrefixed_isRIGHT () {
+    assertEquals("RIGHT", app.mouseMapZoneForAction("Right-click"));
+    assertEquals("RIGHT", app.mouseMapZoneForAction("Right-drag (Terrain Orbit)"));
+  }
+
+  @Test
+  void zoneForAction_scrollPrefixed_isSCROLL () {
+    assertEquals("SCROLL", app.mouseMapZoneForAction("Scroll"));
+    assertEquals("SCROLL", app.mouseMapZoneForAction("Scroll (Terrain Orbit)"));
+  }
+
+  @Test
+  void zoneForAction_hoverOrPlainDrag_isGENERAL () {
+    assertEquals("GENERAL", app.mouseMapZoneForAction("Hover"));
+    assertEquals("GENERAL", app.mouseMapZoneForAction("Drag"));
+  }
+
+  @Test
+  void describeViewportZone_world_left_isOnlyTheLeftClickRow () {
+    ArrayList<String> lines = app.mouseMapDescribeViewportZone("WORLD", "LEFT");
+    assertEquals(1, lines.size());
+    assertTrue(lines.get(0).startsWith("Left-click: "));
+  }
+
+  @Test
+  void describeViewportZone_world_right_isOnlyTheRightClickRow () {
+    ArrayList<String> lines = app.mouseMapDescribeViewportZone("WORLD", "RIGHT");
+    assertEquals(1, lines.size());
+    assertTrue(lines.get(0).startsWith("Right-click: "));
+  }
+
+  @Test
+  void describeViewportZone_world_scroll_isOnlyTheScrollRow () {
+    ArrayList<String> lines = app.mouseMapDescribeViewportZone("WORLD", "SCROLL");
+    assertEquals(1, lines.size());
+    assertTrue(lines.get(0).startsWith("Scroll: "));
+  }
+
+  @Test
+  void describeViewportZone_world_general_isHoverAndDragOnly () {
+    ArrayList<String> lines = app.mouseMapDescribeViewportZone("WORLD", "GENERAL");
+    assertEquals(2, lines.size());
+    assertTrue(lines.stream().anyMatch(l -> l.startsWith("Hover: ")));
+    assertTrue(lines.stream().anyMatch(l -> l.startsWith("Drag: ")));
+  }
+
+  @Test
+  void describeViewportZone_middle_isAlwaysEmpty_noMiddleClickBindingExistsAnywhere () {
+    assertTrue(app.mouseMapDescribeViewportZone("WORLD", "MIDDLE").isEmpty());
+    assertTrue(app.mouseMapDescribeViewportZone("STUDY", "MIDDLE").isEmpty());
+    assertTrue(app.mouseMapDescribeViewportZone("WIN3D", "MIDDLE").isEmpty());
+  }
+
+  @Test
+  void describeViewportZone_win3d_left_and_right_matchEveryModesOwnDragRowPlusTheGenericClick () {
+    // 1 generic "Left-click" + 16 modes' own "Left-drag (...)" = 17.
+    ArrayList<String> left = app.mouseMapDescribeViewportZone("WIN3D", "LEFT");
+    assertEquals(17, left.size());
+    ArrayList<String> right = app.mouseMapDescribeViewportZone("WIN3D", "RIGHT");
+    assertEquals(17, right.size());
+  }
+
+  @Test
+  void describeViewportZone_win3d_scroll_matchesEveryModesOwnScrollRow () {
+    // 16 modes * 1 "Scroll (...)" row apiece = 16; WIN3D has no generic
+    // unprefixed "Scroll" row of its own (every WIN3D scroll binding is
+    // mode-specific).
+    ArrayList<String> scroll = app.mouseMapDescribeViewportZone("WIN3D", "SCROLL");
+    assertEquals(16, scroll.size());
+  }
+
+  @Test
+  void zonePartition_everyRowForAViewport_landsInExactlyOneOfTheFourRealZones () {
+    // LEFT + RIGHT + SCROLL + GENERAL must account for every row - this
+    // is the same "the split covers the whole set, nothing falls
+    // through" property check mergeCoplanar's own selection-preservation
+    // fix cared about, just for a classification instead of a deletion.
+    for (String viewport : new String[]{"WORLD", "STUDY", "WIN3D"}) {
+      int whole = app.mouseMapDescribeViewport(viewport).size();
+      int partitioned = app.mouseMapDescribeViewportZone(viewport, "LEFT").size()
+          + app.mouseMapDescribeViewportZone(viewport, "RIGHT").size()
+          + app.mouseMapDescribeViewportZone(viewport, "SCROLL").size()
+          + app.mouseMapDescribeViewportZone(viewport, "GENERAL").size();
+      assertEquals(whole, partitioned, viewport + ": zone split must account for every binding");
+    }
+  }
 }

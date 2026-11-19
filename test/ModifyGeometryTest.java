@@ -1183,13 +1183,13 @@ class ModifyGeometryTest {
     assertEquals(10, app.allFaces.nodes.length);
   }
 
-  // --- fillHoles_Selection (a full integration test) --------------------
+  // --- capHoles_Selection (a full integration test) --------------------
 
   @Test
-  void fillHoles_capsTheOneMissingFaceOfAnOpenToppedBox () {
+  void capHoles_capsTheOneMissingFaceOfAnOpenToppedBox () {
     // An axis-aligned unit box with all 4 side faces but no top (the
     // top face, at z=1, is the "hole"). Bottom is left off too - this
-    // object has two holes, top and bottom, confirming fillHoles_Selection
+    // object has two holes, top and bottom, confirming capHoles_Selection
     // finds and fills both from a single call, not just the first one.
     app.allVertices = new float[][]{
       {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // bottom corners 0-3
@@ -1211,7 +1211,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.fillHoles_Selection();
+    app.Modify3D.capHoles_Selection();
 
     // One new cap for the top hole, one for the bottom hole.
     assertEquals(6, app.allFaces.nodes.length);
@@ -1249,7 +1249,7 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void fillHoles_doesNothingToAnAlreadyClosedSolid () {
+  void capHoles_doesNothingToAnAlreadyClosedSolid () {
     // A tetrahedron: every one of its 6 edges is shared by exactly 2 of
     // its 4 faces, so there's no naked edge anywhere to fill.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
@@ -1266,19 +1266,19 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.fillHoles_Selection();
+    app.Modify3D.capHoles_Selection();
 
     assertEquals(4, app.allFaces.nodes.length); // unchanged
     assertEquals(4, app.allVertices.length);    // unchanged
   }
 
   @Test
-  void fillHoles_isANoOpWhenNothingIsSelected () {
+  void capHoles_isANoOpWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
-    app.Modify3D.fillHoles_Selection();
+    app.Modify3D.capHoles_Selection();
 
     assertEquals(1, app.allFaces.nodes.length); // isGroupOrFaceCategorySelected() guard short-circuited before any work
   }

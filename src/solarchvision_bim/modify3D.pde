@@ -1401,7 +1401,7 @@ class Modify3D {
   // before building the cap gives normal-up (out of the box), matching
   // the side faces' own outward convention - so the loop is reversed
   // below, once walking finds a clean closed loop.
-  void fillHoles_Selection () {
+  void capHoles_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     beginScene3DChange();
@@ -1559,7 +1559,7 @@ class Modify3D {
   // need to track the shift any more carefully than that.
   //
   // The cluster's outer boundary is found with the exact same
-  // naked-edge walk fillHoles_Selection() above uses, but - unlike
+  // naked-edge walk capHoles_Selection() above uses, but - unlike
   // there - the walked order is used AS WALKED, not reversed: these
   // faces already have their own correct, mutually consistent winding
   // (that's part of what "coplanar AND same-facing" verified above), so

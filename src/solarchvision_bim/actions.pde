@@ -2296,8 +2296,8 @@ void build_allActions() {
     Modify3D.mergeCoplanarFaces_Selection();
   });
 
-  putAction("Fill Holes", () -> {
-    Modify3D.fillHoles_Selection();
+  putAction("Cap Holes", () -> {
+    Modify3D.capHoles_Selection();
   });
 
   putAction("Offset(above) Vertices", () -> {
