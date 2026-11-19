@@ -1140,27 +1140,33 @@ void build_allActions() {
     UI_setTo_Create_Face();
   });
 
-  putAction("Parametric 1", () -> {
+  // Menu labels name the actual shape each n value (add_ParametricSurface's
+  // own switch, create3D.pde) produces, rather than the old plain
+  // "Parametric 1".."Parametric 6" numbering - the n values themselves
+  // (passed straight through to UI_setTo_Create_Parametric() and from
+  // there to the "Parametric n=?" script command) are unchanged, so
+  // existing saved scripts/files that reference n directly still work.
+  putAction("Dome Surface", () -> { // n=1: z = cos(0.5*u*pi)*cos(0.5*v*pi) - bulges up in the middle, pinches to zero along all four edges
     UI_setTo_Create_Parametric(1);
   });
 
-  putAction("Parametric 2", () -> {
+  putAction("Egg-Crate Surface", () -> { // n=2: z = 0.5*sin(u*pi)*sin(v*pi) - four alternating bumps/dips, the classic textbook "egg-crate" ripple
     UI_setTo_Create_Parametric(2);
   });
 
-  putAction("Parametric 3", () -> {
+  putAction("Saddle Surface", () -> { // n=3: z = u*v - a hyperbolic paraboloid
     UI_setTo_Create_Parametric(3);
   });
 
-  putAction("Parametric 4", () -> {
+  putAction("Diagonal Wave Surface", () -> { // n=4: z = cos((u+v)*pi) - ripples running diagonally across the surface
     UI_setTo_Create_Parametric(4);
   });
 
-  putAction("Parametric 5", () -> {
+  putAction("Wavy Sphere", () -> { // n=5: same diagonal-ripple formula as n=4, projected onto a unit sphere
     UI_setTo_Create_Parametric(5);
   });
 
-  putAction("Parametric 6", () -> {
+  putAction("Twisted Sphere", () -> { // n=6: x/y/z driven asymmetrically by u and v then projected onto a unit sphere - lumpier/less regular than Wavy Sphere
     UI_setTo_Create_Parametric(6);
   });
 

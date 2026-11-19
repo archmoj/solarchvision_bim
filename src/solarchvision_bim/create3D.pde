@@ -1368,6 +1368,20 @@ class Create3D {
 
 
 
+  // One shared surface generator for 7 hardcoded (x(u,v), y(u,v), z(u,v))
+  // formulas, picked by n (0..6) - the switch below is the one place
+  // that actually defines what each n looks like. n=1..6 are the Create
+  // menu's own "Dome Surface" / "Egg-Crate Surface" / "Saddle Surface" /
+  // "Diagonal Wave Surface" / "Wavy Sphere" / "Twisted Sphere" items
+  // (uiMenuBar.pde's PARENT_CREATE, wired in actions.pde) -
+  // User3D.creatorParametricTypeIndex just carries whichever one was
+  // picked through to here, unchanged, so this comment is the map from
+  // a menu name back to its own n value and formula. n=0 is NOT exposed
+  // in that menu at all (reachable only via the "Parametric n=0 ..."
+  // script command's own default) and is NOT the same thing as the
+  // menu's separate "Cushion" command (CREATE.SuperOBJ/add_SuperSphere,
+  // an unrelated superellipsoid) - see n==0's own comment below for why
+  // that distinction matters.
   void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
     beginScene3DChange();
 
@@ -1419,7 +1433,12 @@ class Create3D {
           float y = 0;
           float z = 0;
 
-          if (n == 6) { // LOGO
+          if (n == 6) { // "Twisted Sphere" in the Create menu (uiMenuBar.pde) -
+                         // x/y/z driven asymmetrically by u and v (x depends only
+                         // on u, y only on v), then normalized onto a unit
+                         // sphere - lumpier than the more regular n==5 "Wavy
+                         // Sphere" below. Same raw x0/y0/z0 formula as n==0
+                         // below, just normalized here and not there.
             float x0 = cos(u * PI);
             float y0 = sin(v * PI);
             float z0 = -sin(u * PI) * cos(v * PI);
@@ -1433,15 +1452,30 @@ class Create3D {
               y = y0 / d;
               z = z0 / d;
             }
-          } else if (n == 0) { // Cushion
+          } else if (n == 0) { // This genuinely IS the Create menu's "Cushion"
+                                // command's own shape - correcting an earlier,
+                                // wrong claim in this comment that the two were
+                                // unrelated. The trace: UI_setTo_Create_Cushion()
+                                // (uiSetTo.pde) sets CREATE.SuperOBJ with powers
+                                // (CubePower, CubePower, 2); on click,
+                                // mouseClicked.pde's classifySuperOBJShape(px,
+                                // py, pz) matches exactly that combination to
+                                // SUPEROBJ_SHAPE_PARAMETRIC, which runs
+                                // "Parametric ... n=0" - landing right here. n=0
+                                // isn't reachable through the Create menu's own
+                                // "Dome/Egg-Crate/Saddle/.../Twisted Sphere"
+                                // items (those only ever pass n=1..6), only
+                                // through Cushion's own SuperOBJ power preset.
+                                // Same raw formula as n==6 above, just not
+                                // normalized onto the sphere.
             x = cos(u * PI);
             y = sin(v * PI);
             z = -sin(u * PI) * cos(v * PI);
-          } else if (n == 4) {
+          } else if (n == 4) { // "Diagonal Wave Surface" - ripples running diagonally across a flat u/v grid
             x = sin(u * PI);
             y = sin(v * PI);
             z = cos((u + v) * PI);
-          } else if (n == 5) {
+          } else if (n == 5) { // "Wavy Sphere" - same diagonal-ripple formula as n==4 above, normalized onto a unit sphere
             float x0 = sin(u * PI);
             float y0 = sin(v * PI);
             float z0 = cos((u + v) * PI);
@@ -1455,15 +1489,15 @@ class Create3D {
               y = y0 / d;
               z = z0 / d;
             }
-          } else if (n == 1) {
+          } else if (n == 1) { // "Dome Surface" - bulges up in the middle, pinches to zero along all four edges
             x = u;
             y = v;
             z = cos(0.5 * u * PI) * cos(0.5 * v * PI);
-          } else if (n == 2) {
+          } else if (n == 2) { // "Egg-Crate Surface" - four alternating bumps/dips, the classic textbook ripple
             x = u;
             y = v;
             z = 0.5 * sin(u * PI) * sin(v * PI);
-          } else if (n == 3) {
+          } else if (n == 3) { // "Saddle Surface" - a hyperbolic paraboloid
             x = u;
             y = v;
             z = u * v;
