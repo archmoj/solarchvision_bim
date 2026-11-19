@@ -1544,4 +1544,120 @@ class ModifyGeometryTest {
 
     assertEquals(1, app.allFaces.nodes.length);
   }
+
+  // --- accumulateRelaxFromRing (given a hand-built ring face) ---------
+
+  @Test
+  void accumulateRelaxFromRing_triangle_sumsTheOtherTwoVertexPositions () {
+    // vNo=0's one ring is the whole triangle, so its two ring-neighbors
+    // are simply vertices 1 and 2 - this just confirms their positions
+    // get summed, once each, with count=2.
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    int[][] ringNodes = {{0, 1, 2}};
+
+    float[][] relaxSum = new float[1][3];
+    int[] relaxNum = new int[1];
+
+    app.Modify3D.accumulateRelaxFromRing(ringNodes, 0, 0, relaxSum, relaxNum);
+
+    assertArrayEquals(new float[]{10, 10, 0}, relaxSum[0], 0.0001f);
+    assertEquals(2, relaxNum[0]);
+  }
+
+  @Test
+  void accumulateRelaxFromRing_twoPointEdge_countsItsOneRealNeighborOnlyOnce () {
+    // A degenerate 2-vertex ring: "next" and "prev" of vNo are both the
+    // SAME other vertex, so without the nbrPrev!=nbrNext guard this
+    // would double-count it. count must come out 1, not 2.
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}};
+    int[][] ringNodes = {{0, 1}};
+
+    float[][] relaxSum = new float[1][3];
+    int[] relaxNum = new int[1];
+
+    app.Modify3D.accumulateRelaxFromRing(ringNodes, 0, 0, relaxSum, relaxNum);
+
+    assertArrayEquals(new float[]{10, 0, 0}, relaxSum[0], 0.0001f);
+    assertEquals(1, relaxNum[0]);
+  }
+
+  @Test
+  void accumulateRelaxFromRing_ringNotContainingVNo_contributesNothing () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    int[][] ringNodes = {{1, 2}}; // vNo=0 isn't in this ring at all
+
+    float[][] relaxSum = new float[1][3];
+    int[] relaxNum = new int[1];
+
+    app.Modify3D.accumulateRelaxFromRing(ringNodes, 0, 0, relaxSum, relaxNum);
+
+    assertArrayEquals(new float[]{0, 0, 0}, relaxSum[0], 0.0001f);
+    assertEquals(0, relaxNum[0]);
+  }
+
+  // --- relaxVertices_Selection (a full integration test) ---------------
+  //
+  // Combines accumulateRelaxFromRing (already unit-tested above) with
+  // averaging by contribution count and the actual point-move step -
+  // reusing the same triangle, where accumulateRelaxFromRing's own test
+  // already established the raw accumulated total is (10,10,0) with 2
+  // contributions, so the average is (5,5,0).
+
+  @Test
+  void relaxVertices_fullAmount_movesTheVertexAllTheWayToTheNeighborAverage () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierRelaxAmount = 1.0f;
+
+    app.Modify3D.relaxVertices_Selection();
+
+    assertArrayEquals(new float[]{5, 5, 0}, app.allVertices[0], 0.0001f);
+    // Untouched neighbors - relax only ever moves the SELECTED vertices.
+    assertArrayEquals(new float[]{10, 0, 0}, app.allVertices[1], 0.0001f);
+    assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[2], 0.0001f);
+  }
+
+  @Test
+  void relaxVertices_partialAmount_movesOnlyThatFractionOfTheWay () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierRelaxAmount = 0.5f;
+
+    app.Modify3D.relaxVertices_Selection();
+
+    // Average is (5,5,0); starting from (0,0,0), half way there is (2.5,2.5,0).
+    assertArrayEquals(new float[]{2.5f, 2.5f, 0}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void relaxVertices_vertexWithNoEdgesAtAll_isLeftExactlyWhereItIs () {
+    // Vertex 0 isn't referenced by any face or polyline, so it has no
+    // ring-neighbors to relax toward at all.
+    app.allVertices = new float[][]{{3, 4, 5}, {10, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{1, 2}}; // doesn't mention vertex 0
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierRelaxAmount = 1.0f;
+
+    app.Modify3D.relaxVertices_Selection();
+
+    assertArrayEquals(new float[]{3, 4, 5}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void relaxVertices_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.Select3D.vertexSelection = new int[]{0};
+    app.User3D.modifierRelaxAmount = 1.0f;
+
+    app.Modify3D.relaxVertices_Selection();
+
+    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
+  }
 }

@@ -1276,6 +1276,28 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierRelaxAmount (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 1; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Relax Amount";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierRelaxAmount,
+        (v) -> { User3D.modifierRelaxAmount = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierRelaxAmount, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

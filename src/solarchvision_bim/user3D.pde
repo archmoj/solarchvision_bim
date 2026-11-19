@@ -52,6 +52,7 @@ class User3D {
   float modifierOpeningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
   float modifierOffsetAmount = 1.0; // 1 = 1m
   float modifierInsetDepth = 0.1; // 0.1 = 10cm inward, in-plane, from every edge
+  float modifierRelaxAmount = 0.5; // 0-1, 0 = no change, 1 = each vertex fully snaps to its own neighbors' average position
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -115,6 +116,7 @@ class User3D {
     XML_setFloat(parent, "modifierWeldThreshold", this.modifierWeldThreshold);
     XML_setFloat(parent, "modifierOffsetAmount", this.modifierOffsetAmount);
     XML_setFloat(parent, "modifierInsetDepth", this.modifierInsetDepth);
+    XML_setFloat(parent, "modifierRelaxAmount", this.modifierRelaxAmount);
 
     XML_setFloat(parent, "exporterScale", this.exporterScale);
     XML_setInt(parent, "exporterYaxisUp", this.exporterYaxisUp);
@@ -180,6 +182,7 @@ class User3D {
     this.modifierWeldThreshold = XML_getFloat(parent, "modifierWeldThreshold");
     this.modifierOffsetAmount = XML_getFloat(parent, "modifierOffsetAmount");
     this.modifierInsetDepth = XML_getFloat(parent, "modifierInsetDepth", 0.1); // older save files never had this field - 0 would mean "no inset at all", not a useful fallback
+    this.modifierRelaxAmount = XML_getFloat(parent, "modifierRelaxAmount", 0.5); // older save files never had this field - 0 would mean "relax does nothing", not a useful fallback
 
     this.exporterScale = XML_getFloat(parent, "exporterScale");
     this.exporterYaxisUp = XML_getInt(parent, "exporterYaxisUp");

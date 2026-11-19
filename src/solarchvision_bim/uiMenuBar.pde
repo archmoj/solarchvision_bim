@@ -511,6 +511,7 @@ class UI_menuBar {
       "Weld Objects Selected Vertices",
       "Weld Scene Selected Vertices",
       "Flatten Selected Terrain Vertices",
+      "Relax Selected Vertices",
       ___divider___,
       "Reverse Visibility of All Faces",
       "Hide All Faces",

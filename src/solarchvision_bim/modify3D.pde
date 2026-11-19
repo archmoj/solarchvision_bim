@@ -258,6 +258,107 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // For one occurrence of vNo within a face's or polyline's own node
+  // ring, adds its two immediate ring-neighbors (the vertices one step
+  // before and one step after it in that ring) to a running position
+  // sum/count - the same "walk every ring vNo appears in, across both
+  // allFaces.nodes and allPolylines.nodes" shape as
+  // accumulateOffsetFromRing() above, just summing actual neighbor
+  // POSITIONS here rather than an offset direction. A vertex shared by
+  // several faces naturally gets each of its real mesh neighbors added
+  // once per face that edge belongs to (twice, for an interior edge
+  // shared by two faces) rather than once per unique neighbor - the
+  // same "no separate dedup" simplification accumulateOffsetFromRing()
+  // already accepts, and for a normal manifold mesh this still weighs
+  // every neighbor around a vertex equally, since every one of its
+  // edges is shared the same way. n<2 rings (lone points) and the
+  // degenerate n==2 case (where "next" and "prev" are the same single
+  // other vertex) are both guarded against, the latter so that one
+  // two-point edge doesn't count its one real neighbor twice.
+  void accumulateRelaxFromRing (int[][] ringNodes, int vNo, int o, float[][] Vertex_relaxSum, int[] Vertex_relaxNum) {
+    for (int f = 0; f < ringNodes.length; f++) {
+      int n = ringNodes[f].length;
+      if (n < 2) continue;
+
+      for (int j = 0; j < n; j++) {
+        if (ringNodes[f][j] != vNo) continue;
+
+        int j_next = (j + 1) % n;
+        int j_prev = (j + n - 1) % n;
+        int nbrNext = ringNodes[f][j_next];
+        int nbrPrev = ringNodes[f][j_prev];
+
+        if (nbrNext != vNo) {
+          Vertex_relaxSum[o][0] += allPoints.getX(nbrNext);
+          Vertex_relaxSum[o][1] += allPoints.getY(nbrNext);
+          Vertex_relaxSum[o][2] += allPoints.getZ(nbrNext);
+          Vertex_relaxNum[o] += 1;
+        }
+        if (nbrPrev != vNo && nbrPrev != nbrNext) {
+          Vertex_relaxSum[o][0] += allPoints.getX(nbrPrev);
+          Vertex_relaxSum[o][1] += allPoints.getY(nbrPrev);
+          Vertex_relaxSum[o][2] += allPoints.getZ(nbrPrev);
+          Vertex_relaxNum[o] += 1;
+        }
+      }
+    }
+  }
+
+  // Moves every selected vertex a fraction (User3D.modifierRelaxAmount,
+  // 0..1) of the way toward the average position of its own real mesh
+  // neighbors (from every face and polyline edge touching it anywhere
+  // in the scene, not just within the current selection - same "find
+  // real adjacency, not just what's selected" reasoning capHoles_
+  // Selection() and mergeCoplanarFaces_Selection() already use) -
+  // softening blocky/faceted geometry (terrain, a rough mesh) without
+  // changing topology at all, purely a per-vertex position blend. All
+  // neighbor sums are gathered from a full read-only pass BEFORE any
+  // vertex in the selection is actually moved, so relaxing one selected
+  // vertex never uses an already-moved neighbor's NEW position within
+  // the same pass - the result doesn't depend on vertex iteration
+  // order, same "snapshot first, write once" reasoning thickenFaces_
+  // Selection()'s own shared-vertex offset pass uses. A vertex with no
+  // edges at all (Vertex_relaxNum==0) has nothing to relax toward and
+  // is left exactly where it is. Re-running the command applies another
+  // pass on top of the last, same "click again for more" idea as any
+  // other repeatable modifier in this menu.
+  void relaxVertices_Selection () {
+    if (!isPolymeshCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectVertices_fromCurrentSelection();
+
+    float amount = User3D.modifierRelaxAmount;
+
+    float[][] Vertex_relaxSum = new float[Select3D.vertexSelection.length][3];
+    int[] Vertex_relaxNum = new int[Select3D.vertexSelection.length];
+
+    for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
+      int vNo = Select3D.vertexSelection[o];
+      accumulateRelaxFromRing(allFaces.nodes, vNo, o, Vertex_relaxSum, Vertex_relaxNum);
+      accumulateRelaxFromRing(allPolylines.nodes, vNo, o, Vertex_relaxSum, Vertex_relaxNum);
+    }
+
+    for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
+      if (Vertex_relaxNum[o] == 0) continue;
+
+      int vNo = Select3D.vertexSelection[o];
+      float avgX = Vertex_relaxSum[o][0] / Vertex_relaxNum[o];
+      float avgY = Vertex_relaxSum[o][1] / Vertex_relaxNum[o];
+      float avgZ = Vertex_relaxSum[o][2] / Vertex_relaxNum[o];
+
+      float oldX = allPoints.getX(vNo);
+      float oldY = allPoints.getY(vNo);
+      float oldZ = allPoints.getZ(vNo);
+
+      allPoints.move(vNo, (avgX - oldX) * amount, (avgY - oldY) * amount, (avgZ - oldZ) * amount);
+    }
+
+    selection_changed();
+    endScene3DChange();
+  }
+
   void separateVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 
