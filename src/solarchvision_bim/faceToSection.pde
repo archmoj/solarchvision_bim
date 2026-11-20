@@ -6,7 +6,7 @@
 // How far (world units) a converted section is lifted off its source
 // face's own plane, along the face's own normal. No longer a fixed
 // constant - exposed as its own spinner (valueModifier.pde's
-// faceToSectionLift(), drawn in the CHILD_GEOMETRY_REFORM rollout panel
+// faceToSectionLift(), drawn in the CHILD_GEOMETRY_CREATE rollout panel
 // - see uiRollout.pde) and saved to XML with the rest of the "display"
 // settings (saveProject.pde/parseXmlVariables.pde), the same way
 // Celestial Magnification and World Scale already are, for a

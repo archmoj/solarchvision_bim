@@ -609,6 +609,15 @@ class UI_rollout {
         User3D.creatorConeDegree = vm.creatorConeDegree(1);
         User3D.creatorPolygonDegree = vm.creatorPolygonDegree(1);
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
+
+        // Face-to-section turns a selected face into a new arbitrary-
+        // section object (see faceToSection.pde) - that's creating a new
+        // object, not reforming an existing one, so this lift amount
+        // (how far the new section is nudged off the source face's
+        // plane, to avoid z-fighting) belongs with Create's other
+        // object-creation fields rather than Reform's face/mesh-editing
+        // tools.
+        FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
       if (this.child == CHILD_GEOMETRY_REFORM) {
@@ -621,7 +630,6 @@ class UI_rollout {
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
-        FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
       // Split out of CHILD_GEOMETRY_REFORM above: the Relax/Skew/Twist/
