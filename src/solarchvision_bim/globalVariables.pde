@@ -355,6 +355,20 @@ float[][][] VertexSolar_amounts;
 boolean VertexSolar_rebuild_array = true;
 boolean GlobalSolar_rebuild_array = true;
 
+// When true, calculate_VertexSolar_array() (calculateVertexSolarArray.pde)
+// forces every face's own sample-point tessellation to 0 for that one
+// run, regardless of the face's own allFaces.getTessellation(f) or the
+// global allFaces.displayTessellation - making every sample point land
+// exactly on that face's own real corner vertices instead of a
+// subdivided grid. Set true immediately before, and false immediately
+// after, a direct calculate_VertexSolar_array() call that needs its
+// results keyed to real mesh vertices (solarFormFindVertices_Selection(),
+// modify3D.pde); nothing else reads or sets this, and it is never left
+// true across frames, so it has no effect on the normal Vertex_Solar
+// shading pass (shade.pde), which still samples at the usual
+// display-tessellated resolution.
+boolean VertexSolar_forceNoTessellation = false;
+
 float[][][][] GlobalSolar;
 
 

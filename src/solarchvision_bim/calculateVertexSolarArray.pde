@@ -142,6 +142,12 @@ void calculate_VertexSolar_array () {
       if (allFaces.getMaterial(f) == 0) {
         tessellation += allFaces.displayTessellation;
       }
+      // See VertexSolar_forceNoTessellation's own comment (globalVariables.pde):
+      // overrides BOTH the per-face and the global tessellation settings
+      // above, so every face's sample points land on its own real
+      // vertices on this call, whatever its own getTessellation(f) or
+      // the global displayTessellation would otherwise have produced.
+      if (VertexSolar_forceNoTessellation) tessellation = 0;
       if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];

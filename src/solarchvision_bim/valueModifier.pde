@@ -1496,6 +1496,50 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierSolarFormFindStep (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 2; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Solar Form-Find Step";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierSolarFormFindStep,
+        (v) -> { User3D.modifierSolarFormFindStep = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierSolarFormFindStep, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierSolarFormFindAngle (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 90; //stop
+    float s3 = 0.1; //step
+
+    float out = 0;
+    String command = "Modifier Solar Form-Find Angle";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierSolarFormFindAngle,
+        (v) -> { User3D.modifierSolarFormFindAngle = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierSolarFormFindAngle, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

@@ -359,6 +359,273 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // The solar-climatic form-finding modifier: a single bounded step
+  // (User3D.modifierSolarFormFindStep meters, default 0.25) that pushes
+  // each selected vertex out along, or pulls it in against, the average
+  // direction to its own real mesh neighbors - the same ring-walking
+  // neighbor-gathering relaxVertices_Selection() above uses, just read
+  // as a direction to step along rather than a position to blend
+  // toward. Which way each vertex goes is decided by its own net solar
+  // response (TOTAL_COMPARISON, from solarComparisonScore() -
+  // solarComparisonScore.pde): a net-beneficial vertex steps OUT, away
+  // from its neighbors, to expose more of what's already working; a
+  // net-harmful vertex steps IN, toward its neighbors, to self-shade.
+  // This is intentionally just one step forward per call, not a solve
+  // for "the" optimal shape - there's no single optimal shape, and how
+  // many times to apply this (and when to stop) is left to the
+  // architect, same as a repeatable Relax/Skew/Twist/Bend pass.
+  //
+  // A vertex is treated as a real edge/corner, and left exactly where
+  // it is, when the FACES meeting at it aren't roughly coplanar - their
+  // own per-corner normals (collectFaceNormals_atVertex(), below)
+  // differ by more than User3D.modifierSolarFormFindAngle degrees
+  // (default 45) between any two of them. This is a crease-angle test,
+  // not a check on the neighbor-direction vectors themselves: an
+  // ordinary INTERIOR vertex of a flat tessellated grid (several quads
+  // sharing it, each contributing the same face normal) has neighbor
+  // directions that point every which way - opposite ring-neighbors
+  // are always ~180 degrees apart on any regular grid, by construction
+  // - so comparing those directions against each other (an earlier,
+  // now-corrected version of this check did exactly that) flagged
+  // nearly every interior grid vertex as an "edge", freezing a whole
+  // tessellated face solid. Comparing face NORMALS instead correctly
+  // leaves a flat region's own normals all pointing the same way (no
+  // crease, moves normally) while still catching a genuine edge or
+  // corner, where the faces on either side meet at a real angle. A
+  // vertex with fewer than 2 faces has nothing to compare and is never
+  // frozen by this check alone. A vertex with no real neighbors at all
+  // (ring-wise, across both faces and polylines) is left untouched
+  // too, the same way relaxVertices_Selection() leaves one.
+  //
+  // calculate_VertexSolar_array() (calculateVertexSolarArray.pde) is
+  // the app's existing, expensive, ray-traced per-sample-point solar
+  // calculation - normally sampled at tessellated sub-face points
+  // rather than at real mesh vertices (see overlay3D.pde's
+  // computeFaceTessellation() for the same tessellation math).
+  // VertexSolar_forceNoTessellation (globalVariables.pde) is set for
+  // the one direct call this function makes, so every sample point
+  // lands exactly on its own face's real corner vertices, then cleared
+  // again immediately after - nothing else observes the override, and
+  // it's never left set across frames.
+  //
+  // Each real vertex can be a corner of several faces, so (with
+  // tessellation forced to 0) it can appear as a sample point more than
+  // once - vertexSolar_TotalComparisonAt() averages TOTAL_COMPARISON
+  // across every occurrence at that exact position, the same "no
+  // separate dedup, every occurrence counted" simplification
+  // accumulateRelaxFromRing() already accepts for neighbor positions.
+  //
+  // Because self-shading between vertices goes stale the moment any of
+  // them move, VertexSolar_rebuild_array is flagged at the end so the
+  // NEXT call (whether this modifier again, or the normal Vertex_Solar
+  // shading pass) recomputes against the new geometry - this call's own
+  // moves are already based on whatever was baked coming in.
+  void solarFormFindVertices_Selection () {
+    if (!isPolymeshCategorySelected()) return;
+
+    this.selectVertices_fromCurrentSelection();
+    if (Select3D.vertexSelection.length == 0) return;
+
+    VertexSolar_forceNoTessellation = true;
+    calculate_VertexSolar_array();
+    VertexSolar_forceNoTessellation = false;
+
+    beginScene3DChange();
+
+    float step = User3D.modifierSolarFormFindStep;
+    float maxAngle = radians(User3D.modifierSolarFormFindAngle);
+
+    for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
+      int vNo = Select3D.vertexSelection[o];
+
+      float oldX = allPoints.getX(vNo);
+      float oldY = allPoints.getY(vNo);
+      float oldZ = allPoints.getZ(vNo);
+
+      FloatList dirX = new FloatList();
+      FloatList dirY = new FloatList();
+      FloatList dirZ = new FloatList();
+      collectNeighborDirections_fromRing(allFaces.nodes, vNo, oldX, oldY, oldZ, dirX, dirY, dirZ);
+      collectNeighborDirections_fromRing(allPolylines.nodes, vNo, oldX, oldY, oldZ, dirX, dirY, dirZ);
+
+      if (dirX.size() == 0) continue; // no real neighbors - nothing to step toward
+
+      FloatList normX = new FloatList();
+      FloatList normY = new FloatList();
+      FloatList normZ = new FloatList();
+      collectFaceNormals_atVertex(allFaces.nodes, vNo, normX, normY, normZ);
+
+      if (maxPairwiseAngle(normX, normY, normZ) > maxAngle) continue; // the faces meeting here aren't coplanar enough - a real edge/corner, frozen
+
+      float avgX = 0, avgY = 0, avgZ = 0;
+      for (int i = dirX.size() - 1; i >= 0; i--) {
+        avgX += dirX.get(i);
+        avgY += dirY.get(i);
+        avgZ += dirZ.get(i);
+      }
+      float avgLen = sqrt(avgX * avgX + avgY * avgY + avgZ * avgZ);
+      if (avgLen < 0.00001) continue; // neighbor directions cancel out exactly - no stable direction to step along
+
+      avgX /= avgLen;
+      avgY /= avgLen;
+      avgZ /= avgLen;
+
+      float solarValue = vertexSolar_TotalComparisonAt(oldX, oldY, oldZ);
+      if (is_undefined(solarValue) || solarValue == 0) continue; // no solar signal at this vertex - nothing to decide a direction from
+
+      // avgX/Y/Z points FROM the vertex TOWARD its neighbors, so a
+      // negative sign (beneficial, step OUT) moves it away from them,
+      // and a positive sign (harmful, step IN) moves it toward them.
+      float sign = (solarValue > 0) ? -1 : 1;
+
+      allPoints.move(vNo, avgX * step * sign, avgY * step * sign, avgZ * step * sign);
+    }
+
+    VertexSolar_rebuild_array = true;
+    selection_changed();
+    endScene3DChange();
+  }
+
+  // Same ring-walking traversal accumulateRelaxFromRing() uses, but
+  // collects a unit DIRECTION vector (from vNo toward each real
+  // neighbor) per ring occurrence instead of summing raw neighbor
+  // positions - solarFormFindVertices_Selection() averages these into
+  // the direction it steps the vertex along. (Whether that step
+  // actually happens - the edge/corner freeze decision - is a separate
+  // question, answered by collectFaceNormals_atVertex() below, not by
+  // these directions themselves.)
+  void collectNeighborDirections_fromRing (int[][] ringNodes, int vNo, float oldX, float oldY, float oldZ, FloatList dirX, FloatList dirY, FloatList dirZ) {
+    for (int f = 0; f < ringNodes.length; f++) {
+      int n = ringNodes[f].length;
+      if (n < 2) continue;
+
+      for (int j = 0; j < n; j++) {
+        if (ringNodes[f][j] != vNo) continue;
+
+        int j_next = (j + 1) % n;
+        int j_prev = (j + n - 1) % n;
+        int nbrNext = ringNodes[f][j_next];
+        int nbrPrev = ringNodes[f][j_prev];
+
+        if (nbrNext != vNo) appendUnitDirection(oldX, oldY, oldZ, nbrNext, dirX, dirY, dirZ);
+        if (nbrPrev != vNo && nbrPrev != nbrNext) appendUnitDirection(oldX, oldY, oldZ, nbrPrev, dirX, dirY, dirZ);
+      }
+    }
+  }
+
+  void appendUnitDirection (float oldX, float oldY, float oldZ, int nbrVNo, FloatList dirX, FloatList dirY, FloatList dirZ) {
+    float dx = allPoints.getX(nbrVNo) - oldX;
+    float dy = allPoints.getY(nbrVNo) - oldY;
+    float dz = allPoints.getZ(nbrVNo) - oldZ;
+    float len = sqrt(dx * dx + dy * dy + dz * dz);
+    if (len < 0.00001) return; // coincident neighbor - no direction to contribute
+    dirX.append(dx / len);
+    dirY.append(dy / len);
+    dirZ.append(dz / len);
+  }
+
+  // For every face in faceNodes that includes vNo (at whatever corner
+  // position it occupies there), computes that face's own unit normal
+  // AT that corner and appends it to nX/nY/nZ - the same (next-this)
+  // cross (prev-this), then normalize, formula already used throughout
+  // the app for a per-face-corner normal (faces.pde's own per-vertex
+  // normal-line display, and the identical cross-product shape in
+  // calculateVertexSolarArray.pde). Polylines have no area and so no
+  // normal, so unlike collectNeighborDirections_fromRing above, this
+  // only ever looks at allFaces.nodes. solarFormFindVertices_Selection()
+  // uses the SPREAD across these (via maxPairwiseAngle, below) to
+  // decide whether a vertex sits in a flat region (every face sharing
+  // it points the same way) or on a real edge/corner (they don't) -
+  // see that function's own comment for why this, and not the ring-
+  // neighbor DIRECTIONS collectNeighborDirections_fromRing collects,
+  // is the right thing to compare for that. A degenerate corner
+  // (collinear neighbors, cross product ~0) is skipped rather than
+  // appending a meaningless direction.
+  void collectFaceNormals_atVertex (int[][] faceNodes, int vNo, FloatList nX, FloatList nY, FloatList nZ) {
+    float thisX = allPoints.getX(vNo);
+    float thisY = allPoints.getY(vNo);
+    float thisZ = allPoints.getZ(vNo);
+
+    for (int f = 0; f < faceNodes.length; f++) {
+      int n = faceNodes[f].length;
+      if (n < 3) continue; // need a real corner (two distinct edges) to have a normal at all
+
+      for (int j = 0; j < n; j++) {
+        if (faceNodes[f][j] != vNo) continue;
+
+        int j_next = (j + 1) % n;
+        int j_prev = (j + n - 1) % n;
+        int nextVNo = faceNodes[f][j_next];
+        int prevVNo = faceNodes[f][j_prev];
+
+        PVector U = new PVector(allPoints.getX(nextVNo) - thisX, allPoints.getY(nextVNo) - thisY, allPoints.getZ(nextVNo) - thisZ);
+        PVector V = new PVector(allPoints.getX(prevVNo) - thisX, allPoints.getY(prevVNo) - thisY, allPoints.getZ(prevVNo) - thisZ);
+        PVector UV = U.cross(V);
+
+        float len = sqrt((UV.x * UV.x) + (UV.y * UV.y) + (UV.z * UV.z));
+        if (len < 0.00001) continue; // collinear corner - no well-defined normal here
+
+        nX.append(UV.x / len);
+        nY.append(UV.y / len);
+        nZ.append(UV.z / len);
+      }
+    }
+  }
+
+  // Largest angle (radians) between any two of the given unit vectors -
+  // used both to detect a vertex sitting at a real edge/corner (via its
+  // face normals' own spread, collectFaceNormals_atVertex() above) and,
+  // more generally, as a plain "how spread out is this set of unit
+  // vectors" measure. 0 or 1 vectors can't diverge from anything, so
+  // this returns 0 for those.
+  float maxPairwiseAngle (FloatList dirX, FloatList dirY, FloatList dirZ) {
+    float maxAngle = 0;
+    for (int i = dirX.size() - 1; i >= 0; i--) {
+      for (int j = i - 1; j >= 0; j--) {
+        float dot = (dirX.get(i) * dirX.get(j)) + (dirY.get(i) * dirY.get(j)) + (dirZ.get(i) * dirZ.get(j));
+        dot = constrain(dot, -1, 1);
+        float angle = acos(dot);
+        if (angle > maxAngle) maxAngle = angle;
+      }
+    }
+    return maxAngle;
+  }
+
+  // Looks up the all-days-total solar COMPARISON score (solarComparisonScore.pde)
+  // at a given position, by scanning VertexSolar_XYZ for every sample
+  // point whose own position (the first of its now/prev/next triple -
+  // see calculateVertexSolarArray.pde) exactly matches x/y/z, and
+  // averaging VertexSolar_amounts[Impact_PASSIVE][0] (index 0 is the
+  // all-days total, per calculate_VertexSolar_array()'s own layout)
+  // across every match. With VertexSolar_forceNoTessellation set, each
+  // face contributes its own real corner vertices as sample points, so
+  // a vertex shared by several faces matches once per face - no
+  // separate dedup, same simplification accumulateRelaxFromRing() above
+  // already accepts for shared-vertex neighbor positions. Returns
+  // FLOAT_undefined if nothing matches or the array hasn't been built.
+  float vertexSolar_TotalComparisonAt (float x, float y, float z) {
+    if ((VertexSolar_XYZ == null) || (VertexSolar_amounts == null)) return FLOAT_undefined;
+    if (VertexSolar_amounts[Impact_PASSIVE].length == 0) return FLOAT_undefined;
+
+    float[] comparisons = VertexSolar_amounts[Impact_PASSIVE][0];
+    if ((comparisons == null) || (comparisons.length != VertexSolar_XYZ.length)) return FLOAT_undefined;
+
+    float sum = 0;
+    int num = 0;
+    for (int q = 0; q < VertexSolar_XYZ.length; q++) {
+      float[] row = VertexSolar_XYZ[q];
+      if ((row[0] == x) && (row[1] == y) && (row[2] == z)) {
+        float v = comparisons[q];
+        if (is_defined(v)) {
+          sum += v;
+          num += 1;
+        }
+      }
+    }
+    if (num == 0) return FLOAT_undefined;
+    return sum / num;
+  }
+
   void skewVertices_Selection () {
     skewVertices_Selection(1);
   }

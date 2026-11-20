@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import processing.data.FloatList;
 
 class ModifyGeometryTest {
 
@@ -2276,5 +2277,407 @@ class ModifyGeometryTest {
     // the wiring actually ran it: vertex 0 must have moved off its
     // original (0,0,0).
     assertNotEquals(0f, app.allVertices[0][0], "vertex should have moved toward its neighbors' average, not been left in place");
+  }
+
+  // --- collectNeighborDirections_fromRing -------------------------------
+  //
+  // Same ring-walking shape as accumulateRelaxFromRing (already
+  // unit-tested above), but collecting a unit DIRECTION per ring
+  // occurrence instead of summing raw positions - these reuse the same
+  // hand-built rings/positions for an easy side-by-side comparison.
+
+  @Test
+  void collectNeighborDirections_triangle_collectsBothUnitDirections () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    int[][] ringNodes = {{0, 1, 2}};
+
+    FloatList dirX = new FloatList();
+    FloatList dirY = new FloatList();
+    FloatList dirZ = new FloatList();
+    app.Modify3D.collectNeighborDirections_fromRing(ringNodes, 0, 0, 0, 0, dirX, dirY, dirZ);
+
+    assertEquals(2, dirX.size());
+    assertEquals(1f, dirX.get(0), 0.0001f);
+    assertEquals(0f, dirY.get(0), 0.0001f);
+    assertEquals(0f, dirX.get(1), 0.0001f);
+    assertEquals(1f, dirY.get(1), 0.0001f);
+  }
+
+  @Test
+  void collectNeighborDirections_twoPointEdge_collectsItsOneRealNeighborOnlyOnce () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}};
+    int[][] ringNodes = {{0, 1}};
+
+    FloatList dirX = new FloatList();
+    FloatList dirY = new FloatList();
+    FloatList dirZ = new FloatList();
+    app.Modify3D.collectNeighborDirections_fromRing(ringNodes, 0, 0, 0, 0, dirX, dirY, dirZ);
+
+    assertEquals(1, dirX.size(), "the degenerate 2-point ring's single real neighbor must not be double-counted");
+    assertArrayEquals(new float[]{1, 0, 0}, new float[]{dirX.get(0), dirY.get(0), dirZ.get(0)}, 0.0001f);
+  }
+
+  @Test
+  void collectNeighborDirections_ringNotContainingVNo_collectsNothing () {
+    app.allVertices = new float[][]{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}};
+    int[][] ringNodes = {{1, 2}}; // vNo=0 isn't in this ring at all
+
+    FloatList dirX = new FloatList();
+    app.Modify3D.collectNeighborDirections_fromRing(ringNodes, 0, 0, 0, 0, dirX, new FloatList(), new FloatList());
+
+    assertEquals(0, dirX.size());
+  }
+
+  @Test
+  void collectNeighborDirections_coincidentNeighbor_isSkipped () {
+    // vertex 1 sits exactly on top of vNo (a degenerate zero-length
+    // edge) - appendUnitDirection's own len<0.00001 guard must drop it
+    // rather than dividing by ~0, while vertex 2's real direction still
+    // comes through.
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 0}, {0, 10, 0}};
+    int[][] ringNodes = {{0, 1, 2}};
+
+    FloatList dirX = new FloatList();
+    FloatList dirY = new FloatList();
+    FloatList dirZ = new FloatList();
+    app.Modify3D.collectNeighborDirections_fromRing(ringNodes, 0, 0, 0, 0, dirX, dirY, dirZ);
+
+    assertEquals(1, dirX.size());
+    assertArrayEquals(new float[]{0, 1, 0}, new float[]{dirX.get(0), dirY.get(0), dirZ.get(0)}, 0.0001f);
+  }
+
+  // --- collectFaceNormals_atVertex ----------------------------------------
+  //
+  // This is the fix for a real bug: an earlier version of
+  // solarFormFindVertices_Selection() froze a vertex based on the
+  // spread of its ring-NEIGHBOR directions (collectNeighborDirections_
+  // fromRing, tested above) rather than its surrounding FACE normals -
+  // but opposite ring-neighbors are always ~180 degrees apart on any
+  // ordinary flat grid (e.g. a box face after "Tessellate Rectangular"),
+  // so that check froze nearly every interior vertex of any tessellated
+  // face, not just real edges/corners. The first test below reproduces
+  // exactly that flat-grid shape and confirms the face-NORMAL spread
+  // correctly comes out near 0 there (so the vertex is free to move),
+  // where the old neighbor-direction check would have measured ~180.
+
+  @Test
+  void collectFaceNormals_flatGridInteriorVertex_allFourFaceNormalsPointTheSameWay () {
+    // A 3x3 patch of unit quads in the XY plane - the same shape
+    // "Tessellate Rectangular" produces on a box face - with vertex 4
+    // at the center, shared by all four quads.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {2, 0, 0},
+      {0, 1, 0}, {1, 1, 0}, {2, 1, 0},
+      {0, 2, 0}, {1, 2, 0}, {2, 2, 0}
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 4, 3},
+      {1, 2, 5, 4},
+      {4, 5, 8, 7},
+      {3, 4, 7, 6}
+    };
+
+    FloatList nX = new FloatList();
+    FloatList nY = new FloatList();
+    FloatList nZ = new FloatList();
+    app.Modify3D.collectFaceNormals_atVertex(app.allFaces.nodes, 4, nX, nY, nZ);
+
+    assertEquals(4, nX.size(), "all four surrounding quads should each contribute their own corner normal");
+    assertEquals(0f, app.Modify3D.maxPairwiseAngle(nX, nY, nZ), 0.001f,
+      "a flat interior grid vertex's surrounding faces are all coplanar - this must NOT read as an edge/corner");
+  }
+
+  @Test
+  void collectFaceNormals_rightAngleCorner_detectsTheNinetyDegreeCrease () {
+    // Two unit quads meeting at vertex 0 at a right angle, like a real
+    // box edge: one in the XY plane, one in the XZ plane - a genuine
+    // crease, unlike the flat-grid case above. They share real vertex
+    // INDICES (0 and 1) along their common edge, not just coincident
+    // positions under different indices - a shared vertex in this app
+    // is a shared index, same as everywhere else in this file.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {1, 0, 1}, {0, 0, 1}
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2, 3}, // XY-plane quad
+      {1, 0, 5, 4}  // XZ-plane quad, sharing the 0-1 edge
+    };
+
+    FloatList nX = new FloatList();
+    FloatList nY = new FloatList();
+    FloatList nZ = new FloatList();
+    app.Modify3D.collectFaceNormals_atVertex(app.allFaces.nodes, 0, nX, nY, nZ);
+
+    assertEquals(2, nX.size());
+    assertEquals((float) (Math.PI / 2), app.Modify3D.maxPairwiseAngle(nX, nY, nZ), 0.01f,
+      "two faces meeting at a real right-angle edge must read as a 90-degree crease");
+  }
+
+  @Test
+  void collectFaceNormals_fewerThanTwoFaces_contributesNothingToCompare () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}}; // vertex 0 touched by only one face
+
+    FloatList nX = new FloatList();
+    FloatList nY = new FloatList();
+    FloatList nZ = new FloatList();
+    app.Modify3D.collectFaceNormals_atVertex(app.allFaces.nodes, 0, nX, nY, nZ);
+
+    assertEquals(1, nX.size());
+    assertEquals(0f, app.Modify3D.maxPairwiseAngle(nX, nY, nZ), 0.0001f, "nothing to diverge from with only one face");
+  }
+
+  @Test
+  void collectFaceNormals_degenerateCollinearCorner_isSkipped () {
+    // Vertex 0's own two ring-neighbors within this triangle (1, its
+    // "next", and 2, its "prev") sit exactly on the same line through
+    // it, so the cross product - and the normal - is exactly zero
+    // there; appendUnitDirection's sibling guard here must drop it
+    // rather than dividing by ~0.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {2, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+
+    FloatList nX = new FloatList();
+    FloatList nY = new FloatList();
+    FloatList nZ = new FloatList();
+    app.Modify3D.collectFaceNormals_atVertex(app.allFaces.nodes, 0, nX, nY, nZ);
+
+    assertEquals(0, nX.size());
+  }
+
+  // --- maxPairwiseAngle --------------------------------------------------
+
+  @Test
+  void maxPairwiseAngle_fewerThanTwoVectors_isZero () {
+    assertEquals(0f, app.Modify3D.maxPairwiseAngle(new FloatList(), new FloatList(), new FloatList()), 0.0001f);
+
+    FloatList oneX = new FloatList();
+    oneX.append(1);
+    FloatList oneY = new FloatList();
+    oneY.append(0);
+    FloatList oneZ = new FloatList();
+    oneZ.append(0);
+    assertEquals(0f, app.Modify3D.maxPairwiseAngle(oneX, oneY, oneZ), 0.0001f, "nothing to diverge from with only one direction");
+  }
+
+  @Test
+  void maxPairwiseAngle_sameDirectionTwice_isZero () {
+    FloatList dirX = new FloatList();
+    dirX.append(1);
+    dirX.append(1);
+    FloatList dirY = new FloatList();
+    dirY.append(0);
+    dirY.append(0);
+    FloatList dirZ = new FloatList();
+    dirZ.append(0);
+    dirZ.append(0);
+
+    assertEquals(0f, app.Modify3D.maxPairwiseAngle(dirX, dirY, dirZ), 0.0001f);
+  }
+
+  @Test
+  void maxPairwiseAngle_perpendicularVectors_isNinetyDegrees () {
+    FloatList dirX = new FloatList();
+    dirX.append(1);
+    dirX.append(0);
+    FloatList dirY = new FloatList();
+    dirY.append(0);
+    dirY.append(1);
+    FloatList dirZ = new FloatList();
+    dirZ.append(0);
+    dirZ.append(0);
+
+    assertEquals((float) (Math.PI / 2), app.Modify3D.maxPairwiseAngle(dirX, dirY, dirZ), 0.0001f);
+  }
+
+  @Test
+  void maxPairwiseAngle_oppositeVectors_isOneHundredEightyDegrees () {
+    FloatList dirX = new FloatList();
+    dirX.append(1);
+    dirX.append(-1);
+    FloatList dirY = new FloatList();
+    dirY.append(0);
+    dirY.append(0);
+    FloatList dirZ = new FloatList();
+    dirZ.append(0);
+    dirZ.append(0);
+
+    assertEquals((float) Math.PI, app.Modify3D.maxPairwiseAngle(dirX, dirY, dirZ), 0.0001f);
+  }
+
+  @Test
+  void maxPairwiseAngle_pickedAcrossNonAdjacentPair_notJustConsecutiveOnes () {
+    // a (0deg) -> b (45deg) -> c (90deg from a, 45deg from b): the
+    // widest gap is between a and c, the FIRST and LAST entries, not
+    // between any two consecutive ones - this only passes if every
+    // pair is actually checked, not just neighboring list entries.
+    float h = (float) (Math.sqrt(2) / 2);
+    FloatList dirX = new FloatList();
+    dirX.append(1);
+    dirX.append(h);
+    dirX.append(0);
+    FloatList dirY = new FloatList();
+    dirY.append(0);
+    dirY.append(h);
+    dirY.append(1);
+    FloatList dirZ = new FloatList();
+    dirZ.append(0);
+    dirZ.append(0);
+    dirZ.append(0);
+
+    assertEquals((float) (Math.PI / 2), app.Modify3D.maxPairwiseAngle(dirX, dirY, dirZ), 0.0001f);
+  }
+
+  // --- vertexSolar_TotalComparisonAt --------------------------------------
+  //
+  // Reads directly off hand-set VertexSolar_XYZ/VertexSolar_amounts
+  // arrays rather than running calculate_VertexSolar_array() itself -
+  // that function needs a live PGraphics surface to run at all (see
+  // SolarArraySmokeTest.java's own comment on why it can't be smoke
+  // tested here), so this isolates just the lookup/averaging logic that
+  // reads its output.
+
+  @Test
+  void vertexSolar_TotalComparisonAt_singleMatch_returnsItsValue () {
+    app.VertexSolar_XYZ = new float[][]{{1, 2, 3, 0, 0, 0, 0, 0, 0}};
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{7.5f};
+
+    assertEquals(7.5f, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  @Test
+  void vertexSolar_TotalComparisonAt_multipleMatches_averagesThem () {
+    // Positions (1,2,3) repeats across rows 0 and 1 (one real vertex
+    // shared by two faces, each contributing its own sample point, per
+    // VertexSolar_forceNoTessellation's own comment) - row 2 is a
+    // different position and must not be pulled into the average.
+    app.VertexSolar_XYZ = new float[][]{
+      {1, 2, 3, 0, 0, 0, 0, 0, 0},
+      {1, 2, 3, 9, 9, 9, 0, 0, 0},
+      {5, 5, 5, 0, 0, 0, 0, 0, 0}
+    };
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{4.0f, 8.0f, 100f};
+
+    assertEquals(6.0f, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  @Test
+  void vertexSolar_TotalComparisonAt_noMatch_isUndefined () {
+    app.VertexSolar_XYZ = new float[][]{{9, 9, 9, 0, 0, 0, 0, 0, 0}};
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{1f};
+
+    assertEquals(app.FLOAT_undefined, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  @Test
+  void vertexSolar_TotalComparisonAt_arrayNeverBuilt_isUndefined () {
+    // A fresh app instance: VertexSolar_XYZ/VertexSolar_amounts are
+    // both still null, exactly as they are before calculate_
+    // VertexSolar_array() has ever run once.
+    assertEquals(app.FLOAT_undefined, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  @Test
+  void vertexSolar_TotalComparisonAt_mismatchedArrayLengths_isUndefined () {
+    // Defensive guard against a stale/inconsistent pair of arrays -
+    // shouldn't normally happen (both are always rebuilt together by
+    // calculate_VertexSolar_array()), but reading past comparisons'
+    // own length would be a real bug if it ever did.
+    app.VertexSolar_XYZ = new float[][]{{1, 2, 3, 0, 0, 0, 0, 0, 0}};
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{1f, 2f};
+
+    assertEquals(app.FLOAT_undefined, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  @Test
+  void vertexSolar_TotalComparisonAt_skipsUndefinedMatches_inTheAverage () {
+    app.VertexSolar_XYZ = new float[][]{
+      {1, 2, 3, 0, 0, 0, 0, 0, 0},
+      {1, 2, 3, 0, 0, 0, 0, 0, 0}
+    };
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{app.FLOAT_undefined, 5f};
+
+    assertEquals(5f, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
+  }
+
+  // --- solarFormFindVertices_Selection (no-op guard paths only) ---------
+  //
+  // The real call it makes to calculate_VertexSolar_array() needs a
+  // live PGraphics surface to run at all (see SolarArraySmokeTest.java's
+  // own comment) - a bare test instance throws a NullPointerException
+  // reaching it, same as that file documents for calculate_
+  // VertexSolar_array() itself. So only the two early-return guards
+  // that sit BEFORE that call are exercised here; the step/direction/
+  // freeze math itself is covered above, isolated from that call, via
+  // collectNeighborDirections_fromRing, maxPairwiseAngle and
+  // vertexSolar_TotalComparisonAt directly.
+
+  @Test
+  void solarFormFind_isANoOpWhenCategoryIsNotPolymesh () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    app.allVertices = new float[][]{{1, 2, 3}};
+    app.Select3D.vertexSelection = new int[]{0};
+
+    assertDoesNotThrow(() -> app.Modify3D.solarFormFindVertices_Selection());
+
+    assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
+  }
+
+  @Test
+  void solarFormFind_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.allVertices = new float[][]{{1, 2, 3}};
+    app.Select3D.vertexSelection = new int[]{};
+
+    assertDoesNotThrow(() -> app.Modify3D.solarFormFindVertices_Selection());
+
+    assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
+  }
+
+  // --- "Solar Form-Find Selected Vertices"/"...Group" (wiring only) -----
+  //
+  // Same NullPointerException constraint as above rules out a full
+  // integration test through runScriptLine() once real vertices would
+  // actually be selected - these two only confirm the command is
+  // registered and reaches/respects the same early-return guards,
+  // staying on their safe side.
+
+  @Test
+  void solarFormFindSelectedVertices_commandIsRegistered_andSafeWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
+    app.allVertices = new float[0][3];
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Solar Form-Find Selected Vertices");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+  }
+
+  @Test
+  void solarFormFindSelectedGroup_commandIsRegistered_andSwitchesToVertexCategory () {
+    app.allVertices = new float[0][3];
+    app.allFaces.nodes = new int[0][];
+    app.allPolylines.nodes = new int[0][];
+    app.allGroups.makeEmpty(0);
+    app.Select3D.groupSelection = new int[]{};
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Solar Form-Find Selected Group");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    // No groups selected -> convert_Groups_to_Vertices() yields an
+    // empty vertex selection, which is solarFormFindVertices_
+    // Selection()'s own second early-return guard - so this stays
+    // safely clear of the calculate_VertexSolar_array() call while
+    // still proving the group-to-vertex conversion half of the wiring
+    // ran (same category-switch check relaxSelectedGroup_... above
+    // uses).
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
   }
 }

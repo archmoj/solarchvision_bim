@@ -530,11 +530,13 @@ class UI_menuBar {
       "Skew Selected Vertices",
       "Twist Selected Vertices",
       "Bend Selected Vertices",
+      "Solar Form-Find Selected Vertices",
       ___divider___,
       "Relax Selected Group",
       "Skew Selected Group",
       "Twist Selected Group",
-      "Bend Selected Group"
+      "Bend Selected Group",
+      "Solar Form-Find Selected Group"
     },
     {
       PARENT_MATCH,

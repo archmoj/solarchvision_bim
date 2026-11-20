@@ -772,6 +772,8 @@ the user interface.
 | `Modifier Bend XY` | Circular-arc bend (degrees per meter) in X driven by Y offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend XZ` | Circular-arc bend (degrees per meter) in X driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend YZ` | Circular-arc bend (degrees per meter) in Y driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
+| `Modifier Solar Form-Find Step` | Distance (meters) each vertex is pushed out or pulled in per run of `Solar Form-Find Selected Vertices` | 0 to 2 |
+| `Modifier Solar Form-Find Angle` | A vertex whose surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched by `Solar Form-Find Selected Vertices` | 0 to 90 |
 
 ### Export defaults (3D-export)
 
@@ -1362,15 +1364,32 @@ under [Shading and rendering](#shading-and-rendering) above)
     Deform panel's own currently-set `Modifier Skew */Modifier Twist
     */Modifier Bend *` fields forward or backward, instead of using
     one of the three commands directly above
+-   `Solar Form-Find Selected Vertices`: a solar-climatic form-finding
+    pass - one bounded step (`Modifier Solar Form-Find Step` meters)
+    that pushes each selected vertex out along, or pulls it in against,
+    the average direction to its own real mesh neighbors, same
+    neighbor-gathering as `Relax Selected Vertices` above but read as a
+    direction rather than a blend target. Direction is decided per
+    vertex by its own net solar response: a net-beneficial vertex steps
+    out to expose more of what's working, a net-harmful one steps in to
+    self-shade. A vertex is treated as an edge or corner, and left
+    untouched, when the faces meeting there aren't coplanar enough -
+    their own normals differ by more than `Modifier Solar Form-Find
+    Angle` degrees - rather than when its neighbors simply point in
+    different directions, which is normal for any ordinary interior
+    vertex of a flat, subdivided face. This is one step forward per
+    run, not a solve for an "optimal" shape - run it again for another
+    step, as many times as fits the design
 -   `Relax Selected Group`, `Skew Selected Group`, `Twist Selected Group`,
-    `Bend Selected Group`: the same four modifiers as above, but for a
-    selection still at the GROUP level - each runs `Groups >> Vertices`
-    first (see [Groups](#groups) below) to expand the group's own faces
-    and polylines into their vertices, then applies the matching
-    modifier to that vertex selection, so a group never needs to be
-    converted to vertices by hand first. The selection ends up at the
-    VERTEX level afterward, same as running `Groups >> Vertices` on its
-    own would leave it.
+    `Bend Selected Group`, `Solar Form-Find Selected Group`: the same
+    five modifiers as above, but for a selection still at the GROUP
+    level - each runs `Groups >> Vertices` first (see
+    [Groups](#groups) below) to expand the group's own faces and
+    polylines into their vertices, then applies the matching modifier
+    to that vertex selection, so a group never needs to be converted to
+    vertices by hand first. The selection ends up at the VERTEX level
+    afterward, same as running `Groups >> Vertices` on its own would
+    leave it.
 -   `Flip Normal`, `Set-In Normal`, `Set-Out Normal`,
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,
