@@ -65,9 +65,9 @@ class UI_rollout {
     PARENT_GEOMETRY = pushParent("Geometry & Space");
     CHILD_GEOMETRY_CREATE = pushChild("Create");
     CHILD_GEOMETRY_VIEWPORT = pushChild("View");
-    CHILD_GEOMETRY_MODIFY = pushChild("Modify");
+    CHILD_GEOMETRY_REFORM = pushChild("Reform");
     CHILD_GEOMETRY_DEFORM = pushChild("Deform");
-    CHILD_GEOMETRY_SELECT = pushChild("Select");
+    CHILD_GEOMETRY_TRANSFORM = pushChild("Transform");
     CHILD_GEOMETRY_ENTOURAGE = pushChild("Entourage");
     CHILD_GEOMETRY_SOLID = pushChild("Solids");
     CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
@@ -91,9 +91,9 @@ class UI_rollout {
 
   int PARENT_GEOMETRY;
   int CHILD_GEOMETRY_CREATE;
-  int CHILD_GEOMETRY_MODIFY;
+  int CHILD_GEOMETRY_REFORM;
   int CHILD_GEOMETRY_DEFORM;
-  int CHILD_GEOMETRY_SELECT;
+  int CHILD_GEOMETRY_TRANSFORM;
   int CHILD_GEOMETRY_SOLID;
   int CHILD_GEOMETRY_ENTOURAGE;
   int CHILD_GEOMETRY_VIEWPORT;
@@ -606,7 +606,7 @@ class UI_rollout {
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
       }
 
-      if (this.child == CHILD_GEOMETRY_MODIFY) {
+      if (this.child == CHILD_GEOMETRY_REFORM) {
 
         User3D.modifierOpeningDepth = vm.modifierOpeningDepth(1);
         User3D.modifierOpeningArea = vm.modifierOpeningArea(1);
@@ -619,22 +619,26 @@ class UI_rollout {
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
-      // Split out of CHILD_GEOMETRY_MODIFY above: the Relax/Skew/Twist/
+      // Split out of CHILD_GEOMETRY_REFORM above: the Relax/Skew/Twist/
       // Bend vertex-deformer trio (9 fields) grew into its own cohesive
       // feature set (see modify3D.pde's relaxVertices_Selection()/
       // skewVertices_Selection()/twistVertices_Selection()/
-      // bendVertices_Selection()) and was crowding Modify's one column
+      // bendVertices_Selection()) and was crowding that one column
       // alongside unrelated face/mesh-editing and selection-transform
       // tools - same "everything piled into one place" pattern already
       // fixed for the Modify *menu* (see uiMenuBar.pde's own Visibility
       // split). Registration (the vm.xxx(0) calls above) is flat and
       // child-agnostic, so only this draw/read-back half needed to move.
-      // Soft-selection falloff (power/radius) joined it here too - it's
-      // what controls how far a deformer's effect spreads from the
-      // pivot, so it reads as part of "deforming", not "modifying" or
-      // "selecting".
+      // Soft-selection falloff (power/radius) is drawn FIRST here, ahead
+      // of the four deformers themselves - it's a setting that decides
+      // how far each one's effect spreads from the pivot before any of
+      // them runs, not a deformation in its own right, so it reads as
+      // "set the spread, then deform" rather than one more item in the
+      // Relax/Skew/Twist/Bend list.
       if (this.child == CHILD_GEOMETRY_DEFORM) {
 
+        Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
+        Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);
         User3D.modifierRelaxAmount = vm.modifierRelaxAmount(1);
         User3D.modifierSkewXY = vm.modifierSkewXY(1);
         User3D.modifierSkewXZ = vm.modifierSkewXZ(1);
@@ -645,28 +649,32 @@ class UI_rollout {
         User3D.modifierBendXY = vm.modifierBendXY(1);
         User3D.modifierBendXZ = vm.modifierBendXZ(1);
         User3D.modifierBendYZ = vm.modifierBendYZ(1);
-        Select3D.softSelectionFalloffPower = vm.softSelectionFalloffPower(1);
-        Select3D.softSelectionFalloffRadius = vm.softSelectionFalloffRadius(1);
       }
 
-      // The other half of Modify's original split: these are all
-      // Select3D fields driving the current selection's own position/
-      // rotation/scale and pivot alignment (command/README.md already
-      // documents them separately, under "Selection tools (3D-select)",
-      // not "Modify tools (3D-modify)") - they never belonged alongside
-      // the face/mesh-editing tools Modify keeps, they just ended up
-      // there historically.
-      if (this.child == CHILD_GEOMETRY_SELECT) {
+      // The other half of Reform's original (pre-split) content: these
+      // are all Select3D fields driving the current selection's own
+      // pivot and its position/rotation/scale (command/README.md
+      // already documents them separately, under "Selection tools
+      // (3D-select)", not "Modify tools (3D-modify)") - they never
+      // belonged alongside the face/mesh-editing tools Reform keeps,
+      // they just ended up there historically. Pivot alignment is drawn
+      // first, since it decides the point position/rotation/scale
+      // themselves pivot around - a setting the other three read, the
+      // same reasoning that put falloff first in Deform above. Each of
+      // position/rotation/scale is then its own pair: the axis picker
+      // immediately followed by the matching delta field it feeds,
+      // rather than all three pickers grouped before all three deltas.
+      if (this.child == CHILD_GEOMETRY_TRANSFORM) {
 
-        Select3D.positionVectorIndex = vm.positionVectorIndex(1);
-        Select3D.rotationVectorIndex = vm.rotationVectorIndex(1);
-        Select3D.scaleVectorIndex = vm.scaleVectorIndex(1);
-        Select3D.position = vm.positionSelection(1);
-        Select3D.rotation = vm.rotationSelection(1);
-        Select3D.scale = vm.scaleSelection(1);
         Select3D.pivotAlignmentX = vm.pivotAlignmentX(1);
         Select3D.pivotAlignmentY = vm.pivotAlignmentY(1);
         Select3D.pivotAlignmentZ = vm.pivotAlignmentZ(1);
+        Select3D.positionVectorIndex = vm.positionVectorIndex(1);
+        Select3D.position = vm.positionSelection(1);
+        Select3D.rotationVectorIndex = vm.rotationVectorIndex(1);
+        Select3D.rotation = vm.rotationSelection(1);
+        Select3D.scaleVectorIndex = vm.scaleVectorIndex(1);
+        Select3D.scale = vm.scaleSelection(1);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
