@@ -63,7 +63,8 @@ class UI_rollout {
 
 
     PARENT_GEOMETRY = pushParent("Geometry & Space");
-    CHILD_GEOMETRY_CREATE = pushChild("Create");
+    CHILD_GEOMETRY_FORM = pushChild("Form");
+    CHILD_GEOMETRY_FIGURE = pushChild("Figure");
     CHILD_GEOMETRY_ENTOURAGE = pushChild("Entourage");
     CHILD_GEOMETRY_SOLID = pushChild("Solids");
 
@@ -94,7 +95,8 @@ class UI_rollout {
   int CHILD_LOCATION_STATIONS;
 
   int PARENT_GEOMETRY;
-  int CHILD_GEOMETRY_CREATE;
+  int CHILD_GEOMETRY_FORM;
+  int CHILD_GEOMETRY_FIGURE;
   int CHILD_GEOMETRY_REFORM;
   int CHILD_GEOMETRY_DEFORM;
   int CHILD_GEOMETRY_TRANSFORM;
@@ -589,14 +591,17 @@ class UI_rollout {
         currentDataSource = vm.currentDataSource(1);
       }
     } else if (this.parent == PARENT_GEOMETRY) {
-      if (this.child == CHILD_GEOMETRY_CREATE) {
+      // Create's original single panel mixed two different kinds of
+      // default: parameters that define the new object's own shape
+      // (its dimensions, segment counts, orientation, open/closed
+      // state) versus parameters about how it then sits in the scene
+      // (material, tessellation quality, layer, visibility, weight,
+      // grouping) - same "everything piled into one place" pattern
+      // already split for Modify (Reform/Deform/Transform) and
+      // Environment (Sky/Land). Form keeps the shape/geometry fields;
+      // Figure keeps the object/scene-appearance fields.
+      if (this.child == CHILD_GEOMETRY_FORM) {
 
-        addToLastGroup = vm.addToLastGroup(1);
-        User3D.creatorMaterial = vm.creatorMaterial(1);
-        User3D.creatorTessellation = vm.creatorTessellation(1);
-        User3D.creatorLayer = vm.creatorLayer(1);
-        User3D.creatorVisibility = vm.creatorVisibility(1);
-        User3D.creatorWeight = vm.creatorWeight(1);
         User3D.creatorClosed = vm.creatorClosed(1);
         User3D.creatorOrientation = vm.creatorOrientation(1);
         User3D.creatorLength = vm.creatorLength(1);
@@ -609,14 +614,24 @@ class UI_rollout {
         User3D.creatorConeDegree = vm.creatorConeDegree(1);
         User3D.creatorPolygonDegree = vm.creatorPolygonDegree(1);
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
+      }
+
+      if (this.child == CHILD_GEOMETRY_FIGURE) {
+
+        addToLastGroup = vm.addToLastGroup(1);
+        User3D.creatorMaterial = vm.creatorMaterial(1);
+        User3D.creatorTessellation = vm.creatorTessellation(1);
+        User3D.creatorLayer = vm.creatorLayer(1);
+        User3D.creatorVisibility = vm.creatorVisibility(1);
+        User3D.creatorWeight = vm.creatorWeight(1);
 
         // Face-to-section turns a selected face into a new arbitrary-
         // section object (see faceToSection.pde) - that's creating a new
         // object, not reforming an existing one, so this lift amount
         // (how far the new section is nudged off the source face's
-        // plane, to avoid z-fighting) belongs with Create's other
-        // object-creation fields rather than Reform's face/mesh-editing
-        // tools.
+        // plane, to avoid z-fighting) belongs here with Figure's other
+        // scene-appearance defaults for newly created objects, rather
+        // than Reform's face/mesh-editing tools.
         FACE_TO_SECTION_LIFT = vm.faceToSectionLift(1);
       }
 
