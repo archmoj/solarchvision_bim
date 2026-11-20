@@ -1177,6 +1177,25 @@ class WIN3D {
       Move3D.selection(dx, dy, dz);
     }
 
+    // Skew/Twist/Bend have no vector index of their own (unlike Move/
+    // Scale/Rotate above) - forward (direction +1) commits the Deform
+    // panel's own 3 currently-set modifier fields as-is, exactly like
+    // the "Skew/Twist/Bend Selected Vertices" menu actions do; backward
+    // (direction -1) commits the same fields negated (and, for Twist
+    // only, in reversed application order - see twistedPoint()'s own
+    // comment in modify3D.pde for why that part matters).
+    if (User3D.currentTool == UITASK.Skew) {
+      Modify3D.skewVertices_Selection(direction);
+    }
+
+    if (User3D.currentTool == UITASK.Twist) {
+      Modify3D.twistVertices_Selection(direction);
+    }
+
+    if (User3D.currentTool == UITASK.Bend) {
+      Modify3D.bendVertices_Selection(direction);
+    }
+
     if (User3D.toolParameterModifier == 0) {
       if (User3D.currentTool >= UITASK.Seed_Material) {
         int p = direction;

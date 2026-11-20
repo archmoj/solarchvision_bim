@@ -59,6 +59,32 @@ class UiSetToModifyAndViewTest {
     assertEquals(3, app.Select3D.rotationVectorIndex);
   }
 
+  // ================= Modify_* : Skew/Twist/Bend (no vector index) =========
+  // Unlike Move/Scale/Rotate above, these take no axis argument - each
+  // already drives its own 3 modifier fields together (see
+  // WIN3DActionsTest.java's own Skew/Twist/Bend Shift+Up/Down tests).
+
+  @Test
+  void modifySkew_setsTool () {
+    app.UI_setTo_Modify_Skew();
+
+    assertEquals(app.UITASK.Skew, app.User3D.currentTool);
+  }
+
+  @Test
+  void modifyTwist_setsTool () {
+    app.UI_setTo_Modify_Twist();
+
+    assertEquals(app.UITASK.Twist, app.User3D.currentTool);
+  }
+
+  @Test
+  void modifyBend_setsTool () {
+    app.UI_setTo_Modify_Bend();
+
+    assertEquals(app.UITASK.Bend, app.User3D.currentTool);
+  }
+
   // ================= Modify_* : toolParameterModifier family ==============
   // Seed/Tessellation/Layer/Visibility/Weight/DegreeMax/BranchTilt/
   // BranchTwist/BranchRatio/TreeBase/TrunkSize/LeafSize/Model1DsProps/

@@ -27,6 +27,9 @@ class UITASK {
   int Move = num++;
   int Scale = num++;
   int Rotate = num++;
+  int Skew = num++;
+  int Twist = num++;
+  int Bend = num++;
   int Seed_Material = num++;
   int Tessellation = num++;
   int Layer = num++;

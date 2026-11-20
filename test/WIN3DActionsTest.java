@@ -608,4 +608,124 @@ class WIN3DActionsTest {
     assertEquals(0f, app.allVertices[0][1], 0.0001f);
     assertEquals(-0.5f, app.allVertices[0][2], 0.0001f);
   }
+
+  // ================= Shift+Up/Down with Skew/Twist/Bend tools ============
+  // Unlike Move/Rotate above, these 3 tools take no per-axis vector index
+  // - each commits all 3 of its own Deform-panel modifier fields together.
+  // "Increase"/"Decrease Tool Parameter" just need to reach Modify3D.
+  // skewVertices_Selection(direction)/twistVertices_Selection(direction)/
+  // bendVertices_Selection(direction) with the matching +1/-1 - the exact
+  // math each performs is covered by ModifyGeometryTest.java's own
+  // forward/backward tests, so these only check the dispatch wiring.
+
+  @Test
+  void keyShiftUp_withSkewTool_commitsForwardSkew () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierSkewXY = 18;
+    app.User3D.currentTool = app.UITASK.Skew;
+
+    String hint = app.runScriptLine("Increase Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertNotEquals(0f, app.allVertices[0][0], 0.0001f, "forward Skew should have sheared x by the +direction amount");
+  }
+
+  @Test
+  void keyShiftDown_withSkewTool_commitsBackwardSkew_negatedFromForward () {
+    // v1's own y-offset from the pivot (cy=5) is +5, so its forward
+    // shear is positive and its backward shear is negative - using v1
+    // (not v0, whose -5 offset makes forward negative already) keeps
+    // the "negated from forward" framing intuitive.
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierSkewXY = 18;
+    app.User3D.currentTool = app.UITASK.Skew;
+
+    String hint = app.runScriptLine("Decrease Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.allVertices[1][0] < 0, "backward Skew should shear x the opposite way from forward");
+  }
+
+  @Test
+  void keyShiftUp_withTwistTool_commitsForwardTwist () {
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistZ = 18; // same setup as ModifyGeometryTest's own aroundZOnly test
+    app.User3D.currentTool = app.UITASK.Twist;
+
+    String hint = app.runScriptLine("Increase Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 1, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void keyShiftDown_withTwistTool_commitsBackwardTwist_negatedFromForward () {
+    // Same single-call setup as keyShiftUp_withTwistTool_
+    // commitsForwardTwist above, just direction -1 instead of +1 - NOT
+    // a forward-then-backward round trip: a round trip through two
+    // separate vertex-selection calls would re-read the selection's
+    // bounding-box pivot after the first call has already moved it
+    // (see ModifyGeometryTest's own twistedPoint_forwardThenBackward_
+    // isAnExactRoundTrip_forASingleActiveAxis for where that claim is
+    // actually tested, at the fixed-pivot single-point level). A
+    // single backward call from the original, unmoved selection still
+    // uses the same pivot the forward call would have, so it's simply
+    // the sign-negated result of the forward test above.
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistZ = 18;
+    app.User3D.currentTool = app.UITASK.Twist;
+
+    String hint = app.runScriptLine("Decrease Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertArrayEquals(new float[]{0, -1, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, -1, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void keyShiftUp_withBendTool_commitsForwardBend () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 18;
+    app.User3D.currentTool = app.UITASK.Bend;
+
+    String hint = app.runScriptLine("Increase Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{r, 10, 0}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void keyShiftDown_withBendTool_commitsBackwardBend_negatedFromForward () {
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 18;
+    app.User3D.currentTool = app.UITASK.Bend;
+
+    String hint = app.runScriptLine("Decrease Tool Parameter");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{-r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{-r, 10, 0}, app.allVertices[1], 0.0001f);
+  }
 }

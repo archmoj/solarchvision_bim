@@ -1883,21 +1883,27 @@ class ModifyGeometryTest {
   // somewhere else entirely.
 
   @Test
-  void twistVertices_forwardThenBackward_isAnExactRoundTrip_forASingleActiveAxis () {
-    // Same setup as twistVertices_aroundZOnly_... above - only
-    // modifierTwistZ is nonzero, so X/Y steps are no-ops both ways and
-    // the single Z rotation is trivially its own exact inverse.
-    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
-    app.allFaces.nodes = new int[][]{{0, 1}};
-    app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.vertexSelection = new int[]{0, 1};
+  void twistedPoint_forwardThenBackward_isAnExactRoundTrip_forASingleActiveAxis () {
+    // Exercises twistedPoint() directly rather than through
+    // twistVertices_Selection(): the latter re-reads the selection's
+    // bounding-box center fresh on EVERY call (Select3D.
+    // vertexIdsExtents(), shared with Skew and the overlay gizmo), so a
+    // forward call followed by a backward call on the same selection
+    // generally uses two DIFFERENT pivots - the forward twist moves the
+    // vertices, which moves their own bounding-box center, so the
+    // "round trip" claim below only holds at the single-point,
+    // fixed-pivot level twistedPoint() itself operates at, which is
+    // what this test isolates. Same single-active-axis setup (only
+    // modifierTwistZ nonzero) as twistVertices_aroundZOnly_... above,
+    // using that test's own v0 pivot-relative offset directly.
+    app.User3D.modifierTwistX = 0;
+    app.User3D.modifierTwistY = 0;
     app.User3D.modifierTwistZ = 18;
 
-    app.Modify3D.twistVertices_Selection(1);
-    app.Modify3D.twistVertices_Selection(-1);
+    float[] forward = app.Modify3D.twistedPoint(1, -1, 0, -5);
+    float[] back = app.Modify3D.twistedPoint(-1, forward[0], forward[1], forward[2]);
 
-    assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.0001f);
-    assertArrayEquals(new float[]{1, 0, 10}, app.allVertices[1], 0.0001f);
+    assertArrayEquals(new float[]{-1, 0, -5}, back, 0.0001f);
   }
 
   @Test
@@ -2054,6 +2060,30 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
+  }
+
+  // --- bendVertices_Selection(int direction) ------------------------------
+  // The Bend tool's own Shift+Up (direction +1)/Shift+Down (direction
+  // -1) nudge. bendOffset()'s r*(1-cos(k*offset)) is even in k's sign
+  // (cos is an even function), so negating the 3 bend factors simply
+  // negates the arc's sagitta - no step-order reversal needed the way
+  // Twist's sequential rotations require.
+
+  @Test
+  void bendVertices_backwardDirection_negatesAllThreeFactors () {
+    // Same setup as bendVertices_xyOnly_curvesXByArcProportionalToYOffset
+    // above, just negated direction -> negated sagitta.
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierBendXY = 18;
+
+    app.Modify3D.bendVertices_Selection(-1);
+
+    float r = (float) (10 / Math.PI);
+    assertArrayEquals(new float[]{-r, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{-r, 10, 0}, app.allVertices[1], 0.0001f);
   }
 
   // --- previewModifierDeformation -----------------------------------------
