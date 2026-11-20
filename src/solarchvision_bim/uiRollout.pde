@@ -72,7 +72,8 @@ class UI_rollout {
     CHILD_GEOMETRY_TRANSFORM = pushChild("Transform");
 
     CHILD_GEOMETRY_SOLARSYSTEM = pushChild("Solar System");
-    CHILD_GEOMETRY_ENVIRONMENT = pushChild("Environment");
+    CHILD_GEOMETRY_SKY = pushChild("Sky");
+    CHILD_GEOMETRY_LAND = pushChild("Land");
     CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
 
     CHILD_GEOMETRY_VIEWPORT = pushChild("View");
@@ -101,7 +102,8 @@ class UI_rollout {
   int CHILD_GEOMETRY_ENTOURAGE;
   int CHILD_GEOMETRY_VIEWPORT;
   int CHILD_GEOMETRY_WINDROSE;
-  int CHILD_GEOMETRY_ENVIRONMENT;
+  int CHILD_GEOMETRY_SKY;
+  int CHILD_GEOMETRY_LAND;
   int CHILD_GEOMETRY_SOLARSYSTEM;
 
   int PARENT_ILLUSTRATION;
@@ -730,16 +732,28 @@ class UI_rollout {
         Moon3D.fitInSkyDome = vm.Moon3DFitInSkyDome(1);
       }
 
-      if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
-        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
-        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
-        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
-        Earth3D.recomputeLevelOfDetailDependents();
+      // Split out of the old CHILD_GEOMETRY_ENVIRONMENT: that one panel
+      // mixed the sky/atmosphere trio (Sky3D + Tropo3D) with the
+      // ground/terrain trio (Earth3D + Terrain) under a single
+      // "Environment" label that didn't distinguish them - same
+      // "everything piled into one place" pattern already split for
+      // Modify (now Reform/Deform/Transform). Sky3D and Tropo3D are
+      // both things overhead; Earth3D and Terrain are both the ground
+      // plane, so each now gets its own tab.
+      if (this.child == CHILD_GEOMETRY_SKY) {
         Sky3D.displaySurface = vm.Sky3DDisplaySurface(1);
         Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
         Sky3D.radius = vm.Sky3DRadius(1);
         Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
         Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
+      }
+
+      if (this.child == CHILD_GEOMETRY_LAND) {
+        Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);
+        Earth3D.displayTexture = vm.Earth3DDisplayTexture(1);
+        Earth3D.levelOfDetail = vm.Earth3DLevelOfDetail(1);
+        Earth3D.recomputeLevelOfDetailDependents();
+
         Terrain.loadMesh = vm.TerrainLoadMesh(1);
         Terrain.loadTexture = vm.TerrainLoadTextures(1);
         Terrain.displaySurface = vm.TerrainDisplaySurface(1);
