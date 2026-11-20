@@ -185,12 +185,7 @@ void calculate_GlobalSolar_array () {
         }
 
 
-        float AVERAGE, PERCENTAGE, COMPARISON;
-
-        AVERAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N);
-        if ((valuesSUM_EFF_P + valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N) / (1.0 * (valuesSUM_EFF_P + valuesSUM_EFF_N));
-        else PERCENTAGE = 0.0;
-        COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+        float COMPARISON = solarComparisonScore(valuesSUM_EFF_P, valuesSUM_EFF_N);
 
         if (is_defined(valuesSUM_RAD)) {
           GlobalSolar[Impact_ACTIVE][j + 1][a][b] = valuesSUM_RAD;
@@ -219,12 +214,7 @@ void calculate_GlobalSolar_array () {
         TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
       }
 
-      float AVERAGE, PERCENTAGE, COMPARISON;
-
-      AVERAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]);
-      if ((TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]) / (1.0 * (TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]));
-      else PERCENTAGE = 0.0;
-      COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+      float COMPARISON = solarComparisonScore(TOTALvaluesSUM_EFF_P[a][b], TOTALvaluesSUM_EFF_N[a][b]);
 
       if (is_defined(TOTALvaluesSUM_RAD[a][b])) {
         GlobalSolar[Impact_ACTIVE][0][a][b] = TOTALvaluesSUM_RAD[a][b];

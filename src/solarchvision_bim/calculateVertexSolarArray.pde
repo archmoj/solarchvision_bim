@@ -276,12 +276,7 @@ void calculate_VertexSolar_array () {
                 valuesSUM_EFF_N = FLOAT_undefined;
               }
 
-              float AVERAGE, PERCENTAGE, COMPARISON;
-
-              AVERAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N);
-              if ((valuesSUM_EFF_P + valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N) / (1.0 * (valuesSUM_EFF_P + valuesSUM_EFF_N));
-              else PERCENTAGE = 0.0;
-              COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+              float COMPARISON = solarComparisonScore(valuesSUM_EFF_P, valuesSUM_EFF_N);
 
               activeDayValues[j + 1].append(valuesSUM_RAD);
               passiveDayValues[j + 1].append(COMPARISON);
@@ -298,12 +293,7 @@ void calculate_VertexSolar_array () {
               TOTALvaluesSUM_EFF_N = FLOAT_undefined;
             }
 
-            float TOTAL_AVERAGE, TOTAL_PERCENTAGE, TOTAL_COMPARISON;
-
-            TOTAL_AVERAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N);
-            if ((TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N) > 0.00001) TOTAL_PERCENTAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N) / (1.0 * (TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N));
-            else TOTAL_PERCENTAGE = 0.0;
-            TOTAL_COMPARISON = ((abs(TOTAL_PERCENTAGE)) * TOTAL_AVERAGE);
+            float TOTAL_COMPARISON = solarComparisonScore(TOTALvaluesSUM_EFF_P, TOTALvaluesSUM_EFF_N);
 
             float valuesSUM = FLOAT_undefined;
             if (WIN3D.impactTypeIndex == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;

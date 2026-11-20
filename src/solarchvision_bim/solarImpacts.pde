@@ -490,14 +490,11 @@ class SolarImpacts {
     }
 
     if (q == Impact_PASSIVE) {
-      float AVERAGE, PERCENTAGE, COMPARISON;
-
-      AVERAGE = (Image_B - Image_R);
-      if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-      else PERCENTAGE = 0.0;
-      COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-      valuesSUM = COMPARISON;
+      // Image_B/Image_R hold this pixel's pre-rendered positive/negative
+      // solar-effect channels (the Blue/Red image planes), standing in
+      // for sumP/sumN here - see solarComparisonScore.pde's own comment
+      // for what this computes and why.
+      valuesSUM = solarComparisonScore(Image_B, Image_R);
 
       PAL_type = allFaces.passiveColorScaleIndex;
       PAL_direction = allFaces.passiveColorScaleDirection;

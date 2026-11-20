@@ -3106,12 +3106,7 @@ class STUDY {
           dayHoverEFF_P[a][b] = valuesSUM_EFF_P;
           dayHoverEFF_N[a][b] = valuesSUM_EFF_N;
 
-          float AVERAGE, PERCENTAGE, COMPARISON;
-
-          AVERAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N);
-          if ((valuesSUM_EFF_P + valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N) / (1.0 * (valuesSUM_EFF_P + valuesSUM_EFF_N));
-          else PERCENTAGE = 0.0;
-          COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+          float COMPARISON = solarComparisonScore(valuesSUM_EFF_P, valuesSUM_EFF_N);
 
 
           float valuesSUM = FLOAT_undefined;
@@ -3209,12 +3204,7 @@ class STUDY {
           }
 
 
-          float AVERAGE, PERCENTAGE, COMPARISON;
-
-          AVERAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]);
-          if ((TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]) / (1.0 * (TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]));
-          else PERCENTAGE = 0.0;
-          COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+          float COMPARISON = solarComparisonScore(TOTALvaluesSUM_EFF_P[a][b], TOTALvaluesSUM_EFF_N[a][b]);
 
 
           float valuesSUM = FLOAT_undefined;
