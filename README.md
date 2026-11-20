@@ -486,13 +486,13 @@ See the [command reference](command/README.md) for complete syntax, arguments, a
 
 ## Settings rollout panel
 
-Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 6 parents and 25 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
+Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 6 parents and 29 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
 
 | Parent | Children | Covers |
 |---|---|---|
 | **Location & Data** | Station · Data Points | The project's site location, and which weather/climate data sources are shown |
 | **Time & Scenarios** | Time · Ranges · Filters | Calendar date, sampling ranges, and scenario/temporal filters |
-| **Geometry & Space** | Create · View · Modify · Entourage · Solids · Windrose · Environment · Solar System | Creating and editing 3D objects, camera/viewport behavior, and the celestial/terrain backdrop |
+| **Geometry & Space** | Form · Figure · Entourage · Reform · Deform · Transform · Land · Sky · Solar System · View · Solids · Windrose | Creating and editing 3D objects, camera/viewport behavior, and the celestial/terrain backdrop |
 | **Visualization Options** | 2D Layout · 2D Palette · Solar Palette · Spatial Palette · Selection · Visibility | Chart layout and color scales, selection indicators, and object visibility toggles |
 | **Export Options** | Model · Data · Content | 3D mesh export, 2D chart-data export, and image/PDF snapshot recording |
 | **Assessment Options** | Interpolation · Derived Data · Simulation | Interpolation weighting, derived analysis layers, and solar/wind impact-simulation setup |
