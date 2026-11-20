@@ -716,49 +716,66 @@ class Overlay3D {
             }
           }
 
-          float r = 0.1 * max(0.0001, max(maxX - minX, max(maxY - minY, maxZ - minZ))); // never a zero-length triad
-
-          float[][] Triad_Vertices = {
-            { cx, cy, cz },
-            { cx + r, cy, cz },
-            { cx, cy + r, cz },
-            { cx, cy, cz + r }
+          // The three pivot-axis lines - no longer a fixed small marker
+          // (a uniform 10%-of-extent triad), but each stretched the full
+          // way across the selection's own extent along its own axis
+          // (X from minX to maxX at the pivot's Y/Z, and so on), so they
+          // illustrate the actual axis/axes each Skew/Bend factor (XY,
+          // XZ, YZ) or Twist factor (X, Y, Z) reads. Sampled at the same
+          // SEGMENTS count as the bounding box above and run through
+          // the same previewModifierDeformation() call, so each axis
+          // line also doubles as a live preview of how that axis itself
+          // deforms - degenerate (zero-length) axes are skipped rather
+          // than drawn as a zero-length line.
+          float[][] AxisLine_Endpoints = {
+            { minX, cy, cz, maxX, cy, cz }, // X
+            { cx, minY, cz, cx, maxY, cz }, // Y
+            { cx, cy, minZ, cx, cy, maxZ }  // Z
           };
 
-          int[][] Triad_Lines = {
-            { 0, 1 }
-            , { 0, 2 }
-            , { 0, 3 }
-          };
+          for (int axis = 0; axis < AxisLine_Endpoints.length; axis++) {
 
-          for (int f = 0; f < Triad_Lines.length; f++) {
+            float[] A = { AxisLine_Endpoints[axis][0], AxisLine_Endpoints[axis][1], AxisLine_Endpoints[axis][2] };
+            float[] B = { AxisLine_Endpoints[axis][3], AxisLine_Endpoints[axis][4], AxisLine_Endpoints[axis][5] };
+
+            if ((A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2])) continue; // degenerate on this axis - nothing to draw
 
             DrawStyle axisStyle;
-            if (f == 0) axisStyle = AXIS_X_STYLE;
-            else if (f == 1) axisStyle = AXIS_Y_STYLE;
+            if (axis == 0) axisStyle = AXIS_X_STYLE;
+            else if (axis == 1) axisStyle = AXIS_Y_STYLE;
             else axisStyle = AXIS_Z_STYLE;
 
             axisStyle.applyStyle();
 
-            int a = Triad_Lines[f][0];
-            int b = Triad_Lines[f][1];
+            float[] prevImage = null;
 
-            float x1 = Triad_Vertices[a][0] * overallScale;
-            float y1 = Triad_Vertices[a][1] * overallScale;
-            float z1 = Triad_Vertices[a][2] * overallScale;
+            for (int s = 0; s <= SEGMENTS; s++) {
 
-            float x2 = Triad_Vertices[b][0] * overallScale;
-            float y2 = Triad_Vertices[b][1] * overallScale;
-            float z2 = Triad_Vertices[b][2] * overallScale;
+              float t = (float) s / SEGMENTS;
 
-            float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
-            float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
+              float x0 = lerp(A[0], B[0], t) - cx;
+              float y0 = lerp(A[1], B[1], t) - cy;
+              float z0 = lerp(A[2], B[2], t) - cz;
 
-            if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) {
-              if (isInside(Image_XYZa[0], Image_XYZa[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
-                if (isInside(Image_XYZb[0], Image_XYZb[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
-                  line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
+              float[] deformed = Modify3D.previewModifierDeformation(x0, y0, z0);
+
+              float x = (cx + deformed[0]) * overallScale;
+              float y = (cy + deformed[1]) * overallScale;
+              float z = (cz + deformed[2]) * overallScale;
+
+              float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
+
+              if (Image_XYZ[2] > 0) {
+                if (isInside(Image_XYZ[0], Image_XYZ[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
+                  if (prevImage != null) {
+                    line(prevImage[0], prevImage[1], Image_XYZ[0], Image_XYZ[1]);
+                  }
+                  prevImage = Image_XYZ;
+                } else {
+                  prevImage = null; // this sample fell outside the clip window - don't bridge across it
                 }
+              } else {
+                prevImage = null;
               }
             }
           }
