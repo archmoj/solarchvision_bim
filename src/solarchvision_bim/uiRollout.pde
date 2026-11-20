@@ -66,18 +66,18 @@ class UI_rollout {
     CHILD_GEOMETRY_FORM = pushChild("Form");
     CHILD_GEOMETRY_FIGURE = pushChild("Figure");
     CHILD_GEOMETRY_ENTOURAGE = pushChild("Entourage");
-    CHILD_GEOMETRY_SOLID = pushChild("Solids");
 
     CHILD_GEOMETRY_REFORM = pushChild("Reform");
     CHILD_GEOMETRY_DEFORM = pushChild("Deform");
     CHILD_GEOMETRY_TRANSFORM = pushChild("Transform");
 
-    CHILD_GEOMETRY_SOLARSYSTEM = pushChild("Solar System");
-    CHILD_GEOMETRY_SKY = pushChild("Sky");
     CHILD_GEOMETRY_LAND = pushChild("Land");
-    CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
+    CHILD_GEOMETRY_SKY = pushChild("Sky");
+    CHILD_GEOMETRY_SOLARSYSTEM = pushChild("Solar System");
 
     CHILD_GEOMETRY_VIEWPORT = pushChild("View");
+    CHILD_GEOMETRY_SOLIDS = pushChild("Solids");
+    CHILD_GEOMETRY_WINDROSE = pushChild("Windrose");
 
     PARENT_EXPORT = pushParent("Export Options");
     CHILD_EXPORT_MODEL = pushChild("Model");
@@ -100,7 +100,7 @@ class UI_rollout {
   int CHILD_GEOMETRY_REFORM;
   int CHILD_GEOMETRY_DEFORM;
   int CHILD_GEOMETRY_TRANSFORM;
-  int CHILD_GEOMETRY_SOLID;
+  int CHILD_GEOMETRY_SOLIDS;
   int CHILD_GEOMETRY_ENTOURAGE;
   int CHILD_GEOMETRY_VIEWPORT;
   int CHILD_GEOMETRY_WINDROSE;
@@ -705,7 +705,7 @@ class UI_rollout {
         Select3D.scale = vm.scaleSelection(1);
       }
 
-      if (this.child == CHILD_GEOMETRY_SOLID) {
+      if (this.child == CHILD_GEOMETRY_SOLIDS) {
         User3D.creatorUniformSuperellipsoidPower = vm.creatorUniformSuperellipsoidPower(1);
         User3D.creatorSuperellipsoidPowerX = vm.creatorSuperellipsoidPowerX(1);
         User3D.creatorSuperellipsoidPowerY = vm.creatorSuperellipsoidPowerY(1);
