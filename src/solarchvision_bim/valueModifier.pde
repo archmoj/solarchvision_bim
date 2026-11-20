@@ -2184,7 +2184,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     boolean out = false;
-    String command = "Display Depth";
+    String command = "Terrain Display Depth";
     if (created == 0) {
       putValueAction(command,
         () -> (Terrain.displayDepth ? 1f : 0f),

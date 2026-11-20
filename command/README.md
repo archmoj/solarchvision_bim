@@ -793,7 +793,7 @@ the user interface.
 | `Terrain Display Surface` | Toggle: show the land surface | 0 or 1 |
 | `Terrain Display Texture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
 | `Terrain Display Points` | Toggle: show land survey points | 0 or 1 |
-| `Display Depth` | Toggle: shade the land by elevation/depth | 0 or 1 |
+| `Terrain Display Depth` | Toggle: shade the land by elevation/depth | 0 or 1 |
 | `Terrain Display Tessellation` | Tessellation-display mode for the land surface | 0 to 4 |
 | `Terrain Load Mesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
 | `Terrain Load Textures` | Toggle: (re)load the land texture images | 0 or 1 |

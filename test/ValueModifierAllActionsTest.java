@@ -142,7 +142,7 @@ class ValueModifierAllActionsTest {
       "Terrain Display Surface", // TerrainDisplaySurface
       "Terrain Display Texture", // TerrainDisplayTexture
       "Terrain Display Points", // TerrainDisplayPoints
-      "Display Depth", // TerrainDisplayDepth
+      "Terrain Display Depth", // TerrainDisplayDepth
       "Model2Ds Display All", // Model2DsDisplayAll
       "Model1Ds Display All", // Model1DsDisplayAll
       "Model1Ds Display Leaves", // Model1DsDisplayLeaves
