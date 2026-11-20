@@ -1737,6 +1737,35 @@ class ModifyGeometryTest {
     assertArrayEquals(new float[]{0, 10, 0}, app.allVertices[1], 0.0001f);
   }
 
+  // --- skewVertices_Selection(int direction) ------------------------------
+  // The Skew tool's own Shift+Up ("Increase Tool Parameter", direction
+  // +1, identical to the no-arg method above)/Shift+Down ("Decrease
+  // Tool Parameter", direction -1) nudge - see WIN3D.incrementParameter()
+  // and WIN3DActionsTest.java's own keyShiftUp/Down-with-Skew-tool tests
+  // for the end-to-end path. direction -1 negates all 3 factors; Skew
+  // has no internal step order to also reverse (unlike Twist below), so
+  // that alone is the whole difference from the forward (direction +1)
+  // case.
+
+  @Test
+  void skewVertices_backwardDirection_negatesAllThreeFactors () {
+    // Same setup/factors as skewVertices_allThreeFactorsCombine_
+    // perTheFormula above - same per-point deltas, just negated.
+    app.allVertices = new float[][]{{0, 0, 0}, {0, 10, 0}, {0, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1, 2};
+    app.User3D.modifierSkewXY = 0.5f;
+    app.User3D.modifierSkewXZ = 0.2f;
+    app.User3D.modifierSkewYZ = 0.3f;
+
+    app.Modify3D.skewVertices_Selection(-1);
+
+    assertArrayEquals(new float[]{3.5f, 1.5f, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{-1.5f, 11.5f, 0}, app.allVertices[1], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, -1.5f, 10}, app.allVertices[2], 0.0001f);
+  }
+
   // --- twistVertices_Selection -------------------------------------------
   //
   // Each axis's own rotation amount (degrees per meter) is driven by each
@@ -1836,6 +1865,72 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{1, 0, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  // --- twistVertices_Selection(int direction) -----------------------------
+  // The Twist tool's own Shift+Up (direction +1)/Shift+Down (direction
+  // -1) nudge. Unlike Skew/Bend, Twist's forward pass applies 3
+  // sequential rotations (X, then Y, then Z) whose angles are each
+  // recomputed from the point's CURRENT position - so simply negating
+  // the 3 angles does NOT invert the forward pass when 2+ axes are
+  // active at once; the backward pass must also apply them in REVERSED
+  // order (Z, then Y, then X) for the composition to actually invert.
+  // The two tests below prove both halves of that: an exact round-trip
+  // for a single active axis (where order doesn't matter, since the
+  // other two steps are no-ops), and a case with 2 simultaneously
+  // active axes where only the reversed-order implementation is
+  // correct - a naive same-order-but-negated version would land
+  // somewhere else entirely.
+
+  @Test
+  void twistVertices_forwardThenBackward_isAnExactRoundTrip_forASingleActiveAxis () {
+    // Same setup as twistVertices_aroundZOnly_... above - only
+    // modifierTwistZ is nonzero, so X/Y steps are no-ops both ways and
+    // the single Z rotation is trivially its own exact inverse.
+    app.allVertices = new float[][]{{-1, 0, 0}, {1, 0, 10}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistZ = 18;
+
+    app.Modify3D.twistVertices_Selection(1);
+    app.Modify3D.twistVertices_Selection(-1);
+
+    assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{1, 0, 10}, app.allVertices[1], 0.0001f);
+  }
+
+  @Test
+  void twistVertices_backwardDirection_reversesOrder_notJustNegatesAngles () {
+    // Pivot at the origin (bounding box is symmetric), TwistX=TwistY=
+    // 22.5 deg/m chosen so each vertex's own +/-4m offset on the active
+    // axis produces a clean +/-90 degree angle at each of the two
+    // active steps. Hand-derived via Rotate3D.rotateAroundVector()'s
+    // formulas for direction=-1 (reversed order Z->Y->X, negated
+    // angles - Z is a no-op here since modifierTwistZ=0):
+    //   v0 (-4,-4,0): Y-step (-90deg, using original y=-4) sends
+    //     (-4,-4,0) -> (0,-4,-4); then X-step (-90deg, using the
+    //     ORIGINAL x=-4, not the post-Y-step x) sends (0,-4,-4) ->
+    //     (0,-4,-4) unchanged (rotation around X leaves x alone, and
+    //     the y/z here happen to land back on themselves for -90 at
+    //     this offset) -> final (0,-4,-4).
+    //   v1 (4,4,0): by symmetry, Y-step (+90deg) sends (4,4,0) ->
+    //     (0,4,4); X-step (+90deg) sends (0,4,4) -> (0,4,-4).
+    // A naive same-order (X then Y), negated-angles-only version would
+    // instead give v0->(-4,0,4), v1->(4,0,-4) - a different, wrong
+    // result - so this test is load-bearing for the order reversal,
+    // not just the angle negation.
+    app.allVertices = new float[][]{{-4, -4, 0}, {4, 4, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0, 1};
+    app.User3D.modifierTwistX = 22.5f;
+    app.User3D.modifierTwistY = 22.5f;
+
+    app.Modify3D.twistVertices_Selection(-1);
+
+    assertArrayEquals(new float[]{0, -4, -4}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{0, 4, -4}, app.allVertices[1], 0.0001f);
   }
 
   // --- bendOffset / bendVertices_Selection --------------------------------

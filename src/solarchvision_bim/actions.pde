@@ -1351,6 +1351,18 @@ void build_allActions() {
     UI_setTo_Modify_Rotate(2);
   });
 
+  putAction("Skew", () -> {
+    UI_setTo_Modify_Skew();
+  });
+
+  putAction("Twist", () -> {
+    UI_setTo_Modify_Twist();
+  });
+
+  putAction("Bend", () -> {
+    UI_setTo_Modify_Bend();
+  });
+
   putAction("Pivot", () -> {
     UI_setTo_Modify_Pivot(0);
   });

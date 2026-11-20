@@ -1169,9 +1169,16 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Power`, `PowerX`, `PowerY`, `PowerZ`: adjust the superellipsoid
     power exponent (see `Creator Uniform Superellipsoid Power`/`Creator Superellipsoid Power X`/`Creator Superellipsoid Power Y`/`Creator Superellipsoid Power Z` above)
     on the current selection
+-   `Skew`, `Twist`, `Bend`: switch to the matching Deform-panel tool,
+    with no per-axis variant (each already uses its own 3 modifier
+    fields - XY/XZ/YZ for Skew and Bend, X/Y/Z for Twist - together)
 -   `Increase Tool Parameter`, `Decrease Tool Parameter`: nudge the
-    current selection via whichever of Rotate/Scale/Move/Edit the
-    active tool is
+    current selection via whichever of Rotate/Scale/Move/Skew/Twist/
+    Bend/Edit the active tool is - for Skew/Twist/Bend specifically,
+    this commits the Deform panel's own currently-set fields forward
+    (Increase) or backward (Decrease, negated - and for Twist, also
+    applied in reverse order, since a composed rotation's own inverse
+    needs both)
 
 ### Mouse-wheel commands
 
@@ -1345,10 +1352,16 @@ under [Shading and rendering](#shading-and-rendering) above)
     values above - while any of these three have a nonzero value set,
     the selection's bounding-box gizmo (see `Group Display Box`/
     `Pivot Display Reference` above) previews the combined effect by
-    deforming its own 12 edges (sampled into segments) through the
-    same Skew-then-Twist-then-Bend math, without touching the real
-    vertices until the command actually runs; the gizmo's own axis
-    triad is never deformed, only the box
+    deforming its own 12-segment box edges AND its 3 pivot-axis lines
+    (each stretched to the selection's own extent along its own axis)
+    through the same Skew-then-Twist-then-Bend math, without touching
+    the real vertices until the command actually runs
+-   `Skew`, `Twist`, `Bend` (see [Move / rotate / scale by axis](#move--rotate--scale-by-axis)
+    above): switches to a tool mode where `Increase Tool Parameter`/
+    `Decrease Tool Parameter` (Shift+Up/Shift+Down) then commit the
+    Deform panel's own currently-set `Modifier Skew */Modifier Twist
+    */Modifier Bend *` fields forward or backward, instead of using
+    one of the three commands directly above
 -   `Relax Selected Group`, `Skew Selected Group`, `Twist Selected Group`,
     `Bend Selected Group`: the same four modifiers as above, but for a
     selection still at the GROUP level - each runs `Groups >> Vertices`

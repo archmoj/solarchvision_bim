@@ -321,6 +321,31 @@ void UI_setTo_Modify_Rotate (int n) {
   UI_rollout.revise();
 }
 
+// The Skew/Twist/Bend trio - unlike Move/Scale/Rotate, these have no
+// per-axis vector index to set: each one's live preview already uses
+// its own 3 modifier fields together (Deform panel's own Skew XY/XZ/YZ,
+// Twist X/Y/Z, Bend XY/XZ/YZ spinners), so entering one of these tools
+// is just the plain currentTool switch - Shift+Up/Down then nudges
+// forward/backward using whatever those 3 fields are currently set to
+// (see WIN3D.incrementParameter()).
+void UI_setTo_Modify_Skew () {
+  User3D.currentTool = UITASK.Skew;
+
+  UI_rollout.revise();
+}
+
+void UI_setTo_Modify_Twist () {
+  User3D.currentTool = UITASK.Twist;
+
+  UI_rollout.revise();
+}
+
+void UI_setTo_Modify_Bend () {
+  User3D.currentTool = UITASK.Bend;
+
+  UI_rollout.revise();
+}
+
 void UI_setTo_Modify_Seed (int n) {
   User3D.currentTool = UITASK.Seed_Material;
   User3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to

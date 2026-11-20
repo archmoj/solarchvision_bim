@@ -360,6 +360,17 @@ class Modify3D {
   }
 
   void skewVertices_Selection () {
+    skewVertices_Selection(1);
+  }
+
+  // The "Skew" tool mode's own Shift+Up ("Increase Tool Parameter",
+  // direction +1) / Shift+Down ("Decrease Tool Parameter", direction
+  // -1) nudge - see WIN3D.incrementParameter(). Negating the 3 factors
+  // for direction -1 is enough to make backward the inverse of forward
+  // for Skew (unlike Twist below), since dx/dy here are each a plain
+  // linear combination of y0/z0 with no sequential, order-dependent
+  // sub-steps to also reverse.
+  void skewVertices_Selection (int direction) {
     if (!isPolymeshCategorySelected()) return;
 
     beginScene3DChange();
@@ -383,7 +394,7 @@ class Modify3D {
       float y = allPoints.getY(vNo);
       float z = allPoints.getZ(vNo);
 
-      float[] d = skewDelta(y - cy, z - cz);
+      float[] d = skewDelta(direction, y - cy, z - cz);
 
       allPoints.move(vNo, d[0], d[1], 0);
     }
@@ -398,14 +409,29 @@ class Modify3D {
   // source on purpose, so the preview can never silently show a
   // different shear than committing the operation would actually
   // produce (the same reasoning vertexIdsExtents()'s own comment gives
-  // for the pivot itself).
+  // for the pivot itself). previewModifierDeformation() always wants
+  // the plain forward shear, so it goes through this 2-arg overload,
+  // which is just the 3-arg one with direction fixed at +1.
   float[] skewDelta (float y0, float z0) {
-    float dx = User3D.modifierSkewXY * y0 + User3D.modifierSkewXZ * z0;
-    float dy = User3D.modifierSkewYZ * z0;
+    return skewDelta(1, y0, z0);
+  }
+
+  float[] skewDelta (int direction, float y0, float z0) {
+    float dx = direction * (User3D.modifierSkewXY * y0 + User3D.modifierSkewXZ * z0);
+    float dy = direction * (User3D.modifierSkewYZ * z0);
     return new float[]{ dx, dy };
   }
 
   void twistVertices_Selection () {
+    twistVertices_Selection(1);
+  }
+
+  // See skewVertices_Selection(int)'s own comment for the Shift+Up/Down
+  // direction this feeds. Unlike Skew/Bend, direction -1 here ALSO
+  // reverses the 3 rotations' own application order (see twistedPoint()'s
+  // own comment for why that's the part that actually makes backward a
+  // meaningful inverse of forward, not just negating the angles).
+  void twistVertices_Selection (int direction) {
     if (!isPolymeshCategorySelected()) return;
 
     beginScene3DChange();
@@ -435,7 +461,7 @@ class Modify3D {
       float y = oldY - cy;
       float z = oldZ - cz;
 
-      float[] afterZ = twistedPoint(x, y, z);
+      float[] afterZ = twistedPoint(direction, x, y, z);
 
       float newX = cx + afterZ[0];
       float newY = cy + afterZ[1];
@@ -457,10 +483,30 @@ class Modify3D {
   // order Select3D's own object-level rotX/rotY/rotZ triple uses.
   // Returns the new PIVOT-RELATIVE point (not a delta - a rotation has
   // no additive "delta" the way skew/bend's shear/arc do).
+  // previewModifierDeformation() always wants the plain forward twist,
+  // so it goes through this 3-arg overload (direction fixed at +1).
   float[] twistedPoint (float x0, float y0, float z0) {
-    float rX = radians(User3D.modifierTwistX * x0);
-    float rY = radians(User3D.modifierTwistY * y0);
-    float rZ = radians(User3D.modifierTwistZ * z0);
+    return twistedPoint(1, x0, y0, z0);
+  }
+
+  // direction -1 (the Shift+Down/"backward" nudge) negates all three
+  // angles AND applies them in the reverse order (Z, then Y, then X)
+  // instead of forward's X, then Y, then Z. Negating alone would not be
+  // a meaningful inverse here: rotation composition doesn't commute, so
+  // undoing A-then-B-then-C means applying C^-1, then B^-1, then A^-1 -
+  // reversing the order is what makes "backward" the rotations' own
+  // inverse, the same way it would for any other composed rotation.
+  float[] twistedPoint (int direction, float x0, float y0, float z0) {
+    float rX = radians(direction * User3D.modifierTwistX * x0);
+    float rY = radians(direction * User3D.modifierTwistY * y0);
+    float rZ = radians(direction * User3D.modifierTwistZ * z0);
+
+    if (direction < 0) {
+      float[] afterZ = Rotate3D.rotateAroundVector(x0, y0, z0, rZ, 2);
+      float[] afterY = Rotate3D.rotateAroundVector(afterZ[0], afterZ[1], afterZ[2], rY, 1);
+      float[] afterX = Rotate3D.rotateAroundVector(afterY[0], afterY[1], afterY[2], rX, 0);
+      return afterX;
+    }
 
     float[] afterX = Rotate3D.rotateAroundVector(x0, y0, z0, rX, 0);
     float[] afterY = Rotate3D.rotateAroundVector(afterX[0], afterX[1], afterX[2], rY, 1);
@@ -500,6 +546,13 @@ class Modify3D {
   }
 
   void bendVertices_Selection () {
+    bendVertices_Selection(1);
+  }
+
+  // See skewVertices_Selection(int)'s own comment for the Shift+Up/Down
+  // direction this feeds, and for why negating the 3 factors (no order
+  // to reverse here either, same as Skew) is enough.
+  void bendVertices_Selection (int direction) {
     if (!isPolymeshCategorySelected()) return;
 
     beginScene3DChange();
@@ -522,7 +575,7 @@ class Modify3D {
       float y = allPoints.getY(vNo);
       float z = allPoints.getZ(vNo);
 
-      float[] d = bendDelta(y - cy, z - cz);
+      float[] d = bendDelta(direction, y - cy, z - cz);
 
       allPoints.move(vNo, d[0], d[1], 0);
     }
@@ -534,9 +587,15 @@ class Modify3D {
   // The {dx,dy} bendVertices_Selection()'s own loop used to compute
   // inline, now shared with the overlay gizmo's own deformed-preview
   // cage - see skewDelta()'s own comment for why.
+  // previewModifierDeformation() always wants the plain forward bend,
+  // so it goes through this 2-arg overload (direction fixed at +1).
   float[] bendDelta (float y0, float z0) {
-    float dx = bendOffset(User3D.modifierBendXY, y0) + bendOffset(User3D.modifierBendXZ, z0);
-    float dy = bendOffset(User3D.modifierBendYZ, z0);
+    return bendDelta(1, y0, z0);
+  }
+
+  float[] bendDelta (int direction, float y0, float z0) {
+    float dx = bendOffset(direction * User3D.modifierBendXY, y0) + bendOffset(direction * User3D.modifierBendXZ, z0);
+    float dy = bendOffset(direction * User3D.modifierBendYZ, z0);
     return new float[]{ dx, dy };
   }
 
