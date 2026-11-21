@@ -729,8 +729,8 @@ class WIN3DActionsTest {
     assertArrayEquals(new float[]{-r, 10, 0}, app.allVertices[1], 0.0001f);
   }
 
-  // ================= Save JPG/PNG 3D Graph ===============================
-  // Each sets only its own one-shot flag (never the other format's), plus
+  // ================= Save JPG/PNG/TIFF 3D Graph ===========================
+  // Each sets only its own one-shot flag (never the other formats'), plus
   // WIN3D.update via view_changed()->WIN3D.revise() - the actual file-
   // extension choice happens later, inside saveRecordedFrame(), which
   // isn't runnable headlessly (real graphics.save() I/O - see test/
@@ -743,6 +743,7 @@ class WIN3DActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -754,6 +755,19 @@ class WIN3DActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void saveTIFF3DGraph_setsRecordTIFFOnlyAndRevises () {
+    String hint = app.runScriptLine("Save TIFF 3D Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -765,6 +779,7 @@ class WIN3DActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_TIFF);
     assertTrue(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -776,6 +791,19 @@ class WIN3DActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_TIFF);
+    assertTrue(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void saveTIFF3DGraphFullPeriod_setsRecordTIFFAndFullPeriodFlag () {
+    String hint = app.runScriptLine("Save TIFF 3D Graph (Full-Period)");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
     assertTrue(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }

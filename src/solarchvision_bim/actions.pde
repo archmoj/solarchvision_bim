@@ -523,6 +523,11 @@ void build_allActions() {
     STUDY.revise();
   });
 
+  putAction("Save TIFF Time Graph", () -> {
+    STUDY.record_TIFF = true;
+    STUDY.revise();
+  });
+
   putAction("Save JPG Map Graph", () -> {
     WORLD.record_IMG = true;
     WORLD.revise();
@@ -530,6 +535,11 @@ void build_allActions() {
 
   putAction("Save PNG Map Graph", () -> {
     WORLD.record_PNG = true;
+    WORLD.revise();
+  });
+
+  putAction("Save TIFF Map Graph", () -> {
+    WORLD.record_TIFF = true;
     WORLD.revise();
   });
 
@@ -550,6 +560,12 @@ void build_allActions() {
     view_changed();
   });
 
+  putAction("Save TIFF 3D Graph", () -> {
+    WIN3D.record_TIFF = true;
+
+    view_changed();
+  });
+
   putAction("Save JPG 3D Graph (Full-Period)", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_IMG = true;
@@ -560,6 +576,13 @@ void build_allActions() {
   putAction("Save PNG 3D Graph (Full-Period)", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_PNG = true;
+
+    view_changed();
+  });
+
+  putAction("Save TIFF 3D Graph (Full-Period)", () -> {
+    WIN3D.fullPeriod_IMG = true;
+    WIN3D.record_TIFF = true;
 
     view_changed();
   });

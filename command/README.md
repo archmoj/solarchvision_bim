@@ -1249,6 +1249,8 @@ around.
 -   `Save PNG 3D Graph`, `Save PNG 3D Graph (Full-Period)`, `Save PNG Time Graph`,
     `Save PNG Map Graph` - same exports as their JPG counterparts, saved as
     lossless PNG instead
+-   `Save TIFF 3D Graph`, `Save TIFF 3D Graph (Full-Period)`, `Save TIFF Time Graph`,
+    `Save TIFF Map Graph` - same exports again, saved as TIFF instead
 -   `Save PDF Time Graph`, `Save PDF Map Graph`
 
 ### Weather and climate data

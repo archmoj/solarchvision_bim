@@ -369,8 +369,8 @@ class STUDYActionsTest {
     assertTrue(app.STUDY.update);
   }
 
-  // ================= Save JPG/PNG Time Graph ===============================
-  // Each sets only its own one-shot flag (never the other format's), plus
+  // ================= Save JPG/PNG/TIFF Time Graph ==========================
+  // Each sets only its own one-shot flag (never the other formats'), plus
   // STUDY.update via revise() - the actual file-extension choice happens
   // later, inside endFrame(), which isn't runnable headlessly (real
   // graphics.save() I/O - see test/README.md's "Extending this" section).
@@ -382,6 +382,7 @@ class STUDYActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.record_IMG);
     assertFalse(app.STUDY.record_PNG);
+    assertFalse(app.STUDY.record_TIFF);
     assertTrue(app.STUDY.update);
   }
 
@@ -392,6 +393,18 @@ class STUDYActionsTest {
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_TIFF);
+    assertTrue(app.STUDY.update);
+  }
+
+  @Test
+  void saveTIFFTimeGraph_setsRecordTIFFOnlyAndRevises () {
+    String hint = app.runScriptLine("Save TIFF Time Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.STUDY.record_TIFF);
+    assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_PNG);
     assertTrue(app.STUDY.update);
   }
 }

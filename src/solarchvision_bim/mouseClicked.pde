@@ -59,14 +59,17 @@ void stopAllRecording() {
   STUDY.record_AUTO = false;
   STUDY.record_IMG = false;
   STUDY.record_PNG = false;
+  STUDY.record_TIFF = false;
   STUDY.record_PDF = false;
   WORLD.record_AUTO = false;
   WORLD.record_IMG = false;
   WORLD.record_PNG = false;
+  WORLD.record_TIFF = false;
   WORLD.record_PDF = false;
   WIN3D.record_AUTO = false;
   WIN3D.record_IMG = false;
   WIN3D.record_PNG = false;
+  WIN3D.record_TIFF = false;
   FRAME_record_AUTO = false;
   FRAME_record_IMG = false;
   FRAME_click_IMG = false;

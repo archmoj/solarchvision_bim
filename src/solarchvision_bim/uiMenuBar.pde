@@ -662,14 +662,18 @@ class UI_menuBar {
       ___divider___,
       "Save JPG Time Graph",
       "Save PNG Time Graph",
+      "Save TIFF Time Graph",
       "Save PDF Time Graph",
       "Save JPG Map Graph",
       "Save PNG Map Graph",
+      "Save TIFF Map Graph",
       "Save PDF Map Graph",
       "Save JPG 3D Graph",
       "Save PNG 3D Graph",
+      "Save TIFF 3D Graph",
       "Save JPG 3D Graph (Full-Period)",
-      "Save PNG 3D Graph (Full-Period)"
+      "Save PNG 3D Graph (Full-Period)",
+      "Save TIFF 3D Graph (Full-Period)"
     },
     {
       PARENT_GUIDE,
