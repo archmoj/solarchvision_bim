@@ -1503,7 +1503,15 @@ class Modify3D {
             } else if ((i == 0) && (j == User3D.modifierTessellateRows)) {
               new_EdgevertexSelection[s] = allFaces.nodes[f][3];
             } else {
-              new_EdgevertexSelection[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+              // getOrCreateVertex_atPosition() (defined alongside
+              // tessellateRectangular_Selection() below, for the same
+              // reason): every grid point that isn't one of the face's
+              // own 4 original corners - including the ones running
+              // along its own outer edges, not just interior points -
+              // would otherwise get a brand-new, duplicate vertex each
+              // time a neighboring face (or a later re-run of this same
+              // command) computes that identical position for itself.
+              new_EdgevertexSelection[s] = getOrCreateVertex_atPosition(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
             }
           }
         }
@@ -1547,6 +1555,36 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // Returns an existing vertex already sitting exactly at (x, y, z), if
+  // there is one, instead of creating a new one - used by
+  // tessellateRectangular_Selection() below so a new edge-midpoint (or
+  // center) vertex it's about to add gets shared with whichever
+  // neighboring face already has - or will have - a vertex at that
+  // same spot, rather than silently duplicating it.
+  int getOrCreateVertex_atPosition (float x, float y, float z) {
+    int existing = findVertex_atPosition(x, y, z);
+    if (existing != -1) return existing;
+    return allPoints.create(x, y, z);
+  }
+
+  // Linear scan for an existing vertex at an EXACT position match - not
+  // a within-threshold match (like Modify3D.weldObjectsVertices_
+  // Selection()'s own User3D.modifierWeldThreshold check, select3D.pde),
+  // because there's nothing approximate to tolerate here: two faces
+  // sharing an edge always compute that edge's midpoint the same way,
+  // from the SAME two corner vertices' current coordinates (0.5*A +
+  // 0.5*B), so the float arithmetic lands on bit-identical results on
+  // both sides. Same exact-match-by-linear-scan shape as SHADE.
+  // findID_SolarImpact_atXYZ (shade.pde) uses for the same reason.
+  // O(vertex count) per call - fine at this app's usual model sizes,
+  // worth revisiting only if tessellating a very large mesh gets slow.
+  int findVertex_atPosition (float x, float y, float z) {
+    for (int v = allPoints.getLength() - 1; v >= 0; v--) {
+      if ((allPoints.getX(v) == x) && (allPoints.getY(v) == y) && (allPoints.getZ(v) == z)) return v;
+    }
+    return -1;
+  }
+
   void tessellateRectangular_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
@@ -1581,10 +1619,21 @@ class Modify3D {
 
       int[] new_EdgevertexSelection = new int[n]; // on the edge
       for (int s = 0; s < n; s++) {
-        new_EdgevertexSelection[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+        // getOrCreateVertex_atPosition(), not a bare allPoints.create():
+        // this same edge midpoint is about to be computed AGAIN, from
+        // the same two corner positions, by whichever neighboring face
+        // shares this edge - either already processed earlier in this
+        // very call (another currently-selected face), or on some
+        // earlier call that already tessellated the other side of this
+        // edge (re-running this command on an already-tessellated
+        // selection). Without reuse, each side would create its own,
+        // separate vertex sitting on the exact same position - visually
+        // identical but not actually connected, breaking real mesh
+        // connectivity across what looks like one continuous grid.
+        new_EdgevertexSelection[s] = getOrCreateVertex_atPosition(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
       }
 
-      int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
+      int new_CenterVertex_number = getOrCreateVertex_atPosition(G_face[0], G_face[1], G_face[2]); // at the center - reuse is essentially never hit here in practice (two distinct faces' centroids coinciding is a near-impossible coincidence), but kept consistent with the edge-midpoint logic above rather than special-cased away
 
       current_Material = allFaces.getMaterial(f);
       current_Tessellation = allFaces.getTessellation(f);
@@ -1641,7 +1690,13 @@ class Modify3D {
 
       float[][] base_Vertices = faceBaseVertices(f);
       float[] G_face = faceCentroid(base_Vertices);
-      int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
+      // getOrCreateVertex_atPosition() (same helper used by
+      // tessellateRectangular_Selection() and tessellateRowsColumns_Selection()):
+      // two different faces' centroids landing on the exact same position is a
+      // near-impossible coincidence in practice, but a bare allPoints.create()
+      // here would still duplicate rather than reuse a vertex in that case, so
+      // keep this consistent with the other two Tessellate commands.
+      int new_CenterVertex_number = getOrCreateVertex_atPosition(G_face[0], G_face[1], G_face[2]); // at the center
 
       current_Material = allFaces.getMaterial(f);
       current_Tessellation = allFaces.getTessellation(f);

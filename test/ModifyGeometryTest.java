@@ -229,6 +229,44 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
   }
 
+  // This function creates only ONE new vertex per face (the centroid),
+  // so two different faces' centroids landing on the exact same
+  // position is a near-impossible coincidence in practice - unlike
+  // tessellateRectangular_Selection()'s edge-midpoints, which routinely
+  // coincide between neighboring faces. There's no realistic scene to
+  // reproduce an actual collision with, so this test instead places a
+  // vertex that ALREADY sits exactly at the face's centroid before
+  // tessellating, and checks that getOrCreateVertex_atPosition() (the
+  // same helper used by tessellateRectangular_Selection() and
+  // tessellateRowsColumns_Selection()) reuses that existing vertex
+  // rather than creating a duplicate one on top of it.
+  @Test
+  void tessellateTriangular_reusesAnExistingVertexAlreadySittingAtTheCentroid_insteadOfDuplicatingIt () {
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}, // the face's own 4 corners
+      {1, 1, 0}                                   // pre-existing, unused vertex at the face's centroid
+    };
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateTriangular_Selection();
+
+    // No new vertex was created - the fan reuses vertex 4, which was
+    // already sitting exactly at (1, 1, 0).
+    assertEquals(5, app.allVertices.length);
+
+    assertArrayEquals(new int[]{0, 1, 4}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{1, 2, 4}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{2, 3, 4}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{3, 0, 4}, app.allFaces.nodes[3]);
+  }
+
   // --- tessellateRectangular_Selection (a full integration test) -----
   //
   // Same wiring as the Triangular test above, but this operation fans
@@ -273,6 +311,137 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0]);
     assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
+  }
+
+  // This is the fix for a real bug: running Tessellate Rectangular a
+  // SECOND time on an already-tessellated selection used to create a
+  // brand-new, separate vertex for every edge shared between two
+  // sibling quads from the first pass, landing exactly on top of that
+  // edge's already-existing midpoint - visually one continuous grid,
+  // but not actually connected by shared vertex indices across most of
+  // its own interior. getOrCreateVertex_atPosition() (above
+  // tessellateRectangular_Selection() itself) is the fix: reuse
+  // whatever vertex is already sitting at that exact position instead
+  // of duplicating it.
+  @Test
+  void tessellateRectangular_runASecondTime_reusesTheFirstPassesSharedEdgeMidpoints_insteadOfDuplicatingThem () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateRectangular_Selection(); // pass 1: 4 quads around vertex 8, confirmed shared by the test above
+    app.Modify3D.tessellateRectangular_Selection(); // pass 2: tessellates those same 4 quads again
+
+    assertEquals(16, app.allFaces.nodes.length);
+
+    // No two vertices should ever occupy the exact same position - that
+    // would mean a position got duplicated instead of reused.
+    for (int i = 0; i < app.allVertices.length; i++) {
+      for (int j = i + 1; j < app.allVertices.length; j++) {
+        boolean samePosition = (app.allVertices[i][0] == app.allVertices[j][0])
+          && (app.allVertices[i][1] == app.allVertices[j][1])
+          && (app.allVertices[i][2] == app.allVertices[j][2]);
+        assertFalse(samePosition, "vertex " + i + " and vertex " + j + " sit at the same position " + java.util.Arrays.toString(app.allVertices[i]) + " - should be ONE shared vertex, not two");
+      }
+    }
+
+    // Every vertex that lies on an edge genuinely shared by two of the
+    // 16 final faces (i.e. isn't on the original quad's own outer
+    // boundary) must actually BE that one shared index, appearing in
+    // both faces' own node lists - not just visually coincide.
+    java.util.HashMap<Integer, Integer> useCount = new java.util.HashMap<>();
+    for (int[] face : app.allFaces.nodes) {
+      for (int v : face) {
+        useCount.merge(v, 1, Integer::sum);
+      }
+    }
+    int interiorVertexCount = 0;
+    for (int count : useCount.values()) {
+      if (count > 1) interiorVertexCount++;
+    }
+    assertTrue(interiorVertexCount > 0, "at least some vertices must be genuinely shared between faces after two tessellation passes");
+  }
+
+  // Two separately-selected, edge-adjacent faces tessellated in the
+  // SAME call must also share their new midpoint along that common
+  // edge, not just two sibling sub-faces produced from the SAME
+  // original face (already covered above) - getOrCreateVertex_
+  // atPosition() scans the WHOLE of allPoints, which by the time the
+  // second selected face is processed already includes whatever the
+  // first one just created, so this cross-face case is covered by the
+  // same fix.
+  @Test
+  void tessellateRectangular_twoAdjacentFacesInOneCall_shareTheirCommonEdgesMidpoint () {
+    // Two unit quads sharing the edge between vertex 1 and vertex 2.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // face 0
+      {2, 0, 0}, {2, 1, 0}                        // face 1's own other two corners
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2, 3},
+      {1, 4, 5, 2}
+    };
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateRectangular_Selection();
+
+    // The shared edge's midpoint, (1, 0.5, 0), must be exactly ONE
+    // vertex, used by a face belonging to each original side - not two
+    // coincident vertices, one per side.
+    int sharedMidpointVertex = -1;
+    for (int v = 0; v < app.allVertices.length; v++) {
+      if ((app.allVertices[v][0] == 1) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) {
+        assertEquals(-1, sharedMidpointVertex, "the shared edge's midpoint must exist as exactly one vertex, not be duplicated");
+        sharedMidpointVertex = v;
+      }
+    }
+    assertTrue(sharedMidpointVertex >= 0, "expected to find the shared edge's midpoint vertex at all");
+
+    // Neither original corner vertex (1 or even the un-shared 0/4) is a
+    // reliable "which original face did this sub-face come from?"
+    // marker - a sub-face touching the shared midpoint only ever also
+    // touches vertex 1 or vertex 2 (both shared) plus its OWN face's
+    // center, never the far corner. Each original face's own centroid
+    // is a reliable per-side marker instead: face 0's is (0.5,0.5,0),
+    // face 1's is (1.5,0.5,0) - distinct positions, so distinct
+    // vertices, and every one of that face's own sub-pieces touches it.
+    int centerFace0Vertex = -1;
+    int centerFace1Vertex = -1;
+    for (int v = 0; v < app.allVertices.length; v++) {
+      if ((app.allVertices[v][0] == 0.5f) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) centerFace0Vertex = v;
+      if ((app.allVertices[v][0] == 1.5f) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) centerFace1Vertex = v;
+    }
+    assertTrue(centerFace0Vertex >= 0);
+    assertTrue(centerFace1Vertex >= 0);
+
+    boolean usedOnFace0Side = false;
+    boolean usedOnFace1Side = false;
+    for (int[] face : app.allFaces.nodes) {
+      boolean hasSharedMidpoint = false;
+      boolean hasCenterFace0 = false;
+      boolean hasCenterFace1 = false;
+      for (int v : face) {
+        if (v == sharedMidpointVertex) hasSharedMidpoint = true;
+        if (v == centerFace0Vertex) hasCenterFace0 = true;
+        if (v == centerFace1Vertex) hasCenterFace1 = true;
+      }
+      if (hasSharedMidpoint && hasCenterFace0) usedOnFace0Side = true;
+      if (hasSharedMidpoint && hasCenterFace1) usedOnFace1Side = true;
+    }
+    assertTrue(usedOnFace0Side, "the shared midpoint should be used by one of face 0's own tessellated pieces");
+    assertTrue(usedOnFace1Side, "the shared midpoint should be used by one of face 1's own tessellated pieces");
   }
 
   // --- changeVisibilityFaces_Scene / reverseVisibilityFaces_Scene -----
@@ -897,6 +1066,92 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0]); // grew by netShift = nNewFaces-1 = 3
     assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
+  }
+
+  // Same bug class as tessellateRectangular_Selection(): two separately-
+  // selected, edge-adjacent quads tessellated in the SAME call must
+  // share their new grid point along that common edge instead of each
+  // creating its own duplicate sitting at the same position.
+  // getOrCreateVertex_atPosition() (used in the "else" branch above, for
+  // every grid point that isn't one of the face's own 4 original
+  // corners) is the fix.
+  @Test
+  void tessellateRowsColumns_twoAdjacentFacesInOneCall_shareTheirCommonEdgesGridPoints () {
+    // Two unit quads sharing the edge between vertex 1 and vertex 2 -
+    // same layout as tessellateRectangular_twoAdjacentFacesInOneCall_
+    // shareTheirCommonEdgesMidpoint() above.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // face 0
+      {2, 0, 0}, {2, 1, 0}                        // face 1's own other two corners
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2, 3},
+      {1, 4, 5, 2}
+    };
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierTessellateColumns = 2;
+    app.User3D.modifierTessellateRows = 2;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateRowsColumns_Selection();
+
+    // No two vertices should ever occupy the exact same position - that
+    // would mean a position got duplicated instead of reused.
+    for (int i = 0; i < app.allVertices.length; i++) {
+      for (int j = i + 1; j < app.allVertices.length; j++) {
+        boolean samePosition = (app.allVertices[i][0] == app.allVertices[j][0])
+          && (app.allVertices[i][1] == app.allVertices[j][1])
+          && (app.allVertices[i][2] == app.allVertices[j][2]);
+        assertFalse(samePosition, "vertex " + i + " and vertex " + j + " sit at the same position " + java.util.Arrays.toString(app.allVertices[i]) + " - should be ONE shared vertex, not two");
+      }
+    }
+
+    // The shared edge's midpoint grid point, (1, 0.5, 0), must be
+    // exactly ONE vertex, used by a face belonging to each original
+    // side - not two coincident vertices, one per side.
+    int sharedMidpointVertex = -1;
+    for (int v = 0; v < app.allVertices.length; v++) {
+      if ((app.allVertices[v][0] == 1) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) {
+        assertEquals(-1, sharedMidpointVertex, "the shared edge's midpoint must exist as exactly one vertex, not be duplicated");
+        sharedMidpointVertex = v;
+      }
+    }
+    assertTrue(sharedMidpointVertex >= 0, "expected to find the shared edge's midpoint vertex at all");
+
+    // Each original face's own center grid point (face 0's at
+    // (0.5,0.5,0), face 1's at (1.5,0.5,0)) is a reliable per-side
+    // marker - every one of that face's own sub-pieces touching the
+    // shared edge also touches its own center.
+    int centerFace0Vertex = -1;
+    int centerFace1Vertex = -1;
+    for (int v = 0; v < app.allVertices.length; v++) {
+      if ((app.allVertices[v][0] == 0.5f) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) centerFace0Vertex = v;
+      if ((app.allVertices[v][0] == 1.5f) && (app.allVertices[v][1] == 0.5f) && (app.allVertices[v][2] == 0)) centerFace1Vertex = v;
+    }
+    assertTrue(centerFace0Vertex >= 0);
+    assertTrue(centerFace1Vertex >= 0);
+
+    boolean usedOnFace0Side = false;
+    boolean usedOnFace1Side = false;
+    for (int[] face : app.allFaces.nodes) {
+      boolean hasSharedMidpoint = false;
+      boolean hasCenterFace0 = false;
+      boolean hasCenterFace1 = false;
+      for (int v : face) {
+        if (v == sharedMidpointVertex) hasSharedMidpoint = true;
+        if (v == centerFace0Vertex) hasCenterFace0 = true;
+        if (v == centerFace1Vertex) hasCenterFace1 = true;
+      }
+      if (hasSharedMidpoint && hasCenterFace0) usedOnFace0Side = true;
+      if (hasSharedMidpoint && hasCenterFace1) usedOnFace1Side = true;
+    }
+    assertTrue(usedOnFace0Side, "the shared midpoint should be used by one of face 0's own tessellated pieces");
+    assertTrue(usedOnFace1Side, "the shared midpoint should be used by one of face 1's own tessellated pieces");
   }
 
   // --- extrudeFaceEdges_Selection (a full integration test) -----------
