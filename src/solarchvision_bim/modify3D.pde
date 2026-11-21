@@ -495,15 +495,19 @@ class Modify3D {
       float solarValue = vertexSolar_TotalComparisonAt(oldX, oldY, oldZ);
       if (is_undefined(solarValue) || solarValue == 0) continue; // no solar signal at this vertex - nothing to decide a direction from
 
-      // avgX/Y/Z points FROM the vertex TOWARD its neighbors, so a
-      // negative sign (beneficial, step OUT) moves it away from them,
-      // and a positive sign (harmful, step IN) moves it toward them.
-      float sign = (solarValue > 0) ? -1 : 1;
+      // Only step IN when solar exposure here is harmful (solarValue <=
+      // 0). A beneficial vertex (solarValue > 0) is left untouched for
+      // now rather than stepping OUT away from it - stepping out may
+      // come back later as a separate option, but harmful-only step-in
+      // is the better default. avgX/Y/Z points FROM the vertex TOWARD
+      // its neighbors, so moving by exactly that (unsigned) step is
+      // what moves it IN toward them.
+      if (solarValue > 0) continue;
 
       Vertex_shouldMove[o] = true;
-      Vertex_moveBy[o][0] = avgX * step * sign;
-      Vertex_moveBy[o][1] = avgY * step * sign;
-      Vertex_moveBy[o][2] = avgZ * step * sign;
+      Vertex_moveBy[o][0] = avgX * step;
+      Vertex_moveBy[o][1] = avgY * step;
+      Vertex_moveBy[o][2] = avgZ * step;
     }
 
     for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
