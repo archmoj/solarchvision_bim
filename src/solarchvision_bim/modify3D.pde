@@ -473,36 +473,16 @@ class Modify3D {
 
       if (maxPairwiseAngle(normX, normY, normZ) > maxAngle) continue; // the faces meeting here aren't coplanar enough - a real edge/corner, frozen
 
-      float avgX = 0, avgY = 0, avgZ = 0;
-      for (int i = normX.size() - 1; i >= 0; i--) {
-        avgX += normX.get(i);
-        avgY += normY.get(i);
-        avgZ += normZ.get(i);
-      }
-      float avgLen = sqrt(avgX * avgX + avgY * avgY + avgZ * avgZ);
-      if (avgLen < 0.00001) continue; // face normals cancel out exactly - no stable direction to step along
-
-      avgX /= avgLen;
-      avgY /= avgLen;
-      avgZ /= avgLen;
+      float[] avgNormal = new float[3];
+      if (!averageNormalizedDirection(normX, normY, normZ, avgNormal)) continue; // face normals cancel out exactly - no stable direction to step along
 
       float solarValue = vertexSolar_TotalComparisonAt(oldX, oldY, oldZ);
-      if (is_undefined(solarValue) || solarValue == 0) continue; // no solar signal at this vertex - nothing to decide a direction from
 
-      // Only step IN when solar exposure here is harmful (solarValue <=
-      // 0). A beneficial vertex (solarValue > 0) is left untouched for
-      // now rather than stepping OUT away from it - stepping out may
-      // come back later as a separate option, but harmful-only step-in
-      // is the better default. avgX/Y/Z is the averaged FACE NORMAL at
-      // this vertex, which points outward from the surface, so moving
-      // by its negation is what steps the vertex IN - receding inward,
-      // away from the sun.
-      if (solarValue > 0) continue;
+      float[] moveBy = new float[3];
+      if (!passiveSolarTouchMoveFor(avgNormal[0], avgNormal[1], avgNormal[2], solarValue, step, moveBy)) continue;
 
       Vertex_shouldMove[o] = true;
-      Vertex_moveBy[o][0] = -avgX * step;
-      Vertex_moveBy[o][1] = -avgY * step;
-      Vertex_moveBy[o][2] = -avgZ * step;
+      Vertex_moveBy[o] = moveBy;
     }
 
     for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
@@ -517,14 +497,62 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // Averages a set of vectors (e.g. the per-face normals collected by
+  // collectFaceNormals_atVertex()) and normalizes the result to a unit
+  // vector, writing it into outDir[0..2]. Returns false (leaving outDir
+  // untouched) when the vectors cancel out exactly - no stable average
+  // direction to report. Pulled out of passiveSolarTouchVertices_
+  // Selection() so this piece of its math can be unit-tested on its
+  // own: that function's own real call to calculate_VertexSolar_array()
+  // needs a live PGraphics surface to run at all (see
+  // SolarArraySmokeTest.java's own comment), so a bare test instance
+  // can never exercise this averaging step through the full function.
+  boolean averageNormalizedDirection (FloatList dx, FloatList dy, FloatList dz, float[] outDir) {
+    float avgX = 0, avgY = 0, avgZ = 0;
+    for (int i = dx.size() - 1; i >= 0; i--) {
+      avgX += dx.get(i);
+      avgY += dy.get(i);
+      avgZ += dz.get(i);
+    }
+    float avgLen = sqrt(avgX * avgX + avgY * avgY + avgZ * avgZ);
+    if (avgLen < 0.00001) return false;
+
+    outDir[0] = avgX / avgLen;
+    outDir[1] = avgY / avgLen;
+    outDir[2] = avgZ / avgLen;
+    return true;
+  }
+
+  // Decides whether a vertex should move under Passive Solar Touch, and
+  // by how much, given its own solar comparison value and the already-
+  // averaged, unit-length outward face normal at that vertex (from
+  // averageNormalizedDirection() above). Returns false (leaving moveBy
+  // untouched) unless solar exposure here is harmful (solarValue <= 0)
+  // - a beneficial vertex is left untouched for now rather than
+  // stepping OUT away from it; stepping out may come back later as a
+  // separate option, but harmful-only step-IN is the better default.
+  // Moving by the NEGATED outward normal is what steps the vertex IN -
+  // receding inward, away from the sun. Pulled out for the same
+  // testability reason as averageNormalizedDirection() above.
+  boolean passiveSolarTouchMoveFor (float normAvgX, float normAvgY, float normAvgZ, float solarValue, float step, float[] moveBy) {
+    if (is_undefined(solarValue) || solarValue == 0) return false; // no solar signal at this vertex - nothing to decide a direction from
+    if (solarValue > 0) return false; // beneficial - left untouched (no step-out, for now)
+
+    moveBy[0] = -normAvgX * step;
+    moveBy[1] = -normAvgY * step;
+    moveBy[2] = -normAvgZ * step;
+    return true;
+  }
+
   // Same ring-walking traversal accumulateRelaxFromRing() uses, but
   // collects a unit DIRECTION vector (from vNo toward each real
   // neighbor) per ring occurrence instead of summing raw neighbor
-  // positions - passiveSolarTouchVertices_Selection() averages these into
-  // the direction it steps the vertex along. (Whether that step
-  // actually happens - the edge/corner freeze decision - is a separate
-  // question, answered by collectFaceNormals_atVertex() below, not by
-  // these directions themselves.)
+  // positions. No longer used by passiveSolarTouchVertices_Selection()
+  // itself - it now steps along the averaged FACE NORMAL instead (see
+  // collectFaceNormals_atVertex() below and passiveSolarTouchMoveFor()
+  // above) - but kept as a standalone, independently tested helper in
+  // case a neighbor-direction-based step (e.g. a future "step out"
+  // option) wants it again.
   void collectNeighborDirections_fromRing (int[][] ringNodes, int vNo, float oldX, float oldY, float oldZ, FloatList dirX, FloatList dirY, FloatList dirZ) {
     for (int f = 0; f < ringNodes.length; f++) {
       int n = ringNodes[f].length;
@@ -563,15 +591,17 @@ class Modify3D {
   // normal-line display, and the identical cross-product shape in
   // calculateVertexSolarArray.pde). Polylines have no area and so no
   // normal, so unlike collectNeighborDirections_fromRing above, this
-  // only ever looks at allFaces.nodes. passiveSolarTouchVertices_Selection()
-  // uses the SPREAD across these (via maxPairwiseAngle, below) to
-  // decide whether a vertex sits in a flat region (every face sharing
-  // it points the same way) or on a real edge/corner (they don't) -
-  // see that function's own comment for why this, and not the ring-
-  // neighbor DIRECTIONS collectNeighborDirections_fromRing collects,
-  // is the right thing to compare for that. A degenerate corner
-  // (collinear neighbors, cross product ~0) is skipped rather than
-  // appending a meaningless direction.
+  // only ever looks at allFaces.nodes. passiveSolarTouchVertices_
+  // Selection() uses these results TWICE: the SPREAD across them (via
+  // maxPairwiseAngle, below) decides whether a vertex sits in a flat
+  // region (every face sharing it points the same way) or on a real
+  // edge/corner (they don't) - see that function's own comment for why
+  // this, and not the ring-neighbor DIRECTIONS collectNeighborDirections_
+  // fromRing collects, is the right thing to compare for that; and their
+  // AVERAGE (via averageNormalizedDirection(), above) is the outward
+  // direction passiveSolarTouchMoveFor() steps the vertex opposite of.
+  // A degenerate corner (collinear neighbors, cross product ~0) is
+  // skipped rather than appending a meaningless direction.
   void collectFaceNormals_atVertex (int[][] faceNodes, int vNo, FloatList nX, FloatList nY, FloatList nZ) {
     float thisX = allPoints.getX(vNo);
     float thisY = allPoints.getY(vNo);

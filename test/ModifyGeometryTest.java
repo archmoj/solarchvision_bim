@@ -2783,6 +2783,103 @@ class ModifyGeometryTest {
     assertEquals((float) (Math.PI / 2), app.Modify3D.maxPairwiseAngle(dirX, dirY, dirZ), 0.0001f);
   }
 
+  // --- averageNormalizedDirection ------------------------------------------
+  //
+  // Pulled out of passiveSolarTouchVertices_Selection() so this piece of
+  // its math - averaging a set of vectors (its own face normals, in
+  // practice) and normalizing the result - can be unit-tested directly,
+  // since that function's own real call to calculate_VertexSolar_array()
+  // needs a live PGraphics surface and so can never be exercised through
+  // the full function in a bare test instance (see the "no-op guard
+  // paths only" section below).
+
+  @Test
+  void averageNormalizedDirection_singleVector_isJustItsOwnNormalizedCopy () {
+    FloatList dx = new FloatList(); dx.append(0);
+    FloatList dy = new FloatList(); dy.append(0);
+    FloatList dz = new FloatList(); dz.append(5);
+
+    float[] outDir = new float[3];
+    assertTrue(app.Modify3D.averageNormalizedDirection(dx, dy, dz, outDir));
+    assertArrayEquals(new float[]{0, 0, 1}, outDir, 0.0001f);
+  }
+
+  @Test
+  void averageNormalizedDirection_multipleVectors_averagesThenNormalizes () {
+    // Three copies of (1,0,0) and one of (0,1,0): sums to (3,1,0),
+    // length sqrt(10) - the average is NOT just a simple per-axis mean
+    // of already-unit vectors re-normalized by count, it's the sum
+    // normalized, so a 3-to-1 majority direction dominates accordingly.
+    FloatList dx = new FloatList(); dx.append(1); dx.append(1); dx.append(1); dx.append(0);
+    FloatList dy = new FloatList(); dy.append(0); dy.append(0); dy.append(0); dy.append(1);
+    FloatList dz = new FloatList(); dz.append(0); dz.append(0); dz.append(0); dz.append(0);
+
+    float[] outDir = new float[3];
+    assertTrue(app.Modify3D.averageNormalizedDirection(dx, dy, dz, outDir));
+
+    float len = (float) Math.sqrt(10);
+    assertArrayEquals(new float[]{3 / len, 1 / len, 0}, outDir, 0.0001f);
+  }
+
+  @Test
+  void averageNormalizedDirection_oppositeVectorsCancelOut_returnsFalse () {
+    FloatList dx = new FloatList(); dx.append(1); dx.append(-1);
+    FloatList dy = new FloatList(); dy.append(0); dy.append(0);
+    FloatList dz = new FloatList(); dz.append(0); dz.append(0);
+
+    float[] outDir = new float[]{9, 9, 9}; // sentinel - must be left untouched
+    assertFalse(app.Modify3D.averageNormalizedDirection(dx, dy, dz, outDir));
+    assertArrayEquals(new float[]{9, 9, 9}, outDir, 0.0001f, "no stable direction - outDir must be left untouched, not zeroed or garbage");
+  }
+
+  @Test
+  void averageNormalizedDirection_emptyLists_returnsFalse () {
+    float[] outDir = new float[]{9, 9, 9};
+    assertFalse(app.Modify3D.averageNormalizedDirection(new FloatList(), new FloatList(), new FloatList(), outDir));
+    assertArrayEquals(new float[]{9, 9, 9}, outDir, 0.0001f);
+  }
+
+  // --- passiveSolarTouchMoveFor --------------------------------------------
+  //
+  // Pulled out of passiveSolarTouchVertices_Selection() for the same
+  // testability reason as averageNormalizedDirection() above - this is
+  // the per-vertex move decision itself: only step IN (opposite the
+  // averaged outward face normal) when solar exposure is harmful
+  // (solarValue <= 0); a beneficial vertex (solarValue > 0) is left
+  // untouched for now rather than stepping OUT - that may come back
+  // later as a separate option, but harmful-only step-in is the better
+  // default confirmed for this app.
+
+  @Test
+  void passiveSolarTouchMoveFor_harmfulValue_stepsOppositeTheNormal_scaledByStep () {
+    float[] moveBy = new float[3];
+    // Outward normal points straight up; harmful exposure should step
+    // the vertex DOWN (opposite the normal), by exactly `step`.
+    assertTrue(app.Modify3D.passiveSolarTouchMoveFor(0, 0, 1, -5f, 0.25f, moveBy));
+    assertArrayEquals(new float[]{0, 0, -0.25f}, moveBy, 0.0001f);
+  }
+
+  @Test
+  void passiveSolarTouchMoveFor_beneficialValue_leavesVertexUntouched () {
+    float[] moveBy = new float[]{9, 9, 9}; // sentinel - must be left untouched
+    assertFalse(app.Modify3D.passiveSolarTouchMoveFor(0, 0, 1, 5f, 0.25f, moveBy));
+    assertArrayEquals(new float[]{9, 9, 9}, moveBy, 0.0001f, "beneficial vertices get no step-out for now - moveBy must be left untouched");
+  }
+
+  @Test
+  void passiveSolarTouchMoveFor_zeroSolarValue_isNoSignal_leavesVertexUntouched () {
+    float[] moveBy = new float[]{9, 9, 9};
+    assertFalse(app.Modify3D.passiveSolarTouchMoveFor(0, 0, 1, 0f, 0.25f, moveBy));
+    assertArrayEquals(new float[]{9, 9, 9}, moveBy, 0.0001f);
+  }
+
+  @Test
+  void passiveSolarTouchMoveFor_undefinedSolarValue_leavesVertexUntouched () {
+    float[] moveBy = new float[]{9, 9, 9};
+    assertFalse(app.Modify3D.passiveSolarTouchMoveFor(0, 0, 1, app.FLOAT_undefined, 0.25f, moveBy));
+    assertArrayEquals(new float[]{9, 9, 9}, moveBy, 0.0001f);
+  }
+
   // --- vertexSolar_TotalComparisonAt --------------------------------------
   //
   // Reads directly off hand-set VertexSolar_XYZ/VertexSolar_amounts
