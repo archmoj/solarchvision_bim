@@ -149,8 +149,8 @@ class MeshPointCloudTest {
 
     assertEquals(n, insertedCounts.size(), "one call per real point, never for the 3 internal super-triangle points");
     for (int i = 0; i < n; i++) {
-      assertEquals(i + 1, insertedCounts.get(i), "pointsInserted should count up from 1");
-      assertEquals(n, totalCounts.get(i), "totalPoints should always equal n");
+      assertEquals(i + 1, insertedCounts.get(i).intValue(), "pointsInserted should count up from 1");
+      assertEquals(n, totalCounts.get(i).intValue(), "totalPoints should always equal n");
     }
   }
 

@@ -23,8 +23,8 @@ looked right - not written speculatively.
 **This is a fallback, not a replacement.** Prefer `test/run_tests.sh` with
 a real JUnit jar whenever one is reachable - this stub has none of the
 real platform's filtering, tagging, parallelism, or detailed reporting,
-and doesn't support `@AfterEach`/`@AfterAll`/`@Nested`/`@ParameterizedTest`
-(nothing here uses them yet). Reach for this specifically when Maven
+and doesn't support `@AfterAll`/`@Nested`/`@ParameterizedTest`
+(nothing here uses those yet; `@AfterEach` is supported). Reach for this specifically when Maven
 Central (or an equivalent jar host) isn't reachable from wherever you're
 running.
 
@@ -80,5 +80,5 @@ If a future test file needs an `Assertions` method or overload that
 isn't here, the compiler error naming the missing symbol says exactly
 what to add - follow the pattern of its neighbors in `Assertions.java`.
 The same goes for `TestRunner.java` if a test file ever needs
-`@AfterEach`/`@AfterAll`/`@Nested`/etc. - none of that exists yet because
+`@AfterAll`/`@Nested`/etc. - none of that exists yet because
 nothing currently needs it.

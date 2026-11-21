@@ -129,8 +129,8 @@ class MeshPointCloudGridTest {
 
     assertEquals(n, insertedCounts.size(), "one call per point BINNED - see meshPointCloud_gridXY()'s own progress comment for why that's a different operation from Delaunay's own \"per point inserted\"");
     for (int i = 0; i < n; i++) {
-      assertEquals(i + 1, insertedCounts.get(i));
-      assertEquals(n, totalCounts.get(i));
+      assertEquals(i + 1, insertedCounts.get(i).intValue());
+      assertEquals(n, totalCounts.get(i).intValue());
     }
   }
 

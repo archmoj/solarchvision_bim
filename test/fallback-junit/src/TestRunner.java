@@ -5,8 +5,10 @@
 // build/all-test-classes) to scan. For each top-level, non-nested class
 // found there, runs any static @BeforeAll methods once, then for every
 // @Test method: constructs a fresh instance, runs any @BeforeEach
-// methods on it, invokes the test method, and records pass/fail/error.
-// No filtering, tagging, parallelism, or @AfterEach/@AfterAll/@Nested/
+// methods on it, invokes the test method, then runs any @AfterEach
+// methods (even if the test itself failed, like real JUnit), and
+// records pass/fail/error.
+// No filtering, tagging, parallelism, or @AfterAll/@Nested/
 // @ParameterizedTest support - this repo's test/*.java files don't use
 // any of those, so there was nothing to reproduce; add support the same
 // way if a later test file needs it.
@@ -84,8 +86,10 @@ public class TestRunner {
 
     for (Method testMethod : testMethods) {
       String fullName = className + "." + testMethod.getName();
+      Object instance = null;
+      Throwable failure = null;
       try {
-        Object instance = clazz.getDeclaredConstructor().newInstance();
+        instance = clazz.getDeclaredConstructor().newInstance();
 
         for (Method m : clazz.getDeclaredMethods()) {
           if (isAnnotated(m, "BeforeEach")) {
@@ -96,10 +100,30 @@ public class TestRunner {
 
         testMethod.setAccessible(true);
         testMethod.invoke(instance);
-
-        totalPassed++;
       } catch (Throwable t) {
-        Throwable root = rootCauseThrowable(t);
+        failure = t;
+      }
+
+      // @AfterEach runs even if the test (or @BeforeEach) above failed,
+      // same as real JUnit - e.g. so a test that swapped out System.out
+      // still gets it restored.
+      if (instance != null) {
+        for (Method m : clazz.getDeclaredMethods()) {
+          if (isAnnotated(m, "AfterEach")) {
+            try {
+              m.setAccessible(true);
+              m.invoke(instance);
+            } catch (Throwable t) {
+              if (failure == null) failure = t;
+            }
+          }
+        }
+      }
+
+      if (failure == null) {
+        totalPassed++;
+      } else {
+        Throwable root = rootCauseThrowable(failure);
         if (root.getClass().getName().contains("TestAssertionError") || root instanceof AssertionError) {
           totalFailed++;
           failures.add(fullName + " -- " + root.getMessage());
