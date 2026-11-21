@@ -31,6 +31,7 @@ class WIN3D {
 
   boolean fullPeriod_IMG = false;
   boolean record_IMG = false;
+  boolean record_PNG = false;
   boolean record_AUTO = false;
 
   float ImageScale = 1.0;
@@ -148,12 +149,13 @@ class WIN3D {
     image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
 
     if (this.record_IMG || !this.record_AUTO) this.record_IMG = false;
+    if (this.record_PNG || !this.record_AUTO) this.record_PNG = false;
 
     endImageScale();
   }
 
   void beginImageScale () {
-    if (this.record_IMG) this.ImageScale = 1; //2; //3;
+    if (this.record_IMG || this.record_PNG) this.ImageScale = 1; //2; //3;
     else this.ImageScale = 1;
 
     this.dX *= this.ImageScale;
@@ -198,7 +200,7 @@ class WIN3D {
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
-    if (!(this.record_IMG || this.record_AUTO)) {
+    if (!(this.record_IMG || this.record_PNG || this.record_AUTO)) {
       this.draw_referencePivot();
     }
 
@@ -211,7 +213,7 @@ class WIN3D {
     // longer includes it - it's only composited onto the main canvas
     // afterward, by drawViewport3DLayers.pde, which saveRecordedFrame() below
     // doesn't capture.
-    if (this.record_IMG || this.record_AUTO) {
+    if (this.record_IMG || this.record_PNG || this.record_AUTO) {
       saveRecordedFrame();
     }
   }
@@ -246,7 +248,7 @@ class WIN3D {
     if (this.impactTypeIndex == Impact_ACTIVE) myFile += "_RAD";
     if (this.impactTypeIndex == Impact_PASSIVE) myFile += "_EFF";
     myFile += "_" + importedObjectName;
-    myFile += ".jpg";
+    myFile += this.record_PNG ? ".png" : ".jpg";
 
     this.graphics.save(myFile);
     println("File created:" + myFile);

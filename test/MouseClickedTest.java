@@ -321,12 +321,15 @@ class MouseClickedTest {
   void stopAllRecording_clearsEveryRecordingFlagAcrossAllThreeWindows () {
     app.STUDY.record_AUTO = true;
     app.STUDY.record_IMG = true;
+    app.STUDY.record_PNG = true;
     app.STUDY.record_PDF = true;
     app.WORLD.record_AUTO = true;
     app.WORLD.record_IMG = true;
+    app.WORLD.record_PNG = true;
     app.WORLD.record_PDF = true;
     app.WIN3D.record_AUTO = true;
     app.WIN3D.record_IMG = true;
+    app.WIN3D.record_PNG = true;
     app.FRAME_record_AUTO = true;
     app.FRAME_record_IMG = true;
     app.FRAME_click_IMG = true;
@@ -336,12 +339,15 @@ class MouseClickedTest {
 
     assertFalse(app.STUDY.record_AUTO);
     assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_PDF);
     assertFalse(app.WORLD.record_AUTO);
     assertFalse(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_PDF);
     assertFalse(app.WIN3D.record_AUTO);
     assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.FRAME_record_AUTO);
     assertFalse(app.FRAME_record_IMG);
     assertFalse(app.FRAME_click_IMG);

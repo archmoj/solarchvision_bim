@@ -37,6 +37,32 @@ class WORLDTest {
     assertFalse(app.WORLD.update);
   }
 
+  // ================= Save JPG/PNG Map Graph ==============================
+  // Each sets only its own one-shot flag (never the other format's), plus
+  // WORLD.update via revise() - the actual file-extension choice happens
+  // later, inside endFrame(), which isn't runnable headlessly (real
+  // graphics.save() I/O - see test/README.md's "Extending this" section).
+
+  @Test
+  void saveJPGMapGraph_setsRecordIMGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save JPG Map Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_PNG);
+    assertTrue(app.WORLD.update);
+  }
+
+  @Test
+  void savePNGMapGraph_setsRecordPNGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save PNG Map Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WORLD.record_PNG);
+    assertFalse(app.WORLD.record_IMG);
+    assertTrue(app.WORLD.update);
+  }
+
   // ================= hideAllMarkersAndLabels ============================
 
   @Test

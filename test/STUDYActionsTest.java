@@ -368,4 +368,30 @@ class STUDYActionsTest {
     assertEquals(2, app.STUDY.probabilityWidthInterval);
     assertTrue(app.STUDY.update);
   }
+
+  // ================= Save JPG/PNG Time Graph ===============================
+  // Each sets only its own one-shot flag (never the other format's), plus
+  // STUDY.update via revise() - the actual file-extension choice happens
+  // later, inside endFrame(), which isn't runnable headlessly (real
+  // graphics.save() I/O - see test/README.md's "Extending this" section).
+
+  @Test
+  void saveJPGTimeGraph_setsRecordIMGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save JPG Time Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_PNG);
+    assertTrue(app.STUDY.update);
+  }
+
+  @Test
+  void savePNGTimeGraph_setsRecordPNGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save PNG Time Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.STUDY.record_PNG);
+    assertFalse(app.STUDY.record_IMG);
+    assertTrue(app.STUDY.update);
+  }
 }

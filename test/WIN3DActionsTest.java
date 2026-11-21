@@ -728,4 +728,55 @@ class WIN3DActionsTest {
     assertArrayEquals(new float[]{-r, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{-r, 10, 0}, app.allVertices[1], 0.0001f);
   }
+
+  // ================= Save JPG/PNG 3D Graph ===============================
+  // Each sets only its own one-shot flag (never the other format's), plus
+  // WIN3D.update via view_changed()->WIN3D.revise() - the actual file-
+  // extension choice happens later, inside saveRecordedFrame(), which
+  // isn't runnable headlessly (real graphics.save() I/O - see test/
+  // README.md's "Extending this" section).
+
+  @Test
+  void saveJPG3DGraph_setsRecordIMGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save JPG 3D Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void savePNG3DGraph_setsRecordPNGOnlyAndRevises () {
+    String hint = app.runScriptLine("Save PNG 3D Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void saveJPG3DGraphFullPeriod_setsRecordIMGAndFullPeriodFlag () {
+    String hint = app.runScriptLine("Save JPG 3D Graph (Full-Period)");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
+    assertTrue(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void savePNG3DGraphFullPeriod_setsRecordPNGAndFullPeriodFlag () {
+    String hint = app.runScriptLine("Save PNG 3D Graph (Full-Period)");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_IMG);
+    assertTrue(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
 }

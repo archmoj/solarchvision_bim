@@ -1246,6 +1246,9 @@ around.
     `Record Solid Graph`, `Stop Recording`
 -   `Save JPG 3D Graph`, `Save JPG 3D Graph (Full-Period)`, `Save JPG Time Graph`,
     `Save JPG Map Graph`
+-   `Save PNG 3D Graph`, `Save PNG 3D Graph (Full-Period)`, `Save PNG Time Graph`,
+    `Save PNG Map Graph` - same exports as their JPG counterparts, saved as
+    lossless PNG instead
 -   `Save PDF Time Graph`, `Save PDF Map Graph`
 
 ### Weather and climate data

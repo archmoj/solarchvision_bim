@@ -518,8 +518,18 @@ void build_allActions() {
     STUDY.revise();
   });
 
+  putAction("Save PNG Time Graph", () -> {
+    STUDY.record_PNG = true;
+    STUDY.revise();
+  });
+
   putAction("Save JPG Map Graph", () -> {
     WORLD.record_IMG = true;
+    WORLD.revise();
+  });
+
+  putAction("Save PNG Map Graph", () -> {
+    WORLD.record_PNG = true;
     WORLD.revise();
   });
 
@@ -534,9 +544,22 @@ void build_allActions() {
     view_changed();
   });
 
+  putAction("Save PNG 3D Graph", () -> {
+    WIN3D.record_PNG = true;
+
+    view_changed();
+  });
+
   putAction("Save JPG 3D Graph (Full-Period)", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_IMG = true;
+
+    view_changed();
+  });
+
+  putAction("Save PNG 3D Graph (Full-Period)", () -> {
+    WIN3D.fullPeriod_IMG = true;
+    WIN3D.record_PNG = true;
 
     view_changed();
   });
