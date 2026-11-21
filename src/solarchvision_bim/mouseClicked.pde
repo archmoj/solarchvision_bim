@@ -57,19 +57,19 @@ void selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java
 
 void stopAllRecording() {
   STUDY.record_AUTO = false;
-  STUDY.record_IMG = false;
+  STUDY.record_JPG = false;
   STUDY.record_PNG = false;
   STUDY.record_TIFF = false;
   STUDY.record_BMP = false;
   STUDY.record_PDF = false;
   WORLD.record_AUTO = false;
-  WORLD.record_IMG = false;
+  WORLD.record_JPG = false;
   WORLD.record_PNG = false;
   WORLD.record_TIFF = false;
   WORLD.record_BMP = false;
   WORLD.record_PDF = false;
   WIN3D.record_AUTO = false;
-  WIN3D.record_IMG = false;
+  WIN3D.record_JPG = false;
   WIN3D.record_PNG = false;
   WIN3D.record_TIFF = false;
   WIN3D.record_BMP = false;

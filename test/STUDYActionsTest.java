@@ -376,11 +376,11 @@ class STUDYActionsTest {
   // graphics.save() I/O - see test/README.md's "Extending this" section).
 
   @Test
-  void saveJPGTimeGraph_setsRecordIMGOnlyAndRevises () {
+  void saveJPGTimeGraph_setsRecordJPGOnlyAndRevises () {
     String hint = app.runScriptLine("Save JPG Time Graph");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertTrue(app.STUDY.record_IMG);
+    assertTrue(app.STUDY.record_JPG);
     assertFalse(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_TIFF);
     assertFalse(app.STUDY.record_BMP);
@@ -393,7 +393,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.record_PNG);
-    assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_JPG);
     assertFalse(app.STUDY.record_TIFF);
     assertFalse(app.STUDY.record_BMP);
     assertTrue(app.STUDY.update);
@@ -405,7 +405,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.record_TIFF);
-    assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_JPG);
     assertFalse(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_BMP);
     assertTrue(app.STUDY.update);
@@ -417,7 +417,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.record_BMP);
-    assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_JPG);
     assertFalse(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_TIFF);
     assertTrue(app.STUDY.update);

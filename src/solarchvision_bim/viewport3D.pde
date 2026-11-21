@@ -30,7 +30,7 @@ class WIN3D {
   boolean include = true;
 
   boolean fullPeriod_IMG = false;
-  boolean record_IMG = false;
+  boolean record_JPG = false;
   boolean record_PNG = false;
   boolean record_TIFF = false;
   boolean record_BMP = false;
@@ -150,7 +150,7 @@ class WIN3D {
     imageMode(CORNER);
     image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
 
-    if (this.record_IMG || !this.record_AUTO) this.record_IMG = false;
+    if (this.record_JPG || !this.record_AUTO) this.record_JPG = false;
     if (this.record_PNG || !this.record_AUTO) this.record_PNG = false;
     if (this.record_TIFF || !this.record_AUTO) this.record_TIFF = false;
     if (this.record_BMP || !this.record_AUTO) this.record_BMP = false;
@@ -159,7 +159,7 @@ class WIN3D {
   }
 
   void beginImageScale () {
-    if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP) this.ImageScale = 1; //2; //3;
+    if (this.record_JPG || this.record_PNG || this.record_TIFF || this.record_BMP) this.ImageScale = 1; //2; //3;
     else this.ImageScale = 1;
 
     this.dX *= this.ImageScale;
@@ -204,7 +204,7 @@ class WIN3D {
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
-    if (!(this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO)) {
+    if (!(this.record_JPG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO)) {
       this.draw_referencePivot();
     }
 
@@ -217,7 +217,7 @@ class WIN3D {
     // longer includes it - it's only composited onto the main canvas
     // afterward, by drawViewport3DLayers.pde, which saveRecordedFrame() below
     // doesn't capture.
-    if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO) {
+    if (this.record_JPG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO) {
       saveRecordedFrame();
     }
   }

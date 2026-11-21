@@ -737,11 +737,11 @@ class WIN3DActionsTest {
   // README.md's "Extending this" section).
 
   @Test
-  void saveJPG3DGraph_setsRecordIMGOnlyAndRevises () {
+  void saveJPG3DGraph_setsRecordJPGOnlyAndRevises () {
     String hint = app.runScriptLine("Save JPG 3D Graph");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertTrue(app.WIN3D.record_IMG);
+    assertTrue(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_BMP);
@@ -755,7 +755,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_PNG);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_BMP);
     assertFalse(app.WIN3D.fullPeriod_IMG);
@@ -768,7 +768,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_TIFF);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_BMP);
     assertFalse(app.WIN3D.fullPeriod_IMG);
@@ -781,7 +781,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_BMP);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.fullPeriod_IMG);
@@ -789,11 +789,11 @@ class WIN3DActionsTest {
   }
 
   @Test
-  void saveJPG3DGraphFullPeriod_setsRecordIMGAndFullPeriodFlag () {
+  void saveJPG3DGraphFullPeriod_setsRecordJPGAndFullPeriodFlag () {
     String hint = app.runScriptLine("Save JPG 3D Graph (Full-Period)");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertTrue(app.WIN3D.record_IMG);
+    assertTrue(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_BMP);
@@ -807,7 +807,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_PNG);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_BMP);
     assertTrue(app.WIN3D.fullPeriod_IMG);
@@ -820,7 +820,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_TIFF);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_BMP);
     assertTrue(app.WIN3D.fullPeriod_IMG);
@@ -833,7 +833,7 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WIN3D.record_BMP);
-    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_JPG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
     assertTrue(app.WIN3D.fullPeriod_IMG);

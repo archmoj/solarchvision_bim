@@ -514,7 +514,7 @@ void build_allActions() {
   });
 
   putAction("Save JPG Time Graph", () -> {
-    STUDY.record_IMG = true;
+    STUDY.record_JPG = true;
     STUDY.revise();
   });
 
@@ -534,7 +534,7 @@ void build_allActions() {
   });
 
   putAction("Save JPG Map Graph", () -> {
-    WORLD.record_IMG = true;
+    WORLD.record_JPG = true;
     WORLD.revise();
   });
 
@@ -559,7 +559,7 @@ void build_allActions() {
   });
 
   putAction("Save JPG 3D Graph", () -> {
-    WIN3D.record_IMG = true;
+    WIN3D.record_JPG = true;
 
     view_changed();
   });
@@ -584,7 +584,7 @@ void build_allActions() {
 
   putAction("Save JPG 3D Graph (Full-Period)", () -> {
     WIN3D.fullPeriod_IMG = true;
-    WIN3D.record_IMG = true;
+    WIN3D.record_JPG = true;
 
     view_changed();
   });

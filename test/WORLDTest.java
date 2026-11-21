@@ -44,11 +44,11 @@ class WORLDTest {
   // graphics.save() I/O - see test/README.md's "Extending this" section).
 
   @Test
-  void saveJPGMapGraph_setsRecordIMGOnlyAndRevises () {
+  void saveJPGMapGraph_setsRecordJPGOnlyAndRevises () {
     String hint = app.runScriptLine("Save JPG Map Graph");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertTrue(app.WORLD.record_IMG);
+    assertTrue(app.WORLD.record_JPG);
     assertFalse(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_TIFF);
     assertFalse(app.WORLD.record_BMP);
@@ -61,7 +61,7 @@ class WORLDTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WORLD.record_PNG);
-    assertFalse(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_JPG);
     assertFalse(app.WORLD.record_TIFF);
     assertFalse(app.WORLD.record_BMP);
     assertTrue(app.WORLD.update);
@@ -73,7 +73,7 @@ class WORLDTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WORLD.record_TIFF);
-    assertFalse(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_JPG);
     assertFalse(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_BMP);
     assertTrue(app.WORLD.update);
@@ -85,7 +85,7 @@ class WORLDTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.WORLD.record_BMP);
-    assertFalse(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_JPG);
     assertFalse(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_TIFF);
     assertTrue(app.WORLD.update);
