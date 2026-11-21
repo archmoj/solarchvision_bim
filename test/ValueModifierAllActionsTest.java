@@ -121,8 +121,8 @@ class ValueModifierAllActionsTest {
       "Modifier Bend XY", // modifierBendXY
       "Modifier Bend XZ", // modifierBendXZ
       "Modifier Bend YZ", // modifierBendYZ
-      "Modifier Solar Form-Find Step", // modifierSolarFormFindStep
-      "Modifier Solar Form-Find Angle", // modifierSolarFormFindAngle
+      "Modifier Passive Solar Touch Step", // modifierPassiveSolarTouchStep
+      "Modifier Passive Solar Touch Angle", // modifierPassiveSolarTouchAngle
       "Modifier Weld Threshold", // modifierWeldThreshold
       "Soft Selection Falloff Power", // softSelectionFalloffPower
       "Soft Selection Falloff Radius", // softSelectionFalloffRadius

@@ -772,8 +772,8 @@ the user interface.
 | `Modifier Bend XY` | Circular-arc bend (degrees per meter) in X driven by Y offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend XZ` | Circular-arc bend (degrees per meter) in X driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend YZ` | Circular-arc bend (degrees per meter) in Y driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
-| `Modifier Solar Form-Find Step` | Distance (meters) each vertex is pushed out or pulled in per run of `Solar Form-Find Selected Vertices` | 0 to 2 |
-| `Modifier Solar Form-Find Angle` | A vertex whose surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched by `Solar Form-Find Selected Vertices` | 0 to 90 |
+| `Modifier Passive Solar Touch Step` | Distance (meters) each vertex is pushed out or pulled in per run of `Passive Solar Touch Selected Vertices` | 0 to 2 |
+| `Modifier Passive Solar Touch Angle` | A vertex whose surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched by `Passive Solar Touch Selected Vertices` | 0 to 90 |
 
 ### Export defaults (3D-export)
 
@@ -1364,8 +1364,8 @@ under [Shading and rendering](#shading-and-rendering) above)
     Deform panel's own currently-set `Modifier Skew */Modifier Twist
     */Modifier Bend *` fields forward or backward, instead of using
     one of the three commands directly above
--   `Solar Form-Find Selected Vertices`: a solar-climatic form-finding
-    pass - one bounded step (`Modifier Solar Form-Find Step` meters)
+-   `Passive Solar Touch Selected Vertices`: a passive-solar-driven touch -
+    one bounded step (`Modifier Passive Solar Touch Step` meters)
     that pushes each selected vertex out along, or pulls it in against,
     the average direction to its own real mesh neighbors, same
     neighbor-gathering as `Relax Selected Vertices` above but read as a
@@ -1374,14 +1374,14 @@ under [Shading and rendering](#shading-and-rendering) above)
     out to expose more of what's working, a net-harmful one steps in to
     self-shade. A vertex is treated as an edge or corner, and left
     untouched, when the faces meeting there aren't coplanar enough -
-    their own normals differ by more than `Modifier Solar Form-Find
+    their own normals differ by more than `Modifier Passive Solar Touch
     Angle` degrees - rather than when its neighbors simply point in
     different directions, which is normal for any ordinary interior
     vertex of a flat, subdivided face. This is one step forward per
     run, not a solve for an "optimal" shape - run it again for another
     step, as many times as fits the design
 -   `Relax Selected Group`, `Skew Selected Group`, `Twist Selected Group`,
-    `Bend Selected Group`, `Solar Form-Find Selected Group`: the same
+    `Bend Selected Group`, `Passive Solar Touch Selected Group`: the same
     five modifiers as above, but for a selection still at the GROUP
     level - each runs `Groups >> Vertices` first (see
     [Groups](#groups) below) to expand the group's own faces and

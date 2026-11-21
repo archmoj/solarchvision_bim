@@ -62,8 +62,8 @@ class User3D {
   float modifierBendXY = 0; // degrees of circular-arc bend in X, per 1m of Y offset from the selection's own bounding-box center
   float modifierBendXZ = 0; // degrees of circular-arc bend in X, per 1m of Z offset from the selection's own bounding-box center
   float modifierBendYZ = 0; // degrees of circular-arc bend in Y, per 1m of Z offset from the selection's own bounding-box center
-  float modifierSolarFormFindStep = 0.25; // meters moved in or out per run of Solar Form-Find Selected Vertices
-  float modifierSolarFormFindAngle = 45; // degrees - a vertex whose own surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched
+  float modifierPassiveSolarTouchStep = 0.25; // meters moved in or out per run of Passive Solar Touch Selected Vertices
+  float modifierPassiveSolarTouchAngle = 45; // degrees - a vertex whose own surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched
   float modifierWeldThreshold = 0.1;
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
@@ -124,8 +124,8 @@ class User3D {
     XML_setFloat(parent, "modifierOpeningDepth", this.modifierOpeningDepth);
     XML_setFloat(parent, "modifierOpeningArea", this.modifierOpeningArea);
     XML_setFloat(parent, "modifierOpeningDeviation", this.modifierOpeningDeviation);
-    XML_setFloat(parent, "modifierSolarFormFindStep", this.modifierSolarFormFindStep);
-    XML_setFloat(parent, "modifierSolarFormFindAngle", this.modifierSolarFormFindAngle);
+    XML_setFloat(parent, "modifierPassiveSolarTouchStep", this.modifierPassiveSolarTouchStep);
+    XML_setFloat(parent, "modifierPassiveSolarTouchAngle", this.modifierPassiveSolarTouchAngle);
     XML_setFloat(parent, "modifierWeldThreshold", this.modifierWeldThreshold);
     XML_setFloat(parent, "modifierOffsetAmount", this.modifierOffsetAmount);
     XML_setFloat(parent, "modifierInsetDepth", this.modifierInsetDepth);
@@ -201,8 +201,8 @@ class User3D {
     this.modifierOpeningDepth = XML_getFloat(parent, "modifierOpeningDepth");
     this.modifierOpeningArea = XML_getFloat(parent, "modifierOpeningArea");
     this.modifierOpeningDeviation = XML_getFloat(parent, "modifierOpeningDeviation");
-    this.modifierSolarFormFindStep = XML_getFloat(parent, "modifierSolarFormFindStep", 0.25); // older save files never had this field - 0 would mean "form-find does nothing", not a useful fallback
-    this.modifierSolarFormFindAngle = XML_getFloat(parent, "modifierSolarFormFindAngle", 45); // older save files never had this field - 0 would freeze every vertex as an "edge", not a useful fallback
+    this.modifierPassiveSolarTouchStep = XML_getFloat(parent, "modifierPassiveSolarTouchStep", 0.25); // older save files never had this field - 0 would mean Passive Solar Touch does nothing, not a useful fallback
+    this.modifierPassiveSolarTouchAngle = XML_getFloat(parent, "modifierPassiveSolarTouchAngle", 45); // older save files never had this field - 0 would freeze every vertex as an "edge", not a useful fallback
     this.modifierWeldThreshold = XML_getFloat(parent, "modifierWeldThreshold");
     this.modifierOffsetAmount = XML_getFloat(parent, "modifierOffsetAmount");
     this.modifierInsetDepth = XML_getFloat(parent, "modifierInsetDepth", 0.1); // older save files never had this field - 0 would mean "no inset at all", not a useful fallback

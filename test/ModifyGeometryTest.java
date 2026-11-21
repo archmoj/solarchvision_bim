@@ -2349,7 +2349,7 @@ class ModifyGeometryTest {
   // --- collectFaceNormals_atVertex ----------------------------------------
   //
   // This is the fix for a real bug: an earlier version of
-  // solarFormFindVertices_Selection() froze a vertex based on the
+  // passiveSolarTouchVertices_Selection() froze a vertex based on the
   // spread of its ring-NEIGHBOR directions (collectNeighborDirections_
   // fromRing, tested above) rather than its surrounding FACE normals -
   // but opposite ring-neighbors are always ~180 degrees apart on any
@@ -2605,7 +2605,7 @@ class ModifyGeometryTest {
     assertEquals(5f, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
   }
 
-  // --- solarFormFindVertices_Selection (no-op guard paths only) ---------
+  // --- passiveSolarTouchVertices_Selection (no-op guard paths only) ---------
   //
   // The real call it makes to calculate_VertexSolar_array() needs a
   // live PGraphics surface to run at all (see SolarArraySmokeTest.java's
@@ -2618,28 +2618,28 @@ class ModifyGeometryTest {
   // vertexSolar_TotalComparisonAt directly.
 
   @Test
-  void solarFormFind_isANoOpWhenCategoryIsNotPolymesh () {
+  void passiveSolarTouch_isANoOpWhenCategoryIsNotPolymesh () {
     app.currentObjectCategory = app.ObjectCategory.SOLID;
     app.allVertices = new float[][]{{1, 2, 3}};
     app.Select3D.vertexSelection = new int[]{0};
 
-    assertDoesNotThrow(() -> app.Modify3D.solarFormFindVertices_Selection());
+    assertDoesNotThrow(() -> app.Modify3D.passiveSolarTouchVertices_Selection());
 
     assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
   }
 
   @Test
-  void solarFormFind_isANoOpWhenNothingIsSelected () {
+  void passiveSolarTouch_isANoOpWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{1, 2, 3}};
     app.Select3D.vertexSelection = new int[]{};
 
-    assertDoesNotThrow(() -> app.Modify3D.solarFormFindVertices_Selection());
+    assertDoesNotThrow(() -> app.Modify3D.passiveSolarTouchVertices_Selection());
 
     assertArrayEquals(new float[]{1, 2, 3}, app.allVertices[0], 0.0001f);
   }
 
-  // --- "Solar Form-Find Selected Vertices"/"...Group" (wiring only) -----
+  // --- "Passive Solar Touch Selected Vertices"/"...Group" (wiring only) -----
   //
   // Same NullPointerException constraint as above rules out a full
   // integration test through runScriptLine() once real vertices would
@@ -2648,18 +2648,18 @@ class ModifyGeometryTest {
   // staying on their safe side.
 
   @Test
-  void solarFormFindSelectedVertices_commandIsRegistered_andSafeWhenNothingIsSelected () {
+  void passiveSolarTouchSelectedVertices_commandIsRegistered_andSafeWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.SOLID; // not a polymesh category
     app.allVertices = new float[0][3];
 
     app.build_allActions();
-    String hint = app.runScriptLine("Solar Form-Find Selected Vertices");
+    String hint = app.runScriptLine("Passive Solar Touch Selected Vertices");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
   }
 
   @Test
-  void solarFormFindSelectedGroup_commandIsRegistered_andSwitchesToVertexCategory () {
+  void passiveSolarTouchSelectedGroup_commandIsRegistered_andSwitchesToVertexCategory () {
     app.allVertices = new float[0][3];
     app.allFaces.nodes = new int[0][];
     app.allPolylines.nodes = new int[0][];
@@ -2668,11 +2668,11 @@ class ModifyGeometryTest {
     app.currentObjectCategory = app.ObjectCategory.GROUP;
 
     app.build_allActions();
-    String hint = app.runScriptLine("Solar Form-Find Selected Group");
+    String hint = app.runScriptLine("Passive Solar Touch Selected Group");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     // No groups selected -> convert_Groups_to_Vertices() yields an
-    // empty vertex selection, which is solarFormFindVertices_
+    // empty vertex selection, which is passiveSolarTouchVertices_
     // Selection()'s own second early-return guard - so this stays
     // safely clear of the calculate_VertexSolar_array() call while
     // still proving the group-to-vertex conversion half of the wiring

@@ -362,7 +362,7 @@ boolean GlobalSolar_rebuild_array = true;
 // exactly on that face's own real corner vertices instead of a
 // subdivided grid. Set true immediately before, and false immediately
 // after, a direct calculate_VertexSolar_array() call that needs its
-// results keyed to real mesh vertices (solarFormFindVertices_Selection(),
+// results keyed to real mesh vertices (passiveSolarTouchVertices_Selection(),
 // modify3D.pde); nothing else reads or sets this, and it is never left
 // true across frames, so it has no effect on the normal Vertex_Solar
 // shading pass (shade.pde), which still samples at the usual

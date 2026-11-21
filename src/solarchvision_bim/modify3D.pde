@@ -359,8 +359,8 @@ class Modify3D {
     endScene3DChange();
   }
 
-  // The solar-climatic form-finding modifier: a single bounded step
-  // (User3D.modifierSolarFormFindStep meters, default 0.25) that pushes
+  // Passive Solar Touch: a single bounded step (User3D.
+  // modifierPassiveSolarTouchStep meters, default 0.25) that pushes
   // each selected vertex out along, or pulls it in against, the average
   // direction to its own real mesh neighbors - the same ring-walking
   // neighbor-gathering relaxVertices_Selection() above uses, just read
@@ -373,12 +373,20 @@ class Modify3D {
   // This is intentionally just one step forward per call, not a solve
   // for "the" optimal shape - there's no single optimal shape, and how
   // many times to apply this (and when to stop) is left to the
-  // architect, same as a repeatable Relax/Skew/Twist/Bend pass.
+  // architect, same as a repeatable Relax/Skew/Twist/Bend pass. Named
+  // for what it actually does today - a touch driven by the PASSIVE
+  // solar metric specifically (vertexSolar_TotalComparisonAt(), below,
+  // reads VertexSolar_amounts[Impact_PASSIVE], never [Impact_ACTIVE] -
+  // the app's other, direct-radiation metric, used elsewhere for
+  // "Active Shade"/"Passive Shade") - rather than "form-finding", which
+  // is reserved for a possible later, broader process that combines
+  // this push/pull with other factors (structural, wind, etc.) rather
+  // than solar alone.
   //
   // A vertex is treated as a real edge/corner, and left exactly where
   // it is, when the FACES meeting at it aren't roughly coplanar - their
   // own per-corner normals (collectFaceNormals_atVertex(), below)
-  // differ by more than User3D.modifierSolarFormFindAngle degrees
+  // differ by more than User3D.modifierPassiveSolarTouchAngle degrees
   // (default 45) between any two of them. This is a crease-angle test,
   // not a check on the neighbor-direction vectors themselves: an
   // ordinary INTERIOR vertex of a flat tessellated grid (several quads
@@ -431,7 +439,7 @@ class Modify3D {
   // already have moved by the time the second one reads its position
   // for its own direction/freeze decision - making the result depend
   // on selection iteration order, not just on geometry and solar data.
-  void solarFormFindVertices_Selection () {
+  void passiveSolarTouchVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 
     this.selectVertices_fromCurrentSelection();
@@ -443,8 +451,8 @@ class Modify3D {
 
     beginScene3DChange();
 
-    float step = User3D.modifierSolarFormFindStep;
-    float maxAngle = radians(User3D.modifierSolarFormFindAngle);
+    float step = User3D.modifierPassiveSolarTouchStep;
+    float maxAngle = radians(User3D.modifierPassiveSolarTouchAngle);
 
     boolean[] Vertex_shouldMove = new boolean[Select3D.vertexSelection.length];
     float[][] Vertex_moveBy = new float[Select3D.vertexSelection.length][3];
@@ -513,7 +521,7 @@ class Modify3D {
   // Same ring-walking traversal accumulateRelaxFromRing() uses, but
   // collects a unit DIRECTION vector (from vNo toward each real
   // neighbor) per ring occurrence instead of summing raw neighbor
-  // positions - solarFormFindVertices_Selection() averages these into
+  // positions - passiveSolarTouchVertices_Selection() averages these into
   // the direction it steps the vertex along. (Whether that step
   // actually happens - the edge/corner freeze decision - is a separate
   // question, answered by collectFaceNormals_atVertex() below, not by
@@ -556,7 +564,7 @@ class Modify3D {
   // normal-line display, and the identical cross-product shape in
   // calculateVertexSolarArray.pde). Polylines have no area and so no
   // normal, so unlike collectNeighborDirections_fromRing above, this
-  // only ever looks at allFaces.nodes. solarFormFindVertices_Selection()
+  // only ever looks at allFaces.nodes. passiveSolarTouchVertices_Selection()
   // uses the SPREAD across these (via maxPairwiseAngle, below) to
   // decide whether a vertex sits in a flat region (every face sharing
   // it points the same way) or on a real edge/corner (they don't) -

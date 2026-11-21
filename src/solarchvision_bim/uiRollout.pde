@@ -244,8 +244,8 @@ class UI_rollout {
     vm.modifierBendXY(0);
     vm.modifierBendXZ(0);
     vm.modifierBendYZ(0);
-    vm.modifierSolarFormFindStep(0);
-    vm.modifierSolarFormFindAngle(0);
+    vm.modifierPassiveSolarTouchStep(0);
+    vm.modifierPassiveSolarTouchAngle(0);
     vm.modifierWeldThreshold(0);
     vm.softSelectionFalloffPower(0);
     vm.softSelectionFalloffRadius(0);
@@ -679,8 +679,8 @@ class UI_rollout {
         User3D.modifierBendXY = vm.modifierBendXY(1);
         User3D.modifierBendXZ = vm.modifierBendXZ(1);
         User3D.modifierBendYZ = vm.modifierBendYZ(1);
-        User3D.modifierSolarFormFindStep = vm.modifierSolarFormFindStep(1);
-        User3D.modifierSolarFormFindAngle = vm.modifierSolarFormFindAngle(1);
+        User3D.modifierPassiveSolarTouchStep = vm.modifierPassiveSolarTouchStep(1);
+        User3D.modifierPassiveSolarTouchAngle = vm.modifierPassiveSolarTouchAngle(1);
       }
 
       // The other half of Reform's original (pre-split) content: these

@@ -2457,13 +2457,13 @@ void build_allActions() {
     Modify3D.bendVertices_Selection();
   });
 
-  putAction("Solar Form-Find Selected Vertices", () -> {
-    Modify3D.solarFormFindVertices_Selection();
+  putAction("Passive Solar Touch Selected Vertices", () -> {
+    Modify3D.passiveSolarTouchVertices_Selection();
   });
 
-  putAction("Solar Form-Find Selected Group", () -> {
+  putAction("Passive Solar Touch Selected Group", () -> {
     convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX);
-    Modify3D.solarFormFindVertices_Selection();
+    Modify3D.passiveSolarTouchVertices_Selection();
   });
 
   putAction("Add People on Land", () -> {

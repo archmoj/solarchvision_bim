@@ -14,7 +14,9 @@
 // SolarArray.pde (per-vertex sample point, per-day and all-days-total),
 // and solarImpacts.pde (the solar-impact-coloring sweep). Centralized
 // here so all seven stay in lockstep by construction, and so a future
-// caller (e.g. a solar-driven form-finding modifier wanting this same
+// caller (e.g. the Passive Solar Touch modifier, modify3D.pde - or a
+// later, broader form-finding process that pulls that modifier's push/
+// pull decision together with other factors - wanting this same
 // per-vertex/per-orientation score) has one obvious function to call
 // instead of re-deriving or re-copying the formula a fourth time.
 //
