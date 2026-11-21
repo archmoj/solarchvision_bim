@@ -464,29 +464,23 @@ class Modify3D {
       float oldY = allPoints.getY(vNo);
       float oldZ = allPoints.getZ(vNo);
 
-      FloatList dirX = new FloatList();
-      FloatList dirY = new FloatList();
-      FloatList dirZ = new FloatList();
-      collectNeighborDirections_fromRing(allFaces.nodes, vNo, oldX, oldY, oldZ, dirX, dirY, dirZ);
-      collectNeighborDirections_fromRing(allPolylines.nodes, vNo, oldX, oldY, oldZ, dirX, dirY, dirZ);
-
-      if (dirX.size() == 0) continue; // no real neighbors - nothing to step toward
-
       FloatList normX = new FloatList();
       FloatList normY = new FloatList();
       FloatList normZ = new FloatList();
       collectFaceNormals_atVertex(allFaces.nodes, vNo, normX, normY, normZ);
 
+      if (normX.size() == 0) continue; // vertex isn't part of any face - no normal to step along
+
       if (maxPairwiseAngle(normX, normY, normZ) > maxAngle) continue; // the faces meeting here aren't coplanar enough - a real edge/corner, frozen
 
       float avgX = 0, avgY = 0, avgZ = 0;
-      for (int i = dirX.size() - 1; i >= 0; i--) {
-        avgX += dirX.get(i);
-        avgY += dirY.get(i);
-        avgZ += dirZ.get(i);
+      for (int i = normX.size() - 1; i >= 0; i--) {
+        avgX += normX.get(i);
+        avgY += normY.get(i);
+        avgZ += normZ.get(i);
       }
       float avgLen = sqrt(avgX * avgX + avgY * avgY + avgZ * avgZ);
-      if (avgLen < 0.00001) continue; // neighbor directions cancel out exactly - no stable direction to step along
+      if (avgLen < 0.00001) continue; // face normals cancel out exactly - no stable direction to step along
 
       avgX /= avgLen;
       avgY /= avgLen;
@@ -499,15 +493,16 @@ class Modify3D {
       // 0). A beneficial vertex (solarValue > 0) is left untouched for
       // now rather than stepping OUT away from it - stepping out may
       // come back later as a separate option, but harmful-only step-in
-      // is the better default. avgX/Y/Z points FROM the vertex TOWARD
-      // its neighbors, so moving by exactly that (unsigned) step is
-      // what moves it IN toward them.
+      // is the better default. avgX/Y/Z is the averaged FACE NORMAL at
+      // this vertex, which points outward from the surface, so moving
+      // by its negation is what steps the vertex IN - receding inward,
+      // away from the sun.
       if (solarValue > 0) continue;
 
       Vertex_shouldMove[o] = true;
-      Vertex_moveBy[o][0] = avgX * step;
-      Vertex_moveBy[o][1] = avgY * step;
-      Vertex_moveBy[o][2] = avgZ * step;
+      Vertex_moveBy[o][0] = -avgX * step;
+      Vertex_moveBy[o][1] = -avgY * step;
+      Vertex_moveBy[o][2] = -avgZ * step;
     }
 
     for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
