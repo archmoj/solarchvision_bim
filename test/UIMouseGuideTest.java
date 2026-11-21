@@ -231,8 +231,8 @@ class UIMouseGuideTest {
   // ================= button-row thirds / scroll wheel / subZoneAt() ==========
   // Covers the per-touchpad sub-zones added for per-button hover
   // filtering: a left/middle/right-click button row and a scroll wheel
-  // recentered over the middle button, same "pure geometry, no graphics
-  // calls" reasoning as the layout tests above.
+  // nested inside the middle third itself, same "pure geometry, no
+  // graphics calls" reasoning as the layout tests above.
 
   @Test
   void buttonThirdRect_threeThirds_tileTheButtonRowExactlyWithNoGapOrOverlap () {
@@ -254,18 +254,23 @@ class UIMouseGuideTest {
   }
 
   @Test
-  void scrollZoneRect_isHorizontallyCenteredOverTheMiddleThird_andSitsBelowTheButtonRow () {
+  void scrollZoneRect_isCenteredOverTheMiddleThird_andNestsEntirelyInsideIt () {
     solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
     float[] middle = app.UI_mouseGuide.buttonThirdRect(p, 1);
     float[] scroll = app.UI_mouseGuide.scrollZoneRect(p);
 
     float middleCenterX = (middle[0] + middle[2]) / 2;
+    float middleCenterY = (middle[1] + middle[3]) / 2;
     float scrollCenterX = (scroll[0] + scroll[2]) / 2;
+    float scrollCenterY = (scroll[1] + scroll[3]) / 2;
     assertEquals(middleCenterX, scrollCenterX, 0.001, "scroll wheel must be centered over the middle-click third");
-    // Button row is now at the pad's top edge, so the scroll wheel -
-    // directly below it - must start at or after the button row's own
-    // bottom edge, not overlap it.
-    assertTrue(scroll[1] >= middle[3], "scroll wheel must sit below the button row, not overlap it");
+    assertEquals(middleCenterY, scrollCenterY, 0.001, "scroll wheel must be vertically centered within the middle-click third");
+    // The scroll wheel now sits nested inside the middle third itself
+    // (replacing where the "Middle\nClick" label used to be), not as a
+    // separate zone below the button row - so it must stay entirely
+    // within the middle third's own bounds.
+    assertTrue(scroll[0] >= middle[0] && scroll[2] <= middle[2], "scroll wheel must stay within the middle third's width");
+    assertTrue(scroll[1] >= middle[1] && scroll[3] <= middle[3], "scroll wheel must stay within the middle third's height");
   }
 
   @Test
@@ -281,8 +286,10 @@ class UIMouseGuideTest {
   void subZoneAt_pointInMiddleThird_returnsMIDDLE () {
     solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
     float[] middle = app.UI_mouseGuide.buttonThirdRect(p, 1);
-    float cx = (middle[0] + middle[2]) / 2;
-    float cy = middle[3] - 1; // just above the button row's own bottom edge, clear of the scroll wheel below
+    float[] scroll = app.UI_mouseGuide.scrollZoneRect(p);
+    float cx = middle[0] + 1; // left edge of the middle third, clear of the nested scroll wheel at its center
+    float cy = (middle[1] + middle[3]) / 2;
+    assertTrue(cx < scroll[0], "probe point must fall outside the nested scroll wheel");
     assertEquals("MIDDLE", app.UI_mouseGuide.subZoneAt(p, cx, cy));
   }
 
@@ -305,11 +312,11 @@ class UIMouseGuideTest {
   }
 
   @Test
-  void subZoneAt_pointOnTheBodyBelowTheScrollWheel_returnsGENERAL () {
+  void subZoneAt_pointOnTheLowerBody_returnsGENERAL () {
     solarchvision_bim.UI_mouseGuide.LaidOutPad p = app.UI_mouseGuide.buildLayout().get(0);
-    // Near the pad's own bottom edge - below the scroll wheel and below
-    // the (now top-mounted) button row, so none of those more specific
-    // zones match.
+    // Near the pad's own bottom edge - below the button row (and its
+    // now-nested scroll wheel) entirely, so none of those more specific
+    // zones match; this is also where the viewport-name label is drawn.
     assertEquals("GENERAL", app.UI_mouseGuide.subZoneAt(p, p.x + p.w / 2, p.y + p.h - 1));
   }
 

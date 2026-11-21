@@ -4,8 +4,8 @@
 // same spirit as UI_keyboardMap (uiKeyboardMap.pde): no highlighting of
 // "currently active" state, no click-to-fire. Each touchpad is itself
 // split into separately-hoverable sub-zones - a left/middle/right-click
-// button row along its top edge, and a scroll wheel just below it,
-// centered over the middle button - and hovering one shows only that
+// button row along its top edge, with a scroll wheel nested inside the
+// middle third itself - and hovering one shows only that
 // zone's own mouse bindings for that viewport (mouseMapBindings.pde),
 // same per-part granularity as UI_keyboardMap's own per-key hover,
 // rather than the whole viewport's list at once. The hint list itself
@@ -127,16 +127,22 @@ class UI_mouseGuide {
   //
   // Moved up close to the overlay's own top edge (0.5 unit, down from
   // 2) rather than centered with a tall gap above - the extra vertical
-  // room goes to the pads themselves (the top-of-mouse Left/Right Click
-  // labels and the recentered scroll wheel both need space inside each
-  // pad) and to the hint list below, not to empty space above.
+  // room goes to the hint list below instead of to empty space above.
+  // The pad itself only needs to be tall enough for its own button row
+  // (now two-line labels, buttonThirdRect()'s own comment) plus a lower
+  // body for the viewport-name label (drawPad()'s own comment) - a
+  // horizontal rectangle, wider than tall, rather than a square or
+  // portrait shape. The scroll wheel no longer needs its own room below
+  // the button row - it's nested inside the middle third itself now
+  // (scrollZoneRect()'s own comment) - which is what leaves this lower
+  // body free for the viewport-name label to move back into.
   ArrayList<LaidOutPad> buildLayout () {
     ArrayList<LaidOutPad> pads = new ArrayList<LaidOutPad>();
     float unit = padUnit();
     float[] box = boundingBox();
 
     float padWidth = 6 * unit;
-    float padHeight = 8 * unit;
+    float padHeight = 4 * unit; // horizontal rectangle - just tall enough for the button row + scroll wheel (buttonThirdRect()/scrollZoneRect()), stretched up from the square/portrait shapes this used to be
     float gap = 2 * unit;
 
     float totalWidth = PAD_ORDER.length * padWidth + (PAD_ORDER.length - 1) * gap;
@@ -158,54 +164,71 @@ class UI_mouseGuide {
     return null;
   }
 
-  // Bottom edge of the lowest touchpad (+ its label underneath) - where
-  // the hint list starts, same "measure what was actually drawn" idea as
+  // Bottom edge of the lowest touchpad - where the hint list starts,
+  // same "measure what was actually drawn" idea as
   // UI_keyboardMap.mainClusterBottom(), just analytic here since every
-  // pad shares one fixed height rather than needing a scan.
+  // pad shares one fixed height rather than needing a scan. The
+  // viewport-name label moved back inside the pad (drawPad()'s own
+  // comment), so there's nothing left below the pad to reserve room
+  // for - just a little breathing room before the hint list starts,
+  // same small gap the square-pad layout used.
   float padClusterBottom (ArrayList<LaidOutPad> pads) {
     float bottom = 0;
     for (LaidOutPad p : pads) bottom = max(bottom, p.y + p.h);
-    return bottom + 1.5 * padUnit(); // + room for the viewport-name label below each pad
+    return bottom + 0.6 * padUnit();
   }
 
   // Bounding box of one of the button row's three equal thirds -
   // third 0 = left-click, 1 = middle-click, 2 = right-click. The button
   // row itself sits at the TOP of the pad (where a real mouse's own
   // buttons are, near the front/top of its body) rather than along the
-  // bottom edge. Computed from p's own fields rather than cached on
-  // LaidOutPad, and called identically from drawPad() (to draw it) and
-  // subZoneAt() (to hit-test it), so the two can never drift apart -
-  // same reasoning modify3D.pde's countLessThan()-style shared helpers
-  // follow.
+  // bottom edge. Height is a fixed multiple of padUnit() rather than a
+  // fraction of p.h - each third ends up roughly square (thirdWidth is
+  // also ~2 units), which is all the two-line Left/Middle/Right Click
+  // labels (drawPad()'s own comment) need, independent of whatever the
+  // pad's own total height is. Computed from p's own fields rather than
+  // cached on LaidOutPad, and called identically from drawPad() (to
+  // draw it) and subZoneAt() (to hit-test it), so the two can never
+  // drift apart - same reasoning modify3D.pde's countLessThan()-style
+  // shared helpers follow.
   float[] buttonThirdRect (LaidOutPad p, int third) {
-    float buttonRowHeight = 0.22 * p.h;
+    float buttonRowHeight = 2 * padUnit();
     float thirdWidth = p.w / 3;
     float zoneLeft = p.x + third * thirdWidth;
     return new float[]{ zoneLeft, p.y, zoneLeft + thirdWidth, p.y + buttonRowHeight };
   }
 
-  // Bounding box of the scroll wheel ("dragger") pill - centered over
-  // the middle-click third, directly below the (now top-mounted) button
-  // row, same placement a real mouse's scroll wheel has relative to its
-  // middle button. Clear of both the button row above it and the big
-  // Left/Right Click labels near the bottom of the pad below it.
+  // Bounding box of the scroll wheel ("dragger") pill - nested inside
+  // the middle-click third itself now, right where the "Middle\nClick"
+  // label used to sit (drawPad()'s own comment dropped that label so
+  // the pill could move in), rather than as a separate zone below the
+  // button row. Sized to sit comfortably within one third's own
+  // square-ish bounds (buttonThirdRect()'s own comment) with a visible
+  // margin on every side, centered on that third's center point.
   float[] scrollZoneRect (LaidOutPad p) {
-    float scrollW = 0.16 * p.w;
-    float scrollH = 0.34 * p.h;
-    float scrollX = p.x + p.w / 2 - scrollW / 2;
-    float scrollY = p.y + 0.32 * p.h;
+    float[] middleThird = buttonThirdRect(p, 1);
+    float thirdWidth = middleThird[2] - middleThird[0];
+    float thirdHeight = middleThird[3] - middleThird[1];
+    float scrollW = 0.5 * thirdWidth;
+    float scrollH = 0.6 * thirdHeight;
+    float centerX = (middleThird[0] + middleThird[2]) / 2;
+    float centerY = (middleThird[1] + middleThird[3]) / 2;
+    float scrollX = centerX - scrollW / 2;
+    float scrollY = centerY - scrollH / 2;
     return new float[]{ scrollX, scrollY, scrollX + scrollW, scrollY + scrollH };
   }
 
   // Which part of this one touchpad the given point is inside - one of
   // "LEFT", "MIDDLE", "RIGHT" (the button row's three thirds, at the
-  // pad's top edge), "SCROLL" (the dragger pill, just below the button
-  // row), "GENERAL" (anywhere else on the pad's own surface - the body
-  // below the scroll wheel, where the "Hover"/"Drag" bindings that
-  // aren't tied to any one button apply), or null if the point isn't on
-  // this pad at all. SCROLL is checked first purely because it sits
-  // inside what would otherwise fall into GENERAL, not because of any
-  // real overlap with the button-row thirds.
+  // pad's top edge), "SCROLL" (the dragger pill, now nested inside the
+  // middle third itself - scrollZoneRect()'s own comment), "GENERAL"
+  // (anywhere else on the pad's own surface - the lower body below the
+  // button row, where the "Hover"/"Drag" bindings that aren't tied to
+  // any one button apply, and where the viewport-name label now sits -
+  // drawPad()'s own comment), or null if the point isn't on this pad at
+  // all. SCROLL is checked first purely because it sits inside what
+  // would otherwise fall into MIDDLE, not because of any real overlap
+  // between MIDDLE and the other thirds.
   String subZoneAt (LaidOutPad p, float mx, float my) {
     float[] scroll = scrollZoneRect(p);
     if (isInside(mx, my, scroll[0], scroll[1], scroll[2], scroll[3])) return "SCROLL";
@@ -219,11 +242,24 @@ class UI_mouseGuide {
     return null;
   }
 
+  // The internal viewport keys (PAD_ORDER, and every row in
+  // mouseMapBindings.pde) stay WORLD/STUDY/WIN3D - that's the lookup key
+  // mouseMapDescribeViewportZone() is keyed on, so renaming those would
+  // break the hint lookup. Only what's actually painted on screen uses
+  // the API's own viewport-type naming instead.
+  String viewportDisplayLabel (String viewport) {
+    if ("WORLD".equals(viewport)) return "Map Viewport";
+    if ("STUDY".equals(viewport)) return "2D Viewport";
+    if ("WIN3D".equals(viewport)) return "3D Viewport";
+    return viewport;
+  }
+
   // Draws one touchpad: an outer rounded surface, a three-way button
   // row (left/middle/right-click) along the TOP edge - where a real
   // mouse's own buttons sit, near the front of its body, rather than
-  // along the bottom - and a scroll wheel ("dragger") pill centered
-  // over the middle button, just below the row. Purely illustrative
+  // along the bottom - with a scroll wheel ("dragger") pill nested
+  // inside the middle third itself, rather than as a separate zone of
+  // its own. Purely illustrative
   // past the button row's own three zones, which really are separately
   // hoverable now (hoveredZone, one of this class's subZoneAt()
   // results, or null if this pad isn't the one being hovered at all):
@@ -246,7 +282,7 @@ class UI_mouseGuide {
       rect(z[0], z[1], z[2] - z[0], z[3] - z[1]);
     }
 
-    float buttonRowHeight = 0.22 * p.h;
+    float buttonRowHeight = 2 * padUnit();
     float buttonRowBottom = p.y + buttonRowHeight;
     float thirdWidth = p.w / 3;
 
@@ -259,38 +295,42 @@ class UI_mouseGuide {
     line(p.x + 2 * thirdWidth, p.y, p.x + 2 * thirdWidth, buttonRowBottom);
     noStroke();
 
+    // Left/Right Click labels, centered on their own third of the
+    // button row (where the buttons they name actually are). The
+    // middle third drops its own text label - the scroll wheel pill
+    // sits there instead (scrollZoneRect()'s own comment) - but keeps
+    // the same shared textSize the other two use, so Left/Right Click
+    // stay visually consistent with each other. Each wraps onto two
+    // lines ("Right\nClick") so a bigger size still fits a third's
+    // width - text()'s own "\n" support centers both lines under
+    // textAlign(CENTER, CENTER), no manual layout needed.
+    float buttonLabelSize = 0.3 * padUnit();
+    float buttonLabelY = p.y + buttonRowHeight / 2;
     fill(255, 160);
     textAlign(CENTER, CENTER);
-    textSize(0.2 * padUnit());
-    text("Middle Click", p.x + p.w / 2, p.y + buttonRowHeight / 2);
+    textSize(buttonLabelSize);
+    text("Left\nClick", p.x + thirdWidth / 2, buttonLabelY);
+    text("Right\nClick", p.x + 2.5 * thirdWidth, buttonLabelY);
 
-    // Scroll wheel, highlighted the same way a hovered button-row third
-    // is.
+    // Scroll wheel, nested inside the middle third itself now - right
+    // where the "Middle\nClick" label used to sit - highlighted the
+    // same way a hovered button-row third is.
     float[] scroll = scrollZoneRect(p);
     float scrollW = scroll[2] - scroll[0];
     float scrollH = scroll[3] - scroll[1];
     fill("SCROLL".equals(hoveredZone) ? color(255) : color(90));
     rect(scroll[0], scroll[1], scrollW, scrollH, scrollW / 2);
 
-    // "LEFT CLICK"/"RIGHT CLICK", near the bottom of the mouse body,
-    // clear of the button row/scroll wheel above - bigger and bold. No
-    // bold variant of the overlay's font is loaded (font.pde only ever
-    // loads one weight), so this is faux-bolded by drawing each label
-    // twice, offset by roughly a device pixel, same trick the hint list
-    // below uses for its own combo text.
-    float labelSize = 0.34 * padUnit();
-    float labelBoldOffset = max(1, 0.05 * labelSize);
-    float labelY = p.y + 0.86 * p.h;
-    textSize(labelSize);
-    fill(255);
-    text("LEFT CLICK", p.x + p.w * 0.25, labelY);
-    text("LEFT CLICK", p.x + p.w * 0.25 + labelBoldOffset, labelY);
-    text("RIGHT CLICK", p.x + p.w * 0.75, labelY);
-    text("RIGHT CLICK", p.x + p.w * 0.75 + labelBoldOffset, labelY);
-
+    // Viewport name, back inside the pad - centered in the lower body
+    // below the button row, the space the scroll wheel's move up into
+    // the middle third just freed up. Bigger than the button-row labels
+    // since it names the whole pad, and shown with the API's own
+    // viewport-type wording (Map/2D/3D Viewport) via
+    // viewportDisplayLabel() rather than the internal WORLD/STUDY/WIN3D
+    // key p.viewport itself holds.
     fill(255, 220);
-    textSize(0.3 * padUnit());
-    text(p.viewport, p.x + p.w / 2, p.y + p.h + 0.8 * padUnit());
+    textSize(0.4 * padUnit());
+    text(viewportDisplayLabel(p.viewport), p.x + p.w / 2, buttonRowBottom + (p.h - buttonRowHeight) / 2);
   }
 
   void draw () {
