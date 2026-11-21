@@ -729,7 +729,7 @@ class WIN3DActionsTest {
     assertArrayEquals(new float[]{-r, 10, 0}, app.allVertices[1], 0.0001f);
   }
 
-  // ================= Save JPG/PNG/TIFF 3D Graph ===========================
+  // ================= Save JPG/PNG/TIFF/BMP 3D Graph =======================
   // Each sets only its own one-shot flag (never the other formats'), plus
   // WIN3D.update via view_changed()->WIN3D.revise() - the actual file-
   // extension choice happens later, inside saveRecordedFrame(), which
@@ -744,6 +744,7 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_BMP);
     assertFalse(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -756,6 +757,7 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_BMP);
     assertFalse(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -768,6 +770,20 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_BMP);
+    assertFalse(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void saveBMP3DGraph_setsRecordBMPOnlyAndRevises () {
+    String hint = app.runScriptLine("Save BMP 3D Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_BMP);
+    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -780,6 +796,7 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_BMP);
     assertTrue(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -792,6 +809,7 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_PNG);
     assertFalse(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_TIFF);
+    assertFalse(app.WIN3D.record_BMP);
     assertTrue(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }
@@ -804,6 +822,20 @@ class WIN3DActionsTest {
     assertTrue(app.WIN3D.record_TIFF);
     assertFalse(app.WIN3D.record_IMG);
     assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_BMP);
+    assertTrue(app.WIN3D.fullPeriod_IMG);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void saveBMP3DGraphFullPeriod_setsRecordBMPAndFullPeriodFlag () {
+    String hint = app.runScriptLine("Save BMP 3D Graph (Full-Period)");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.record_BMP);
+    assertFalse(app.WIN3D.record_IMG);
+    assertFalse(app.WIN3D.record_PNG);
+    assertFalse(app.WIN3D.record_TIFF);
     assertTrue(app.WIN3D.fullPeriod_IMG);
     assertTrue(app.WIN3D.update);
   }

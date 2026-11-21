@@ -33,6 +33,7 @@ class WIN3D {
   boolean record_IMG = false;
   boolean record_PNG = false;
   boolean record_TIFF = false;
+  boolean record_BMP = false;
   boolean record_AUTO = false;
 
   float ImageScale = 1.0;
@@ -152,12 +153,13 @@ class WIN3D {
     if (this.record_IMG || !this.record_AUTO) this.record_IMG = false;
     if (this.record_PNG || !this.record_AUTO) this.record_PNG = false;
     if (this.record_TIFF || !this.record_AUTO) this.record_TIFF = false;
+    if (this.record_BMP || !this.record_AUTO) this.record_BMP = false;
 
     endImageScale();
   }
 
   void beginImageScale () {
-    if (this.record_IMG || this.record_PNG || this.record_TIFF) this.ImageScale = 1; //2; //3;
+    if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP) this.ImageScale = 1; //2; //3;
     else this.ImageScale = 1;
 
     this.dX *= this.ImageScale;
@@ -202,7 +204,7 @@ class WIN3D {
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
-    if (!(this.record_IMG || this.record_PNG || this.record_TIFF || this.record_AUTO)) {
+    if (!(this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO)) {
       this.draw_referencePivot();
     }
 
@@ -215,7 +217,7 @@ class WIN3D {
     // longer includes it - it's only composited onto the main canvas
     // afterward, by drawViewport3DLayers.pde, which saveRecordedFrame() below
     // doesn't capture.
-    if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_AUTO) {
+    if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP || this.record_AUTO) {
       saveRecordedFrame();
     }
   }
@@ -250,7 +252,7 @@ class WIN3D {
     if (this.impactTypeIndex == Impact_ACTIVE) myFile += "_RAD";
     if (this.impactTypeIndex == Impact_PASSIVE) myFile += "_EFF";
     myFile += "_" + importedObjectName;
-    myFile += this.record_PNG ? ".png" : this.record_TIFF ? ".tif" : ".jpg";
+    myFile += this.record_PNG ? ".png" : this.record_TIFF ? ".tif" : this.record_BMP ? ".bmp" : ".jpg";
 
     this.graphics.save(myFile);
     println("File created:" + myFile);

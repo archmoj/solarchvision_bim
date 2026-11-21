@@ -369,7 +369,7 @@ class STUDYActionsTest {
     assertTrue(app.STUDY.update);
   }
 
-  // ================= Save JPG/PNG/TIFF Time Graph ==========================
+  // ================= Save JPG/PNG/TIFF/BMP Time Graph ======================
   // Each sets only its own one-shot flag (never the other formats'), plus
   // STUDY.update via revise() - the actual file-extension choice happens
   // later, inside endFrame(), which isn't runnable headlessly (real
@@ -383,6 +383,7 @@ class STUDYActionsTest {
     assertTrue(app.STUDY.record_IMG);
     assertFalse(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_TIFF);
+    assertFalse(app.STUDY.record_BMP);
     assertTrue(app.STUDY.update);
   }
 
@@ -394,6 +395,7 @@ class STUDYActionsTest {
     assertTrue(app.STUDY.record_PNG);
     assertFalse(app.STUDY.record_IMG);
     assertFalse(app.STUDY.record_TIFF);
+    assertFalse(app.STUDY.record_BMP);
     assertTrue(app.STUDY.update);
   }
 
@@ -405,6 +407,19 @@ class STUDYActionsTest {
     assertTrue(app.STUDY.record_TIFF);
     assertFalse(app.STUDY.record_IMG);
     assertFalse(app.STUDY.record_PNG);
+    assertFalse(app.STUDY.record_BMP);
+    assertTrue(app.STUDY.update);
+  }
+
+  @Test
+  void saveBMPTimeGraph_setsRecordBMPOnlyAndRevises () {
+    String hint = app.runScriptLine("Save BMP Time Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.STUDY.record_BMP);
+    assertFalse(app.STUDY.record_IMG);
+    assertFalse(app.STUDY.record_PNG);
+    assertFalse(app.STUDY.record_TIFF);
     assertTrue(app.STUDY.update);
   }
 }

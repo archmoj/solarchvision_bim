@@ -37,7 +37,7 @@ class WORLDTest {
     assertFalse(app.WORLD.update);
   }
 
-  // ================= Save JPG/PNG/TIFF Map Graph ==========================
+  // ================= Save JPG/PNG/TIFF/BMP Map Graph ======================
   // Each sets only its own one-shot flag (never the other formats'), plus
   // WORLD.update via revise() - the actual file-extension choice happens
   // later, inside endFrame(), which isn't runnable headlessly (real
@@ -51,6 +51,7 @@ class WORLDTest {
     assertTrue(app.WORLD.record_IMG);
     assertFalse(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_TIFF);
+    assertFalse(app.WORLD.record_BMP);
     assertTrue(app.WORLD.update);
   }
 
@@ -62,6 +63,7 @@ class WORLDTest {
     assertTrue(app.WORLD.record_PNG);
     assertFalse(app.WORLD.record_IMG);
     assertFalse(app.WORLD.record_TIFF);
+    assertFalse(app.WORLD.record_BMP);
     assertTrue(app.WORLD.update);
   }
 
@@ -73,6 +75,19 @@ class WORLDTest {
     assertTrue(app.WORLD.record_TIFF);
     assertFalse(app.WORLD.record_IMG);
     assertFalse(app.WORLD.record_PNG);
+    assertFalse(app.WORLD.record_BMP);
+    assertTrue(app.WORLD.update);
+  }
+
+  @Test
+  void saveBMPMapGraph_setsRecordBMPOnlyAndRevises () {
+    String hint = app.runScriptLine("Save BMP Map Graph");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WORLD.record_BMP);
+    assertFalse(app.WORLD.record_IMG);
+    assertFalse(app.WORLD.record_PNG);
+    assertFalse(app.WORLD.record_TIFF);
     assertTrue(app.WORLD.update);
   }
 

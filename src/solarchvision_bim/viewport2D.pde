@@ -172,6 +172,7 @@ class STUDY {
   boolean record_IMG = false;
   boolean record_PNG = false;
   boolean record_TIFF = false;
+  boolean record_BMP = false;
   boolean record_PDF = false;
   boolean record_AUTO = false;
 
@@ -2135,12 +2136,12 @@ class STUDY {
   }
 
   // Decides this.ImageScale from the current record_PDF / record_IMG /
-  // record_PNG / record_TIFF flags. If it changed since last frame,
-  // several views need a full redraw because switching resolution loses
-  // the GL context.
+  // record_PNG / record_TIFF / record_BMP flags. If it changed since
+  // last frame, several views need a full redraw because switching
+  // resolution loses the GL context.
   void updateImageScale () {
     if (this.record_PDF) this.ImageScale = 1;
-    else if (this.record_IMG || this.record_PNG || this.record_TIFF) this.ImageScale = 2;
+    else if (this.record_IMG || this.record_PNG || this.record_TIFF || this.record_BMP) this.ImageScale = 2;
     else this.ImageScale = 1;
 
     if (prev_ImageScale != this.ImageScale) {
@@ -2267,8 +2268,8 @@ class STUDY {
     } else {
       this.graphics.endDraw();
 
-      if ((this.record_IMG) || (this.record_PNG) || (this.record_TIFF) || (this.record_AUTO)) {
-        String ext = this.record_PNG ? ".png" : this.record_TIFF ? ".tif" : ".jpg";
+      if ((this.record_IMG) || (this.record_PNG) || (this.record_TIFF) || (this.record_BMP) || (this.record_AUTO)) {
+        String ext = this.record_PNG ? ".png" : this.record_TIFF ? ".tif" : this.record_BMP ? ".bmp" : ".jpg";
         String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP)) + ext;
         this.graphics.save(myFile);
         println("File created:" + myFile);
@@ -2295,6 +2296,7 @@ class STUDY {
     if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
     if ((this.record_PNG) || (this.record_AUTO == false)) this.record_PNG = false;
     if ((this.record_TIFF) || (this.record_AUTO == false)) this.record_TIFF = false;
+    if ((this.record_BMP) || (this.record_AUTO == false)) this.record_BMP = false;
   }
 
 
