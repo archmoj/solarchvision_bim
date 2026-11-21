@@ -420,6 +420,17 @@ class Modify3D {
   // NEXT call (whether this modifier again, or the normal Vertex_Solar
   // shading pass) recomputes against the new geometry - this call's own
   // moves are already based on whatever was baked coming in.
+  //
+  // Every selected vertex's own step (direction, sign, and whether it's
+  // frozen) is worked out from a full read-only pass over the ORIGINAL,
+  // pre-move positions first, and only then actually applied, in a
+  // second pass - the same "snapshot first, write once" shape
+  // relaxVertices_Selection() above uses, and for the same reason: two
+  // selected vertices can be real mesh neighbors of each other, and
+  // without this, whichever one happened to be processed first would
+  // already have moved by the time the second one reads its position
+  // for its own direction/freeze decision - making the result depend
+  // on selection iteration order, not just on geometry and solar data.
   void solarFormFindVertices_Selection () {
     if (!isPolymeshCategorySelected()) return;
 
@@ -434,6 +445,9 @@ class Modify3D {
 
     float step = User3D.modifierSolarFormFindStep;
     float maxAngle = radians(User3D.modifierSolarFormFindAngle);
+
+    boolean[] Vertex_shouldMove = new boolean[Select3D.vertexSelection.length];
+    float[][] Vertex_moveBy = new float[Select3D.vertexSelection.length][3];
 
     for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
       int vNo = Select3D.vertexSelection[o];
@@ -478,7 +492,17 @@ class Modify3D {
       // and a positive sign (harmful, step IN) moves it toward them.
       float sign = (solarValue > 0) ? -1 : 1;
 
-      allPoints.move(vNo, avgX * step * sign, avgY * step * sign, avgZ * step * sign);
+      Vertex_shouldMove[o] = true;
+      Vertex_moveBy[o][0] = avgX * step * sign;
+      Vertex_moveBy[o][1] = avgY * step * sign;
+      Vertex_moveBy[o][2] = avgZ * step * sign;
+    }
+
+    for (int o = Select3D.vertexSelection.length - 1; o >= 0; o--) {
+      if (!Vertex_shouldMove[o]) continue;
+
+      int vNo = Select3D.vertexSelection[o];
+      allPoints.move(vNo, Vertex_moveBy[o][0], Vertex_moveBy[o][1], Vertex_moveBy[o][2]);
     }
 
     VertexSolar_rebuild_array = true;
