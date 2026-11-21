@@ -1045,7 +1045,7 @@ subtract modes.
 ### Groups
 
 -   `Group Selection`, `Ungroup Selection`
--   `Attach to Last Group`, `Dettach from Groups Selection`
+-   `Attach Selection to Last Group`, `Dettach from Groups Selection`
 -   `Begin New Group at Origin`, `Begin New Group at Pivot`
 -   `Faces >> Groups`, `Groups >> Faces`, `Groups >> Model1Ds`,
     `Groups >> Model2Ds`, `Groups >> Polylines`, `Groups >> Solids`,

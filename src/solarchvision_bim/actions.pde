@@ -2266,7 +2266,7 @@ void build_allActions() {
     allGroups.group_Selection(1);
   });
 
-  putAction("Attach to Last Group", () -> {
+  putAction("Attach Selection to Last Group", () -> {
     allGroups.group_Selection(0);
   });
 

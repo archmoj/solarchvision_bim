@@ -459,7 +459,13 @@ class UI_menuBar {
       "Show/Hide Selected 2D Edges",
       "Show/Hide Selected 1D Edges",
       ___divider___,
-      "Show/Hide Modifier Bounding Box"
+      "Show/Hide Modifier Bounding Box",
+      ___divider___,
+      "Attach Selection to Last Group",
+      "Dettach from Groups Selection",
+      ___divider___,
+      "Group Selection",
+      "Ungroup Selection"
     },
     {
       PARENT_CONVERT,
@@ -492,12 +498,6 @@ class UI_menuBar {
     },
     {
       PARENT_MODIFY,
-      "Attach to Last Group",
-      "Dettach from Groups Selection",
-      ___divider___,
-      "Group Selection",
-      "Ungroup Selection",
-      ___divider___,
       "Tessellate Triangular",
       "Tessellate Rectangular",
       "Tessellate Rows & Columns",
