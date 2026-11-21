@@ -1269,70 +1269,176 @@ class Modify3D {
           continue;
         }
 
-        allGroups.inserted_nFaces(OBJ_ID, f, n); // because adding the faces also changes the end pointer of the same object
-
-        ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
-        midList_Faces_nodes_L.add(allFaces.nodes[f]); // same reference as before - mutated in place below
-        ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
-        midList_Faces_options_L.add(allFaces.options[f]);
-
-        float[][] base_Vertices = faceBaseVertices(f);
-        float[] faceNormal = faceNormalUnit(base_Vertices);
-
-        float[][] edgeDir = new float[n][];
-        float[][] inwardPerp = new float[n][];
-        for (int s = 0; s < n; s++) {
-          int s_next = (s + 1) % n;
-          float[] d = { base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2] };
-          edgeDir[s] = funcs.vec3_unit(d);
-
-          PVector N = new PVector(faceNormal[0], faceNormal[1], faceNormal[2]);
-          PVector D = new PVector(edgeDir[s][0], edgeDir[s][1], edgeDir[s][2]);
-          PVector perp = N.cross(D); // in-plane, pointing inward - see this method's own comment for why
-          inwardPerp[s] = funcs.vec3_unit(new float[] { perp.x, perp.y, perp.z });
-        }
-
-        int[] innerVertexSelection = new int[n];
-        for (int s = 0; s < n; s++) {
-          int s_prev = (s + n - 1) % n;
-
-          float[] P1 = { base_Vertices[s_prev][0] + inwardPerp[s_prev][0] * User3D.modifierInsetDepth, base_Vertices[s_prev][1] + inwardPerp[s_prev][1] * User3D.modifierInsetDepth, base_Vertices[s_prev][2] + inwardPerp[s_prev][2] * User3D.modifierInsetDepth };
-          float[] P2 = { base_Vertices[s][0] + inwardPerp[s][0] * User3D.modifierInsetDepth, base_Vertices[s][1] + inwardPerp[s][1] * User3D.modifierInsetDepth, base_Vertices[s][2] + inwardPerp[s][2] * User3D.modifierInsetDepth };
-
-          float[] innerPoint = lineIntersection3D(P1, edgeDir[s_prev], P2, edgeDir[s]);
-          if (innerPoint == null) { // a straight-through vertex (both edges run the same direction) - no crossing to find, so just nudge the corner itself inward
-            float[] avg = { inwardPerp[s_prev][0] + inwardPerp[s][0], inwardPerp[s_prev][1] + inwardPerp[s][1], inwardPerp[s_prev][2] + inwardPerp[s][2] };
-            float[] avgUnit = funcs.vec3_unit(avg);
-            innerPoint = new float[] { base_Vertices[s][0] + avgUnit[0] * User3D.modifierInsetDepth, base_Vertices[s][1] + avgUnit[1] * User3D.modifierInsetDepth, base_Vertices[s][2] + avgUnit[2] * User3D.modifierInsetDepth };
-          }
-
-          innerVertexSelection[s] = allPoints.create(innerPoint[0], innerPoint[1], innerPoint[2]);
-        }
-
-        current_Material = allFaces.getMaterial(f);
-        current_Tessellation = allFaces.getTessellation(f);
-        current_Layer = allFaces.getLayer(f);
-        current_Visibility = allFaces.getVisibility(f);
-
-        for (int s = 0; s < n; s++) {
-          int s_next = (s + 1) % n;
-
-          int[] ringFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], innerVertexSelection[s_next], innerVertexSelection[s] };
-          int[] ringFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
-          midList_Faces_nodes_L.add(ringFace_nodes);
-          midList_Faces_options_L.add(ringFace_options);
-        }
-
-        // modifying the base face to shrink it down to the new inner boundary
-        for (int s = 0; s < n; s++) {
-          allFaces.nodes[f][s] = innerVertexSelection[s];
-        }
-
-        spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+        insetAndRecedeFace(f, OBJ_ID, User3D.modifierInsetDepth, 0); // insetStep=0: flat, coplanar inset - no recede
         primary_list = this.remove_item_from_primary_list(q, primary_list);
       }
     }
 
+    switch_category(ObjectCategory.FACE);
+    endScene3DChange();
+  }
+
+  // Shrinks face f inward, in its own plane, by insetDepth - exactly
+  // insetFaces_Selection()'s own inward-perpendicular-offset-then-
+  // intersect math (see that function's own header comment for how and
+  // why), unchanged - then, if insetStep is nonzero, additionally
+  // RECEDES every one of the resulting inner-ring vertices by insetStep
+  // along the face's own NEGATED outward normal, pushing the new inner
+  // face into the solid. The untouched original boundary and the now-
+  // receded inner face are joined by the same ring of border quads
+  // either way; with insetStep=0 those border quads stay flat and
+  // coplanar (reproducing insetFaces_Selection()'s own result exactly),
+  // and with insetStep>0 they become slanted "reveal" walls - shared by
+  // insetFaces_Selection() above and passiveSolarInsetFaces_Selection()
+  // below so this ~70 lines of 3D math exists in exactly one place.
+  void insetAndRecedeFace (int f, int OBJ_ID, float insetDepth, float insetStep) {
+    int n = allFaces.nodes[f].length;
+
+    allGroups.inserted_nFaces(OBJ_ID, f, n); // because adding the faces also changes the end pointer of the same object
+
+    ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+    midList_Faces_nodes_L.add(allFaces.nodes[f]); // same reference as before - mutated in place below
+    ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+    midList_Faces_options_L.add(allFaces.options[f]);
+
+    float[][] base_Vertices = faceBaseVertices(f);
+    float[] faceNormal = faceNormalUnit(base_Vertices);
+
+    float[][] edgeDir = new float[n][];
+    float[][] inwardPerp = new float[n][];
+    for (int s = 0; s < n; s++) {
+      int s_next = (s + 1) % n;
+      float[] d = { base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2] };
+      edgeDir[s] = funcs.vec3_unit(d);
+
+      PVector N = new PVector(faceNormal[0], faceNormal[1], faceNormal[2]);
+      PVector D = new PVector(edgeDir[s][0], edgeDir[s][1], edgeDir[s][2]);
+      PVector perp = N.cross(D); // in-plane, pointing inward - see insetFaces_Selection()'s own comment for why
+      inwardPerp[s] = funcs.vec3_unit(new float[] { perp.x, perp.y, perp.z });
+    }
+
+    int[] innerVertexSelection = new int[n];
+    for (int s = 0; s < n; s++) {
+      int s_prev = (s + n - 1) % n;
+
+      float[] P1 = { base_Vertices[s_prev][0] + inwardPerp[s_prev][0] * insetDepth, base_Vertices[s_prev][1] + inwardPerp[s_prev][1] * insetDepth, base_Vertices[s_prev][2] + inwardPerp[s_prev][2] * insetDepth };
+      float[] P2 = { base_Vertices[s][0] + inwardPerp[s][0] * insetDepth, base_Vertices[s][1] + inwardPerp[s][1] * insetDepth, base_Vertices[s][2] + inwardPerp[s][2] * insetDepth };
+
+      float[] innerPoint = lineIntersection3D(P1, edgeDir[s_prev], P2, edgeDir[s]);
+      if (innerPoint == null) { // a straight-through vertex (both edges run the same direction) - no crossing to find, so just nudge the corner itself inward
+        float[] avg = { inwardPerp[s_prev][0] + inwardPerp[s][0], inwardPerp[s_prev][1] + inwardPerp[s][1], inwardPerp[s_prev][2] + inwardPerp[s][2] };
+        float[] avgUnit = funcs.vec3_unit(avg);
+        innerPoint = new float[] { base_Vertices[s][0] + avgUnit[0] * insetDepth, base_Vertices[s][1] + avgUnit[1] * insetDepth, base_Vertices[s][2] + avgUnit[2] * insetDepth };
+      }
+
+      // Recede the new inner-ring point into the solid, away from the
+      // sun, by insetStep along the NEGATED outward normal - the same
+      // "move opposite the outward normal" convention passiveSolarTouch
+      // MoveFor() uses. insetStep=0 is a no-op here, leaving the inset
+      // perfectly flat/coplanar.
+      innerPoint[0] -= faceNormal[0] * insetStep;
+      innerPoint[1] -= faceNormal[1] * insetStep;
+      innerPoint[2] -= faceNormal[2] * insetStep;
+
+      innerVertexSelection[s] = allPoints.create(innerPoint[0], innerPoint[1], innerPoint[2]);
+    }
+
+    current_Material = allFaces.getMaterial(f);
+    current_Tessellation = allFaces.getTessellation(f);
+    current_Layer = allFaces.getLayer(f);
+    current_Visibility = allFaces.getVisibility(f);
+
+    for (int s = 0; s < n; s++) {
+      int s_next = (s + 1) % n;
+
+      int[] ringFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], innerVertexSelection[s_next], innerVertexSelection[s] };
+      int[] ringFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+      midList_Faces_nodes_L.add(ringFace_nodes);
+      midList_Faces_options_L.add(ringFace_options);
+    }
+
+    // modifying the base face to shrink it down to the new inner boundary
+    for (int s = 0; s < n; s++) {
+      allFaces.nodes[f][s] = innerVertexSelection[s];
+    }
+
+    spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+  }
+
+  // Averages vertexSolar_TotalComparisonAt() across every one of face
+  // f's own vertices. Any single undefined vertex disqualifies the
+  // whole face outright - returns FLOAT_undefined rather than quietly
+  // averaging over just the defined ones - since passiveSolarInsetFaces_
+  // Selection() below treats "disqualified" and "beneficial/neutral on
+  // average" the same way (left untouched), but the caller still needs
+  // to tell the two apart from "harmful on average" (a negative result).
+  float faceSolarAverage (int f) {
+    int n = allFaces.nodes[f].length;
+    float sum = 0;
+
+    for (int s = 0; s < n; s++) {
+      int vNo = allFaces.nodes[f][s];
+      float v = vertexSolar_TotalComparisonAt(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+      if (is_undefined(v)) return FLOAT_undefined;
+      sum += v;
+    }
+
+    return sum / n;
+  }
+
+  // "Passive Solar Touch"'s own sister function, operating on selected
+  // FACES rather than vertices - its root motivation is the same small
+  // architectural lever against a building's own contribution to global
+  // warming: a face that reads as harmful ON AVERAGE across its own
+  // vertices (see faceSolarAverage() above - any single undefined
+  // vertex disqualifies the whole face, same as a beneficial/neutral
+  // average does) gets recessed away from the sun, lowering its solar
+  // heat gain and so the cooling load behind it. Unlike a vertex, which
+  // can straddle several faces at different angles, a face has exactly
+  // one unambiguous normal - so there's no freeze/edge-angle check here
+  // the way Passive Solar Touch needs one. The actual geometry (shrink
+  // in-plane, then recede the new inner face along the normal) is
+  // insetAndRecedeFace() above, shared with insetFaces_Selection().
+  void passiveSolarInsetFaces_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    if (Select3D.faceSelection.length == 0) return;
+
+    VertexSolar_forceNoTessellation = true;
+    calculate_VertexSolar_array();
+    VertexSolar_forceNoTessellation = false;
+
+    beginScene3DChange();
+
+    int[] primary_list = Select3D.faceSelection;
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+
+      for (int q = primary_list.length - 1; q >= 0; q--) {
+        int f = primary_list[q];
+        if (!isFaceInGroupRange(f, OBJ_ID)) continue;
+
+        int n = allFaces.nodes[f].length;
+        if (n < 3) {
+          primary_list = this.remove_item_from_primary_list(q, primary_list);
+          continue;
+        }
+
+        float avgSolar = faceSolarAverage(f);
+        if (is_undefined(avgSolar) || avgSolar >= 0) { // disqualified, or beneficial/neutral on average - left untouched, no step-out
+          primary_list = this.remove_item_from_primary_list(q, primary_list);
+          continue;
+        }
+
+        insetAndRecedeFace(f, OBJ_ID, User3D.modifierPassiveSolarInsetDepth, User3D.modifierPassiveSolarInsetStep);
+        primary_list = this.remove_item_from_primary_list(q, primary_list);
+      }
+    }
+
+    VertexSolar_rebuild_array = true;
+    selection_changed();
     switch_category(ObjectCategory.FACE);
     endScene3DChange();
   }

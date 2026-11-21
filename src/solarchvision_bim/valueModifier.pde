@@ -1540,6 +1540,50 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierPassiveSolarInsetDepth (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 25; //stop
+    float s3 = 0.001; //step
+
+    float out = 0;
+    String command = "Modifier Passive Solar Inset Depth";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierPassiveSolarInsetDepth,
+        (v) -> { User3D.modifierPassiveSolarInsetDepth = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierPassiveSolarInsetDepth, s1, s2, s3);
+    }
+    return out;
+  }
+  float modifierPassiveSolarInsetStep (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = 0; //start
+    float s2 = 2; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Passive Solar Inset Step";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierPassiveSolarInsetStep,
+        (v) -> { User3D.modifierPassiveSolarInsetStep = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierPassiveSolarInsetStep, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

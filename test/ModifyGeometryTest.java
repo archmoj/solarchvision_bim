@@ -1790,6 +1790,53 @@ class ModifyGeometryTest {
     assertArrayEquals(new float[]{0.5f, 2.0f, 0}, app.allVertices[5], 0.0001f);
   }
 
+  // insetFaces_Selection() itself always calls this with insetStep=0 -
+  // this is the piece it never exercises: a nonzero insetStep, shared
+  // with (and actually used by) passiveSolarInsetFaces_Selection()
+  // below. Called directly here since neither this helper nor
+  // passiveSolarInsetFaces_Selection()'s own geometry depends on
+  // calculate_VertexSolar_array() - only that function's SOLAR DECISION
+  // half does (see faceSolarAverage()'s own tests, and the no-op-guard-
+  // only tests further down, for why the full function can't be).
+  @Test
+  void insetAndRecedeFace_nonzeroStep_shrinksInPlaneThenRecedesTheInnerFaceAlongTheNegatedNormal () {
+    // Same square as insetFaces_squareInsetByAPlainDistance_... above.
+    // Its vertices wind counter-clockwise when viewed from +Z, so
+    // faceNormalUnit() gives it an outward normal of (0,0,1) - receding
+    // means the new inner face's Z becomes negative.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Modify3D.insetAndRecedeFace(0, 0, 0.5f, 0.3f);
+
+    assertEquals(5, app.allFaces.nodes.length); // the receded inner face + 4 new ring quads
+    assertEquals(8, app.allVertices.length);    // 4 original + 4 new inner corners
+
+    // Same in-plane (X, Y) positions as the insetDepth=0.5, step=0 case
+    // above, but every one of the 4 new inner corners is now ALSO
+    // pushed to Z = -0.3, opposite the +Z outward normal.
+    assertArrayEquals(new float[]{0.5f, 0.5f, -0.3f}, app.allVertices[4], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 0.5f, -0.3f}, app.allVertices[5], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 1.5f, -0.3f}, app.allVertices[6], 0.0001f);
+    assertArrayEquals(new float[]{0.5f, 1.5f, -0.3f}, app.allVertices[7], 0.0001f);
+
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[0]); // the receded inner face
+
+    // The ring quads still connect each ORIGINAL (Z=0) edge to the
+    // matching new (Z=-0.3) inner edge - genuinely slanted "reveal"
+    // walls now, not flat ring quads.
+    assertArrayEquals(new int[]{0, 1, 5, 4}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{1, 2, 6, 5}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{2, 3, 7, 6}, app.allFaces.nodes[3]);
+    assertArrayEquals(new int[]{3, 0, 4, 7}, app.allFaces.nodes[4]);
+
+    assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
+  }
+
   @Test
   void insetFaces_isANoOpWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
@@ -2957,6 +3004,53 @@ class ModifyGeometryTest {
     assertEquals(5f, app.Modify3D.vertexSolar_TotalComparisonAt(1, 2, 3), 0.0001f);
   }
 
+  // --- faceSolarAverage ----------------------------------------------------
+  //
+  // Same hand-set VertexSolar_XYZ/VertexSolar_amounts approach as
+  // vertexSolar_TotalComparisonAt above, for the same reason -
+  // calculate_VertexSolar_array() needs a live PGraphics surface to run
+  // at all. passiveSolarInsetFaces_Selection() below uses this to
+  // decide whether a face reads as harmful ON AVERAGE across its own
+  // vertices, with one single undefined vertex disqualifying the whole
+  // face outright (not just quietly dropped from the average, the way
+  // vertexSolar_TotalComparisonAt's own per-position duplicates are).
+
+  @Test
+  void faceSolarAverage_everyVertexDefined_averagesThem () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+
+    app.VertexSolar_XYZ = new float[][]{
+      {0, 0, 0, 0, 0, 0, 0, 0, 0},
+      {1, 0, 0, 0, 0, 0, 0, 0, 0},
+      {1, 1, 0, 0, 0, 0, 0, 0, 0},
+      {0, 1, 0, 0, 0, 0, 0, 0, 0}
+    };
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{-4f, -2f, 2f, 0f};
+
+    assertEquals(-1f, app.Modify3D.faceSolarAverage(0), 0.0001f); // (-4-2+2+0)/4 = -1
+  }
+
+  @Test
+  void faceSolarAverage_anyUndefinedVertex_disqualifiesTheWholeFace () {
+    // Vertex 2 (at (9,9,9)) has no matching VertexSolar_XYZ row at all -
+    // even though the other two vertices both read strongly harmful,
+    // the whole face must come back undefined, not an average over just
+    // the two defined ones.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {9, 9, 9}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+
+    app.VertexSolar_XYZ = new float[][]{
+      {0, 0, 0, 0, 0, 0, 0, 0, 0},
+      {1, 0, 0, 0, 0, 0, 0, 0, 0}
+    };
+    app.VertexSolar_amounts = new float[2][1][];
+    app.VertexSolar_amounts[app.Impact_PASSIVE][0] = new float[]{-5f, -5f};
+
+    assertEquals(app.FLOAT_undefined, app.Modify3D.faceSolarAverage(0), 0.0001f);
+  }
+
   // --- passiveSolarTouchVertices_Selection (no-op guard paths only) ---------
   //
   // The real call it makes to calculate_VertexSolar_array() needs a
@@ -3031,5 +3125,55 @@ class ModifyGeometryTest {
     // ran (same category-switch check relaxSelectedGroup_... above
     // uses).
     assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+  }
+
+  // --- passiveSolarInsetFaces_Selection (no-op guard paths only) -----------
+  //
+  // Same NullPointerException constraint as passiveSolarTouchVertices_
+  // Selection() above: its own real call to calculate_VertexSolar_array()
+  // needs a live PGraphics surface to run at all, so only the two early-
+  // return guards that sit BEFORE that call are exercised here. The
+  // per-face decision and geometry themselves are covered in isolation
+  // above, via faceSolarAverage() and insetAndRecedeFace() directly.
+
+  @Test
+  void passiveSolarInsetFaces_isANoOpWhenCategoryIsNeitherGroupNorFace () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    assertDoesNotThrow(() -> app.Modify3D.passiveSolarInsetFaces_Selection());
+
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void passiveSolarInsetFaces_isANoOpWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.Select3D.faceSelection = new int[]{};
+
+    assertDoesNotThrow(() -> app.Modify3D.passiveSolarInsetFaces_Selection());
+
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  // --- "Passive Solar Inset" (wiring only) ---------------------------------
+  //
+  // Same NullPointerException constraint rules out a full integration
+  // test through runScriptLine() once real faces would actually be
+  // selected - this only confirms the command is registered and
+  // respects the same early-return guard, staying on its safe side.
+
+  @Test
+  void passiveSolarInsetSelectedFaces_commandIsRegistered_andSafeWhenNothingIsSelected () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not a Group/Face category
+    app.allFaces.nodes = new int[0][];
+
+    app.build_allActions();
+    String hint = app.runScriptLine("Passive Solar Inset");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
   }
 }

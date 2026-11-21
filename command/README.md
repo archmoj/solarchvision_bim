@@ -772,8 +772,10 @@ the user interface.
 | `Modifier Bend XY` | Circular-arc bend (degrees per meter) in X driven by Y offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend XZ` | Circular-arc bend (degrees per meter) in X driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
 | `Modifier Bend YZ` | Circular-arc bend (degrees per meter) in Y driven by Z offset from the selection's bounding-box center, used by `Bend Selected Vertices` | -360 to 360 |
-| `Modifier Passive Solar Touch Step` | Distance (meters) each vertex is pushed out or pulled in per run of `Passive Solar Touch Selected Vertices` | 0 to 2 |
+| `Modifier Passive Solar Touch Step` | Distance (meters) a harmful vertex is pulled in, opposite its own averaged face normal, per run of `Passive Solar Touch Selected Vertices` | 0 to 2 |
 | `Modifier Passive Solar Touch Angle` | A vertex whose surrounding faces' normals diverge by more than this (not coplanar enough) is treated as an edge/corner and left untouched by `Passive Solar Touch Selected Vertices` | 0 to 90 |
+| `Modifier Passive Solar Inset Depth` | In-plane distance (meters) `Passive Solar Inset` shrinks a harmful face inward from every edge - its own value, separate from `Modifier Inset Depth` | 0 to 25 |
+| `Modifier Passive Solar Inset Step` | Distance (meters) `Passive Solar Inset` additionally recedes the new inner face, opposite the face's own normal, into the solid | 0 to 2 |
 
 ### Export defaults (3D-export)
 
@@ -1341,6 +1343,22 @@ under [Shading and rendering](#shading-and-rendering) above)
     `Offset(expand) Vertices`, `Offset(shrink) Vertices`
 -   `Insert Corner Openings`, `Insert Edge Openings`,
     `Insert Parallel Openings`, `Insert Rotated Openings`
+-   `Passive Solar Inset`: `Passive Solar Touch`'s own sister function,
+    and the same small architectural lever against global warming
+    applied to whole FACES rather than vertices - a selected face whose
+    own vertices read as harmful ON AVERAGE (any single vertex with no
+    solar signal at all disqualifies the whole face, same as a
+    beneficial/neutral average does - left untouched either way) is
+    shrunk inward in its own plane by `Modifier Passive Solar Inset
+    Depth` meters, then the resulting smaller inner face is additionally
+    receded `Modifier Passive Solar Inset Step` meters into the solid,
+    opposite the face's own normal - away from the sun, lowering its
+    solar heat gain. The ring connecting the untouched original boundary
+    to the now-receded inner face becomes a set of slanted "reveal"
+    walls, the same shape as a real recessed window or coffer. Unlike
+    `Passive Solar Touch`, there's no edge/corner freeze check here - a
+    face has exactly one unambiguous normal, not several it might
+    straddle
 -   `Extrude Face Edges`
 -   `Weld Objects Selected Vertices`, `Weld Scene Selected Vertices`,
     `Separate Selected Vertices`
@@ -1364,22 +1382,23 @@ under [Shading and rendering](#shading-and-rendering) above)
     Deform panel's own currently-set `Modifier Skew */Modifier Twist
     */Modifier Bend *` fields forward or backward, instead of using
     one of the three commands directly above
--   `Passive Solar Touch Selected Vertices`: a passive-solar-driven touch -
-    one bounded step (`Modifier Passive Solar Touch Step` meters)
-    that pushes each selected vertex out along, or pulls it in against,
-    the average direction to its own real mesh neighbors, same
-    neighbor-gathering as `Relax Selected Vertices` above but read as a
-    direction rather than a blend target. Direction is decided per
-    vertex by its own net solar response: a net-beneficial vertex steps
-    out to expose more of what's working, a net-harmful one steps in to
-    self-shade. A vertex is treated as an edge or corner, and left
-    untouched, when the faces meeting there aren't coplanar enough -
-    their own normals differ by more than `Modifier Passive Solar Touch
-    Angle` degrees - rather than when its neighbors simply point in
-    different directions, which is normal for any ordinary interior
-    vertex of a flat, subdivided face. This is one step forward per
-    run, not a solve for an "optimal" shape - run it again for another
-    step, as many times as fits the design
+-   `Passive Solar Touch Selected Vertices`: a passive-solar-driven touch,
+    and a small architectural lever against a building's own
+    contribution to global warming - a vertex whose own net solar
+    response is harmful steps IN by one bounded step (`Modifier
+    Passive Solar Touch Step` meters), opposite the averaged outward
+    normal of the faces meeting there, receding it away from the sun
+    and lowering the solar heat gain (and so the cooling load) behind
+    it. A beneficial or neutral vertex is left untouched for now -
+    there's no "step out" yet, though it may come back later as a
+    separate option. A vertex is treated as an edge or corner, and left
+    untouched either way, when the faces meeting there aren't coplanar
+    enough - their own normals differ by more than `Modifier Passive
+    Solar Touch Angle` degrees - rather than when its neighbors simply
+    point in different directions, which is normal for any ordinary
+    interior vertex of a flat, subdivided face. This is one step
+    forward per run, not a solve for an "optimal" shape - run it again
+    for another step, as many times as fits the design
 -   `Relax Selected Group`, `Skew Selected Group`, `Twist Selected Group`,
     `Bend Selected Group`, `Passive Solar Touch Selected Group`: the same
     five modifiers as above, but for a selection still at the GROUP

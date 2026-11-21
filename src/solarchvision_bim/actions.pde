@@ -2306,6 +2306,10 @@ void build_allActions() {
     Modify3D.insetFaces_Selection();
   });
 
+  putAction("Passive Solar Inset", () -> {
+    Modify3D.passiveSolarInsetFaces_Selection();
+  });
+
   putAction("Optimize Faces", () -> {
     Modify3D.optimizeFace_Selection();
   });

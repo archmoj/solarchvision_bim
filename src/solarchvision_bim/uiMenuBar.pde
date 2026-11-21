@@ -507,6 +507,7 @@ class UI_menuBar {
       "Insert Rotated Openings",
       "Insert Edge Openings",
       "Inset Faces",
+      "Passive Solar Inset",
       "Cap Holes",
       ___divider___,
       "Offset(above) Vertices",
