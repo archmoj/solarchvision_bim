@@ -1837,6 +1837,51 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
   }
 
+  // The receded inner face keeps the EXACT same corner order as the
+  // original face, so its own winding - and so its normal - must stay
+  // identical, not flip, just because it's been pushed inward. The 4
+  // ring/reveal walls, which DO tilt once insetStep is nonzero, must
+  // still face consistently "up and toward the recess's own center
+  // axis" - the same way the inside of a bowl or crater faces (concave,
+  // normals converging toward the opening) - not flipped to face down
+  // into the solid they themselves bound.
+  @Test
+  void insetAndRecedeFace_nonzeroStep_keepsTheInnerFacesNormalUnchanged_andTheRingWallsTiltTowardTheRecessWithoutFlipping () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    float[] originalNormal = app.Modify3D.faceNormalUnit(app.Modify3D.faceBaseVertices(0));
+    assertArrayEquals(new float[]{0, 0, 1}, originalNormal, 0.0001f);
+
+    app.Modify3D.insetAndRecedeFace(0, 0, 0.5f, 0.3f);
+
+    // Face 0 is the receded inner face - same winding as the original,
+    // so the exact same normal.
+    assertArrayEquals(originalNormal, app.Modify3D.faceNormalUnit(app.Modify3D.faceBaseVertices(0)), 0.0001f);
+
+    // Faces 1-4 are the 4 ring walls. None of them has flipped to face
+    // away from the recess (which a sign error in the push direction
+    // would produce, pointing the walls down into the solid instead):
+    // each one's normal still has a strictly positive dot product with
+    // the original face's own normal - still facing generally the same
+    // way, just tilted - and its own in-plane (X, Y) component points
+    // toward the recess's center axis, not away from it.
+    float[][] expectedInwardXY = { {0, 1}, {-1, 0}, {0, -1}, {1, 0} }; // south, east, north, west walls
+    for (int f = 1; f <= 4; f++) {
+      float[] n = app.Modify3D.faceNormalUnit(app.Modify3D.faceBaseVertices(f));
+      float dot = n[0] * originalNormal[0] + n[1] * originalNormal[1] + n[2] * originalNormal[2];
+      assertTrue(dot > 0, "ring wall " + f + "'s normal " + java.util.Arrays.toString(n) + " must not flip away from the original face's own normal direction");
+
+      float[] expected = expectedInwardXY[f - 1];
+      assertTrue(n[0] * expected[0] + n[1] * expected[1] > 0,
+        "ring wall " + f + "'s normal " + java.util.Arrays.toString(n) + " must tilt toward the recess's own center axis, not away from it");
+    }
+  }
+
   @Test
   void insetFaces_isANoOpWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.SOLID; // neither GROUP nor FACE
