@@ -51,8 +51,8 @@ class SolarArraySmokeTest {
     app.sketchPath(); // see LoadClimateTypicalYearTest.java's own comment on why
 
     int numLayers = app.allLayers.length;
-    app.climateTypicalYearValues = new float[24][365][numLayers][1];
-    app.climateTypicalYearFlags = new boolean[24][365][numLayers][1];
+    app.climateTypicalYearValues = new float[24][366][numLayers][1];
+    app.climateTypicalYearFlags = new boolean[24][366][numLayers][1];
     for (float[][][] perJ : app.climateTypicalYearValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {

@@ -57,15 +57,15 @@ class UI_caseBarTest {
 
   @Test
   void dayOfYearFromClick_beforeTheWrapPoint_addsTheMarchEquinoxOffset () {
-    assertEquals(200, app.UI_caseBar.dayOfYearFromClick(279, 0, 365));
+    assertEquals(200, app.UI_caseBar.dayOfYearFromClick(280, 0, 366));
   }
 
   @Test
   void dayOfYearFromClick_pastTheWrapPoint_wrapsAroundToZero () {
-    // +286 pushes clickX=79 (-> scaled index 79) to exactly 365, which
+    // +286 pushes clickX=80 (-> scaled index 80) to exactly 366, which
     // wraps to 0 - this is the TIME.date convention (0 == March 21,
     // 286 == Jan 1) documented in solarchvision_bim.pde's setup().
-    assertEquals(0, app.UI_caseBar.dayOfYearFromClick(79, 0, 365));
+    assertEquals(0, app.UI_caseBar.dayOfYearFromClick(80, 0, 366));
   }
 
   // ================= impactCellBounds =========================================
@@ -263,14 +263,14 @@ class UI_caseBarTest {
     app.vm.beginDay(0);
     app.TIME.date = 100;
     app.TIME.beginDay = 50;
-    app.X_clicked = 279; // -> dayOfYearFromClick(279, 0, 365) == 200
+    app.X_clicked = 280; // -> dayOfYearFromClick(280, 0, 366) == 200
     app.Y_clicked = 10;
     app.mouseButton = app.LEFT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     assertEquals(200f, app.TIME.date, 0.001f);
-    // newBeginDay = (50 + (200 - 100) + 365) % 365 = 150
+    // newBeginDay = (50 + (200 - 100) + 366) % 366 = 150
     assertEquals(150, app.TIME.beginDay);
   }
 
@@ -281,11 +281,11 @@ class UI_caseBarTest {
     app.TIME.date = 50;
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 12;
-    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.X_clicked = 180; // -> dayOfYearFromClick(180, 0, 366) == 100
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     // There are endDay - startDay - 1 == 11 dayIncrement-sized steps
     // between the first drawn group's center (j == startDay, which
@@ -303,14 +303,14 @@ class UI_caseBarTest {
     app.TIME.date = 100;
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 12;
-    // dayOfYearFromClick(179, 0, 365) == 100, exactly TIME.date itself -
+    // dayOfYearFromClick(180, 0, 366) == 100, exactly TIME.date itself -
     // a zero-length drag, which without the clamp would compute a
     // selectedValue of 0.
-    app.X_clicked = 179;
+    app.X_clicked = 180;
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     assertEquals(1f, app.STUDY.dayIncrement, 0.001f);
   }
@@ -322,11 +322,11 @@ class UI_caseBarTest {
     app.TIME.date = 10;
     app.STUDY.startDay = 2;
     app.STUDY.endDay = 8; // daySteps == endDay - startDay - 1 == 5, not the 6-group count
-    app.X_clicked = 279; // -> dayOfYearFromClick(279, 0, 365) == 200
+    app.X_clicked = 280; // -> dayOfYearFromClick(280, 0, 366) == 200
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     // roundTo((200 - 10) / 5, 0.5) == 38.0 - dividing by the 6-group
     // count instead (190 / 6 == 31.67, rounding to 31.5) would give a
@@ -341,11 +341,11 @@ class UI_caseBarTest {
     app.TIME.date = 50;
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 1; // only one group drawn -> endDay - startDay - 1 == 0, floored to 1
-    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.X_clicked = 180; // -> dayOfYearFromClick(180, 0, 366) == 100
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     // Without the >= 1 floor this would divide by zero.
     // roundTo((100 - 50) / 1, 0.5) == 50.0
@@ -361,11 +361,11 @@ class UI_caseBarTest {
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 12; // daySteps == 11
     app.STUDY.daysMergedCount = 1; // different from the target, so the change is observable
-    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.X_clicked = 180; // -> dayOfYearFromClick(180, 0, 366) == 100
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     // selectedValue == 4.5 (see ...setsDayIncrementFromTheDragSpan above);
     // round(4.5) == 5 - Java's Math.round rounds a .5 tie up, the same
@@ -382,41 +382,56 @@ class UI_caseBarTest {
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 12;
     app.STUDY.daysMergedCount = 5; // different from the target, so the change is observable
-    // dayOfYearFromClick(179, 0, 365) == 100, a zero-length drag - see
+    // dayOfYearFromClick(180, 0, 366) == 100, a zero-length drag - see
     // ...neverGoesBelowOne above, which pins the matching dayIncrement
     // clamp.
-    app.X_clicked = 179;
+    app.X_clicked = 180;
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     assertEquals(1, app.STUDY.daysMergedCount);
   }
 
   @Test
   void handleDaysClick_rightClick_clampsDaysMergedCountToTheSpinnersOwnUpperBound () {
+    // Under the old 365-day (odd) calendar, "Day Increment"'s own float
+    // upper bound (182.5) and "Days Merged Count"'s own int upper bound
+    // (182, i.e. floor(182.5)) were half a day apart, so a selectedValue
+    // sitting exactly on the former (182.5) still rounded (ties up) past
+    // the latter, demonstrating the two caps are enforced independently.
+    // 366 is even, so that gap no longer exists - floor(366 / 2) == 183
+    // == 366 / 2.0 exactly, both caps now coincide, and no value accepted
+    // by "Day Increment" can ever round past "Days Merged Count"'s own
+    // cap anymore. What's still real and worth covering: a selectedValue
+    // large enough to be rejected outright by "Day Increment" (so
+    // STUDY.dayIncrement is left untouched) must still get its own,
+    // separately-computed "Days Merged Count" clamped and applied -
+    // the two commands are independent dispatches, not one rejecting
+    // the other.
     app.allActions = new java.util.HashMap<>();
     app.vm.dayIncrement(0);
     app.vm.daysMergedCount(0);
-    app.TIME.date = 182.5f;
+    app.STUDY.dayIncrement = 1f; // distinct from both the rejected request and its own default (30.5), so "unchanged" is observable
+    app.TIME.date = 0;
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 2; // daySteps == endDay - startDay - 1 == 1
     app.STUDY.daysMergedCount = 1; // different from the clamped target, so the change is observable
-    app.X_clicked = 79; // -> dayOfYearFromClick(79, 0, 365) == 0, wraps to 365 since TIME.date > 0
+    app.X_clicked = 79; // -> dayOfYearFromClick(79, 0, 366) == 365 (no wrap needed: TIME.date (0) is not > 365)
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
-    // selectedValue == roundTo((365 - 182.5) / 1, 0.5) == 182.5 - "Day
-    // Increment"'s own upper bound. round(182.5) == 183 (ties round up),
-    // which handleDaysClick must still clamp to "Days Merged Count"'s
-    // own, lower, 182 upper bound rather than pass 183 straight through
-    // (which putValueAction would otherwise reject outright, leaving
-    // daysMergedCount unchanged).
-    assertEquals(182.5f, app.STUDY.dayIncrement, 0.001f);
-    assertEquals(182, app.STUDY.daysMergedCount);
+    // selectedValue == roundTo((365 - 0) / 1, 0.5) == 365.0 - well past
+    // "Day Increment"'s own 183.0 upper bound, so that command is
+    // rejected outright (putValueAction's own min/max check) and
+    // STUDY.dayIncrement is left exactly as this test set it. round(365)
+    // == 365 still gets clamped to "Days Merged Count"'s own, separate,
+    // 183 upper bound and applied regardless.
+    assertEquals(1f, app.STUDY.dayIncrement, 0.001f);
+    assertEquals(183, app.STUDY.daysMergedCount);
   }
 
   @Test
@@ -429,12 +444,12 @@ class UI_caseBarTest {
     app.STUDY.endDay = 12; // daySteps == 11
     app.STUDY.dayIncrement = 4.5f; // already the value this drag would compute
     app.STUDY.daysMergedCount = 5; // already round(4.5) == 5
-    app.X_clicked = 179; // -> dayOfYearFromClick(179, 0, 365) == 100
+    app.X_clicked = 180; // -> dayOfYearFromClick(180, 0, 366) == 100
     app.Y_clicked = 10;
     app.mouseButton = app.RIGHT;
     app.UI_caseBar.update = false;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     // Neither value actually changes here, so neither putValueAction
     // should fire its onChanged/revise callback - UI_caseBar.update
@@ -454,7 +469,7 @@ class UI_caseBarTest {
     app.Y_clicked = -1;
     app.mouseButton = app.LEFT;
 
-    app.UI_caseBar.handleDaysClick(0, 0, 365, 20);
+    app.UI_caseBar.handleDaysClick(0, 0, 366, 20);
 
     assertEquals(before, app.TIME.date, 0.001f);
   }

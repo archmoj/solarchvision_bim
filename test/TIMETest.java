@@ -16,10 +16,10 @@ class TIMETest {
   // --- safeDate -----------------------------------------------------
 
   @Test
-  void safeDate_wrapsIntoZeroTo365Range () {
+  void safeDate_wrapsIntoZeroTo366Range () {
     assertEquals(0, time.safeDate(0));
-    assertEquals(364, time.safeDate(-1));   // one day before the epoch wraps to the last index
-    assertEquals(0, time.safeDate(365));    // exactly one full year wraps back to 0
+    assertEquals(365, time.safeDate(-1));   // one day before the epoch wraps to the last index
+    assertEquals(0, time.safeDate(366));    // exactly one full (366-day) year wraps back to 0
   }
 
   @Test
@@ -33,6 +33,11 @@ class TIMETest {
 
   // --- convert2Day / convert2Date ----------------------------------
 
+  // convert2Day() is dead code (not called anywhere in src/, confirmed
+  // by grep) and was deliberately left on the old 365-day approximation
+  // when the rest of TIME moved to 366 (see its own comment in
+  // time.pde) - these two tests pin down that it's still unchanged,
+  // not that 365 is still correct anywhere else in this class.
   @Test
   void convert2Day_insertsExtraDaysAtEachThreshold () {
     assertEquals(0, time.convert2Day(0));
@@ -55,12 +60,18 @@ class TIMETest {
     assertEquals(0, time.convert2Date(1, 1));    // Jan 1
     assertEquals(30, time.convert2Date(1, 31));  // Jan 31
     assertEquals(31, time.convert2Date(2, 1));   // Feb 1
-    assertEquals(59, time.convert2Date(3, 1));   // Mar 1 (31 + 28 days before it)
-    assertEquals(364, time.convert2Date(12, 31)); // last day of a 365-day year
+    assertEquals(60, time.convert2Date(3, 1));   // Mar 1 (31 + 29 days before it - Feb is always 29 in this generic calendar)
+    assertEquals(365, time.convert2Date(12, 31)); // last day of a 366-day year
   }
 
   // --- calendar lookup tables (built by createCalendar) -----------
 
+  // None of the known-index values below changed when lengthOfMonths[1]
+  // grew from 28 to 29 (see createCalendar()'s own comment in time.pde):
+  // index 0 is Mar 21 and index 286 is Jan 1 regardless of February's
+  // length (the days from Mar 21 to Dec 31 - which is what separates
+  // them - never pass through February at all), and index 200 (Oct 7)
+  // sits inside that same Feb-independent Mar21..Dec31 stretch too.
   @Test
   void calendarLookups_matchTheNowruzAlignedWalkAtKnownIndices () {
     assertEquals(3, time.getMonth_fromDate(0));
@@ -81,11 +92,14 @@ class TIMETest {
   @Test
   void calendarLookups_goThroughSafeDateSoOutOfRangeIndicesStillResolve () {
     // getMonth_fromDate/getDay_fromDate/etc. all route their argument
-    // through safeDate() first, so values outside [0, 365) still land on
+    // through safeDate() first, so values outside [0, 366) still land on
     // a valid table entry instead of throwing.
-    assertEquals(time.getMonth_fromDate(0), time.getMonth_fromDate(365));
-    assertEquals(time.getDay_fromDate(0), time.getDay_fromDate(365));
-    assertEquals(time.getMonth_fromDate(364), time.getMonth_fromDate(-1));
+    assertEquals(time.getMonth_fromDate(0), time.getMonth_fromDate(366));
+    assertEquals(time.getDay_fromDate(0), time.getDay_fromDate(366));
+    // index 365 (the last slot before the wrap back to index 0 / Mar 21)
+    // is Mar 20 either way - it's always the day right before Mar 21,
+    // regardless of February's length.
+    assertEquals(time.getMonth_fromDate(365), time.getMonth_fromDate(-1));
   }
 
   @Test

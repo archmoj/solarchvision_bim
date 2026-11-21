@@ -31,8 +31,8 @@ class FindScenariosCloseToDailyStatSmokeTest {
     app.sketchPath(); // see LoadClimateTypicalYearTest.java's own comment on why
 
     int numLayers = app.allLayers.length;
-    app.climateTypicalYearValues = new float[24][365][numLayers][1];
-    app.climateTypicalYearFlags = new boolean[24][365][numLayers][1];
+    app.climateTypicalYearValues = new float[24][366][numLayers][1];
+    app.climateTypicalYearFlags = new boolean[24][366][numLayers][1];
     for (float[][][] perJ : app.climateTypicalYearValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {
@@ -61,9 +61,9 @@ class FindScenariosCloseToDailyStatSmokeTest {
     // nonzero solar radiation in this exact file. DATE_ANGLE computed
     // the same way sync_SHADE_DATE_ANGLE() does for that day-of-year
     // (ImpactDayToDayOfYearTest.java's own derivation style): 360 *
-    // ((286 + 182) % 365) / 365.0 ~= 101.59.
+    // ((286 + 182) % 366) / 366.0 ~= 100.33.
     int j = 6;
-    float DATE_ANGLE = 360f * ((286 + 182) % 365) / 365f;
+    float DATE_ANGLE = 360f * ((286 + 182) % 366) / 366f;
 
     int[] result = app.FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(
         app.STAT_N_Ave, start_k, end_k, j, DATE_ANGLE, app.Impact_ACTIVE);
@@ -94,7 +94,7 @@ class FindScenariosCloseToDailyStatSmokeTest {
     // specifically, independent of whatever real file happens to be
     // loaded.
     int numLayers = app.allLayers.length;
-    app.climateTypicalYearValues = new float[24][365][numLayers][1];
+    app.climateTypicalYearValues = new float[24][366][numLayers][1];
     for (float[][][] perJ : app.climateTypicalYearValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {
@@ -104,7 +104,7 @@ class FindScenariosCloseToDailyStatSmokeTest {
     }
 
     int[] result = app.FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(
-        app.STAT_N_Ave, 0, 0, 6, 101.59f, app.Impact_ACTIVE);
+        app.STAT_N_Ave, 0, 0, 6, 100.33f, app.Impact_ACTIVE);
 
     assertNotNull(result);
     assertEquals(0, result.length);

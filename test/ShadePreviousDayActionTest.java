@@ -42,10 +42,10 @@ class ShadePreviousDayActionTest {
     // sync_SHADE_DATE_ANGLE() via impactDayToDayOfYear(STUDY.endDay=12),
     // TIME.beginDay=0, STUDY.dayIncrement=30.5:
     //   j = 12 - 1 = 11
-    //   now_j = (11 * 30 + 0 + 365) % 365 = 695 % 365 = 330
-    //   angle = (int) (360 * ((286 + 330) % 365) / 365.0)
-    //         = (int) (360 * 251 / 365.0) = 247
-    assertEquals(247, app.SHADE_DATE_ANGLE);
+    //   now_j = (11 * 30 + 0 + 366) % 366 = 696 % 366 = 330
+    //   angle = (int) (360 * ((286 + 330) % 366) / 366.0)
+    //         = (int) (360 * 250 / 366.0) = 245
+    assertEquals(245, app.SHADE_DATE_ANGLE);
   }
 
   @Test

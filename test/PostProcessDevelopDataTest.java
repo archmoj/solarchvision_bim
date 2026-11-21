@@ -47,9 +47,9 @@ class PostProcessDevelopDataTest {
   }
 
   private float[][][][] freshArray () {
-    float[][][][] values = new float[24][365][numLayers][1];
+    float[][][][] values = new float[24][366][numLayers][1];
     for (int i = 0; i < 24; i++) {
-      for (int j = 0; j < 365; j++) {
+      for (int j = 0; j < 366; j++) {
         for (int l = 0; l < numLayers; l++) {
           values[i][j][l][0] = app.FLOAT_undefined;
         }
@@ -97,7 +97,7 @@ class PostProcessDevelopDataTest {
   // Orientation - then calls SolarAtSurface() with it.
 
   private float expectedSolarAtSurface (float R_dir, float R_dif, float alpha, float beta) {
-    float DATE_ANGLE = (360 * ((286 + DAY) % 365) / 365.0f);
+    float DATE_ANGLE = (360 * ((286 + DAY) % 366) / 366.0f);
     float[] SunR = app.funcs.SunPosition(app.STATION.getLatitude(), DATE_ANGLE, (float) HOUR);
     return app.SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, alpha, beta, app.globalAlbedo);
   }
@@ -177,7 +177,7 @@ class PostProcessDevelopDataTest {
     app.climateTypicalYearValues[HOUR][DAY][app.LAYER_developed.id][0] = app.FLOAT_undefined; // undo the leading reset for a fair rerun
     app.climateTypicalYearValues[HOUR][DAY][app.LAYER_precipitation.id][0] = 999f;
     int nextI = HOUR + 12, nextJ = DAY; // the function's own "12 hours later" pairing
-    if (nextI >= 24) { nextI -= 24; nextJ = (nextJ + 1) % 365; }
+    if (nextI >= 24) { nextI -= 24; nextJ = (nextJ + 1) % 366; }
     app.climateTypicalYearValues[nextI][nextJ][app.LAYER_precipitation.id][0] = -999f;
 
     app.postProcess_developDATA(app.dataID_climateTypicalYear);

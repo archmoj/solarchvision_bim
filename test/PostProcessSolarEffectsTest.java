@@ -24,7 +24,7 @@ class PostProcessSolarEffectsTest {
   // freshTypicalYearArray(): climateTypicalYearStart/End default to 1/1,
   // so only k == 0 is ever touched here.
   private float[][][][] freshTypicalYearArray () {
-    float[][][][] values = new float[24][365][numLayers][1];
+    float[][][][] values = new float[24][366][numLayers][1];
     for (int h = 0; h < 24; h++) {
       for (int l = 0; l < numLayers; l++) {
         values[h][0][l][0] = app.FLOAT_undefined;

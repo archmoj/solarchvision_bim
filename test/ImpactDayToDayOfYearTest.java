@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 // that drives its own "now_j < 0" wraparound branch, which stayed
 // uncovered as a result.
 //
-// Its sibling branch, "now_j >= 365", is deliberately NOT exercised here:
-// now_j comes from "... % 365" (a positive divisor), and Java's %
+// Its sibling branch, "now_j >= 366", is deliberately NOT exercised here:
+// now_j comes from "... % 366" (a positive divisor), and Java's %
 // operator never returns a value whose absolute value reaches the
 // divisor for any int dividend - so that branch is unreachable by
 // construction, not just untested by coincidence.
@@ -44,17 +44,17 @@ class ImpactDayToDayOfYearTest {
   void anOrdinaryLaterDay_advancesByWholeDayIncrementStepsFromBeginDay () {
     app.TIME.beginDay = 0;
     // STUDY.dayIncrement defaults to 30.5, truncated to 30 by int(...)
-    // inside the function itself - day 5 (j=4): (4*30 + 0 + 365) % 365
-    // = 485 % 365 = 120.
+    // inside the function itself - day 5 (j=4): (4*30 + 0 + 366) % 366
+    // = 486 % 366 = 120.
     assertEquals(120, app.impactDayToDayOfYear(5));
   }
 
   @Test
   void aNegativeDay_wrapsForwardIntoAPositiveDayOfYear () {
     app.TIME.beginDay = 0;
-    // day -50 (j=-51): (-51*30 + 0 + 365) % 365 = -1165 % 365 = -70
+    // day -50 (j=-51): (-51*30 + 0 + 366) % 366 = -1164 % 366 = -66
     // (Java's % keeps the dividend's sign) -> the "now_j < 0" branch then
-    // wraps it forward: (-70 + 365) % 365 = 295.
-    assertEquals(295, app.impactDayToDayOfYear(-50));
+    // wraps it forward: (-66 + 366) % 366 = 300.
+    assertEquals(300, app.impactDayToDayOfYear(-50));
   }
 }

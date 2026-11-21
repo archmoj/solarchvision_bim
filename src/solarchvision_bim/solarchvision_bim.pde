@@ -88,7 +88,7 @@ void setup () {
 
   draw_frame_icon();
 
-  TIME.date = (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  TIME.date = (286 + TIME.convert2Date(TIME.month, TIME.day)) % 366; // 0 presents March 21, 286 presents Jan.01, 346 presents March.01
   //if (TIME.hour >= 12) TIME.date += 0.5;
 
   VertexSolar_resize_array();

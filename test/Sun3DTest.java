@@ -246,19 +246,19 @@ class Sun3DTest {
   }
 
   @Test
-  void wrapDayIndex_wrapsValuesAtOrAbove365 () {
-    assertEquals(0, app.Sun3D.wrapDayIndex(365));
-    assertEquals(35, app.Sun3D.wrapDayIndex(400));
+  void wrapDayIndex_wrapsValuesAtOrAbove366 () {
+    assertEquals(0, app.Sun3D.wrapDayIndex(366));
+    assertEquals(34, app.Sun3D.wrapDayIndex(400));
   }
 
   @Test
   void wrapDayIndex_wrapsNegativeValues () {
-    assertEquals(364, app.Sun3D.wrapDayIndex(-1));
+    assertEquals(365, app.Sun3D.wrapDayIndex(-1));
     // More than a single year below zero - confirmed by hand against the
     // real compiled app rather than just trusting the double-wrap
-    // (+365, then a second +365 if still negative) actually covers this:
-    // int(-366+365)=-1, then (-1+365)%365=364.
-    assertEquals(364, app.Sun3D.wrapDayIndex(-366));
+    // (+366, then a second +366 if still negative) actually covers this:
+    // int(-367+366)=-1, then (-1+366)%366=365.
+    assertEquals(365, app.Sun3D.wrapDayIndex(-367));
   }
 
   // ================= activePalette() ===============================================

@@ -9,7 +9,7 @@ void postProcess_solarEffects (int desired_DataSource) {
 
 
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
 
         float T     = getValue_currentDataSource(i, j, k, LAYER_drybulb.id);

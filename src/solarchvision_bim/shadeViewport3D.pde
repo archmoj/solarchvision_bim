@@ -865,8 +865,8 @@ void previousShadeDay () {
   callAction("Previous Impact Day");
 }
 
-// The day-of-year index (TIME.convert2Date()'s own 0-364, Jan-1-is-0
-// convention - not the (286 + ...) % 365 shift SHADE_DATE_ANGLE's own
+// The day-of-year index (TIME.convert2Date()'s own 0-365, Jan-1-is-0
+// convention - not the (286 + ...) % 366 shift SHADE_DATE_ANGLE's own
 // degrees are built from, see sync_SHADE_DATE_ANGLE() below for that
 // extra step) a given impactDisplayDay slot represents. impactDisplayDay
 // == 0 ("total") is treated the same as 1 (STUDY.dayIncrement * 0 steps
@@ -879,13 +879,13 @@ int impactDayToDayOfYear (int day) {
   int j = day - 1;
   if (j == -1) j = 0; // use beginDay for the case of total
 
-  int now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+  int now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 366) % 366;
 
-  if (now_j >= 365) {
-    now_j = now_j % 365;
+  if (now_j >= 366) {
+    now_j = now_j % 366;
   }
   if (now_j < 0) {
-    now_j = (now_j + 365) % 365;
+    now_j = (now_j + 366) % 366;
   }
 
   return now_j;
@@ -894,7 +894,7 @@ int impactDayToDayOfYear (int day) {
 void sync_SHADE_DATE_ANGLE () {
   int now_j = impactDayToDayOfYear(impactDisplayDay);
 
-  SHADE_DATE_ANGLE = (int) (360 * ((286 + now_j) % 365) / 365.0);
+  SHADE_DATE_ANGLE = (int) (360 * ((286 + now_j) % 366) / 366.0);
 }
 
 // Turns off the sticky shaded-viewport overlay ShadeViewport() leaves on

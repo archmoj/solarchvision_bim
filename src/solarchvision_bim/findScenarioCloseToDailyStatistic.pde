@@ -78,13 +78,13 @@ int[] FIND_SCENARIOS_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, 
     allSunZ[i] = SunR[3];
   }
 
-  float baseJ = j * STUDY.dayIncrement + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * daysMergedCount, 1));
+  float baseJ = j * STUDY.dayIncrement + TIME.beginDay + 366 - int(funcs.roundTo(0.5 * daysMergedCount, 1));
 
   int[] nowJ = new int[daysMergedCount];
   for (int j_ADD = 0; j_ADD < daysMergedCount; j_ADD++) {
-    int now_j = int(baseJ + j_ADD) % 365;
-    if (now_j >= 365) now_j %= 365;
-    if (now_j < 0) now_j = (now_j + 365) % 365;
+    int now_j = int(baseJ + j_ADD) % 366;
+    if (now_j >= 366) now_j %= 366;
+    if (now_j < 0) now_j = (now_j + 366) % 366;
     nowJ[j_ADD] = now_j;
   }
 

@@ -1,10 +1,10 @@
 void update_climateTypicalYear () {
 
-  climateTypicalYearValues = new float [24][365][allLayers.length][(1 + climateTypicalYearEnd - climateTypicalYearStart)];
-  climateTypicalYearFlags = new boolean [24][365][allLayers.length][(1 + climateTypicalYearEnd - climateTypicalYearStart)]; // true: direct input , false: no-input, interpolated or post-processed
+  climateTypicalYearValues = new float [24][366][allLayers.length][(1 + climateTypicalYearEnd - climateTypicalYearStart)];
+  climateTypicalYearFlags = new boolean [24][366][allLayers.length][(1 + climateTypicalYearEnd - climateTypicalYearStart)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + climateTypicalYearEnd - climateTypicalYearStart); k++) {
           climateTypicalYearValues[i][j][l][k] = FLOAT_undefined;

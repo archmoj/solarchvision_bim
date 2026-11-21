@@ -56,16 +56,16 @@ void calculate_GlobalSolar_array () {
 
   for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-    now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+    now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 366) % 366;
 
-    if (now_j >= 365) {
-      now_j = now_j % 365;
+    if (now_j >= 366) {
+      now_j = now_j % 366;
     }
     if (now_j < 0) {
-      now_j = (now_j + 365) % 365;
+      now_j = (now_j + 366) % 366;
     }
 
-    float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+    float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
 
     int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
     if (allNk.length == 0) continue;
@@ -80,9 +80,9 @@ void calculate_GlobalSolar_array () {
       int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
       sampleNowK[s] = sample_k + start_k;
 
-      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-      if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
-      if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
+      if (sample_now_j >= 366) sample_now_j = sample_now_j % 366;
+      if (sample_now_j < 0) sample_now_j = (sample_now_j + 366) % 366;
       sampleNowJ[s] = sample_now_j;
     }
 

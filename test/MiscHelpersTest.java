@@ -54,28 +54,28 @@ class MiscHelpersTest {
   @Test
   void wrapDayIndex_isAnIdentityWithinTheYear () {
     assertEquals(0, app.Sun3D.wrapDayIndex(0));
-    assertEquals(364, app.Sun3D.wrapDayIndex(364));
+    assertEquals(365, app.Sun3D.wrapDayIndex(365)); // 365 is now a valid in-range index (366-day year)
   }
 
   @Test
   void wrapDayIndex_wrapsForwardPastTheEndOfTheYear () {
-    assertEquals(0, app.Sun3D.wrapDayIndex(365));
-    assertEquals(0, app.Sun3D.wrapDayIndex(730));  // two full years
-    assertEquals(270, app.Sun3D.wrapDayIndex(1000));
+    assertEquals(0, app.Sun3D.wrapDayIndex(366));
+    assertEquals(0, app.Sun3D.wrapDayIndex(732));  // two full (366-day) years
+    assertEquals(268, app.Sun3D.wrapDayIndex(1000));
   }
 
   @Test
   void wrapDayIndex_wrapsBackwardForNegativeDays () {
-    assertEquals(364, app.Sun3D.wrapDayIndex(-1));
+    assertEquals(365, app.Sun3D.wrapDayIndex(-1));
   }
 
   @Test
   void wrapDayIndex_secondWraparoundClauseHandlesDaysMoreThanAYearNegative () {
-    // rawDay + 365 is itself still negative when rawDay < -365, so
+    // rawDay + 366 is itself still negative when rawDay < -366, so
     // Java's % (which keeps the sign of the dividend, unlike Python's)
     // leaves `day` negative after the first mod - this is exactly what
     // the function's second `if (day < 0)` clause exists to catch.
-    assertEquals(364, app.Sun3D.wrapDayIndex(-366));
-    assertEquals(95, app.Sun3D.wrapDayIndex(-1000));
+    assertEquals(365, app.Sun3D.wrapDayIndex(-367));
+    assertEquals(98, app.Sun3D.wrapDayIndex(-1000));
   }
 }

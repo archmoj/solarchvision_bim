@@ -230,14 +230,15 @@ class Tropo3DTest {
     // the original "if (dt.day < 0)" check left day sitting at the
     // otherwise-invalid value 0 instead of rolling over, since days are
     // 1..lengthOfMonths[month-1] (see time.pde) and decrementing from 1
-    // lands exactly on 0, never below it. February has 28 days here (see
-    // TIME.lengthOfMonths - no leap-year handling in this app).
+    // lands exactly on 0, never below it. February is fixed at 29 days
+    // here (see TIME.lengthOfMonths - a single generic 366-day calendar
+    // used for every real year alike, not a per-year Gregorian one).
     solarchvision_bim.Tropo3D.DateTimeUTC dt = dateTime(2026, 3, 1, 0);
 
     app.Tropo3D.advanceHourBackward(dt);
 
     assertEquals(23, dt.hour);
-    assertEquals(28, dt.day);
+    assertEquals(29, dt.day);
     assertEquals(2, dt.month);
     assertEquals(2026, dt.year);
   }
@@ -421,7 +422,7 @@ class Tropo3DTest {
     setImpactDisplayDayToToday();
     // One real day off from today (still day 1 - so still exactly
     // TIME.beginDay, just no longer today's own day-of-year).
-    app.TIME.beginDay = (app.TIME.beginDay + 1) % 365;
+    app.TIME.beginDay = (app.TIME.beginDay + 1) % 366;
 
     assertFalse(app.Tropo3D.selectedDayHasForecastAvailable());
   }
@@ -436,7 +437,7 @@ class Tropo3DTest {
     int today = app.TIME.convert2Date(nowUTC[1], nowUTC[2]);
 
     app.impactDisplayDay = 3; // j == 2, so TIME.beginDay + 2 == today
-    app.TIME.beginDay = ((today - 2) % 365 + 365) % 365;
+    app.TIME.beginDay = ((today - 2) % 366 + 366) % 366;
 
     assertTrue(app.Tropo3D.selectedDayHasForecastAvailable());
   }

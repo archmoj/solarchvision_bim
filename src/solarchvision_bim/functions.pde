@@ -613,17 +613,17 @@ class Functions {
   //    month (~29.53 days) - near new moon it tracks the Sun closely
   //    (rising/setting together, hence invisible against the daytime
   //    sky); near full moon it's a full 12 hours out of phase (rising as
-  //    the Sun sets). DateAngle spans 360 over exactly 365 days - the
-  //    same day-of-year/365.0 convention every DATE_ANGLE site in this
+  //    the Sun sets). DateAngle spans 360 over exactly 366 days - the
+  //    same day-of-year/366.0 convention every DATE_ANGLE site in this
   //    app uses (sync_SHADE_DATE_ANGLE() in shadeViewport3D.pde, sun3D.pde,
-  //    solarImpacts.pde, viewport2D.pde, etc. - all "360 * (day % 365) /
-  //    365.0", never 365.25), so this phase needs to cycle
-  //    (365.0 / 29.53) ≈ 12.36 times as fast.
+  //    solarImpacts.pde, viewport2D.pde, etc. - all "360 * (day % 366) /
+  //    366.0", never the real 365.2425-day Gregorian year), so this phase
+  //    needs to cycle (366.0 / 29.53) ≈ 12.39 times as fast.
   // 2) Its declination swings through a comparable range to the Sun's
   //    (same ±23.45 amplitude, for simplicity - the real extra ~5 degrees
   //    from the Moon's own orbital inclination is a second-order detail
   //    not worth the added complexity here), but on its own, faster,
-  //    ~27.3-day sidereal cycle rather than the Sun's 365-day one - same
+  //    ~27.3-day sidereal cycle rather than the Sun's 366-day one - same
   //    scaling idea as above.
   //
   // correctHourAngle()'s equation-of-time correction is Sun-specific (it
@@ -631,8 +631,8 @@ class Functions {
   // deliberately not reused here - this function computes the Moon's own
   // hour angle directly instead.
   float[] MoonPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
-    float phaseAngle = (DateAngle * (365.0 / 29.53)) % 360.0;
-    float declinationDateAngle = (DateAngle * (365.0 / 27.3)) % 360.0;
+    float phaseAngle = (DateAngle * (366.0 / 29.53)) % 360.0;
+    float declinationDateAngle = (DateAngle * (366.0 / 27.3)) % 360.0;
 
     float HourAngle = HourAngleOrigin - (phaseAngle / 360.0) * 24.0;
     float Declination = 23.45 * this.sin_ang(declinationDateAngle - 180.0);

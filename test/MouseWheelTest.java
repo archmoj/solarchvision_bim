@@ -86,7 +86,7 @@ class MouseWheelTest {
   @Test
   void handleDaysCaseBarWheel_increasesJoinDaysByTwoOnPositiveWheel () {
     app.STUDY.daysMergedCount = 10;
-    app.STUDY.endDay = 12; // cap = 365/12 = 30
+    app.STUDY.endDay = 12; // cap = 366/12 = 30
 
     app.handleDaysCaseBarWheel(1);
 
@@ -103,13 +103,13 @@ class MouseWheelTest {
   }
 
   @Test
-  void handleDaysCaseBarWheel_clampsToTheThreeSixtyFiveOverJEndCeiling () {
+  void handleDaysCaseBarWheel_clampsToTheThreeSixtySixOverJEndCeiling () {
     app.STUDY.daysMergedCount = 100;
-    app.STUDY.endDay = 12; // cap = 365/12 = 30
+    app.STUDY.endDay = 12; // cap = 366/12 = 30
 
     app.handleDaysCaseBarWheel(1);
 
-    assertEquals(365 / 12, app.STUDY.daysMergedCount);
+    assertEquals(366 / 12, app.STUDY.daysMergedCount);
   }
 
   // ================= handleScenarioCaseBarWheel =============================

@@ -1,10 +1,10 @@
 void update_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ensembleForecastValues = new float [24][365][allLayers.length][(1 + ensembleForecastEnd - ensembleForecastStart)];
-  ensembleForecastFlags = new boolean [24][365][allLayers.length][(1 + ensembleForecastEnd - ensembleForecastStart)]; // true: direct input , false: no-input, interpolated or post-processed
+  ensembleForecastValues = new float [24][366][allLayers.length][(1 + ensembleForecastEnd - ensembleForecastStart)];
+  ensembleForecastFlags = new boolean [24][366][allLayers.length][(1 + ensembleForecastEnd - ensembleForecastStart)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + ensembleForecastEnd - ensembleForecastStart); k++) {
           ensembleForecastValues[i][j][l][k] = FLOAT_undefined;

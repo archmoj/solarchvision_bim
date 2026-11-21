@@ -36,13 +36,13 @@ void postProcess_developDATA (int desired_DataSource) {
 
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+            int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
 
-            if (now_j >= 365) {
-              now_j = now_j % 365;
+            if (now_j >= 366) {
+              now_j = now_j % 366;
             }
             if (now_j < 0) {
-              now_j = (now_j + 365) % 365;
+              now_j = (now_j + 366) % 366;
             }
 
             int next_i = now_i + 12;
@@ -51,8 +51,8 @@ void postProcess_developDATA (int desired_DataSource) {
             if (next_i >= 24) {
               next_i = next_i - 24;
               next_j += 1;
-              if (next_j >= 365) {
-                next_j = next_j % 365;
+              if (next_j >= 366) {
+                next_j = next_j % 366;
               }
             }
 
@@ -64,7 +64,7 @@ void postProcess_developDATA (int desired_DataSource) {
               pre_i = pre_i + 24;
               pre_j -= 1;
               if (pre_j < 0) {
-                pre_j = (pre_j + 365) % 365;
+                pre_j = (pre_j + 366) % 366;
               }
             }
 
@@ -125,7 +125,7 @@ void postProcess_developDATA (int desired_DataSource) {
             }
 
 
-            float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+            float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
             float HOUR_ANGLE = now_i;
 
             float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);

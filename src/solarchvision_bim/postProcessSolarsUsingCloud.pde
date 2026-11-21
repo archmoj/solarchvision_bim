@@ -8,13 +8,13 @@ void postProcess_solarsUsingCloud (int desired_DataSource) {
   int DATA_end = getEnd_currentDataSource();
 
   for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int i = 0; i < 24; i++) {
 
         float CL = getValue_currentDataSource(i, j, k, LAYER_cloudcover.id);
 
         if (is_defined(CL)) {
-          float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
+          float DATE_ANGLE = (360 * ((286 + j) % 366) / 366.0);
           float HOUR_ANGLE = i;
 
           float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, CL);

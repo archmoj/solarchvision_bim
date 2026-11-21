@@ -48,7 +48,7 @@ class LoadClimateArchiveTest {
 
     int numLayers = app.allLayers.length;
     int numYears = 1 + app.climateArchiveEnd - app.climateArchiveStart; // climateArchiveEnd is year()-based - computed, not hardcoded, for exactly that reason
-    app.climateArchiveValues = new float[24][365][numLayers][numYears];
+    app.climateArchiveValues = new float[24][366][numLayers][numYears];
     for (float[][][] perJ : app.climateArchiveValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {

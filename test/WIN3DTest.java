@@ -1163,9 +1163,9 @@ class WIN3DTest {
     // STUDY.dayIncrement=30.5), "Next Impact Day" advances
     // impactDisplayDay to 1 and sync_SHADE_DATE_ANGLE() computes:
     //   j = impactDisplayDay - 1 = 0
-    //   now_j = (0 * 30 + 0 + 365) % 365 = 0
-    //   angle = (int) (360 * ((286 + 0) % 365) / 365.0) = 282
-    assertEquals(282, app.SHADE_DATE_ANGLE);
+    //   now_j = (0 * 30 + 0 + 366) % 366 = 0
+    //   angle = (int) (360 * ((286 + 0) % 366) / 366.0) = 281
+    assertEquals(281, app.SHADE_DATE_ANGLE);
   }
 
   // ================= impactDayToDayOfYear ===============================
@@ -1198,11 +1198,11 @@ class WIN3DTest {
   }
 
   @Test
-  void impactDayToDayOfYear_wrapsAroundThe365DayYear () {
+  void impactDayToDayOfYear_wrapsAroundThe366DayYear () {
     app.TIME.beginDay = 350;
     app.STUDY.dayIncrement = 30;
 
-    assertEquals((350 + 30) % 365, app.impactDayToDayOfYear(2));
+    assertEquals((350 + 30) % 366, app.impactDayToDayOfYear(2));
   }
 
   // ================= dismissShading (Esc's own end to the sticky shaded-

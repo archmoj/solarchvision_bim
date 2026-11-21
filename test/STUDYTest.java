@@ -200,16 +200,16 @@ class STUDYTest {
     app.STUDY.daysMergedCount = 0;
     app.TIME.beginDay = -10;
 
-    assertEquals(355, app.STUDY.computeWrappedDayIndex(0, 0));
+    assertEquals(356, app.STUDY.computeWrappedDayIndex(0, 0));
   }
 
   @Test
-  void computeWrappedDayIndex_wrapsResultsPast365BackToZero () {
+  void computeWrappedDayIndex_wrapsResultsPast366BackToZero () {
     app.STUDY.dayIncrement = 1;
     app.STUDY.daysMergedCount = 0;
     app.TIME.beginDay = 0;
 
-    assertEquals(35, app.STUDY.computeWrappedDayIndex(400, 0));
+    assertEquals(34, app.STUDY.computeWrappedDayIndex(400, 0));
   }
 
   // ================= countDefinedPrefix (newly extracted) ===============
@@ -255,10 +255,10 @@ class STUDYTest {
   // ================= changeJoinDays ======================================
 
   @Test
-  void changeJoinDays_isClampedBetween1And365 () {
+  void changeJoinDays_isClampedBetween1And366 () {
     app.STUDY.daysMergedCount = 364;
     app.STUDY.changeJoinDays(5);
-    assertEquals(365, app.STUDY.daysMergedCount);
+    assertEquals(366, app.STUDY.daysMergedCount);
 
     app.STUDY.daysMergedCount = 2;
     app.STUDY.changeJoinDays(-5);

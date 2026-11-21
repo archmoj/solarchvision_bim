@@ -1,10 +1,10 @@
 void update_climateEngineering () {
 
-  climateEngineeringValues = new float [24][365][allLayers.length][(1 + climateEngineeringEnd - climateEngineeringStart)];
-  climateEngineeringFlags = new boolean [24][365][allLayers.length][(1 + climateEngineeringEnd - climateEngineeringStart)]; // true: direct input , false: no-input, interpolated or post-processed
+  climateEngineeringValues = new float [24][366][allLayers.length][(1 + climateEngineeringEnd - climateEngineeringStart)];
+  climateEngineeringFlags = new boolean [24][366][allLayers.length][(1 + climateEngineeringEnd - climateEngineeringStart)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int l = 0; l < allLayers.length; l++) {
         java.util.Arrays.fill(climateEngineeringValues[i][j][l], FLOAT_undefined);
         java.util.Arrays.fill(climateEngineeringFlags[i][j][l], false);

@@ -729,16 +729,16 @@ class SolarImpacts {
             }
           }
 
-          now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+          now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 366) % 366;
 
-          if (now_j >= 365) {
-            now_j = now_j % 365;
+          if (now_j >= 366) {
+            now_j = now_j % 366;
           }
           if (now_j < 0) {
-            now_j = (now_j + 365) % 365;
+            now_j = (now_j + 366) % 366;
           }
 
-          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+          float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
 
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
@@ -757,9 +757,9 @@ class SolarImpacts {
             int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
             sampleNowK[s] = sample_k + start_k;
 
-            int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-            if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
-            if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+            int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
+            if (sample_now_j >= 366) sample_now_j = sample_now_j % 366;
+            if (sample_now_j < 0) sample_now_j = (sample_now_j + 366) % 366;
             sampleNowJ[s] = sample_now_j;
           }
 

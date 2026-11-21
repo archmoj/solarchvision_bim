@@ -140,7 +140,7 @@ void setDataFlags (int desired_DataSource) {
   int DATA_end = getEnd_currentDataSource();
   // setting the flags
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
           if (is_defined(getValue_currentDataSource(i, j, k, l))) {

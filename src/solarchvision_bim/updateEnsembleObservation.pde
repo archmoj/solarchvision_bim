@@ -1,10 +1,10 @@
 void update_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ensembleObservationValues = new float [24][365][allLayers.length][(1 + ensembleObservationEnd - ensembleObservationStart)];
-  ensembleObservationFlags = new boolean [24][365][allLayers.length][(1 + ensembleObservationEnd - ensembleObservationStart)]; // true: direct input , false: no-input, interpolated or post-processed
+  ensembleObservationValues = new float [24][366][allLayers.length][(1 + ensembleObservationEnd - ensembleObservationStart)];
+  ensembleObservationFlags = new boolean [24][366][allLayers.length][(1 + ensembleObservationEnd - ensembleObservationStart)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
-    for (int j = 0; j < 365; j++) {
+    for (int j = 0; j < 366; j++) {
       for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + ensembleObservationEnd - ensembleObservationStart); k++) {
           ensembleObservationValues[i][j][l][k] = FLOAT_undefined;
@@ -26,11 +26,11 @@ void update_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       now_i -= 24;
       now_j += 1;
       if (now_j > 364) {
-        now_j -= 365;
+        now_j -= 366;
         THE_YEAR += 1;
       }
       THE_DATE += 1;
-      if (THE_DATE > 364) THE_DATE -= 365;
+      if (THE_DATE > 365) THE_DATE -= 366;
     }
     THE_HOUR = now_i;
 
@@ -61,7 +61,7 @@ void update_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
         now_i += 24;
         now_j -= 1;
         if (now_j < 0) {
-          now_j += 365;
+          now_j += 366;
           THE_YEAR -= 1;
         }
         THE_DATE -= 1;

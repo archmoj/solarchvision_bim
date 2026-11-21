@@ -35,7 +35,7 @@ class LoadEnsembleObservationTest {
     // also needs a real nearest-station search apparatus this test
     // doesn't - see this file's own header comment).
     int numLayers = app.allLayers.length;
-    app.ensembleObservationValues = new float[24][365][numLayers][1];
+    app.ensembleObservationValues = new float[24][366][numLayers][1];
     for (float[][][] perJ : app.ensembleObservationValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {

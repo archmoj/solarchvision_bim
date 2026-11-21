@@ -46,9 +46,9 @@ class PostProcessClimaticSolarForecastTest {
   }
 
   private float[][][][] freshArray () {
-    float[][][][] values = new float[24][365][numLayers][1];
+    float[][][][] values = new float[24][366][numLayers][1];
     for (int i = 0; i < 24; i++) {
-      for (int j = 0; j < 365; j++) {
+      for (int j = 0; j < 366; j++) {
         for (int l = 0; l < numLayers; l++) {
           values[i][j][l][0] = app.FLOAT_undefined;
         }
@@ -58,7 +58,7 @@ class PostProcessClimaticSolarForecastTest {
   }
 
   private float[] baselineSunR (float cloudCover) {
-    float DATE_ANGLE = (360 * ((286 + DAY) % 365) / 365.0f);
+    float DATE_ANGLE = (360 * ((286 + DAY) % 366) / 366.0f);
     return app.funcs.SunPositionRadiation(DATE_ANGLE, (float) HOUR, cloudCover);
   }
 

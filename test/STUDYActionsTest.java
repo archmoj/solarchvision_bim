@@ -154,12 +154,12 @@ class STUDYActionsTest {
   }
 
   @Test
-  void keyGreaterThan_clampsAt365 () {
-    app.STUDY.daysMergedCount = 365;
+  void keyGreaterThan_clampsAt366 () {
+    app.STUDY.daysMergedCount = 366;
 
     app.runScriptLine("Widen Join Window");
 
-    assertEquals(365, app.STUDY.daysMergedCount);
+    assertEquals(366, app.STUDY.daysMergedCount);
     assertTrue(app.STUDY.update);
   }
 

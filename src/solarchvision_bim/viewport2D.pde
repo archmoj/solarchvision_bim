@@ -339,18 +339,18 @@ class STUDY {
   // call sites, confirmed before extracting) - some as a fresh `int
   // now_j = ...` declaration, others as a reassignment of an existing
   // now_j; both call sites now just do `now_j = computeWrappedDayIndex(j,
-  // j_ADD);` instead. Note the `now_j >= 365` branch is unreachable in
+  // j_ADD);` instead. Note the `now_j >= 366` branch is unreachable in
   // practice (Java's % already bounds the preceding expression to
-  // (-364, 364)) - preserved as-is rather than removed, since this is a
+  // (-365, 365)) - preserved as-is rather than removed, since this is a
   // refactor, not a behavior change.
   int computeWrappedDayIndex (int j, int j_ADD) {
-    int now_j = int(j * this.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * this.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+    int now_j = int(j * this.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * this.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
 
-    if (now_j >= 365) {
-      now_j = now_j % 365;
+    if (now_j >= 366) {
+      now_j = now_j % 366;
     }
     if (now_j < 0) {
-      now_j = (now_j + 365) % 365;
+      now_j = (now_j + 366) % 366;
     }
 
     return now_j;
@@ -564,10 +564,10 @@ class STUDY {
   }
 
   // '>' / '<' : widen or narrow the day-joining (averaging) window, clamped
-  // to [1, 365] days.
+  // to [1, 366] days.
   void changeJoinDays (int delta) {
     this.daysMergedCount += delta;
-    if (this.daysMergedCount > 365) this.daysMergedCount = 365;
+    if (this.daysMergedCount > 366) this.daysMergedCount = 366;
     if (this.daysMergedCount < 1) this.daysMergedCount = 1;
     requestDataRefresh();
   }
@@ -1674,7 +1674,7 @@ class STUDY {
               if (next_i == 24) {
                 next_i = 0;
                 next_j += 1;
-                if (next_j == 365) {
+                if (next_j == 366) {
                   next_j = 0;
                   next_k += 1;
                 }
@@ -2306,7 +2306,7 @@ class STUDY {
         (currentDataSource == dataID_climateTypicalYear)) {
 
       if (this.dayIncrement == 1) {
-        this.dayIncrement = int(365 / float(this.endDay - this.startDay));
+        this.dayIncrement = int(366 / float(this.endDay - this.startDay));
       } else {
         this.dayIncrement = 1;
       }
@@ -2764,13 +2764,13 @@ class STUDY {
 
       for (int j = this.startDay; j < this.endDay; j++) {
 
-        now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
+        now_j = (j * int(this.dayIncrement) + TIME.beginDay + 366) % 366;
 
-        if (now_j >= 365) {
-          now_j = now_j % 365;
+        if (now_j >= 366) {
+          now_j = now_j % 366;
         }
         if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
+          now_j = (now_j + 366) % 366;
         }
 
 
@@ -2986,16 +2986,16 @@ class STUDY {
 
     for (int j = this.startDay; j < this.endDay; j++) {
 
-      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
+      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 366) % 366;
 
-      if (now_j >= 365) {
-        now_j = now_j % 365;
+      if (now_j >= 366) {
+        now_j = now_j % 366;
       }
       if (now_j < 0) {
-        now_j = (now_j + 365) % 365;
+        now_j = (now_j + 366) % 366;
       }
 
-      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+      float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
 
       int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
       if (allNk.length == 0) continue;
@@ -3414,16 +3414,16 @@ class STUDY {
 
     for (int j = this.startDay; j < this.endDay; j++) {
 
-      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
+      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 366) % 366;
 
-      if (now_j >= 365) {
-        now_j = now_j % 365;
+      if (now_j >= 366) {
+        now_j = now_j % 366;
       }
       if (now_j < 0) {
-        now_j = (now_j + 365) % 365;
+        now_j = (now_j + 366) % 366;
       }
 
-      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+      float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
 
       int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactTypeIndex);
       if (allNk.length == 0) continue;

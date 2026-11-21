@@ -67,9 +67,9 @@ class Sun3D {
   }
 
   int wrapDayIndex (float rawDay) {
-    int day = int(rawDay + 365) % 365;
-    if (day >= 365) day = day % 365;
-    if (day < 0) day = (day + 365) % 365;
+    int day = int(rawDay + 366) % 366;
+    if (day >= 366) day = day % 366;
+    if (day < 0) day = (day + 366) % 366;
     return day;
   }
 
@@ -720,7 +720,7 @@ class Sun3D {
 
     for (int j = J_START; j < J_END; j += 1) {
       int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
-      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+      float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
 
       int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
@@ -953,7 +953,7 @@ class Sun3D {
 
         for (int more_J = 0; more_J < STUDY_dayIncrement; more_J += STUDY.daysMergedCount) {
           int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
-          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+          float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
           float sunrise_origin = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
           float sunset_origin = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
 
@@ -1079,7 +1079,7 @@ class Sun3D {
 
         for (int more_J = 0; more_J < STUDY_dayIncrement - STUDY.daysMergedCount; more_J += STUDY.daysMergedCount) { // count one less!
           int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
-          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+          float DATE_ANGLE = (360 * ((286 + now_j) % 366) / 366.0);
           float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE);
           float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
 

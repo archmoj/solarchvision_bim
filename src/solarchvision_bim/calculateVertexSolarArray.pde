@@ -43,11 +43,11 @@ void calculate_VertexSolar_array () {
   for (int j = J_START; j < J_END; j += DATE_step) {
     int jIdx = j - J_START;
 
-    int day_now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
-    if (day_now_j >= 365) day_now_j = day_now_j % 365;
-    if (day_now_j < 0) day_now_j = (day_now_j + 365) % 365;
+    int day_now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 366) % 366;
+    if (day_now_j >= 366) day_now_j = day_now_j % 366;
+    if (day_now_j < 0) day_now_j = (day_now_j + 366) % 366;
 
-    float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
+    float DATE_ANGLE = (360 * ((286 + day_now_j) % 366) / 366.0);
     TS_DayTime[jIdx] = funcs.roundTo(STUDY.effectiveDayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
     int[] allNk = FIND_SCENARIOS_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
@@ -65,9 +65,9 @@ void calculate_VertexSolar_array () {
       int sample_j_ADD = allNk[s] % STUDY.daysMergedCount;
       sampleNowK[s] = sample_k + start_k;
 
-      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-      if (sample_now_j >= 365) sample_now_j = sample_now_j % 365;
-      if (sample_now_j < 0) sample_now_j = (sample_now_j + 365) % 365;
+      int sample_now_j = int(j * STUDY.dayIncrement + (sample_j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
+      if (sample_now_j >= 366) sample_now_j = sample_now_j % 366;
+      if (sample_now_j < 0) sample_now_j = (sample_now_j + 366) % 366;
       sampleNowJ[s] = sample_now_j;
     }
 

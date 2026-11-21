@@ -35,7 +35,7 @@ class ReactTest {
 
     app.react.applyTimeChange.run(0, 0);
 
-    float expectedDate = (app.TIME.hour / 24.0f) + ((286 + app.TIME.convert2Date(3, 21)) % 365);
+    float expectedDate = (app.TIME.hour / 24.0f) + ((286 + app.TIME.convert2Date(3, 21)) % 366);
     assertEquals(expectedDate, app.TIME.date, 0.01f);
   }
 

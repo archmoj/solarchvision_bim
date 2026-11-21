@@ -466,9 +466,9 @@ class WIN3DActionsTest {
     // (impactDisplayDay=1, TIME.beginDay=0, STUDY.dayIncrement=30.5)
     // rather than incremented by SHADE_STEP_DAYS:
     //   j = impactDisplayDay - 1 = 0
-    //   now_j = (0 * 30 + 0 + 365) % 365 = 0
-    //   angle = (int) (360 * ((286 + 0) % 365) / 365.0) = 282
-    assertEquals(282, app.SHADE_DATE_ANGLE);
+    //   now_j = (0 * 30 + 0 + 366) % 366 = 0
+    //   angle = (int) (360 * ((286 + 0) % 366) / 366.0) = 281
+    assertEquals(281, app.SHADE_DATE_ANGLE);
   }
 
   @Test

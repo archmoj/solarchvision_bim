@@ -43,8 +43,8 @@ class LoadClimateTypicalYearTest {
     // The real production allocation (update_climateTypicalYear.pde),
     // done directly here instead of through that whole function.
     int numLayers = app.allLayers.length;
-    app.climateTypicalYearValues = new float[24][365][numLayers][1];
-    app.climateTypicalYearFlags = new boolean[24][365][numLayers][1];
+    app.climateTypicalYearValues = new float[24][366][numLayers][1];
+    app.climateTypicalYearFlags = new boolean[24][366][numLayers][1];
     for (float[][][] perJ : app.climateTypicalYearValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {

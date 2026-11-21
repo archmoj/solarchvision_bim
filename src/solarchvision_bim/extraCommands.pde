@@ -592,7 +592,7 @@ String __$DAYS__ (String[] parts) {
     int oldJoinDays = STUDY.daysMergedCount;
     if (wheelValue > 0) STUDY.daysMergedCount += 2;
     if (wheelValue < 0) STUDY.daysMergedCount -= 2;
-    if (STUDY.daysMergedCount > 365 / STUDY.endDay) STUDY.daysMergedCount = 365 / STUDY.endDay;
+    if (STUDY.daysMergedCount > 366 / STUDY.endDay) STUDY.daysMergedCount = 366 / STUDY.endDay;
     if (STUDY.daysMergedCount < 1) STUDY.daysMergedCount = 1;
     if (oldJoinDays != STUDY.daysMergedCount) {
         reviseStudyAndRegenerate(false);

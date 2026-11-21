@@ -4,11 +4,11 @@ void postProcess_climaticSolarForecast () {
 
   for (int k = 0; k < (1 + ensembleForecastEnd - ensembleForecastStart); k++) {
     for (int j_for = 0; j_for < ensembleForecastMaxDays; j_for++) {
-      int j = ((j_for + TIME.beginDay) % 365);
+      int j = ((j_for + TIME.beginDay) % 366);
       for (int i = 0; i < 24; i++) {
         if (is_undefined(ensembleForecastValues[i][j][LAYER_cloudcover.id][k])) {
         } else {
-          float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
+          float DATE_ANGLE = (360 * ((286 + j) % 366) / 366.0);
           float HOUR_ANGLE = i;
 
           float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, ensembleForecastValues[i][j][LAYER_cloudcover.id][k]);
@@ -39,13 +39,13 @@ void postProcess_climaticSolarForecast () {
             for (int j_ADD = 0; j_ADD < process_add_days; j_ADD++) {
 
               int now_i = i;
-              int now_j = int(j + (j_ADD - int(0.5 * process_add_days)) + 365) % 365;
+              int now_j = int(j + (j_ADD - int(0.5 * process_add_days)) + 366) % 366;
 
-              if (now_j >= 365) {
-                now_j = now_j % 365;
+              if (now_j >= 366) {
+                now_j = now_j % 366;
               }
               if (now_j < 0) {
-                now_j = (now_j + 365) % 365;
+                now_j = (now_j + 366) % 366;
               }
 
 

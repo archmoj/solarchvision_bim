@@ -48,7 +48,7 @@ class CaseBarWheelHandlersTest {
 
   // ================= handleDaysCaseBarWheel =================================
   // STUDY.daysMergedCount's own bare-construction default (30) already
-  // sits at its own clamp ceiling here (365 / STUDY.endDay == 365/12 ==
+  // sits at its own clamp ceiling here (366 / STUDY.endDay == 366/12 ==
   // 30, integer division) - a "+2" from there clamps right back down to
   // 30, an unobservable no-op - so the "advances" case below starts from
   // a lower value instead, to actually see it move.
@@ -77,7 +77,7 @@ class CaseBarWheelHandlersTest {
 
     app.handleDaysCaseBarWheel(1);
 
-    assertEquals(30, app.STUDY.daysMergedCount, "32 clamped back down to the ceiling (365 / STUDY.endDay) lands exactly on the unchanged value");
+    assertEquals(30, app.STUDY.daysMergedCount, "32 clamped back down to the ceiling (366 / STUDY.endDay) lands exactly on the unchanged value");
   }
 
   // ================= handleScenarioCaseBarWheel =============================

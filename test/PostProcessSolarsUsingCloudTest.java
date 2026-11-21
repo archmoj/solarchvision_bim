@@ -26,7 +26,7 @@ class PostProcessSolarsUsingCloudTest {
   // freshTypicalYearArray(): climateTypicalYearStart/End default to 1/1,
   // so only k == 0 is ever touched here.
   private float[][][][] freshTypicalYearArray () {
-    float[][][][] values = new float[24][365][numLayers][1];
+    float[][][][] values = new float[24][366][numLayers][1];
     for (int h = 0; h < 24; h++) {
       for (int l = 0; l < numLayers; l++) {
         values[h][0][l][0] = app.FLOAT_undefined;
@@ -46,7 +46,7 @@ class PostProcessSolarsUsingCloudTest {
     // the exact date/hour-angle arguments postProcessSolarsUsingCloud.
     // pde's own source computes for day 0, hour 12 - ground truth to
     // compare the wiring against, not a re-test of the astronomy itself.
-    float DATE_ANGLE = (360 * ((286 + day) % 365) / 365.0f);
+    float DATE_ANGLE = (360 * ((286 + day) % 366) / 366.0f);
     float[] expected = app.funcs.SunPositionRadiation(DATE_ANGLE, (float) hour, cloud);
 
     app.postProcess_solarsUsingCloud(app.dataID_climateTypicalYear);

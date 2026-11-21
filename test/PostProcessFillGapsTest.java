@@ -26,7 +26,7 @@ class PostProcessFillGapsTest {
   // DATA_start") only ever touches k == 0 here - the smallest fixture
   // that still exercises the real function, not a special case of it.
   private float[][][][] freshTypicalYearArray () {
-    float[][][][] values = new float[24][365][numLayers][1];
+    float[][][][] values = new float[24][366][numLayers][1];
     for (int h = 0; h < 24; h++) {
       for (int l = 0; l < numLayers; l++) {
         values[h][0][l][0] = app.FLOAT_undefined;

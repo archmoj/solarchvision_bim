@@ -15,7 +15,7 @@ void postProcess_fillGaps (int desired_DataSource) {
       float pre_v = FLOAT_undefined;
       int pre_num = 0;
 
-      for (int j = 0; j < 365; j++) {
+      for (int j = 0; j < 366; j++) {
 
         for (int i = 0; i < 24; i++) {
 
@@ -34,7 +34,7 @@ void postProcess_fillGaps (int desired_DataSource) {
                   next_i -= 24;
                   next_j += 1;
                 }
-                if (next_j == 365) {
+                if (next_j == 366) {
                   next_j = 0;
                 }
                 if (is_defined(getValue_currentDataSource(next_i, next_j, k, l))) {

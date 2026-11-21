@@ -38,7 +38,7 @@ class LoadEnsembleForecastTest {
     // file's own 24 real ensemble members.
     int numLayers = app.allLayers.length;
     int numMembers = 1 + app.ensembleForecastEnd - app.ensembleForecastStart;
-    app.ensembleForecastValues = new float[24][365][numLayers][numMembers];
+    app.ensembleForecastValues = new float[24][366][numLayers][numMembers];
     for (float[][][] perJ : app.ensembleForecastValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {

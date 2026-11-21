@@ -25,7 +25,7 @@ void load_ensembleObservation (String FileName, int Load_Layer) {
     now_i += 24;
     now_j -= 1;
     if (now_j < 0) {
-      now_j += 365;
+      now_j += 366;
     }
   }
 

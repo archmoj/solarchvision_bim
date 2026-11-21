@@ -17,7 +17,7 @@ class react {
   OnChange applyTimeChange = (o, n) -> {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
-    TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
+    TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 366;
     sync_SHADE_DATE_ANGLE();
     println("\nDATE:", TIME.date, "\tHOUR:", TIME.hour);
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);

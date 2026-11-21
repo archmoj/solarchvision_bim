@@ -21,7 +21,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 1; //start
-    int s2 = 365; //stop
+    int s2 = 366; //stop
     int s3 = 1; //step
 
     int out = 0;
@@ -44,7 +44,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     float s1 = 1.0; //start
-    float s2 = 182.5; //stop
+    float s2 = 183.0; //stop (half of the 366-day generic year)
     float s3 = 0.5; //step
 
     float out = 0;
@@ -67,7 +67,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 1; //start
-    int s2 = 182; //stop
+    int s2 = 183; //stop (half of the 366-day generic year)
     int s3 = 1; //step
 
     int out = 0;

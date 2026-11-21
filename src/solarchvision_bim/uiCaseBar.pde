@@ -170,7 +170,7 @@ class UI_caseBar {
 
   // Shared by both mouse buttons: maps the click x-position to a day-of-year.
   int dayOfYearFromClick (float clickX, float x1, float x2) {
-    return (scaledIndexFromClick(clickX, x1, x2, 365.0, 0) + 286) % 365;
+    return (scaledIndexFromClick(clickX, x1, x2, 366.0, 0) + 286) % 366;
   }
 
   void handleDaysClick (float x1, float y1, float x2, float y2) {
@@ -180,13 +180,13 @@ class UI_caseBar {
       float keep_TIME_Date = TIME.date;
       runScriptLine("Date " + dayOfYearFromClick(X_clicked, x1, x2));
 
-      int newBeginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
+      int newBeginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 366) % 366;
       runScriptLine("Begin Day " + newBeginDay);
     }
 
     if (mouseButton == RIGHT) {
       float _DATE2 = dayOfYearFromClick(X_clicked, x1, x2);
-      if (TIME.date > _DATE2) _DATE2 += 365;
+      if (TIME.date > _DATE2) _DATE2 += 366;
 
       // drawDaysBands centers group j's band at j * dayIncrement + beginDay
       // (STUDY.startDay is a hardcoded 0, so the first drawn group, j ==
@@ -215,7 +215,7 @@ class UI_caseBar {
       // the latter, rather than always falling short.
       int bestFitDaysMergedCount = round(selectedValue);
       if (bestFitDaysMergedCount < 1) bestFitDaysMergedCount = 1;
-      if (bestFitDaysMergedCount > 182) bestFitDaysMergedCount = 182;
+      if (bestFitDaysMergedCount > 183) bestFitDaysMergedCount = 183; // half of the 366-day generic year
       if (bestFitDaysMergedCount != STUDY.daysMergedCount) {
         runScriptLine("Days Merged Count " + bestFitDaysMergedCount);
       }
@@ -228,12 +228,12 @@ class UI_caseBar {
       float last_x_end = -1;
 
       for (int j_ADD = 0; j_ADD < STUDY.daysMergedCount; j_ADD++) {
-        int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
-        if (now_j >= 365) now_j = now_j % 365;
-        if (now_j < 0) now_j = (now_j + 365) % 365;
+        int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 366) % 366;
+        if (now_j >= 366) now_j = now_j % 366;
+        if (now_j < 0) now_j = (now_j + 366) % 366;
 
-        float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;
-        float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
+        float x_start = x1 + (x2 - x1) * ((now_j) % 366) / 366.0;
+        float x_end = x1 + (x2 - x1) * ((now_j + 1) % 366) / 366.0;
 
         if (j_ADD == 0) first_x_start = x_start;
         if (j_ADD == STUDY.daysMergedCount - 1) last_x_end = x_end;

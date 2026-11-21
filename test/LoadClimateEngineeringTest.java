@@ -44,8 +44,8 @@ class LoadClimateEngineeringTest {
     // this file's own real 1998-2017 range.
     int numLayers = app.allLayers.length;
     int numYears = 1 + app.climateEngineeringEnd - app.climateEngineeringStart;
-    app.climateEngineeringValues = new float[24][365][numLayers][numYears];
-    app.climateEngineeringFlags = new boolean[24][365][numLayers][numYears];
+    app.climateEngineeringValues = new float[24][366][numLayers][numYears];
+    app.climateEngineeringFlags = new boolean[24][366][numLayers][numYears];
     for (float[][][] perJ : app.climateEngineeringValues) {
       for (float[][] perLayer : perJ) {
         for (float[] perK : perLayer) {
