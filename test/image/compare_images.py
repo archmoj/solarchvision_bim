@@ -5,9 +5,12 @@ Usage:
   compare_images.py <baseline> <actual> <diff_out> [--threshold PCT] [--pixel-tolerance N]
 
 Exits 0 if the percentage of differing pixels is <= --threshold (default
-0.5%), and non-zero otherwise. A diff image is always written to <diff_out>
+0.1%), and non-zero otherwise. A diff image is always written to <diff_out>
 (baseline with differing pixels painted red) so a failure is easy to eyeball,
 even when comparison passes.
+
+Defaults match compare_pixels.py's own (its own comment there for why
+0.5%/12 were tightened to 0.1%/6) - keep the two in sync.
 
 Requires: Pillow, numpy.
 """
@@ -24,13 +27,13 @@ def main():
     parser.add_argument("actual")
     parser.add_argument("diff_out")
     parser.add_argument(
-        "--threshold", type=float, default=0.5,
-        help="max percent of differing pixels allowed (default: 0.5)")
+        "--threshold", type=float, default=0.1,
+        help="max percent of differing pixels allowed (default: 0.1)")
     parser.add_argument(
-        "--pixel-tolerance", type=int, default=12,
+        "--pixel-tolerance", type=int, default=6,
         help="per-channel value difference (0-255) below which a pixel still "
              "counts as matching, to absorb minor antialiasing/compression "
-             "noise (default: 12)")
+             "noise (default: 6)")
     args = parser.parse_args()
 
     try:

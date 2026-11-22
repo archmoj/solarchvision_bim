@@ -8,9 +8,19 @@ test/image/baseline/ once looked at by eye.
 Usage:
   python3 test/image/compare_pixels.py                 # compare every test/image/actual/*.png that exists
   python3 test/image/compare_pixels.py test_houses ...  # compare specific ones only (name without .svs)
-  python3 test/image/compare_pixels.py --threshold 1.0  # allow up to 1% of pixels to differ (default 0.5)
+  python3 test/image/compare_pixels.py --threshold 1.0  # allow up to 1% of pixels to differ (default 0.1)
   python3 test/image/compare_pixels.py --allow-missing-baseline  # warn instead of fail when a baseline
                                                                   # doesn't exist yet (handy for local, first-time runs)
+
+Defaults were tightened (threshold 0.5% -> 0.1%, pixel-tolerance 12 -> 6):
+a small object moving a few pixels - the Moon's own disc, say (see
+funcs.MoonPosition's own comment on SHADE_EPOCH_DAY) - only ever touches a
+tiny fraction of a screenshot's total pixels, so the old 0.5% threshold
+could pass right through a real positional regression undetected. If
+tightening this surfaces false failures from genuine antialiasing/render
+jitter rather than real regressions, loosen --threshold/--pixel-tolerance
+back up rather than assuming every new failure is a real one - these two
+numbers are a tradeoff, not a correctness guarantee either way.
 
 Requires: Pillow, numpy.
 """
@@ -85,11 +95,11 @@ def compare_one(name, threshold, pixel_tolerance, allow_missing_baseline):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("names", nargs="*", help="test names to compare (default: every test/image/actual/*.png)")
-    parser.add_argument("--threshold", type=float, default=float(os.environ.get("IMAGE_DIFF_THRESHOLD", 0.5)),
-                         help="max percent of differing pixels allowed (default: 0.5)")
-    parser.add_argument("--pixel-tolerance", type=int, default=12,
+    parser.add_argument("--threshold", type=float, default=float(os.environ.get("IMAGE_DIFF_THRESHOLD", 0.1)),
+                         help="max percent of differing pixels allowed (default: 0.1)")
+    parser.add_argument("--pixel-tolerance", type=int, default=6,
                          help="per-channel value difference (0-255) below which a pixel still counts as "
-                              "matching, to absorb minor antialiasing/compression noise (default: 12)")
+                              "matching, to absorb minor antialiasing/compression noise (default: 6)")
     parser.add_argument("--allow-missing-baseline", action="store_true",
                          help="warn instead of fail when a baseline doesn't exist yet")
     args = parser.parse_args()

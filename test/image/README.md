@@ -201,11 +201,15 @@ warn-instead-of-fail local/dev run.
 ## Thresholds
 
 `compare_pixels.py` treats a pixel as "different" if any channel differs by
-more than `--pixel-tolerance` (default `12`, to absorb minor antialiasing
+more than `--pixel-tolerance` (default `6`, to absorb minor antialiasing
 noise), and fails if more than `--threshold` percent of pixels differ
-(default `0.5`, or set `IMAGE_DIFF_THRESHOLD`). Loosen this if the renderer
-turns out to have some inherent run-to-run jitter; tighten it once the
-tests have proven stable.
+(default `0.1`, or set `IMAGE_DIFF_THRESHOLD`). Tightened down from `12`/
+`0.5` (compare_pixels.py's own comment for why - the old threshold could
+pass a small object's real positional regression straight through) - not
+yet proven stable at these stricter values across a real CI run, so
+loosen them again if the renderer turns out to have more inherent
+run-to-run jitter than that, rather than treating every new failure as a
+real regression.
 
 ## Adding a new test
 
