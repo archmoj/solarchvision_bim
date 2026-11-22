@@ -366,108 +366,146 @@ class TIMETest {
     }
   }
 
-  // --- persianMonthLength (step 4d, Table B) --------------------------
+  // --- solarchvisionMonthLength (step 4d, Table B, final design) -----
+  // No flex slot: threshold = 6 (leap terminal year) or 5 (common),
+  // position < threshold -> 31, else -> 30. See time.pde's own comment
+  // on solarchvisionMonthLength for why this replaced the traditional
+  // Persian 31x6/30x5/flex pattern.
 
   @Test
-  void persianMonthLength_sixThirtyOneDayPositionsForTheSlowAphelionHalf () {
+  void solarchvisionMonthLength_commonYearHasFiveThirtyOneDayPositions () {
+    for (int position = 0; position < 5; position++) {
+      assertEquals(31, time.solarchvisionMonthLength(position, 2025)); // 2025 is common
+    }
+    for (int position = 5; position < 12; position++) {
+      assertEquals(30, time.solarchvisionMonthLength(position, 2025));
+    }
+  }
+
+  @Test
+  void solarchvisionMonthLength_leapYearHasSixThirtyOneDayPositions () {
     for (int position = 0; position < 6; position++) {
-      assertEquals(31, time.persianMonthLength(position, 2025));
+      assertEquals(31, time.solarchvisionMonthLength(position, 2024)); // 2024 is leap
+    }
+    for (int position = 6; position < 12; position++) {
+      assertEquals(30, time.solarchvisionMonthLength(position, 2024));
     }
   }
 
   @Test
-  void persianMonthLength_fiveThirtyDayPositionsForTheFastPerihelionHalf () {
-    for (int position = 6; position < 11; position++) {
-      assertEquals(30, time.persianMonthLength(position, 2025));
-    }
-  }
-
-  @Test
-  void persianMonthLength_lastPositionFollowsIsLeapYearLikeRealFebruaryDoes () {
-    assertEquals(30, time.persianMonthLength(11, 2024)); // leap
-    assertEquals(29, time.persianMonthLength(11, 2025)); // common
-  }
-
-  @Test
-  void persianMonthLength_allTwelvePositionsSumToThatRealYearsOwnTrueLength () {
+  void solarchvisionMonthLength_allTwelvePositionsSumToThatRealYearsOwnTrueLength () {
     for (int year : new int[]{2024, 2025}) {
       int total = 0;
       for (int position = 0; position < 12; position++) {
-        total += time.persianMonthLength(position, year);
+        total += time.solarchvisionMonthLength(position, year);
       }
       assertEquals(time.isLeapYear(year) ? 366 : 365, total);
     }
   }
 
-  // --- dateAngleFromRealDate (step 4d, rewritten: Table-B-stepped) ---
+  // --- dateAngleFromRealDate (step 4d, rewritten: discrete integer
+  // stepping over Table B, with the terminal-year leap-status fix) ---
 
   // Every one of these expected values was cross-checked with a Python
   // simulation of this function before being written here - see
   // time.pde's own comment on dateAngleFromRealDate and
-  // persianMonthLength for the physics and the walk this implements.
+  // solarchvisionMonthLength for the physics, the terminal-year bug,
+  // and the +1-degree-per-day/last-day-stays walk this implements.
 
   @Test
   void dateAngleFromRealDate_march21stIsAlwaysTheZeroAnchor () {
-    // true in both a leap and a non-leap real year, by construction
+    // true in both a leap and a non-leap terminal year, by construction
     assertEquals(0f, time.dateAngleFromRealDate(2024, 3, 21), 0.0001f);
     assertEquals(0f, time.dateAngleFromRealDate(2025, 3, 21), 0.0001f);
   }
 
   @Test
-  void dateAngleFromRealDate_landsOnAnExactMultipleOfThirtyAtEveryPersianMonthBoundary () {
-    // the core property this whole rewrite is for: unlike a linear
-    // model (this function's first version, or the generic formula),
-    // walking Table B's uneven positions lands exactly on 30, 60, 90...
-    // degrees at each boundary regardless of how many real days that
-    // position actually took - cross-checked against real calendar
-    // dates 31, 62, 93... real days after Mar 21 (via Python's
-    // datetime), for a leap equinox-year (starting 2024, so its own
-    // flex position - spanning late Feb into March of 2025 - is 30
-    // real days) and a common one (starting 2025, flex position 29
-    // real days, so its boundary dates shift a day earlier)
+  void dateAngleFromRealDate_landsOnAnExactMultipleOfThirtyAtEveryPositionBoundary () {
+    // the core property this whole rewrite is for: walking Table B's
+    // uneven positions with the "stay on the last day of a 31-day
+    // position" rule lands exactly on 30, 60, ... 330 degrees at every
+    // single position boundary, for both a leap terminal year (2025,
+    // terminal year of the equinox-year starting 2024-03-21) and a
+    // common one (2026, terminal year of the equinox-year starting
+    // 2025-03-21)
     assertEquals(30f, time.dateAngleFromRealDate(2024, 4, 21), 0.0001f);
     assertEquals(60f, time.dateAngleFromRealDate(2024, 5, 22), 0.0001f);
-    assertEquals(300f, time.dateAngleFromRealDate(2025, 1, 21), 0.0001f); // still part of the 2024-start equinox-year
-    assertEquals(330f, time.dateAngleFromRealDate(2025, 2, 20), 0.0001f);
+    assertEquals(181f, time.dateAngleFromRealDate(2024, 9, 23), 0.0001f);
+    assertEquals(211f, time.dateAngleFromRealDate(2024, 10, 23), 0.0001f);
+    assertEquals(301f, time.dateAngleFromRealDate(2025, 1, 21), 0.0001f); // still part of the 2024-start equinox-year
+    assertEquals(331f, time.dateAngleFromRealDate(2025, 2, 20), 0.0001f);
     assertEquals(0f, time.dateAngleFromRealDate(2025, 3, 21), 0.0001f);   // next equinox-year's own zero
 
-    assertEquals(300f, time.dateAngleFromRealDate(2026, 1, 21), 0.0001f); // the 2025-start (common) equinox-year
-    assertEquals(330f, time.dateAngleFromRealDate(2026, 2, 20), 0.0001f);
+    assertEquals(30f, time.dateAngleFromRealDate(2025, 4, 21), 0.0001f);  // the 2025-start (common terminal year) equinox-year
+    assertEquals(60f, time.dateAngleFromRealDate(2025, 5, 22), 0.0001f);
+    assertEquals(180f, time.dateAngleFromRealDate(2025, 9, 22), 0.0001f);
+    assertEquals(210f, time.dateAngleFromRealDate(2025, 10, 22), 0.0001f);
+    assertEquals(301f, time.dateAngleFromRealDate(2026, 1, 21), 0.0001f);
+    assertEquals(331f, time.dateAngleFromRealDate(2026, 2, 20), 0.0001f);
   }
 
   @Test
-  void dateAngleFromRealDate_interpolatesMoreSlowlyAcrossA31DayPositionThanA30DayOne () {
-    // same number of days (5) into the first position of each half:
-    // the 31-day (slow/aphelion) position advances fewer degrees per
-    // day than the 30-day (fast/perihelion) one - the actual
-    // Kepler/eccentricity effect this step exists to approximate
+  void dateAngleFromRealDate_stepsOneDegreePerDayWithinAPosition () {
+    // same number of days (5, 0-indexed) into the first position of
+    // each half of the same (common-terminal-year) equinox-year:
+    // every day within a position advances exactly 1 degree, whether
+    // the position itself is 31 or 30 days long - the discretized
+    // version of the Kepler/eccentricity effect this step approximates
     float fiveDaysIntoA31DayPosition = time.dateAngleFromRealDate(2025, 3, 26); // position 0 (starts Mar 21), day index 5
-    float fiveDaysIntoA30DayPosition = time.dateAngleFromRealDate(2025, 9, 28); // position 6 (starts Sep 23), day index 5
-    assertEquals(30.0 * 0 + 30.0 * 5 / 31, fiveDaysIntoA31DayPosition, 0.0001f);
-    assertEquals(30.0 * 6 + 30.0 * 5 / 30, fiveDaysIntoA30DayPosition, 0.0001f);
-    assertTrue(fiveDaysIntoA31DayPosition < fiveDaysIntoA30DayPosition);
+    float fiveDaysIntoA30DayPosition = time.dateAngleFromRealDate(2025, 9, 27); // position 6 (starts Sep 22 for this common terminal year), day index 5
+    assertEquals(30.0 * 0 + 5, fiveDaysIntoA31DayPosition, 0.0001f);
+    assertEquals(30.0 * 6 + 5, fiveDaysIntoA30DayPosition, 0.0001f);
   }
 
   @Test
-  void dateAngleFromRealDate_midPositionInterpolation () {
-    assertEquals(14.516129f, time.dateAngleFromRealDate(2025, 4, 5), 0.0001f);  // 15 real days into the 31-day position starting Mar 21
-    assertEquals(202.0f, time.dateAngleFromRealDate(2025, 10, 15), 0.0001f);    // squarely inside the 30-day second half
+  void dateAngleFromRealDate_lastDayOfA31DayPositionStaysInsteadOfAdvancing () {
+    // position 0 (Mar21-Apr20 here, 31 real days, day indices 0..30)
+    // reaches +29 on day index 29 (Apr 19) and then STAYS at +29 on
+    // day index 30 (the 31st and last real day, Apr 20) rather than
+    // advancing to +30 - the mechanism that absorbs a 31-day
+    // position's extra day
+    assertEquals(28f, time.dateAngleFromRealDate(2025, 4, 18), 0.0001f); // day index 28, still climbing normally
+    assertEquals(29f, time.dateAngleFromRealDate(2025, 4, 19), 0.0001f); // day index 29
+    assertEquals(29f, time.dateAngleFromRealDate(2025, 4, 20), 0.0001f); // day index 30 (last day) - stays
+    assertEquals(30f, time.dateAngleFromRealDate(2025, 4, 21), 0.0001f); // next position starts fresh at +30
   }
 
   @Test
-  void dateAngleFromRealDate_flexPositionSizingFollowsTheDatesOwnWrittenYear () {
-    // 2027-03-21 starts a common equinox-year (2027 is common) whose
-    // own flex position (Esfand-equivalent) therefore has 29 real
-    // days and falls late Feb/early Mar of 2028 - but 2028 is itself
-    // a leap year, so a date written with year 2028 (Feb 29 included)
-    // must still use isLeapYear(2028) = true for its own flex
-    // position's length, per persianMonthLength's own contract, and
-    // that is what actually determines where it lands - not 2027's
+  void dateAngleFromRealDate_midPositionStepping () {
+    assertEquals(15f, time.dateAngleFromRealDate(2025, 4, 5), 0.0001f);   // 15 real days into the 31-day position starting Mar 21
+    assertEquals(203f, time.dateAngleFromRealDate(2025, 10, 15), 0.0001f); // squarely inside a 30-day position
+  }
+
+  @Test
+  void dateAngleFromRealDate_terminalYearNotTheDatesOwnWrittenYearDecidesLeapStatus () {
+    // 2024-03-21 starts an equinox-year whose terminal February is
+    // Feb 2025 (common), even though 2024 itself is leap - this is
+    // the bug this rewrite fixed: using isLeapYear(year_IN) directly
+    // would have treated this equinox-year as 366 days (leap), but it
+    // is actually 365 (common), via terminalYear = year_IN + 1 for
+    // any month_IN >= 3. Verified against real calendar day counts.
+    assertEquals(331f, time.dateAngleFromRealDate(2025, 2, 20), 0.0001f); // last 30-day position of this (common) equinox-year
+    assertEquals(0f, time.dateAngleFromRealDate(2025, 3, 21), 0.0001f);
+
+    // 2027-03-21 (terminalYear 2028, leap) vs 2028-03-21 (terminalYear
+    // 2029, common): both still anchor at zero regardless
+    assertEquals(0f, time.dateAngleFromRealDate(2027, 3, 21), 0.0001f);
+    assertEquals(0f, time.dateAngleFromRealDate(2028, 3, 21), 0.0001f);
+
+    // the 2027-start equinox-year has terminalYear 2028 (leap), so its
+    // position-6 boundary (Sep23) and Feb 2028 dates land exactly where
+    // a 6x31/6x30 leap split puts them
+    assertEquals(180f, time.dateAngleFromRealDate(2027, 9, 23), 0.0001f);
+    assertEquals(181f, time.dateAngleFromRealDate(2027, 9, 24), 0.0001f);
     assertEquals(338f, time.dateAngleFromRealDate(2028, 2, 28), 0.0001f);
     assertEquals(339f, time.dateAngleFromRealDate(2028, 2, 29), 0.0001f);
-    // the day immediately before the next equinox never quite reaches
-    // 360 (the same kind of "last day of a bucket" gap any day-count
-    // interpolation has) - here in a leap equinox-year specifically
-    assertEquals(359f, time.dateAngleFromRealDate(2024, 3, 20), 0.0001f);
+    assertEquals(359f, time.dateAngleFromRealDate(2028, 3, 20), 0.0001f); // day before the next equinox never quite reaches 360
+  }
+
+  @Test
+  void dateAngleFromRealDate_januaryAndFebruaryDatesUseTheirOwnWrittenYearAsTerminalYear () {
+    // for Jan/Feb dates, month_IN < 3 so terminalYear reduces to
+    // year_IN itself - no behavior change from the fix for these
+    assertEquals(339f, time.dateAngleFromRealDate(2024, 2, 29), 0.0001f); // 2024 leap, terminalYear 2024
   }
 }
