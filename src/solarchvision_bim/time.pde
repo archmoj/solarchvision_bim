@@ -318,25 +318,6 @@ class TIME {
     }
   }
 
-  // NOTE: not called anywhere in this app (confirmed by grep - only
-  // its own test exercises it) and NOT updated for the 365->366 change
-  // below, so its own "% 365" and its 5 inserted-day thresholds (a
-  // degrees-to-days approximation for the old 365-day generic year)
-  // are now stale relative to the rest of this class. Left alone
-  // rather than guessing new thresholds for dead code; revisit
-  // (recalibrate for 366, or remove) if something ever actually calls
-  // this.
-  int convert2Day (int Date_Angle) {
-    int DAY = (Date_Angle + 360) % 360;
-    if (DAY >=  31) DAY++;
-    if (DAY >=  62) DAY++;
-    if (DAY >=  93) DAY++;
-    if (DAY >= 124) DAY++;
-    if (DAY >= 155) DAY++;
-    DAY = DAY % 365;
-    return DAY;
-  }
-
   int convert2Date (int month, int day) {
     int k = 0;
     for (int i = 0; i < (month - 1); i++) {

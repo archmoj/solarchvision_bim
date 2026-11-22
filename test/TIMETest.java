@@ -31,27 +31,7 @@ class TIMETest {
     assertEquals(5, time.safeDate(4.9999999f));
   }
 
-  // --- convert2Day / convert2Date ----------------------------------
-
-  // convert2Day() is dead code (not called anywhere in src/, confirmed
-  // by grep) and was deliberately left on the old 365-day approximation
-  // when the rest of TIME moved to 366 (see its own comment in
-  // time.pde) - these two tests pin down that it's still unchanged,
-  // not that 365 is still correct anywhere else in this class.
-  @Test
-  void convert2Day_insertsExtraDaysAtEachThreshold () {
-    assertEquals(0, time.convert2Day(0));
-    assertEquals(30, time.convert2Day(30));   // below the first threshold: unchanged
-    assertEquals(32, time.convert2Day(31));   // crosses the 31 threshold: +1
-    assertEquals(95, time.convert2Day(92));   // crosses all of 31/62/93: +3
-    assertEquals(185, time.convert2Day(180)); // crosses all 5 thresholds: +5
-  }
-
-  @Test
-  void convert2Day_wrapsDateAngleModulo360 () {
-    assertEquals(time.convert2Day(359), time.convert2Day(-1));
-    assertEquals(time.convert2Day(0), time.convert2Day(360));
-  }
+  // --- convert2Date ---------------------------------------------------
 
   @Test
   void convert2Date_matchesASequentialJanuaryFirstCalendar () {
