@@ -28,7 +28,7 @@ class ShadePreviousDayActionTest {
 
   @Test
   void shadePreviousDay_fromDayZero_wrapsBackwardToStudyEndDay () {
-    // step 4e: sync_SHADE_DATE_ANGLE() now derives SHADE_DATE_ANGLE from
+    // sync_SHADE_DATE_ANGLE() derives SHADE_DATE_ANGLE from
     // TIME's own (year, month, day) anchor, not TIME.beginDay - pinned
     // to a fixed date here (rather than TIME's bare-construction,
     // wall-clock default) so this test's own expected angle doesn't

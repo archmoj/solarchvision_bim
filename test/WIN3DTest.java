@@ -1153,8 +1153,8 @@ class WIN3DTest {
     // sync_SHADE_DATE_ANGLE(), instead of adding SHADE_HOURS_PER_DAY + 1
     // hourly steps - so it no longer touches SHADE_HOUR_ANGLE at all.
     //
-    // Step 4e: SHADE_DATE_ANGLE is now derived from TIME's own real
-    // (year, month, day) anchor rather than TIME.beginDay - pinned to
+    // SHADE_DATE_ANGLE is derived from TIME's own real (year, month,
+    // day) anchor rather than TIME.beginDay - pinned to
     // a fixed date here (rather than TIME's bare-construction,
     // wall-clock default) so this test's own expected angle doesn't
     // depend on what day it happens to run.
@@ -1216,7 +1216,7 @@ class WIN3DTest {
   }
 
   // ================= impactDayToRealDate / sync_SHADE_DATE_ANGLE ========
-  // (step 4e: SHADE_DATE_ANGLE driven by a real date instead of
+  // (SHADE_DATE_ANGLE driven by a real date instead of
   // impactDayToDayOfYear's generic-calendar wraparound - see time.pde's
   // own dateAngleFromRealDate comment and shadeViewport3D.pde's own
   // impactDayToRealDate comment for why.)
@@ -1263,9 +1263,8 @@ class WIN3DTest {
 
   @Test
   void impactDayToRealDate_multiDayStepCrossesTheRealYearBoundary () {
-    // a step past Dec 31 advances TIME.year by itself - the Q1 design
-    // question step 4e was held back for, now resolved by true
-    // epoch-day arithmetic rather than any manual rollover check.
+    // a step past Dec 31 advances TIME.year by itself, resolved by
+    // true epoch-day arithmetic rather than any manual rollover check.
     app.TIME.year = 2025;
     app.TIME.month = 12;
     app.TIME.day = 20;
@@ -1280,8 +1279,7 @@ class WIN3DTest {
 
   @Test
   void impactDayToRealDate_skipsFebruary29thWhenSteppingThroughACommonYear () {
-    // the Q2 design question step 4e was held back for: stepping
-    // forward through where Feb 29 would fall in a common year lands
+    // stepping forward through where Feb 29 would fall in a common year lands
     // on Mar 1 instead, with no special-casing in impactDayToRealDate
     // itself - it falls straight out of realDateFromEpochDay.
     app.TIME.year = 2025;

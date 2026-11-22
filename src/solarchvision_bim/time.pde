@@ -113,28 +113,22 @@ class TIME {
     return floor(0.001 + (366 + date_IN) % 366);
   }
 
-  // Step 4a of the real-Gregorian-year plan: this.year already exists
-  // (see the field above and its spinner in valueModifier.pde / XML
-  // round-trip below) but today it is purely a decorative/lookup-key
-  // tag - it is passed to the ensemble-observation/forecast fetch
-  // functions and used in saved-image/file names, and nothing checks
-  // it for validity or ties it to this.month/this.day, which are
-  // instead derived from the generic 366-day calendar via updateDate()
-  // and never consult this.year at all. isLeapYear() is pure groundwork
-  // for that gap: the standard Gregorian rule, with no side effects and
-  // no callers yet, so it changes no existing behavior. Real-year leap
-  // arithmetic (deriving an actual real-year day-of-year/weekday from
-  // it, and validating e.g. a Feb 29 pick against it) is step 4b; the
-  // conversion between this and the generic 366-slot index is step 4c.
+  // The standard Gregorian leap rule. this.year (see the field above
+  // and its spinner in valueModifier.pde / XML round-trip below) is
+  // also passed to the ensemble-observation/forecast fetch functions
+  // and used in saved-image/file names; this.month/this.day are
+  // derived from the generic 366-day calendar via updateDate() and
+  // never consult this.year directly. lengthOfMonthInRealYear/
+  // isValidRealDate below build real-year leap arithmetic on top of
+  // this (an actual real-year day-of-year/weekday, and validating e.g.
+  // a Feb 29 pick); genericIndexFromRealDate/realDateFromGenericIndex
+  // convert between a real date and the generic 366-slot index.
   boolean isLeapYear (int year_IN) {
     return (year_IN % 4 == 0 && year_IN % 100 != 0) || (year_IN % 400 == 0);
   }
 
-  // Step 4b of the real-Gregorian-year plan, building on isLeapYear
-  // (4a). These are still pure and still have no callers in the app
-  // yet - the generic<->real conversion layer (4c) and decoupling
-  // solar geometry (4d) are what will actually call them. They are
-  // deliberately kept independent of this.lengthOfMonths (the generic
+  // Real-year leap arithmetic, building on isLeapYear above. Kept
+  // deliberately independent of this.lengthOfMonths (the generic
   // calendar's fixed Feb=29 table): a *real* year's February is 28 or
   // 29 days depending on isLeapYear(year), never a fixed 29.
 
@@ -157,8 +151,8 @@ class TIME {
     return day_IN >= 1 && day_IN <= this.lengthOfMonthInRealYear(year_IN, month_IN);
   }
 
-  // Step 4f of the real-Gregorian-year plan: the Day/Month/Year UI
-  // spinners (valueModifier.pde) are three independent controls - Day
+  // The Day/Month/Year UI spinners (valueModifier.pde) are three
+  // independent controls - Day
   // 1..31, Month 1..12, Year 1953..2100 - with no cross-validation
   // against each other, so changing any one of them can leave this.day
   // pointing past the end of this.month in this.year (Feb 29 after
@@ -167,7 +161,7 @@ class TIME {
   // only ever reach the generic-calendar convert2Date() path (which
   // treats Feb 29 as always valid, Table A's own fixed slot for it) or
   // a download/filename lookup that just fails to find a file - but
-  // since step 4e wired sync_SHADE_DATE_ANGLE() to real epoch-day
+  // since sync_SHADE_DATE_ANGLE() was wired to real epoch-day
   // arithmetic, the same invalid date now silently overflows into the
   // next month instead (daysFromRealCivilEpoch/realDateFromEpochDay
   // have no concept of "invalid", only of "day N of a y/m-less
@@ -228,7 +222,7 @@ class TIME {
   // one proleptic-Gregorian real date, so unlike RealDate's other
   // producer (realDateFromGenericIndex, which can land on a Feb 29 that
   // doesn't exist in a non-leap target year) the result here is always
-  // valid. Added for step 4e's planning-mode stepper: advancing a real
+  // valid. Added for the planning-mode stepper: advancing a real
   // date by N real days is daysFromRealCivilEpoch() + N, then this -
   // true calendar-day arithmetic rather than generic-calendar (% 366)
   // wraparound, so a step that crosses Dec31->Jan1 advances the year by
@@ -332,9 +326,9 @@ class TIME {
     return k;
   }
 
-  // Step 4c of the real-Gregorian-year plan: the explicit, tested
-  // conversion layer between a specific real calendar year (built on
-  // isLeapYear/isValidRealDate, 4a/4b above) and the generic 0..365,
+  // The explicit, tested conversion layer between a specific real
+  // calendar year (built on isLeapYear/isValidRealDate above) and the
+  // generic 0..365,
   // Jan-1-is-0 day-of-year index that convert2Date() above already
   // produces - this is NOT a new index space. convert2Date() is
   // already exactly how the rest of this app keys climate/ensemble
@@ -386,7 +380,7 @@ class TIME {
   // date already has a slot in the generic table (the generic
   // calendar's month lengths equal the real ones for every month
   // except February, where the generic table's fixed 29 is a superset
-  // of a real Feb's 28 or 29), so once isValidRealDate (4b) passes,
+  // of a real Feb's 28 or 29), so once isValidRealDate passes,
   // this simply delegates to the existing convert2Date(). Returns -1
   // for an invalid real date (most notably Feb 29 in a non-leap year)
   // instead of the silent wrong answer convert2Date() alone would give.
@@ -407,8 +401,8 @@ class TIME {
     return result;
   }
 
-  // Step 4d of the real-Gregorian-year plan: the actual Kepler/
-  // eccentricity accuracy fix. Third version of this function (after
+  // The actual Kepler/eccentricity accuracy fix for DATE_ANGLE. Third
+  // version of this function (after
   // a linear interpolation, then a traditional-Persian-pattern walk
   // with a 29/30 flex slot), rewritten again after discussing the
   // physics: the Sun sits at one focus of Earth's elliptical orbit,
@@ -528,9 +522,9 @@ class TIME {
   // year_IN already *is* the terminal year, so terminalYear reduces
   // to year_IN exactly in that case and nothing changes there.
   //
-  // Step 4e wires this into the one planning-mode call site this was
-  // held back for: sync_SHADE_DATE_ANGLE() (shadeViewport3D.pde) now
-  // calls this directly off a real date, rather than building
+  // This wires into the one planning-mode call site this was held
+  // back for: sync_SHADE_DATE_ANGLE() (shadeViewport3D.pde) now calls
+  // this directly off a real date, rather than building
   // SHADE_DATE_ANGLE from the old generic-calendar formula. That real
   // date comes from impactDayToRealDate() there, which steps TIME's own
   // (year, month, day) anchor by true epoch-day arithmetic
@@ -603,7 +597,7 @@ class TIME {
     this.beginDay = XML_getInt(parent, "beginDay");
     this.date = XML_getFloat(parent, "date");
 
-    this.clampDayToValidRealDate(); // step 4f: a hand-edited or corrupted project file could hold an invalid (year, month, day) combo directly
+    this.clampDayToValidRealDate(); // a hand-edited or corrupted project file could hold an invalid (year, month, day) combo directly
     sync_SHADE_DATE_ANGLE();
   }
 

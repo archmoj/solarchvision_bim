@@ -138,7 +138,7 @@ class TIMETest {
     assertEquals(123.5f, fresh.date, 0.0001f);
   }
 
-  // --- isLeapYear (step 4a groundwork: pure, no callers yet) ---------
+  // --- isLeapYear --------------------------------------------------
 
   @Test
   void isLeapYear_trueForOrdinaryMultiplesOfFour () {
@@ -167,7 +167,7 @@ class TIMETest {
     assertTrue(time.isLeapYear(1600));
   }
 
-  // --- lengthOfMonthInRealYear (step 4b) ------------------------------
+  // --- lengthOfMonthInRealYear -----------------------------------------
 
   @Test
   void lengthOfMonthInRealYear_februaryTracksLeapYearNotTheGenericTable () {
@@ -186,7 +186,7 @@ class TIMETest {
     assertEquals(31, time.lengthOfMonthInRealYear(2025, 12));
   }
 
-  // --- isValidRealDate (step 4b: the actual "Feb 29 validation") -----
+  // --- isValidRealDate (the actual "Feb 29 validation") ---------------
 
   @Test
   void isValidRealDate_february29thIsValidOnlyInALeapYear () {
@@ -211,7 +211,7 @@ class TIMETest {
     assertTrue(time.isValidRealDate(2025, 12, 31));
   }
 
-  // --- clampDayToValidRealDate (step 4f: the Day/Month/Year spinner
+  // --- clampDayToValidRealDate (the Day/Month/Year spinner
   // cross-validation gap) ----------------------------------------------
 
   @Test
@@ -261,7 +261,7 @@ class TIMETest {
     assertEquals(28, time.day);
   }
 
-  // --- dayOfYearInRealYear (step 4b) ----------------------------------
+  // --- dayOfYearInRealYear ------------------------------------------
 
   @Test
   void dayOfYearInRealYear_januaryFirstIsAlwaysDayOne () {
@@ -281,7 +281,7 @@ class TIMETest {
     assertEquals(60, time.dayOfYearInRealYear(2025, 3, 1)); // 31 + 28 + 1
   }
 
-  // --- daysFromRealCivilEpoch / weekdayFromRealDate (step 4b) ---------
+  // --- daysFromRealCivilEpoch / weekdayFromRealDate ---------------------
 
   @Test
   void weekdayFromRealDate_epochDateIsThursday () {
@@ -306,7 +306,7 @@ class TIMETest {
     assertEquals(2, time.weekdayFromRealDate(1600, 2, 29)); // Tuesday
   }
 
-  // --- realDateFromEpochDay (step 4e groundwork: inverse of
+  // --- realDateFromEpochDay (inverse of
   // daysFromRealCivilEpoch) ---------------------------------------------
 
   @Test
@@ -327,7 +327,7 @@ class TIMETest {
 
   @Test
   void realDateFromEpochDay_steppingByOneSkipsFebruary29thInACommonYear () {
-    // the core property step 4e's stepper rewrite relies on: ordinary
+    // the core property the real-date stepper rewrite relies on: ordinary
     // epoch-day arithmetic has no Feb 29 to land on in a common year,
     // so stepping forward from Feb 28 lands on Mar 1, and stepping
     // backward from Mar 1 lands on Feb 28, with no special-casing
@@ -371,7 +371,7 @@ class TIMETest {
     assertEquals(3, rd50.day);
   }
 
-  // --- monthDayFromGenericIndex (step 4c: inverse of convert2Date) ---
+  // --- monthDayFromGenericIndex (inverse of convert2Date) -------------
 
   @Test
   void monthDayFromGenericIndex_isTheExactInverseOfConvert2Date () {
@@ -391,7 +391,7 @@ class TIMETest {
     assertArrayEquals(time.monthDayFromGenericIndex(365), time.monthDayFromGenericIndex(-1));
   }
 
-  // --- genericIndexFromRealDate (step 4c) -----------------------------
+  // --- genericIndexFromRealDate -----------------------------------------
 
   @Test
   void genericIndexFromRealDate_matchesConvert2DateForAnyValidRealDate () {
@@ -414,7 +414,7 @@ class TIMETest {
     assertEquals(-1, time.genericIndexFromRealDate(2025, 13, 1));
   }
 
-  // --- realDateFromGenericIndex (step 4c) -----------------------------
+  // --- realDateFromGenericIndex -----------------------------------------
 
   @Test
   void realDateFromGenericIndex_roundTripsAnOrdinaryDateForAnyYear () {
@@ -461,7 +461,7 @@ class TIMETest {
     }
   }
 
-  // --- solarchvisionMonthLength (step 4d, Table B, final design) -----
+  // --- solarchvisionMonthLength (Table B, final design) -----------------
   // No flex slot: threshold = 6 (leap terminal year) or 5 (common),
   // position < threshold -> 31, else -> 30. See time.pde's own comment
   // on solarchvisionMonthLength for why this replaced the traditional
@@ -498,7 +498,7 @@ class TIMETest {
     }
   }
 
-  // --- dateAngleFromRealDate (step 4d, rewritten: discrete integer
+  // --- dateAngleFromRealDate (discrete integer
   // stepping over Table B, with the terminal-year leap-status fix) ---
 
   // Every one of these expected values was cross-checked with a Python

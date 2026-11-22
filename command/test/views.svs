@@ -1,9 +1,9 @@
 # set test time
 # Year is pinned explicitly (not left at TIME's own wall-clock default)
-# so south-west-shade's own SHADE_DATE_ANGLE - driven by a real date
-# since step 4e - can't drift from one baseline regeneration to the
-# next just because of which real year happens to be current when this
-# runs: for a January date, dateAngleFromRealDate's own terminalYear
+# so south-west-shade's own SHADE_DATE_ANGLE - driven by a real date -
+# can't drift from one baseline regeneration to the next just because
+# of which real year happens to be current when this runs: for a
+# January date, dateAngleFromRealDate's own terminalYear
 # reduces to this same year, and its leap-status alone shifts the angle
 # by about a degree (294 in a leap year vs 295 in a common one) - small,
 # but enough to invalidate the committed baseline for no reason related

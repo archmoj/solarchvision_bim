@@ -452,8 +452,8 @@ class WIN3DActionsTest {
 
   @Test
   void keyShadeTimePlusDay_stepsForwardByAFullDay () {
-    // step 4e: SHADE_DATE_ANGLE is now derived from TIME's own real
-    // (year, month, day) anchor rather than TIME.beginDay - pinned to
+    // SHADE_DATE_ANGLE is derived from TIME's own real (year, month,
+    // day) anchor rather than TIME.beginDay - pinned to
     // a fixed date here (rather than TIME's bare-construction,
     // wall-clock default) so this test's own expected angle doesn't
     // depend on what day it happens to run.

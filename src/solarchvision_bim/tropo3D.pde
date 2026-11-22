@@ -457,7 +457,7 @@ class Tropo3D {
   // (TIME.convert2Date(), the same 0-364 Jan-1-is-0 convention).
   // Deliberately stays on this year-less, generic-calendar comparison
   // even though impactDisplayDay can now also resolve to a specific
-  // real year (impactDayToRealDate(), step 4e) - a live weather feed
+  // real year (impactDayToRealDate()) - a live weather feed
   // only ever has data for the real current year anyway, so comparing
   // real dates here would almost never match on any other year,
   // defeating the point of this check. "The same day of year as
