@@ -1307,6 +1307,52 @@ class WIN3DTest {
     assertEquals(180, app.SHADE_DATE_ANGLE);
   }
 
+  @Test
+  void syncSHADE_DATE_ANGLE_alsoSetsSHADE_EPOCH_DAYToTheSameSteppedRealDate () {
+    // SHADE_EPOCH_DAY exists for funcs.MoonPosition's own continuity fix
+    // (see its comment, and functions.pde's own comment on MoonPosition)
+    // - sync_SHADE_DATE_ANGLE() sets it alongside SHADE_DATE_ANGLE, off
+    // the exact same stepped real date, never independently.
+    app.TIME.year = 2025;
+    app.TIME.month = 9;
+    app.TIME.day = 22;
+    app.STUDY.dayIncrement = 30;
+    app.impactDisplayDay = 3; // j == 2 -> 60 real days forward from the anchor
+
+    app.sync_SHADE_DATE_ANGLE();
+
+    long expectedEpochDay = app.TIME.daysFromRealCivilEpoch(2025, 9, 22) + 60;
+    assertEquals(expectedEpochDay, app.SHADE_EPOCH_DAY);
+  }
+
+  @Test
+  void syncSHADE_DATE_ANGLE_epochDayKeepsAdvancingAcrossTheDateAngleWrapUnlikeDateAngleItself () {
+    // The regression this whole change guards against, exercised at the
+    // sync_SHADE_DATE_ANGLE() level rather than funcs.MoonPosition's own
+    // (see FunctionsTest.java's moonPosition_takesTheSameSizeStepAcross-
+    // TheDateAngleWrapAsAnywhereElse for that side): a one-day step
+    // across dateAngleFromRealDate's own Mar-21 wrap point resets
+    // SHADE_DATE_ANGLE back near 0, while SHADE_EPOCH_DAY simply
+    // advances by 1, same as any other day.
+    app.TIME.year = 2025;
+    app.TIME.month = 3;
+    app.TIME.day = 20;
+    app.STUDY.dayIncrement = 1;
+    app.impactDisplayDay = 1; // j == 0, lands exactly on the 2025-03-20 anchor
+
+    app.sync_SHADE_DATE_ANGLE();
+    int dateAngleBefore = app.SHADE_DATE_ANGLE;
+    long epochDayBefore = app.SHADE_EPOCH_DAY;
+
+    app.impactDisplayDay = 2; // j == 1 -> 1 real day forward, to 2025-03-21
+
+    app.sync_SHADE_DATE_ANGLE();
+
+    assertEquals(359, dateAngleBefore);
+    assertEquals(0, app.SHADE_DATE_ANGLE, "SHADE_DATE_ANGLE wraps back to 0 right here - the bug this change avoids for the Moon");
+    assertEquals(epochDayBefore + 1, app.SHADE_EPOCH_DAY, "SHADE_EPOCH_DAY just keeps counting forward across the same boundary");
+  }
+
   // ================= dismissShading (Esc's own end to the sticky shaded-
   // viewport preview - see WIN3D.showShading's own comment) ==============
 

@@ -599,19 +599,19 @@ class Functions {
     return return_array;
   }
 
-  // Simplified lunar position - NOT a precise ephemeris. TIME
-  // (time.pde) now has real epoch-day machinery, since SHADE_DATE_ANGLE
-  // itself is derived from a real (year, month, day) via
-  // dateAngleFromRealDate - but this function deliberately still drives
-  // off DateAngle/HourAngleOrigin, the exact same inputs SunPosition()
-  // above uses, rather than that real epoch day. One consequence:
-  // DateAngle resets to 0 every year (it spans 360 over exactly 366
-  // days, the same day-of-year/366.0 convention every DATE_ANGLE site
-  // in this app uses - never the real 365.2425-day Gregorian year), so
-  // the Moon's simulated phase jumps discontinuously at every year
-  // boundary instead of carrying over the way the real Moon's does;
-  // driving this off a real epoch day instead would fix that, but is a
-  // separate change from this one. This model's two most visually
+  // Simplified lunar position - NOT a precise ephemeris. Unlike
+  // SunPosition() above (which takes DateAngle, an integer-degree
+  // position within one year - see dateAngleFromRealDate's own
+  // comment), this takes EpochDay: a real, continuously-counting day
+  // count (TIME.daysFromRealCivilEpoch/SHADE_EPOCH_DAY in
+  // shadeViewport3D.pde) that never resets at a year boundary the way
+  // DateAngle does. That matters here specifically because this
+  // function's own phase/declination cycles (below) are shorter than a
+  // year and have nothing to do with where DateAngle itself wraps
+  // (dateAngleFromRealDate's own Mar-21 equinox-year boundary, not
+  // Jan 1) - driving them off DateAngle would make the Moon's simulated
+  // phase jump discontinuously there every year instead of carrying
+  // over the way the real Moon's does. This model's two most visually
   // relevant departures from the Sun's own path:
   //
   // 1) It rises/sets roughly 50 minutes later each day, drifting through
@@ -619,22 +619,20 @@ class Functions {
   //    month (~29.53 days) - near new moon it tracks the Sun closely
   //    (rising/setting together, hence invisible against the daytime
   //    sky); near full moon it's a full 12 hours out of phase (rising as
-  //    the Sun sets). DateAngle spans 360 over exactly 366 days, so this
-  //    phase needs to cycle (366.0 / 29.53) ≈ 12.39 times as fast.
+  //    the Sun sets).
   // 2) Its declination swings through a comparable range to the Sun's
   //    (same ±23.45 amplitude, for simplicity - the real extra ~5 degrees
   //    from the Moon's own orbital inclination is a second-order detail
   //    not worth the added complexity here), but on its own, faster,
-  //    ~27.3-day sidereal cycle rather than the Sun's 366-day one - same
-  //    scaling idea as above.
+  //    ~27.3-day sidereal cycle rather than the Sun's ~365.24-day one.
   //
   // correctHourAngle()'s equation-of-time correction is Sun-specific (it
   // corrects apparent solar time against clock time), so it's
   // deliberately not reused here - this function computes the Moon's own
   // hour angle directly instead.
-  float[] MoonPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
-    float phaseAngle = (DateAngle * (366.0 / 29.53)) % 360.0;
-    float declinationDateAngle = (DateAngle * (366.0 / 27.3)) % 360.0;
+  float[] MoonPosition (float Latitude, float EpochDay, float HourAngleOrigin) {
+    float phaseAngle = (360.0 * EpochDay / 29.53) % 360.0;
+    float declinationDateAngle = (360.0 * EpochDay / 27.3) % 360.0;
 
     float HourAngle = HourAngleOrigin - (phaseAngle / 360.0) * 24.0;
     float Declination = 23.45 * this.sin_ang(declinationDateAngle - 180.0);

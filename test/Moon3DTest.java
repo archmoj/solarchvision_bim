@@ -185,12 +185,16 @@ class Moon3DTest {
 
   @Test
   void buildSubFace_positionChangesWithDate () {
+    // The Moon's own position input is SHADE_EPOCH_DAY, not
+    // SHADE_DATE_ANGLE - see funcs.MoonPosition's own comment for why -
+    // so that's what this test has to move to see computeFrame() pick
+    // up a different date.
     app.SHADE_HOUR_ANGLE = 12;
 
-    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_EPOCH_DAY = 0;
     solarchvision_bim.Moon3D.FaceVertex[] day0 = app.Moon3D.buildSubFace(0, 0, 1, 10, 0, 0, 1, 1, app.Moon3D.computeFrame());
 
-    app.SHADE_DATE_ANGLE = 90;
+    app.SHADE_EPOCH_DAY = 90;
     solarchvision_bim.Moon3D.FaceVertex[] day90 = app.Moon3D.buildSubFace(0, 0, 1, 10, 0, 0, 1, 1, app.Moon3D.computeFrame());
 
     boolean moved = day0[0].x != day90[0].x || day0[0].y != day90[0].y || day0[0].z != day90[0].z;

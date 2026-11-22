@@ -91,6 +91,17 @@ final int SHADE_STEP_DAYS = 30; //90;
 int SHADE_HOUR_ANGLE = 10;
 int SHADE_DATE_ANGLE = -1; // This would be set to TIME.beginDay later in the process.
 
+// Real epoch day for the same selected real date SHADE_DATE_ANGLE is
+// derived from - set alongside it by sync_SHADE_DATE_ANGLE() below,
+// never independently. Unlike SHADE_DATE_ANGLE (an integer-degree
+// position within one year, see dateAngleFromRealDate's own comment on
+// its last-day-of-a-31-day-position repeat), this never repeats or
+// resets at a year boundary - it exists for funcs.MoonPosition's own
+// phase/declination calculation, which needs a continuously advancing
+// day count rather than an angle that restarts every year (see
+// MoonPosition's own comment).
+long SHADE_EPOCH_DAY = Long.MIN_VALUE;
+
 volatile boolean isShadingViewport = false;
 
 // Derives pixel np's own primary camera ray into the caller's own
@@ -259,16 +270,17 @@ void ShadeViewport () {
   boolean sunIsBelowHorizon = (SunR[3] <= 0);
 
   // moon3D.pde's own simplified model (funcs.MoonPosition's own comment)
-  // reused here, same DATE/HOUR inputs the Sun already uses, purely as a
-  // second, much weaker light source for the sunIsBelowHorizon case below
-  // - a real moon only lights (and casts its own faint shadows) at
-  // night, never alongside direct sunlight, and only while it's actually
-  // above the horizon itself (MoonR[3] > 0) - a sun-down night with the
-  // moon also below the horizon gets no direct light at all, same as
-  // before this. Computed unconditionally (cheap, a few trig calls), not
-  // just when sunIsBelowHorizon, so moonIsAboveHorizon below reads
-  // naturally either way.
-  float[] MoonR = funcs.MoonPosition(STATION.getLatitude(), SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+  // reused here - SHADE_EPOCH_DAY/SHADE_HOUR_ANGLE, not SHADE_DATE_ANGLE
+  // (see funcs.MoonPosition's own comment for why) - purely as a second,
+  // much weaker light source for the sunIsBelowHorizon case below - a
+  // real moon only lights (and casts its own faint shadows) at night,
+  // never alongside direct sunlight, and only while it's actually above
+  // the horizon itself (MoonR[3] > 0) - a sun-down night with the moon
+  // also below the horizon gets no direct light at all, same as before
+  // this. Computed unconditionally (cheap, a few trig calls), not just
+  // when sunIsBelowHorizon, so moonIsAboveHorizon below reads naturally
+  // either way.
+  float[] MoonR = funcs.MoonPosition(STATION.getLatitude(), SHADE_EPOCH_DAY, SHADE_HOUR_ANGLE);
   float[] MoonV = { MoonR[1], MoonR[2], MoonR[3] };
   float[] MoonV_unit = funcs.vec3_unit(new float[]{ MoonV[0], MoonV[1], MoonV[2] });
   boolean moonIsAboveHorizon = sunIsBelowHorizon && (MoonR[3] > 0);
@@ -907,6 +919,17 @@ long impactDayToRawDayOffset (int day) {
   return (long) j * (long) STUDY.dayIncrement;
 }
 
+// The real, continuously-counting epoch day impactDisplayDay slot "day"
+// represents - TIME's own (year, month, day) anchor's own epoch day,
+// stepped by impactDayToRawDayOffset's real calendar days. Pulled out of
+// impactDayToRealDate below (which otherwise computed this same value
+// only to immediately convert it back with realDateFromEpochDay) so
+// sync_SHADE_DATE_ANGLE() can set SHADE_EPOCH_DAY from the exact same
+// number, rather than recomputing it a second way.
+long impactDayToEpochDay (int day) {
+  return TIME.daysFromRealCivilEpoch(TIME.year, TIME.month, TIME.day) + impactDayToRawDayOffset(day);
+}
+
 // The real (year, month, day) impactDisplayDay slot "day" represents -
 // TIME's own (year, month, day) anchor, stepped by impactDayToRawDayOffset's
 // real calendar days via true epoch-day arithmetic (daysFromRealCivilEpoch/
@@ -919,9 +942,7 @@ long impactDayToRawDayOffset (int day) {
 // backward - both for free, from ordinary date arithmetic, with no
 // special-casing needed.
 TIME.RealDate impactDayToRealDate (int day) {
-  long epochDay = TIME.daysFromRealCivilEpoch(TIME.year, TIME.month, TIME.day) + impactDayToRawDayOffset(day);
-
-  return TIME.realDateFromEpochDay(epochDay);
+  return TIME.realDateFromEpochDay(impactDayToEpochDay(day));
 }
 
 void sync_SHADE_DATE_ANGLE () {
@@ -929,9 +950,14 @@ void sync_SHADE_DATE_ANGLE () {
   // and relied on elsewhere (e.g. tropo3D.pde's selectedDayHasForecastAvailable())
   // - unchanged by this rewrite, and no longer needed here now that the
   // angle itself is driven by the real date above instead.
-  TIME.RealDate realDate = impactDayToRealDate(impactDisplayDay);
+  long epochDay = impactDayToEpochDay(impactDisplayDay);
+  TIME.RealDate realDate = TIME.realDateFromEpochDay(epochDay);
 
   SHADE_DATE_ANGLE = (int) TIME.dateAngleFromRealDate(realDate.year, realDate.month, realDate.day);
+
+  // funcs.MoonPosition's own comment on why it needs this instead of
+  // SHADE_DATE_ANGLE above.
+  SHADE_EPOCH_DAY = epochDay;
 }
 
 // Turns off the sticky shaded-viewport overlay ShadeViewport() leaves on

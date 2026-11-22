@@ -290,12 +290,12 @@ class Moon3D {
     f.ta = 90 - stationLat;
 
     // Real position tracking, same architecture as sun3D.pde: MoonR/tA/tB
-    // move the sphere's POSITION across the sky via the translation step
-    // in buildSubFace, using the exact same SHADE_DATE_ANGLE/
-    // SHADE_HOUR_ANGLE this app already drives the Sun with (see
-    // funcs.MoonPosition's own comment for what this simplified model
-    // does and doesn't capture).
-    float[] MoonR = funcs.MoonPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+    // move the sphere's POSITION across the sky via the translation
+    // step in buildSubFace, using SHADE_EPOCH_DAY/SHADE_HOUR_ANGLE -
+    // not SHADE_DATE_ANGLE, the Sun's own input (see funcs.MoonPosition's
+    // own comment for why, and for what this simplified model does and
+    // doesn't capture).
+    float[] MoonR = funcs.MoonPosition(stationLat, SHADE_EPOCH_DAY, SHADE_HOUR_ANGLE);
     f.tA = funcs.asin_ang(MoonR[3]);
     f.tB = funcs.atan2_ang(MoonR[2], MoonR[1]);
 
@@ -352,16 +352,24 @@ class Moon3D {
 
   // --- WIN3D retained-mode cache --------------------------------------------
   // Same shape as sun3D.pde's own sun-disc cache: draw() is WIN3D-only
-  // already, so a straight build-once-and-replay. Position depends on the
-  // same SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE/station-latitude trio as the
-  // Sun; phase shading additionally depends on the Sun's own direction
-  // (also from those two globals, via computeFrame()'s own SunPosition()
-  // call) plus the handful of toggles below, none of which ever touch the
-  // camera.
+  // already, so a straight build-once-and-replay. Position depends on
+  // station-latitude, SHADE_HOUR_ANGLE, and SHADE_EPOCH_DAY (the Moon's
+  // own real-position input, see funcs.MoonPosition's own comment on why
+  // it's not SHADE_DATE_ANGLE); phase shading additionally depends on
+  // the Sun's own direction (via computeFrame()'s own SunPosition()
+  // call, which does use SHADE_DATE_ANGLE) plus the handful of toggles
+  // below, none of which ever touch the camera. Both SHADE_DATE_ANGLE
+  // and SHADE_EPOCH_DAY need checking here even though sync_
+  // SHADE_DATE_ANGLE() always sets them together: dateAngleFromRealDate
+  // repeats its own last value once per solarchvisionMonthLength
+  // position (see its own comment) while SHADE_EPOCH_DAY keeps
+  // advancing underneath it, so SHADE_DATE_ANGLE alone would miss a
+  // real phase change on exactly those days.
   PShape win3DCache = null;
   float win3DCache_stationLat = Float.NaN;
   int win3DCache_SHADE_DATE_ANGLE = Integer.MIN_VALUE;
   int win3DCache_SHADE_HOUR_ANGLE = Integer.MIN_VALUE;
+  long win3DCache_SHADE_EPOCH_DAY = Long.MIN_VALUE;
   boolean win3DCache_displayTexture = true;
   boolean win3DCache_displayShadow = true;
   boolean win3DCache_displayNightSide = true;
@@ -377,6 +385,7 @@ class Moon3D {
       this.win3DCache_stationLat                == STATION.getLatitude() &&
       this.win3DCache_SHADE_DATE_ANGLE           == SHADE_DATE_ANGLE &&
       this.win3DCache_SHADE_HOUR_ANGLE           == SHADE_HOUR_ANGLE &&
+      this.win3DCache_SHADE_EPOCH_DAY            == SHADE_EPOCH_DAY &&
       this.win3DCache_displayTexture             == this.displayTexture &&
       this.win3DCache_displayShadow              == this.displayShadow &&
       this.win3DCache_displayNightSide           == this.displayNightSide &&
@@ -392,6 +401,7 @@ class Moon3D {
     this.win3DCache_stationLat                = STATION.getLatitude();
     this.win3DCache_SHADE_DATE_ANGLE           = SHADE_DATE_ANGLE;
     this.win3DCache_SHADE_HOUR_ANGLE           = SHADE_HOUR_ANGLE;
+    this.win3DCache_SHADE_EPOCH_DAY            = SHADE_EPOCH_DAY;
     this.win3DCache_displayTexture             = this.displayTexture;
     this.win3DCache_displayShadow              = this.displayShadow;
     this.win3DCache_displayNightSide           = this.displayNightSide;

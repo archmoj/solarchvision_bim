@@ -294,15 +294,67 @@ class FunctionsTest {
     // Same invariant as sunPosition_directionVectorIsAlwaysUnitLength
     // above - MoonPosition shares SunPosition's own rotation formula (see
     // functions.pde's own comment on MoonPosition), just with phase-
-    // shifted inputs, so the same rotation-preserves-length argument holds.
+    // shifted inputs, so the same rotation-preserves-length argument
+    // holds regardless of what the second argument means. These case
+    // values are arbitrary epoch-day stand-ins (not the 0..360-degree
+    // dateAngle values SunPosition's own test above uses) - the
+    // invariant holds for any real number there either way.
     float[][] cases = {
       {0f, 80f, 2f}, {45f, 180f, -3f}, {-30f, 300f, 6f}, {60f, 10f, 0f}
     };
     for (float[] c : cases) {
       float[] pos = funcs.MoonPosition(c[0], c[1], c[2]);
       float magSq = pos[1] * pos[1] + pos[2] * pos[2] + pos[3] * pos[3];
-      assertEquals(1f, magSq, 0.01f, "latitude=" + c[0] + " dateAngle=" + c[1] + " hourAngle=" + c[2]);
+      assertEquals(1f, magSq, 0.01f, "latitude=" + c[0] + " epochDay=" + c[1] + " hourAngle=" + c[2]);
     }
+  }
+
+  @Test
+  void moonPosition_takesAnOrdinaryDailyStepAcrossTheDateAngleWrapTooNoSpecialJump () {
+    // The whole point of driving MoonPosition off EpochDay rather than
+    // DateAngle (see functions.pde's own comment on MoonPosition): a
+    // day-to-day step should move the Moon by roughly its usual small
+    // amount no matter what the calendar date happens to be - in
+    // particular, it must NOT depend on where dateAngleFromRealDate
+    // itself wraps back to 0 (the Mar-21 equinox-year boundary -
+    // time.pde's own comment there). Feeding that wrap straight into a
+    // formula keyed on DateAngle (as this function used to be) would
+    // produce a jump of up to ~180 degrees right there, once a year -
+    // nothing like the ordinary ~12-13 degree/day drift this model's
+    // own 29.53-day phase cycle otherwise produces (declination's own
+    // slower 27.3-day cycle adds a little variation day to day, hence
+    // the loose bound below rather than an exact figure).
+    //
+    // 2025-03-20 -> 2025-03-21 is exactly that wrap point: confirmed
+    // below via dateAngleFromRealDate itself (359 -> 0), even though
+    // the two dates are one single real day apart, same as any other
+    // consecutive pair.
+    assertEquals(359, (int) app.TIME.dateAngleFromRealDate(2025, 3, 20));
+    assertEquals(0, (int) app.TIME.dateAngleFromRealDate(2025, 3, 21));
+
+    long epochDay1 = app.TIME.daysFromRealCivilEpoch(2025, 3, 20);
+    long epochDay2 = app.TIME.daysFromRealCivilEpoch(2025, 3, 21);
+    assertEquals(1, epochDay2 - epochDay1, "sanity check: these really are one real day apart");
+
+    float angularStep = angleBetween(
+      funcs.MoonPosition(43.7f, epochDay1, 12f),
+      funcs.MoonPosition(43.7f, epochDay2, 12f));
+
+    assertTrue(angularStep < 20f,
+      "a one-day step right at DateAngle's own wrap point should still be an ordinary small step, not a discontinuity - was " + angularStep + " degrees");
+  }
+
+  // Angle (in degrees) between two MoonPosition/SunPosition-shaped unit
+  // direction vectors - just acos of their dot product, both being unit
+  // length already (see the *_directionVectorIsAlwaysUnitLength tests).
+  // Math.acos/toDegrees, not the bare Processing equivalents - this is a
+  // plain Java class, not a PApplet, same reasoning as Moon3DTest.java's
+  // own comment on why it can't use a bare constrain() either. The
+  // clamp guards acos() against a NaN from a dot product that drifts
+  // fractionally past ±1 from float rounding.
+  private static float angleBetween (float[] a, float[] b) {
+    float dot = a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+    return (float) Math.toDegrees(Math.acos(Math.max(-1f, Math.min(1f, dot))));
   }
 
   @Test
