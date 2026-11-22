@@ -1,4 +1,13 @@
 # set test time
+# Year is pinned (not left at TIME's own wall-clock default) so the
+# Moon's own rendered position/phase - Moon3D.draw() runs on every
+# frame, unlike the Sun-shading path views.svs's own comment covers -
+# can't drift from one baseline regeneration to the next just because
+# of which real year happens to be current when this runs (see
+# funcs.MoonPosition's own comment on SHADE_EPOCH_DAY). 2026 matches
+# terrain.svs's own pinned year, for one consistent year across this
+# whole test suite rather than picking a different one per script.
+Year 2026
 Month 1
 Day 15
 
