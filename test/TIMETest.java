@@ -186,4 +186,93 @@ class TIMETest {
     assertTrue(time.isLeapYear(2000));
     assertTrue(time.isLeapYear(1600));
   }
+
+  // --- lengthOfMonthInRealYear (step 4b) ------------------------------
+
+  @Test
+  void lengthOfMonthInRealYear_februaryTracksLeapYearNotTheGenericTable () {
+    // the generic calendar's own lengthOfMonths[1] is always 29 (see
+    // time.pde) - this must NOT follow that for a real, non-leap year
+    assertEquals(29, time.lengthOfMonthInRealYear(2024, 2));
+    assertEquals(28, time.lengthOfMonthInRealYear(2025, 2));
+    assertEquals(28, time.lengthOfMonthInRealYear(1900, 2));
+    assertEquals(29, time.lengthOfMonthInRealYear(2000, 2));
+  }
+
+  @Test
+  void lengthOfMonthInRealYear_otherMonthsMatchTheGenericTableRegardlessOfYear () {
+    assertEquals(31, time.lengthOfMonthInRealYear(2024, 1));
+    assertEquals(30, time.lengthOfMonthInRealYear(2025, 4));
+    assertEquals(31, time.lengthOfMonthInRealYear(2025, 12));
+  }
+
+  // --- isValidRealDate (step 4b: the actual "Feb 29 validation") -----
+
+  @Test
+  void isValidRealDate_february29thIsValidOnlyInALeapYear () {
+    assertTrue(time.isValidRealDate(2024, 2, 29));
+    assertTrue(time.isValidRealDate(2000, 2, 29));
+    assertFalse(time.isValidRealDate(2025, 2, 29));
+    assertFalse(time.isValidRealDate(1900, 2, 29)); // divisible by 100, not by 400
+  }
+
+  @Test
+  void isValidRealDate_rejectsOutOfRangeMonthOrDay () {
+    assertFalse(time.isValidRealDate(2025, 0, 15));
+    assertFalse(time.isValidRealDate(2025, 13, 15));
+    assertFalse(time.isValidRealDate(2025, 4, 31));  // April has 30 days
+    assertFalse(time.isValidRealDate(2025, 1, 0));
+  }
+
+  @Test
+  void isValidRealDate_acceptsOrdinaryInRangeDates () {
+    assertTrue(time.isValidRealDate(2025, 1, 1));
+    assertTrue(time.isValidRealDate(2025, 4, 30));
+    assertTrue(time.isValidRealDate(2025, 12, 31));
+  }
+
+  // --- dayOfYearInRealYear (step 4b) ----------------------------------
+
+  @Test
+  void dayOfYearInRealYear_januaryFirstIsAlwaysDayOne () {
+    assertEquals(1, time.dayOfYearInRealYear(2024, 1, 1));
+    assertEquals(1, time.dayOfYearInRealYear(2025, 1, 1));
+  }
+
+  @Test
+  void dayOfYearInRealYear_decemberThirtyFirstReflectsTheRealYearLength () {
+    assertEquals(366, time.dayOfYearInRealYear(2024, 12, 31)); // leap
+    assertEquals(365, time.dayOfYearInRealYear(2025, 12, 31)); // common
+  }
+
+  @Test
+  void dayOfYearInRealYear_marchFirstShiftsByOneDependingOnFebruary () {
+    assertEquals(61, time.dayOfYearInRealYear(2024, 3, 1)); // 31 + 29 + 1
+    assertEquals(60, time.dayOfYearInRealYear(2025, 3, 1)); // 31 + 28 + 1
+  }
+
+  // --- daysFromRealCivilEpoch / weekdayFromRealDate (step 4b) ---------
+
+  @Test
+  void weekdayFromRealDate_epochDateIsThursday () {
+    // 1970-01-01, day 0 of the Unix civil epoch, was a Thursday
+    assertEquals(0L, time.daysFromRealCivilEpoch(1970, 1, 1));
+    assertEquals(4, time.weekdayFromRealDate(1970, 1, 1)); // 0=Sunday..6=Saturday
+  }
+
+  @Test
+  void weekdayFromRealDate_matchesKnownHistoricalWeekdays () {
+    // cross-checked against a reference proleptic-Gregorian calendar
+    assertEquals(6, time.weekdayFromRealDate(2000, 1, 1));  // Saturday
+    assertEquals(1, time.weekdayFromRealDate(2024, 1, 1));  // Monday
+    assertEquals(4, time.weekdayFromRealDate(2024, 2, 29)); // Thursday (leap day)
+  }
+
+  @Test
+  void weekdayFromRealDate_handlesDatesBeforeTheEpochWithoutGoingNegative () {
+    // 1600-02-29 is a leap day in a 400-divisible century year, and
+    // well before the 1970 epoch - exercises the "+7" guard against
+    // Java's sign-preserving "%" on a negative days-since-epoch value
+    assertEquals(2, time.weekdayFromRealDate(1600, 2, 29)); // Tuesday
+  }
 }

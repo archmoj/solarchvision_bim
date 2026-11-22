@@ -130,6 +130,73 @@ class TIME {
     return (year_IN % 4 == 0 && year_IN % 100 != 0) || (year_IN % 400 == 0);
   }
 
+  // Step 4b of the real-Gregorian-year plan, building on isLeapYear
+  // (4a). These are still pure and still have no callers in the app
+  // yet - the generic<->real conversion layer (4c) and decoupling
+  // solar geometry (4d) are what will actually call them. They are
+  // deliberately kept independent of this.lengthOfMonths (the generic
+  // calendar's fixed Feb=29 table): a *real* year's February is 28 or
+  // 29 days depending on isLeapYear(year), never a fixed 29.
+
+  // Real (non-generic) month length: every month matches the generic
+  // lengthOfMonths table except February, which is real-year-aware
+  // (28 in a common year, 29 in a leap year) rather than the generic
+  // calendar's fixed 29.
+  int lengthOfMonthInRealYear (int year_IN, int month_IN) {
+    if (month_IN == 2) return this.isLeapYear(year_IN) ? 29 : 28;
+    return this.lengthOfMonths[month_IN - 1];
+  }
+
+  // A real calendar date is valid exactly when month is 1..12 and day
+  // is 1..lengthOfMonthInRealYear(year, month) for that specific real
+  // year - this is the "Feb 29 validation" from the plan: it falls
+  // directly out of this general check (true only in a leap year)
+  // rather than needing its own separate special case.
+  boolean isValidRealDate (int year_IN, int month_IN, int day_IN) {
+    if (month_IN < 1 || month_IN > 12) return false;
+    return day_IN >= 1 && day_IN <= this.lengthOfMonthInRealYear(year_IN, month_IN);
+  }
+
+  // 1-based real day-of-year (1..365, or 1..366 in a leap year) for a
+  // *valid* real calendar date - callers are expected to have checked
+  // isValidRealDate first; behavior for an invalid (year, month, day)
+  // is not defined here.
+  int dayOfYearInRealYear (int year_IN, int month_IN, int day_IN) {
+    int total = day_IN;
+    for (int i = 0; i < month_IN - 1; i++) {
+      total += this.lengthOfMonthInRealYear(year_IN, i + 1);
+    }
+    return total;
+  }
+
+  // Days since the 1970-01-01 civil (Unix) epoch for a proleptic
+  // Gregorian date, via Howard Hinnant's widely-used days_from_civil
+  // algorithm (see http://howardhinnant.github.io/date_algorithms.html)
+  // - correct for every year this app's real-year field can hold,
+  // including the 100/400-year leap exceptions. Deliberately a fully
+  // independent derivation of the same leap structure (not composed
+  // from lengthOfMonthInRealYear above), used as the base for the
+  // weekday arithmetic below.
+  long daysFromRealCivilEpoch (int year_IN, int month_IN, int day_IN) {
+    int y = year_IN - (month_IN <= 2 ? 1 : 0);
+    long era = (y >= 0 ? y : y - 399) / 400;
+    long yoe = y - era * 400;                                                     // [0, 399]
+    long doy = (153 * (month_IN + (month_IN > 2 ? -3 : 9)) + 2) / 5 + day_IN - 1;  // [0, 365]
+    long doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;                             // [0, 146096]
+    return era * 146097L + doe - 719468L;
+  }
+
+  // 0=Sunday .. 6=Saturday, derived from daysFromRealCivilEpoch above:
+  // 1970-01-01 (epoch day 0) was a Thursday, i.e. weekday index 4, so
+  // adding 4 and wrapping into 0..6 (Java's % keeps the dividend's
+  // sign, hence the extra "+ 7" before the final "% 7" so a date
+  // before 1970 still wraps forward rather than coming out negative)
+  // gives every other date's weekday.
+  int weekdayFromRealDate (int year_IN, int month_IN, int day_IN) {
+    long days = this.daysFromRealCivilEpoch(year_IN, month_IN, day_IN);
+    return (int) (((days + 4) % 7 + 7) % 7);
+  }
+
   int getMonth_fromDate(float date_IN) {
      return this.monthFromDate[safeDate(date_IN)];
   }
