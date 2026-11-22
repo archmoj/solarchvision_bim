@@ -366,14 +366,45 @@ class TIMETest {
     }
   }
 
-  // --- dateAngleFromRealDate (step 4d: the actual accuracy fix) ------
+  // --- persianMonthLength (step 4d, Table B) --------------------------
+
+  @Test
+  void persianMonthLength_sixThirtyOneDayPositionsForTheSlowAphelionHalf () {
+    for (int position = 0; position < 6; position++) {
+      assertEquals(31, time.persianMonthLength(position, 2025));
+    }
+  }
+
+  @Test
+  void persianMonthLength_fiveThirtyDayPositionsForTheFastPerihelionHalf () {
+    for (int position = 6; position < 11; position++) {
+      assertEquals(30, time.persianMonthLength(position, 2025));
+    }
+  }
+
+  @Test
+  void persianMonthLength_lastPositionFollowsIsLeapYearLikeRealFebruaryDoes () {
+    assertEquals(30, time.persianMonthLength(11, 2024)); // leap
+    assertEquals(29, time.persianMonthLength(11, 2025)); // common
+  }
+
+  @Test
+  void persianMonthLength_allTwelvePositionsSumToThatRealYearsOwnTrueLength () {
+    for (int year : new int[]{2024, 2025}) {
+      int total = 0;
+      for (int position = 0; position < 12; position++) {
+        total += time.persianMonthLength(position, year);
+      }
+      assertEquals(time.isLeapYear(year) ? 366 : 365, total);
+    }
+  }
+
+  // --- dateAngleFromRealDate (step 4d, rewritten: Table-B-stepped) ---
 
   // Every one of these expected values was cross-checked with a Python
-  // simulation of both this function and the existing generic formula
-  // ("360 * ((286 + convert2Date(month, day)) % 366) / 366.0", the
-  // same one calculateGlobalSolarArray.pde / sun3D.pde / etc. use)
-  // before being written here - see time.pde's own comment on
-  // dateAngleFromRealDate for what each case demonstrates.
+  // simulation of this function before being written here - see
+  // time.pde's own comment on dateAngleFromRealDate and
+  // persianMonthLength for the physics and the walk this implements.
 
   @Test
   void dateAngleFromRealDate_march21stIsAlwaysTheZeroAnchor () {
@@ -383,39 +414,60 @@ class TIMETest {
   }
 
   @Test
-  void dateAngleFromRealDate_exactlyMatchesTheExistingGenericFormulaInALeapYear () {
-    // a leap real year's own length (366) equals the generic
-    // calendar's fixed length, and real Feb matches generic Feb
-    // (both 29) day for day, so the two formulas must agree exactly
-    int m1 = 6, d1 = 15;
-    float genericJune15 = 360 * ((286 + time.convert2Date(m1, d1)) % 366) / 366.0f;
-    assertEquals(genericJune15, time.dateAngleFromRealDate(2024, m1, d1), 0.0001f);
+  void dateAngleFromRealDate_landsOnAnExactMultipleOfThirtyAtEveryPersianMonthBoundary () {
+    // the core property this whole rewrite is for: unlike a linear
+    // model (this function's first version, or the generic formula),
+    // walking Table B's uneven positions lands exactly on 30, 60, 90...
+    // degrees at each boundary regardless of how many real days that
+    // position actually took - cross-checked against real calendar
+    // dates 31, 62, 93... real days after Mar 21 (via Python's
+    // datetime), for a leap equinox-year (starting 2024, so its own
+    // flex position - spanning late Feb into March of 2025 - is 30
+    // real days) and a common one (starting 2025, flex position 29
+    // real days, so its boundary dates shift a day earlier)
+    assertEquals(30f, time.dateAngleFromRealDate(2024, 4, 21), 0.0001f);
+    assertEquals(60f, time.dateAngleFromRealDate(2024, 5, 22), 0.0001f);
+    assertEquals(300f, time.dateAngleFromRealDate(2025, 1, 21), 0.0001f); // still part of the 2024-start equinox-year
+    assertEquals(330f, time.dateAngleFromRealDate(2025, 2, 20), 0.0001f);
+    assertEquals(0f, time.dateAngleFromRealDate(2025, 3, 21), 0.0001f);   // next equinox-year's own zero
 
-    int m2 = 12, d2 = 31;
-    float genericDec31 = 360 * ((286 + time.convert2Date(m2, d2)) % 366) / 366.0f;
-    assertEquals(genericDec31, time.dateAngleFromRealDate(2024, m2, d2), 0.0001f);
+    assertEquals(300f, time.dateAngleFromRealDate(2026, 1, 21), 0.0001f); // the 2025-start (common) equinox-year
+    assertEquals(330f, time.dateAngleFromRealDate(2026, 2, 20), 0.0001f);
   }
 
   @Test
-  void dateAngleFromRealDate_divergesFromTheGenericFormulaInANonLeapYear () {
-    // this is the inaccuracy the generic formula alone has, and that
-    // this function exists to fix: by Dec 31 of a non-leap year, the
-    // generic (fixed-366) formula has fallen behind the real (365-day)
-    // year's own true position by about 0.77 degrees
-    float genericDec31 = 360 * ((286 + time.convert2Date(12, 31)) % 366) / 366.0f;
-    assertEquals(281.095890f, time.dateAngleFromRealDate(2025, 12, 31), 0.001f);
-    assertEquals(0.768022f, time.dateAngleFromRealDate(2025, 12, 31) - genericDec31, 0.001f);
-
-    float genericJan1 = 360 * ((286 + time.convert2Date(1, 1)) % 366) / 366.0f;
-    assertEquals(282.082192f, time.dateAngleFromRealDate(2025, 1, 1), 0.001f);
-    assertEquals(0.770716f, time.dateAngleFromRealDate(2025, 1, 1) - genericJan1, 0.001f);
+  void dateAngleFromRealDate_interpolatesMoreSlowlyAcrossA31DayPositionThanA30DayOne () {
+    // same number of days (5) into the first position of each half:
+    // the 31-day (slow/aphelion) position advances fewer degrees per
+    // day than the 30-day (fast/perihelion) one - the actual
+    // Kepler/eccentricity effect this step exists to approximate
+    float fiveDaysIntoA31DayPosition = time.dateAngleFromRealDate(2025, 3, 26); // position 0 (starts Mar 21), day index 5
+    float fiveDaysIntoA30DayPosition = time.dateAngleFromRealDate(2025, 9, 28); // position 6 (starts Sep 23), day index 5
+    assertEquals(30.0 * 0 + 30.0 * 5 / 31, fiveDaysIntoA31DayPosition, 0.0001f);
+    assertEquals(30.0 * 6 + 30.0 * 5 / 30, fiveDaysIntoA30DayPosition, 0.0001f);
+    assertTrue(fiveDaysIntoA31DayPosition < fiveDaysIntoA30DayPosition);
   }
 
   @Test
-  void dateAngleFromRealDate_wrapsCorrectlyForDatesJustBeforeTheEquinox () {
-    // the days-from-equinox difference goes negative here before the
-    // modulo wraps it back up near 360 - exercises that wrap, and
-    // shows the divergence from the generic formula can go either way
-    assertEquals(340.273973f, time.dateAngleFromRealDate(2025, 3, 1), 0.001f);
+  void dateAngleFromRealDate_midPositionInterpolation () {
+    assertEquals(14.516129f, time.dateAngleFromRealDate(2025, 4, 5), 0.0001f);  // 15 real days into the 31-day position starting Mar 21
+    assertEquals(202.0f, time.dateAngleFromRealDate(2025, 10, 15), 0.0001f);    // squarely inside the 30-day second half
+  }
+
+  @Test
+  void dateAngleFromRealDate_flexPositionSizingFollowsTheDatesOwnWrittenYear () {
+    // 2027-03-21 starts a common equinox-year (2027 is common) whose
+    // own flex position (Esfand-equivalent) therefore has 29 real
+    // days and falls late Feb/early Mar of 2028 - but 2028 is itself
+    // a leap year, so a date written with year 2028 (Feb 29 included)
+    // must still use isLeapYear(2028) = true for its own flex
+    // position's length, per persianMonthLength's own contract, and
+    // that is what actually determines where it lands - not 2027's
+    assertEquals(338f, time.dateAngleFromRealDate(2028, 2, 28), 0.0001f);
+    assertEquals(339f, time.dateAngleFromRealDate(2028, 2, 29), 0.0001f);
+    // the day immediately before the next equinox never quite reaches
+    // 360 (the same kind of "last day of a bucket" gap any day-count
+    // interpolation has) - here in a leap equinox-year specifically
+    assertEquals(359f, time.dateAngleFromRealDate(2024, 3, 20), 0.0001f);
   }
 }

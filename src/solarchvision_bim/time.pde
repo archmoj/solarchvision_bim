@@ -357,61 +357,115 @@ class TIME {
     return result;
   }
 
-  // Step 4d of the real-Gregorian-year plan: the actual accuracy fix,
-  // built on isLeapYear/dayOfYearInRealYear (4a/4b) above rather than
-  // on the generic 366-slot calendar at all.
+  // Step 4d of the real-Gregorian-year plan: the actual Kepler/
+  // eccentricity accuracy fix. Replaces this function's first version
+  // (a linear days-from-equinox/real-year-length interpolation) with
+  // a second, deliberately non-uniform one, after discussing the
+  // physics behind this app's own DATE_ANGLE convention: the Sun sits
+  // at one focus of Earth's elliptical orbit, not at its center, so
+  // by Kepler's second law (equal areas swept in equal times) Earth
+  // moves faster near perihelion (~early Jan) and slower near
+  // aphelion (~early Jul) - the Sun's true ecliptic longitude does
+  // NOT advance uniformly with calendar time. The traditional Persian
+  // (Solar Hijri) calendar compensates for exactly this by giving the
+  // slow half of the year longer (31-day) months and the fast half
+  // shorter (29/30-day) months, so each calendar month is
+  // (approximately) an equal 30 degree step in the Sun's true
+  // position despite covering a different number of real days -
+  // which is the whole reason every DATE_ANGLE site in this app
+  // (sync_SHADE_DATE_ANGLE() in shadeViewport3D.pde, and the many
+  // "(360 * ((286 + j) % 366) / 366.0)" sites in
+  // calculateGlobalSolarArray.pde, calculateVertexSolarArray.pde,
+  // postProcessClimaticSolarForecast.pde, postProcessSolarsUsingCloud.pde,
+  // postProcessDevelopData.pde and sun3D.pde) is anchored at the Mar
+  // 21 equinox in the first place - that anchor is the one piece of
+  // the Persian-calendar design already present. The month-length
+  // asymmetry that was supposed to go with it was not: lengthOfMonths
+  // above (Table A) is the ordinary Gregorian pattern, re-walked from
+  // Mar 21 rather than Jan 1, which is why every existing DATE_ANGLE
+  // site still only has the linear, uniform approximation.
   //
-  // Every DATE_ANGLE site in this app - sync_SHADE_DATE_ANGLE() in
-  // shadeViewport3D.pde, and the many "(360 * ((286 + j) % 366) /
-  // 366.0)" sites in calculateGlobalSolarArray.pde,
-  // calculateVertexSolarArray.pde, postProcessClimaticSolarForecast.pde,
-  // postProcessSolarsUsingCloud.pde, postProcessDevelopData.pde and
-  // sun3D.pde - computes "degrees from the Mar-21 generic-calendar
-  // anchor" as a fraction of a *fixed 366-day* year, in every real
-  // year alike (see functions.pde's own comment above MoonPosition()
-  // for the same convention applied there). In a real, non-leap
-  // (365-day) year that is a built-in inaccuracy: the real Earth has
-  // already moved further along its real 365-day orbit than a fixed-
-  // 366-day fraction credits it with, by an amount that grows to
-  // nearly a full day's worth of orbital motion (~0.3 degrees out of
-  // 360) by the time a non-leap year reaches its own Dec 31 - verified
-  // numerically in TIMETest.java against the existing generic formula.
+  // persianMonthLength (Table B) below is a second, independent
+  // month-length table existing deliberately alongside Table A rather
+  // than replacing it: Table A keeps doing exactly what it already
+  // does (real-date validation in lengthOfMonthInRealYear/
+  // isValidRealDate above, and every climate-mode DATE_ANGLE site,
+  // which aggregates over the whole generic 366-slot statistical year
+  // and has no one real year to anchor a Persian conversion to
+  // anyway). Table B exists purely to drive this one function, for
+  // "planning mode" (a single selected real date) once it is wired
+  // in - still a separate, open decision (see below), not resolved by
+  // adding Table B itself.
+
+  // Table B: Persian/Solar-Hijri-pattern month lengths, walked from
+  // the Mar-21 equinox (position 0), NOT indexed by Gregorian month
+  // like lengthOfMonths (Table A) above. Six 31-day positions (the
+  // slow, aphelion half: Mar..Aug), five 30-day positions (the fast,
+  // perihelion half: Sep..Jan), and one flexible last position (the
+  // Esfand-equivalent, immediately before the next Nowruz) sized
+  // isLeapYear(year) ? 30 : 29 - the same real-Gregorian leap rule
+  // isValidRealDate/lengthOfMonthInRealYear already apply to real
+  // Feb's own 28/29 split above, just +1 day on both sides, so the 12
+  // positions sum to exactly this real year's own true length (365 or
+  // 366) in every case, by construction.
+  int persianMonthLength (int positionFromEquinox_IN, int year_IN) {
+    if (positionFromEquinox_IN < 6) return 31;   // Mar..Aug: the slow (aphelion) half
+    if (positionFromEquinox_IN < 11) return 30;  // Sep..Jan: the fast (perihelion) half
+    return this.isLeapYear(year_IN) ? 30 : 29;   // the 12th/last position - the one flexible slot
+  }
+
+  // Computes DATE_ANGLE for a real (year, month, day) by walking
+  // persianMonthLength (Table B) above, crediting a full 30 degrees
+  // for each complete Persian-pattern position already passed since
+  // the real Mar-21 equinox of this real year, and interpolating
+  // linearly only *within* the current, correctly (unevenly) sized
+  // position - rather than this function's first version, which
+  // divided the whole year uniformly and so could not represent the
+  // Sun's non-uniform apparent motion at all. The result lands on an
+  // exact multiple of 30 degrees at every Persian-pattern month
+  // boundary (verified in TIMETest.java for both a leap and a common
+  // equinox-year), with a visibly different (slower) degrees-per-day
+  // rate across the six 31-day positions than across the 30-and-29/30-
+  // day ones - the actual Kepler/eccentricity effect this whole step
+  // exists to approximate.
   //
-  // This computes the same "degrees from Mar 21, out of a full year"
-  // quantity, but from a real (year, month, day) and that real year's
-  // own true length (365 or 366, via isLeapYear) instead of the
-  // generic calendar's fixed 366 - matching every existing DATE_ANGLE
-  // site's own Mar-21-as-zero convention exactly (not the true
-  // astronomical equinox, which drifts by a day or so year to year;
-  // same simplification the generic calendar already makes).
+  // realDaysFromEquinox below is still computed exactly as this
+  // function's first version did, via dayOfYearInRealYear/isLeapYear
+  // (4a/4b) and Table A - that part was already a correct count of
+  // true elapsed real days and needed no change; only what is done
+  // with that count (uniform division vs. walking Table B's uneven
+  // positions) has changed.
   //
-  // Deliberately not wired into any existing call site yet: those
-  // sites fall into two different roles this function does not by
-  // itself resolve - "planning mode" (SHADE_DATE_ANGLE, a single
-  // currently-selected real date, where this fix is exactly what's
-  // wanted) versus "climate mode" (the calculateGlobalSolarArray.pde/
-  // sun3D.pde/postProcess*.pde sites, which aggregate over the whole
-  // generic 366-slot statistical year and have no one real year to
-  // anchor to - see this file's own top-of-class comment on
-  // lengthOfMonths). Separately, SHADE_DATE_ANGLE's own now_j
-  // (impactDayToDayOfYear() in shadeViewport3D.pde) steps by
-  // STUDY.dayIncrement across potentially many days using generic-
-  // calendar wraparound (% 366) with no year attached at all, so
-  // wiring even just the planning-mode site raises its own open
-  // question - whether/how an impactDisplayDay step that crosses a
+  // Still deliberately not wired into any existing call site: the
+  // open question from this function's first version is unchanged by
+  // this rewrite - SHADE_DATE_ANGLE's own now_j (impactDayToDayOfYear()
+  // in shadeViewport3D.pde) steps across potentially many days using
+  // generic-calendar wraparound (% 366) with no year attached at all,
+  // so wiring even just that one planning-mode site still needs an
+  // answer for how/whether an impactDisplayDay step that crosses a
   // real Dec31->Jan1 boundary should advance TIME.year, and what a
   // step landing on a generic Feb-29 slot should do in a non-leap
-  // target real year - flagged for a decision before any call site
-  // is actually rewired, rather than answered unilaterally here.
+  // target real year.
   float dateAngleFromRealDate (int year_IN, int month_IN, int day_IN) {
     int realYearLength = this.isLeapYear(year_IN) ? 366 : 365;
 
     int dayOfYear = this.dayOfYearInRealYear(year_IN, month_IN, day_IN);
     int equinoxDayOfYear = this.dayOfYearInRealYear(year_IN, 3, 21); // same fixed Mar-21 anchor every existing DATE_ANGLE site uses - not the true astronomical equinox
 
-    int daysFromEquinox = ((dayOfYear - equinoxDayOfYear) % realYearLength + realYearLength) % realYearLength;
+    int realDaysFromEquinox = ((dayOfYear - equinoxDayOfYear) % realYearLength + realYearLength) % realYearLength;
 
-    return 360.0 * daysFromEquinox / realYearLength;
+    int remaining = realDaysFromEquinox;
+    for (int position = 0; position < 12; position++) {
+      int positionLength = this.persianMonthLength(position, year_IN);
+      if (remaining < positionLength) {
+        return 30.0 * position + 30.0 * remaining / positionLength;
+      }
+      remaining -= positionLength;
+    }
+    // unreachable: the 12 Table B positions sum to exactly
+    // realYearLength (see persianMonthLength's own comment above), and
+    // remaining (from the modulo above) is already < realYearLength
+    return 330.0;
   }
 
   void updateDate () {
