@@ -186,6 +186,39 @@ class TIME {
     return era * 146097L + doe - 719468L;
   }
 
+  // Inverse of daysFromRealCivilEpoch above (Howard Hinnant's own
+  // civil_from_days, http://howardhinnant.github.io/date_algorithms.html) -
+  // every epoch day number, positive or negative, maps back to exactly
+  // one proleptic-Gregorian real date, so unlike RealDate's other
+  // producer (realDateFromGenericIndex, which can land on a Feb 29 that
+  // doesn't exist in a non-leap target year) the result here is always
+  // valid. Added for step 4e's planning-mode stepper: advancing a real
+  // date by N real days is daysFromRealCivilEpoch() + N, then this -
+  // true calendar-day arithmetic rather than generic-calendar (% 366)
+  // wraparound, so a step that crosses Dec31->Jan1 advances the year by
+  // itself, and a step through where a non-leap year's Feb 29 would be
+  // simply has no such day to land on, landing on Mar 1 (stepping
+  // forward) or Feb 28 (stepping backward) automatically.
+  RealDate realDateFromEpochDay (long epochDay_IN) {
+    long z = epochDay_IN + 719468L;
+    long era = (z >= 0 ? z : z - 146096) / 146097;
+    long doe = z - era * 146097L;                                 // [0, 146096]
+    long yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365; // [0, 399]
+    long y = yoe + era * 400;
+    long doy = doe - (365 * yoe + yoe / 4 - yoe / 100);            // [0, 365]
+    long mp = (5 * doy + 2) / 153;                                 // [0, 11]
+    long d = doy - (153 * mp + 2) / 5 + 1;                         // [1, 31]
+    long m = mp + (mp < 10 ? 3 : -9);                              // [1, 12]
+    y = y + (m <= 2 ? 1 : 0);
+
+    RealDate result = new RealDate();
+    result.year = (int) y;
+    result.month = (int) m;
+    result.day = (int) d;
+    result.valid = true;
+    return result;
+  }
+
   // 0=Sunday .. 6=Saturday, derived from daysFromRealCivilEpoch above:
   // 1970-01-01 (epoch day 0) was a Thursday, i.e. weekday index 4, so
   // adding 4 and wrapping into 0..6 (Java's % keeps the dividend's
@@ -478,16 +511,23 @@ class TIME {
   // year_IN already *is* the terminal year, so terminalYear reduces
   // to year_IN exactly in that case and nothing changes there.
   //
-  // Still deliberately not wired into any existing call site: the
-  // open question from this function's earlier versions is unchanged
-  // by this rewrite - SHADE_DATE_ANGLE's own now_j
-  // (impactDayToDayOfYear() in shadeViewport3D.pde) steps across
-  // potentially many days using generic-calendar wraparound (% 366)
-  // with no year attached at all, so wiring even just that one
-  // planning-mode site still needs an answer for how/whether an
-  // impactDisplayDay step that crosses a real Dec31->Jan1 boundary
-  // should advance TIME.year, and what a step landing on a generic
-  // Feb-29 slot should do in a non-leap target real year.
+  // Step 4e wires this into the one planning-mode call site this was
+  // held back for: sync_SHADE_DATE_ANGLE() (shadeViewport3D.pde) now
+  // calls this directly off a real date, rather than building
+  // SHADE_DATE_ANGLE from the old generic-calendar formula. That real
+  // date comes from impactDayToRealDate() there, which steps TIME's own
+  // (year, month, day) anchor by true epoch-day arithmetic
+  // (daysFromRealCivilEpoch/realDateFromEpochDay above) instead of
+  // impactDayToDayOfYear()'s generic-calendar (% 366) wraparound - so a
+  // step crossing Dec31->Jan1 advances TIME.year on its own, and a step
+  // through where a non-leap year's Feb 29 would fall simply has no
+  // such day to land on. impactDayToDayOfYear() itself is unchanged and
+  // still used elsewhere (e.g. tropo3D.pde), still on the old generic
+  // index - only SHADE_DATE_ANGLE's own derivation moved off it.
+  // Table A / the generic 366-wide calendar otherwise continues
+  // exactly as before: climate-mode aggregation has no single real
+  // year to anchor a Table-B conversion to, so every other DATE_ANGLE
+  // site in the app is deliberately left on the old formula.
   float dateAngleFromRealDate (int year_IN, int month_IN, int day_IN) {
     int terminalYear = month_IN >= 3 ? year_IN + 1 : year_IN; // see this function's own comment above for why
 

@@ -866,9 +866,10 @@ void previousShadeDay () {
 }
 
 // The day-of-year index (TIME.convert2Date()'s own 0-365, Jan-1-is-0
-// convention - not the (286 + ...) % 366 shift SHADE_DATE_ANGLE's own
-// degrees are built from, see sync_SHADE_DATE_ANGLE() below for that
-// extra step) a given impactDisplayDay slot represents. impactDisplayDay
+// convention; SHADE_DATE_ANGLE itself is no longer built from this -
+// see impactDayToRealDate/sync_SHADE_DATE_ANGLE below, which derive the
+// angle from a real date instead, step 4e) a given impactDisplayDay
+// slot represents. impactDisplayDay
 // == 0 ("total") is treated the same as 1 (STUDY.dayIncrement * 0 steps
 // from TIME.beginDay) - "use beginDay for the case of total" below.
 // Pulled out of sync_SHADE_DATE_ANGLE() itself so tropo3D.pde's own
@@ -891,10 +892,46 @@ int impactDayToDayOfYear (int day) {
   return now_j;
 }
 
-void sync_SHADE_DATE_ANGLE () {
-  int now_j = impactDayToDayOfYear(impactDisplayDay);
+// Step 4e of the real-Gregorian-year plan: the raw (unwrapped) number
+// of real calendar days impactDisplayDay slot "day" represents, away
+// from TIME's own (year, month, day) anchor - same j and the same
+// STUDY.dayIncrement step impactDayToDayOfYear uses, but NOT wrapped
+// into generic-calendar (% 366) space the way that function's own
+// now_j is, since true calendar-day arithmetic needs the real,
+// unwrapped offset to carry a multi-day step across a year boundary
+// correctly.
+long impactDayToRawDayOffset (int day) {
+  int j = day - 1;
+  if (j == -1) j = 0; // use TIME's own year/month/day for the case of total
 
-  SHADE_DATE_ANGLE = (int) (360 * ((286 + now_j) % 366) / 366.0);
+  return (long) j * (long) STUDY.dayIncrement;
+}
+
+// The real (year, month, day) impactDisplayDay slot "day" represents -
+// TIME's own (year, month, day) anchor, stepped by impactDayToRawDayOffset's
+// real calendar days via true epoch-day arithmetic (daysFromRealCivilEpoch/
+// realDateFromEpochDay, step 4b/4e) rather than impactDayToDayOfYear's
+// generic-calendar wraparound. This is what resolves this function's own
+// former open question (see its previous comment, now out of date): a
+// step that crosses Dec31->Jan1 advances TIME.year by itself, and a step
+// through where a non-leap year's Feb 29 would fall simply has no such
+// day to land on - landing on Mar 1 stepping forward, or Feb 28 stepping
+// backward - both for free, from ordinary date arithmetic, with no
+// special-casing needed.
+TIME.RealDate impactDayToRealDate (int day) {
+  long epochDay = TIME.daysFromRealCivilEpoch(TIME.year, TIME.month, TIME.day) + impactDayToRawDayOffset(day);
+
+  return TIME.realDateFromEpochDay(epochDay);
+}
+
+void sync_SHADE_DATE_ANGLE () {
+  // impactDayToDayOfYear's own generic-calendar index is still computed
+  // and relied on elsewhere (e.g. tropo3D.pde's selectedDayHasForecastAvailable())
+  // - unchanged by this rewrite, and no longer needed here now that the
+  // angle itself is driven by the real date above instead.
+  TIME.RealDate realDate = impactDayToRealDate(impactDisplayDay);
+
+  SHADE_DATE_ANGLE = (int) TIME.dateAngleFromRealDate(realDate.year, realDate.month, realDate.day);
 }
 
 // Turns off the sticky shaded-viewport overlay ShadeViewport() leaves on

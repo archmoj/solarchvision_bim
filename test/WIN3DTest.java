@@ -1152,6 +1152,15 @@ class WIN3DTest {
     // impactDisplayDay) and re-derives SHADE_DATE_ANGLE from
     // sync_SHADE_DATE_ANGLE(), instead of adding SHADE_HOURS_PER_DAY + 1
     // hourly steps - so it no longer touches SHADE_HOUR_ANGLE at all.
+    //
+    // Step 4e: SHADE_DATE_ANGLE is now derived from TIME's own real
+    // (year, month, day) anchor rather than TIME.beginDay - pinned to
+    // a fixed date here (rather than TIME's bare-construction,
+    // wall-clock default) so this test's own expected angle doesn't
+    // depend on what day it happens to run.
+    app.TIME.year = 2025;
+    app.TIME.month = 3;
+    app.TIME.day = 21;
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR + 2;
     app.SHADE_DATE_ANGLE = 0;
     int startHour = app.SHADE_HOUR_ANGLE;
@@ -1159,13 +1168,14 @@ class WIN3DTest {
     app.nextShadeDay();
 
     assertEquals(startHour, app.SHADE_HOUR_ANGLE);
-    // With a fresh app (impactDisplayDay starts at 0, TIME.beginDay=0,
-    // STUDY.dayIncrement=30.5), "Next Impact Day" advances
-    // impactDisplayDay to 1 and sync_SHADE_DATE_ANGLE() computes:
-    //   j = impactDisplayDay - 1 = 0
-    //   now_j = (0 * 30 + 0 + 366) % 366 = 0
-    //   angle = (int) (360 * ((286 + 0) % 366) / 366.0) = 281
-    assertEquals(281, app.SHADE_DATE_ANGLE);
+    // With a fresh app (impactDisplayDay starts at 0), "Next Impact
+    // Day" advances impactDisplayDay to 1 and sync_SHADE_DATE_ANGLE()
+    // computes, via impactDayToRealDate(1) off the 2025-03-21 anchor
+    // above:
+    //   j = impactDisplayDay - 1 = 0, so rawDayOffset = 0 * 30 = 0
+    //   realDate = 2025-03-21 + 0 real days = 2025-03-21 (unchanged)
+    //   angle = dateAngleFromRealDate(2025, 3, 21) = 0 (the equinox anchor)
+    assertEquals(0, app.SHADE_DATE_ANGLE);
   }
 
   // ================= impactDayToDayOfYear ===============================
@@ -1203,6 +1213,100 @@ class WIN3DTest {
     app.STUDY.dayIncrement = 30;
 
     assertEquals((350 + 30) % 366, app.impactDayToDayOfYear(2));
+  }
+
+  // ================= impactDayToRealDate / sync_SHADE_DATE_ANGLE ========
+  // (step 4e: SHADE_DATE_ANGLE driven by a real date instead of
+  // impactDayToDayOfYear's generic-calendar wraparound - see time.pde's
+  // own dateAngleFromRealDate comment and shadeViewport3D.pde's own
+  // impactDayToRealDate comment for why.)
+
+  @Test
+  void impactDayToRealDate_forDayOneOrZero_isExactlyTIMEsOwnAnchorDate () {
+    // j == 0 for both day 0 ("total") and day 1 - same "use TIME's own
+    // year/month/day for the case of total" contract impactDayToDayOfYear
+    // has for TIME.beginDay.
+    app.TIME.year = 2025;
+    app.TIME.month = 6;
+    app.TIME.day = 15;
+    app.STUDY.dayIncrement = 30;
+
+    solarchvision_bim.TIME.RealDate dayOne = app.impactDayToRealDate(1);
+    solarchvision_bim.TIME.RealDate dayZero = app.impactDayToRealDate(0);
+
+    assertEquals(2025, dayOne.year);
+    assertEquals(6, dayOne.month);
+    assertEquals(15, dayOne.day);
+    assertEquals(dayOne.year, dayZero.year);
+    assertEquals(dayOne.month, dayZero.month);
+    assertEquals(dayOne.day, dayZero.day);
+  }
+
+  @Test
+  void impactDayToRealDate_stepsForwardByTrueCalendarDaysNotGenericWraparound () {
+    // j == 2, dayIncrement == 30 -> 60 real days forward from the
+    // anchor - true epoch-day arithmetic, not a % 366 generic-calendar
+    // step, so this is verified against an actual calendar day count
+    // (2025-06-15 + 60 real days = 2025-08-14) rather than any
+    // generic-index formula.
+    app.TIME.year = 2025;
+    app.TIME.month = 6;
+    app.TIME.day = 15;
+    app.STUDY.dayIncrement = 30;
+
+    solarchvision_bim.TIME.RealDate rd = app.impactDayToRealDate(3); // j == 2
+
+    assertEquals(2025, rd.year);
+    assertEquals(8, rd.month);
+    assertEquals(14, rd.day);
+  }
+
+  @Test
+  void impactDayToRealDate_multiDayStepCrossesTheRealYearBoundary () {
+    // a step past Dec 31 advances TIME.year by itself - the Q1 design
+    // question step 4e was held back for, now resolved by true
+    // epoch-day arithmetic rather than any manual rollover check.
+    app.TIME.year = 2025;
+    app.TIME.month = 12;
+    app.TIME.day = 20;
+    app.STUDY.dayIncrement = 15; // j == 1 -> 15 real days forward
+
+    solarchvision_bim.TIME.RealDate rd = app.impactDayToRealDate(2);
+
+    assertEquals(2026, rd.year);
+    assertEquals(1, rd.month);
+    assertEquals(4, rd.day);
+  }
+
+  @Test
+  void impactDayToRealDate_skipsFebruary29thWhenSteppingThroughACommonYear () {
+    // the Q2 design question step 4e was held back for: stepping
+    // forward through where Feb 29 would fall in a common year lands
+    // on Mar 1 instead, with no special-casing in impactDayToRealDate
+    // itself - it falls straight out of realDateFromEpochDay.
+    app.TIME.year = 2025;
+    app.TIME.month = 2;
+    app.TIME.day = 28;
+    app.STUDY.dayIncrement = 1; // j == 1 -> 1 real day forward
+
+    solarchvision_bim.TIME.RealDate rd = app.impactDayToRealDate(2);
+
+    assertEquals(2025, rd.year);
+    assertEquals(3, rd.month);
+    assertEquals(1, rd.day);
+  }
+
+  @Test
+  void syncSHADE_DATE_ANGLE_derivesTheAngleFromTheSteppedRealDate () {
+    app.TIME.year = 2025;
+    app.TIME.month = 9;
+    app.TIME.day = 22; // dateAngleFromRealDate(2025, 9, 22) == 180 (verified in TIMETest.java)
+    app.STUDY.dayIncrement = 30;
+    app.impactDisplayDay = 1; // j == 0, zero-day step - lands exactly back on the anchor
+
+    app.sync_SHADE_DATE_ANGLE();
+
+    assertEquals(180, app.SHADE_DATE_ANGLE);
   }
 
   // ================= dismissShading (Esc's own end to the sticky shaded-

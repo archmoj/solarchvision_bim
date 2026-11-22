@@ -276,6 +276,71 @@ class TIMETest {
     assertEquals(2, time.weekdayFromRealDate(1600, 2, 29)); // Tuesday
   }
 
+  // --- realDateFromEpochDay (step 4e groundwork: inverse of
+  // daysFromRealCivilEpoch) ---------------------------------------------
+
+  @Test
+  void realDateFromEpochDay_isTheExactInverseOfDaysFromRealCivilEpoch () {
+    int[][] dates = {
+      {1970, 1, 1}, {2000, 1, 1}, {2024, 2, 29}, {2025, 2, 28},
+      {2025, 3, 1}, {1969, 12, 31}, {1600, 2, 29}, {1, 1, 1}, {2024, 12, 31},
+    };
+    for (int[] d : dates) {
+      long epochDay = time.daysFromRealCivilEpoch(d[0], d[1], d[2]);
+      solarchvision_bim.TIME.RealDate rd = time.realDateFromEpochDay(epochDay);
+      assertTrue(rd.valid);
+      assertEquals(d[0], rd.year);
+      assertEquals(d[1], rd.month);
+      assertEquals(d[2], rd.day);
+    }
+  }
+
+  @Test
+  void realDateFromEpochDay_steppingByOneSkipsFebruary29thInACommonYear () {
+    // the core property step 4e's stepper rewrite relies on: ordinary
+    // epoch-day arithmetic has no Feb 29 to land on in a common year,
+    // so stepping forward from Feb 28 lands on Mar 1, and stepping
+    // backward from Mar 1 lands on Feb 28, with no special-casing
+    long feb28_2025 = time.daysFromRealCivilEpoch(2025, 2, 28);
+    solarchvision_bim.TIME.RealDate forward = time.realDateFromEpochDay(feb28_2025 + 1);
+    assertEquals(2025, forward.year);
+    assertEquals(3, forward.month);
+    assertEquals(1, forward.day);
+
+    long mar1_2025 = time.daysFromRealCivilEpoch(2025, 3, 1);
+    solarchvision_bim.TIME.RealDate backward = time.realDateFromEpochDay(mar1_2025 - 1);
+    assertEquals(2025, backward.year);
+    assertEquals(2, backward.month);
+    assertEquals(28, backward.day);
+  }
+
+  @Test
+  void realDateFromEpochDay_steppingByOneLandsOnFebruary29thInALeapYear () {
+    long feb28_2024 = time.daysFromRealCivilEpoch(2024, 2, 28);
+    solarchvision_bim.TIME.RealDate rd = time.realDateFromEpochDay(feb28_2024 + 1);
+    assertEquals(2024, rd.year);
+    assertEquals(2, rd.month);
+    assertEquals(29, rd.day);
+  }
+
+  @Test
+  void realDateFromEpochDay_multiDayStepCrossesTheRealYearBoundary () {
+    // a multi-day step that runs past Dec 31 advances the real year by
+    // itself, falling out of plain epoch-day arithmetic - no manual
+    // "did this cross Dec31->Jan1" check needed
+    long dec31_2024 = time.daysFromRealCivilEpoch(2024, 12, 31);
+    solarchvision_bim.TIME.RealDate rd = time.realDateFromEpochDay(dec31_2024 + 1);
+    assertEquals(2025, rd.year);
+    assertEquals(1, rd.month);
+    assertEquals(1, rd.day);
+
+    long dec15_2025 = time.daysFromRealCivilEpoch(2025, 12, 15);
+    solarchvision_bim.TIME.RealDate rd50 = time.realDateFromEpochDay(dec15_2025 + 50);
+    assertEquals(2026, rd50.year);
+    assertEquals(2, rd50.month);
+    assertEquals(3, rd50.day);
+  }
+
   // --- monthDayFromGenericIndex (step 4c: inverse of convert2Date) ---
 
   @Test

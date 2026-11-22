@@ -452,6 +452,14 @@ class WIN3DActionsTest {
 
   @Test
   void keyShadeTimePlusDay_stepsForwardByAFullDay () {
+    // step 4e: SHADE_DATE_ANGLE is now derived from TIME's own real
+    // (year, month, day) anchor rather than TIME.beginDay - pinned to
+    // a fixed date here (rather than TIME's bare-construction,
+    // wall-clock default) so this test's own expected angle doesn't
+    // depend on what day it happens to run.
+    app.TIME.year = 2025;
+    app.TIME.month = 3;
+    app.TIME.day = 21;
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
@@ -463,12 +471,12 @@ class WIN3DActionsTest {
     // hourly steps, so SHADE_HOUR_ANGLE is left untouched...
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
     // ...and SHADE_DATE_ANGLE is derived from sync_SHADE_DATE_ANGLE()
-    // (impactDisplayDay=1, TIME.beginDay=0, STUDY.dayIncrement=30.5)
-    // rather than incremented by SHADE_STEP_DAYS:
-    //   j = impactDisplayDay - 1 = 0
-    //   now_j = (0 * 30 + 0 + 366) % 366 = 0
-    //   angle = (int) (360 * ((286 + 0) % 366) / 366.0) = 281
-    assertEquals(281, app.SHADE_DATE_ANGLE);
+    // via impactDayToRealDate(impactDisplayDay=1), off the 2025-03-21
+    // anchor above:
+    //   j = impactDisplayDay - 1 = 0, so rawDayOffset = 0 * 30 = 0
+    //   realDate = 2025-03-21 + 0 real days = 2025-03-21 (unchanged)
+    //   angle = dateAngleFromRealDate(2025, 3, 21) = 0 (the equinox anchor)
+    assertEquals(0, app.SHADE_DATE_ANGLE);
   }
 
   @Test

@@ -28,6 +28,14 @@ class ShadePreviousDayActionTest {
 
   @Test
   void shadePreviousDay_fromDayZero_wrapsBackwardToStudyEndDay () {
+    // step 4e: sync_SHADE_DATE_ANGLE() now derives SHADE_DATE_ANGLE from
+    // TIME's own (year, month, day) anchor, not TIME.beginDay - pinned
+    // to a fixed date here (rather than TIME's bare-construction,
+    // wall-clock default) so this test's own expected angle doesn't
+    // depend on what day it happens to run.
+    app.TIME.year = 2025;
+    app.TIME.month = 3;
+    app.TIME.day = 21;
     app.impactDisplayDay = 0; // its own bare-construction default
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
@@ -39,13 +47,14 @@ class ShadePreviousDayActionTest {
     // SHADE_HOUR_ANGLE is left untouched - "Shade Previous Day" only
     // ever drives impactDisplayDay, not the hour.
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
-    // sync_SHADE_DATE_ANGLE() via impactDayToDayOfYear(STUDY.endDay=12),
-    // TIME.beginDay=0, STUDY.dayIncrement=30.5:
+    // sync_SHADE_DATE_ANGLE() via impactDayToRealDate(STUDY.endDay=12),
+    // off the 2025-03-21 anchor above, STUDY.dayIncrement=30.5:
     //   j = 12 - 1 = 11
-    //   now_j = (11 * 30 + 0 + 366) % 366 = 696 % 366 = 330
-    //   angle = (int) (360 * ((286 + 330) % 366) / 366.0)
-    //         = (int) (360 * 250 / 366.0) = 245
-    assertEquals(245, app.SHADE_DATE_ANGLE);
+    //   rawDayOffset = 11 * (long) 30.5 = 11 * 30 = 330
+    //   realDate = 2025-03-21 + 330 real days = 2026-02-14
+    //   angle = dateAngleFromRealDate(2026, 2, 14) = 325
+    // (cross-checked against a Python simulation of dateAngleFromRealDate)
+    assertEquals(325, app.SHADE_DATE_ANGLE);
   }
 
   @Test
