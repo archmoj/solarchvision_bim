@@ -282,6 +282,80 @@ class TIME {
     return k;
   }
 
+  // Step 4c of the real-Gregorian-year plan: the explicit, tested
+  // conversion layer between a specific real calendar year (built on
+  // isLeapYear/isValidRealDate, 4a/4b above) and the generic 0..365,
+  // Jan-1-is-0 day-of-year index that convert2Date() above already
+  // produces - this is NOT a new index space. convert2Date() is
+  // already exactly how the rest of this app keys climate/ensemble
+  // storage off a (month, day) pair (see its own callers in
+  // loadClimateArchive.pde, loadClimateEngineering.pde,
+  // loadClimateTypicalYear.pde, loadEnsembleObservation.pde,
+  // loadEnsembleForecast.pde, updateEnsembleObservation.pde,
+  // updateStation.pde, react.pde, solarchvision_bim.pde and
+  // tropo3D.pde), it just has no year parameter and performs no
+  // validation today - so e.g. convert2Date(2, 29) always silently
+  // succeeds, in every real year alike, because the generic calendar
+  // always has a Feb 29 slot (lengthOfMonths[1] == 29, see above).
+  // These two functions are what make that gap explicit and checkable.
+
+  // Inverse of convert2Date(): given a generic 0..365 Jan-1-is-0
+  // day-of-year index, returns the {month, day} it corresponds to.
+  // Walks the exact same lengthOfMonths table in the exact same order
+  // as convert2Date()'s own forward loop (rather than a separately
+  // maintained formula), so the two stay in lock-step by construction.
+  // Routed through safeDate() first for the same out-of-range wrap
+  // behavior as getMonth_fromDate/getDay_fromDate above.
+  int[] monthDayFromGenericIndex (int genericIndex_IN) {
+    int remaining = this.safeDate(genericIndex_IN);
+    for (int i = 0; i < 12; i++) {
+      if (remaining < this.lengthOfMonths[i]) {
+        return new int[] { i + 1, remaining + 1 };
+      }
+      remaining -= this.lengthOfMonths[i];
+    }
+    // unreachable: lengthOfMonths sums to exactly 366 and remaining
+    // (from safeDate) is already in [0, 366)
+    return new int[] { 12, 31 };
+  }
+
+  // Plain data holder for the generic-index -> real-date direction,
+  // mirroring Tropo3D.DateTimeUTC's style: a generic index does not
+  // always correspond to a real date in a given real year (the Feb 29
+  // slot has no real counterpart in a non-leap year - the "undefined/
+  // empty for that year" case named in the lengthOfMonths comment
+  // above), so this carries an explicit valid flag rather than
+  // returning a silently-wrong (year, month, day).
+  class RealDate {
+    int year, month, day;
+    boolean valid;
+  }
+
+  // real (year, month, day) -> generic index, with the year-aware
+  // validation convert2Date() alone does not do. Every *valid* real
+  // date already has a slot in the generic table (the generic
+  // calendar's month lengths equal the real ones for every month
+  // except February, where the generic table's fixed 29 is a superset
+  // of a real Feb's 28 or 29), so once isValidRealDate (4b) passes,
+  // this simply delegates to the existing convert2Date(). Returns -1
+  // for an invalid real date (most notably Feb 29 in a non-leap year)
+  // instead of the silent wrong answer convert2Date() alone would give.
+  int genericIndexFromRealDate (int year_IN, int month_IN, int day_IN) {
+    if (!this.isValidRealDate(year_IN, month_IN, day_IN)) return -1;
+    return this.convert2Date(month_IN, day_IN);
+  }
+
+  // generic index -> real (year, month, day) for a specific target
+  // real year. See RealDate above for why this can come back invalid.
+  RealDate realDateFromGenericIndex (int genericIndex_IN, int year_IN) {
+    int[] monthDay = this.monthDayFromGenericIndex(genericIndex_IN);
+    RealDate result = new RealDate();
+    result.year = year_IN;
+    result.month = monthDay[0];
+    result.day = monthDay[1];
+    result.valid = this.isValidRealDate(year_IN, result.month, result.day);
+    return result;
+  }
 
   void updateDate () {
     this.month = this.getMonth_fromDate(this.date);

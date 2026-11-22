@@ -275,4 +275,94 @@ class TIMETest {
     // Java's sign-preserving "%" on a negative days-since-epoch value
     assertEquals(2, time.weekdayFromRealDate(1600, 2, 29)); // Tuesday
   }
+
+  // --- monthDayFromGenericIndex (step 4c: inverse of convert2Date) ---
+
+  @Test
+  void monthDayFromGenericIndex_isTheExactInverseOfConvert2Date () {
+    // same (month, day) pairs convert2Date_matchesASequentialJanuaryFirstCalendar
+    // above already pins down, round-tripped the other way
+    assertArrayEquals(new int[]{1, 1}, time.monthDayFromGenericIndex(0));    // Jan 1
+    assertArrayEquals(new int[]{1, 31}, time.monthDayFromGenericIndex(30)); // Jan 31
+    assertArrayEquals(new int[]{2, 1}, time.monthDayFromGenericIndex(31));  // Feb 1
+    assertArrayEquals(new int[]{2, 29}, time.monthDayFromGenericIndex(59)); // Feb 29 (generic slot)
+    assertArrayEquals(new int[]{3, 1}, time.monthDayFromGenericIndex(60));  // Mar 1
+    assertArrayEquals(new int[]{12, 31}, time.monthDayFromGenericIndex(365)); // Dec 31
+  }
+
+  @Test
+  void monthDayFromGenericIndex_wrapsOutOfRangeIndicesLikeConvert2Date () {
+    assertArrayEquals(time.monthDayFromGenericIndex(0), time.monthDayFromGenericIndex(366));
+    assertArrayEquals(time.monthDayFromGenericIndex(365), time.monthDayFromGenericIndex(-1));
+  }
+
+  // --- genericIndexFromRealDate (step 4c) -----------------------------
+
+  @Test
+  void genericIndexFromRealDate_matchesConvert2DateForAnyValidRealDate () {
+    assertEquals(time.convert2Date(1, 1), time.genericIndexFromRealDate(2025, 1, 1));
+    assertEquals(time.convert2Date(3, 1), time.genericIndexFromRealDate(2025, 3, 1));
+    assertEquals(time.convert2Date(2, 29), time.genericIndexFromRealDate(2024, 2, 29)); // leap year
+  }
+
+  @Test
+  void genericIndexFromRealDate_rejectsFebruary29thInANonLeapRealYear () {
+    // the exact gap convert2Date() alone cannot see: it would happily
+    // return 59 here too, the same as for 2024
+    assertEquals(-1, time.genericIndexFromRealDate(2025, 2, 29));
+    assertEquals(-1, time.genericIndexFromRealDate(1900, 2, 29));
+  }
+
+  @Test
+  void genericIndexFromRealDate_rejectsOtherOutOfRangeRealDates () {
+    assertEquals(-1, time.genericIndexFromRealDate(2025, 4, 31)); // April has 30 days
+    assertEquals(-1, time.genericIndexFromRealDate(2025, 13, 1));
+  }
+
+  // --- realDateFromGenericIndex (step 4c) -----------------------------
+
+  @Test
+  void realDateFromGenericIndex_roundTripsAnOrdinaryDateForAnyYear () {
+    solarchvision_bim.TIME.RealDate rd = time.realDateFromGenericIndex(60, 2025); // Mar 1
+    assertEquals(2025, rd.year);
+    assertEquals(3, rd.month);
+    assertEquals(1, rd.day);
+    assertTrue(rd.valid);
+  }
+
+  @Test
+  void realDateFromGenericIndex_february29thSlotIsValidOnlyInALeapYear () {
+    solarchvision_bim.TIME.RealDate leap = time.realDateFromGenericIndex(59, 2024);
+    assertEquals(2, leap.month);
+    assertEquals(29, leap.day);
+    assertTrue(leap.valid);
+
+    // same generic slot, a non-leap target real year: this is the
+    // "undefined/empty for that year" Feb-29 gap made explicit
+    solarchvision_bim.TIME.RealDate common = time.realDateFromGenericIndex(59, 2025);
+    assertEquals(2, common.month);
+    assertEquals(29, common.day);
+    assertFalse(common.valid);
+  }
+
+  @Test
+  void genericIndexFromRealDate_and_realDateFromGenericIndex_roundTripForEveryValidRealDate () {
+    // exhaustive round trip, both leap and common real years, every
+    // month: genericIndexFromRealDate then back through
+    // realDateFromGenericIndex always recovers the same valid date
+    for (int year : new int[]{2024, 2025}) {
+      for (int month = 1; month <= 12; month++) {
+        int daysInMonth = time.lengthOfMonthInRealYear(year, month);
+        for (int day = 1; day <= daysInMonth; day++) {
+          int idx = time.genericIndexFromRealDate(year, month, day);
+          assertTrue(idx >= 0, "expected a valid index for " + year + "-" + month + "-" + day);
+
+          solarchvision_bim.TIME.RealDate rd = time.realDateFromGenericIndex(idx, year);
+          assertTrue(rd.valid);
+          assertEquals(month, rd.month);
+          assertEquals(day, rd.day);
+        }
+      }
+    }
+  }
 }
