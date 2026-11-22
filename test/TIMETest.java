@@ -157,4 +157,33 @@ class TIMETest {
     assertEquals(200, fresh.beginDay);
     assertEquals(123.5f, fresh.date, 0.0001f);
   }
+
+  // --- isLeapYear (step 4a groundwork: pure, no callers yet) ---------
+
+  @Test
+  void isLeapYear_trueForOrdinaryMultiplesOfFour () {
+    assertTrue(time.isLeapYear(2024));
+    assertTrue(time.isLeapYear(2028));
+  }
+
+  @Test
+  void isLeapYear_falseForNonMultiplesOfFour () {
+    assertFalse(time.isLeapYear(2025));
+    assertFalse(time.isLeapYear(2026));
+    assertFalse(time.isLeapYear(2027));
+  }
+
+  @Test
+  void isLeapYear_falseForCenturyYearsNotDivisibleBy400 () {
+    // 1900 and 2100 are both divisible by 100 but not by 400, so the
+    // ordinary "divisible by 4" rule alone would wrongly call them leap
+    assertFalse(time.isLeapYear(1900));
+    assertFalse(time.isLeapYear(2100));
+  }
+
+  @Test
+  void isLeapYear_trueForCenturyYearsDivisibleBy400 () {
+    assertTrue(time.isLeapYear(2000));
+    assertTrue(time.isLeapYear(1600));
+  }
 }

@@ -113,6 +113,23 @@ class TIME {
     return floor(0.001 + (366 + date_IN) % 366);
   }
 
+  // Step 4a of the real-Gregorian-year plan: this.year already exists
+  // (see the field above and its spinner in valueModifier.pde / XML
+  // round-trip below) but today it is purely a decorative/lookup-key
+  // tag - it is passed to the ensemble-observation/forecast fetch
+  // functions and used in saved-image/file names, and nothing checks
+  // it for validity or ties it to this.month/this.day, which are
+  // instead derived from the generic 366-day calendar via updateDate()
+  // and never consult this.year at all. isLeapYear() is pure groundwork
+  // for that gap: the standard Gregorian rule, with no side effects and
+  // no callers yet, so it changes no existing behavior. Real-year leap
+  // arithmetic (deriving an actual real-year day-of-year/weekday from
+  // it, and validating e.g. a Feb 29 pick against it) is step 4b; the
+  // conversion between this and the generic 366-slot index is step 4c.
+  boolean isLeapYear (int year_IN) {
+    return (year_IN % 4 == 0 && year_IN % 100 != 0) || (year_IN % 400 == 0);
+  }
+
   int getMonth_fromDate(float date_IN) {
      return this.monthFromDate[safeDate(date_IN)];
   }
@@ -197,6 +214,7 @@ class TIME {
     k = k % 366;
     return k;
   }
+
 
   void updateDate () {
     this.month = this.getMonth_fromDate(this.date);
