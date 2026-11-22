@@ -184,6 +184,7 @@ class UI_rollout {
     vm.day(0);
     vm.month(0);
     vm.year(0);
+    vm.hour(0);
     vm.startHour(0);
     vm.endHour(0);
     vm.sampleYearStart(0);

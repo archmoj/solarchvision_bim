@@ -137,6 +137,20 @@ class react {
     UI_caseBar.revise();
   };
 
+  // The Hour command's own follow-up (valueModifier.pde's hour()) - a
+  // direct, one-shot counterpart to "Shade Next/Previous Hour"'s own
+  // nextShadeHour()/previousShadeHour() (actions.pde). That command's
+  // own update2/update3 flags already cover WIN3D.revise()/
+  // WORLD.revise() (same ground those two actions' own explicit
+  // view_changed()/WORLD.revise() calls cover - putValueAction's own
+  // update1/2/3 comment), except for view_changed()'s own extra
+  // shadingNeedsRebuild flag (its own comment, globalFunctions.pde) -
+  // replicated here so the sticky shaded-viewport overlay, if showing,
+  // doesn't go stale when Hour is set directly instead of stepped to.
+  OnChange applyShadeHourChange = (o, n) -> {
+    if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
+  };
+
   // Unlike Move3D/Rotate3D/Scale3D's own selection() above, Terrain's
   // update_textures()/update_mesh() don't call beginScene3DChange()/
   // endScene3DChange() themselves - this is the only place that edit gets

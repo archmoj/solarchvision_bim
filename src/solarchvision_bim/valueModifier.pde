@@ -220,6 +220,39 @@ class ValueModifier {
     }
     return out;
   }
+  // SHADE_HOUR_ANGLE's own direct setter - unlike "Shade Next/Previous
+  // Hour" (actions.pde), which only step it by +-1 at a time (and skip
+  // past any hour STUDY.isInHourlyRange() rejects along the way), this
+  // sets it to an exact value in one command, with no range-dependent
+  // skipping - for a command/test/*.svs script that wants a specific
+  // hour without counting Shade Next Hour repeats up from
+  // SHADE_HOUR_ANGLE's own hardcoded default (10, shadeViewport3D.pde).
+  // No UI rollout spinner wired up (the "else" branch below is dead
+  // code for now, same as beginDay()'s own - see its own comment) -
+  // command-line/script only, same as Begin Day.
+  int hour (int created) {
+    int u1 = 0; // updateSTUDY - SHADE_HOUR_ANGLE doesn't touch STUDY
+    int u2 = 1; // updateWIN3D
+    int u3 = 1; // updateWORLD - Tropo3D.i_Map() tracks SHADE_HOUR_ANGLE (see "Shade Next Hour"'s own comment, actions.pde)
+
+    int s1 = SHADE_FIRST_HOUR; //start
+    int s2 = SHADE_LAST_HOUR; //stop
+    int s3 = 1; //step
+
+    int out = 0;
+    String command = "Hour";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (float) SHADE_HOUR_ANGLE,
+        (v) -> { SHADE_HOUR_ANGLE = int(v); },
+        s1, s2, s3,
+        u1, u2, u3,
+        react.applyShadeHourChange);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, SHADE_HOUR_ANGLE, s1, s2, s3);
+    }
+    return out;
+  }
   int startHour (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D

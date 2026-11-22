@@ -907,7 +907,7 @@ class RunScriptTest {
 
   // ================= matchFullLine / matchTrailingWordRemoved / matchFirstToken ===
   // Each of allActions' three match tiers, tested directly against a
-  // throwaway allActions map - not the real, 249-command one - so a
+  // throwaway allActions map - not the real, 250-command one - so a
   // tier's own behavior (what it matches, what args it builds, which
   // bypass exception it respects) can be pinned down in isolation from
   // the other two, and from everything else actually registered.
@@ -1001,7 +1001,7 @@ class RunScriptTest {
   // covered here, generically, rather than only by scanning the real
   // command set after the fact (that's what the comprehensive test below
   // still does, and remains useful for, but it can only catch a collision
-  // that already happened to land among the current 249 commands).
+  // that already happened to land among the current 250 commands).
 
   @Test
   void resolveAction_prefersTheMoreSpecificTrailingWordMatch_overAColliding_shorterFirstToken () {
@@ -1080,7 +1080,7 @@ class RunScriptTest {
   // parameter appended to its name, through runScriptLine itself - not by
   // calling its allActions entry directly (that's ValueModifierTest's own
   // registration-only smoke test). "1" is used as the probe value for all
-  // 249: whatever a command's own min/max happen to be, action.run(...) is
+  // 250: whatever a command's own min/max happen to be, action.run(...) is
   // still what gets invoked either way (an out-of-range value is rejected
   // *inside* the action - see putValueAction - without ever surfacing as
   // "Unrecognized command!"), so the underscore-key case below only checks
@@ -1151,7 +1151,7 @@ class RunScriptTest {
       checkedCount++;
     }
 
-    assertEquals(249, checkedCount, "expected exactly 249 value-modifier methods");
+    assertEquals(250, checkedCount, "expected exactly 250 value-modifier methods");
   }
 
   // ================= parseParams / getF / getI ================================

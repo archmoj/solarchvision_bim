@@ -127,4 +127,57 @@ class ValueModifierTest {
 
     assertEquals(0, app.WIN3D.currentCameraIndex);
   }
+
+  // ================= hour (int, WITH an onChange side effect) ================
+  // Bounds: SHADE_FIRST_HOUR..SHADE_LAST_HOUR == 0..24, step 1 (see
+  // valueModifier.pde's own hour() comment) - a direct setter for
+  // SHADE_HOUR_ANGLE, the same field "Shade Next/Previous Hour"
+  // (ShadePreviousDayActionTest.java's own file covers those) only ever
+  // step by +-1.
+
+  @Test
+  void hour_withAValidValue_setsItAndRunsTheOnChangeCallback () {
+    app.vm.hour(0);
+    app.WIN3D.showShading = true; // react.applyShadeHourChange's own guard
+
+    assertEquals("", app.runScriptLine("Hour 14"));
+
+    assertEquals(14, app.SHADE_HOUR_ANGLE);
+    // react.applyShadeHourChange's own effect - confirms the onChanged
+    // callback actually ran, not just the setter (same shape as
+    // currentCameraIndex's own test above).
+    assertTrue(app.WIN3D.shadingNeedsRebuild);
+  }
+
+  @Test
+  void hour_withAValidValue_andShowShadingOff_doesNotFlagARebuild () {
+    app.vm.hour(0);
+    app.WIN3D.showShading = false;
+    app.WIN3D.shadingNeedsRebuild = false;
+
+    app.runScriptLine("Hour 14");
+
+    assertEquals(14, app.SHADE_HOUR_ANGLE);
+    assertFalse(app.WIN3D.shadingNeedsRebuild, "nothing needs rebuilding if the sticky shading overlay isn't even showing");
+  }
+
+  @Test
+  void hour_withAnOutOfRangeValue_rejectsIt_leavingTheFieldUnchanged () {
+    app.vm.hour(0);
+    app.SHADE_HOUR_ANGLE = 10;
+
+    app.runScriptLine("Hour 999"); // max is 24
+
+    assertEquals(10, app.SHADE_HOUR_ANGLE, "putValueAction()'s own bounds check must reject this, not clamp it");
+  }
+
+  @Test
+  void hour_withNoValue_isRejected_leavingTheFieldUnchanged () {
+    app.vm.hour(0);
+    app.SHADE_HOUR_ANGLE = 10;
+
+    app.runScriptLine("Hour");
+
+    assertEquals(10, app.SHADE_HOUR_ANGLE);
+  }
 }

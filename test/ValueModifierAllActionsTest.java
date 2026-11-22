@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // ValueModifierTest.java demonstrated the pattern on 3 representative
 // vm.* methods (impactDisplayDay/cameraClipNear/currentCameraIndex).
-// This file completes it generically for ALL 249 - every single
+// This file completes it generically for ALL 250 - every single
 // ValueModifier method, not a sample - rather than hand-writing 245 more
 // near-identical tests.
 //
-// Every one of the 249 command name strings below was extracted
+// Every one of the 250 command name strings below was extracted
 // directly from valueModifier.pde's own source (each method's own
 // "String command = \"...\";" line, paired with its enclosing method by
 // position in the file via a script, not retyped by hand or guessed
@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 // app.build_allActions() (ValueModifierTest.java's own per-method
 // vm.xxx(0) calls, done here all at once) ends by calling UI_rollout.
 // registerSpinnerActions(), which itself calls every single one of
-// these 249 methods with created == 0 - registering all 249 actions in
+// these 250 methods with created == 0 - registering all 250 actions in
 // one call. Each is then triggered here with NO argument - safe (see
 // ValueModifierTest.java's own impactDisplayDay_withNoValue_... test),
 // and - this is the real point - putValueAction()'s own "if (args.
 // length < 2)" branch still calls minGetter.get()/maxGetter.get() to
-// build its error message, so this exercises each of the 249 methods'
+// build its error message, so this exercises each of the 250 methods'
 // own min/max getter closures for real, not just the shared dispatch
 // machinery around them.
 //
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // result; see the loop's own comment below for what's actually checked
 // instead. The getter/setter lambda bodies specifically (as opposed to
 // the min/max ones) only run on an actual, successful set - not
-// attempted here for all 249, since each one's own valid range isn't
+// attempted here for all 250, since each one's own valid range isn't
 // safely derivable from the no-arg error message alone (it's rounded
 // to whole numbers for display - nf(min_v, 0, 0) - which isn't precise
 // enough to reconstruct a fractional bound like cameraClipNear's own
@@ -61,6 +61,7 @@ class ValueModifierAllActionsTest {
       "Day", // day
       "Month", // month
       "Year", // year
+      "Hour", // hour
       "Start Hour", // startHour
       "End Hour", // endHour
       "Sample Year Start", // sampleYearStart
@@ -308,7 +309,7 @@ class ValueModifierAllActionsTest {
   void setUp () {
     app = new solarchvision_bim();
     app.allActions = new java.util.HashMap<>(); // see ViewNavigationCommandsTest.java's own setUp comment
-    app.build_allActions(); // registers all 249 ValueModifier actions via UI_rollout.registerSpinnerActions()
+    app.build_allActions(); // registers all 250 ValueModifier actions via UI_rollout.registerSpinnerActions()
   }
 
   @Test
@@ -348,6 +349,6 @@ class ValueModifierAllActionsTest {
     for (String name : COMMAND_NAMES) {
       assertTrue(seen.add(name), "duplicate command name in this file's own list: " + name);
     }
-    assertEquals(249, COMMAND_NAMES.length);
+    assertEquals(250, COMMAND_NAMES.length);
   }
 }
