@@ -357,6 +357,63 @@ class TIME {
     return result;
   }
 
+  // Step 4d of the real-Gregorian-year plan: the actual accuracy fix,
+  // built on isLeapYear/dayOfYearInRealYear (4a/4b) above rather than
+  // on the generic 366-slot calendar at all.
+  //
+  // Every DATE_ANGLE site in this app - sync_SHADE_DATE_ANGLE() in
+  // shadeViewport3D.pde, and the many "(360 * ((286 + j) % 366) /
+  // 366.0)" sites in calculateGlobalSolarArray.pde,
+  // calculateVertexSolarArray.pde, postProcessClimaticSolarForecast.pde,
+  // postProcessSolarsUsingCloud.pde, postProcessDevelopData.pde and
+  // sun3D.pde - computes "degrees from the Mar-21 generic-calendar
+  // anchor" as a fraction of a *fixed 366-day* year, in every real
+  // year alike (see functions.pde's own comment above MoonPosition()
+  // for the same convention applied there). In a real, non-leap
+  // (365-day) year that is a built-in inaccuracy: the real Earth has
+  // already moved further along its real 365-day orbit than a fixed-
+  // 366-day fraction credits it with, by an amount that grows to
+  // nearly a full day's worth of orbital motion (~0.3 degrees out of
+  // 360) by the time a non-leap year reaches its own Dec 31 - verified
+  // numerically in TIMETest.java against the existing generic formula.
+  //
+  // This computes the same "degrees from Mar 21, out of a full year"
+  // quantity, but from a real (year, month, day) and that real year's
+  // own true length (365 or 366, via isLeapYear) instead of the
+  // generic calendar's fixed 366 - matching every existing DATE_ANGLE
+  // site's own Mar-21-as-zero convention exactly (not the true
+  // astronomical equinox, which drifts by a day or so year to year;
+  // same simplification the generic calendar already makes).
+  //
+  // Deliberately not wired into any existing call site yet: those
+  // sites fall into two different roles this function does not by
+  // itself resolve - "planning mode" (SHADE_DATE_ANGLE, a single
+  // currently-selected real date, where this fix is exactly what's
+  // wanted) versus "climate mode" (the calculateGlobalSolarArray.pde/
+  // sun3D.pde/postProcess*.pde sites, which aggregate over the whole
+  // generic 366-slot statistical year and have no one real year to
+  // anchor to - see this file's own top-of-class comment on
+  // lengthOfMonths). Separately, SHADE_DATE_ANGLE's own now_j
+  // (impactDayToDayOfYear() in shadeViewport3D.pde) steps by
+  // STUDY.dayIncrement across potentially many days using generic-
+  // calendar wraparound (% 366) with no year attached at all, so
+  // wiring even just the planning-mode site raises its own open
+  // question - whether/how an impactDisplayDay step that crosses a
+  // real Dec31->Jan1 boundary should advance TIME.year, and what a
+  // step landing on a generic Feb-29 slot should do in a non-leap
+  // target real year - flagged for a decision before any call site
+  // is actually rewired, rather than answered unilaterally here.
+  float dateAngleFromRealDate (int year_IN, int month_IN, int day_IN) {
+    int realYearLength = this.isLeapYear(year_IN) ? 366 : 365;
+
+    int dayOfYear = this.dayOfYearInRealYear(year_IN, month_IN, day_IN);
+    int equinoxDayOfYear = this.dayOfYearInRealYear(year_IN, 3, 21); // same fixed Mar-21 anchor every existing DATE_ANGLE site uses - not the true astronomical equinox
+
+    int daysFromEquinox = ((dayOfYear - equinoxDayOfYear) % realYearLength + realYearLength) % realYearLength;
+
+    return 360.0 * daysFromEquinox / realYearLength;
+  }
+
   void updateDate () {
     this.month = this.getMonth_fromDate(this.date);
     this.day = this.getDay_fromDate(this.date);
