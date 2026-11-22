@@ -157,6 +157,42 @@ class TIME {
     return day_IN >= 1 && day_IN <= this.lengthOfMonthInRealYear(year_IN, month_IN);
   }
 
+  // Step 4f of the real-Gregorian-year plan: the Day/Month/Year UI
+  // spinners (valueModifier.pde) are three independent controls - Day
+  // 1..31, Month 1..12, Year 1953..2100 - with no cross-validation
+  // against each other, so changing any one of them can leave this.day
+  // pointing past the end of this.month in this.year (Feb 29 after
+  // Year moves to a common year; day 31 after Month moves to a 30-day
+  // month). Left unclamped, that invalid (year, month, day) used to
+  // only ever reach the generic-calendar convert2Date() path (which
+  // treats Feb 29 as always valid, Table A's own fixed slot for it) or
+  // a download/filename lookup that just fails to find a file - but
+  // since step 4e wired sync_SHADE_DATE_ANGLE() to real epoch-day
+  // arithmetic, the same invalid date now silently overflows into the
+  // next month instead (daysFromRealCivilEpoch/realDateFromEpochDay
+  // have no concept of "invalid", only of "day N of a y/m-less
+  // sequence") - e.g. 2025-02-29 silently becomes 2025-03-01, with
+  // nothing visible to the user. Only Month/Year ever need no clamp of
+  // their own: both already have their own correct range (1..12,
+  // 1953..2100) regardless of the other two fields, so the only
+  // possible invalidity this app's own date model can produce is a Day
+  // too large for the (now possibly different) Month/Year - clamping
+  // Day down to the real last day of that month, same as how an
+  // ordinary calendar widget behaves, is this function's whole job.
+  // Called from every place that sets year/month/day (the immediate
+  // GUI-driven setters in valueModifier.pde, and react.applyTimeChange
+  // - the once-per-frame, source-agnostic path that also covers a
+  // command-line SET command or a loaded project file) rather than
+  // from inside day()/month()/year() themselves, so a caller that only
+  // intends to read the current value never has a side effect sprung
+  // on it.
+  void clampDayToValidRealDate () {
+    int validLength = this.lengthOfMonthInRealYear(this.year, this.month);
+    if (this.day > validLength) {
+      this.day = validLength;
+    }
+  }
+
   // 1-based real day-of-year (1..365, or 1..366 in a leap year) for a
   // *valid* real calendar date - callers are expected to have checked
   // isValidRealDate first; behavior for an invalid (year, month, day)
@@ -586,6 +622,7 @@ class TIME {
     this.beginDay = XML_getInt(parent, "beginDay");
     this.date = XML_getFloat(parent, "date");
 
+    this.clampDayToValidRealDate(); // step 4f: a hand-edited or corrupted project file could hold an invalid (year, month, day) combo directly
     sync_SHADE_DATE_ANGLE();
   }
 

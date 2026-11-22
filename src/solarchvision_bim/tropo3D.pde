@@ -454,12 +454,15 @@ class Tropo3D {
   // not a multi-day forecast window, so this is a single-day match, not a
   // "close enough" range: impactDayToDayOfYear(impactDisplayDay)
   // (shadeViewport3D.pde) against today's own day-of-year
-  // (TIME.convert2Date(), the same 0-364 Jan-1-is-0 convention). Ignores
-  // year on both sides - impactDisplayDay's own date range has no year of
-  // its own (TIME.beginDay is a day-of-year, not a full calendar date),
-  // so "the same day of year as today" is the closest meaningful
-  // equivalent this app's own date model can express, not a deliberate
-  // "any year is fine" design choice.
+  // (TIME.convert2Date(), the same 0-364 Jan-1-is-0 convention).
+  // Deliberately stays on this year-less, generic-calendar comparison
+  // even though impactDisplayDay can now also resolve to a specific
+  // real year (impactDayToRealDate(), step 4e) - a live weather feed
+  // only ever has data for the real current year anyway, so comparing
+  // real dates here would almost never match on any other year,
+  // defeating the point of this check. "The same day of year as
+  // today" stays the right question to ask, not a leftover from
+  // before this app's date model could express a real year at all.
   boolean selectedDayHasForecastAvailable () {
     int simulatedDayOfYear = impactDayToDayOfYear(impactDisplayDay);
 

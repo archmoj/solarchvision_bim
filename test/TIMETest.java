@@ -231,6 +231,56 @@ class TIMETest {
     assertTrue(time.isValidRealDate(2025, 12, 31));
   }
 
+  // --- clampDayToValidRealDate (step 4f: the Day/Month/Year spinner
+  // cross-validation gap) ----------------------------------------------
+
+  @Test
+  void clampDayToValidRealDate_leavesAnAlreadyValidDateUntouched () {
+    time.year = 2024;
+    time.month = 2;
+    time.day = 29; // valid: 2024 is leap
+    time.clampDayToValidRealDate();
+    assertEquals(29, time.day);
+  }
+
+  @Test
+  void clampDayToValidRealDate_pullsFebruary29thBackTo28thInACommonYear () {
+    time.year = 2025; // common
+    time.month = 2;
+    time.day = 29;
+    time.clampDayToValidRealDate();
+    assertEquals(28, time.day);
+  }
+
+  @Test
+  void clampDayToValidRealDate_pullsDay31BackTo30thInAThirtyDayMonth () {
+    time.year = 2025;
+    time.month = 4; // April has 30 days
+    time.day = 31;
+    time.clampDayToValidRealDate();
+    assertEquals(30, time.day);
+  }
+
+  @Test
+  void clampDayToValidRealDate_reactsToWhicheverFieldChangedMostRecently () {
+    // the same (month, day) becomes invalid or valid again purely by
+    // changing year - the exact scenario the Year spinner's own
+    // onChange now guards against
+    time.year = 2024;
+    time.month = 2;
+    time.day = 29; // valid while year is leap
+    time.clampDayToValidRealDate();
+    assertEquals(29, time.day);
+
+    time.year = 2025; // now common - the same day is no longer valid
+    time.clampDayToValidRealDate();
+    assertEquals(28, time.day);
+
+    time.year = 2028; // leap again - but day is already 28, so nothing to restore
+    time.clampDayToValidRealDate();
+    assertEquals(28, time.day);
+  }
+
   // --- dayOfYearInRealYear (step 4b) ----------------------------------
 
   @Test

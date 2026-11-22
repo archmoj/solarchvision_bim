@@ -15,6 +15,7 @@
 class react {
 
   OnChange applyTimeChange = (o, n) -> {
+    TIME.clampDayToValidRealDate(); // step 4f: catches Year/Month/Day drifting into an invalid combo from any source (GUI, SET command, loaded project) before anything below reads TIME.day
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
     TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 366;

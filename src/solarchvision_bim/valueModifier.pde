@@ -153,8 +153,9 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.day,
-        (v) -> { 
+        (v) -> {
           TIME.day = int(v);
+          TIME.clampDayToValidRealDate(); // step 4f: this spinner's own 1..31 range alone can't know TIME.month's actual length
           sync_SHADE_DATE_ANGLE();
         },
         s1, s2, s3,
@@ -179,8 +180,9 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.month,
-        (v) -> { 
+        (v) -> {
           TIME.month = int(v);
+          TIME.clampDayToValidRealDate(); // step 4f: the new month may be shorter than TIME.day's current value
           sync_SHADE_DATE_ANGLE();
         },
         s1, s2, s3,
@@ -205,8 +207,9 @@ class ValueModifier {
     if (created == 0) {
       putValueAction(command,
         () -> (float) TIME.year,
-        (v) -> { 
+        (v) -> {
           TIME.year = int(v);
+          TIME.clampDayToValidRealDate(); // step 4f: Feb 29 only exists if the new year is leap
           sync_SHADE_DATE_ANGLE();
         },
         s1, s2, s3,
