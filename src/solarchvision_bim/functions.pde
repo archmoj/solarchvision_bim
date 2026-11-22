@@ -599,26 +599,28 @@ class Functions {
     return return_array;
   }
 
-  // Simplified lunar position - NOT a precise ephemeris. This app has no
-  // real calendar date/epoch to work from in the first place (DateAngle
-  // is day-of-year only, the same way SunPosition() above already is -
-  // no year, so no true lunar-phase accuracy is possible here regardless
-  // of how this function is written), so this models the Moon's two most
-  // visually relevant departures from the Sun's own path using the exact
-  // same DateAngle/HourAngleOrigin inputs, rather than introducing some
-  // separate, unsupported notion of "real time" just for the Moon:
+  // Simplified lunar position - NOT a precise ephemeris. TIME
+  // (time.pde) now has real epoch-day machinery, since SHADE_DATE_ANGLE
+  // itself is derived from a real (year, month, day) via
+  // dateAngleFromRealDate - but this function deliberately still drives
+  // off DateAngle/HourAngleOrigin, the exact same inputs SunPosition()
+  // above uses, rather than that real epoch day. One consequence:
+  // DateAngle resets to 0 every year (it spans 360 over exactly 366
+  // days, the same day-of-year/366.0 convention every DATE_ANGLE site
+  // in this app uses - never the real 365.2425-day Gregorian year), so
+  // the Moon's simulated phase jumps discontinuously at every year
+  // boundary instead of carrying over the way the real Moon's does;
+  // driving this off a real epoch day instead would fix that, but is a
+  // separate change from this one. This model's two most visually
+  // relevant departures from the Sun's own path:
   //
   // 1) It rises/sets roughly 50 minutes later each day, drifting through
   //    a full day/night cycle relative to solar time over one synodic
   //    month (~29.53 days) - near new moon it tracks the Sun closely
   //    (rising/setting together, hence invisible against the daytime
   //    sky); near full moon it's a full 12 hours out of phase (rising as
-  //    the Sun sets). DateAngle spans 360 over exactly 366 days - the
-  //    same day-of-year/366.0 convention every DATE_ANGLE site in this
-  //    app uses (sync_SHADE_DATE_ANGLE() in shadeViewport3D.pde, sun3D.pde,
-  //    solarImpacts.pde, viewport2D.pde, etc. - all "360 * (day % 366) /
-  //    366.0", never the real 365.2425-day Gregorian year), so this phase
-  //    needs to cycle (366.0 / 29.53) ≈ 12.39 times as fast.
+  //    the Sun sets). DateAngle spans 360 over exactly 366 days, so this
+  //    phase needs to cycle (366.0 / 29.53) ≈ 12.39 times as fast.
   // 2) Its declination swings through a comparable range to the Sun's
   //    (same ±23.45 amplitude, for simplicity - the real extra ~5 degrees
   //    from the Moon's own orbital inclination is a second-order detail
