@@ -605,3 +605,26 @@ void keyReleased () {
     addNewSelectionToPreviousSelection = 0;
   }
 }
+
+// Called by Processing whenever this sketch's window loses OS focus -
+// e.g. Alt+Tab away, clicking another window, or the OS itself stealing
+// focus - while a key is still physically held down. None of those
+// ways of losing focus deliver a matching keyReleased() here: the key
+// is released over whatever window now has focus instead, so this
+// sketch never finds out. UI_menuBar.altHeld in particular is only ever
+// cleared by keyReleased()'s own keyCode==ALT case just above, so
+// without this, Alt+Tabbing away while Alt is down leaves altHeld stuck
+// true forever afterward - drawParentTab() (uiMenuBar.pde) keeps
+// highlighting every tab's mnemonic letter in blue even once the key is
+// no longer held, exactly the "highlight shows up when Alt isn't
+// actually down" symptom this fixes. Simplest fix: on any focus loss,
+// treat every modifier as released, the same way keyReleased() would
+// have if the release event had actually reached this sketch.
+void focusLost () {
+  if (UI_menuBar.altHeld) {
+    UI_menuBar.altHeld = false;
+    UI_menuBar.revise();
+  }
+  addNewSelectionToPreviousSelection = addNewSelectionToPreviousSelection_beforeModifierKey;
+  addNewSelectionToPreviousSelection_isOverridden = false;
+}
