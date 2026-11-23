@@ -65,9 +65,24 @@ boolean isRestoringViewport3DSnapshot = false;
 // between). See that function's own comment.
 int viewport3DHistoryLastChangeFrame = -1;
 
-// WIN3D's own undo/redo snapshot - deliberately just the one class,
-// unlike buildScene3DSnapshot()'s eleven. See this file's header
-// comment for why Viewport3D's undo/redo is scoped to WIN3D alone.
+// WIN3D's own undo/redo snapshot, plus (see writeVisibilityToggleState()'s
+// own comment just below) the "Visibility" menu's Show/Hide display
+// toggles - everything buildScene3DSnapshot()'s own header comment
+// explicitly calls out as NOT wired to beginScene3DChange()/
+// endScene3DChange() ("toggling what's displayed... those don't call
+// either function and don't record a step"). Those toggles used to not
+// record ANY undo step at all; they now ride along in this same
+// snapshot/poll pipeline as WIN3D's own camera/view fields, so Ctrl+Shift+Z/
+// Ctrl+Shift+Y undo/redo them - never Ctrl+Z/Ctrl+Y, which stays scoped
+// to actual model/geometry edits. Deliberately still NOT the eleven
+// buildScene3DSnapshot() classes themselves, and NOT the per-face/
+// per-polyline Visibility VALUE (allFaces/allPolylines.options[.][3],
+// set by the Modify menu's Change/Pick/Assign/Reverse Visibility and
+// Hide/Unhide Selected Faces/Polylines) - that's real per-face project
+// data, potentially thousands of entries, so it stays on the Scene3D
+// side (Ctrl+Z), reusing buildOrReuseSubtree()'s already-built sharing
+// logic instead of getting duplicated into up to MAX_UNDO_VIEWPORT3D
+// snapshots here.
 XML buildViewport3DSnapshot () {
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
@@ -75,8 +90,90 @@ XML buildViewport3DSnapshot () {
   xml.setName("solarchvisionV" + version);
 
   WIN3D.to_XML(xml);
+  writeVisibilityToggleState(xml);
 
   return xml;
+}
+
+// The ~two dozen plain boolean "what's displayed" flags behind the
+// "Visibility" menu (uiMenuBar.pde's PARENT_VISIBILITY block) and their
+// matching actions (actions.pde's "Show/Hide ..." putAction() calls) -
+// one attribute each, on their own child element so a project's actual
+// WIN3D.to_XML()/from_XML() pair (camera/view only) stays untouched by
+// this unrelated set of flags living in the same snapshot. Cheap to
+// duplicate into every one of the up to MAX_UNDO_VIEWPORT3D entries -
+// two dozen booleans, not per-object data - unlike the per-face/
+// per-polyline Visibility VALUE this deliberately excludes (see
+// buildViewport3DSnapshot()'s own comment).
+void writeVisibilityToggleState (XML parent) {
+  XML xml = parent.addChild("visibilityToggles");
+
+  XML_setBoolean(xml, "terrainDisplaySurface", Terrain.displaySurface);
+  XML_setBoolean(xml, "terrainDisplayTexture", Terrain.displayTexture);
+  XML_setBoolean(xml, "terrainDisplayPoints", Terrain.displayPoints);
+  XML_setBoolean(xml, "terrainDisplayDepth", Terrain.displayDepth);
+  XML_setBoolean(xml, "pointsDisplayAll", allPoints.displayAll);
+  XML_setBoolean(xml, "facesDisplayEdges", allFaces.displayEdges);
+  XML_setBoolean(xml, "facesShowNormalLines", allFaces.showNormalLines);
+  XML_setBoolean(xml, "model1DsDisplayLeaves", allModel1Ds.displayLeaves);
+  XML_setBoolean(xml, "model1DsDisplayAll", allModel1Ds.displayAll);
+  XML_setBoolean(xml, "model2DsDisplayAll", allModel2Ds.displayAll);
+  XML_setBoolean(xml, "polylinesDisplayAll", allPolylines.displayAll);
+  XML_setBoolean(xml, "facesDisplayAll", allFaces.displayAll);
+  XML_setBoolean(xml, "solidsDisplayAll", allSolids.displayAll);
+  XML_setBoolean(xml, "sectionsDisplayAll", allSections.displayAll);
+  XML_setBoolean(xml, "camerasDisplayAll", allCameras.displayAll);
+  XML_setBoolean(xml, "skyDisplaySurface", Sky3D.displaySurface);
+  XML_setBoolean(xml, "sunDisplayGrid", Sun3D.displayGrid);
+  XML_setBoolean(xml, "sunDisplayPath", Sun3D.displayPath);
+  XML_setBoolean(xml, "sunDisplayPattern", Sun3D.displayPattern);
+  XML_setBoolean(xml, "sunDisplaySurface", Sun3D.displaySurface);
+  XML_setBoolean(xml, "moonDisplaySurface", Moon3D.displaySurface);
+  XML_setBoolean(xml, "earthDisplaySurface", Earth3D.displaySurface);
+  XML_setBoolean(xml, "tropoDisplaySurface", Tropo3D.displaySurface);
+  XML_setBoolean(xml, "solarImpactsDisplayImage", allSolarImpacts.displayImage);
+  XML_setBoolean(xml, "solidImpactsDisplayImage", allSolidImpacts.displayImage);
+  XML_setBoolean(xml, "windFlowDisplayAll", allWindFlows.displayAll);
+}
+
+// The from_XML() counterpart to writeVisibilityToggleState() above - see
+// that function's own comment. Reads back the same "visibilityToggles"
+// child restoreViewport3DSnapshot() (below) looks for; a snapshot built
+// before this child existed (there shouldn't be one - this is an
+// in-memory-only history, never written to a project file - but just in
+// case) leaves every flag at whatever it already was, rather than
+// forcing them all to XML_getBoolean()'s own missing-attribute default
+// of false.
+void readVisibilityToggleState (XML parent) {
+  XML xml = parent.getChild("visibilityToggles");
+  if (xml == null) return;
+
+  Terrain.displaySurface = XML_getBoolean(xml, "terrainDisplaySurface");
+  Terrain.displayTexture = XML_getBoolean(xml, "terrainDisplayTexture");
+  Terrain.displayPoints = XML_getBoolean(xml, "terrainDisplayPoints");
+  Terrain.displayDepth = XML_getBoolean(xml, "terrainDisplayDepth");
+  allPoints.displayAll = XML_getBoolean(xml, "pointsDisplayAll");
+  allFaces.displayEdges = XML_getBoolean(xml, "facesDisplayEdges");
+  allFaces.showNormalLines = XML_getBoolean(xml, "facesShowNormalLines");
+  allModel1Ds.displayLeaves = XML_getBoolean(xml, "model1DsDisplayLeaves");
+  allModel1Ds.displayAll = XML_getBoolean(xml, "model1DsDisplayAll");
+  allModel2Ds.displayAll = XML_getBoolean(xml, "model2DsDisplayAll");
+  allPolylines.displayAll = XML_getBoolean(xml, "polylinesDisplayAll");
+  allFaces.displayAll = XML_getBoolean(xml, "facesDisplayAll");
+  allSolids.displayAll = XML_getBoolean(xml, "solidsDisplayAll");
+  allSections.displayAll = XML_getBoolean(xml, "sectionsDisplayAll");
+  allCameras.displayAll = XML_getBoolean(xml, "camerasDisplayAll");
+  Sky3D.displaySurface = XML_getBoolean(xml, "skyDisplaySurface");
+  Sun3D.displayGrid = XML_getBoolean(xml, "sunDisplayGrid");
+  Sun3D.displayPath = XML_getBoolean(xml, "sunDisplayPath");
+  Sun3D.displayPattern = XML_getBoolean(xml, "sunDisplayPattern");
+  Sun3D.displaySurface = XML_getBoolean(xml, "sunDisplaySurface");
+  Moon3D.displaySurface = XML_getBoolean(xml, "moonDisplaySurface");
+  Earth3D.displaySurface = XML_getBoolean(xml, "earthDisplaySurface");
+  Tropo3D.displaySurface = XML_getBoolean(xml, "tropoDisplaySurface");
+  allSolarImpacts.displayImage = XML_getBoolean(xml, "solarImpactsDisplayImage");
+  allSolidImpacts.displayImage = XML_getBoolean(xml, "solidImpactsDisplayImage");
+  allWindFlows.displayAll = XML_getBoolean(xml, "windFlowDisplayAll");
 }
 
 // The one baseline entry that isn't "state after a change" - same role
@@ -158,10 +255,13 @@ void redoViewport3DChange () {
   restoreProjectViewport3DSnapshot(viewport3DHistory.get(viewport3DHistoryIndex));
 }
 
-// The from_XML() counterpart to buildViewport3DSnapshot() above - just
-// WIN3D.from_XML(), same single-class scope.
+// The from_XML() counterpart to buildViewport3DSnapshot() above -
+// WIN3D.from_XML() plus readVisibilityToggleState() (see
+// buildViewport3DSnapshot()'s own comment for why the latter rides
+// along in this same snapshot).
 void restoreViewport3DSnapshot (XML xml) {
   WIN3D.from_XML(xml);
+  readVisibilityToggleState(xml);
 }
 
 // Safe to call from undo()/redo() only because of
@@ -177,11 +277,13 @@ void restoreProjectViewport3DSnapshot (XML xml) {
   try {
     restoreViewport3DSnapshot(xml);
 
-    // Same flag every other camera/view change in this codebase sets
-    // (WIN3D.revise()'s own callers) - makes the 3D viewport actually
-    // redraw from the restored position/rotation/zoom instead of
-    // keeping whatever it had on screen right before the undo/redo.
-    WIN3D.revise();
+    // view_changed() (globalFunctions.pde) calls WIN3D.revise() itself -
+    // same redraw every other camera/view change in this codebase
+    // triggers - and is also exactly what every live "Show/Hide ..."
+    // action (actions.pde) already calls after flipping one of these
+    // same flags directly, so a restored toggle redraws the same way a
+    // live one does.
+    view_changed();
   } finally {
     isRestoringViewport3DSnapshot = false;
   }

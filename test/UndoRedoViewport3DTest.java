@@ -378,4 +378,151 @@ class UndoRedoViewport3DTest {
     assertEquals(50f, app.WIN3D.cameraX, 0.0001f);
     assertEquals(1, app.viewport3DHistoryIndex);
   }
+
+  // ================= "Visibility" menu Show/Hide toggles =================
+  //
+  // Covers writeVisibilityToggleState()/readVisibilityToggleState()
+  // (undoRedoViewport3D.pde): the "Visibility" menu's Show/Hide display
+  // flags (Terrain/Sky/Sun/Faces/Edges/... - uiMenuBar.pde's own
+  // PARENT_VISIBILITY block) ride along in the same WIN3D snapshot/poll
+  // pipeline as the camera, so Ctrl+Shift+Z/Y (not Ctrl+Z/Y) undo/redo
+  // them - the bug this file's own header comment was expanded for.
+
+  @Test
+  void toggleFacesDisplayAll_recordsAViewport3DHistoryStepNotAScene3DOne () {
+    app.seedScene3DHistory();
+    seed();
+
+    app.frameCount = 10;
+    app.allFaces.displayAll = !app.allFaces.displayAll; // the live "Show/Hide Faces" action's own effect (actions.pde)
+    app.trackViewport3DChange();
+
+    assertEquals(2, app.viewport3DHistory.size(), "a visibility toggle must record a viewport history step");
+    assertEquals(1, app.scene3DHistory.size(), "a visibility toggle must NOT record a model history step");
+  }
+
+  @Test
+  void undoViewport3DChange_restoresAFacesDisplayAllToggle () {
+    seed();
+    boolean baseline = app.allFaces.displayAll;
+
+    app.frameCount = 10;
+    app.allFaces.displayAll = !baseline;
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+
+    assertEquals(baseline, app.allFaces.displayAll, "Ctrl+Shift+Z must undo the visibility toggle");
+  }
+
+  @Test
+  void redoViewport3DChange_reappliesAFacesDisplayAllToggle () {
+    seed();
+    boolean baseline = app.allFaces.displayAll;
+
+    app.frameCount = 10;
+    app.allFaces.displayAll = !baseline;
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+    app.redoViewport3DChange();
+
+    assertEquals(!baseline, app.allFaces.displayAll, "Ctrl+Shift+Y must redo the visibility toggle");
+  }
+
+  @Test
+  void undoThenRedo_roundTripsEveryVisibilityMenuToggleExactly () {
+    // One of each of the ~two dozen "Visibility" menu flags
+    // writeVisibilityToggleState()/readVisibilityToggleState() cover -
+    // confirms the full set actually round-trips, not just the one
+    // field the tests above already isolate.
+    seed();
+
+    app.frameCount = 10;
+    app.Terrain.displaySurface = !app.Terrain.displaySurface;
+    app.Terrain.displayTexture = !app.Terrain.displayTexture;
+    app.Terrain.displayPoints = !app.Terrain.displayPoints;
+    app.Terrain.displayDepth = !app.Terrain.displayDepth;
+    app.allPoints.displayAll = !app.allPoints.displayAll;
+    app.allFaces.displayEdges = !app.allFaces.displayEdges;
+    app.allFaces.showNormalLines = !app.allFaces.showNormalLines;
+    app.allModel1Ds.displayLeaves = !app.allModel1Ds.displayLeaves;
+    app.allModel1Ds.displayAll = !app.allModel1Ds.displayAll;
+    app.allModel2Ds.displayAll = !app.allModel2Ds.displayAll;
+    app.allPolylines.displayAll = !app.allPolylines.displayAll;
+    app.allFaces.displayAll = !app.allFaces.displayAll;
+    app.allSolids.displayAll = !app.allSolids.displayAll;
+    app.allSections.displayAll = !app.allSections.displayAll;
+    app.allCameras.displayAll = !app.allCameras.displayAll;
+    app.Sky3D.displaySurface = !app.Sky3D.displaySurface;
+    app.Sun3D.displayGrid = !app.Sun3D.displayGrid;
+    app.Sun3D.displayPath = !app.Sun3D.displayPath;
+    app.Sun3D.displayPattern = !app.Sun3D.displayPattern;
+    app.Sun3D.displaySurface = !app.Sun3D.displaySurface;
+    app.Moon3D.displaySurface = !app.Moon3D.displaySurface;
+    app.Earth3D.displaySurface = !app.Earth3D.displaySurface;
+    app.Tropo3D.displaySurface = !app.Tropo3D.displaySurface;
+    app.allSolarImpacts.displayImage = !app.allSolarImpacts.displayImage;
+    app.allSolidImpacts.displayImage = !app.allSolidImpacts.displayImage;
+    app.allWindFlows.displayAll = !app.allWindFlows.displayAll;
+
+    boolean terrainDisplaySurface = app.Terrain.displaySurface;
+    boolean terrainDisplayTexture = app.Terrain.displayTexture;
+    boolean terrainDisplayPoints = app.Terrain.displayPoints;
+    boolean terrainDisplayDepth = app.Terrain.displayDepth;
+    boolean pointsDisplayAll = app.allPoints.displayAll;
+    boolean facesDisplayEdges = app.allFaces.displayEdges;
+    boolean facesShowNormalLines = app.allFaces.showNormalLines;
+    boolean model1DsDisplayLeaves = app.allModel1Ds.displayLeaves;
+    boolean model1DsDisplayAll = app.allModel1Ds.displayAll;
+    boolean model2DsDisplayAll = app.allModel2Ds.displayAll;
+    boolean polylinesDisplayAll = app.allPolylines.displayAll;
+    boolean facesDisplayAll = app.allFaces.displayAll;
+    boolean solidsDisplayAll = app.allSolids.displayAll;
+    boolean sectionsDisplayAll = app.allSections.displayAll;
+    boolean camerasDisplayAll = app.allCameras.displayAll;
+    boolean skyDisplaySurface = app.Sky3D.displaySurface;
+    boolean sunDisplayGrid = app.Sun3D.displayGrid;
+    boolean sunDisplayPath = app.Sun3D.displayPath;
+    boolean sunDisplayPattern = app.Sun3D.displayPattern;
+    boolean sunDisplaySurface = app.Sun3D.displaySurface;
+    boolean moonDisplaySurface = app.Moon3D.displaySurface;
+    boolean earthDisplaySurface = app.Earth3D.displaySurface;
+    boolean tropoDisplaySurface = app.Tropo3D.displaySurface;
+    boolean solarImpactsDisplayImage = app.allSolarImpacts.displayImage;
+    boolean solidImpactsDisplayImage = app.allSolidImpacts.displayImage;
+    boolean windFlowDisplayAll = app.allWindFlows.displayAll;
+
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+    app.redoViewport3DChange();
+
+    assertEquals(terrainDisplaySurface, app.Terrain.displaySurface);
+    assertEquals(terrainDisplayTexture, app.Terrain.displayTexture);
+    assertEquals(terrainDisplayPoints, app.Terrain.displayPoints);
+    assertEquals(terrainDisplayDepth, app.Terrain.displayDepth);
+    assertEquals(pointsDisplayAll, app.allPoints.displayAll);
+    assertEquals(facesDisplayEdges, app.allFaces.displayEdges);
+    assertEquals(facesShowNormalLines, app.allFaces.showNormalLines);
+    assertEquals(model1DsDisplayLeaves, app.allModel1Ds.displayLeaves);
+    assertEquals(model1DsDisplayAll, app.allModel1Ds.displayAll);
+    assertEquals(model2DsDisplayAll, app.allModel2Ds.displayAll);
+    assertEquals(polylinesDisplayAll, app.allPolylines.displayAll);
+    assertEquals(facesDisplayAll, app.allFaces.displayAll);
+    assertEquals(solidsDisplayAll, app.allSolids.displayAll);
+    assertEquals(sectionsDisplayAll, app.allSections.displayAll);
+    assertEquals(camerasDisplayAll, app.allCameras.displayAll);
+    assertEquals(skyDisplaySurface, app.Sky3D.displaySurface);
+    assertEquals(sunDisplayGrid, app.Sun3D.displayGrid);
+    assertEquals(sunDisplayPath, app.Sun3D.displayPath);
+    assertEquals(sunDisplayPattern, app.Sun3D.displayPattern);
+    assertEquals(sunDisplaySurface, app.Sun3D.displaySurface);
+    assertEquals(moonDisplaySurface, app.Moon3D.displaySurface);
+    assertEquals(earthDisplaySurface, app.Earth3D.displaySurface);
+    assertEquals(tropoDisplaySurface, app.Tropo3D.displaySurface);
+    assertEquals(solarImpactsDisplayImage, app.allSolarImpacts.displayImage);
+    assertEquals(solidImpactsDisplayImage, app.allSolidImpacts.displayImage);
+    assertEquals(windFlowDisplayAll, app.allWindFlows.displayAll);
+  }
 }
