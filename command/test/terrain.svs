@@ -6,12 +6,12 @@
 
 # Two real-clock overrides, both needed before anything below depends on
 # them, and both fixed to the exact moment the real fixture data was
-# actually captured (2026-11-13 23:00):
+# actually captured (2026-11-23 07:00):
 #
 # - RunStamp (globalVariables.pde) defaults to the real system clock at
 #   startup, and Folder_GEOMET (updateFolders.pde) is built from it -
 #   but the real GEOMET fixture is a fixed, pre-captured subfolder
-#   (projects/test/data/GEOMET/20261113_23/), not "right now". RUN.STAMP
+#   (projects/test/data/GEOMET/20261123_07/), not "right now". RUN.STAMP
 #   overrides RunStamp directly so Folder_GEOMET resolves to that real
 #   subfolder once NEW below derives it - must run first, since NEW's
 #   own update_project_folders() call only derives Folder_GEOMET from
@@ -23,8 +23,8 @@
 #   troposphere tile at all when they match - which, without RUN.NOW,
 #   could only ever be true on the one real calendar day this fixture
 #   happens to be dated, not whenever this test actually runs.
-RUN.STAMP 20261113_23
-RUN.NOW 2026111323
+RUN.STAMP 20261123_07
+RUN.NOW 2026112307
 
 # NEW takes no existing file to work - it just points Folder_Project at
 # the given path's own parent directory and clears the scene (see
@@ -56,7 +56,7 @@ Terrain Display Texture 1
 Earth3D Display Surface 0
 
 # The real NAEFS fixture's own filenames are all timestamped
-# 2026111300 (year/month/day/hour) - matching that here is what lets
+# 2026112300 (year/month/day/hour) - matching that here is what lets
 # "Use Ensemble Forecast" below actually find and load them (its own
 # update_ensembleForecast() builds each file's name from TIME.year/
 # month/day/hour directly), and is also what selectedDayHasForecastAvailable()
@@ -65,7 +65,7 @@ Earth3D Display Surface 0
 # own default), so only year/month/day need setting.
 Year 2026
 Month 11
-Day 13
+Day 23
 
 # Loads every real NAEFS layer file that exists for that date (TMP-SFC/
 # MSLP/RELH-SFC/APCP-SFC - projects/test/data/NAEFS/) AND switches

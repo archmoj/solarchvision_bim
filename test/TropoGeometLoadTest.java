@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // currentUTC() -> getNow_inUTC(), which reads the real system clock,
 // making its own result different every time this suite runs rather
 // than a fixed, verifiable one against a fixture pinned to one specific
-// hour (projects/test/data/GEOMET/20261113_23/). loadSlotIfMatch()
+// hour (projects/test/data/GEOMET/20261123_07/). loadSlotIfMatch()
 // itself has no such dependency - a plain string match against whatever
 // hour label it's given - so that's what's tested directly, the same
 // reasoning LoadClimateTypicalYearTest.java's own header gives for
@@ -32,7 +32,7 @@ class TropoGeometLoadTest {
   void setUp () {
     app = new solarchvision_bim();
     app.sketchPath(); // see LoadClimateTypicalYearTest.java's own comment on why - loadImage() needs this too
-    app.Folder_GEOMET = System.getProperty("user.dir") + "/projects/test/data/GEOMET/20261113_23";
+    app.Folder_GEOMET = System.getProperty("user.dir") + "/projects/test/data/GEOMET/20261123_07";
     app.Tropo3D.resize_images(); // allocates Filenames/Map/BoundariesX/Y to TROPO_timeSteps - null otherwise
   }
 

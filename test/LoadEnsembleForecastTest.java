@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // load_ensembleForecast() (loadEnsembleForecast.pde) was untested - 165
 // instructions - and parses a real NAEFS (North American Ensemble
-// Forecast System) file: projects/test/data/NAEFS/2026111300_GEPS-NAEFS-RAW_
+// Forecast System) file: projects/test/data/NAEFS/2026112300_GEPS-NAEFS-RAW_
 // TORONTO_PEARSON_INTL_ON_CA_TMP-SFC_000-384.xml, matching STATION's own
 // bare-construction ensembleForecastFilename ("CYYZ-MAN" - actually the
 // file naming here follows the station's city/province/country name,
@@ -49,7 +49,7 @@ class LoadEnsembleForecastTest {
   }
 
   private String realNaefsTmpPath () {
-    return System.getProperty("user.dir") + "/projects/test/data/NAEFS/2026111300_GEPS-NAEFS-RAW_TORONTO_PEARSON_INTL_ON_CA_TMP-SFC_000-384.xml";
+    return System.getProperty("user.dir") + "/projects/test/data/NAEFS/2026112300_GEPS-NAEFS-RAW_TORONTO_PEARSON_INTL_ON_CA_TMP-SFC_000-384.xml";
   }
 
   @Test
@@ -62,7 +62,7 @@ class LoadEnsembleForecastTest {
     app.load_ensembleForecast(realNaefsTmpPath(), app.LAYER_drybulb.id);
 
     // The file's own first <forecast> block: forecast_hour="6",
-    // valid_time="2026111306" -> THE_YEAR=2026,MONTH=11,DAY=13,HOUR=6.
+    // valid_time="2026112306" -> THE_YEAR=2026,MONTH=11,DAY=13,HOUR=6.
     // STATION's own real timezoneLongitude (-75): now_i = 6 -
     // int(-(-75)/15) = 6 - 5 = 1.
     int i = 1;

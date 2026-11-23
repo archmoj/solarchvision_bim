@@ -1,5 +1,6 @@
 *
 !.gitignore
+!/test
 !/test/data
 !/test/data/**
 !/test/terrain
