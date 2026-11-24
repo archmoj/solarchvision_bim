@@ -1883,10 +1883,10 @@ class Modify3D {
   // whatever vertex count results (3, 5, 6, 7+...) rather than being
   // re-triangulated - allFaces already supports arbitrary N-gons elsewhere
   // in the app, so there's nothing to fan.
-  final static int TILING_SQUARE = 0;
-  final static int TILING_HEXAGON = 1;
-  final static int TILING_EQUILATERAL = 2;
-  final static int TILING_CAIRO = 3;
+  final static int TILING_EQUILATERAL = 3;
+  final static int TILING_SQUARE = 4;
+  final static int TILING_CAIRO = 5;
+  final static int TILING_HEXAGON = 6;
 
   void tilingSquare_Selection () {
     applyTiling_Selection(TILING_SQUARE);
