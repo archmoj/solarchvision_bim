@@ -498,7 +498,7 @@ class UI_menuBar {
     },
     {
       PARENT_MODIFY,
-      "Tessellate Triangular",
+      "Triangle Tessellate",
       "Quad Tessellate",
       "Tessellate Rows & Columns",
       ___divider___,

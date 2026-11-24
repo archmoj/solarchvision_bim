@@ -2391,7 +2391,7 @@ void build_allActions() {
     Modify3D.tessellateRectangular_Selection();
   });
 
-  putAction("Tessellate Triangular", () -> {
+  putAction("Triangle Tessellate", () -> {
     Modify3D.tessellateTriangular_Selection();
   });
 

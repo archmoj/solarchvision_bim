@@ -1420,7 +1420,7 @@ under [Shading and rendering](#shading-and-rendering) above)
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,
     `Reverse Visibility of All Faces`
--   `Quad Tessellate`, `Tessellate Triangular`,
+-   `Quad Tessellate`, `Triangle Tessellate`,
     `Tessellate Rows & Columns`
 -   `Faces >> Vertices`, `Vertices >> Faces`, `Polylines >> Vertices`,
     `Vertices >> Polylines`
