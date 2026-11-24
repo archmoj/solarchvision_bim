@@ -1368,6 +1368,205 @@ class Create3D {
 
 
 
+  // Regular tetrahedron, same (cx, cy, cz, r, rot) signature as
+  // add_Icosahedron() above - r is the circumradius (every vertex sits
+  // exactly r from the center), not an edge length. Same "one apex on the
+  // z-axis, the rest on a ring below it" construction Icosahedron uses,
+  // just with a 3-vertex ring instead of a 5-vertex one: for a regular
+  // tetrahedron, the angle subtended at the center between any 2 vertices
+  // is arccos(-1/3), so with v0 = (0, 0, r), every other vertex has
+  // z = r*cos(theta) = -r/3 and a ring radius of r*sin(theta) =
+  // r*sqrt(1 - 1/9) = r*2*sqrt(2)/3 (verified numerically: all 4 vertices
+  // equidistant from the center, all 6 edges equal length).
+  void add_Tetrahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float rot) {
+    beginScene3DChange();
+
+
+    if (r > 0) {
+
+      current_Material = m;
+      current_Tessellation = tes;
+      current_Layer = lyr;
+      current_Visibility = vsb;
+      current_Weight = wgt;
+      current_Closed = clz;
+
+      float R_base = r * 2.0 * pow(2.0, 0.5) / 3.0;
+      float z_ring = cz - r / 3.0;
+
+      int[] v = new int [4];
+
+      v[0] = allPoints.create(cx, cy, cz + r);
+
+      for (int i = 1; i <= 3; i++) {
+        float t = (i - 1) * 120 + rot;
+        v[i] = allPoints.create(cx + R_base * funcs.cos_ang(t), cy + R_base * funcs.sin_ang(t), z_ring);
+      }
+
+      if (m == -1) current_Material = 0;
+      else current_Material = m;
+
+      // Base face first, in reverse ring order (v1, v3, v2) so its own
+      // outward normal points down (away from the apex), then the 3
+      // side faces (v0, v_i, v_{i+1}), each already CCW-outward by the
+      // same cross-product check add_Octahedron()/add_Icosahedron() rely
+      // on above.
+      {
+        int[] newFace_nodes = { v[1], v[3], v[2] };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+
+      for (int i = 1; i <= 3; i++) {
+        int next_i = (i % 3) + 1;
+        int[] newFace_nodes = { v[0], v[i], v[next_i] };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+
+      model_added();
+    }
+
+    endScene3DChange();
+  }
+
+
+
+  // Regular dodecahedron, same (cx, cy, cz, r, rot) signature as
+  // add_Icosahedron()/add_Tetrahedron() above - r is the circumradius.
+  // Unlike those 2, a dodecahedron has no vertex-plus-ring symmetry to
+  // build it from directly, so its 20 vertices are the standard
+  // construction instead: the 8 corners of a cube, plus 3 sets of 4
+  // vertices each built from the golden ratio phi - every one of those
+  // 20 points sits at distance sqrt(3) from the center at unit scale
+  // (cube corners (+-1,+-1,+-1) at sqrt(3); e.g. (0, 1/phi, phi) at
+  // sqrt(1/phi^2 + phi^2) = sqrt(3) too, since phi^2 = phi+1 and
+  // 1/phi^2 = 2-phi), so scaling every coordinate by r/sqrt(3) gives
+  // every vertex exactly the requested circumradius. Its 12 pentagonal
+  // faces don't need triangulating - the mesh format already supports
+  // n-gon faces directly - but unlike a tetrahedron's or icosahedron's
+  // faces, their vertex connectivity isn't a simple formula; the 12
+  // index lists below were derived (and verified: all 20 vertices
+  // equidistant from the center, all 12 faces planar regular pentagons
+  // with one shared edge length, all already wound CCW-outward) from
+  // this exact vertex ordering via a convex-hull computation, not
+  // transcribed by hand.
+  void add_Dodecahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float rot) {
+    beginScene3DChange();
+
+
+    if (r > 0) {
+
+      current_Material = m;
+      current_Tessellation = tes;
+      current_Layer = lyr;
+      current_Visibility = vsb;
+      current_Weight = wgt;
+      current_Closed = clz;
+
+      float s = r / pow(3.0, 0.5);
+      float phi = (1.0 + pow(5.0, 0.5)) / 2.0;
+      float invPhi = 1.0 / phi;
+
+      float[] X_ = new float [20];
+      float[] Y_ = new float [20];
+      float[] Z_ = new float [20];
+
+      // Sign order within each group matters: the faceIndices table below
+      // was derived against exactly this iteration order (sign +1 before
+      // -1, outer-to-inner as written) - see this function's own header
+      // comment.
+      float[] sign2 = { 1, -1 };
+
+      int idx = 0;
+      for (float sx : sign2) {
+        for (float sy : sign2) {
+          for (float sz : sign2) {
+            X_[idx] = sx;
+            Y_[idx] = sy;
+            Z_[idx] = sz;
+            idx++;
+          }
+        }
+      }
+      for (float sy : sign2) {
+        for (float sz : sign2) {
+          X_[idx] = 0;
+          Y_[idx] = sy * invPhi;
+          Z_[idx] = sz * phi;
+          idx++;
+        }
+      }
+      for (float sx : sign2) {
+        for (float sy : sign2) {
+          X_[idx] = sx * invPhi;
+          Y_[idx] = sy * phi;
+          Z_[idx] = 0;
+          idx++;
+        }
+      }
+      for (float sx : sign2) {
+        for (float sz : sign2) {
+          X_[idx] = sx * phi;
+          Y_[idx] = 0;
+          Z_[idx] = sz * invPhi;
+          idx++;
+        }
+      }
+
+      float teta = rot * PI / 180.0;
+
+      int[] v = new int [20];
+      for (int i = 0; i < 20; i++) {
+        float X_s = X_[i] * s;
+        float Y_s = Y_[i] * s;
+        float Z_s = Z_[i] * s;
+
+        float X_r = X_s * cos(teta) - Y_s * sin(teta);
+        float Y_r = X_s * sin(teta) + Y_s * cos(teta);
+        float Z_r = Z_s;
+
+        v[i] = allPoints.create(X_r + cx, Y_r + cy, Z_r + cz);
+      }
+
+      if (m == -1) current_Material = 0;
+      else current_Material = m;
+
+      // Each row is one pentagon's 5 vertex indices, already in
+      // CCW-outward order - see this function's own header comment for
+      // how these were derived and verified.
+      int[][] faceIndices = {
+        {9, 11, 7, 19, 5},
+        {12, 1, 9, 5, 14},
+        {4, 14, 5, 19, 18},
+        {10, 8, 4, 18, 6},
+        {13, 2, 10, 6, 15},
+        {7, 15, 6, 18, 19},
+        {17, 16, 2, 13, 3},
+        {1, 17, 3, 11, 9},
+        {11, 3, 13, 15, 7},
+        {16, 17, 1, 12, 0},
+        {2, 16, 0, 8, 10},
+        {0, 12, 14, 4, 8}
+      };
+
+      for (int[] faceIdx : faceIndices) {
+        int[] newFace_nodes = new int [5];
+        for (int s2 = 0; s2 < 5; s2++) {
+          newFace_nodes[s2] = v[faceIdx[s2]];
+        }
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+
+      model_added();
+    }
+
+    endScene3DChange();
+  }
+
+
+
   // One shared surface generator for 7 hardcoded (x(u,v), y(u,v), z(u,v))
   // formulas, picked by n (0..6) - the switch below is the one place
   // that actually defines what each n looks like. n=1..6 are the Create

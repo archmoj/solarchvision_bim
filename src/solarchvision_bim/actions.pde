@@ -1302,6 +1302,14 @@ void build_allActions() {
     UI_setTo_Create_Octahedron();
   });
 
+  putAction("Tetrahedron", () -> {
+    UI_setTo_Create_Tetrahedron();
+  });
+
+  putAction("Dodecahedron", () -> {
+    UI_setTo_Create_Dodecahedron();
+  });
+
   putAction("Sphere", () -> {
     UI_setTo_Create_Sphere();
   });

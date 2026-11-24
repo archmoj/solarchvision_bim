@@ -2068,6 +2068,20 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
             runScriptLine("Icosahedron" + creatorCommandArgs() +
               " x=" + x + " y=" + y + " z=" + z +
               " d=" + (2 * rx) + " r=" + rot);
+          } else if (CreateObject == CREATE.Tetrahedron) {
+
+            // Same "d" (diameter, halved internally)-plus-"r" (rotation)
+            // shape as the Icosahedron branch just above, for the same
+            // reason: add_Tetrahedron()'s own circumradius parameter
+            // doesn't map onto boxLikeCommandArgs()'s dx/dy/dz.
+            runScriptLine("Tetrahedron" + creatorCommandArgs() +
+              " x=" + x + " y=" + y + " z=" + z +
+              " d=" + (2 * rx) + " r=" + rot);
+          } else if (CreateObject == CREATE.Dodecahedron) {
+
+            runScriptLine("Dodecahedron" + creatorCommandArgs() +
+              " x=" + x + " y=" + y + " z=" + z +
+              " d=" + (2 * rx) + " r=" + rot);
           } else if (CreateObject == CREATE.Pyramid) {
 
             runScriptLine("Pyramid" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));

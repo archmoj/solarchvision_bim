@@ -367,6 +367,8 @@ class UI_menuBar {
       "Sphere",
       "Octahedron",
       "Icosahedron",
+      "Tetrahedron",
+      "Dodecahedron",
       "Pyramid",
       "Hyper",
       "Plane",

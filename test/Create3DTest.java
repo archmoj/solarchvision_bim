@@ -432,6 +432,71 @@ class Create3DTest {
     assertEquals(0, app.allVertices.length);
   }
 
+  // ================= add_Tetrahedron ===================================
+
+  @Test
+  void addTetrahedron_buildsFourVerticesAndFourTriangularFaces () {
+    app.Create3D.add_Tetrahedron(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0);
+
+    assertEquals(4, app.allVertices.length); // 1 apex + 3-vertex ring
+    assertEquals(4, app.allFaces.nodes.length); // 1 base + 3 sides
+    for (int[] face : app.allFaces.nodes) assertEquals(3, face.length);
+
+    assertArrayEquals(new float[]{0, 0, 1}, app.allVertices[0], 0.0001f); // apex
+
+    // Every vertex sits exactly r=1 from the center - the defining
+    // property of a circumradius parameter (verified independently via
+    // a Python/matplotlib derivation before this was written: all 4
+    // vertices equidistant, all 6 edges equal, every pairwise angle at
+    // the center exactly arccos(-1/3)).
+    for (float[] vert : app.allVertices) {
+      float dist = (float) Math.sqrt(vert[0]*vert[0] + vert[1]*vert[1] + vert[2]*vert[2]);
+      assertEquals(1f, dist, 0.0001f);
+    }
+  }
+
+  @Test
+  void addTetrahedron_isANoOpForANonPositiveRadius () {
+    app.Create3D.add_Tetrahedron(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+    assertEquals(0, app.allVertices.length);
+  }
+
+  // ================= add_Dodecahedron ===================================
+
+  @Test
+  void addDodecahedron_buildsTwentyVerticesAndTwelvePentagonalFaces () {
+    app.Create3D.add_Dodecahedron(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0);
+
+    assertEquals(20, app.allVertices.length);
+    assertEquals(12, app.allFaces.nodes.length);
+    for (int[] face : app.allFaces.nodes) assertEquals(5, face.length);
+
+    // Every vertex sits exactly r=1 from the center (verified
+    // independently via a convex-hull-based derivation before this was
+    // written: all 20 vertices equidistant, all 12 faces planar regular
+    // pentagons with one shared edge length, every face already wound
+    // CCW-outward).
+    for (float[] vert : app.allVertices) {
+      float dist = (float) Math.sqrt(vert[0]*vert[0] + vert[1]*vert[1] + vert[2]*vert[2]);
+      assertEquals(1f, dist, 0.0001f);
+    }
+
+    // Every vertex is used by exactly 3 of the 12 pentagons - the other
+    // defining property of a regular dodecahedron (20 vertices * 3
+    // faces-per-vertex / 5 vertices-per-face = 12 faces).
+    int[] usageCount = new int[20];
+    for (int[] face : app.allFaces.nodes) {
+      for (int idx : face) usageCount[idx]++;
+    }
+    for (int count : usageCount) assertEquals(3, count);
+  }
+
+  @Test
+  void addDodecahedron_isANoOpForANonPositiveRadius () {
+    app.Create3D.add_Dodecahedron(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+    assertEquals(0, app.allVertices.length);
+  }
+
   // ================= add_ParametricSurface ==============================
   //
   // Unlike every other generator here, this one has NO validity guard at

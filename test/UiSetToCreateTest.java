@@ -309,6 +309,21 @@ class UiSetToCreateTest {
     assertEquals(1f, app.User3D.creatorSuperellipsoidPowerZ, 0.0001f);
   }
 
+  @Test
+  void createTetrahedron_andCreateDodecahedron_alsoRouteThroughTheirOwnDedicatedCreateConstants () {
+    // Same reasoning as createIcosahedron_... above: neither a regular
+    // tetrahedron nor a regular dodecahedron is representable as a
+    // superquadric at any power, so both route through their own
+    // dedicated CREATE constants instead of CREATE.SuperOBJ.
+    app.UI_setTo_Create_Tetrahedron();
+    assertEquals(app.CREATE.Tetrahedron, app.CreateObject);
+    assertNotEquals(app.CREATE.SuperOBJ, app.CreateObject);
+
+    app.UI_setTo_Create_Dodecahedron();
+    assertEquals(app.CREATE.Dodecahedron, app.CreateObject);
+    assertNotEquals(app.CREATE.SuperOBJ, app.CreateObject);
+  }
+
   // ================= every Create_* always resets through Nothing first ==
 
   @Test

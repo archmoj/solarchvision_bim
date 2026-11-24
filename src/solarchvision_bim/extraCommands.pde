@@ -1897,6 +1897,58 @@ String __ICOSAHEDRON__ (String[] parts) {
     return hint;
 }
 
+String __TETRAHEDRON__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    HashMap<String,String> p = parseParams(parts);
+    int m = getI(p, "m", 7);
+    int tes = getI(p, "tes", 0);
+    int lyr = getI(p, "lyr", 0);
+    int vsb = getI(p, "vsb", 1);
+    int wgt = getI(p, "wgt", 0);
+    int clz = getI(p, "clz", 0);
+    float x = getF(p, "x", 0);
+    float y = getF(p, "y", 0);
+    float z = getF(p, "z", 0);
+    float d = getF(p, "d", 6);
+    float r = getF(p, "r", 0);
+    if (d != 0) {
+        Create3D.add_Tetrahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
+    }
+    }
+    else {
+    hint = "Tetrahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
+    UI_setTo_Create_Tetrahedron();
+    }
+    return hint;
+}
+
+String __DODECAHEDRON__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) {
+    HashMap<String,String> p = parseParams(parts);
+    int m = getI(p, "m", 7);
+    int tes = getI(p, "tes", 0);
+    int lyr = getI(p, "lyr", 0);
+    int vsb = getI(p, "vsb", 1);
+    int wgt = getI(p, "wgt", 0);
+    int clz = getI(p, "clz", 0);
+    float x = getF(p, "x", 0);
+    float y = getF(p, "y", 0);
+    float z = getF(p, "z", 0);
+    float d = getF(p, "d", 6);
+    float r = getF(p, "r", 0);
+    if (d != 0) {
+        Create3D.add_Dodecahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
+    }
+    }
+    else {
+    hint = "Dodecahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
+    UI_setTo_Create_Dodecahedron();
+    }
+    return hint;
+}
+
 String __POLYGONEXTRUDE__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {

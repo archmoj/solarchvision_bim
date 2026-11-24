@@ -27,11 +27,12 @@
 // still dispatches normally.
 HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "arc", "box", "camera", "cone", "cushion",
-  "cylinder", "house1", "house2", "house3",
+  "cylinder", "dodecahedron", "house1", "house2", "house3",
   "icosahedron", "mesh", "move", "octahedron",
   "person", "polyline", "pyramid",
   "rotate", "rotatex", "rotatey", "rotatez",
   "scale", "section", "solid", "sphere", "spline",
+  "tetrahedron",
   // New/Open/Save/Save As/every Import * also each have their own menu-
   // caption action registered (actions.pde), which - unlike this set's
   // other entries above, added for a no-argument hint to reach the

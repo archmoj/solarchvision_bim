@@ -271,6 +271,8 @@ String ___executeScriptLine___ (String lineSTR) {
     case "IMPORT.STL": return  __IMPORT_STL__(parts);
     case "NORMALZOOM": return  __NORMALZOOM__(parts);
     case "OCTAHEDRON": return  __OCTAHEDRON__(parts);
+    case "TETRAHEDRON": return  __TETRAHEDRON__(parts);
+    case "DODECAHEDRON": return  __DODECAHEDRON__(parts);
     case "PARAMETRIC": return  __PARAMETRIC__(parts);
     case "RUN.SCRIPT": return  __RUN_SCRIPT__(parts);
     case "RUN.STAMP": return  __RUN_STAMP__(parts);

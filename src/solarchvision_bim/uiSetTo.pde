@@ -238,6 +238,27 @@ void UI_setTo_Create_Icosahedron () {
   switch_category(ObjectCategory.GROUP);
 }
 
+void UI_setTo_Create_Tetrahedron () {
+  UI_setTo_Create_Nothing();
+
+  // Same reasoning as UI_setTo_Create_Icosahedron()'s own comment above:
+  // a regular tetrahedron isn't representable as a superquadric at any
+  // power either, so this routes straight to its own dedicated CREATE
+  // constant and add_Tetrahedron(), not CREATE.SuperOBJ.
+  CreateObject = CREATE.Tetrahedron;
+
+  switch_category(ObjectCategory.GROUP);
+}
+
+void UI_setTo_Create_Dodecahedron () {
+  UI_setTo_Create_Nothing();
+
+  // Same reasoning again - no superquadric power gives a dodecahedron.
+  CreateObject = CREATE.Dodecahedron;
+
+  switch_category(ObjectCategory.GROUP);
+}
+
 void UI_setTo_Create_Octahedron () {
   UI_setTo_Create_Nothing();
 

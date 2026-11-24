@@ -180,6 +180,20 @@ class UI_toolBarTest {
   }
 
   @Test
+  void buildingType_tetrahedron_reusesTetrahedronCommand () {
+    items("", "Tetrahedron");
+    app.UI_toolBar.performAction("Building Type", 0, 1);
+    assertEquals(app.CREATE.Tetrahedron, app.CreateObject);
+  }
+
+  @Test
+  void buildingType_dodecahedron_reusesDodecahedronCommand () {
+    items("", "Dodecahedron");
+    app.UI_toolBar.performAction("Building Type", 0, 1);
+    assertEquals(app.CREATE.Dodecahedron, app.CreateObject);
+  }
+
+  @Test
   void buildingType_sphere_reusesSphereCommand () {
     items("", "Sphere");
     app.UI_toolBar.performAction("Building Type", 0, 1);

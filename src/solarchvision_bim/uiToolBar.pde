@@ -90,7 +90,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Spline", "Arc", "Surface", "Building Type", "3.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tetrahedron", "Dodecahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Spline", "Arc", "Surface", "Building Type", "3.8"
     }
     ,
     {
@@ -426,6 +426,8 @@ class UI_toolBar {
           case "Box": runScriptLine("Box"); break;
           case "Icosahedron": runScriptLine("Icosahedron"); break;
           case "Octahedron": runScriptLine("Octahedron"); break;
+          case "Tetrahedron": runScriptLine("Tetrahedron"); break;
+          case "Dodecahedron": runScriptLine("Dodecahedron"); break;
           case "Sphere": runScriptLine("Sphere"); break;
           case "Cylinder": runScriptLine("Cylinder"); break;
           case "Cone": runScriptLine("Cone"); break;

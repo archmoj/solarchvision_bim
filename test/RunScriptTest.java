@@ -670,6 +670,34 @@ class RunScriptTest {
   }
 
   @Test
+  void tetrahedron_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("TETRAHEDRON x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void tetrahedron_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Tetrahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?", app.runScriptLine("TETRAHEDRON"));
+  }
+
+  @Test
+  void dodecahedron_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("DODECAHEDRON x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void dodecahedron_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Dodecahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?", app.runScriptLine("DODECAHEDRON"));
+  }
+
+  @Test
   void cushion_withArguments_actuallyCreatesAFace () {
     app.build_allActions();
     String hint = app.runScriptLine("CUSHION x=0 y=0 z=0");

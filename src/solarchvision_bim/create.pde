@@ -25,5 +25,7 @@ class CREATE {
   final static int Cone       = 20;
   final static int Arc        = 21;
   final static int Icosahedron = 22;
+  final static int Tetrahedron = 23;
+  final static int Dodecahedron = 24;
 
 }
