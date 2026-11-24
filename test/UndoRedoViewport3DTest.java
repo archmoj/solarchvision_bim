@@ -525,4 +525,121 @@ class UndoRedoViewport3DTest {
     assertEquals(solidImpactsDisplayImage, app.allSolidImpacts.displayImage);
     assertEquals(windFlowDisplayAll, app.allWindFlows.displayAll);
   }
+
+  // ============= "Selection" menu Show/Hide Selected ... toggles =============
+  //
+  // Covers writeSelectionDisplayState()/readSelectionDisplayState()
+  // (undoRedoViewport3D.pde): the "Selection" menu's Show/Hide Selected
+  // ... display flags (Select3D's own display fields, as opposed to its
+  // selection-set fields) ride along in the same WIN3D snapshot/poll
+  // pipeline as the camera, so Ctrl+Shift+Z/Y (not Ctrl+Z/Y) undo/redo
+  // them too, same as the Visibility menu toggles above.
+
+  @Test
+  void toggleSolidDisplayEdges_recordsAViewport3DHistoryStepNotAScene3DOne () {
+    app.seedScene3DHistory();
+    seed();
+
+    app.frameCount = 10;
+    app.Select3D.solidDisplayEdges = !app.Select3D.solidDisplayEdges; // the live "Show/Hide Selected Solids" action's own effect (actions.pde)
+    app.trackViewport3DChange();
+
+    assertEquals(2, app.viewport3DHistory.size(), "a selection-display toggle must record a viewport history step");
+    assertEquals(1, app.scene3DHistory.size(), "a selection-display toggle must NOT record a model history step");
+  }
+
+  @Test
+  void undoViewport3DChange_restoresASolidDisplayEdgesToggle () {
+    seed();
+    boolean baseline = app.Select3D.solidDisplayEdges;
+
+    app.frameCount = 10;
+    app.Select3D.solidDisplayEdges = !baseline;
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+
+    assertEquals(baseline, app.Select3D.solidDisplayEdges, "Ctrl+Shift+Z must undo the selection-display toggle");
+  }
+
+  @Test
+  void redoViewport3DChange_reappliesASolidDisplayEdgesToggle () {
+    seed();
+    boolean baseline = app.Select3D.solidDisplayEdges;
+
+    app.frameCount = 10;
+    app.Select3D.solidDisplayEdges = !baseline;
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+    app.redoViewport3DChange();
+
+    assertEquals(!baseline, app.Select3D.solidDisplayEdges, "Ctrl+Shift+Y must redo the selection-display toggle");
+  }
+
+  @Test
+  void undoThenRedo_roundTripsEverySelectionMenuToggleExactly () {
+    // One of each of the 16 "Selection" menu flags
+    // writeSelectionDisplayState()/readSelectionDisplayState() cover -
+    // confirms the full set actually round-trips, not just the one
+    // field the tests above already isolate.
+    seed();
+
+    app.frameCount = 10;
+    app.Select3D.solidDisplayEdges = !app.Select3D.solidDisplayEdges;
+    app.Select3D.sectionDisplayEdges = !app.Select3D.sectionDisplayEdges;
+    app.Select3D.cameraDisplayFrustum = !app.Select3D.cameraDisplayFrustum;
+    app.Select3D.terrainDisplayVertices = !app.Select3D.terrainDisplayVertices;
+    app.Select3D.faceDisplayEdges = !app.Select3D.faceDisplayEdges;
+    app.Select3D.polylineDisplayVertices = !app.Select3D.polylineDisplayVertices;
+    app.Select3D.faceDisplayVertexSelection = !app.Select3D.faceDisplayVertexSelection;
+    app.Select3D.polylineDisplayVertexSelection = !app.Select3D.polylineDisplayVertexSelection;
+    app.Select3D.vertexDisplayMarkers = !app.Select3D.vertexDisplayMarkers;
+    app.Select3D.pivotDisplayReference = !app.Select3D.pivotDisplayReference;
+    app.Select3D.groupDisplayPivot = !app.Select3D.groupDisplayPivot;
+    app.Select3D.groupDisplayEdges = !app.Select3D.groupDisplayEdges;
+    app.Select3D.groupDisplayBox = !app.Select3D.groupDisplayBox;
+    app.Select3D.model2DDisplayBounds = !app.Select3D.model2DDisplayBounds;
+    app.Select3D.model1DDisplayBounds = !app.Select3D.model1DDisplayBounds;
+    app.Select3D.modifierDisplayBoundingBox = !app.Select3D.modifierDisplayBoundingBox;
+
+    boolean solidDisplayEdges = app.Select3D.solidDisplayEdges;
+    boolean sectionDisplayEdges = app.Select3D.sectionDisplayEdges;
+    boolean cameraDisplayFrustum = app.Select3D.cameraDisplayFrustum;
+    boolean terrainDisplayVertices = app.Select3D.terrainDisplayVertices;
+    boolean faceDisplayEdges = app.Select3D.faceDisplayEdges;
+    boolean polylineDisplayVertices = app.Select3D.polylineDisplayVertices;
+    boolean faceDisplayVertexSelection = app.Select3D.faceDisplayVertexSelection;
+    boolean polylineDisplayVertexSelection = app.Select3D.polylineDisplayVertexSelection;
+    boolean vertexDisplayMarkers = app.Select3D.vertexDisplayMarkers;
+    boolean pivotDisplayReference = app.Select3D.pivotDisplayReference;
+    boolean groupDisplayPivot = app.Select3D.groupDisplayPivot;
+    boolean groupDisplayEdges = app.Select3D.groupDisplayEdges;
+    boolean groupDisplayBox = app.Select3D.groupDisplayBox;
+    boolean model2DDisplayBounds = app.Select3D.model2DDisplayBounds;
+    boolean model1DDisplayBounds = app.Select3D.model1DDisplayBounds;
+    boolean modifierDisplayBoundingBox = app.Select3D.modifierDisplayBoundingBox;
+
+    app.trackViewport3DChange();
+
+    app.undoViewport3DChange();
+    app.redoViewport3DChange();
+
+    assertEquals(solidDisplayEdges, app.Select3D.solidDisplayEdges);
+    assertEquals(sectionDisplayEdges, app.Select3D.sectionDisplayEdges);
+    assertEquals(cameraDisplayFrustum, app.Select3D.cameraDisplayFrustum);
+    assertEquals(terrainDisplayVertices, app.Select3D.terrainDisplayVertices);
+    assertEquals(faceDisplayEdges, app.Select3D.faceDisplayEdges);
+    assertEquals(polylineDisplayVertices, app.Select3D.polylineDisplayVertices);
+    assertEquals(faceDisplayVertexSelection, app.Select3D.faceDisplayVertexSelection);
+    assertEquals(polylineDisplayVertexSelection, app.Select3D.polylineDisplayVertexSelection);
+    assertEquals(vertexDisplayMarkers, app.Select3D.vertexDisplayMarkers);
+    assertEquals(pivotDisplayReference, app.Select3D.pivotDisplayReference);
+    assertEquals(groupDisplayPivot, app.Select3D.groupDisplayPivot);
+    assertEquals(groupDisplayEdges, app.Select3D.groupDisplayEdges);
+    assertEquals(groupDisplayBox, app.Select3D.groupDisplayBox);
+    assertEquals(model2DDisplayBounds, app.Select3D.model2DDisplayBounds);
+    assertEquals(model1DDisplayBounds, app.Select3D.model1DDisplayBounds);
+    assertEquals(modifierDisplayBoundingBox, app.Select3D.modifierDisplayBoundingBox);
+  }
 }

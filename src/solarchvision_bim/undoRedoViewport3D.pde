@@ -67,14 +67,16 @@ int viewport3DHistoryLastChangeFrame = -1;
 
 // WIN3D's own undo/redo snapshot, plus (see writeVisibilityToggleState()'s
 // own comment just below) the "Visibility" menu's Show/Hide display
-// toggles - everything buildScene3DSnapshot()'s own header comment
-// explicitly calls out as NOT wired to beginScene3DChange()/
-// endScene3DChange() ("toggling what's displayed... those don't call
-// either function and don't record a step"). Those toggles used to not
-// record ANY undo step at all; they now ride along in this same
-// snapshot/poll pipeline as WIN3D's own camera/view fields, so Ctrl+Shift+Z/
-// Ctrl+Shift+Y undo/redo them - never Ctrl+Z/Ctrl+Y, which stays scoped
-// to actual model/geometry edits. Deliberately still NOT the eleven
+// toggles and (see writeSelectionDisplayState()'s own comment) the
+// "Selection" menu's Show/Hide Selected ... display toggles -
+// everything buildScene3DSnapshot()'s own header comment explicitly
+// calls out as NOT wired to beginScene3DChange()/endScene3DChange()
+// ("toggling what's displayed... those don't call either function and
+// don't record a step"). Those toggles used to not record ANY undo step
+// at all; they now ride along in this same snapshot/poll pipeline as
+// WIN3D's own camera/view fields, so Ctrl+Shift+Z/Ctrl+Shift+Y undo/redo
+// them - never Ctrl+Z/Ctrl+Y, which stays scoped to actual model/
+// geometry edits. Deliberately still NOT the eleven
 // buildScene3DSnapshot() classes themselves, and NOT the per-face/
 // per-polyline Visibility VALUE (allFaces/allPolylines.options[.][3],
 // set by the Modify menu's Change/Pick/Assign/Reverse Visibility and
@@ -91,6 +93,7 @@ XML buildViewport3DSnapshot () {
 
   WIN3D.to_XML(xml);
   writeVisibilityToggleState(xml);
+  writeSelectionDisplayState(xml);
 
   return xml;
 }
@@ -176,6 +179,78 @@ void readVisibilityToggleState (XML parent) {
   allWindFlows.displayAll = XML_getBoolean(xml, "windFlowDisplayAll");
 }
 
+// The 16 plain boolean "what's displayed" flags behind the "Selection"
+// menu's Show/Hide Selected ... items (uiMenuBar.pde's PARENT_SELECTION
+// block) - Select3D's own display fields, as opposed to its selection-
+// set fields (faceSelection, model1DSelection, etc.), which stay out of
+// this and keep being tracked only via Select3D's inclusion in
+// buildScene3DSnapshot()'s eleven classes, same as before.
+//
+// Select3D.to_XML()/from_XML() (select3D.pde) already writes these same
+// 16 flags too - it's both one of buildScene3DSnapshot()'s eleven
+// classes AND the actual project-file format (saveProject.pde/
+// parseXmlVariables.pde), and removing them from it would silently stop
+// persisting these display preferences across Save/Open. So this is
+// deliberately additive, not a replacement: the live fields now have two
+// readers/writers, exactly like Terrain's own four flags above (Terrain
+// is simultaneously one of buildScene3DSnapshot()'s eleven classes and a
+// writeVisibilityToggleState() entry). The trade-off that comes with
+// that, same as Terrain's: undoing/redoing far enough back through
+// Scene3D's own history (Ctrl+Z/Ctrl+Y) can still incidentally carry one
+// of these flags back to whatever it was at that older model edit, as a
+// side effect of Select3D being swapped wholesale - buildScene3DSnapshot()'s
+// own header comment already documents this class of imprecision
+// ("toggling what's displayed... not yet precise for that case") for
+// exactly this reason, and this fix doesn't make it any less precise
+// than it already was. What's new here is that Ctrl+Shift+Z/Ctrl+Shift+Y
+// now gives each toggle its own correct, dedicated undo step, which
+// didn't exist at all before.
+void writeSelectionDisplayState (XML parent) {
+  XML xml = parent.addChild("selectionDisplayToggles");
+
+  XML_setBoolean(xml, "solidDisplayEdges", Select3D.solidDisplayEdges);
+  XML_setBoolean(xml, "sectionDisplayEdges", Select3D.sectionDisplayEdges);
+  XML_setBoolean(xml, "cameraDisplayFrustum", Select3D.cameraDisplayFrustum);
+  XML_setBoolean(xml, "terrainDisplayVertices", Select3D.terrainDisplayVertices);
+  XML_setBoolean(xml, "faceDisplayEdges", Select3D.faceDisplayEdges);
+  XML_setBoolean(xml, "polylineDisplayVertices", Select3D.polylineDisplayVertices);
+  XML_setBoolean(xml, "faceDisplayVertexSelection", Select3D.faceDisplayVertexSelection);
+  XML_setBoolean(xml, "polylineDisplayVertexSelection", Select3D.polylineDisplayVertexSelection);
+  XML_setBoolean(xml, "vertexDisplayMarkers", Select3D.vertexDisplayMarkers);
+  XML_setBoolean(xml, "pivotDisplayReference", Select3D.pivotDisplayReference);
+  XML_setBoolean(xml, "groupDisplayPivot", Select3D.groupDisplayPivot);
+  XML_setBoolean(xml, "groupDisplayEdges", Select3D.groupDisplayEdges);
+  XML_setBoolean(xml, "groupDisplayBox", Select3D.groupDisplayBox);
+  XML_setBoolean(xml, "model2DDisplayBounds", Select3D.model2DDisplayBounds);
+  XML_setBoolean(xml, "model1DDisplayBounds", Select3D.model1DDisplayBounds);
+  XML_setBoolean(xml, "modifierDisplayBoundingBox", Select3D.modifierDisplayBoundingBox);
+}
+
+// The from_XML() counterpart to writeSelectionDisplayState() above - see
+// that function's own comment. Same "leave it alone if the child is
+// missing" fallback as readVisibilityToggleState().
+void readSelectionDisplayState (XML parent) {
+  XML xml = parent.getChild("selectionDisplayToggles");
+  if (xml == null) return;
+
+  Select3D.solidDisplayEdges = XML_getBoolean(xml, "solidDisplayEdges");
+  Select3D.sectionDisplayEdges = XML_getBoolean(xml, "sectionDisplayEdges");
+  Select3D.cameraDisplayFrustum = XML_getBoolean(xml, "cameraDisplayFrustum");
+  Select3D.terrainDisplayVertices = XML_getBoolean(xml, "terrainDisplayVertices");
+  Select3D.faceDisplayEdges = XML_getBoolean(xml, "faceDisplayEdges");
+  Select3D.polylineDisplayVertices = XML_getBoolean(xml, "polylineDisplayVertices");
+  Select3D.faceDisplayVertexSelection = XML_getBoolean(xml, "faceDisplayVertexSelection");
+  Select3D.polylineDisplayVertexSelection = XML_getBoolean(xml, "polylineDisplayVertexSelection");
+  Select3D.vertexDisplayMarkers = XML_getBoolean(xml, "vertexDisplayMarkers");
+  Select3D.pivotDisplayReference = XML_getBoolean(xml, "pivotDisplayReference");
+  Select3D.groupDisplayPivot = XML_getBoolean(xml, "groupDisplayPivot");
+  Select3D.groupDisplayEdges = XML_getBoolean(xml, "groupDisplayEdges");
+  Select3D.groupDisplayBox = XML_getBoolean(xml, "groupDisplayBox");
+  Select3D.model2DDisplayBounds = XML_getBoolean(xml, "model2DDisplayBounds");
+  Select3D.model1DDisplayBounds = XML_getBoolean(xml, "model1DDisplayBounds");
+  Select3D.modifierDisplayBoundingBox = XML_getBoolean(xml, "modifierDisplayBoundingBox");
+}
+
 // The one baseline entry that isn't "state after a change" - same role
 // seedScene3DHistory() plays for the model history. Called once from
 // drawInitialFrames.pde right before the app starts accepting input,
@@ -256,12 +331,13 @@ void redoViewport3DChange () {
 }
 
 // The from_XML() counterpart to buildViewport3DSnapshot() above -
-// WIN3D.from_XML() plus readVisibilityToggleState() (see
-// buildViewport3DSnapshot()'s own comment for why the latter rides
-// along in this same snapshot).
+// WIN3D.from_XML() plus readVisibilityToggleState() and
+// readSelectionDisplayState() (see buildViewport3DSnapshot()'s own
+// comment for why the latter two ride along in this same snapshot).
 void restoreViewport3DSnapshot (XML xml) {
   WIN3D.from_XML(xml);
   readVisibilityToggleState(xml);
+  readSelectionDisplayState(xml);
 }
 
 // Safe to call from undo()/redo() only because of
