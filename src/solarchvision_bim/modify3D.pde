@@ -2395,6 +2395,324 @@ class Modify3D {
     return (pu1 >= u0) && (pu0 <= u1) && (pv1 >= v0) && (pv0 <= v1);
   }
 
+  // --- Semi-Regular (Archimedean) Tiling family -------------------------
+  // A separate command family from Square/Hexagon/Equilateral/Cairo above,
+  // because of one deliberate behavior difference: every piece still gets
+  // created (including clipped boundary fragments of any shape), but only
+  // the WHOLE copies of the pattern's own highest-vertex-count polygon end
+  // up selected afterward - e.g. for Rhombitrihexagonal (3.4.6.4) that's
+  // the hexagons, not the squares, triangles, or any clipped fragment of
+  // either - so the user can go straight on to add openings, etc., inside
+  // just those. "Highest vertex count" is read straight off each
+  // candidate's own pre-clip vertex count, which already uniquely picks
+  // out the right shape for every semi-regular pattern (no two of a given
+  // pattern's own polygon types ever share a vertex count).
+
+  final static int SEMIREGULAR_RHOMBITRIHEXAGONAL = 0;
+
+  void tilingRhombitrihexagonal_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
+  }
+
+  void applySemiRegularTiling_Selection (int patternKind) {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    // Unlike applyTiling_Selection()'s newfaceSelection_L (appended on top
+    // of whatever was already selected), this is built as the ENTIRE new
+    // selection from scratch - every qualifying whole highest-degree tile
+    // across every processed face, and nothing else - since the previously
+    // selected face(s) themselves are not meant to stay selected once
+    // they've been replaced by this pattern's own pieces.
+    ArrayList<Integer> selectedFaceSelection_L = new ArrayList<Integer>();
+
+    for (int q = Select3D.faceSelection.length - 1; q >= 0; q--) {
+      int f = Select3D.faceSelection[q];
+      int OBJ_ID = this.findOwningGroupId(f);
+      if (OBJ_ID == -1) continue;
+
+      float[][] base_Vertices = faceBaseVertices(f);
+      float[] faceNormal = faceNormalUnit(base_Vertices);
+
+      float[] U_first = funcs.vec3_unit(new float[] {
+        base_Vertices[1][0] - base_Vertices[0][0],
+        base_Vertices[1][1] - base_Vertices[0][1],
+        base_Vertices[1][2] - base_Vertices[0][2]
+      });
+      float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
+
+      float[] U_axis = new float[3];
+      float[] V_axis = new float[3];
+      for (int k = 0; k < 3; k++) {
+        U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
+        V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
+      }
+
+      float uMin = FLOAT_huge, uMax = -FLOAT_huge, vMin = FLOAT_huge, vMax = -FLOAT_huge;
+      for (int s = 0; s < base_Vertices.length; s++) {
+        float dx = base_Vertices[s][0] - base_Vertices[0][0];
+        float dy = base_Vertices[s][1] - base_Vertices[0][1];
+        float dz = base_Vertices[s][2] - base_Vertices[0][2];
+        float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
+        float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
+        uMin = min(uMin, u);
+        uMax = max(uMax, u);
+        vMin = min(vMin, v);
+        vMax = max(vMax, v);
+      }
+
+      ArrayList<float[][]> candidates_UV = buildSemiRegularCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+
+      int maxDegree = 0;
+      for (int c = 0; c < candidates_UV.size(); c++) {
+        maxDegree = max(maxDegree, candidates_UV.get(c).length);
+      }
+
+      ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+      ArrayList<Boolean> midList_Qualifies_L = new ArrayList<Boolean>();
+
+      current_Material = allFaces.getMaterial(f);
+      current_Tessellation = allFaces.getTessellation(f);
+      current_Layer = allFaces.getLayer(f);
+      current_Visibility = allFaces.getVisibility(f);
+
+      for (int c = 0; c < candidates_UV.size(); c++) {
+        float[][] candidate_UV = candidates_UV.get(c);
+        int originalVertexCount = candidate_UV.length;
+
+        float[][] candidate_3D = new float[candidate_UV.length][3];
+        for (int s = 0; s < candidate_UV.length; s++) {
+          float u = candidate_UV[s][0];
+          float v = candidate_UV[s][1];
+          candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
+          candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
+          candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
+        }
+
+        float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        // Sutherland-Hodgman returns a candidate completely untouched
+        // (same vertex count, same values, same order) whenever every one
+        // of its corners is already inside every one of the face's own
+        // half-planes - so comparing the pre-dedupe clip result against
+        // the original candidate, value for value, is an exact (not
+        // approximate) test of "did the boundary actually cut this one".
+        boolean wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
+
+        float[][] clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
+        if (clipped.length < 3) continue; // fully outside the face
+
+        float area = polygonArea3D(clipped, faceNormal);
+        if (area < FLOAT_tiny * FLOAT_tiny) continue; // degenerate sliver - see applyTiling_Selection()'s own identical check
+
+        int[] newFace_nodes = new int[clipped.length];
+        for (int s = 0; s < clipped.length; s++) {
+          newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
+        }
+        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+
+        midList_Faces_nodes_L.add(newFace_nodes);
+        midList_Faces_options_L.add(newFace_options);
+        midList_Qualifies_L.add(!wasClipped && (originalVertexCount == maxDegree));
+      }
+
+      if (midList_Faces_nodes_L.size() == 0) continue; // the pattern missed this face entirely - leave it untouched rather than deleting it with nothing to replace it
+
+      int netShift = midList_Faces_nodes_L.size() - 1;
+      allGroups.inserted_nFaces(OBJ_ID, f, netShift);
+
+      spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+
+      // Keep any already-recorded qualifying indices from previously processed
+      // (larger-index) faces in sync with this splice, then queue up this
+      // face's own qualifying pieces - including slot s == 0 (the face
+      // that replaces the original f itself), unlike applyTiling_Selection()'s
+      // own newfaceSelection_L, since here the original face's own slot is
+      // just as eligible (or not) as any newly appended one.
+      for (int i = 0; i < selectedFaceSelection_L.size(); i++) {
+        if (selectedFaceSelection_L.get(i) > f) selectedFaceSelection_L.set(i, selectedFaceSelection_L.get(i) + netShift);
+      }
+      for (int s = 0; s < midList_Faces_nodes_L.size(); s++) {
+        if (midList_Qualifies_L.get(s)) selectedFaceSelection_L.add(f + s);
+      }
+    }
+
+    int[] finalSelection = new int[selectedFaceSelection_L.size()];
+    for (int i = 0; i < finalSelection.length; i++) finalSelection[i] = selectedFaceSelection_L.get(i);
+    Select3D.faceSelection = finalSelection; // full replace, not appended on top of the pre-command selection - see selectedFaceSelection_L's own comment above
+
+    switch_category(ObjectCategory.FACE);
+    endScene3DChange();
+  }
+
+  // Exact (not approximate) vertex-for-vertex equality check - used only
+  // to detect "this candidate passed through clipPolygonToFaceBoundary3D()
+  // completely untouched", which is itself exact (see its own call site's
+  // comment above), so an exact comparison is the correct, not merely
+  // convenient, test here.
+  boolean polygonsExactlyEqual3D (float[][] a, float[][] b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if ((a[i][0] != b[i][0]) || (a[i][1] != b[i][1]) || (a[i][2] != b[i][2])) return false;
+    }
+    return true;
+  }
+
+  // Builds every candidate polygon (as {u, v} corner arrays, same
+  // (U_axis, V_axis) frame as the regular Tiling family above) for one of
+  // the semi-regular patterns, generously overshooting the face's own UV
+  // extent the same way the regular family's buildTilingCandidates_UV()
+  // does, for the same reason (never leave a boundary tile short, however
+  // User3D.tileRotation sits).
+  ArrayList<float[][]> buildSemiRegularCandidates_UV (int patternKind, float edgeSize, float uMin, float uMax, float vMin, float vMax) {
+    ArrayList<float[][]> result = new ArrayList<float[][]>();
+
+    if (patternKind == SEMIREGULAR_RHOMBITRIHEXAGONAL) {
+      // Hexagons (edge a) sit on a triangular lattice, spaced apart (not
+      // edge-to-edge) by D = a*(1+sqrt(3)) in all 6 directions 60 deg
+      // apart - one square (edge a) fills the gap along every pair of
+      // facing hexagon edges, and one triangle (edge a) fills the gap at
+      // every trio of mutually facing hexagon corners. Each hexagon is
+      // generated exactly once (one per lattice point), but each square is
+      // generated twice (once from each of its 2 neighboring hexagons) and
+      // each triangle 3 times (once from each of its 3 neighboring
+      // hexagons) by this same per-lattice-point loop - addUniquePolygonUV()
+      // below is what collapses those back down to one copy apiece.
+      float a_len = edgeSize;
+      float D = a_len * (1 + sqrt(3));
+
+      // Lattice basis vectors (60 deg apart, length D) and their inverse,
+      // used to work out which (i, j) lattice indices this face's own
+      // padded UV extent actually needs.
+      float e1x = D, e1y = 0;
+      float e2x = D * 0.5, e2y = D * sqrt(3) / 2.0;
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * D; // generous - one extra ring of hexagon-lattice points on every side
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      // Template for the k == 0 (direction 0 deg) square and triangle,
+      // relative to a hexagon centered at the origin - every other
+      // direction's square/triangle is this same template rotated by
+      // 60*k deg about the hexagon's own center (the tiling's 6-fold
+      // symmetry), per the construction worked out while planning this:
+      // hexagon vertices at 30+60*m deg (circumradius a); the square
+      // toward direction 60*k deg shares the hexagon edge facing that
+      // direction (hexagon vertices at 60*k-30 and 60*k+30) and the
+      // facing edge of the neighboring hexagon at distance D in that same
+      // direction (that hexagon's own vertices at 60*k+150 and 60*k+210);
+      // the triangle at hexagon vertex 60*k+30 deg is bounded by that
+      // vertex, square_k's far corner (at the neighbor's vertex 60*k+150),
+      // and square_(k+1)'s far corner (at the OTHER neighbor's vertex
+      // 60*(k+1)+210 deg) - verified to close as an equilateral triangle
+      // of edge a (and the square's own free edges to be length a) by the
+      // identity D - a*sqrt(3) == a.
+      float[] P1rel = { a_len * funcs.cos_ang(-30), a_len * funcs.sin_ang(-30) };
+      float[] P2rel = { a_len * funcs.cos_ang(30), a_len * funcs.sin_ang(30) };
+      float[] P3rel = { D + a_len * funcs.cos_ang(150), a_len * funcs.sin_ang(150) };
+      float[] P4rel = { D + a_len * funcs.cos_ang(210), a_len * funcs.sin_ang(210) };
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float cx = i * e1x + j * e2x;
+          float cy = i * e1y + j * e2y;
+
+          float[][] hex = new float[6][2];
+          for (int m = 0; m < 6; m++) {
+            float ang = 30 + 60 * m;
+            hex[m][0] = cx + a_len * funcs.cos_ang(ang);
+            hex[m][1] = cy + a_len * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, hex);
+
+          for (int k = 0; k < 6; k++) {
+            float[] sq1 = rotate2D(P1rel, 60 * k);
+            float[] sq2 = rotate2D(P2rel, 60 * k);
+            float[] sq3 = rotate2D(P3rel, 60 * k);
+            float[] sq4 = rotate2D(P4rel, 60 * k);
+            // P1,P2,P3,P4 in that order traces the square clockwise (P1,P2
+            // is the hexagon-shared edge going "up", P2,P3 the free top
+            // edge going "right", the opposite winding to the hexagon's
+            // and triangle's own CCW vertex order below) - P1,P4,P3,P2
+            // retraces the same square counter-clockwise instead, so
+            // every piece this pattern creates agrees on which way is
+            // "out", same as faceNormalUnit()'s own cross(U,V) convention.
+            float[][] square = new float[][] {
+              { cx + sq1[0], cy + sq1[1] }, { cx + sq4[0], cy + sq4[1] },
+              { cx + sq3[0], cy + sq3[1] }, { cx + sq2[0], cy + sq2[1] }
+            };
+            addUniquePolygonUV(result, seenKeys, square);
+
+            float[] tri2 = rotate2D(P2rel, 60 * k);
+            float[] tri3 = rotate2D(P3rel, 60 * k);
+            float[] tri4next = rotate2D(P4rel, 60 * (k + 1));
+            float[][] triangle = new float[][] {
+              { cx + tri2[0], cy + tri2[1] }, { cx + tri3[0], cy + tri3[1] }, { cx + tri4next[0], cy + tri4next[1] }
+            };
+            addUniquePolygonUV(result, seenKeys, triangle);
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Rotates a single {u, v} point by deg degrees about the UV origin -
+  // the semi-regular family's own templates above are built relative to
+  // each hexagon's own center, so this only ever needs a rotation about
+  // (0, 0), unlike the Cairo family's cairoRotatePentagon_UV() (which
+  // rotates whole pentagons about an arbitrary shared vertex/midpoint).
+  float[] rotate2D (float[] p, float deg) {
+    float c = funcs.cos_ang(deg);
+    float s = funcs.sin_ang(deg);
+    return new float[] { p[0] * c - p[1] * s, p[0] * s + p[1] * c };
+  }
+
+  // Rounds and sorts a polygon's own {u, v} corners into one string key
+  // (same technique as the Cairo family's cairoPentagonKey(), generalized
+  // here since squares and triangles are each generated more than once -
+  // see buildSemiRegularCandidates_UV()'s own comment above for exactly
+  // how many times - and need collapsing back down to one copy apiece).
+  String semiRegularPolygonKeyUV (float[][] poly) {
+    String[] parts = new String[poly.length];
+    for (int k = 0; k < poly.length; k++) {
+      float ru = round(poly[k][0] * 1000) / 1000.0;
+      float rv = round(poly[k][1] * 1000) / 1000.0;
+      parts[k] = ru + "," + rv;
+    }
+    java.util.Arrays.sort(parts);
+    StringBuilder sb = new StringBuilder();
+    for (int k = 0; k < parts.length; k++) {
+      sb.append(parts[k]);
+      sb.append(";");
+    }
+    return sb.toString();
+  }
+
+  void addUniquePolygonUV (ArrayList<float[][]> result, java.util.HashSet<String> seenKeys, float[][] poly) {
+    String key = semiRegularPolygonKeyUV(poly);
+    if (seenKeys.contains(key)) return;
+    seenKeys.add(key);
+    result.add(poly);
+  }
+
   void forceTriangulateFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

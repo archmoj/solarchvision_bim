@@ -507,6 +507,8 @@ class UI_menuBar {
       "Cairo Tiling",
       "Hexagon Tiling",
       ___divider___,
+      "Rhombitrihexagonal Tiling",
+      ___divider___,
       "Insert Corner Openings",
       "Insert Parallel Openings",
       "Insert Rotated Openings",
