@@ -129,6 +129,41 @@ class TilingSelectionTest {
     assertTrue(foundWholeHexagon, "a face this much bigger than one tile should contain at least one unclipped, whole hexagon");
   }
 
+  @Test
+  void tilingHexagon_selectsOnlyTheWholeUnclippedHexagons () {
+    // Same selection discipline as the Semi-Regular family: every tile
+    // still gets created, but only the whole, unclipped ones end up
+    // selected afterward (full replace, not append) - including any
+    // clipped boundary fragment that happened to still land on 6 vertices.
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingHexagon_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 5x5 face at edgeSize=1 should contain at least one whole, unclipped hexagon");
+
+    float expectedHexagonArea = (3 * (float) Math.sqrt(3) / 2) * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(6, app.allFaces.nodes[idx].length, "every selected face must be a hexagon");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      assertEquals(expectedHexagonArea, area, 0.0001f, "a selected hexagon must be a true, unclipped regular hexagon, not a same-vertex-count clipped fragment");
+    }
+
+    boolean foundUnselectedSixVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 6) && !selectedSet.contains(f)) foundUnselectedSixVertexFace = true;
+    }
+    assertTrue(foundUnselectedSixVertexFace, "setup check - this face size should produce at least one clipped-but-still-6-vertex boundary fragment to tell apart from a true whole hexagon");
+  }
+
   // --- tilingEquilateral_Selection (a full integration test) -----------
 
   @Test
@@ -147,6 +182,41 @@ class TilingSelectionTest {
       if (app.allFaces.nodes[f].length == 3) foundWholeTriangle = true;
     }
     assertTrue(foundWholeTriangle, "a face this much bigger than one tile should contain at least one unclipped, whole triangle");
+  }
+
+  @Test
+  void tilingEquilateral_selectsOnlyTheWholeUnclippedTriangles () {
+    // Same selection discipline as the Semi-Regular family: every tile
+    // still gets created, but only the whole, unclipped ones end up
+    // selected afterward (full replace, not append) - including any
+    // clipped boundary fragment that happened to still land on 3 vertices.
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingEquilateral_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 5x5 face at edgeSize=1 should contain at least one whole, unclipped triangle");
+
+    float expectedTriangleArea = ((float) Math.sqrt(3) / 4) * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(3, app.allFaces.nodes[idx].length, "every selected face must be a triangle");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      assertEquals(expectedTriangleArea, area, 0.0001f, "a selected triangle must be a true, unclipped equilateral triangle, not a same-vertex-count clipped fragment");
+    }
+
+    boolean foundUnselectedThreeVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 3) && !selectedSet.contains(f)) foundUnselectedThreeVertexFace = true;
+    }
+    assertTrue(foundUnselectedThreeVertexFace, "setup check - this face size should produce at least one clipped-but-still-3-vertex boundary fragment to tell apart from a true whole triangle");
   }
 
   // --- tilingCairo_Selection (a full integration test) ------------------
@@ -205,7 +275,14 @@ class TilingSelectionTest {
   }
 
   @Test
-  void tilingCairo_appendsTheNewFacesToTheSelectionAndExtendsTheGroupRange () {
+  void tilingCairo_selectsOnlyTheWholeUnclippedPentagonsAndExtendsTheGroupRange () {
+    // The pattern's own irregular (edges a,b,a,a,a) pentagon has a fixed
+    // area of 1.5*edgeSize^2 whatever its rotation (shoelace-verified while
+    // deriving the geometry) - same selection discipline as the
+    // Semi-Regular family: every pentagon still gets created, but only the
+    // whole, unclipped ones end up selected afterward (full replace, not
+    // append), including any clipped boundary fragment that happened to
+    // still land on 5 vertices.
     setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
@@ -216,23 +293,66 @@ class TilingSelectionTest {
     assertTrue(n > 1);
     assertArrayEquals(new int[]{0, n - 1}, app.allGroups.Faces[0], "the group's face range should grow to cover all new tiles");
 
-    int[] expectedSelection = new int[n];
-    for (int i = 0; i < n; i++) expectedSelection[i] = i;
-    assertArrayEquals(expectedSelection, app.Select3D.faceSelection, "all new tiles should end up selected");
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 5x5 face at edgeSize=1 should contain at least one whole, unclipped pentagon");
+
+    float expectedPentagonArea = 1.5f * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(5, app.allFaces.nodes[idx].length, "every selected face must be a pentagon");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      assertEquals(expectedPentagonArea, area, 0.0001f, "a selected pentagon must be a true, unclipped Cairo pentagon, not a same-vertex-count clipped fragment");
+    }
+
+    boolean foundUnselectedFiveVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 5) && !selectedSet.contains(f)) foundUnselectedFiveVertexFace = true;
+    }
+    assertTrue(foundUnselectedFiveVertexFace, "setup check - this face size should produce at least one clipped-but-still-5-vertex boundary fragment to tell apart from a true whole pentagon");
   }
 
   // --- shared selection/group plumbing, same as the tessellate family ---
 
   @Test
-  void tilingSquare_appendsTheNewFacesToTheSelectionAndExtendsTheGroupRange () {
-    setUpOneFace(new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}});
+  void tilingSquare_selectsOnlyTheWholeUnclippedSquaresAndExtendsTheGroupRange () {
+    // Same selection discipline as the Semi-Regular family: every tile
+    // still gets created, but only the whole, unclipped ones end up
+    // selected afterward (full replace, not append), including any
+    // clipped boundary fragment that happened to still land on 4 vertices
+    // (e.g. an edge-clipped square strip, still a quadrilateral but a
+    // smaller, non-square one).
+    setUpOneFace(new float[][]{{0, 0, 0}, {3.5f, 0, 0}, {3.5f, 3.5f, 0}, {0, 3.5f, 0}});
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
 
     app.Modify3D.tilingSquare_Selection();
 
-    assertEquals(4, app.allFaces.nodes.length);
-    assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0], "the group's face range should grow to cover all 4 new tiles");
-    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection, "all 4 new tiles should end up selected");
+    int n = app.allFaces.nodes.length;
+    assertArrayEquals(new int[]{0, n - 1}, app.allGroups.Faces[0], "the group's face range should grow to cover all new tiles");
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 3.5x3.5 face at edgeSize=1 should contain at least one whole, unclipped square");
+
+    for (int idx : selection) {
+      assertEquals(4, app.allFaces.nodes[idx].length, "every selected face must be a quadrilateral");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      assertEquals(1.0f, area, 0.0001f, "a selected square must be a true, unclipped edgeSize-1 square, not a same-vertex-count clipped fragment");
+    }
+
+    boolean foundUnselectedFourVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 4) && !selectedSet.contains(f)) foundUnselectedFourVertexFace = true;
+    }
+    assertTrue(foundUnselectedFourVertexFace, "setup check - this face size should produce at least one clipped-but-still-4-vertex boundary fragment to tell apart from a true whole square");
   }
 }

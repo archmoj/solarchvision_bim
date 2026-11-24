@@ -1882,7 +1882,14 @@ class Modify3D {
   // uses: cross(faceNormal, edgeDir)). A clipped boundary tile keeps
   // whatever vertex count results (3, 5, 6, 7+...) rather than being
   // re-triangulated - allFaces already supports arbitrary N-gons elsewhere
-  // in the app, so there's nothing to fan.
+  // in the app, so there's nothing to fan. Every candidate still gets
+  // created, but only the whole, unclipped tiles end up selected afterward
+  // (full replace, not append - same selection discipline as the
+  // Semi-Regular family's own applySemiRegularTiling_Selection() below) -
+  // so the user can go straight on to add openings, etc., inside just
+  // those, the same reasoning as that family's own "higher degree" rule,
+  // just without needing a vertex-count comparison since each of these 4
+  // patterns only ever has the one shape.
   final static int TILING_EQUILATERAL = 3;
   final static int TILING_SQUARE = 4;
   final static int TILING_CAIRO = 5;
@@ -1910,7 +1917,10 @@ class Modify3D {
     beginScene3DChange();
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
+    // Built as the ENTIRE new selection (full replace at the end below),
+    // not appended on top of whatever was already selected - same as
+    // applySemiRegularTiling_Selection()'s own selectedFaceSelection_L.
+    ArrayList<Integer> selectedFaceSelection_L = new ArrayList<Integer>();
 
     for (int q = Select3D.faceSelection.length - 1; q >= 0; q--) {
       int f = Select3D.faceSelection[q];
@@ -1960,6 +1970,7 @@ class Modify3D {
 
       ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
       ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+      ArrayList<Boolean> midList_Qualifies_L = new ArrayList<Boolean>();
 
       current_Material = allFaces.getMaterial(f);
       current_Tessellation = allFaces.getTessellation(f);
@@ -1978,7 +1989,16 @@ class Modify3D {
           candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
         }
 
-        float[][] clipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        // Whether this candidate survived the clip completely untouched -
+        // same exact vertex-for-vertex equality check the Semi-Regular
+        // family's own applySemiRegularTiling_Selection() uses (and for
+        // the same reason: a clipped boundary fragment can coincidentally
+        // keep the same vertex count as a whole tile, e.g. a clipped
+        // square fragment that's still a quadrilateral, so vertex count
+        // alone can't tell them apart).
+        boolean wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
+
         // Sutherland-Hodgman legitimately emits a repeated vertex whenever
         // a candidate corner lands exactly on one of the face's own clip
         // boundaries (kept once as that pass's own "curr", then kept
@@ -1988,7 +2008,7 @@ class Modify3D {
         // shading elsewhere) builds its normal from this face's own first
         // two vertices, and a repeated first vertex makes that cross()
         // zero/undefined for the resulting face.
-        clipped = dedupeConsecutiveVertices3D(clipped);
+        float[][] clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
         if (clipped.length < 3) continue; // fully outside the face
 
         // The one extra padding ring buildTilingCandidates_UV() adds
@@ -2009,6 +2029,7 @@ class Modify3D {
 
         midList_Faces_nodes_L.add(newFace_nodes);
         midList_Faces_options_L.add(newFace_options);
+        midList_Qualifies_L.add(!wasClipped);
       }
 
       if (midList_Faces_nodes_L.size() == 0) continue; // the pattern missed this face entirely (e.g. tileEdgeSize far bigger than the face) - leave it untouched rather than deleting it with nothing to replace it
@@ -2019,16 +2040,19 @@ class Modify3D {
       spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
 
       // Keep any already-recorded new-face indices from previously processed (larger-index)
-      // faces in sync with this splice, then queue up this face's own new pieces.
-      for (int i = 0; i < newfaceSelection_L.size(); i++) {
-        if (newfaceSelection_L.get(i) > f) newfaceSelection_L.set(i, newfaceSelection_L.get(i) + netShift);
+      // faces in sync with this splice, then queue up this face's own whole, unclipped pieces.
+      for (int i = 0; i < selectedFaceSelection_L.size(); i++) {
+        if (selectedFaceSelection_L.get(i) > f) selectedFaceSelection_L.set(i, selectedFaceSelection_L.get(i) + netShift);
       }
-      for (int s = 1; s < midList_Faces_nodes_L.size(); s++) { // the first tile (s == 0) replaces the base face
-        newfaceSelection_L.add(f + s);
+      for (int s = 0; s < midList_Faces_nodes_L.size(); s++) {
+        if (midList_Qualifies_L.get(s)) selectedFaceSelection_L.add(f + s);
       }
     }
 
-    appendNewFaceSelection(newfaceSelection_L);
+    int[] finalSelection = new int[selectedFaceSelection_L.size()];
+    for (int i = 0; i < finalSelection.length; i++) finalSelection[i] = selectedFaceSelection_L.get(i);
+    Select3D.faceSelection = finalSelection; // full replace, not append
+
     switch_category(ObjectCategory.FACE);
     endScene3DChange();
   }
