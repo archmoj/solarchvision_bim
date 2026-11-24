@@ -14,9 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 // via each resulting tile's own flat XY-projected area). The fix special-
 // cases a non-planar QUADRILATERAL specifically (the one shape with a
 // well-defined surface to tile onto - the standard bilinear patch through
-// its own 4 corners) and leaves any other non-planar face untouched rather
-// than risk the same silent data loss on a shape with no such well-defined
-// surface.
+// its own 4 corners); a non-planar face with any other vertex count is
+// first fan-subdivided into that many quads (the same edge-midpoint-plus-
+// centroid technique "Quad Tessellate"/tessellateRectangular_Selection()
+// already uses, with no planarity assumption of its own), each of which is
+// then tiled the same bilinear-quad-patch way, recursively.
 class NonPlanarFaceTilingTest {
 
   private solarchvision_bim app;
@@ -165,14 +167,19 @@ class NonPlanarFaceTilingTest {
   }
 
   @Test
-  void tilingSquare_onANonPlanarPentagon_leavesItUntouched () {
-    // A non-planar face with a vertex count other than 4 has no standard,
-    // unambiguous surface to warp onto (there's no canonical "bilinear
-    // patch" for a 5-sided warped face) - rather than risk the same kind
-    // of silent data loss the quad case had before its own fix, this
-    // should be left completely untouched, the same "the pattern missed
-    // this face entirely" precedent every tiling command already follows
-    // when a face just doesn't intersect the pattern at all.
+  void tilingSquare_onANonPlanarPentagon_coversTheWholeFootprintViaFanQuads () {
+    // A non-planar face with a vertex count other than 4 has no single
+    // canonical surface to warp onto directly, so it's fan-subdivided
+    // first (same technique "Quad Tessellate"/tessellateRectangular_
+    // Selection() already uses: one quad per edge, built from that edge's
+    // own midpoints and the face's own centroid, via pure 3D averaging -
+    // no planarity assumption anywhere) into exactly n quads (n = vertex
+    // count), each of which is itself always exactly 4 vertices - a
+    // guaranteed base case - so each then gets tiled via the ordinary
+    // bilinear-quad-patch path, recursively. The n fan quads all share the
+    // face's own centroid and meet exactly at each original edge's own
+    // midpoint, so - just like Quad Tessellate's own established output -
+    // they cover the original face's own full footprint with no gap.
     float[][] nonPlanarPentagon = new float[][]{
       {0, 0, 1}, {1, 0, 0}, {1, 1, 1}, {0.5f, 1.3f, 0.2f}, {0, 1, 0}
     };
@@ -180,10 +187,34 @@ class NonPlanarFaceTilingTest {
     app.User3D.tileEdgeSize = 0.2f;
     app.User3D.tileRotation = 0;
 
+    float originalFootprint = shoelaceXY(app.Modify3D.faceBaseVertices(0));
+
     app.Modify3D.tilingSquare_Selection();
 
-    assertEquals(1, app.allFaces.nodes.length, "a non-planar face with a vertex count other than 4 should be left as the single original face");
-    assertArrayEquals(new int[]{0, 1, 2, 3, 4}, app.allFaces.nodes[0]);
+    assertTrue(app.allFaces.nodes.length > 5, "a non-planar pentagon fan-subdivided into 5 quads, each further tiled, should produce many pieces");
+    assertEquals(originalFootprint, totalFacesXYFootprint(), 0.001f, "the fan-quad fallback should cover the non-planar pentagon's own full footprint, not leave it untouched");
+  }
+
+  @Test
+  void applySemiRegularTiling_onANonPlanarPentagon_coversTheWholeFootprintViaFanQuads () {
+    // Same fan-quad fallback, exercised through the Semi-Regular family's
+    // own appendSemiRegularTilesForFaceShape() instead of the regular
+    // family's appendRegularTilesForFaceShape() - both call sites use the
+    // identical fallback logic, so this is the Semi-Regular family's own
+    // regression guard for it.
+    float[][] nonPlanarPentagon = new float[][]{
+      {0, 0, 1}, {1, 0, 0}, {1, 1, 1}, {0.5f, 1.3f, 0.2f}, {0, 1, 0}
+    };
+    setUpOneFace(nonPlanarPentagon);
+    app.User3D.tileEdgeSize = 0.2f;
+    app.User3D.tileRotation = 0;
+
+    float originalFootprint = shoelaceXY(app.Modify3D.faceBaseVertices(0));
+
+    app.Modify3D.tilingTrihexagon_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 5, "a non-planar pentagon fan-subdivided into 5 quads, each further tiled, should produce many pieces");
+    assertEquals(originalFootprint, totalFacesXYFootprint(), 0.001f, "the fan-quad fallback should cover the non-planar pentagon's own full footprint here too");
   }
 
   @Test

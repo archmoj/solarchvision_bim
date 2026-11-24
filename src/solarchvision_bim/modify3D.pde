@@ -1928,78 +1928,6 @@ class Modify3D {
       if (OBJ_ID == -1) continue;
 
       float[][] base_Vertices = faceBaseVertices(f);
-      float[] faceNormal = faceNormalUnit(base_Vertices);
-
-      // A face must actually lie in one flat plane for the ordinary
-      // tiling approach below (one shared (U_axis, V_axis) plane, one
-      // shared clip normal) to make any sense - see isFacePlanar3D()'s
-      // own comment for why, and what silently went wrong before this
-      // check existed. A non-planar QUADRILATERAL (exactly 4 vertices)
-      // still has a well-defined surface to tile onto - the standard
-      // bilinear patch through its own 4 corners (bilinearPatchPoint3D())
-      // - so it gets its own branch below instead of the ordinary flat
-      // one; any other non-planar face has no such well-defined surface,
-      // so it's left untouched (same "the pattern missed this face
-      // entirely" precedent as the (midList_Faces_nodes_L.size() == 0)
-      // check further down).
-      boolean facePlanar = isFacePlanar3D(base_Vertices, faceNormal);
-      if (!facePlanar && base_Vertices.length != 4) continue;
-      boolean useBilinearQuadPatch = !facePlanar;
-
-      float[] U_axis = new float[3];
-      float[] V_axis = new float[3];
-      float uMin, uMax, vMin, vMax;
-
-      if (useBilinearQuadPatch) {
-        // The bilinear patch's own flat parameter domain is always
-        // exactly [0, uMax] x [0, vMax], where uMax/vMax are simply the
-        // real lengths of this quad's own first 2 edges (v0-v1 and
-        // v0-v3) - its 4 corners map to this rectangle's own 4 corners
-        // exactly, by construction. Note: User3D.tileRotation isn't
-        // applied here (unlike the ordinary flat-plane branch below) -
-        // every bilinear-patch tiling aligns with the quad's own v0-v1/
-        // v0-v3 edges.
-        uMin = 0;
-        vMin = 0;
-        uMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[1]);
-        vMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[3]);
-      } else {
-        float[] U_first = funcs.vec3_unit(new float[] {
-          base_Vertices[1][0] - base_Vertices[0][0],
-          base_Vertices[1][1] - base_Vertices[0][1],
-          base_Vertices[1][2] - base_Vertices[0][2]
-        });
-        // in-plane, perpendicular to U_first - (U_first, V_first, faceNormal)
-        // is a right-handed orthonormal frame matching the face's own CCW
-        // winding (same identity faceNormalUnit()'s own cross(U,V) relies on).
-        float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
-
-        // User3D.tileRotation rotates the (U_first, V_first) frame about
-        // faceNormal, so the default (0) stays exactly aligned to the
-        // face's own first edge.
-        for (int k = 0; k < 3; k++) {
-          U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
-          V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
-        }
-
-        // Every face vertex's own position in this (U_axis, V_axis) frame,
-        // relative to the face's own first vertex - the local extent the
-        // tile grid needs to cover.
-        uMin = FLOAT_huge; uMax = -FLOAT_huge; vMin = FLOAT_huge; vMax = -FLOAT_huge;
-        for (int s = 0; s < base_Vertices.length; s++) {
-          float dx = base_Vertices[s][0] - base_Vertices[0][0];
-          float dy = base_Vertices[s][1] - base_Vertices[0][1];
-          float dz = base_Vertices[s][2] - base_Vertices[0][2];
-          float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
-          float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
-          uMin = min(uMin, u);
-          uMax = max(uMax, u);
-          vMin = min(vMin, v);
-          vMax = max(vMax, v);
-        }
-      }
-
-      ArrayList<float[][]> candidates_UV = buildTilingCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
 
       ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
       ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
@@ -2010,86 +1938,7 @@ class Modify3D {
       current_Layer = allFaces.getLayer(f);
       current_Visibility = allFaces.getVisibility(f);
 
-      for (int c = 0; c < candidates_UV.size(); c++) {
-        float[][] candidate_UV = candidates_UV.get(c);
-
-        float[][] clipped;
-        boolean wasClipped;
-        float[] tileNormal;
-
-        if (useBilinearQuadPatch) {
-          // The clip itself stays entirely in flat (u, v) space (exact,
-          // same as the ordinary branch's own 3D clip) - only the final
-          // surviving vertices get warped onto the real saddle surface,
-          // via the quad's own 4 corners.
-          float[][] preDedupeClippedUV = clipPolygon_rectangleUV(candidate_UV, uMax, vMax);
-          wasClipped = !polygonsExactlyEqual2D(preDedupeClippedUV, candidate_UV);
-
-          float[][] clippedUV = dedupeConsecutiveVertices2D(preDedupeClippedUV);
-          if (clippedUV.length < 3) continue; // fully outside the face
-
-          clipped = new float[clippedUV.length][3];
-          for (int s = 0; s < clippedUV.length; s++) {
-            clipped[s] = bilinearPatchPoint3D(base_Vertices, clippedUV[s][0] / uMax, clippedUV[s][1] / vMax);
-          }
-          // The surface is warped, so every tile can face a slightly
-          // different direction - unlike the ordinary branch, there's no
-          // single shared faceNormal to reuse here.
-          tileNormal = faceNormalUnit(clipped);
-        } else {
-          float[][] candidate_3D = new float[candidate_UV.length][3];
-          for (int s = 0; s < candidate_UV.length; s++) {
-            float u = candidate_UV[s][0];
-            float v = candidate_UV[s][1];
-            candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
-            candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
-            candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
-          }
-
-          float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
-          // Whether this candidate survived the clip completely untouched -
-          // same exact vertex-for-vertex equality check the Semi-Regular
-          // family's own applySemiRegularTiling_Selection() uses (and for
-          // the same reason: a clipped boundary fragment can coincidentally
-          // keep the same vertex count as a whole tile, e.g. a clipped
-          // square fragment that's still a quadrilateral, so vertex count
-          // alone can't tell them apart).
-          wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
-
-          // Sutherland-Hodgman legitimately emits a repeated vertex whenever
-          // a candidate corner lands exactly on one of the face's own clip
-          // boundaries (kept once as that pass's own "curr", then kept
-          // again as the next pass's unmodified "curr") - collapsing those
-          // immediately matters: faceNormalUnit() (used both to verify
-          // area below and, the same way, by this app's own rendering/
-          // shading elsewhere) builds its normal from this face's own first
-          // two vertices, and a repeated first vertex makes that cross()
-          // zero/undefined for the resulting face.
-          clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
-          if (clipped.length < 3) continue; // fully outside the face
-          tileNormal = faceNormal;
-        }
-
-        // The one extra padding ring buildTilingCandidates_UV() adds
-        // around every real tile - there to cover corners under rotation -
-        // routinely clips down to a zero-area sliver exactly flush with
-        // the face's own boundary (every point collapsed onto the same
-        // edge or corner) rather than disappearing outright (clipped.
-        // length < 3 above). Skip those too, or every tiled face would
-        // pick up a ring of invisible, zero-area faces around its edge.
-        float area = polygonArea3D(clipped, tileNormal);
-        if (area < FLOAT_tiny * FLOAT_tiny) continue;
-
-        int[] newFace_nodes = new int[clipped.length];
-        for (int s = 0; s < clipped.length; s++) {
-          newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
-        }
-        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
-
-        midList_Faces_nodes_L.add(newFace_nodes);
-        midList_Faces_options_L.add(newFace_options);
-        midList_Qualifies_L.add(!wasClipped);
-      }
+      appendRegularTilesForFaceShape(patternKind, base_Vertices, midList_Faces_nodes_L, midList_Faces_options_L, midList_Qualifies_L);
 
       if (midList_Faces_nodes_L.size() == 0) continue; // the pattern missed this face entirely (e.g. tileEdgeSize far bigger than the face) - leave it untouched rather than deleting it with nothing to replace it
 
@@ -2114,6 +1963,187 @@ class Modify3D {
 
     switch_category(ObjectCategory.FACE);
     endScene3DChange();
+  }
+
+  // Tiles one face's own shape with a regular-family pattern, appending
+  // the results to the given accumulator lists - either directly (the
+  // ordinary flat-plane path, or the quad-only bilinear-patch path for a
+  // non-planar quadrilateral - see isFacePlanar3D()'s own comment), or,
+  // for a non-planar face with some OTHER vertex count (no single well-
+  // defined surface of its own to tile onto), by first fan-subdividing it
+  // into one quad per edge - exactly the same edge-midpoint-plus-centroid
+  // technique Quad Tessellate (tessellateRectangular_Selection()) already
+  // uses to split any n-gon into n quads, reused here purely as an
+  // internal step rather than left as the final visible result - then
+  // calling itself once per quad (always the base case from there on,
+  // since a fan quad is always exactly 4 vertices). Every one of the n fan
+  // quads shares the original face's own centroid as one of its own 4
+  // corners, so they meet there, and along each original edge's own
+  // midpoint, without a gap - exactly as Quad Tessellate's own output
+  // already does.
+  void appendRegularTilesForFaceShape (int patternKind, float[][] base_Vertices,
+      ArrayList<int[]> midList_Faces_nodes_L, ArrayList<int[]> midList_Faces_options_L, ArrayList<Boolean> midList_Qualifies_L) {
+
+    float[] faceNormal = faceNormalUnit(base_Vertices);
+    boolean facePlanar = isFacePlanar3D(base_Vertices, faceNormal);
+
+    if (!facePlanar && base_Vertices.length != 4) {
+      int n = base_Vertices.length;
+      float[] G_face = faceCentroid(base_Vertices);
+
+      float[][] edgeMid = new float[n][3];
+      for (int s = 0; s < n; s++) {
+        int sPrev = (s + n - 1) % n;
+        for (int k = 0; k < 3; k++) {
+          edgeMid[s][k] = 0.5f * base_Vertices[s][k] + 0.5f * base_Vertices[sPrev][k];
+        }
+      }
+
+      for (int s = 0; s < n; s++) {
+        int sNext = (s + 1) % n;
+        float[][] fanQuad = { edgeMid[s], base_Vertices[s], edgeMid[sNext], G_face };
+        appendRegularTilesForFaceShape(patternKind, fanQuad, midList_Faces_nodes_L, midList_Faces_options_L, midList_Qualifies_L);
+      }
+      return;
+    }
+
+    boolean useBilinearQuadPatch = !facePlanar;
+
+    float[] U_axis = new float[3];
+    float[] V_axis = new float[3];
+    float uMin, uMax, vMin, vMax;
+
+    if (useBilinearQuadPatch) {
+      // The bilinear patch's own flat parameter domain is always
+      // exactly [0, uMax] x [0, vMax], where uMax/vMax are simply the
+      // real lengths of this quad's own first 2 edges (v0-v1 and
+      // v0-v3) - its 4 corners map to this rectangle's own 4 corners
+      // exactly, by construction. Note: User3D.tileRotation isn't
+      // applied here (unlike the ordinary flat-plane branch below) -
+      // every bilinear-patch tiling aligns with the quad's own v0-v1/
+      // v0-v3 edges.
+      uMin = 0;
+      vMin = 0;
+      uMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[1]);
+      vMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[3]);
+    } else {
+      float[] U_first = funcs.vec3_unit(new float[] {
+        base_Vertices[1][0] - base_Vertices[0][0],
+        base_Vertices[1][1] - base_Vertices[0][1],
+        base_Vertices[1][2] - base_Vertices[0][2]
+      });
+      // in-plane, perpendicular to U_first - (U_first, V_first, faceNormal)
+      // is a right-handed orthonormal frame matching the face's own CCW
+      // winding (same identity faceNormalUnit()'s own cross(U,V) relies on).
+      float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
+
+      // User3D.tileRotation rotates the (U_first, V_first) frame about
+      // faceNormal, so the default (0) stays exactly aligned to the
+      // face's own first edge.
+      for (int k = 0; k < 3; k++) {
+        U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
+        V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
+      }
+
+      // Every face vertex's own position in this (U_axis, V_axis) frame,
+      // relative to the face's own first vertex - the local extent the
+      // tile grid needs to cover.
+      uMin = FLOAT_huge; uMax = -FLOAT_huge; vMin = FLOAT_huge; vMax = -FLOAT_huge;
+      for (int s = 0; s < base_Vertices.length; s++) {
+        float dx = base_Vertices[s][0] - base_Vertices[0][0];
+        float dy = base_Vertices[s][1] - base_Vertices[0][1];
+        float dz = base_Vertices[s][2] - base_Vertices[0][2];
+        float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
+        float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
+        uMin = min(uMin, u);
+        uMax = max(uMax, u);
+        vMin = min(vMin, v);
+        vMax = max(vMax, v);
+      }
+    }
+
+    ArrayList<float[][]> candidates_UV = buildTilingCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+
+    for (int c = 0; c < candidates_UV.size(); c++) {
+      float[][] candidate_UV = candidates_UV.get(c);
+
+      float[][] clipped;
+      boolean wasClipped;
+      float[] tileNormal;
+
+      if (useBilinearQuadPatch) {
+        // The clip itself stays entirely in flat (u, v) space (exact,
+        // same as the ordinary branch's own 3D clip) - only the final
+        // surviving vertices get warped onto the real saddle surface,
+        // via the quad's own 4 corners.
+        float[][] preDedupeClippedUV = clipPolygon_rectangleUV(candidate_UV, uMax, vMax);
+        wasClipped = !polygonsExactlyEqual2D(preDedupeClippedUV, candidate_UV);
+
+        float[][] clippedUV = dedupeConsecutiveVertices2D(preDedupeClippedUV);
+        if (clippedUV.length < 3) continue; // fully outside the face
+
+        clipped = new float[clippedUV.length][3];
+        for (int s = 0; s < clippedUV.length; s++) {
+          clipped[s] = bilinearPatchPoint3D(base_Vertices, clippedUV[s][0] / uMax, clippedUV[s][1] / vMax);
+        }
+        // The surface is warped, so every tile can face a slightly
+        // different direction - unlike the ordinary branch, there's no
+        // single shared faceNormal to reuse here.
+        tileNormal = faceNormalUnit(clipped);
+      } else {
+        float[][] candidate_3D = new float[candidate_UV.length][3];
+        for (int s = 0; s < candidate_UV.length; s++) {
+          float u = candidate_UV[s][0];
+          float v = candidate_UV[s][1];
+          candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
+          candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
+          candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
+        }
+
+        float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        // Whether this candidate survived the clip completely untouched -
+        // same exact vertex-for-vertex equality check the Semi-Regular
+        // family's own applySemiRegularTiling_Selection() uses (and for
+        // the same reason: a clipped boundary fragment can coincidentally
+        // keep the same vertex count as a whole tile, e.g. a clipped
+        // square fragment that's still a quadrilateral, so vertex count
+        // alone can't tell them apart).
+        wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
+
+        // Sutherland-Hodgman legitimately emits a repeated vertex whenever
+        // a candidate corner lands exactly on one of the face's own clip
+        // boundaries (kept once as that pass's own "curr", then kept
+        // again as the next pass's unmodified "curr") - collapsing those
+        // immediately matters: faceNormalUnit() (used both to verify
+        // area below and, the same way, by this app's own rendering/
+        // shading elsewhere) builds its normal from this face's own first
+        // two vertices, and a repeated first vertex makes that cross()
+        // zero/undefined for the resulting face.
+        clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
+        if (clipped.length < 3) continue; // fully outside the face
+        tileNormal = faceNormal;
+      }
+
+      // The one extra padding ring buildTilingCandidates_UV() adds
+      // around every real tile - there to cover corners under rotation -
+      // routinely clips down to a zero-area sliver exactly flush with
+      // the face's own boundary (every point collapsed onto the same
+      // edge or corner) rather than disappearing outright (clipped.
+      // length < 3 above). Skip those too, or every tiled face would
+      // pick up a ring of invisible, zero-area faces around its edge.
+      float area = polygonArea3D(clipped, tileNormal);
+      if (area < FLOAT_tiny * FLOAT_tiny) continue;
+
+      int[] newFace_nodes = new int[clipped.length];
+      for (int s = 0; s < clipped.length; s++) {
+        newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
+      }
+      int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+
+      midList_Faces_nodes_L.add(newFace_nodes);
+      midList_Faces_options_L.add(newFace_options);
+      midList_Qualifies_L.add(!wasClipped);
+    }
   }
 
   // Whether every one of this face's own vertices actually lies in the
@@ -2683,58 +2713,6 @@ class Modify3D {
       if (OBJ_ID == -1) continue;
 
       float[][] base_Vertices = faceBaseVertices(f);
-      float[] faceNormal = faceNormalUnit(base_Vertices);
-
-      // See applyTiling_Selection()'s own identical check (and
-      // isFacePlanar3D()'s own comment) for why this matters and what it
-      // fixes - same quad-only bilinear-patch branch, same "leave any
-      // other non-planar face untouched" fallback.
-      boolean facePlanar = isFacePlanar3D(base_Vertices, faceNormal);
-      if (!facePlanar && base_Vertices.length != 4) continue;
-      boolean useBilinearQuadPatch = !facePlanar;
-
-      float[] U_axis = new float[3];
-      float[] V_axis = new float[3];
-      float uMin, uMax, vMin, vMax;
-
-      if (useBilinearQuadPatch) {
-        uMin = 0;
-        vMin = 0;
-        uMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[1]);
-        vMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[3]);
-      } else {
-        float[] U_first = funcs.vec3_unit(new float[] {
-          base_Vertices[1][0] - base_Vertices[0][0],
-          base_Vertices[1][1] - base_Vertices[0][1],
-          base_Vertices[1][2] - base_Vertices[0][2]
-        });
-        float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
-
-        for (int k = 0; k < 3; k++) {
-          U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
-          V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
-        }
-
-        uMin = FLOAT_huge; uMax = -FLOAT_huge; vMin = FLOAT_huge; vMax = -FLOAT_huge;
-        for (int s = 0; s < base_Vertices.length; s++) {
-          float dx = base_Vertices[s][0] - base_Vertices[0][0];
-          float dy = base_Vertices[s][1] - base_Vertices[0][1];
-          float dz = base_Vertices[s][2] - base_Vertices[0][2];
-          float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
-          float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
-          uMin = min(uMin, u);
-          uMax = max(uMax, u);
-          vMin = min(vMin, v);
-          vMax = max(vMax, v);
-        }
-      }
-
-      ArrayList<float[][]> candidates_UV = buildSemiRegularCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
-
-      int maxDegree = 0;
-      for (int c = 0; c < candidates_UV.size(); c++) {
-        maxDegree = max(maxDegree, candidates_UV.get(c).length);
-      }
 
       ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
       ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
@@ -2745,63 +2723,7 @@ class Modify3D {
       current_Layer = allFaces.getLayer(f);
       current_Visibility = allFaces.getVisibility(f);
 
-      for (int c = 0; c < candidates_UV.size(); c++) {
-        float[][] candidate_UV = candidates_UV.get(c);
-        int originalVertexCount = candidate_UV.length;
-
-        float[][] clipped;
-        boolean wasClipped;
-        float[] tileNormal;
-
-        if (useBilinearQuadPatch) {
-          float[][] preDedupeClippedUV = clipPolygon_rectangleUV(candidate_UV, uMax, vMax);
-          wasClipped = !polygonsExactlyEqual2D(preDedupeClippedUV, candidate_UV);
-
-          float[][] clippedUV = dedupeConsecutiveVertices2D(preDedupeClippedUV);
-          if (clippedUV.length < 3) continue; // fully outside the face
-
-          clipped = new float[clippedUV.length][3];
-          for (int s = 0; s < clippedUV.length; s++) {
-            clipped[s] = bilinearPatchPoint3D(base_Vertices, clippedUV[s][0] / uMax, clippedUV[s][1] / vMax);
-          }
-          tileNormal = faceNormalUnit(clipped);
-        } else {
-          float[][] candidate_3D = new float[candidate_UV.length][3];
-          for (int s = 0; s < candidate_UV.length; s++) {
-            float u = candidate_UV[s][0];
-            float v = candidate_UV[s][1];
-            candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
-            candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
-            candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
-          }
-
-          float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
-          // Sutherland-Hodgman returns a candidate completely untouched
-          // (same vertex count, same values, same order) whenever every one
-          // of its corners is already inside every one of the face's own
-          // half-planes - so comparing the pre-dedupe clip result against
-          // the original candidate, value for value, is an exact (not
-          // approximate) test of "did the boundary actually cut this one".
-          wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
-
-          clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
-          if (clipped.length < 3) continue; // fully outside the face
-          tileNormal = faceNormal;
-        }
-
-        float area = polygonArea3D(clipped, tileNormal);
-        if (area < FLOAT_tiny * FLOAT_tiny) continue; // degenerate sliver - see applyTiling_Selection()'s own identical check
-
-        int[] newFace_nodes = new int[clipped.length];
-        for (int s = 0; s < clipped.length; s++) {
-          newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
-        }
-        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
-
-        midList_Faces_nodes_L.add(newFace_nodes);
-        midList_Faces_options_L.add(newFace_options);
-        midList_Qualifies_L.add(!wasClipped && (originalVertexCount == maxDegree));
-      }
+      appendSemiRegularTilesForFaceShape(patternKind, base_Vertices, midList_Faces_nodes_L, midList_Faces_options_L, midList_Qualifies_L);
 
       if (midList_Faces_nodes_L.size() == 0) continue; // the pattern missed this face entirely - leave it untouched rather than deleting it with nothing to replace it
 
@@ -2830,6 +2752,146 @@ class Modify3D {
 
     switch_category(ObjectCategory.FACE);
     endScene3DChange();
+  }
+
+  // Semi-Regular family's own analog of appendRegularTilesForFaceShape()
+  // above - see that function's own comments for the shared fan-quad-
+  // fallback and bilinear-quad-patch logic, which is identical here. The
+  // one real difference is maxDegree: each semi-regular pattern mixes
+  // several polygon shapes (e.g. Truncated Hexagonal mixes triangles and
+  // dodecagons), so "qualifies" has to mean "whole piece of the largest
+  // shape this face's own candidates actually produced" rather than
+  // "wasn't clipped" alone - computed fresh per call, so a fan quad (a
+  // face shape of its own) gets its own independent maxDegree from its
+  // own candidates_UV, exactly like every other input shape.
+  void appendSemiRegularTilesForFaceShape (int patternKind, float[][] base_Vertices,
+      ArrayList<int[]> midList_Faces_nodes_L, ArrayList<int[]> midList_Faces_options_L, ArrayList<Boolean> midList_Qualifies_L) {
+
+    float[] faceNormal = faceNormalUnit(base_Vertices);
+    boolean facePlanar = isFacePlanar3D(base_Vertices, faceNormal);
+
+    if (!facePlanar && base_Vertices.length != 4) {
+      int n = base_Vertices.length;
+      float[] G_face = faceCentroid(base_Vertices);
+
+      float[][] edgeMid = new float[n][3];
+      for (int s = 0; s < n; s++) {
+        int sPrev = (s + n - 1) % n;
+        for (int k = 0; k < 3; k++) {
+          edgeMid[s][k] = 0.5f * base_Vertices[s][k] + 0.5f * base_Vertices[sPrev][k];
+        }
+      }
+
+      for (int s = 0; s < n; s++) {
+        int sNext = (s + 1) % n;
+        float[][] fanQuad = { edgeMid[s], base_Vertices[s], edgeMid[sNext], G_face };
+        appendSemiRegularTilesForFaceShape(patternKind, fanQuad, midList_Faces_nodes_L, midList_Faces_options_L, midList_Qualifies_L);
+      }
+      return;
+    }
+
+    boolean useBilinearQuadPatch = !facePlanar;
+
+    float[] U_axis = new float[3];
+    float[] V_axis = new float[3];
+    float uMin, uMax, vMin, vMax;
+
+    if (useBilinearQuadPatch) {
+      uMin = 0;
+      vMin = 0;
+      uMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[1]);
+      vMax = funcs.vec3_dist(base_Vertices[0], base_Vertices[3]);
+    } else {
+      float[] U_first = funcs.vec3_unit(new float[] {
+        base_Vertices[1][0] - base_Vertices[0][0],
+        base_Vertices[1][1] - base_Vertices[0][1],
+        base_Vertices[1][2] - base_Vertices[0][2]
+      });
+      float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
+
+      for (int k = 0; k < 3; k++) {
+        U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
+        V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
+      }
+
+      uMin = FLOAT_huge; uMax = -FLOAT_huge; vMin = FLOAT_huge; vMax = -FLOAT_huge;
+      for (int s = 0; s < base_Vertices.length; s++) {
+        float dx = base_Vertices[s][0] - base_Vertices[0][0];
+        float dy = base_Vertices[s][1] - base_Vertices[0][1];
+        float dz = base_Vertices[s][2] - base_Vertices[0][2];
+        float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
+        float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
+        uMin = min(uMin, u);
+        uMax = max(uMax, u);
+        vMin = min(vMin, v);
+        vMax = max(vMax, v);
+      }
+    }
+
+    ArrayList<float[][]> candidates_UV = buildSemiRegularCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+
+    int maxDegree = 0;
+    for (int c = 0; c < candidates_UV.size(); c++) {
+      maxDegree = max(maxDegree, candidates_UV.get(c).length);
+    }
+
+    for (int c = 0; c < candidates_UV.size(); c++) {
+      float[][] candidate_UV = candidates_UV.get(c);
+      int originalVertexCount = candidate_UV.length;
+
+      float[][] clipped;
+      boolean wasClipped;
+      float[] tileNormal;
+
+      if (useBilinearQuadPatch) {
+        float[][] preDedupeClippedUV = clipPolygon_rectangleUV(candidate_UV, uMax, vMax);
+        wasClipped = !polygonsExactlyEqual2D(preDedupeClippedUV, candidate_UV);
+
+        float[][] clippedUV = dedupeConsecutiveVertices2D(preDedupeClippedUV);
+        if (clippedUV.length < 3) continue; // fully outside the face
+
+        clipped = new float[clippedUV.length][3];
+        for (int s = 0; s < clippedUV.length; s++) {
+          clipped[s] = bilinearPatchPoint3D(base_Vertices, clippedUV[s][0] / uMax, clippedUV[s][1] / vMax);
+        }
+        tileNormal = faceNormalUnit(clipped);
+      } else {
+        float[][] candidate_3D = new float[candidate_UV.length][3];
+        for (int s = 0; s < candidate_UV.length; s++) {
+          float u = candidate_UV[s][0];
+          float v = candidate_UV[s][1];
+          candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
+          candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
+          candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
+        }
+
+        float[][] preDedupeClipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        // Sutherland-Hodgman returns a candidate completely untouched
+        // (same vertex count, same values, same order) whenever every one
+        // of its corners is already inside every one of the face's own
+        // half-planes - so comparing the pre-dedupe clip result against
+        // the original candidate, value for value, is an exact (not
+        // approximate) test of "did the boundary actually cut this one".
+        wasClipped = !polygonsExactlyEqual3D(preDedupeClipped, candidate_3D);
+
+        clipped = dedupeConsecutiveVertices3D(preDedupeClipped);
+        if (clipped.length < 3) continue; // fully outside the face
+        tileNormal = faceNormal;
+      }
+
+      float area = polygonArea3D(clipped, tileNormal);
+      if (area < FLOAT_tiny * FLOAT_tiny) continue; // degenerate sliver - see appendRegularTilesForFaceShape()'s own identical check
+
+      int[] newFace_nodes = new int[clipped.length];
+      for (int s = 0; s < clipped.length; s++) {
+        newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
+      }
+      int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+
+      midList_Faces_nodes_L.add(newFace_nodes);
+      midList_Faces_options_L.add(newFace_options);
+      midList_Qualifies_L.add(!wasClipped && (originalVertexCount == maxDegree));
+    }
   }
 
   // Exact (not approximate) vertex-for-vertex equality check - used only
