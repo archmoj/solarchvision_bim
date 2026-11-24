@@ -49,6 +49,7 @@ class User3D {
   int modifierTessellateColumns = 2;
   float tileEdgeSize = 1.0; // 1 = 1m - shared edge length for Square/Hexagon/Equilateral Tiling
   float tileRotation = 0; // degrees, on top of the default alignment to the face's own first edge
+  float tileStarSpikeAngle = -1; // degrees ABOVE each tile shape's own self-intersection floor (not a raw notch angle) - 0 is the sharpest valid star for that shape, bigger is blunter, and any negative value (the default) disables the star transform entirely; see appendStarTransform_UV()'s own comment for why this is one float instead of a separate on/off switch
   float modifierOpeningDepth = 1; // 1 = 1m
   float modifierOpeningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings)
   float modifierOpeningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
@@ -127,6 +128,7 @@ class User3D {
     XML_setInt(parent, "modifierTessellateColumns", this.modifierTessellateColumns);
     XML_setFloat(parent, "tileEdgeSize", this.tileEdgeSize);
     XML_setFloat(parent, "tileRotation", this.tileRotation);
+    XML_setFloat(parent, "tileStarSpikeAngle", this.tileStarSpikeAngle);
     XML_setFloat(parent, "modifierOpeningDepth", this.modifierOpeningDepth);
     XML_setFloat(parent, "modifierOpeningArea", this.modifierOpeningArea);
     XML_setFloat(parent, "modifierOpeningDeviation", this.modifierOpeningDeviation);
@@ -208,6 +210,7 @@ class User3D {
     this.modifierTessellateColumns = XML_getInt(parent, "modifierTessellateColumns");
     this.tileEdgeSize = XML_getFloat(parent, "tileEdgeSize", 1.0); // older save files never had this field - 0 would mean every tile collapses to a point, not a useful fallback
     this.tileRotation = XML_getFloat(parent, "tileRotation", 0);
+    this.tileStarSpikeAngle = XML_getFloat(parent, "tileStarSpikeAngle", -1); // older save files never had this field - -1 keeps the star transform disabled, same as the in-code default
     this.modifierOpeningDepth = XML_getFloat(parent, "modifierOpeningDepth");
     this.modifierOpeningArea = XML_getFloat(parent, "modifierOpeningArea");
     this.modifierOpeningDeviation = XML_getFloat(parent, "modifierOpeningDeviation");

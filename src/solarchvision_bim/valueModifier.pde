@@ -1312,6 +1312,35 @@ class ValueModifier {
     }
     return out;
   }
+  float tileStarSpikeAngle (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    // -1 is the disabled sentinel; 0 is the sharpest valid star for
+    // whichever tile shape this lands on, and the generous upper end
+    // (170) is never actually reached by every shape - a shape with a
+    // shallow floor (e.g. a triangle's 120 deg) clamps its own usable
+    // range well below that, same as appendStarTransform_UV() clamps the
+    // resulting notch angle to 180 deg (no star) - see that function's
+    // own comment.
+    float s1 = -1; //start
+    float s2 = 170; //stop
+    float s3 = 0.5; //step
+
+    float out = 0;
+    String command = "Tile Star Spike Angle";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.tileStarSpikeAngle,
+        (v) -> { User3D.tileStarSpikeAngle = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.tileStarSpikeAngle, s1, s2, s3);
+    }
+    return out;
+  }
   float modifierOffsetAmount (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

@@ -2063,6 +2063,9 @@ class Modify3D {
     }
 
     ArrayList<float[][]> candidates_UV = buildTilingCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+    for (int c = 0; c < candidates_UV.size(); c++) {
+      candidates_UV.set(c, appendStarTransform_UV(candidates_UV.get(c), User3D.tileStarSpikeAngle));
+    }
 
     for (int c = 0; c < candidates_UV.size(); c++) {
       float[][] candidate_UV = candidates_UV.get(c);
@@ -2147,23 +2150,28 @@ class Modify3D {
   }
 
   // Whether every one of this face's own vertices actually lies in the
-  // single flat plane faceNormalUnit() derives from just its first,
-  // second, and last vertex - true for every ordinary flat face, false
-  // for a genuinely warped one (e.g. a saddle/hyperbolic-paraboloid-
-  // shaped quad). This matters because the ordinary flat-plane tiling
-  // approach below (applyTiling_Selection()/applySemiRegularTiling_
-  // Selection()) silently loses most of a non-planar face's own area -
-  // confirmed numerically while investigating a reported case (a quad
-  // with corners (0,0,1),(1,0,0),(1,1,1),(0,1,0) only ended up with
-  // 16.7% of its own footprint actually tiled) - so it must never be
-  // used on one; see those functions' own "non-planar quad" branch for
-  // the fix. Vertices 0, 1, and n-1 are trivially in that plane by
-  // construction (the normal is built from exactly those 3 - cross()
-  // is always perpendicular to both its inputs), so only vertices
-  // 2..n-2 need checking. The tolerance is scaled to the face's own
-  // size (its largest pairwise vertex distance) rather than a fixed
-  // absolute number, so this reads the same at both architectural and
-  // tiny-test-fixture scales.
+  // single flat plane faceNormalUnit() derives - true for every ordinary
+  // flat face, false for a genuinely warped one (e.g. a saddle/
+  // hyperbolic-paraboloid-shaped quad). This matters because the
+  // ordinary flat-plane tiling approach below (applyTiling_Selection()/
+  // applySemiRegularTiling_Selection()) silently loses most of a
+  // non-planar face's own area - confirmed numerically while
+  // investigating a reported case (a quad with corners (0,0,1),(1,0,0),
+  // (1,1,1),(0,1,0) only ended up with 16.7% of its own footprint
+  // actually tiled) - so it must never be used on one; see those
+  // functions' own "non-planar quad" branch for the fix. Vertex 0 is
+  // trivially in its own plane (dx/dy/dz are all 0 against itself), so
+  // only vertices 1..n-1 need checking - NOT 2..n-2 the way an earlier
+  // version of this function had it, back when faceNormalUnit() built
+  // the normal from exactly vertices 0, 1, and n-1, which put those 3
+  // trivially in-plane by construction too. faceNormalUnit() now sums
+  // over every edge (Newell's method, see its own comment) instead, so
+  // vertices 1 and n-1 are no longer automatically in-plane and have to
+  // be checked like any other vertex, or a non-planar face with its only
+  // deviation at one of those two indices would slip through undetected.
+  // The tolerance is scaled to the face's own size (its largest pairwise
+  // vertex distance) rather than a fixed absolute number, so this reads
+  // the same at both architectural and tiny-test-fixture scales.
   boolean isFacePlanar3D (float[][] base_Vertices, float[] faceNormal) {
     int n = base_Vertices.length;
 
@@ -2178,7 +2186,7 @@ class Modify3D {
     }
     float epsilon = max(FLOAT_tiny, 0.0001 * charLength);
 
-    for (int i = 2; i <= n - 2; i++) {
+    for (int i = 1; i <= n - 1; i++) {
       float dx = base_Vertices[i][0] - base_Vertices[0][0];
       float dy = base_Vertices[i][1] - base_Vertices[0][1];
       float dz = base_Vertices[i][2] - base_Vertices[0][2];
@@ -2387,6 +2395,98 @@ class Modify3D {
 
     float signedArea = 0.5 * (ax * faceNormal[0] + ay * faceNormal[1] + az * faceNormal[2]);
     return abs(signedArea);
+  }
+
+  // Turns one flat (u, v) tile candidate into a star by pulling a notch
+  // point in toward the candidate's own centroid, in the middle of every
+  // edge - doubling its vertex count (corner, notch, corner, notch, ...).
+  // A no-op (returns poly unchanged) whenever spikeAngleParam is negative,
+  // which is User3D.tileStarSpikeAngle's own disabled sentinel.
+  //
+  // Unlike the regular-polygon-only formula this was originally designed
+  // and verified against (r = R*(cos(180/N) - sin(180/N)*cot(gamma/2)),
+  // for a true regular N-gon with circumradius R), every one of this
+  // app's actual tile shapes has to be covered here, and the Cairo
+  // pentagon (TILING_CAIRO) is NOT regular (edges a,b,a,a,a) - so this
+  // works it out per edge instead of once for the whole shape: each
+  // edge's own "R" is the average of its two corners' own distance from
+  // the centroid, and each edge's own central half-angle comes from the
+  // actual angle between those two corners as seen from the centroid,
+  // not an assumed 180/N. For a genuinely regular polygon every edge
+  // works out identical, and the formula below reduces to exactly the
+  // original closed form - verified numerically before wiring this in.
+  //
+  // spikeAngleParam itself is shape-relative (User3D.tileStarSpikeAngle's
+  // own comment): 0 is this particular candidate's own sharpest valid
+  // star, and the notch angle actually fed to the per-edge formula is
+  // this shape's own worst-case (largest) edge-to-edge central angle -
+  // the one edge where a notch would go negative/self-intersecting
+  // first - plus spikeAngleParam, clamped to never exceed 180 (the
+  // universal "no visible star, notch lands on the original edge"
+  // ceiling). That shared worst-case floor, rather than each edge's own
+  // individual floor, is what keeps every edge's own notch at or above
+  // zero simultaneously.
+  float[][] appendStarTransform_UV (float[][] poly, float spikeAngleParam) {
+    if (spikeAngleParam < 0) return poly; // disabled sentinel
+    int n = poly.length;
+    if (n < 3) return poly;
+
+    float cx = 0, cy = 0;
+    for (int i = 0; i < n; i++) { cx += poly[i][0]; cy += poly[i][1]; }
+    cx /= n; cy /= n;
+
+    float[] ang = new float[n];
+    float[] rad = new float[n];
+    for (int i = 0; i < n; i++) {
+      float dx = poly[i][0] - cx;
+      float dy = poly[i][1] - cy;
+      ang[i] = degrees(atan2(dy, dx));
+      rad[i] = sqrt(dx * dx + dy * dy);
+    }
+
+    // Each edge's own central angle, as the magnitude of the SHORTER
+    // angular step from this corner to the next one as seen from the
+    // centroid - wrapped into (-180, 180] first so this comes out
+    // correct regardless of whether poly happens to be wound CW or CCW,
+    // without needing to know or check its winding at all (always true
+    // for a convex polygon with the centroid inside it, which every
+    // candidate tile here is).
+    float[] theta = new float[n];
+    float shapeFloor = 0;
+    for (int i = 0; i < n; i++) {
+      int j = (i + 1) % n;
+      float d = ang[j] - ang[i];
+      d = d - 360.0 * floor((d + 180.0) / 360.0); // wrap into (-180, 180]
+      theta[i] = abs(d);
+      shapeFloor = max(shapeFloor, theta[i]);
+    }
+
+    float gamma = min(180, shapeFloor + spikeAngleParam);
+    float halfGamma = gamma / 2.0;
+    float sinH = funcs.sin_ang(halfGamma);
+    float cosH = funcs.cos_ang(halfGamma);
+    float cotHalfGamma = (sinH != 0) ? (cosH / sinH) : 0; // gamma==180 -> halfGamma==90 -> cot==0, the "no star" case
+
+    float[][] out = new float[2 * n][2];
+    int k = 0;
+    for (int i = 0; i < n; i++) {
+      out[k][0] = poly[i][0]; out[k][1] = poly[i][1]; k++;
+
+      int j = (i + 1) % n;
+      float d = ang[j] - ang[i];
+      d = d - 360.0 * floor((d + 180.0) / 360.0); // same wrapped step as theta[i] above, sign kept this time
+      float alpha = theta[i] / 2.0;
+      float R_edge = 0.5 * (rad[i] + rad[j]);
+      float r = R_edge * (funcs.cos_ang(alpha) - funcs.sin_ang(alpha) * cotHalfGamma);
+      if (r < 0) r = 0; // float-precision guard; gamma >= shapeFloor >= theta[i] for every edge keeps this non-negative in theory
+
+      float amid = ang[i] + d / 2.0;
+      out[k][0] = cx + r * funcs.cos_ang(amid);
+      out[k][1] = cy + r * funcs.sin_ang(amid);
+      k++;
+    }
+
+    return out;
   }
 
   // Builds the candidate tile polygons (each an array of {u, v} corner
@@ -2829,6 +2929,9 @@ class Modify3D {
     }
 
     ArrayList<float[][]> candidates_UV = buildSemiRegularCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+    for (int c = 0; c < candidates_UV.size(); c++) {
+      candidates_UV.set(c, appendStarTransform_UV(candidates_UV.get(c), User3D.tileStarSpikeAngle));
+    }
 
     int maxDegree = 0;
     for (int c = 0; c < candidates_UV.size(); c++) {
@@ -3771,17 +3874,33 @@ class Modify3D {
     endScene3DChange();
   }
 
-  // Same corner-normal estimate extrudeFaceEdges_Selection() computes per
-  // vertex (U = next corner - this corner, V = previous corner - this
-  // corner, W = unit(U x V)), just evaluated once at corner 0 instead of
-  // once per vertex - good enough as a single representative normal for a
-  // face, which is all thickenFaces_Selection() below needs it for.
+  // Newell's method: sums cross(P_i, P_i+1) over every edge (same signed-
+  // area-vector construction polygonArea3D() above already uses, just
+  // kept as a vector here instead of collapsed to a scalar) rather than
+  // taking a single 3-point corner estimate. For an ordinary convex
+  // planar face this agrees with the old corner-0-only shortcut (U x V
+  // at vertex 0) on direction - only on the exact direction, not
+  // magnitude, which funcs.vec3_unit() normalizes away either way - so
+  // every existing caller keeps the same answer. The reason to sum over
+  // every edge instead: a single corner's own 2 edges can land close to
+  // collinear (giving a near-zero, noisy cross product) or, since
+  // appendStarTransform_UV() above can hand this function a concave star
+  // polygon (tileNormal = faceNormalUnit(clipped) in the bilinear-patch
+  // tiling path), corner 0 might land exactly on one of that star's own
+  // reflex notches - summing over every edge instead of trusting one
+  // single corner stays correct (and far less noise-sensitive) in both
+  // cases, while still reducing to the same answer for the ordinary case.
   float[] faceNormalUnit (float[][] base_Vertices) {
     int n = base_Vertices.length;
-    PVector U = new PVector(base_Vertices[1][0] - base_Vertices[0][0], base_Vertices[1][1] - base_Vertices[0][1], base_Vertices[1][2] - base_Vertices[0][2]);
-    PVector V = new PVector(base_Vertices[n - 1][0] - base_Vertices[0][0], base_Vertices[n - 1][1] - base_Vertices[0][1], base_Vertices[n - 1][2] - base_Vertices[0][2]);
-    PVector UV = U.cross(V);
-    float[] W = { UV.x, UV.y, UV.z };
+    float wx = 0, wy = 0, wz = 0;
+    for (int i = 0; i < n; i++) {
+      float[] a = base_Vertices[i];
+      float[] b = base_Vertices[(i + 1) % n];
+      wx += a[1] * b[2] - a[2] * b[1];
+      wy += a[2] * b[0] - a[0] * b[2];
+      wz += a[0] * b[1] - a[1] * b[0];
+    }
+    float[] W = { wx, wy, wz };
     return funcs.vec3_unit(W);
   }
 
