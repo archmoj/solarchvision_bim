@@ -2437,6 +2437,7 @@ class Modify3D {
   final static int SEMIREGULAR_TRIHEXAGONAL = 2;
   final static int SEMIREGULAR_TRUNCATED_SQUARE = 3;
   final static int SEMIREGULAR_TRUNCATED_TRIHEXAGONAL = 4;
+  final static int SEMIREGULAR_SNUB_SQUARE = 5;
 
   void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
@@ -2456,6 +2457,10 @@ class Modify3D {
 
   void tilingTruncatedTrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_TRIHEXAGONAL);
+  }
+
+  void tilingSnubSquare_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_SNUB_SQUARE);
   }
 
   void applySemiRegularTiling_Selection (int patternKind) {
@@ -3084,6 +3089,137 @@ class Modify3D {
               hexagon[m][1] = hcy + a_len * funcs.sin_ang(ang);
             }
             addUniquePolygonUV(result, seenKeys, hexagon);
+          }
+        }
+      }
+
+    } else if (patternKind == SEMIREGULAR_SNUB_SQUARE) {
+      // The only CHIRAL pattern in this family (3.3.4.3.4) - two mirror-
+      // image handednesses exist; this is a fixed default (not a toggle),
+      // decided while planning this pattern. Unlike every pattern above,
+      // this one is built from TWO interleaved ordinary SQUARE lattices
+      // rather than one lattice with alternating shapes: "main" squares
+      // (edge a) at every integer lattice point, rotated +15 deg from
+      // their own lattice axes, and "interstitial" squares (also edge a)
+      // at every half-integer-offset lattice point, rotated -15 deg - the
+      // OPPOSITE sign is what gives the whole tiling its chirality. Each
+      // main square's 4 orthogonal (not diagonal) neighbors are joined to
+      // it by a rhombus-shaped gap, split into exactly 2 equilateral
+      // triangles (edge a) by the diagonal that happens to equal edge
+      // length a. A main square's own corners coincide exactly with
+      // certain interstitial corners (and vice versa) - confirmed
+      // numerically while deriving this - which is why both square types
+      // share the same edge length and both qualify as this pattern's own
+      // "whole tile" (both have 4 vertices, same as each other; only the
+      // triangles, at 3, are a different vertex count).
+      //
+      // A fixed 45 deg whole-pattern rotation is baked into every angle
+      // below (chosen, after reviewing both options, as this pattern's own
+      // canonical "base rotation 0" - the same kind of one-time baked-in
+      // choice as Cairo's own startHeading): it turns the square lattice
+      // so the main/interstitial squares sit as axis-aligned diamonds
+      // rather than square-on, which was the clearer of the two to look
+      // at. User3D.tileRotation (applied once, globally, via U_axis/V_axis
+      // above) still rotates the whole pattern further from there, same as
+      // every other pattern in this family.
+      float a_len = edgeSize;
+      float r = a_len / sqrt(2); // a square's own circumradius (half-diagonal)
+      // Lattice spacing between adjacent main-square centers - derived (and
+      // verified numerically: edge lengths all exactly a, and the vertex
+      // configuration at a sample vertex coming out to the required
+      // 3.3.4.3.4) together with the main lattice's own rotation
+      // (theta = 15 deg) via a numeric solve matching the gap-closing
+      // triangles' own edges to length a.
+      float s = a_len / (2 * funcs.sin_ang(15));
+
+      // Lattice basis vectors for the main-square sublattice, already
+      // carrying the baked-in 45 deg whole-pattern rotation described
+      // above - the interstitial sublattice reuses this exact same basis,
+      // just offset by half a lattice step in each direction (see below).
+      float e1x = s * funcs.cos_ang(45), e1y = s * funcs.sin_ang(45);
+      float e2x = s * funcs.cos_ang(135), e2y = s * funcs.sin_ang(135);
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * s;
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float mcx = i * e1x + j * e2x;
+          float mcy = i * e1y + j * e2y;
+
+          // Main square - vertices at (105+90*m) deg (circumradius r), i.e.
+          // the un-rotated square's own (45+90*m) corners plus the lattice's
+          // 15 deg own rotation plus the 45 deg baked-in whole-pattern
+          // rotation.
+          float[][] mainSquare = new float[4][2];
+          for (int m = 0; m < 4; m++) {
+            float ang = 105 + 90 * m;
+            mainSquare[m][0] = mcx + r * funcs.cos_ang(ang);
+            mainSquare[m][1] = mcy + r * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, mainSquare);
+
+          // Interstitial square - same lattice, offset by half a step in
+          // each direction, rotated the OPPOSITE 15 deg from the main
+          // squares (the two signs are what make this pattern chiral) -
+          // i.e. (75+90*m) deg once the same 45 deg bake-in is folded in.
+          float icx = mcx + 0.5f * (e1x + e2x);
+          float icy = mcy + 0.5f * (e1y + e2y);
+          float[][] interSquare = new float[4][2];
+          for (int m = 0; m < 4; m++) {
+            float ang = 75 + 90 * m;
+            interSquare[m][0] = icx + r * funcs.cos_ang(ang);
+            interSquare[m][1] = icy + r * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, interSquare);
+
+          // One rhombus-shaped gap per orthogonal neighbor direction
+          // (90*k, plus the same 45 deg bake-in), split into 2 equilateral
+          // triangles by the diagonal that equals edge length a - near1/
+          // near2 are 2 of this main square's own corners (the ones facing
+          // that neighbor), far1/far2 the matching 2 corners of the
+          // neighboring main square at lattice offset (+1,0)/(0,+1)/(-1,0)/
+          // (0,-1) rotated by k - derived from (and verified numerically
+          // against) both squares' own vertex positions, confirmed by every
+          // triangle edge coming out to length a.
+          for (int k = 0; k < 4; k++) {
+            float angNeighborDir = 90 * k + 45;
+            float ncx = mcx + s * funcs.cos_ang(angNeighborDir);
+            float ncy = mcy + s * funcs.sin_ang(angNeighborDir);
+
+            float angNear1 = 105 + 90 * k;
+            float angNear2 = 15 + 90 * k;
+            float angFar1 = 195 + 90 * k;
+            float angFar2 = 285 + 90 * k;
+
+            float[] near1 = { mcx + r * funcs.cos_ang(angNear1), mcy + r * funcs.sin_ang(angNear1) };
+            float[] near2 = { mcx + r * funcs.cos_ang(angNear2), mcy + r * funcs.sin_ang(angNear2) };
+            float[] far1 = { ncx + r * funcs.cos_ang(angFar1), ncy + r * funcs.sin_ang(angFar1) };
+            float[] far2 = { ncx + r * funcs.cos_ang(angFar2), ncy + r * funcs.sin_ang(angFar2) };
+
+            // near1, near2, far1 and near2, far2, far1 in those orders are
+            // both counter-clockwise (verified by hand via shoelace for
+            // k == 0 while deriving this geometry) - same convention check
+            // as every other pattern above.
+            float[][] triNear = new float[][] { near1, near2, far1 };
+            float[][] triFar = new float[][] { near2, far2, far1 };
+            addUniquePolygonUV(result, seenKeys, triNear);
+            addUniquePolygonUV(result, seenKeys, triFar);
           }
         }
       }

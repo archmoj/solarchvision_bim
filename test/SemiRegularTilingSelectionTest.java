@@ -549,4 +549,112 @@ class SemiRegularTilingSelectionTest {
     assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
     assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one dodecagon can only be a clipped piece, so nothing should qualify for selection");
   }
+
+  // --- tilingSnubSquare_Selection (a full integration test) ----
+
+  @Test
+  void tilingSnubSquare_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {12, 0, 0}, {12, 12, 0}, {0, 12, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingSnubSquare_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1, "a 12x12 face at edgeSize=1 should produce many pieces");
+    assertEquals(144.0f, totalFacesArea(), 0.01f, "main squares + interstitial squares + triangles + every clipped boundary fragment should still add up to the full 12x12 = 144 area");
+
+    boolean foundTriangle = false, foundSquare = false;
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      int n = app.allFaces.nodes[f].length;
+      if (n == 3) foundTriangle = true;
+      if (n == 4) foundSquare = true;
+    }
+    assertTrue(foundTriangle, "a face this much bigger than one tile should contain at least one triangle");
+    assertTrue(foundSquare, "a face this much bigger than one tile should contain at least one square");
+  }
+
+  @Test
+  void tilingSnubSquare_everyPieceKeepsTheBaseFacesOwnNormalDirection () {
+    // Same regression shape as every other pattern's normal-direction test
+    // - this pattern's own two triangle windings (near1, near2, far1 and
+    // near2, far2, far1) were verified by hand (shoelace check) before
+    // writing the code, but this test is what would actually catch a
+    // regression if either winding were ever broken again.
+    setUpOneFace(new float[][]{{0, 0, 0}, {12, 0, 0}, {12, 12, 0}, {0, 12, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    float[][] originalBaseVertices = app.Modify3D.faceBaseVertices(0);
+    float[] originalNormal = app.Modify3D.faceNormalUnit(originalBaseVertices);
+
+    app.Modify3D.tilingSnubSquare_Selection();
+
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      float[][] verts = app.Modify3D.faceBaseVertices(f);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float dot = normal[0] * originalNormal[0] + normal[1] * originalNormal[1] + normal[2] * originalNormal[2];
+      assertTrue(dot > 0.9f, "face " + f + " (" + verts.length + " vertices) should keep the base face's own normal direction, not an inverted one - dot was " + dot);
+    }
+  }
+
+  @Test
+  void tilingSnubSquare_selectsOnlyTheWholeUnclippedSquares () {
+    // Unlike every other pattern in this family, this one has TWO distinct
+    // polygon types sharing the pattern's own highest vertex count (4) -
+    // the main squares and the interstitial squares (see
+    // buildSemiRegularCandidates_UV()'s own SEMIREGULAR_SNUB_SQUARE comment)
+    // - so both must end up selected together, and only the triangles (3
+    // vertices) and any clipped boundary fragment (whatever its own vertex
+    // count) must stay out.
+    setUpOneFace(new float[][]{{0, 0, 0}, {12, 0, 0}, {12, 12, 0}, {0, 12, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingSnubSquare_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 12x12 face at edgeSize=1 should contain at least one whole, unclipped square");
+
+    float expectedSquareArea = app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(4, app.allFaces.nodes[idx].length, "every selected face must be a square");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      // A regular, unclipped edgeSize-1 square's own exact area - a
+      // clipped-but-coincidentally-4-vertex fragment would not match this
+      // precisely, so this is a stronger check than vertex count alone.
+      assertEquals(expectedSquareArea, area, 0.0001f, "a selected square must be a true, unclipped edge-1 square (main or interstitial), not a same-vertex-count clipped fragment");
+    }
+
+    // At least one 4-vertex face should exist that did NOT make the
+    // selection (a boundary square clipped down to a still-4-vertex shape)
+    // - otherwise this test (and the exact-area check above) wouldn't
+    // actually be exercising the "not the clipped polygons" rule.
+    boolean foundUnselectedFourVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 4) && !selectedSet.contains(f)) foundUnselectedFourVertexFace = true;
+    }
+    assertTrue(foundUnselectedFourVertexFace, "setup check - this face size should produce at least one clipped-but-still-4-vertex boundary fragment to tell apart from a true whole square");
+  }
+
+  @Test
+  void tilingSnubSquare_tilesATooSmallFaceWithAnEmptySelection () {
+    // Same whole-plane-coverage reasoning as every other pattern: a face
+    // much smaller than one tile still gets covered exactly by whatever
+    // single piece it falls inside, and a fragment this small can only ever
+    // be a clipped (not whole) piece, so the selection is empty.
+    setUpOneFace(new float[][]{{0, 0, 0}, {0.05f, 0, 0}, {0.05f, 0.05f, 0}, {0, 0.05f, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingSnubSquare_Selection();
+
+    assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
+    assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one square can only be a clipped piece, so nothing should qualify for selection");
+  }
 }

@@ -2431,6 +2431,10 @@ void build_allActions() {
     Modify3D.tilingTruncatedTrihexagon_Selection();
   });
 
+  putAction("Snub Square Tiling", () -> {
+    Modify3D.tilingSnubSquare_Selection();
+  });
+
   putAction("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });

@@ -1194,4 +1194,33 @@ class UndoRedoTest {
 
     assertEquals(tiledCount, app.allFaces.nodes.length, "redo should reapply the exact same tiling");
   }
+
+  @Test
+  void tilingSnubSquare_isUndoableAndRedoable () {
+    app.allVertices = new float[][]{{0, 0, 0}, {12, 0, 0}, {12, 12, 0}, {0, 12, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    seed(); // baseline captured after the manual setup above - this is the state undo should return to
+
+    app.Modify3D.tilingSnubSquare_Selection();
+
+    int tiledCount = app.allFaces.nodes.length;
+    assertTrue(tiledCount > 1, "setup check - a 12x12 face at edgeSize=1 should tile into more than one piece");
+
+    app.undoScene3DChange();
+
+    assertEquals(1, app.allFaces.nodes.length, "undo should bring back the single original face");
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+
+    app.redoScene3DChange();
+
+    assertEquals(tiledCount, app.allFaces.nodes.length, "redo should reapply the exact same tiling");
+  }
 }
