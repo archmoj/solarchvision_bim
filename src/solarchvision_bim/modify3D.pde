@@ -2411,6 +2411,7 @@ class Modify3D {
   final static int SEMIREGULAR_RHOMBITRIHEXAGONAL = 0;
   final static int SEMIREGULAR_TRUNCATED_HEXAGONAL = 1;
   final static int SEMIREGULAR_TRIHEXAGONAL = 2;
+  final static int SEMIREGULAR_TRUNCATED_SQUARE = 3;
 
   void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
@@ -2422,6 +2423,10 @@ class Modify3D {
 
   void tilingTrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_TRIHEXAGONAL);
+  }
+
+  void tilingTruncatedSquare_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_SQUARE);
   }
 
   void applySemiRegularTiling_Selection (int patternKind) {
@@ -2847,6 +2852,94 @@ class Modify3D {
             // check as the other two patterns' own triangles/squares above.
             float[][] triangle = new float[][] { v1, apex, v2 };
             addUniquePolygonUV(result, seenKeys, triangle);
+          }
+        }
+      }
+
+    } else if (patternKind == SEMIREGULAR_TRUNCATED_SQUARE) {
+      // Regular octagons (edge a) sit on an ordinary SQUARE lattice (unlike
+      // the other 3 patterns' own 60-deg triangular lattice) - each one
+      // shares a direct edge with its 4 orthogonal (N/S/E/W) neighbors,
+      // same as an ordinary square-tiling grid, and one small square (edge
+      // a) fills the gap at each of its other 4 (NE/NW/SE/SW) diagonal
+      // edges, shared with the octagon diagonally across it. Every octagon
+      // is generated once per lattice point, but each small square is
+      // generated twice (once from each of its 2 neighboring octagons) -
+      // addUniquePolygonUV() collapses those back down to one copy apiece.
+      float a_len = edgeSize;
+      // Circumradius of a regular octagon with edge a; its own apothem is
+      // (a/2)*cot(22.5 deg) = a*(1+sqrt(2))/2, so two octagons facing each
+      // other directly (sharing an edge) sit D = a*(1+sqrt(2)) apart.
+      float R = a_len / (2 * funcs.sin_ang(22.5));
+      float D = a_len * (1 + sqrt(2));
+
+      float e1x = D, e1y = 0;
+      float e2x = 0, e2y = D;
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * D;
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float cx = i * e1x + j * e2x;
+          float cy = i * e1y + j * e2y;
+
+          // Octagon vertices at 22.5+45*m deg (circumradius R) - chosen so
+          // its edge midpoints fall on every multiple of 45 deg: the 4
+          // edges facing 0/90/180/270 deg are shared directly with the 4
+          // orthogonal neighbors, and the 4 edges facing 45/135/225/315 deg
+          // are each shared with a small square instead.
+          float[][] octagon = new float[8][2];
+          for (int m = 0; m < 8; m++) {
+            float ang = 22.5 + 45 * m;
+            octagon[m][0] = cx + R * funcs.cos_ang(ang);
+            octagon[m][1] = cy + R * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, octagon);
+
+          // One small square per diagonal direction (45+90*k) - two of its
+          // own corners are this octagon's own vertices at local angle
+          // (22.5+90*k) and (67.5+90*k), and the other two are the
+          // diagonally-across neighbor octagon's (at lattice offset
+          // (+1,+1) rotated by 90*k) vertices at local angle (202.5+90*k)
+          // and (247.5+90*k) - derived from (and verified against) both
+          // octagons' own vertex positions, and confirmed by the resulting
+          // square's 4 edges all coming out to length a.
+          for (int k = 0; k < 4; k++) {
+            float[] diagCenterOffset = rotate2D(new float[]{ D, D }, 90 * k);
+            float ncx = cx + diagCenterOffset[0];
+            float ncy = cy + diagCenterOffset[1];
+
+            float angP0 = 22.5 + 90 * k;
+            float angP1 = 67.5 + 90 * k;
+            float angQ1 = 247.5 + 90 * k;
+            float angQ2 = 202.5 + 90 * k;
+
+            float[] p0 = { cx + R * funcs.cos_ang(angP0), cy + R * funcs.sin_ang(angP0) };
+            float[] q1 = { ncx + R * funcs.cos_ang(angQ1), ncy + R * funcs.sin_ang(angQ1) };
+            float[] q2 = { ncx + R * funcs.cos_ang(angQ2), ncy + R * funcs.sin_ang(angQ2) };
+            float[] p1 = { cx + R * funcs.cos_ang(angP1), cy + R * funcs.sin_ang(angP1) };
+
+            // p0, q1, q2, p1 in that order is counter-clockwise (verified
+            // by hand for k == 0 via shoelace sum before writing this
+            // code) - same convention check as every other pattern above.
+            float[][] square = new float[][] { p0, q1, q2, p1 };
+            addUniquePolygonUV(result, seenKeys, square);
           }
         }
       }

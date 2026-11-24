@@ -348,4 +348,109 @@ class SemiRegularTilingSelectionTest {
     assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
     assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one hexagon can only be a clipped piece, so nothing should qualify for selection");
   }
+
+  // --- tilingTruncatedSquare_Selection (a full integration test) ----
+
+  @Test
+  void tilingTruncatedSquare_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedSquare_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1, "a 15x15 face at edgeSize=1 should produce many pieces");
+    assertEquals(225.0f, totalFacesArea(), 0.01f, "squares + octagons + every clipped boundary fragment should still add up to the full 15x15 = 225 area");
+
+    boolean foundSquare = false, foundOctagon = false;
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      int n = app.allFaces.nodes[f].length;
+      if (n == 4) foundSquare = true;
+      if (n == 8) foundOctagon = true;
+    }
+    assertTrue(foundSquare, "a face this much bigger than one tile should contain at least one square");
+    assertTrue(foundOctagon, "a face this much bigger than one tile should contain at least one octagon");
+  }
+
+  @Test
+  void tilingTruncatedSquare_everyPieceKeepsTheBaseFacesOwnNormalDirection () {
+    // Same regression shape as the other patterns' normal-direction tests -
+    // this pattern's small-square winding (p0, q1, q2, p1) was verified by
+    // hand (shoelace check) before writing the code, but this test is what
+    // would actually catch a regression if that winding were ever broken
+    // again.
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    float[][] originalBaseVertices = app.Modify3D.faceBaseVertices(0);
+    float[] originalNormal = app.Modify3D.faceNormalUnit(originalBaseVertices);
+
+    app.Modify3D.tilingTruncatedSquare_Selection();
+
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      float[][] verts = app.Modify3D.faceBaseVertices(f);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float dot = normal[0] * originalNormal[0] + normal[1] * originalNormal[1] + normal[2] * originalNormal[2];
+      assertTrue(dot > 0.9f, "face " + f + " (" + verts.length + " vertices) should keep the base face's own normal direction, not an inverted one - dot was " + dot);
+    }
+  }
+
+  @Test
+  void tilingTruncatedSquare_selectsOnlyTheWholeUnclippedOctagons () {
+    // The 4.8.8 pattern's own highest-vertex-count shape is the octagon (8
+    // vertices, vs. the square's 4) - every other piece, including any
+    // octagon-shaped boundary fragment that happened to still land on 8
+    // vertices after clipping, must stay unselected.
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedSquare_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 15x15 face at edgeSize=1 should contain at least one whole, unclipped octagon");
+
+    float expectedOctagonArea = 2 * (1 + (float) Math.sqrt(2)) * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(8, app.allFaces.nodes[idx].length, "every selected face must be an octagon");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      // A regular, unclipped edgeSize-1 octagon's own exact area - a
+      // clipped-but-coincidentally-8-vertex fragment would not match this
+      // precisely, so this is a stronger check than vertex count alone.
+      assertEquals(expectedOctagonArea, area, 0.0001f, "a selected octagon must be a true, unclipped regular octagon, not a same-vertex-count clipped fragment");
+    }
+
+    // At least one 8-vertex face should exist that did NOT make the
+    // selection (a boundary octagon clipped down to a still-8-vertex
+    // shape) - otherwise this test (and the exact-area check above)
+    // wouldn't actually be exercising the "not the clipped polygons" rule.
+    boolean foundUnselectedEightVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 8) && !selectedSet.contains(f)) foundUnselectedEightVertexFace = true;
+    }
+    assertTrue(foundUnselectedEightVertexFace, "setup check - this face size should produce at least one clipped-but-still-8-vertex boundary fragment to tell apart from a true whole octagon");
+  }
+
+  @Test
+  void tilingTruncatedSquare_tilesATooSmallFaceWithAnEmptySelection () {
+    // Same whole-plane-coverage reasoning as the other patterns: a face
+    // much smaller than one tile still gets covered exactly by whatever
+    // single piece it falls inside, and a fragment this small can only ever
+    // be a clipped (not whole) piece, so the selection is empty.
+    setUpOneFace(new float[][]{{0, 0, 0}, {0.05f, 0, 0}, {0.05f, 0.05f, 0}, {0, 0.05f, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedSquare_Selection();
+
+    assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
+    assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one octagon can only be a clipped piece, so nothing should qualify for selection");
+  }
 }

@@ -510,6 +510,7 @@ class UI_menuBar {
       "Rhombitrihexagon Tiling",
       "Truncated Hexagon Tiling",
       "Trihexagon Tiling",
+      "Truncated Square Tiling",
       ___divider___,
       "Insert Corner Openings",
       "Insert Parallel Openings",

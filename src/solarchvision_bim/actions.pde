@@ -2423,6 +2423,10 @@ void build_allActions() {
     Modify3D.tilingTrihexagon_Selection();
   });
 
+  putAction("Truncated Square Tiling", () -> {
+    Modify3D.tilingTruncatedSquare_Selection();
+  });
+
   putAction("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });
