@@ -1010,4 +1010,38 @@ class UndoRedoTest {
 
     assertEquals(6, app.allFaces.nodes.length, "redo should reapply the tiling");
   }
+
+  @Test
+  void tilingCairo_isUndoableAndRedoable () {
+    // Cairo's own applyTiling_Selection() call is identical plumbing to
+    // tilingSquare_isUndoableAndRedoable() above - same one
+    // beginScene3DChange()/endScene3DChange() pair - even though the
+    // candidate pentagons themselves come from a BFS growth rather than a
+    // closed-form grid (buildTilingCandidates_UV()'s TILING_CAIRO branch).
+    app.allVertices = new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    seed(); // baseline captured after the manual setup above - this is the state undo should return to
+
+    app.Modify3D.tilingCairo_Selection();
+
+    int tiledCount = app.allFaces.nodes.length;
+    assertTrue(tiledCount > 1, "setup check - a 5x5 face at edgeSize=1 should tile into more than one pentagon piece");
+
+    app.undoScene3DChange();
+
+    assertEquals(1, app.allFaces.nodes.length, "undo should bring back the single original face");
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+
+    app.redoScene3DChange();
+
+    assertEquals(tiledCount, app.allFaces.nodes.length, "redo should reapply the exact same tiling");
+  }
 }

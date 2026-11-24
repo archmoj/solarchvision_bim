@@ -149,6 +149,78 @@ class TilingSelectionTest {
     assertTrue(foundWholeTriangle, "a face this much bigger than one tile should contain at least one unclipped, whole triangle");
   }
 
+  // --- tilingCairo_Selection (a full integration test) ------------------
+  // Unlike the three grid-based patterns above, Cairo is grown outward
+  // from one seed pentagon via BFS (buildTilingCandidates_UV()'s own
+  // TILING_CAIRO branch) rather than placed by a closed-form row/column
+  // formula - these tests cover the same area-conservation invariant the
+  // other patterns rely on, plus the boundary-clip and rotation behavior,
+  // to make sure the generative approach still plugs into the exact same
+  // clip/dedupe/splice pipeline correctly.
+
+  @Test
+  void tilingCairo_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingCairo_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1, "a 5x5 face at edgeSize=1 should produce more than one pentagon-pattern piece");
+    assertEquals(25.0f, totalFacesArea(), 0.01f);
+
+    boolean foundWholePentagon = false;
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if (app.allFaces.nodes[f].length == 5) foundWholePentagon = true;
+    }
+    assertTrue(foundWholePentagon, "a face this much bigger than one tile should contain at least one unclipped, whole pentagon");
+  }
+
+  @Test
+  void tilingCairo_clipsBoundaryTilesToFitInsteadOfDroppingThem () {
+    // A face whose boundary falls mid-pentagon almost everywhere (no
+    // special alignment to the BFS growth, unlike the grid patterns'
+    // flush-rectangle case) - every boundary piece must still be clipped
+    // to fit, never dropped, so the total area must still come out exact.
+    setUpOneFace(new float[][]{{0, 0, 0}, {3.7f, 0, 0}, {3.7f, 2.9f, 0}, {0, 2.9f, 0}});
+    app.User3D.tileEdgeSize = 0.6f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingCairo_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1);
+    assertEquals(3.7f * 2.9f, totalFacesArea(), 0.01f, "clipped boundary pieces should still add up to the full face area");
+  }
+
+  @Test
+  void tilingCairo_rotationTurnsThePatternButKeepsTheTotalAreaExact () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 37;
+
+    app.Modify3D.tilingCairo_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1);
+    assertEquals(25.0f, totalFacesArea(), 0.01f);
+  }
+
+  @Test
+  void tilingCairo_appendsTheNewFacesToTheSelectionAndExtendsTheGroupRange () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingCairo_Selection();
+
+    int n = app.allFaces.nodes.length;
+    assertTrue(n > 1);
+    assertArrayEquals(new int[]{0, n - 1}, app.allGroups.Faces[0], "the group's face range should grow to cover all new tiles");
+
+    int[] expectedSelection = new int[n];
+    for (int i = 0; i < n; i++) expectedSelection[i] = i;
+    assertArrayEquals(expectedSelection, app.Select3D.faceSelection, "all new tiles should end up selected");
+  }
+
   // --- shared selection/group plumbing, same as the tessellate family ---
 
   @Test

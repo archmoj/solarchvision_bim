@@ -2403,6 +2403,10 @@ void build_allActions() {
     Modify3D.tilingHexagon_Selection();
   });
 
+  putAction("Cairo Tiling", () -> {
+    Modify3D.tilingCairo_Selection();
+  });
+
   putAction("Equilateral Tiling", () -> {
     Modify3D.tilingEquilateral_Selection();
   });

@@ -1886,6 +1886,7 @@ class Modify3D {
   final static int TILING_SQUARE = 0;
   final static int TILING_HEXAGON = 1;
   final static int TILING_EQUILATERAL = 2;
+  final static int TILING_CAIRO = 3;
 
   void tilingSquare_Selection () {
     applyTiling_Selection(TILING_SQUARE);
@@ -1897,6 +1898,10 @@ class Modify3D {
 
   void tilingEquilateral_Selection () {
     applyTiling_Selection(TILING_EQUILATERAL);
+  }
+
+  void tilingCairo_Selection () {
+    applyTiling_Selection(TILING_CAIRO);
   }
 
   void applyTiling_Selection (int patternKind) {
@@ -2201,7 +2206,7 @@ class Modify3D {
         }
       }
 
-    } else { // TILING_HEXAGON - flat-top; a regular hexagon's own edge length equals its circumradius, so edgeSize doubles as R directly
+    } else if (patternKind == TILING_HEXAGON) { // flat-top; a regular hexagon's own edge length equals its circumradius, so edgeSize doubles as R directly
       float R = edgeSize;
       float colSpacing = 1.5 * R;
       float rowSpacing = sqrt(3) * R;
@@ -2229,9 +2234,165 @@ class Modify3D {
           result.add(hex);
         }
       }
+
+    } else { // TILING_CAIRO - dual of the snub-square tiling (angles
+      // 90,120,120,90,120; edges a,b,a,a,a with b = (sqrt(3)-1)*a). Unlike
+      // the three patterns above, this has no closed-form row/column grid:
+      // the two right-angle vertices are 4-fold centers and the one short
+      // edge (between the two 120 deg corners that don't touch a right
+      // angle) pairs two pentagons by a half-turn, so the tiling is grown
+      // outward from one seed pentagon by repeatedly reflecting/rotating
+      // onto each neighbor until the padded face bounds are covered.
+      float a_len = edgeSize;
+      float b_len = (sqrt(3) - 1) * a_len;
+
+      // One seed pentagon, walked edge-by-edge from its own first vertex.
+      // Interior angles 90,120,120,90,120 -> exterior turns 60,60,90,60,90,
+      // applied AFTER each edge. Starting heading -60 (rather than 0) is
+      // what lines the 4-fold vertices up on an axis-aligned square
+      // lattice at User3D.tileRotation == 0 - the familiar, architectural-
+      // drawing orientation of the Cairo tiling - instead of an arbitrary
+      // 60 deg tilt that falls out of starting the walk along U_axis.
+      float[] edgeLens = { a_len, b_len, a_len, a_len, a_len };
+      float[] turnDegs = { 60, 60, 90, 60, 90 };
+      float startHeading = -60;
+
+      float[][] seed = new float[5][2];
+      float ux = uCenter, vx = vCenter;
+      float heading = startHeading;
+      for (int k = 0; k < 5; k++) {
+        seed[k][0] = ux;
+        seed[k][1] = vx;
+        ux += edgeLens[k] * funcs.cos_ang(heading);
+        vx += edgeLens[k] * funcs.sin_ang(heading);
+        heading += turnDegs[k];
+      }
+
+      // Generous padding ring beyond the face's own UV extent, so a
+      // boundary pentagon's corner is never short once clipped - the
+      // pentagon's own longest reach from its centroid is a couple of
+      // edgeSize, so a 2*edgeSize margin comfortably covers it the same
+      // way the other three patterns pad by one tile width/ring.
+      float pad = 2 * a_len;
+      float boundU0 = uMin - pad, boundU1 = uMax + pad;
+      float boundV0 = vMin - pad, boundV1 = vMax + pad;
+
+      ArrayList<float[][]> placed = new ArrayList<float[][]>();
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+      placed.add(seed);
+      seenKeys.add(cairoPentagonKey(seed));
+
+      ArrayList<float[][]> frontier = new ArrayList<float[][]>();
+      frontier.add(seed);
+
+      // Safety caps, not expected geometry limits: a BFS "layer" here is
+      // one ring of growth outward, so this comfortably outgrows any
+      // reasonably sized face long before either cap is hit; they only
+      // guard against runaway growth on a pathological edgeSize/face
+      // combination (mirroring the same unchecked-nCols/nRows risk the
+      // other three patterns already accept).
+      int maxLayers = 64;
+      int maxPlaced = 20000;
+
+      for (int layer = 0; layer < maxLayers && frontier.size() > 0 && placed.size() < maxPlaced; layer++) {
+        ArrayList<float[][]> nextFrontier = new ArrayList<float[][]>();
+        boolean anyFrontierInBounds = false;
+
+        for (int p = 0; p < frontier.size() && placed.size() < maxPlaced; p++) {
+          float[][] poly = frontier.get(p);
+          if (!cairoPentagonBoundsOverlap(poly, boundU0, boundU1, boundV0, boundV1)) continue;
+          anyFrontierInBounds = true;
+
+          // neighbor across the short (b) edge V1-V2: half-turn about its midpoint
+          float[] mid = { 0.5 * (poly[1][0] + poly[2][0]), 0.5 * (poly[1][1] + poly[2][1]) };
+          float[][] shortEdgeNeighbor = cairoRotatePentagon_UV(poly, mid, 180);
+          String shortEdgeKey = cairoPentagonKey(shortEdgeNeighbor);
+          if (!seenKeys.contains(shortEdgeKey)) {
+            seenKeys.add(shortEdgeKey);
+            placed.add(shortEdgeNeighbor);
+            nextFrontier.add(shortEdgeNeighbor);
+          }
+
+          // the two right-angle vertices (V0, V3) are 4-fold centers -
+          // three more copies wrap around each one, 90 deg apart
+          int[] rightAngleIdx = { 0, 3 };
+          for (int r = 0; r < rightAngleIdx.length; r++) {
+            float[] center = poly[rightAngleIdx[r]];
+            for (int deg = 90; deg <= 270; deg += 90) {
+              float[][] cand = cairoRotatePentagon_UV(poly, center, deg);
+              String key = cairoPentagonKey(cand);
+              if (!seenKeys.contains(key)) {
+                seenKeys.add(key);
+                placed.add(cand);
+                nextFrontier.add(cand);
+              }
+            }
+          }
+        }
+
+        if (!anyFrontierInBounds) break; // every pentagon left to grow from has already cleared the padded box
+        frontier = nextFrontier;
+      }
+
+      result = placed;
     }
 
     return result;
+  }
+
+  // Half-turn (180 deg) is just the deg==180 case of the general rotation
+  // below, but kept as its own call above for clarity at the one BFS rule
+  // ("pair across the short edge by a half-turn about its midpoint") that
+  // reads more plainly spelled out that way than as "rotate by 180".
+  float[][] cairoRotatePentagon_UV (float[][] poly, float[] center, float deg) {
+    float[][] out = new float[poly.length][2];
+    float c = funcs.cos_ang(deg);
+    float s = funcs.sin_ang(deg);
+    for (int k = 0; k < poly.length; k++) {
+      float dx = poly[k][0] - center[0];
+      float dy = poly[k][1] - center[1];
+      out[k][0] = center[0] + dx * c - dy * s;
+      out[k][1] = center[1] + dx * s + dy * c;
+    }
+    return out;
+  }
+
+  // Rounds every vertex (killing the float noise that accumulates over
+  // several chained rotations) and sorts the rounded pairs before joining
+  // them into one string key - the Cairo BFS routinely reaches the exact
+  // same pentagon by more than one neighbor path, and a plain vertex-order
+  // key would treat those as distinct and place the same tile twice.
+  String cairoPentagonKey (float[][] poly) {
+    String[] parts = new String[poly.length];
+    for (int k = 0; k < poly.length; k++) {
+      float ru = round(poly[k][0] * 1000) / 1000.0;
+      float rv = round(poly[k][1] * 1000) / 1000.0;
+      parts[k] = ru + "," + rv;
+    }
+    java.util.Arrays.sort(parts);
+    StringBuilder sb = new StringBuilder();
+    for (int k = 0; k < parts.length; k++) {
+      sb.append(parts[k]);
+      sb.append(";");
+    }
+    return sb.toString();
+  }
+
+  // Whether this pentagon's own bounding box overlaps the padded UV
+  // region still left to cover - used only to decide whether a frontier
+  // pentagon is still worth growing from, not to decide what's kept
+  // (clipPolygonToFaceBoundary3D() and the area filter in
+  // applyTiling_Selection() already handle that, the same as for the
+  // other three patterns' own one-ring padding).
+  boolean cairoPentagonBoundsOverlap (float[][] poly, float u0, float u1, float v0, float v1) {
+    float pu0 = FLOAT_huge, pu1 = -FLOAT_huge, pv0 = FLOAT_huge, pv1 = -FLOAT_huge;
+    for (int k = 0; k < poly.length; k++) {
+      pu0 = min(pu0, poly[k][0]);
+      pu1 = max(pu1, poly[k][0]);
+      pv0 = min(pv0, poly[k][1]);
+      pv1 = max(pv1, poly[k][1]);
+    }
+    return (pu1 >= u0) && (pu0 <= u1) && (pv1 >= v0) && (pv0 <= v1);
   }
 
   void forceTriangulateFaces_Selection () {
