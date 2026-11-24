@@ -2436,6 +2436,7 @@ class Modify3D {
   final static int SEMIREGULAR_TRUNCATED_HEXAGONAL = 1;
   final static int SEMIREGULAR_TRIHEXAGONAL = 2;
   final static int SEMIREGULAR_TRUNCATED_SQUARE = 3;
+  final static int SEMIREGULAR_TRUNCATED_TRIHEXAGONAL = 4;
 
   void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
@@ -2451,6 +2452,10 @@ class Modify3D {
 
   void tilingTruncatedSquare_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_SQUARE);
+  }
+
+  void tilingTruncatedTrihexagon_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_TRIHEXAGONAL);
   }
 
   void applySemiRegularTiling_Selection (int patternKind) {
@@ -2964,6 +2969,121 @@ class Modify3D {
             // code) - same convention check as every other pattern above.
             float[][] square = new float[][] { p0, q1, q2, p1 };
             addUniquePolygonUV(result, seenKeys, square);
+          }
+        }
+      }
+
+    } else if (patternKind == SEMIREGULAR_TRUNCATED_TRIHEXAGONAL) {
+      // The "great rhombitrihexagonal" tiling (4.6.12 - one square, one
+      // hexagon, one dodecagon at every vertex). Same 60-deg triangular
+      // lattice shape as Rhombitrihexagonal/Truncated Hexagonal above, but
+      // this time the dodecagon (edge a) never shares a direct edge with a
+      // neighboring dodecagon - EVERY one of its 12 edges instead borders
+      // either a small square (6 of them, facing the 6 neighbor directions
+      // 60*k) or a small hexagon (the other 6, facing the 6 bisecting
+      // directions 60*k+30, each one shared with the 2 OTHER dodecagons
+      // that meet there) - both also edge a, same as every other pattern
+      // in this family. Every dodecagon is generated once per lattice
+      // point, each square twice (once from each of its 2 neighboring
+      // dodecagons), and each hexagon 3 times (once from each of its 3
+      // neighboring dodecagons) - addUniquePolygonUV() collapses those back
+      // down to one copy apiece.
+      float a_len = edgeSize;
+      // Circumradius of a regular 12-gon with edge a (same as Truncated
+      // Hexagonal's own R) - but here the lattice spacing is bigger, since
+      // a whole square (not a shared edge) separates two neighboring
+      // dodecagons: D = a*(3+sqrt(3)), derived from (and verified against)
+      // the dodecagon's own vertex positions and the resulting square's 4
+      // edges all coming out to length a.
+      float R = a_len / (2 * funcs.sin_ang(15));
+      float D = a_len * (3 + sqrt(3));
+      // The small hexagon's own center sits at radius D/sqrt(3) from each
+      // of the 3 dodecagons meeting around it, in their shared bisecting
+      // direction - derived from (and verified against) the 3 dodecagon
+      // centers' own centroid, which is exactly where the hexagon's own
+      // center must sit by symmetry.
+      float hexCenterRadius = D / sqrt(3);
+
+      float e1x = D, e1y = 0;
+      float e2x = D * 0.5, e2y = D * sqrt(3) / 2.0;
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * D;
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float cx = i * e1x + j * e2x;
+          float cy = i * e1y + j * e2y;
+
+          // Dodecagon vertices at 15+30*m deg (circumradius R), same phase
+          // as Truncated Hexagonal's own dodecagon - here EVERY edge (both
+          // the even-m ones facing 60*k and the odd-m ones facing
+          // 60*k+30) borders a square or a hexagon rather than another
+          // dodecagon directly.
+          float[][] dodecagon = new float[12][2];
+          for (int m = 0; m < 12; m++) {
+            float ang = 15 + 30 * m;
+            dodecagon[m][0] = cx + R * funcs.cos_ang(ang);
+            dodecagon[m][1] = cy + R * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, dodecagon);
+
+          // One square per neighbor direction (60*k) - two of its own
+          // corners are this dodecagon's own vertices at local angle
+          // (-15+60*k) and (15+60*k) (the edge facing straight at that
+          // neighbor), and the other two are those same 2 points shifted
+          // outward by a*(cos 60*k, sin 60*k) - which land exactly on the
+          // neighboring dodecagon's own matching vertices, confirmed
+          // numerically while deriving this geometry.
+          for (int k = 0; k < 6; k++) {
+            float angC1 = -15 + 60 * k;
+            float angC2 = 15 + 60 * k;
+            float[] outward = { a_len * funcs.cos_ang(60 * k), a_len * funcs.sin_ang(60 * k) };
+
+            float[] c1 = { cx + R * funcs.cos_ang(angC1), cy + R * funcs.sin_ang(angC1) };
+            float[] c2 = { cx + R * funcs.cos_ang(angC2), cy + R * funcs.sin_ang(angC2) };
+            float[] c3 = { c2[0] + outward[0], c2[1] + outward[1] };
+            float[] c4 = { c1[0] + outward[0], c1[1] + outward[1] };
+
+            // c1, c4, c3, c2 in that order is counter-clockwise (the
+            // reverse, c1-c2-c3-c4, traces it clockwise instead) - same
+            // convention check as every other pattern above.
+            float[][] square = new float[][] { c1, c4, c3, c2 };
+            addUniquePolygonUV(result, seenKeys, square);
+          }
+
+          // One hexagon per bisecting direction (60*k+30) - its own center
+          // sits at radius hexCenterRadius in that direction, and (being a
+          // regular edge-a hexagon in its own right) its 6 vertices are at
+          // 60*m deg (same phase as Trihexagonal's own hexagon above)
+          // around that center.
+          for (int k = 0; k < 6; k++) {
+            float angCenter = 30 + 60 * k;
+            float hcx = cx + hexCenterRadius * funcs.cos_ang(angCenter);
+            float hcy = cy + hexCenterRadius * funcs.sin_ang(angCenter);
+
+            float[][] hexagon = new float[6][2];
+            for (int m = 0; m < 6; m++) {
+              float ang = 60 * m;
+              hexagon[m][0] = hcx + a_len * funcs.cos_ang(ang);
+              hexagon[m][1] = hcy + a_len * funcs.sin_ang(ang);
+            }
+            addUniquePolygonUV(result, seenKeys, hexagon);
           }
         }
       }
