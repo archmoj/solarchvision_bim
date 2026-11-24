@@ -1034,8 +1034,23 @@ class UI_menuBar {
     textSize(MessageSize);
     float widthChildren = computeChildMenuWidth(i);
 
+    // Left-align the dropdown with its parent tab's left edge (cx), same
+    // as always - UNLESS that would run the dropdown off the right edge
+    // of the screen, in which case right-align it to the tab's own right
+    // edge instead. Only a handful of tabs far enough right along the
+    // bar with a wide enough dropdown (e.g. "Capture", "Guide") ever hit
+    // that case; every other tab keeps opening to the right of its own
+    // label exactly as before. Right-aligning (rather than just clamping
+    // to the screen edge) keeps the box anchored to its own tab instead
+    // of floating free of it, and never runs off-screen itself since no
+    // tab's own right edge can be off-screen.
+    float boxX = cx;
+    if (cx + widthChildren > width) {
+      boxX = cx + currentParentWidth - widthChildren;
+    }
+
     for (int j = 1; j < this.Items[i].length; j++) {
-      drawChildRow(i, j, cx, cy, cr, widthChildren);
+      drawChildRow(i, j, boxX, cy, cr, widthChildren);
     }
   }
 
