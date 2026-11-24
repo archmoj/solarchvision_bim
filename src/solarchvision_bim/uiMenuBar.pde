@@ -38,6 +38,14 @@ class UI_menuBar {
 
   String[][] Items;
 
+  // For each parent (first index) and each of its child rows (second
+  // index, matching Items[parent]'s own indices): whether a divider
+  // (___divider___) sat directly above that row before
+  // cleanDividersFromParent() (below) stripped every divider out of
+  // Items entirely. Kept in lockstep with Items by cleanDividersFromParent -
+  // never written anywhere else.
+  boolean[][] childDividerBeforeRow;
+
   int LayersID_in_Bar;
 
   // Looks up whether a given menu item should be drawn "greyed out"
@@ -51,7 +59,65 @@ class UI_menuBar {
 
   UI_menuBar () { // constructor
     this.Items = buildMenuItems();
+
+    // Strip every divider out of every parent's own Items[i] up front,
+    // once, right here - see cleanDividersFromParent(), below, for why.
+    this.childDividerBeforeRow = new boolean[this.Items.length][];
+    for (int i = 0; i < this.Items.length; i++) {
+      cleanDividersFromParent(i);
+    }
+
     this.disabledStateByItem = buildDisabledStateLookup();
+  }
+
+  // Strips every divider (___divider___) entry out of this.Items[parentIndex],
+  // replacing it with a same-shaped array holding only real, selectable
+  // child labels, and records where each stripped divider sat into
+  // childDividerBeforeRow[parentIndex] (same length and indices as the
+  // now-cleaned Items[parentIndex]): childDividerBeforeRow[parentIndex][j]
+  // == true means a divider sat directly above child row j.
+  //
+  // Called once for every parent in the constructor, above, right after
+  // buildMenuItems() first populates this.Items, and again whenever a
+  // parent's own child list is rebuilt from scratch afterward (just
+  // "Layer", via populateLayerMenu() - its own raw, divider-containing
+  // array is rebuilt fresh on every call, so it needs re-cleaning every
+  // time too).
+  //
+  // Doing this once, up front, rather than skipping dividers over and
+  // over while drawing or navigating (as an earlier version of this
+  // code did), means every child row index in Items from here on refers
+  // to one real, selectable item - consistently, across every parent -
+  // so moveSelection()'s Left/Right (which carries the same child index
+  // over to a different parent) lands on the same visual row position
+  // in both, regardless of how many dividers either parent happens to
+  // have above that point. It also means a divider costs its row no
+  // height of its own at all (see drawChildRow(), below) without the
+  // rendering or navigation code needing to know dividers ever existed.
+  void cleanDividersFromParent(int parentIndex) {
+    String[] raw = this.Items[parentIndex];
+
+    ArrayList<String> cleaned = new ArrayList<String>();
+    ArrayList<Boolean> dividerBefore = new ArrayList<Boolean>();
+    cleaned.add(raw[0]); // the parent tab's own label, untouched
+    dividerBefore.add(false); // unused - index 0 isn't a child row
+
+    boolean pendingDivider = false;
+    for (int j = 1; j < raw.length; j++) {
+      if (isDivider(raw[j])) {
+        pendingDivider = true; // remembered, not kept as its own row
+      } else {
+        cleaned.add(raw[j]);
+        dividerBefore.add(pendingDivider);
+        pendingDivider = false;
+      }
+    }
+
+    this.Items[parentIndex] = cleaned.toArray(new String[0]);
+
+    boolean[] flags = new boolean[dividerBefore.size()];
+    for (int k = 0; k < flags.length; k++) flags[k] = dividerBefore.get(k);
+    this.childDividerBeforeRow[parentIndex] = flags;
   }
 
   // ---------------------------------------------------------------------
@@ -802,6 +868,18 @@ class UI_menuBar {
 
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
+  //
+  // Builds into a local array (raw) rather than straight into
+  // this.Items[LayersID_in_Bar], and returns that same local array
+  // (still holding its own divider entry) rather than
+  // this.Items[LayersID_in_Bar] (which cleanDividersFromParent(),
+  // above, replaces with a divider-free array of its own, for
+  // rendering/navigation). actions.pde's build_allActions() depends on
+  // the divider's own position in the array it gets back from this
+  // method (to skip it, and to offset the "developed" layers' indices
+  // past it) - keeping that a separate, untouched array leaves that
+  // logic working exactly as it did before dividers were cleaned out of
+  // this.Items itself.
   String[] populateLayerMenu() {
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
@@ -811,28 +889,31 @@ class UI_menuBar {
       }
     }
 
-    this.Items[LayersID_in_Bar] = new String[allLayers.length + numberOfDevelopedLayers + 1]; // +1 for the divider
-    this.Items[LayersID_in_Bar][0] = PARENT_LAYER;
+    String[] raw = new String[allLayers.length + numberOfDevelopedLayers + 1]; // +1 for the divider
+    raw[0] = PARENT_LAYER;
 
     for (int i = 0; i < allLayers.length; i++) {
-      this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
+      raw[i + 1] = allLayers[i].descriptions[Language_EN];
     }
 
     int base = allLayers.length;
-    this.Items[LayersID_in_Bar][base + 0] = ___divider___;
-    this.Items[LayersID_in_Bar][base + 1] = "Wind power";
-    this.Items[LayersID_in_Bar][base + 2] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][base + 3] = "Radiation on surface with inclination";
-    this.Items[LayersID_in_Bar][base + 4] = "Radiation on South surface";
-    this.Items[LayersID_in_Bar][base + 5] = "Radiation on East surface";
-    this.Items[LayersID_in_Bar][base + 6] = "Radiation on North surface";
-    this.Items[LayersID_in_Bar][base + 7] = "Radiation on West surface";
-    this.Items[LayersID_in_Bar][base + 8] = "Radiation on S.E. surface";
-    this.Items[LayersID_in_Bar][base + 9] = "Radiation on N.E. surface";
-    this.Items[LayersID_in_Bar][base + 10] = "Radiation on N.W. surface";
-    this.Items[LayersID_in_Bar][base + 11] = "Radiation on S.W. surface";
+    raw[base + 0] = ___divider___;
+    raw[base + 1] = "Wind power";
+    raw[base + 2] = "Radiation on solar tracker";
+    raw[base + 3] = "Radiation on surface with inclination";
+    raw[base + 4] = "Radiation on South surface";
+    raw[base + 5] = "Radiation on East surface";
+    raw[base + 6] = "Radiation on North surface";
+    raw[base + 7] = "Radiation on West surface";
+    raw[base + 8] = "Radiation on S.E. surface";
+    raw[base + 9] = "Radiation on N.E. surface";
+    raw[base + 10] = "Radiation on N.W. surface";
+    raw[base + 11] = "Radiation on S.W. surface";
 
-    return this.Items[LayersID_in_Bar];
+    this.Items[LayersID_in_Bar] = raw;
+    cleanDividersFromParent(LayersID_in_Bar);
+
+    return raw;
   }
 
   // Builds the lookup used to grey out toggle-style menu items whose
@@ -909,8 +990,21 @@ class UI_menuBar {
     return (state != null) && state.getAsBoolean();
   }
 
+  // null-safe: a divider entry is only ever ___divider___ itself, never
+  // null - but ___divider___'s own initializer (uiMenuBar.pde) runs
+  // after globalVariables.pde's own `UI_menuBar = new UI_menuBar();`
+  // field initializer does (see MenuItemReachabilityTest.java's own
+  // header comment on this), so buildMenuItems() briefly bakes in a
+  // literal Java null everywhere ___divider___ is written, the one time
+  // UI_menuBar gets built this way - cleanDividersFromParent(), below,
+  // runs right there in the constructor, so it's the one caller that
+  // actually sees this. Treating null as "not a divider" here means
+  // that harmless, soon-to-be-discarded instance (solarchvision_bim.pde's
+  // own setup() builds a second, fully-valid one before the real app
+  // ever draws a menu) just keeps a few placeholder rows instead of
+  // crashing outright.
   boolean isDivider(String label) {
-    return label.charAt(0) == DIVIDER_MARK;
+    return (label != null) && (label.charAt(0) == DIVIDER_MARK);
   }
 
   // ---------------------------------------------------------------------
@@ -1066,16 +1160,19 @@ class UI_menuBar {
     return widthChildren;
   }
 
-  // Draws one row (item or divider) of an open dropdown, including hover
-  // highlighting and the disabled/greyed-out state.
+  // Draws one child row of an open dropdown, including hover
+  // highlighting and the disabled/greyed-out state. Every row is a
+  // real, selectable item - cleanDividersFromParent(), above, has
+  // already stripped every divider out of this.Items, so there's no
+  // divider case to handle here at all, and every row costs exactly the
+  // same, uniform height.
   void drawChildRow(int i, int j, float cx, float cy, float cr, float widthChildren) {
     float rowTop = cy - cr + pixel_A + (j - 1) * pixel_A * CHILD_ROW_HEIGHT_FACTOR;
     float rowHeight = pixel_A * CHILD_ROW_HEIGHT_FACTOR;
 
     String label = this.Items[i][j];
-    boolean isSelectable = !isDivider(label);
 
-    boolean isHovered = isSelectable && !isHoverSuppressed() && isInside(
+    boolean isHovered = !isHoverSuppressed() && isInside(
       UI_X_moved, UI_Y_moved,
       cx, ceil(cy - cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) + 1,
       cx + widthChildren, floor(cy + cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) - 1
@@ -1086,7 +1183,7 @@ class UI_menuBar {
     }
 
     // highlight the selected row whether it was selected by mouse or keyboard
-    if (isSelectable && (this.selected_child == j)) {
+    if (this.selected_child == j) {
       fill(HOVER_COLOR_R, HOVER_COLOR_G, HOVER_COLOR_B);
     } else {
       fill(0, 0, 63, 223);
@@ -1119,14 +1216,22 @@ class UI_menuBar {
       fill(255);
     }
 
-    if(isSelectable) {
-      text(label, cx + padChildrenWidth, rowTop + cr - 0.1 * MessageSize);
-    } else {
+    text(label, cx + padChildrenWidth, rowTop + cr - 0.1 * MessageSize);
+
+    // A divider that used to sit directly above this row, before
+    // cleanDividersFromParent() stripped it out of this.Items, left no
+    // row of its own to draw it in - draw its line here instead, right
+    // on this row's own top edge. Drawn last (after this row's own
+    // background/text, just above), it stays on top instead of being
+    // covered by them; nothing drawn afterward - the next row down
+    // starts a full rowHeight below here - ever touches this exact y
+    // again, so it isn't painted over later either.
+    if (this.childDividerBeforeRow[i][j]) {
       stroke(0, 127, 255);
       strokeWeight(2);
       line(
-        cx + padChildrenWidth,                                rowTop + cr,
-        cx + padChildrenWidth + widthChildren - 2 * padChildrenWidth, rowTop + cr
+        cx + padChildrenWidth,                                rowTop,
+        cx + padChildrenWidth + widthChildren - 2 * padChildrenWidth, rowTop
       );
       strokeWeight(0);
       noStroke();
