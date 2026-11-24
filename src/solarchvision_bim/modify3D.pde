@@ -2409,9 +2409,14 @@ class Modify3D {
   // pattern's own polygon types ever share a vertex count).
 
   final static int SEMIREGULAR_RHOMBITRIHEXAGONAL = 0;
+  final static int SEMIREGULAR_TRUNCATED_HEXAGONAL = 1;
 
   void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
+  }
+
+  void tilingTruncatedHexagon_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_HEXAGONAL);
   }
 
   void applySemiRegularTiling_Selection (int patternKind) {
@@ -2665,6 +2670,94 @@ class Modify3D {
             float[][] triangle = new float[][] {
               { cx + tri2[0], cy + tri2[1] }, { cx + tri3[0], cy + tri3[1] }, { cx + tri4next[0], cy + tri4next[1] }
             };
+            addUniquePolygonUV(result, seenKeys, triangle);
+          }
+        }
+      }
+
+    } else if (patternKind == SEMIREGULAR_TRUNCATED_HEXAGONAL) {
+      // Regular dodecagons (12-gons, edge a) sit on the SAME triangular
+      // lattice topology as an ordinary edge-to-edge hexagonal tiling
+      // (TILING_HEXAGON above) - each one adjacent to 6 neighbors, sharing
+      // a direct edge with each - just with a dodecagon's own bigger
+      // circumradius/apothem in place of a hexagon's. One small triangle
+      // (edge a) fills every original 3-way hexagon-tiling vertex that
+      // truncation opened up. Every dodecagon is generated once per
+      // lattice point, but (same reasoning as the Rhombitrihexagonal
+      // branch above) each triangle gets generated 3 times, once from
+      // each of the 3 dodecagons meeting at it - addUniquePolygonUV()
+      // collapses those back down to one copy.
+      float a_len = edgeSize;
+      // Circumradius of a regular 12-gon with edge a; its own apothem is
+      // R*cos(15 deg) = (a/2)*cot(15 deg) = a*(2+sqrt(3))/2, so two
+      // dodecagons facing each other directly (sharing an edge, like two
+      // hexagons in an ordinary honeycomb) sit D = a*(2+sqrt(3)) apart.
+      float R = a_len / (2 * funcs.sin_ang(15));
+      float D = a_len * (2 + sqrt(3));
+
+      float e1x = D, e1y = 0;
+      float e2x = D * 0.5, e2y = D * sqrt(3) / 2.0;
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * D;
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float cx = i * e1x + j * e2x;
+          float cy = i * e1y + j * e2y;
+
+          // Dodecagon vertices at 15+30*m deg (circumradius R) - chosen
+          // (rather than starting at 0) so its edge midpoints fall on
+          // every multiple of 30 deg: the even-m edges (midpoint 60*k deg)
+          // are the ones shared directly with the 6 neighboring dodecagons,
+          // and the odd-m edges (midpoint 60*k+30 deg) are the ones shared
+          // with a small triangle instead - verified by construction below.
+          float[][] dodecagon = new float[12][2];
+          for (int m = 0; m < 12; m++) {
+            float ang = 15 + 30 * m;
+            dodecagon[m][0] = cx + R * funcs.cos_ang(ang);
+            dodecagon[m][1] = cy + R * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, dodecagon);
+
+          // One triangle per pair of adjacent neighbor directions (60*k,
+          // 60*(k+1)) - its own base edge is this dodecagon's edge facing
+          // 60*k+30 deg (vertices at local angle 15+60*k and 45+60*k), and
+          // its apex (shared with the OTHER two dodecagons toward 60*k and
+          // 60*(k+1)) sits at radius a*(1+sqrt(3)) in that same 60*k+30 deg
+          // direction - derived from (and verified against) the dodecagon's
+          // own apothem plus the triangle's own height, and confirmed by
+          // the resulting triangle's 3 edges all coming out to length a.
+          for (int k = 0; k < 6; k++) {
+            float angBase1 = 15 + 60 * k;
+            float angBase2 = 45 + 60 * k;
+            float angApex = 30 + 60 * k;
+            float apexRadius = a_len * (1 + sqrt(3));
+
+            float[] base1 = { cx + R * funcs.cos_ang(angBase1), cy + R * funcs.sin_ang(angBase1) };
+            float[] apex = { cx + apexRadius * funcs.cos_ang(angApex), cy + apexRadius * funcs.sin_ang(angApex) };
+            float[] base2 = { cx + R * funcs.cos_ang(angBase2), cy + R * funcs.sin_ang(angBase2) };
+
+            // base1, apex, base2 in that order is counter-clockwise (the
+            // reverse, base1-base2-apex, traces it clockwise instead) -
+            // same convention check as the Rhombitrihexagonal branch's own
+            // square fix above.
+            float[][] triangle = new float[][] { base1, apex, base2 };
             addUniquePolygonUV(result, seenKeys, triangle);
           }
         }

@@ -163,4 +163,96 @@ class SemiRegularTilingSelectionTest {
     assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
     assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one hexagon can only be a clipped piece, so nothing should qualify for selection");
   }
+
+  // --- tilingTruncatedHexagon_Selection (a full integration test) ----
+
+  @Test
+  void tilingTruncatedHexagon_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedHexagon_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1, "a 15x15 face at edgeSize=1 should produce many pieces");
+    assertEquals(225.0f, totalFacesArea(), 0.01f, "triangles + dodecagons + every clipped boundary fragment should still add up to the full 15x15 = 225 area");
+
+    boolean foundTriangle = false, foundDodecagon = false;
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      int n = app.allFaces.nodes[f].length;
+      if (n == 3) foundTriangle = true;
+      if (n == 12) foundDodecagon = true;
+    }
+    assertTrue(foundTriangle, "a face this much bigger than one tile should contain at least one triangle");
+    assertTrue(foundDodecagon, "a face this much bigger than one tile should contain at least one dodecagon");
+  }
+
+  @Test
+  void tilingTruncatedHexagon_everyPieceKeepsTheBaseFacesOwnNormalDirection () {
+    // Same regression shape as the Rhombitrihexagon normal-direction test -
+    // this pattern's triangle winding was verified by hand (shoelace check)
+    // before writing the code, but this test is what would actually catch
+    // a regression if that winding were ever broken again.
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    float[][] originalBaseVertices = app.Modify3D.faceBaseVertices(0);
+    float[] originalNormal = app.Modify3D.faceNormalUnit(originalBaseVertices);
+
+    app.Modify3D.tilingTruncatedHexagon_Selection();
+
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      float[][] verts = app.Modify3D.faceBaseVertices(f);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float dot = normal[0] * originalNormal[0] + normal[1] * originalNormal[1] + normal[2] * originalNormal[2];
+      assertTrue(dot > 0.9f, "face " + f + " (" + verts.length + " vertices) should keep the base face's own normal direction, not an inverted one - dot was " + dot);
+    }
+  }
+
+  @Test
+  void tilingTruncatedHexagon_selectsOnlyTheWholeUnclippedDodecagons () {
+    // The 3.12.12 pattern's own highest-vertex-count shape is the dodecagon
+    // (12 vertices, vs. the triangle's 3) - every other piece, including
+    // any dodecagon-shaped boundary fragment that happened to still land
+    // on 12 vertices after clipping, must stay unselected.
+    setUpOneFace(new float[][]{{0, 0, 0}, {15, 0, 0}, {15, 15, 0}, {0, 15, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedHexagon_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 15x15 face at edgeSize=1 should contain at least one whole, unclipped dodecagon");
+
+    float expectedDodecagonArea = 3 * (2 + (float) Math.sqrt(3)) * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(12, app.allFaces.nodes[idx].length, "every selected face must be a dodecagon");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      // A regular, unclipped edgeSize-1 dodecagon's own exact area - a
+      // clipped-but-coincidentally-12-vertex fragment would not match this
+      // precisely, so this is a stronger check than vertex count alone.
+      assertEquals(expectedDodecagonArea, area, 0.0001f, "a selected dodecagon must be a true, unclipped regular dodecagon, not a same-vertex-count clipped fragment");
+    }
+  }
+
+  @Test
+  void tilingTruncatedHexagon_tilesATooSmallFaceWithAnEmptySelection () {
+    // Same whole-plane-coverage reasoning as the Rhombitrihexagon version:
+    // a face much smaller than one tile still gets covered exactly by
+    // whatever single piece it falls inside, and a fragment this small can
+    // only ever be a clipped (not whole) piece, so the selection is empty.
+    setUpOneFace(new float[][]{{0, 0, 0}, {0.05f, 0, 0}, {0.05f, 0.05f, 0}, {0, 0.05f, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingTruncatedHexagon_Selection();
+
+    assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
+    assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one dodecagon can only be a clipped piece, so nothing should qualify for selection");
+  }
 }

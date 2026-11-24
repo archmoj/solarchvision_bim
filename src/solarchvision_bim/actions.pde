@@ -2415,6 +2415,10 @@ void build_allActions() {
     Modify3D.tilingRhombitrihexagon_Selection();
   });
 
+  putAction("Truncated Hexagon Tiling", () -> {
+    Modify3D.tilingTruncatedHexagon_Selection();
+  });
+
   putAction("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });
