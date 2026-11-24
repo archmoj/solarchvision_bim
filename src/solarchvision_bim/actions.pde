@@ -2383,7 +2383,7 @@ void build_allActions() {
     Modify3D.optimizeFace_Selection();
   });
 
-  putAction("Tessellate Rows & Columns", () -> {
+  putAction("Grid Tessellate", () -> {
     Modify3D.tessellateRowsColumns_Selection();
   });
 

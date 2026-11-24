@@ -500,7 +500,7 @@ class UI_menuBar {
       PARENT_MODIFY,
       "Triangle Tessellate",
       "Quad Tessellate",
-      "Tessellate Rows & Columns",
+      "Grid Tessellate",
       ___divider___,
       "Insert Corner Openings",
       "Insert Parallel Openings",

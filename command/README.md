@@ -1421,7 +1421,7 @@ under [Shading and rendering](#shading-and-rendering) above)
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,
     `Reverse Visibility of All Faces`
 -   `Quad Tessellate`, `Triangle Tessellate`,
-    `Tessellate Rows & Columns`
+    `Grid Tessellate`
 -   `Faces >> Vertices`, `Vertices >> Faces`, `Polylines >> Vertices`,
     `Vertices >> Polylines`
 
