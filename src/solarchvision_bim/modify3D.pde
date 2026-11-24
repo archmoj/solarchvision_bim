@@ -2410,6 +2410,7 @@ class Modify3D {
 
   final static int SEMIREGULAR_RHOMBITRIHEXAGONAL = 0;
   final static int SEMIREGULAR_TRUNCATED_HEXAGONAL = 1;
+  final static int SEMIREGULAR_TRIHEXAGONAL = 2;
 
   void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
@@ -2417,6 +2418,10 @@ class Modify3D {
 
   void tilingTruncatedHexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_TRUNCATED_HEXAGONAL);
+  }
+
+  void tilingTrihexagon_Selection () {
+    applySemiRegularTiling_Selection(SEMIREGULAR_TRIHEXAGONAL);
   }
 
   void applySemiRegularTiling_Selection (int patternKind) {
@@ -2758,6 +2763,89 @@ class Modify3D {
             // same convention check as the Rhombitrihexagonal branch's own
             // square fix above.
             float[][] triangle = new float[][] { base1, apex, base2 };
+            addUniquePolygonUV(result, seenKeys, triangle);
+          }
+        }
+      }
+
+    } else if (patternKind == SEMIREGULAR_TRIHEXAGONAL) {
+      // This is the rectification of the plain hexagonal tiling (TILING_HEXAGON):
+      // hexagons (edge a) sit on the same lattice shape as the other two
+      // patterns above, spaced D = 2*a apart in all 6 directions - closer
+      // together than Rhombitrihexagonal's hexagons, since there's no
+      // square to make room for here - and touch their 6 neighbors only at
+      // vertices, not edges. One small triangle (edge a) fills every one of
+      // the 6 notches around each hexagon, each one shared with the 2
+      // neighboring hexagons that meet there (verified algebraically: the
+      // triangle's 3 corners land exactly on the 3 mutually facing hexagon
+      // vertices, and all 3 of its own edges come out to length a). Every
+      // hexagon is generated once per lattice point, but each triangle is
+      // generated 3 times (once from each of its 3 neighboring hexagons) -
+      // addUniquePolygonUV() collapses those back down to one copy apiece.
+      float a_len = edgeSize;
+      float D = a_len * 2;
+
+      float e1x = D, e1y = 0;
+      float e2x = D * 0.5, e2y = D * sqrt(3) / 2.0;
+      float det = e1x * e2y - e1y * e2x;
+
+      float pad = 2 * D;
+      float[] cornersU = { uMin - pad, uMax + pad, uMin - pad, uMax + pad };
+      float[] cornersV = { vMin - pad, vMax + pad, vMax + pad, vMin - pad };
+
+      int iMin = Integer.MAX_VALUE, iMax = Integer.MIN_VALUE, jMin = Integer.MAX_VALUE, jMax = Integer.MIN_VALUE;
+      for (int k = 0; k < 4; k++) {
+        float cu = cornersU[k], cv = cornersV[k];
+        float iF = (cu * e2y - cv * e2x) / det;
+        float jF = (cv * e1x - cu * e1y) / det;
+        iMin = min(iMin, int(floor(iF)));
+        iMax = max(iMax, int(ceil(iF)));
+        jMin = min(jMin, int(floor(jF)));
+        jMax = max(jMax, int(ceil(jF)));
+      }
+
+      java.util.HashSet<String> seenKeys = new java.util.HashSet<String>();
+
+      for (int i = iMin; i <= iMax; i++) {
+        for (int j = jMin; j <= jMax; j++) {
+          float cx = i * e1x + j * e2x;
+          float cy = i * e1y + j * e2y;
+
+          // Hexagon vertices at 60*m deg (circumradius a) - note the 60*m
+          // phase (not 30+60*m like TILING_HEXAGON/Rhombitrihexagonal's own
+          // hexagon) so that each vertex points straight at one of the 6
+          // neighboring lattice points, letting the hexagon-at-(i,j) and
+          // the hexagon-at-its-neighbor share that vertex exactly.
+          float[][] hex = new float[6][2];
+          for (int m = 0; m < 6; m++) {
+            float ang = 60 * m;
+            hex[m][0] = cx + a_len * funcs.cos_ang(ang);
+            hex[m][1] = cy + a_len * funcs.sin_ang(ang);
+          }
+          addUniquePolygonUV(result, seenKeys, hex);
+
+          // One triangle per pair of adjacent hexagon vertices (60*k,
+          // 60*(k+1)) - its base edge is the hexagon's own edge between
+          // those two vertices, and its apex (the point shared by the 2
+          // OTHER hexagons that meet at this notch) sits at radius a*sqrt(3)
+          // in the bisecting direction 30+60*k - derived from (and verified
+          // against) the neighboring hexagons' own vertex positions, and
+          // confirmed by the resulting triangle's 3 edges all coming out to
+          // length a.
+          for (int k = 0; k < 6; k++) {
+            float angV1 = 60 * k;
+            float angV2 = 60 * (k + 1);
+            float angApex = 30 + 60 * k;
+            float apexRadius = a_len * sqrt(3);
+
+            float[] v1 = { cx + a_len * funcs.cos_ang(angV1), cy + a_len * funcs.sin_ang(angV1) };
+            float[] apex = { cx + apexRadius * funcs.cos_ang(angApex), cy + apexRadius * funcs.sin_ang(angApex) };
+            float[] v2 = { cx + a_len * funcs.cos_ang(angV2), cy + a_len * funcs.sin_ang(angV2) };
+
+            // v1, apex, v2 in that order is counter-clockwise (the reverse,
+            // v1-v2-apex, traces it clockwise instead) - same convention
+            // check as the other two patterns' own triangles/squares above.
+            float[][] triangle = new float[][] { v1, apex, v2 };
             addUniquePolygonUV(result, seenKeys, triangle);
           }
         }
