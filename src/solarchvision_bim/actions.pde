@@ -2395,6 +2395,18 @@ void build_allActions() {
     Modify3D.tessellateTriangular_Selection();
   });
 
+  putAction("Square Tiling", () -> {
+    Modify3D.tilingSquare_Selection();
+  });
+
+  putAction("Hexagon Tiling", () -> {
+    Modify3D.tilingHexagon_Selection();
+  });
+
+  putAction("Equilateral Tiling", () -> {
+    Modify3D.tilingEquilateral_Selection();
+  });
+
   putAction("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });

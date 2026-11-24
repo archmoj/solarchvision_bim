@@ -1865,6 +1865,375 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // ---- Tiling (Square / Hexagon / Equilateral) -----------------------
+  //
+  // Same one-shot "replace the selected face with real, editable new Face
+  // geometry" shape as Quad/Triangle/Grid Tessellate above (splice via
+  // spliceFaceWithNewFaces(), Ctrl+Z undo via beginScene3DChange()/
+  // endScene3DChange()) - but instead of subdividing the face's own
+  // interior into a grid that exactly fills it, this lays a fixed-size
+  // regular tile pattern (User3D.tileEdgeSize, never rescaled to force an
+  // exact fit) across the face's plane, centered on the face's own local
+  // bounding box, by default aligned to the face's own first edge
+  // (User3D.tileRotation adds a rotation on top of that). Every candidate
+  // tile - including ones straddling the boundary - is clipped to the
+  // face's actual outline with a 3D Sutherland-Hodgman clip (the same
+  // inward-normal-per-edge construction insetAndRecedeFace() above already
+  // uses: cross(faceNormal, edgeDir)). A clipped boundary tile keeps
+  // whatever vertex count results (3, 5, 6, 7+...) rather than being
+  // re-triangulated - allFaces already supports arbitrary N-gons elsewhere
+  // in the app, so there's nothing to fan.
+  final static int TILING_SQUARE = 0;
+  final static int TILING_HEXAGON = 1;
+  final static int TILING_EQUILATERAL = 2;
+
+  void tilingSquare_Selection () {
+    applyTiling_Selection(TILING_SQUARE);
+  }
+
+  void tilingHexagon_Selection () {
+    applyTiling_Selection(TILING_HEXAGON);
+  }
+
+  void tilingEquilateral_Selection () {
+    applyTiling_Selection(TILING_EQUILATERAL);
+  }
+
+  void applyTiling_Selection (int patternKind) {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
+
+    for (int q = Select3D.faceSelection.length - 1; q >= 0; q--) {
+      int f = Select3D.faceSelection[q];
+      int OBJ_ID = this.findOwningGroupId(f);
+      if (OBJ_ID == -1) continue;
+
+      float[][] base_Vertices = faceBaseVertices(f);
+      float[] faceNormal = faceNormalUnit(base_Vertices);
+
+      float[] U_first = funcs.vec3_unit(new float[] {
+        base_Vertices[1][0] - base_Vertices[0][0],
+        base_Vertices[1][1] - base_Vertices[0][1],
+        base_Vertices[1][2] - base_Vertices[0][2]
+      });
+      // in-plane, perpendicular to U_first - (U_first, V_first, faceNormal)
+      // is a right-handed orthonormal frame matching the face's own CCW
+      // winding (same identity faceNormalUnit()'s own cross(U,V) relies on).
+      float[] V_first = funcs.vec3_unit(funcs.vec3_cross(faceNormal, U_first));
+
+      // User3D.tileRotation rotates the (U_first, V_first) frame about
+      // faceNormal, so the default (0) stays exactly aligned to the
+      // face's own first edge.
+      float[] U_axis = new float[3];
+      float[] V_axis = new float[3];
+      for (int k = 0; k < 3; k++) {
+        U_axis[k] = funcs.cos_ang(User3D.tileRotation) * U_first[k] + funcs.sin_ang(User3D.tileRotation) * V_first[k];
+        V_axis[k] = -funcs.sin_ang(User3D.tileRotation) * U_first[k] + funcs.cos_ang(User3D.tileRotation) * V_first[k];
+      }
+
+      // Every face vertex's own position in this (U_axis, V_axis) frame,
+      // relative to the face's own first vertex - the local extent the
+      // tile grid needs to cover.
+      float uMin = FLOAT_huge, uMax = -FLOAT_huge, vMin = FLOAT_huge, vMax = -FLOAT_huge;
+      for (int s = 0; s < base_Vertices.length; s++) {
+        float dx = base_Vertices[s][0] - base_Vertices[0][0];
+        float dy = base_Vertices[s][1] - base_Vertices[0][1];
+        float dz = base_Vertices[s][2] - base_Vertices[0][2];
+        float u = dx * U_axis[0] + dy * U_axis[1] + dz * U_axis[2];
+        float v = dx * V_axis[0] + dy * V_axis[1] + dz * V_axis[2];
+        uMin = min(uMin, u);
+        uMax = max(uMax, u);
+        vMin = min(vMin, v);
+        vMax = max(vMax, v);
+      }
+
+      ArrayList<float[][]> candidates_UV = buildTilingCandidates_UV(patternKind, User3D.tileEdgeSize, uMin, uMax, vMin, vMax);
+
+      ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+
+      current_Material = allFaces.getMaterial(f);
+      current_Tessellation = allFaces.getTessellation(f);
+      current_Layer = allFaces.getLayer(f);
+      current_Visibility = allFaces.getVisibility(f);
+
+      for (int c = 0; c < candidates_UV.size(); c++) {
+        float[][] candidate_UV = candidates_UV.get(c);
+
+        float[][] candidate_3D = new float[candidate_UV.length][3];
+        for (int s = 0; s < candidate_UV.length; s++) {
+          float u = candidate_UV[s][0];
+          float v = candidate_UV[s][1];
+          candidate_3D[s][0] = base_Vertices[0][0] + u * U_axis[0] + v * V_axis[0];
+          candidate_3D[s][1] = base_Vertices[0][1] + u * U_axis[1] + v * V_axis[1];
+          candidate_3D[s][2] = base_Vertices[0][2] + u * U_axis[2] + v * V_axis[2];
+        }
+
+        float[][] clipped = clipPolygonToFaceBoundary3D(candidate_3D, base_Vertices, faceNormal);
+        // Sutherland-Hodgman legitimately emits a repeated vertex whenever
+        // a candidate corner lands exactly on one of the face's own clip
+        // boundaries (kept once as that pass's own "curr", then kept
+        // again as the next pass's unmodified "curr") - collapsing those
+        // immediately matters: faceNormalUnit() (used both to verify
+        // area below and, the same way, by this app's own rendering/
+        // shading elsewhere) builds its normal from this face's own first
+        // two vertices, and a repeated first vertex makes that cross()
+        // zero/undefined for the resulting face.
+        clipped = dedupeConsecutiveVertices3D(clipped);
+        if (clipped.length < 3) continue; // fully outside the face
+
+        // The one extra padding ring buildTilingCandidates_UV() adds
+        // around every real tile - there to cover corners under rotation -
+        // routinely clips down to a zero-area sliver exactly flush with
+        // the face's own boundary (every point collapsed onto the same
+        // edge or corner) rather than disappearing outright (clipped.
+        // length < 3 above). Skip those too, or every tiled face would
+        // pick up a ring of invisible, zero-area faces around its edge.
+        float area = polygonArea3D(clipped, faceNormal);
+        if (area < FLOAT_tiny * FLOAT_tiny) continue;
+
+        int[] newFace_nodes = new int[clipped.length];
+        for (int s = 0; s < clipped.length; s++) {
+          newFace_nodes[s] = getOrCreateVertex_atPosition(clipped[s][0], clipped[s][1], clipped[s][2]);
+        }
+        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+
+        midList_Faces_nodes_L.add(newFace_nodes);
+        midList_Faces_options_L.add(newFace_options);
+      }
+
+      if (midList_Faces_nodes_L.size() == 0) continue; // the pattern missed this face entirely (e.g. tileEdgeSize far bigger than the face) - leave it untouched rather than deleting it with nothing to replace it
+
+      int netShift = midList_Faces_nodes_L.size() - 1;
+      allGroups.inserted_nFaces(OBJ_ID, f, netShift); // because adding the faces also changes the end pointer of the same object
+
+      spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+
+      // Keep any already-recorded new-face indices from previously processed (larger-index)
+      // faces in sync with this splice, then queue up this face's own new pieces.
+      for (int i = 0; i < newfaceSelection_L.size(); i++) {
+        if (newfaceSelection_L.get(i) > f) newfaceSelection_L.set(i, newfaceSelection_L.get(i) + netShift);
+      }
+      for (int s = 1; s < midList_Faces_nodes_L.size(); s++) { // the first tile (s == 0) replaces the base face
+        newfaceSelection_L.add(f + s);
+      }
+    }
+
+    appendNewFaceSelection(newfaceSelection_L);
+    switch_category(ObjectCategory.FACE);
+    endScene3DChange();
+  }
+
+  // Sutherland-Hodgman clip of a 3D polygon (assumed coplanar with the
+  // face) against every one of the face's own n edges in turn - same
+  // inward-normal construction (cross(faceNormal, edgeDir))
+  // insetAndRecedeFace() above already uses for "inward, in this face's
+  // own plane". Degenerates to an empty array if the candidate tile falls
+  // entirely outside the face.
+  float[][] clipPolygonToFaceBoundary3D (float[][] poly, float[][] base_Vertices, float[] faceNormal) {
+    float[][] result = poly;
+    int n = base_Vertices.length;
+
+    for (int s = 0; s < n && result.length > 0; s++) {
+      int s_next = (s + 1) % n;
+      float[] edgeStart = base_Vertices[s];
+      float[] edgeDir = funcs.vec3_unit(new float[] {
+        base_Vertices[s_next][0] - base_Vertices[s][0],
+        base_Vertices[s_next][1] - base_Vertices[s][1],
+        base_Vertices[s_next][2] - base_Vertices[s][2]
+      });
+      float[] inward = funcs.vec3_unit(funcs.vec3_cross(faceNormal, edgeDir));
+
+      result = clipPolygon_halfPlane3D(result, edgeStart, inward);
+    }
+
+    return result;
+  }
+
+  // Same cyclic Sutherland-Hodgman technique as Overlay3D.clipPolygon_
+  // halfPlane() (that one works in 2D screen space for rendering; this one
+  // stays in 3D since every point here is already coplanar with the face).
+  float[][] clipPolygon_halfPlane3D (float[][] poly, float[] planePoint, float[] inwardNormal) {
+    int n = poly.length;
+    if (n == 0) return poly;
+
+    ArrayList<float[]> out = new ArrayList<float[]>();
+
+    for (int i = 0; i < n; i++) {
+      float[] curr = poly[i];
+      float[] prev = poly[(i - 1 + n) % n];
+
+      float dCurr = (curr[0] - planePoint[0]) * inwardNormal[0] + (curr[1] - planePoint[1]) * inwardNormal[1] + (curr[2] - planePoint[2]) * inwardNormal[2];
+      float dPrev = (prev[0] - planePoint[0]) * inwardNormal[0] + (prev[1] - planePoint[1]) * inwardNormal[1] + (prev[2] - planePoint[2]) * inwardNormal[2];
+
+      boolean currIn = dCurr >= 0;
+      boolean prevIn = dPrev >= 0;
+
+      if (currIn != prevIn) {
+        float t = dPrev / (dPrev - dCurr);
+        out.add(new float[] {
+          prev[0] + t * (curr[0] - prev[0]),
+          prev[1] + t * (curr[1] - prev[1]),
+          prev[2] + t * (curr[2] - prev[2])
+        });
+      }
+      if (currIn) {
+        out.add(curr);
+      }
+    }
+
+    return out.toArray(new float[out.size()][]);
+  }
+
+  // Drops any vertex that's an exact repeat of the one immediately
+  // before it (cyclically, so a last-equals-first wraparound repeat is
+  // caught too) - see clipPolygonToFaceBoundary3D()'s own call site
+  // above for why this matters, not just for tidiness.
+  float[][] dedupeConsecutiveVertices3D (float[][] poly) {
+    int n = poly.length;
+    if (n == 0) return poly;
+
+    ArrayList<float[]> out = new ArrayList<float[]>();
+    for (int i = 0; i < n; i++) {
+      float[] curr = poly[i];
+      float[] prev = poly[(i - 1 + n) % n];
+      if ((curr[0] == prev[0]) && (curr[1] == prev[1]) && (curr[2] == prev[2])) continue;
+      out.add(curr);
+    }
+
+    return out.toArray(new float[out.size()][]);
+  }
+
+  // Signed-area-vector method (Newell-style: sum of cross(P_i, P_i+1)
+  // over the polygon's own vertices, dotted with the face's normal to
+  // collapse it to a scalar) for a planar polygon's area - used only to
+  // reject degenerate zero-area slivers above, so only the magnitude
+  // matters here, not the sign.
+  float polygonArea3D (float[][] poly, float[] faceNormal) {
+    int n = poly.length;
+    if (n < 3) return 0;
+
+    float ax = 0, ay = 0, az = 0;
+    for (int i = 0; i < n; i++) {
+      float[] a = poly[i];
+      float[] b = poly[(i + 1) % n];
+      ax += a[1] * b[2] - a[2] * b[1];
+      ay += a[2] * b[0] - a[0] * b[2];
+      az += a[0] * b[1] - a[1] * b[0];
+    }
+
+    float signedArea = 0.5 * (ax * faceNormal[0] + ay * faceNormal[1] + az * faceNormal[2]);
+    return abs(signedArea);
+  }
+
+  // Builds the candidate tile polygons (each an array of {u, v} corner
+  // pairs, in the face's own (U_axis, V_axis) frame) for one of the three
+  // regular Tiling patterns, sized by edgeSize and generously overshooting
+  // [uMin,uMax] x [vMin,vMax] by roughly one full tile ring on every side
+  // so that, after applyTiling_Selection() clips every candidate to the
+  // face's actual boundary, the pattern is never short at a corner
+  // regardless of User3D.tileRotation. The grid is centered on the
+  // (uMin,uMax,vMin,vMax) box's own center - not forced through (0,0) - so
+  // a face sized to a whole multiple of edgeSize tiles exactly flush, with
+  // zero clipping (e.g. a 2x3 rectangle at edgeSize=1 gives exactly 6
+  // whole Square tiles).
+  ArrayList<float[][]> buildTilingCandidates_UV (int patternKind, float edgeSize, float uMin, float uMax, float vMin, float vMax) {
+    ArrayList<float[][]> result = new ArrayList<float[][]>();
+    float uCenter = 0.5 * (uMin + uMax);
+    float vCenter = 0.5 * (vMin + vMax);
+
+    if (patternKind == TILING_SQUARE) {
+      int nCols = int(ceil((uMax - uMin) / edgeSize - FLOAT_tiny));
+      if (nCols < 1) nCols = 1;
+      int nRows = int(ceil((vMax - vMin) / edgeSize - FLOAT_tiny));
+      if (nRows < 1) nRows = 1;
+
+      float uOrigin = uCenter - 0.5 * nCols * edgeSize - edgeSize; // one extra ring of padding
+      float vOrigin = vCenter - 0.5 * nRows * edgeSize - edgeSize;
+      nCols += 2;
+      nRows += 2;
+
+      for (int i = 0; i < nCols; i++) {
+        for (int j = 0; j < nRows; j++) {
+          float u0 = uOrigin + i * edgeSize;
+          float v0 = vOrigin + j * edgeSize;
+          result.add(new float[][] {
+            { u0, v0 }, { u0 + edgeSize, v0 }, { u0 + edgeSize, v0 + edgeSize }, { u0, v0 + edgeSize }
+          });
+        }
+      }
+
+    } else if (patternKind == TILING_EQUILATERAL) {
+      // Standard triangular-lattice strip construction: each row strip
+      // (between v0 and v1) carries a "bottom" line of points at spacing
+      // edgeSize and a "top" line offset by half a cell from the bottom
+      // one; consecutive bottom/top point pairs each split into one
+      // upward- and one downward-pointing triangle, tiling the strip with
+      // no gaps or overlaps.
+      float rowHeight = edgeSize * sqrt(3) / 2.0;
+      int nRows = int(ceil((vMax - vMin) / rowHeight - FLOAT_tiny));
+      if (nRows < 1) nRows = 1;
+      float vOrigin = vCenter - 0.5 * nRows * rowHeight - rowHeight; // one extra ring of padding
+      nRows += 2;
+
+      int nCols = int(ceil((uMax - uMin) / edgeSize - FLOAT_tiny));
+      if (nCols < 1) nCols = 1;
+      float uOrigin = uCenter - 0.5 * nCols * edgeSize - 1.5 * edgeSize; // padding, plus room for the half-cell row stagger
+      nCols += 3;
+
+      for (int j = 0; j < nRows; j++) {
+        float v0 = vOrigin + j * rowHeight;
+        float v1 = v0 + rowHeight;
+        float rowOffsetBottom = (((j % 2) + 2) % 2 == 0) ? 0 : 0.5 * edgeSize;
+
+        for (int i = 0; i < nCols; i++) {
+          float bottom_i = uOrigin + rowOffsetBottom + i * edgeSize;
+          float bottom_i1 = bottom_i + edgeSize;
+          float top_i = bottom_i + 0.5 * edgeSize;
+          float top_i1 = top_i + edgeSize;
+
+          result.add(new float[][] { { bottom_i, v0 }, { bottom_i1, v0 }, { top_i, v1 } }); // upward-pointing
+          result.add(new float[][] { { bottom_i1, v0 }, { top_i1, v1 }, { top_i, v1 } }); // downward-pointing
+        }
+      }
+
+    } else { // TILING_HEXAGON - flat-top; a regular hexagon's own edge length equals its circumradius, so edgeSize doubles as R directly
+      float R = edgeSize;
+      float colSpacing = 1.5 * R;
+      float rowSpacing = sqrt(3) * R;
+
+      int nCols = int(ceil((uMax - uMin) / colSpacing - FLOAT_tiny)) + 2;
+      if (nCols < 1) nCols = 1;
+      int nRows = int(ceil((vMax - vMin) / rowSpacing - FLOAT_tiny)) + 2;
+      if (nRows < 1) nRows = 1;
+      int halfCols = nCols / 2 + 1;
+      int halfRows = nRows / 2 + 1;
+
+      for (int i = -halfCols; i <= halfCols; i++) {
+        float uc = uCenter + i * colSpacing;
+        float rowOffsetParity = (((i % 2) + 2) % 2 == 0) ? 0 : 0.5 * rowSpacing;
+
+        for (int j = -halfRows; j <= halfRows; j++) {
+          float vc = vCenter + rowOffsetParity + j * rowSpacing;
+
+          float[][] hex = new float[6][2];
+          for (int k = 0; k < 6; k++) {
+            float ang = k * 60; // flat-top: vertices at 0,60,...,300 give horizontal top/bottom edges
+            hex[k][0] = uc + R * funcs.cos_ang(ang);
+            hex[k][1] = vc + R * funcs.sin_ang(ang);
+          }
+          result.add(hex);
+        }
+      }
+    }
+
+    return result;
+  }
+
   void forceTriangulateFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

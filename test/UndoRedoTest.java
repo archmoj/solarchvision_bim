@@ -976,4 +976,38 @@ class UndoRedoTest {
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(camerasBefore + 1, app.allCameras.num);
   }
+
+  @Test
+  void tilingSquare_isUndoableAndRedoable () {
+    // applyTiling_Selection() (modify3D.pde) - backing all three of
+    // Square/Hexagon/Equilateral Tiling - is built the same way as the
+    // tessellate* family insertParallelOpenings_isUndoable() above
+    // documents: one beginScene3DChange()/endScene3DChange() pair around
+    // the whole selection loop, so the whole thing undoes/redoes as one
+    // step regardless of how many faces or tiles it touches.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 3, 0}, {0, 3, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    seed(); // baseline captured after the manual setup above - this is the state undo should return to
+
+    app.Modify3D.tilingSquare_Selection();
+
+    assertEquals(6, app.allFaces.nodes.length, "setup check - a flush 2x3 rectangle at edgeSize=1 should tile into exactly 6 whole squares");
+
+    app.undoScene3DChange();
+
+    assertEquals(1, app.allFaces.nodes.length, "undo should bring back the single original face");
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+
+    app.redoScene3DChange();
+
+    assertEquals(6, app.allFaces.nodes.length, "redo should reapply the tiling");
+  }
 }

@@ -233,6 +233,8 @@ class UI_rollout {
     vm.modifierOpeningDeviation(0);
     vm.modifierTessellateRows(0);
     vm.modifierTessellateColumns(0);
+    vm.tileEdgeSize(0);
+    vm.tileRotation(0);
     vm.modifierOffsetAmount(0);
     vm.modifierInsetDepth(0);
     vm.modifierRelaxAmount(0);
@@ -647,6 +649,8 @@ class UI_rollout {
         User3D.modifierOpeningDeviation = vm.modifierOpeningDeviation(1);
         User3D.modifierTessellateRows = vm.modifierTessellateRows(1);
         User3D.modifierTessellateColumns = vm.modifierTessellateColumns(1);
+        User3D.tileEdgeSize = vm.tileEdgeSize(1);
+        User3D.tileRotation = vm.tileRotation(1);
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
