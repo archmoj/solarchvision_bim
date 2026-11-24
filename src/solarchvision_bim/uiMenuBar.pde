@@ -81,6 +81,7 @@ class UI_menuBar {
   static final String PARENT_SELECT     = "Select";
   static final String PARENT_SELECTION  = "Selection";
   static final String PARENT_CONVERT    = "Convert";
+  static final String PARENT_FACES      = "Faces";
   static final String PARENT_MODIFY     = "Modify";
   static final String PARENT_MATCH      = "Match";
   static final String PARENT_TRANSFORM  = "Transform";
@@ -499,7 +500,7 @@ class UI_menuBar {
       "TerrainGap >> Group"
     },
     {
-      PARENT_MODIFY,
+      PARENT_FACES,
       "Triangle Tessellate",
       "Quad Tessellate",
       "Grid Tessellate",
@@ -524,17 +525,19 @@ class UI_menuBar {
       "Passive Solar Inset",
       "Cap Holes",
       ___divider___,
-      "Offset(above) Vertices",
-      "Offset(below) Vertices",
-      "Offset(expand) Vertices",
-      "Offset(shrink) Vertices",
-      ___divider___,
       "Extrude Face Edges",
       "Thicken Selected Faces",
       "Optimize Faces",
       "Auto-Normal Selected Faces",
       "Force Triangulate Selected Faces",
-      "Merge Coplanar Faces",
+      "Merge Coplanar Faces"
+    },
+    {
+      PARENT_MODIFY,
+      "Offset(above) Vertices",
+      "Offset(below) Vertices",
+      "Offset(expand) Vertices",
+      "Offset(shrink) Vertices",
       ___divider___,
       "Separate Selected Vertices",
       "Reposition Selected Vertices",
@@ -733,11 +736,14 @@ class UI_menuBar {
   // solarchvision_bim.pde's keyPressed() (via openParentMenuByKeyCode(),
   // below) while Alt is held, so each tab is reachable from the keyboard
   // the same way the "^<Parent>" command actions already reach it.
-  // Every letter here is unique across the whole bar and is a letter
-  // that's actually in that parent's own name - several needed a letter
-  // other than the first (e.g. Layer -> "Y" since "L" already went to
-  // Location, Shade -> "H" since "S" went to Select) to make that work
-  // out for all 19 without collisions or an arbitrary leftover letter.
+  // Every letter here is unique across the whole bar. Where possible it's
+  // a letter that's actually in that parent's own name - several needed
+  // a letter other than the first (e.g. Layer -> "Y" since "L" already
+  // went to Location, Shade -> "H" since "S" went to Select) to make
+  // that work out. By the time Faces was split out of Modify, every
+  // letter actually in "Faces" was already claimed elsewhere, so it's
+  // the one exception: "K" isn't in the name at all, just the nearest
+  // unclaimed letter left.
   final String[][] PARENT_SHORTCUTS = {
     {"A", PARENT_ABOUT},
     {"F", PARENT_FILE},
@@ -753,6 +759,7 @@ class UI_menuBar {
     {"S", PARENT_SELECT},
     {"I", PARENT_SELECTION},
     {"R", PARENT_CONVERT},
+    {"K", PARENT_FACES},
     {"O", PARENT_MODIFY},
     {"M", PARENT_MATCH},
     {"T", PARENT_TRANSFORM},
