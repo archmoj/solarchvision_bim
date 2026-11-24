@@ -342,10 +342,13 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
 ```
 
 -   `PARAMETRIC`: Creates a parametric surface. `n` selects which
-    parametric formula to use
+    parametric formula to use (1-6 are the Dome/Egg-Crate/Saddle/
+    Diagonal Wave/Wavy Sphere/Twisted Sphere surfaces; 7 is a Torus).
+    `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
+    ignored by every other `n`
 
 ```
-Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=?
+Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=?
 ```
 
 -   `CUSHION`: Creates a cushion-like object
@@ -364,6 +367,18 @@ Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?
 
 ```
 Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?
+```
+
+-   `TETRAHEDRON`: Creates a (regular) tetrahedron
+
+```
+Tetrahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?
+```
+
+-   `DODECAHEDRON`: Creates a (regular) dodecahedron
+
+```
+Dodecahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?
 ```
 
 -   `POLYGONMESH`: Creates an equilateral polygon mesh
@@ -738,7 +753,8 @@ the user interface.
 | `Creator Superellipsoid Power Y` | Default Y-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
 | `Creator Superellipsoid Power Z` | Default Z-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
 | `Creator Model1D Type Index` | Default sub-type for the current creation tool | 0 to 0 |
-| `Creator Parametric Type Index` | Default parametric-object variant (1-6) used by the Parametric creation tools | 1 to 6 |
+| `Creator Parametric Type Index` | Default parametric-object variant (1-7, 7 is Torus) used by the Parametric creation tools | 1 to 7 |
+| `Creator Torus Ratio` | Default minor:major tube-thickness ratio for new Torus parametric objects | 0.01 to 0.99 |
 | `Creator Person Type Index` | Default person model variant used when adding people | _(depends on loaded data)_ |
 | `Creator Plant Type Index` | Default tree/plant model variant used when adding 1D-trees | _(depends on loaded data)_ |
 | `Creator Model1D Seed` | Default random seed for new fractal trees/materials (-1 = random each time) | -1 to 32767 |
@@ -761,6 +777,9 @@ the user interface.
 | `Modifier Opening Deviation` | Allowed random deviation applied to inserted openings | 0 to 1 |
 | `Modifier Tessellate Rows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
 | `Modifier Tessellate Columns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
+| `Tile Edge Size` | Shared edge length used by the Square/Hexagon/Equilateral Tiling tools | 0.01 to 25 |
+| `Tile Rotation` | Rotation (degrees), on top of the default alignment to the face's own first edge, used by every Tiling tool | -360 to 360 |
+| `Tile Star Spike Angle` | Shape-relative star-notch angle (degrees above each tile shape's own self-intersection floor) used by every Tiling tool; any negative value (the default) disables the star transform | -1 to 170 |
 | `Modifier Weld Threshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
 | `Modifier Relax Amount` | How strongly `Relax Selected Vertices` pulls each vertex toward its neighbors' average position (0 = no change, 1 = fully snaps) | 0 to 1 |
 | `Modifier Skew XY` | Shear factor for `Skew Selected Vertices`: offsets X per 1m of Y from the selection's bounding-box center | -5 to 5 |
@@ -996,8 +1015,9 @@ giving all its coordinates on the command line the way `BOX`, `SPHERE`
 and the other [object creation](#object-creation) commands do.
 
 `Point`, `Polyline`, `Spline`, `Arc`, `Surface`, `Plane`, `Pyramid`,
-`Polygon`, `Extrude`, `Solid`, `Section`, `Camera`, `Parametric 1`
-through `Parametric 6`
+`Polygon`, `Extrude`, `Solid`, `Section`, `Camera`, `Tetrahedron`,
+`Dodecahedron`, `Parametric 1` through `Parametric 7` (`Parametric 7`
+is the Torus)
 
 `Spline` behaves exactly like `Polyline` - click to add one point at a
 time - except the result is a smooth curve through those points instead
