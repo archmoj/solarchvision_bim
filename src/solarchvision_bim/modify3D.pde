@@ -2410,7 +2410,7 @@ class Modify3D {
 
   final static int SEMIREGULAR_RHOMBITRIHEXAGONAL = 0;
 
-  void tilingRhombitrihexagonal_Selection () {
+  void tilingRhombitrihexagon_Selection () {
     applySemiRegularTiling_Selection(SEMIREGULAR_RHOMBITRIHEXAGONAL);
   }
 

@@ -2411,8 +2411,8 @@ void build_allActions() {
     Modify3D.tilingEquilateral_Selection();
   });
 
-  putAction("Rhombitrihexagonal Tiling", () -> {
-    Modify3D.tilingRhombitrihexagonal_Selection();
+  putAction("Rhombitrihexagon Tiling", () -> {
+    Modify3D.tilingRhombitrihexagon_Selection();
   });
 
   putAction("Extrude Face Edges", () -> {

@@ -1046,7 +1046,7 @@ class UndoRedoTest {
   }
 
   @Test
-  void tilingRhombitrihexagonal_isUndoableAndRedoable () {
+  void tilingRhombitrihexagon_isUndoableAndRedoable () {
     // The Semi-Regular family's applySemiRegularTiling_Selection() is the
     // same one beginScene3DChange()/endScene3DChange() pair as every other
     // Tiling command above, even though it also fully replaces
@@ -1064,7 +1064,7 @@ class UndoRedoTest {
 
     seed(); // baseline captured after the manual setup above - this is the state undo should return to
 
-    app.Modify3D.tilingRhombitrihexagonal_Selection();
+    app.Modify3D.tilingRhombitrihexagon_Selection();
 
     int tiledCount = app.allFaces.nodes.length;
     assertTrue(tiledCount > 1, "setup check - a 10x10 face at edgeSize=1 should tile into more than one piece");

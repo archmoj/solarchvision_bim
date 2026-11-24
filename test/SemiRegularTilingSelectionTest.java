@@ -3,7 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Covers modify3D.pde's applySemiRegularTiling_Selection() and its first
-// entry point, tilingRhombitrihexagonal_Selection() (3.4.6.4 - triangles,
+// entry point, tilingRhombitrihexagon_Selection() (3.4.6.4 - triangles,
 // squares, and hexagons), plus buildSemiRegularCandidates_UV()'s own
 // SEMIREGULAR_RHOMBITRIHEXAGONAL branch. Same hand-built one-face,
 // one-group fixture style as TilingSelectionTest.java's own regular-Tiling
@@ -46,15 +46,15 @@ class SemiRegularTilingSelectionTest {
     return sum;
   }
 
-  // --- tilingRhombitrihexagonal_Selection (a full integration test) ----
+  // --- tilingRhombitrihexagon_Selection (a full integration test) ----
 
   @Test
-  void tilingRhombitrihexagonal_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+  void tilingRhombitrihexagon_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
     setUpOneFace(new float[][]{{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}});
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
 
-    app.Modify3D.tilingRhombitrihexagonal_Selection();
+    app.Modify3D.tilingRhombitrihexagon_Selection();
 
     assertTrue(app.allFaces.nodes.length > 1, "a 10x10 face at edgeSize=1 should produce many pieces");
     assertEquals(100.0f, totalFacesArea(), 0.01f, "triangles + squares + hexagons + every clipped boundary fragment should still add up to the full 10x10 = 100 area");
@@ -72,7 +72,7 @@ class SemiRegularTilingSelectionTest {
   }
 
   @Test
-  void tilingRhombitrihexagonal_everyPieceKeepsTheBaseFacesOwnNormalDirection () {
+  void tilingRhombitrihexagon_everyPieceKeepsTheBaseFacesOwnNormalDirection () {
     // Regression test for a winding-direction bug: the square candidate's
     // own 4 corners (buildSemiRegularCandidates_UV()'s SEMIREGULAR_RHOMBITRIHEXAGONAL
     // branch) were originally listed clockwise, the opposite winding from
@@ -90,7 +90,7 @@ class SemiRegularTilingSelectionTest {
     float[][] originalBaseVertices = app.Modify3D.faceBaseVertices(0);
     float[] originalNormal = app.Modify3D.faceNormalUnit(originalBaseVertices);
 
-    app.Modify3D.tilingRhombitrihexagonal_Selection();
+    app.Modify3D.tilingRhombitrihexagon_Selection();
 
     for (int f = 0; f < app.allFaces.nodes.length; f++) {
       float[][] verts = app.Modify3D.faceBaseVertices(f);
@@ -101,7 +101,7 @@ class SemiRegularTilingSelectionTest {
   }
 
   @Test
-  void tilingRhombitrihexagonal_selectsOnlyTheWholeUnclippedHexagons () {
+  void tilingRhombitrihexagon_selectsOnlyTheWholeUnclippedHexagons () {
     // The 3.4.6.4 pattern's own highest-vertex-count shape is the hexagon
     // (6 vertices, vs. the square's 4 and the triangle's 3) - every other
     // piece, including any hexagon-shaped boundary fragment that happened
@@ -110,7 +110,7 @@ class SemiRegularTilingSelectionTest {
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
 
-    app.Modify3D.tilingRhombitrihexagonal_Selection();
+    app.Modify3D.tilingRhombitrihexagon_Selection();
 
     int[] selection = app.Select3D.faceSelection;
     assertTrue(selection.length > 0, "a 10x10 face at edgeSize=1 should contain at least one whole, unclipped hexagon");
@@ -143,7 +143,7 @@ class SemiRegularTilingSelectionTest {
   }
 
   @Test
-  void tilingRhombitrihexagonal_tilesATooSmallFaceWithAnEmptySelection () {
+  void tilingRhombitrihexagon_tilesATooSmallFaceWithAnEmptySelection () {
     // Unlike a bounded pattern, this one tiles the whole plane with no
     // gaps - so a face much smaller than one hexagon at this edgeSize
     // isn't "missed" the way an oversized edgeSize can miss a face in the
@@ -158,7 +158,7 @@ class SemiRegularTilingSelectionTest {
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
 
-    app.Modify3D.tilingRhombitrihexagonal_Selection();
+    app.Modify3D.tilingRhombitrihexagon_Selection();
 
     assertEquals(0.05f * 0.05f, totalFacesArea(), 0.0001f, "whatever single piece of the pattern the face falls inside should still cover its own full, tiny area");
     assertEquals(0, app.Select3D.faceSelection.length, "a fragment this much smaller than one hexagon can only be a clipped piece, so nothing should qualify for selection");
