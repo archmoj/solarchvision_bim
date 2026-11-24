@@ -1258,6 +1258,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(6);
   });
 
+  putAction("Torus", () -> { // n=7: standard torus parametrization, tube thickness set separately by User3D.creatorTorusRatio
+    UI_setTo_Create_Parametric(7);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

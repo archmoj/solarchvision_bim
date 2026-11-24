@@ -387,6 +387,7 @@ class UI_menuBar {
       "Diagonal Wave Surface",
       "Wavy Sphere",
       "Twisted Sphere",
+      "Torus",
       ___divider___,
       "Solid",
       "Point",

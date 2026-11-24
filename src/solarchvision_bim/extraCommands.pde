@@ -1744,12 +1744,13 @@ String __PARAMETRIC__ (String[] parts) {
     float dy = getF(p, "dy", 6);
     float dz = getF(p, "dz", 6);
     float r = getF(p, "r", 0);
+    float k = getF(p, "k", 0.3); // only n==7 (Torus) reads this - the default (0.3) keeps every older "Parametric n=1..6 ..." script line, saved before k existed, behaving exactly as it always did
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
-        Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r);
+        Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r, k);
     }
     }
     else {
-    hint = "Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=?";
+    hint = "Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=?";
     UI_setTo_Create_Parametric(0);
     }
     return hint;

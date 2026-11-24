@@ -1106,7 +1106,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 1; //start
-    int s2 = 6; //stop
+    int s2 = 7; //stop - bumped from 6 to 7 when Torus (n=7) joined the preset list
     int s3 = 1; //step
 
     int out = 0;
@@ -1119,6 +1119,32 @@ class ValueModifier {
         u1, u2, u3);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorParametricTypeIndex, s1, s2, s3);
+    }
+    return out;
+  }
+  float creatorTorusRatio (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    // Only n==7 (Torus) in add_ParametricSurface reads this at all -
+    // clamped again there, but kept inside (0, 1) here too so the
+    // spinner itself never shows a value that would silently get
+    // clamped out from under the person's feet.
+    float s1 = 0.01; //start
+    float s2 = 0.99; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Creator Torus Ratio";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.creatorTorusRatio,
+        (v) -> { User3D.creatorTorusRatio = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorTorusRatio, s1, s2, s3);
     }
     return out;
   }

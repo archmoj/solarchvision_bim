@@ -3,9 +3,9 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 7
-// surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO) - the remaining 6
-// are covered here, following that same existing test's own reasoning
+// (Create3DTest.java's own addParametricSurface_... test) of its 8
+// surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus) - the
+// remaining 7 are covered here, following that same existing test's own reasoning
 // exactly (see its header comment): this function has no validity guard
 // at all, and its exact face count depends on floating-point loop-
 // increment behavior this suite doesn't try to replicate - so each test
@@ -36,7 +36,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n0_cushion_buildsAGrid_firstCornerAtUZeroVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     assertSubstantialQuadGrid();
     // start_u = 0 (n == 0), start_v = -1 always.
@@ -46,7 +46,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n2_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 0);
 
     assertSubstantialQuadGrid();
     // x=u=-1; y=v=-1; z=0.5*sin(-PI)*sin(-PI) ~= 0.
@@ -55,7 +55,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n3_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 0, 0);
 
     assertSubstantialQuadGrid();
     // x=u=-1; y=v=-1; z=u*v=1.
@@ -64,7 +64,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n4_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0);
 
     assertSubstantialQuadGrid();
     // x=sin(-PI)~=0; y=sin(-PI)~=0; z=cos(-2*PI)=1.
@@ -73,7 +73,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n5_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 5, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 5, 0, 0);
 
     assertSubstantialQuadGrid();
     // Same x0/y0/z0 as n=4 at this corner (~0,~0,1), already length 1,
@@ -83,11 +83,22 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n6_logo_buildsAGrid_firstCornerAtUZeroVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 6, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 6, 0, 0);
 
     assertSubstantialQuadGrid();
     // Same x0/y0/z0 as n=0 at this corner (1,~0,0), already length 1,
     // so the normalization step here is a no-op too.
     assertArrayEquals(new float[]{1, 0, 0}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n7_torus_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 0.3f);
+
+    assertSubstantialQuadGrid();
+    // start_u = start_v = -1 (n==7 isn't in the "start_u = 0" list).
+    // cos(v*PI) = cos(-PI) = -1, so x = (1 + k*-1)*cos(-PI) = (1-k)*-1 = k-1;
+    // y = (1-k)*sin(-PI) ~= 0; z = k*sin(-PI) ~= 0.
+    assertArrayEquals(new float[]{-0.7f, 0, 0}, app.allVertices[0], 0.01f);
   }
 }

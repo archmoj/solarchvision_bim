@@ -1567,12 +1567,12 @@ class Create3D {
 
 
 
-  // One shared surface generator for 7 hardcoded (x(u,v), y(u,v), z(u,v))
-  // formulas, picked by n (0..6) - the switch below is the one place
-  // that actually defines what each n looks like. n=1..6 are the Create
+  // One shared surface generator for 8 hardcoded (x(u,v), y(u,v), z(u,v))
+  // formulas, picked by n (0..7) - the switch below is the one place
+  // that actually defines what each n looks like. n=1..7 are the Create
   // menu's own "Dome Surface" / "Egg-Crate Surface" / "Saddle Surface" /
-  // "Diagonal Wave Surface" / "Wavy Sphere" / "Twisted Sphere" items
-  // (uiMenuBar.pde's PARENT_CREATE, wired in actions.pde) -
+  // "Diagonal Wave Surface" / "Wavy Sphere" / "Twisted Sphere" / "Torus"
+  // items (uiMenuBar.pde's PARENT_CREATE, wired in actions.pde) -
   // User3D.creatorParametricTypeIndex just carries whichever one was
   // picked through to here, unchanged, so this comment is the map from
   // a menu name back to its own n value and formula. n=0 is NOT exposed
@@ -1581,7 +1581,20 @@ class Create3D {
   // menu's separate "Cushion" command (CREATE.SuperOBJ/add_SuperSphere,
   // an unrelated superellipsoid) - see n==0's own comment below for why
   // that distinction matters.
-  void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
+  //
+  // k only means anything to n==7 (Torus) - every other n ignores it
+  // outright, same as how rx/ry/rz/rot already work on every n uniformly
+  // while n itself picks the formula. It's the torus's own minor:major
+  // radius ratio (tube thickness relative to the ring's own radius,
+  // which is fixed at 1 before rx/ry/rz scale it) - the one shape
+  // parameter that can't be expressed as a post-formula axis scale the
+  // way every other preset's entire shape already is, since it changes
+  // the formula itself rather than stretching its output. Clamped to
+  // (0, 1): k==0 collapses the tube to a zero-thickness ring, and k>=1
+  // produces a self-intersecting "spindle torus" (the tube's own radius
+  // would reach past the ring's own center) - a real shape, just not
+  // the one this clamp is meant to hand back by default.
+  void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot, float k) {
     beginScene3DChange();
 
 
@@ -1609,7 +1622,7 @@ class Create3D {
       start_u = 0;
     }
 
-    if ((n == 0) || (n == 4) || (n == 5) || (n == 6)) {
+    if ((n == 0) || (n == 4) || (n == 5) || (n == 6) || (n == 7)) {
       stp_u = 0.05;
       stp_v = 0.05;
     }
@@ -1700,6 +1713,19 @@ class Create3D {
             x = u;
             y = v;
             z = u * v;
+          } else if (n == 7) { // "Torus" - u is the ring's own angle (major
+                                // circle, radius 1 before rx/ry/rz), v is
+                                // the tube's own angle (minor circle,
+                                // radius k) - standard torus parametrization,
+                                // closing up in both directions for free the
+                                // same way n==5/n==6 already do, since u*PI
+                                // and v*PI both already span one full period
+                                // (-PI..PI) across this function's own fixed
+                                // u/v domain.
+            float kClamped = constrain(k, FLOAT_tiny, 1 - FLOAT_tiny);
+            x = (1 + kClamped * cos(v * PI)) * cos(u * PI);
+            y = (1 + kClamped * cos(v * PI)) * sin(u * PI);
+            z = kClamped * sin(v * PI);
           }
 
 
