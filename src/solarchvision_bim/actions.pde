@@ -2387,7 +2387,7 @@ void build_allActions() {
     Modify3D.tessellateRowsColumns_Selection();
   });
 
-  putAction("Tessellate Rectangular", () -> {
+  putAction("Quad Tessellate", () -> {
     Modify3D.tessellateRectangular_Selection();
   });
 

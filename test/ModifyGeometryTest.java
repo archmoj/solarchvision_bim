@@ -313,7 +313,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
   }
 
-  // This is the fix for a real bug: running Tessellate Rectangular a
+  // This is the fix for a real bug: running Quad Tessellate a
   // SECOND time on an already-tessellated selection used to create a
   // brand-new, separate vertex for every edge shared between two
   // sibling quads from the first pass, landing exactly on top of that
@@ -2700,7 +2700,7 @@ class ModifyGeometryTest {
   // spread of its ring-NEIGHBOR directions (collectNeighborDirections_
   // fromRing, tested above) rather than its surrounding FACE normals -
   // but opposite ring-neighbors are always ~180 degrees apart on any
-  // ordinary flat grid (e.g. a box face after "Tessellate Rectangular"),
+  // ordinary flat grid (e.g. a box face after "Quad Tessellate"),
   // so that check froze nearly every interior vertex of any tessellated
   // face, not just real edges/corners. The first test below reproduces
   // exactly that flat-grid shape and confirms the face-NORMAL spread
@@ -2710,7 +2710,7 @@ class ModifyGeometryTest {
   @Test
   void collectFaceNormals_flatGridInteriorVertex_allFourFaceNormalsPointTheSameWay () {
     // A 3x3 patch of unit quads in the XY plane - the same shape
-    // "Tessellate Rectangular" produces on a box face - with vertex 4
+    // "Quad Tessellate" produces on a box face - with vertex 4
     // at the center, shared by all four quads.
     app.allVertices = new float[][]{
       {0, 0, 0}, {1, 0, 0}, {2, 0, 0},

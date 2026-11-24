@@ -499,7 +499,7 @@ class UI_menuBar {
     {
       PARENT_MODIFY,
       "Tessellate Triangular",
-      "Tessellate Rectangular",
+      "Quad Tessellate",
       "Tessellate Rows & Columns",
       ___divider___,
       "Insert Corner Openings",
