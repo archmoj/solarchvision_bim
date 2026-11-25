@@ -1266,6 +1266,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(8);
   });
 
+  putAction("Paraboloid Dish", () -> { // n=9: z = r^2, same polar (radius/angle) footprint as n=8 Hyperbolic Disc - a bowl/dish shape, e.g. a solar concentrator dish
+    UI_setTo_Create_Parametric(9);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

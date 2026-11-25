@@ -1615,8 +1615,8 @@ class Create3D {
     float end_u = 1;
     float end_v = 1;
 
-    if ((n == 0) || (n == 6) || (n == 8)) {
-      start_u = 0; // n==8 (Hyperbolic Disc): u is a radius, 0..1, not -1..1
+    if ((n == 0) || (n == 6) || (n == 8) || (n == 9)) {
+      start_u = 0; // n==8/9 (Hyperbolic Disc/Paraboloid Dish): u is a radius, 0..1, not -1..1
     }
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
@@ -1746,6 +1746,22 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = x * y;
+          } else if (n == 9) { // "Paraboloid Dish" - a solar-concentrator-
+                                // dish shape: z = r^2, the same polar
+                                // (u = 0..1 radius, v = angle) domain as
+                                // n==8 Hyperbolic Disc above, just a
+                                // different height field - a bowl, not a
+                                // saddle. rz (applied below, same as every
+                                // other preset) controls the dish's own
+                                // depth relative to its radius, exactly
+                                // the way it already controls bulge height
+                                // for n==1 Dome - no separate ratio
+                                // parameter needed, unlike n==7 Torus.
+            float r = u;
+            float theta = v * PI;
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = r * r;
           }
 
 

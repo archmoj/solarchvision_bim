@@ -3,18 +3,19 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 9
+// (Create3DTest.java's own addParametricSurface_... test) of its 10
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
-// Hyperbolic Disc) - the remaining 8 are covered here, following that
-// same existing test's own reasoning exactly (see its header comment):
-// this function has no validity guard at all, and its exact face count
-// depends on floating-point loop-increment behavior this suite doesn't
-// try to replicate - so each test checks for a substantial, non-trivial
-// amount of quad geometry, and the deterministic position of the very
-// first grid corner (u = start_u, v = start_v = -1 always; start_u is 0
-// for n == 0, 6, or 8, -1 otherwise - read directly from the function's
-// own "if ((n == 0) || (n == 6) || (n == 8)) start_u = 0;" line),
-// computed from each n's own x/y/z formula.
+// Hyperbolic Disc, 9 Paraboloid Dish) - the remaining 9 are covered
+// here, following that same existing test's own reasoning exactly (see
+// its header comment): this function has no validity guard at all, and
+// its exact face count depends on floating-point loop-increment
+// behavior this suite doesn't try to replicate - so each test checks
+// for a substantial, non-trivial amount of quad geometry, and the
+// deterministic position of the very first grid corner (u = start_u,
+// v = start_v = -1 always; start_u is 0 for n == 0, 6, 8, or 9, -1
+// otherwise - read directly from the function's own "if ((n == 0) ||
+// (n == 6) || (n == 8) || (n == 9)) start_u = 0;" line), computed from
+// each n's own x/y/z formula.
 //
 // Expected first-corner positions were cross-checked against a
 // standalone Python re-implementation of each formula, not just hand-
@@ -145,5 +146,30 @@ class AddParametricSurfaceRemainingTest {
       float dist = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]);
       assertTrue(dist <= 1.001f, "every vertex must stay within the unit disc, found distance " + dist);
     }
+  }
+
+  @Test
+  void n9_paraboloidDish_buildsAGrid_firstCornerAtTheCenter () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 9, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u = 0 (n==9 IS in the "start_u = 0" list, same as n==8 - a
+    // radius) - so the very first corner sits at the dish's own center
+    // (r=0): x=y=z=0.
+    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n9_paraboloidDish_everyVertexSatisfiesZEqualsRSquared_andStaysWithinTheUnitDisc () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 9, 0, 0, 20, 20);
+
+    boolean foundNonCenterPoint = false;
+    for (float[] v : app.allVertices) {
+      float distSq = v[0] * v[0] + v[1] * v[1];
+      assertEquals(distSq, v[2], 0.0001f, "every vertex must satisfy z = x^2 + y^2 = r^2");
+      assertTrue(Math.sqrt(distSq) <= 1.001f, "every vertex must stay within the unit disc");
+      if (distSq > 0.01f) foundNonCenterPoint = true;
+    }
+    assertTrue(foundNonCenterPoint, "setup check - this grid should contain at least one point away from the center");
   }
 }
