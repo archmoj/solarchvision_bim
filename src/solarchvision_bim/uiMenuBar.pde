@@ -144,6 +144,7 @@ class UI_menuBar {
   static final String PARENT_VIEW       = "View";
   static final String PARENT_VISIBILITY = "Visibility";
   static final String PARENT_CREATE     = "Create";
+  static final String PARENT_FX         = "F(x,y)"; // split out of PARENT_CREATE - the parametric-surface family (add_ParametricSurface(), create3D.pde), grouped by their own shared mechanism rather than left mixed into Create's basic-shape list
   static final String PARENT_SELECT     = "Select";
   static final String PARENT_SELECTION  = "Selection";
   static final String PARENT_CONVERT    = "Convert";
@@ -447,20 +448,6 @@ class UI_menuBar {
       "House2",
       "House3",
       ___divider___,
-      "Dome Surface",
-      "Egg-Crate Surface",
-      "Saddle Surface",
-      "Tetra Wave Surface",
-      "Tetra Sphere",
-      "Grid Sphere",
-      "Torus",
-      "Hyperbolic Disc",
-      "Paraboloid Dish",
-      "Hyperboloid of Revolution",
-      "Helicoid",
-      "Catenoid",
-      "Conoid",
-      ___divider___,
       "Solid",
       "Point",
       "Polyline",
@@ -474,6 +461,29 @@ class UI_menuBar {
       "Add People on Land",
       "Add 2D-Trees on Land",
       "Add 1D-Trees on Land"
+    },
+    {
+      PARENT_FX,
+      // Flat (square u/v footprint) rippled surfaces.
+      "Dome Surface",
+      "Egg-Crate Surface",
+      "Saddle Surface",
+      "Tetra Wave Surface",
+      ___divider___,
+      // Same two formulas as above, normalized onto a unit sphere.
+      "Tetra Sphere",
+      "Grid Sphere",
+      ___divider___,
+      // Surfaces of revolution - a circular footprint swept around an axis.
+      "Torus",
+      "Hyperbolic Disc",
+      "Paraboloid Dish",
+      "Hyperboloid of Revolution",
+      "Catenoid",
+      ___divider___,
+      // Ruled surfaces - not surfaces of revolution at all.
+      "Helicoid",
+      "Conoid"
     },
     {
       PARENT_SELECT,
@@ -833,6 +843,7 @@ class UI_menuBar {
     {"V", PARENT_VIEW},
     {"B", PARENT_VISIBILITY},
     {"C", PARENT_CREATE},
+    {"X", PARENT_FX},
     {"S", PARENT_SELECT},
     {"I", PARENT_SELECTION},
     {"R", PARENT_CONVERT},

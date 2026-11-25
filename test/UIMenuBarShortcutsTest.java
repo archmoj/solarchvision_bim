@@ -142,11 +142,13 @@ class UIMenuBarShortcutsTest {
   // ================= PARENT_SHORTCUTS self-consistency ====================
 
   @Test
-  void parentShortcuts_hasExactlyTwentyOneEntries () {
+  void parentShortcuts_hasExactlyTwentyTwoEntries () {
     // 19 + "G" for the "Guide" menu (uiKeyboardMap.pde's own
     // UIKeyboardMapTest.java covers that one specifically) + "K" for
-    // "Make", split out of what used to be the single "Modify" menu.
-    assertEquals(21, app.UI_menuBar.PARENT_SHORTCUTS.length);
+    // "Make", split out of what used to be the single "Modify" menu +
+    // "X" for "F(x,y)", split out of "Create" (its own parametric-
+    // surface family, which had grown to 13 items on its own).
+    assertEquals(22, app.UI_menuBar.PARENT_SHORTCUTS.length);
   }
 
   @Test
