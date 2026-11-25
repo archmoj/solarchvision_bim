@@ -3,7 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Covers the Torus-specific additions riding on top of the existing
-// Dome/Egg-Crate/Saddle/Diagonal Wave/Wavy Sphere/Grid Sphere
+// Dome/Egg-Crate/Saddle/Tetra Wave/Tetra Sphere/Grid Sphere
 // parametric-surface mechanism (create3D.pde's add_ParametricSurface(),
 // n=7, see that function's own comment): the k (minor:major radius
 // ratio) parameter it alone reads, and User3D.creatorTorusRatio, the new

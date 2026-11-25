@@ -1246,11 +1246,11 @@ void build_allActions() {
     UI_setTo_Create_Parametric(3);
   });
 
-  putAction("Diagonal Wave Surface", () -> { // n=4: z = cos((u+v)*pi) - ripples running diagonally across the surface
+  putAction("Tetra Wave Surface", () -> { // n=4: z = cos((u+v)*pi) - renamed from "Diagonal Wave Surface" - its own diagonal ripples pass through 4 of a cube's alternating (tetrahedral) vertices, (+-1,+-1,+-1)
     UI_setTo_Create_Parametric(4);
   });
 
-  putAction("Wavy Sphere", () -> { // n=5: same diagonal-ripple formula as n=4, projected onto a unit sphere
+  putAction("Tetra Sphere", () -> { // n=5: same formula as n=4, projected onto a unit sphere - renamed from "Wavy Sphere" - those same 4 tetrahedral vertices land exactly on a regular tetrahedron inscribed in the sphere
     UI_setTo_Create_Parametric(5);
   });
 

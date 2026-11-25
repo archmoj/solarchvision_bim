@@ -1571,7 +1571,7 @@ class Create3D {
   // formulas, picked by n (0..7) - the switch below is the one place
   // that actually defines what each n looks like. n=1..7 are the Create
   // menu's own "Dome Surface" / "Egg-Crate Surface" / "Saddle Surface" /
-  // "Diagonal Wave Surface" / "Wavy Sphere" / "Grid Sphere" / "Torus"
+  // "Tetra Wave Surface" / "Tetra Sphere" / "Grid Sphere" / "Torus"
   // items (uiMenuBar.pde's PARENT_CREATE, wired in actions.pde) -
   // User3D.creatorParametricTypeIndex just carries whichever one was
   // picked through to here, unchanged, so this comment is the map from
@@ -1693,11 +1693,27 @@ class Create3D {
             x = cos(u * PI);
             y = sin(v * PI);
             z = -sin(u * PI) * cos(v * PI);
-          } else if (n == 4) { // "Diagonal Wave Surface" - ripples running diagonally across a flat u/v grid
+          } else if (n == 4) { // "Tetra Wave Surface" - renamed from "Diagonal
+                                // Wave Surface" - ripples running diagonally
+                                // across a flat u/v grid, passing through 4 of
+                                // a cube's own alternating (tetrahedral)
+                                // vertices along the way: at (u,v) = (0.5,
+                                // -0.5)/(-0.5, 0.5)/(0.5, 0.5)/(-0.5, -0.5),
+                                // (x, y, z) lands exactly on (1,-1,1)/(-1,1,1)/
+                                // (1,1,-1)/(-1,-1,-1) - see n==5's own comment
+                                // below for what those same 4 points become
+                                // once normalized onto a sphere.
             x = sin(u * PI);
             y = sin(v * PI);
             z = cos((u + v) * PI);
-          } else if (n == 5) { // "Wavy Sphere" - same diagonal-ripple formula as n==4 above, normalized onto a unit sphere
+          } else if (n == 5) { // "Tetra Sphere" - renamed from "Wavy Sphere" -
+                                // same formula as n==4 above, normalized onto
+                                // a unit sphere, which lands n==4's own 4
+                                // alternating-cube-vertex points (see n==4's
+                                // own comment above) exactly on the 4 vertices
+                                // of a regular tetrahedron inscribed in this
+                                // sphere - a genuine tetrahedral symmetry, not
+                                // just a visual resemblance.
             float x0 = sin(u * PI);
             float y0 = sin(v * PI);
             float z0 = cos((u + v) * PI);
