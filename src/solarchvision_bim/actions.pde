@@ -431,6 +431,10 @@ void build_allActions() {
     exportAutocadScript();
   });
 
+  putAction("Export 3D > GeoJSON", () -> {
+    exportGeojson();
+  });
+
   putAction("Quit", () -> {
     println();
     exit();

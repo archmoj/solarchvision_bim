@@ -191,6 +191,30 @@ This page has two parts:
     `.las` point cloud (geometry only - position data, nothing else)
 -   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
 -   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
+-   `EXPORT.GEOJSON`: Exports every visible Face as a GeoJSON (RFC 7946)
+    Polygon Feature and every visible Polyline as a LineString Feature,
+    the write-side counterpart to `IMPORT.GEOJSON` and the shared "GIS
+    export core" future KML/TopoJSON/Shapefile/CityGML exporters are
+    meant to build on. A Face's own single ring is exported exactly as
+    stored - this app keeps no separate "this was really a hole"
+    bookkeeping once a hole has been bridged into a Face on import, and
+    no "these N faces were really one extruded building" link either, so
+    neither is ever reconstructed on the way back out; each Face just
+    becomes its own independent Polygon Feature. A Polyline is closed
+    (its first coordinate repeated at the end) only when it is actually
+    closed; no standalone Point Features are ever written, since this
+    app has no dedicated point/marker object. Every coordinate is
+    reverse-projected back to real longitude/latitude around the
+    project's own site location - the exact inverse of the projection
+    `IMPORT.GEOJSON`/`IMPORT.TOPOJSON`/`IMPORT.KML`/`IMPORT.CITYGML`/
+    `IMPORT.SHAPEFILE` already use coming in - and every ring is wound
+    counterclockwise, per RFC 7946's own exterior-ring convention,
+    regardless of how it happened to be wound in the scene. Each
+    Feature's own `"properties"` carries its source Face's/Polyline's
+    material and layer as `"material"`/`"layer"`, so re-importing this
+    same file and typing `"material"` or `"layer"` into `IMPORT.GEOJSON`'s
+    own group-property option regroups it exactly the way it was grouped
+    here
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page

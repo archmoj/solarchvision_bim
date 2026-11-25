@@ -55,6 +55,33 @@ class Functions {
     return XY;
   }
 
+  // The exact inverse of convert_lonlat2XY() above - this app's own
+  // local (x, y) meters, around the same (lon0, lat0) site location,
+  // back to (lon, lat). Used by every GIS *exporter* (exportGeojson.pde
+  // and whatever else is built on it) the same way convert_lonlat2XY()
+  // itself is already used by every GIS *importer* (geojsonLonLatAltToXYZ(),
+  // importGeojson.pde) - kept right beside it for the same reason.
+  //
+  // Solving convert_lonlat2XY() for (lon, lat) given (x, y): dv (=y)
+  // depends only on lat, so lat is recovered first; du (=x / cos(lat))
+  // then needs that already-recovered lat's own cosine, not lat0's -
+  // exactly mirroring the forward formula's own this.cos_ang((float) lat)
+  // (the destination point's latitude, not the origin's). cos(lat) is
+  // never exactly zero for any real building/site latitude, but is
+  // guarded anyway (falling back to lon0, rather than dividing by zero)
+  // for the degenerate case of a site placed exactly at a pole.
+  float[] convert_XY2lonlat (double lon0, double lat0, double x, double y) {
+    double lat = lat0 + (y * 180.0) / (PI * DOUBLE_r_Earth);
+    double cosLat = this.cos_ang((float) lat);
+    double lon = lon0;
+    if (Math.abs(cosLat) > 0.0000001) {
+      double du = x / cosLat;
+      lon = lon0 + (du * 180.0) / (PI * DOUBLE_r_Earth);
+    }
+    float[] lonLat = {(float) lon, (float) lat};
+    return lonLat;
+  }
+
   float lon_lat_dist (double lon1, double lat1, double lon2, double lat2) {
     float dLon = (float) (lon2 - lon1);
     float dLat = (float) (lat2 - lat1);

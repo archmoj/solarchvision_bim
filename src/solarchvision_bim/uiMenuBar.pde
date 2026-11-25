@@ -198,6 +198,7 @@ class UI_menuBar {
       "Export 3D > OBJ (date-series)",
       "Export 3D > OBJ (time-series)",
       "Export 3D > LAS",
+      "Export 3D > GeoJSON",
       ___divider___,
       "Quit"
     },

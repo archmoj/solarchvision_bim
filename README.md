@@ -403,6 +403,7 @@ Use the application's project save/load functions to retain supported scene and 
 - **LAS:** Export the positions of points in the scene as a point cloud.
 - **RAD:** Export Radiance geometry.
 - **SCR:** Export an AutoCAD script.
+- **GeoJSON:** Export scene faces as Polygon features and polylines as LineString features, geo-referenced back to real longitude/latitude around the project's own site location.
 - **HTML:** Export through the available HTML workflow.
 - **Image capture:** Record viewport frames in PNG, JPG, TIF, or BMP formats using the command interface.
 

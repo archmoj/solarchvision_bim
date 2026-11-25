@@ -312,6 +312,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "+EDITSELECTION": return  __$EDITSELECTION__(parts);
     case "+SCALEALLMODEL": return  __$SCALEALLMODEL__(parts);
     case "+TARGETROLLXYZ": return  __$TARGETROLLXYZ__(parts);
+    case "EXPORT.GEOJSON": return  __EXPORT_GEOJSON__(parts);
     case "GROUP>POLYLINE": return  __GROUP$POLYLINE__(parts);
     case "IMPORT.CITYGML": return  __IMPORT_CITYGML__(parts);
     case "IMPORT.GEOJSON": return  __IMPORT_GEOJSON__(parts);

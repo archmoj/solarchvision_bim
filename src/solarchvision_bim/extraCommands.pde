@@ -283,6 +283,12 @@ String __EXPORT_SCR__ (String[] parts) {
     return hint;
 }
 
+String __EXPORT_GEOJSON__ (String[] parts) {
+    String hint = "";
+    exportGeojson();
+    return hint;
+}
+
 String __REC_PNG__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
