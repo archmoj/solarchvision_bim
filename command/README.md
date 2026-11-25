@@ -150,6 +150,38 @@ This page has two parts:
     by its own local name (the part after any `:`), not a hard-coded
     prefix, since real-world CityGML files are free to declare their own
     namespace prefixes
+-   `IMPORT.SHAPEFILE`: Imports an ESRI Shapefile `.shp` file, also built
+    directly on top of `IMPORT.GEOJSON`'s own geometry handling, with its
+    own **Import Shapefile** options dialog (same two height/group-property
+    fields, plus one extra checkbox - see below, except for ".dbf field
+    name" in place of "properties"). Point, MultiPoint, PolyLine, and
+    Polygon shapes are supported, including their Z variants (M values,
+    when present in a shape record, are never read); MultiPatch shapes are
+    not supported and are skipped, as are Null shapes. Polygon rings are
+    grouped into faces using the shapefile format's own winding-direction
+    convention - a clockwise ring (negative signed area) starts a new outer
+    Face, and an immediately following counterclockwise ring (positive
+    signed area) is bridged into that Face as a hole, the same way
+    `IMPORT.GEOJSON`'s own holes are; a positive-area ring with no
+    preceding outer ring is defensively treated as its own outer Face
+    rather than dropped or erroring. A sibling `.dbf` file (same base name
+    as the selected `.shp` file) is read automatically when present: each
+    `.dbf` row supplies that record's attributes, in strict 1:1 order with
+    the `.shp` file's own records, for the same height-property extrusion
+    and group-property options as a GeoJSON Feature's properties; a row
+    marked deleted in the `.dbf` still leaves its own shape imported, just
+    with no attributes. No `.shx` index file is read (one sequential pass
+    through the `.shp` file's own record-length chain is enough), and
+    zipped `.shz` shapefiles are not supported. Unlike `IMPORT.GEOJSON`/
+    `IMPORT.TOPOJSON`/`IMPORT.KML` (always longitude/latitude) or
+    `IMPORT.CITYGML` (always already-local-planar by default), Shapefile
+    coordinates are auto-detected from a sibling `.prj` file when one is
+    found next to the selected `.shp` file - a geographic (`GEOGCS`) `.prj`
+    switches the import to the same longitude/latitude projection used by
+    `IMPORT.GEOJSON`, while a projected (`PROJCS`) `.prj` or no `.prj` at
+    all keeps already-local-planar meters; either way, the **Import
+    Shapefile** options dialog's own extra checkbox shows the detected
+    setting and can be overridden before importing
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

@@ -327,6 +327,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "VERTEX>POLYLINE": return  __VERTEX$POLYLINE__(parts);
     case "+ORBITSELECTIONZ": return  __$ORBITSELECTIONZ__(parts);
     case "+ROTATESELECTION": return  __$ROTATESELECTION__(parts);
+    case "IMPORT.SHAPEFILE": return  __IMPORT_SHAPEFILE__(parts);
     case "PREBAKE.VIEWPORT": return  __PREBAKE_VIEWPORT__(parts);
     case "UNSHADE.VIEWPORT": return  __UNSHADE_VIEWPORT__(parts);
     case "+MOVETOWARDSMOUSE": return  __$MOVETOWARDSMOUSE__(parts);

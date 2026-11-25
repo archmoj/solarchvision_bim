@@ -116,6 +116,14 @@ void selectFile_ImportCitygml () {
   selectInput("Select CityGML file to import:", "_fileSelected_ImportCitygml", new File(Folder_Import + "/_.gml"));
 }
 
+void selectFile_ImportShapefile () {
+  // Arms shpImportShowOptionsDialog (importShapefile.pde) the same way.
+  shpImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
+  selectInput("Select Shapefile (.shp) to import:", "_fileSelected_ImportShapefile", new File(Folder_Import + "/_.shp"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see importObj.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
@@ -289,6 +297,50 @@ boolean citygmlShowImportOptionsDialog () {
   geojsonHeightProperty = heightField.getText().trim();
   geojsonGroupProperty = groupField.getText().trim();
   citygmlCoordinatesAreLonLat = lonLatBox.isSelected();
+
+  return true;
+}
+
+// Shapefile's own dialog - same shape as citygmlShowImportOptionsDialog()
+// just above (shared geojsonHeightProperty/geojsonGroupProperty text
+// fields, plus its own lon/lat checkbox, for the same "a shapefile's own
+// X/Y could be either already-planar or geographic" reason
+// importShapefile.pde's own header comment gives), just reading/writing
+// shpCoordinatesAreLonLat instead of citygmlCoordinatesAreLonLat.
+// import_objects_SHP() (importShapefile.pde) already sets
+// shpCoordinatesAreLonLat from a sibling .prj file, best-effort, before
+// this dialog is ever shown - so the checkbox the person actually sees
+// here reflects that guess, which they can still freely override.
+boolean shpShowImportOptionsDialog () {
+
+  javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
+  javax.swing.JTextField groupField = new javax.swing.JTextField(geojsonGroupProperty, 20);
+  javax.swing.JCheckBox lonLatBox = new javax.swing.JCheckBox("Coordinates are longitude/latitude (project around site location)", shpCoordinatesAreLonLat);
+
+  javax.swing.JPanel heightRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  heightRow.add(new javax.swing.JLabel("Extrude polygons using height property (a .dbf field name):"));
+  heightRow.add(heightField);
+
+  javax.swing.JPanel groupRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  groupRow.add(new javax.swing.JLabel("Group/cycle material by property (a .dbf field name):"));
+  groupRow.add(groupField);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(new javax.swing.JLabel("Leave either field blank to skip that option."));
+  panel.add(heightRow);
+  panel.add(groupRow);
+  panel.add(lonLatBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "Shapefile import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where they were unless this dialog's own OK button is
+  // actually pressed - same reasoning as every dialog above.
+  geojsonHeightProperty = heightField.getText().trim();
+  geojsonGroupProperty = groupField.getText().trim();
+  shpCoordinatesAreLonLat = lonLatBox.isSelected();
 
   return true;
 }
@@ -1311,6 +1363,60 @@ void _fileSelected_ImportCitygml (File selectedFile) {
 
     // Same reason as import_objects_GEOJSON()'s own identical call above -
     // import_objects_CITYGML() adds points/faces/polylines straight into
+    // allPoints/allFaces/allPolylines without ever calling
+    // endScene3DChange() itself.
+    endScene3DChange();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
+  }
+}
+
+void _fileSelected_ImportShapefile (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for why -
+  // set here too (not just in selectFile_ImportShapefile(), above), since
+  // extraCommands.pde's own console IMPORT.SHAPEFILE command can reach this
+  // function directly, with a path already given, bypassing
+  // selectFile_ImportShapefile() and its own dialog entirely. Cleared at
+  // each of this function's own 2 exit points below.
+  isImportingInProgress = true;
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportGeojson()'s own identical
+    // lines above: cancelling the native file chooser itself never
+    // reaches import_objects_SHP(), which is otherwise what consumes
+    // shpImportShowOptionsDialog - without this, it would stay armed and
+    // pop the options dialog up on the next import_objects_SHP() call
+    // regardless of how that one was started.
+    shpImportShowOptionsDialog = false;
+    isImportingInProgress = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+    beginScene3DChange();
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_SHP(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_GEOJSON()'s own identical call above -
+    // import_objects_SHP() adds points/faces/polylines straight into
     // allPoints/allFaces/allPolylines without ever calling
     // endScene3DChange() itself.
     endScene3DChange();

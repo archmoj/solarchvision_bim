@@ -187,6 +187,7 @@ class UI_menuBar {
       "Import LAS",
       "Import OBJ",
       "Import PLY",
+      "Import Shapefile",
       "Import STL",
       "Import TopoJSON",
       ___divider___,

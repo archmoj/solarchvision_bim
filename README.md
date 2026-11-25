@@ -174,6 +174,7 @@ SOLARCHVISION-BIM can use existing project geometry as well as geometry created 
 | **TopoJSON** (`.topojson`) | Topology-encoded GIS/mapping geometry exchange (same geometry as GeoJSON, shared/quantized arcs) |
 | **KML** (`.kml`) | GIS/mapping geometry exchange (same geometry as GeoJSON/TopoJSON, XML-based; KMZ not supported) |
 | **CityGML** (`.gml`) | 3D city/building-model geometry exchange (LOD0 footprints through LOD2+ semantic surfaces; namespace-prefix-agnostic XML) |
+| **Shapefile** (`.shp`) | GIS/mapping geometry exchange (points, lines, polygons, optionally extruded; binary, with sibling `.dbf`/`.prj` read automatically) |
 
 Import behavior and the geometry or attributes retained depend on the source format and the contents of the file. Check the imported result before using it for measurement or analysis. A successful geometry import does not necessarily mean that all source BIM properties, classifications, materials, or relationships are preserved.
 
@@ -184,6 +185,10 @@ GeoJSON, TopoJSON, and KML points/lines/polygons are all projected into the proj
 ### CityGML workflow
 
 CityGML Buildings (and BuildingParts) are imported by finding every `<gml:Polygon>` inside each one, regardless of how deeply nested it is in a Solid/CompositeSurface/MultiSurface/`boundedBy` wrapper - no explicit LOD-structure parsing is required. A Building with any real LOD1-4 solid/semantic-surface geometry imports every one of those polygons directly as flat faces (already 3D, never extruded); a Building with only a flat LOD0 footprint (`lod0FootPrint`/`lod0RoofEdge`) is extrusion-eligible via the same height-property option GeoJSON/TopoJSON/KML already offer, and CityGML's own `<bldg:measuredHeight>` is exposed as a ready-made `measuredHeight` property for exactly this case. Coordinates default to already-local-planar meters (the common case for real CityGML data, typically in a national/local projected CRS) rather than longitude/latitude - the **Import CityGML** options dialog has its own checkbox to instead project longitude/latitude coordinates the same way GeoJSON/TopoJSON/KML already do, for the less common geographic-CRS case. Unlike the other three GIS formats, this importer is namespace-prefix-agnostic: it matches elements and attributes by their own local name (the part after any `:`), not a hard-coded `bldg:`/`gml:` prefix, since CityGML files are free to declare their own prefix for each namespace.
+
+### Shapefile workflow
+
+Shapefile (`.shp`) points, lines, and polygons are built directly on top of `IMPORT.GEOJSON`'s own geometry handling, so the same height and grouping options apply. When a sibling `.dbf` file with the same base name is found next to the selected `.shp` file, its per-record attributes are read and used for height/extrusion and grouping exactly like a GeoJSON feature's properties; a `.dbf` row marked deleted still leaves its shape in place but contributes no attributes. No `.shx` index file is read (one sequential pass through the `.shp` file is enough), and zipped `.shz` shapefiles are not supported. Point, MultiPoint, PolyLine, and Polygon shapes are supported, including their Z variants (M values, when present, are ignored); MultiPatch shapes are not supported and are skipped. Polygon rings are grouped into faces using the shapefile format's own winding-direction convention: a clockwise ring starts a new outer face, and an immediately following counterclockwise ring is treated as a hole bridged into that face, matching the same hole-handling already used for GeoJSON/TopoJSON/KML/CityGML polygons. Coordinates are imported as already-local planar meters by default, but when a sibling `.prj` file is found its coordinate system is checked and geographic (longitude/latitude) `.prj` files switch the import to the same lon/lat projection used by GeoJSON/TopoJSON/KML/CityGML; either way, the import options dialog shows the detected setting and allows it to be overridden before importing.
 
 ### LAS point-cloud workflow
 
@@ -209,6 +214,7 @@ IMPORT.GEOJSON
 IMPORT.TOPOJSON
 IMPORT.KML
 IMPORT.CITYGML
+IMPORT.SHAPEFILE
 ```
 
 See the [command reference](command/README.md) for command syntax and details.
