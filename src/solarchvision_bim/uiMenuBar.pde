@@ -199,6 +199,8 @@ class UI_menuBar {
       "Export 3D > OBJ (date-series)",
       "Export 3D > OBJ (time-series)",
       "Export 3D > DXF",
+      "Export 3D > STL",
+      "Export 3D > PLY",
       "Export 3D > LAS",
       "Export 3D > GeoJSON",
       "Export 3D > KML",

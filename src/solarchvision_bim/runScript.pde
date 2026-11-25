@@ -259,8 +259,10 @@ String ___executeScriptLine___ (String lineSTR) {
     case "EXPORT.DXF": return  __EXPORT_DXF__(parts);
     case "EXPORT.KML": return  __EXPORT_KML__(parts);
     case "EXPORT.LAS": return  __EXPORT_LAS__(parts);
+    case "EXPORT.PLY": return  __EXPORT_PLY__(parts);
     case "EXPORT.RAD": return  __EXPORT_RAD__(parts);
     case "EXPORT.SCR": return  __EXPORT_SCR__(parts);
+    case "EXPORT.STL": return  __EXPORT_STL__(parts);
     case "FACE>GROUP": return  __FACE$GROUP__(parts);
     case "GROUP>FACE": return  __GROUP$FACE__(parts);
     case "IMPORT.DAE": return  __IMPORT_DAE__(parts);

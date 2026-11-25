@@ -410,6 +410,8 @@ Use the application's project save/load functions to retain supported scene and 
 - **RAD:** Export Radiance geometry.
 - **SCR:** Export an AutoCAD script.
 - **DXF:** Export scene faces as 3DFACE entities (or, for a face with more than 4 corners, a fan-triangulated polyface-mesh POLYLINE) and polylines as 3D POLYLINE entities, each entity's own material and layer folded into one composite DXF layer name.
+- **STL:** Export scene faces as triangles (fan-triangulated for any face with more than 3 corners), each with a computed facet normal. STL has no line element, so polylines are not included.
+- **PLY:** Export scene faces (as arbitrary-sized polygons, no triangulation needed) and polylines (as a run of 2-point edges) over one shared, deduplicated vertex list.
 - **GeoJSON:** Export scene faces as Polygon features and polylines as LineString features, geo-referenced back to real longitude/latitude around the project's own site location.
 - **KML:** Export scene faces as Polygon Placemarks and polylines as LineString Placemarks, built directly on the same geo-referencing as the GeoJSON export above.
 - **CityGML:** Export scene faces as Buildings (one per face), each carrying a flat Polygon surface in its own local coordinates (no longitude/latitude projection).

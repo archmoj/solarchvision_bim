@@ -287,6 +287,51 @@ This page has two parts:
     the plainest one, and already the implicit dialect every entity
     type and group code here belongs to) followed directly by the
     `ENTITIES` section
+-   `EXPORT.STL`: Exports the scene in ASCII STL `.stl` format, the
+    write-side counterpart to `IMPORT.STL`. STL's own "facet" is a pure
+    triangle with no larger-polygon variant at all, so every visible
+    Face with more than 3 corners is fan-triangulated from its own
+    first corner into (corners-2) triangles - the same technique
+    `EXPORT.DXF` uses for its own 4-corner ceiling, just starting one
+    corner earlier; reimporting such a Face therefore recovers that
+    many separate triangles, not the original polygon. Each triangle's
+    own facet normal is computed (not left as a placeholder), since
+    real-world STL consumers other than this app's own importer
+    generally rely on it for shading, even though `IMPORT.STL` itself
+    always derives its own normals rather than trusting a file's. STL
+    has no line/curve element and no per-triangle material or layer
+    attribute at all, so visible Polylines are never written (a count
+    of however many were skipped is printed at the end of the export),
+    and there is nothing for a Face's own material/layer to be folded
+    into the way `EXPORT.DXF`'s own composite layer name does. The
+    whole scene becomes one single `solid ... endsolid` block
+-   `EXPORT.PLY`: Exports the scene in ASCII PLY `.ply` format, the
+    write-side counterpart to `IMPORT.PLY`. Unlike `EXPORT.DXF`'s/
+    `EXPORT.STL`'s own entity-by-entity coordinate restating, PLY's own
+    "vertex"/"face"/"edge" shape is built around one shared,
+    deduplicated whole-file vertex table that every face/edge indexes
+    into, so this exporter builds an index remap over every point
+    actually referenced by a visible Face or Polyline (in first-
+    appearance order) rather than writing coordinates inline each time -
+    a point genuinely shared between two touching Faces (or a Face and
+    a Polyline) in the scene is written once and referenced twice, the
+    same real mesh connectivity `EXPORT.OBJ`'s own shared vertex list
+    already takes advantage of. Every visible Face, any corner count,
+    becomes one "face" element instance written directly as its own
+    exact n-gon - no triangulation needed at all, since `IMPORT.PLY`'s
+    own reader already accepts an arbitrary-length face index list
+    directly. Every visible Polyline becomes a run of "edge" element
+    instances, one per consecutive pair of its own points (plus one
+    more closing the loop back to the first point when the Polyline is
+    closed and has more than 2 points - a closed 2-point Polyline writes
+    its one distinct segment only once, not twice); PLY's own "edge"
+    element is always exactly one isolated 2-point segment with no
+    multi-point chain or closed-flag concept of its own, so reimporting
+    (which needs `IMPORT.PLY`'s own `plyImportCurves` toggle turned on,
+    off by default) recovers one separate 2-point Polyline per edge
+    instead of the original single Polyline. Like STL, base PLY has no
+    per-element material or layer attribute this app's own round-trip
+    can use, so neither is written
 -   `EXPORT.GEOJSON`: Exports every visible Face as a GeoJSON (RFC 7946)
     Polygon Feature and every visible Polyline as a LineString Feature,
     the write-side counterpart to `IMPORT.GEOJSON` and the shared "GIS

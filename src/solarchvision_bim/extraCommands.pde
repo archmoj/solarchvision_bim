@@ -320,6 +320,18 @@ String __EXPORT_DXF__ (String[] parts) {
     return hint;
 }
 
+String __EXPORT_STL__ (String[] parts) {
+    String hint = "";
+    exportStl();
+    return hint;
+}
+
+String __EXPORT_PLY__ (String[] parts) {
+    String hint = "";
+    exportPly();
+    return hint;
+}
+
 String __EXPORT_TOPOJSON__ (String[] parts) {
     String hint = "";
     exportTopojson();
