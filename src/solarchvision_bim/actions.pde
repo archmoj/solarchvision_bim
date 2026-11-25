@@ -1262,6 +1262,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(7);
   });
 
+  putAction("Hyperbolic Disc", () -> { // n=8: z = x*y (same hyperbolic paraboloid as n=3 Saddle Surface), swept over a circular (polar u=radius, v=angle) footprint instead of Saddle's square one
+    UI_setTo_Create_Parametric(8);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

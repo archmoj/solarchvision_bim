@@ -1615,8 +1615,8 @@ class Create3D {
     float end_u = 1;
     float end_v = 1;
 
-    if ((n == 0) || (n == 6)) {
-      start_u = 0;
+    if ((n == 0) || (n == 6) || (n == 8)) {
+      start_u = 0; // n==8 (Hyperbolic Disc): u is a radius, 0..1, not -1..1
     }
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
@@ -1732,6 +1732,20 @@ class Create3D {
             x = (1 + kClamped * cos(v * PI)) * cos(u * PI);
             y = (1 + kClamped * cos(v * PI)) * sin(u * PI);
             z = kClamped * sin(v * PI);
+          } else if (n == 8) { // "Hyperbolic Disc" - the same hyperbolic
+                                // paraboloid as n==3 Saddle (z = x*y), but
+                                // swept in polar coordinates (u is a 0..1
+                                // radius, not -1..1 - see the "start_u = 0"
+                                // line above; v is the angle, closing up
+                                // for free across its own full -PI..PI
+                                // sweep, same as n==7 Torus's own v) instead
+                                // of Cartesian x/y - a circular, not square,
+                                // footprint around the same saddle shape.
+            float r = u;
+            float theta = v * PI;
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = x * y;
           }
 
 

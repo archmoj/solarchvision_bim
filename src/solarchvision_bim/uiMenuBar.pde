@@ -454,6 +454,7 @@ class UI_menuBar {
       "Wavy Sphere",
       "Twisted Sphere",
       "Torus",
+      "Hyperbolic Disc",
       ___divider___,
       "Solid",
       "Point",
