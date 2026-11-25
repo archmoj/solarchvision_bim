@@ -1620,6 +1620,7 @@ class Create3D {
     }
 
     final float HELICOID_TURNS = 2; // n==11 Helicoid only - how many full turns the ramp winds through across its own -1..1 height range
+    final float REVOLUTION_HEIGHT_SCALE = 2; // n==10/12 (Hyperboloid of Revolution/Catenoid) only - stretches v's own -1..1 domain out to -2..2 worth of actual height before r(v) sees it, so the waist (still radius 1, unaffected) ends up a smaller fraction of the now-wider open ends - shrinking the "hole" without touching the waist itself
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -1790,21 +1791,24 @@ class Create3D {
                                  // literal height (-1..1, NOT an angle -
                                  // unlike every other preset here, so
                                  // start_v is left at its own ordinary
-                                 // default, same as start_u). r(v) =
-                                 // sqrt(1 + v^2) is the hyperbola traced
-                                 // out from the waist (v=0, r=1, the
-                                 // narrowest ring) to either open end
-                                 // (v=+-1, r=sqrt(2)) - a fixed waist-
+                                 // default, same as start_u), stretched by
+                                 // REVOLUTION_HEIGHT_SCALE before r(v) sees
+                                 // it. r(height) = sqrt(1 + height^2) is
+                                 // the hyperbola traced out from the waist
+                                 // (v=0, height=0, r=1, the narrowest
+                                 // ring) to either open end (v=+-1,
+                                 // height=+-2, r=sqrt(5)) - a fixed waist-
                                  // tightness, no separate ratio parameter
                                  // like n==7 Torus's own k (rx/ry/rz,
                                  // applied below same as every preset,
                                  // already give plenty of control over
                                  // the overall proportions).
+            float height = v * REVOLUTION_HEIGHT_SCALE;
             float theta = u * PI;
-            float r = sqrt(1 + v * v);
+            float r = sqrt(1 + height * height);
             x = r * cos(theta);
             y = r * sin(theta);
-            z = v;
+            z = height;
           } else if (n == 11) { // "Helicoid" - a spiral ramp/parking-garage
                                  // shape: u is the radius (-1..1, both
                                  // signs - a NEGATIVE u lands on the
@@ -1841,19 +1845,24 @@ class Create3D {
                                  // ring's own angle, full -1..1*PI sweep;
                                  // v is a literal height, not an angle, so
                                  // start_v is left at its own ordinary
-                                 // default same as start_u), but r(v) =
-                                 // cosh(v) instead of sqrt(1+v^2) - the
-                                 // catenary curve traced out from the
-                                 // waist (v=0, r=1, the narrowest ring,
-                                 // same as n==10's own waist) to either
-                                 // open end. No exp()/cosh() built in to
-                                 // Processing's own API, so cosh(v) is
-                                 // spelled out as (e^v + e^-v)/2 directly.
+                                 // default same as start_u), also stretched
+                                 // by REVOLUTION_HEIGHT_SCALE before r(v)
+                                 // sees it, same reasoning as n==10's own.
+                                 // r(height) = cosh(height) instead of
+                                 // sqrt(1+height^2) - the catenary curve
+                                 // traced out from the waist (v=0,
+                                 // height=0, r=1, the narrowest ring, same
+                                 // as n==10's own waist) to either open
+                                 // end. No exp()/cosh() built in to
+                                 // Processing's own API, so cosh(height) is
+                                 // spelled out as (e^height + e^-height)/2
+                                 // directly.
+            float height = v * REVOLUTION_HEIGHT_SCALE;
             float theta = u * PI;
-            float r = (exp(v) + exp(-v)) / 2.0;
+            float r = (exp(height) + exp(-height)) / 2.0;
             x = r * cos(theta);
             y = r * sin(theta);
-            z = v;
+            z = height;
           } else if (n == 13) { // "Conoid" - a true ruled surface (unlike
                                  // every preset above, which all sweep a
                                  // single curve around an axis): a flat

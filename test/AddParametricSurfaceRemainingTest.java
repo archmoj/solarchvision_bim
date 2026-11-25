@@ -180,15 +180,17 @@ class AddParametricSurfaceRemainingTest {
     assertSubstantialQuadGrid();
     // start_u = start_v = -1 (n==10 isn't in the "start_u = 0" list - u
     // is a full angle sweep, same as n==7 Torus's own u, not a radius).
-    // theta = -PI, r = sqrt(1 + (-1)^2) = sqrt(2);
-    // x = sqrt(2)*cos(-PI) = -sqrt(2); y = sqrt(2)*sin(-PI) ~= 0; z = -1.
-    assertArrayEquals(new float[]{-1.4142f, 0, -1}, app.allVertices[0], 0.01f);
+    // height = v * REVOLUTION_HEIGHT_SCALE = -1*2 = -2; theta = -PI;
+    // r = sqrt(1 + (-2)^2) = sqrt(5);
+    // x = sqrt(5)*cos(-PI) = -sqrt(5); y = sqrt(5)*sin(-PI) ~= 0; z = -2.
+    assertArrayEquals(new float[]{-2.2361f, 0, -2}, app.allVertices[0], 0.01f);
   }
 
   @Test
   void n10_hyperboloidOfRevolution_everyVertexSatisfiesTheHyperbolaEquation () {
-    // x^2 + y^2 = r^2 = 1 + v^2 = 1 + z^2 (since z = v exactly) - the
-    // defining equation of a single-sheet hyperboloid of revolution.
+    // x^2 + y^2 = r^2 = 1 + height^2 = 1 + z^2 (since z = height exactly,
+    // whatever REVOLUTION_HEIGHT_SCALE is set to) - the defining equation
+    // of a single-sheet hyperboloid of revolution.
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 10, 0, 0, 20, 20);
 
     float minDistFromAxis = Float.MAX_VALUE;
@@ -247,14 +249,16 @@ class AddParametricSurfaceRemainingTest {
     assertSubstantialQuadGrid();
     // start_u = start_v = -1 (n==12 isn't in the "start_u = 0" list - u
     // is a full angle sweep, same as n==7 Torus/n==10 Hyperboloid's own
-    // u). theta = -PI, r = cosh(-1) = (e + 1/e)/2 ~= 1.5431;
-    // x = 1.5431*cos(-PI) = -1.5431; y = 1.5431*sin(-PI) ~= 0; z = -1.
-    assertArrayEquals(new float[]{-1.5431f, 0, -1}, app.allVertices[0], 0.01f);
+    // u). height = v * REVOLUTION_HEIGHT_SCALE = -1*2 = -2; theta = -PI;
+    // r = cosh(-2) = (e^2 + e^-2)/2 ~= 3.7622;
+    // x = 3.7622*cos(-PI) = -3.7622; y = 3.7622*sin(-PI) ~= 0; z = -2.
+    assertArrayEquals(new float[]{-3.7622f, 0, -2}, app.allVertices[0], 0.01f);
   }
 
   @Test
   void n12_catenoid_everyVertexSatisfiesTheCatenaryEquation () {
-    // x^2 + y^2 = r^2 = cosh(v)^2 = cosh(z)^2 (since z = v exactly) - the
+    // x^2 + y^2 = r^2 = cosh(height)^2 = cosh(z)^2 (since z = height
+    // exactly, whatever REVOLUTION_HEIGHT_SCALE is set to) - the
     // defining equation of a catenoid.
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 12, 0, 0, 20, 20);
 
