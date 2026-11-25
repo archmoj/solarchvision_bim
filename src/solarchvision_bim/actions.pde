@@ -1302,8 +1302,8 @@ void build_allActions() {
     UI_setTo_Create_Extrude();
   });
 
-  putAction("Hyper", () -> {
-    UI_setTo_Create_Hyper();
+  putAction("Crown", () -> { // formerly "Hyper" - renamed so it stops reading as related to Hyperbolic Disc/Hyperboloid of Revolution, which it isn't
+    UI_setTo_Create_Crown();
   });
 
   putAction("House3", () -> {

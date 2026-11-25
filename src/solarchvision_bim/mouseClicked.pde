@@ -2096,15 +2096,19 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
               " x4=" + (x-rx) + " y4=" + (y+ry) + " z4=" + z);
           } else if (CreateObject == CREATE.Polygon) {
 
-            // PolygonMesh/Hyper/Extrude's commands take a
+            // PolygonMesh/PolygonHyper/Extrude's commands take a
             // single "d" (diameter, halved internally - so
-            // d=2*rx) and, for Hyper/Extrude, "h" passed
+            // d=2*rx) and, for PolygonHyper/Extrude, "h" passed
             // through unhalved (matching the direct calls'
-            // own un-halved 2*rz exactly).
+            // own un-halved 2*rz exactly). PolygonHyper itself
+            // isn't renamed below - it's the "Crown" menu item's
+            // own script command (CREATE.Crown, formerly CREATE.
+            // Hyper), kept under its old command name so older
+            // saved scripts keep working.
             runScriptLine("PolygonMesh" + creatorCommandArgs() +
               " x=" + x + " y=" + y + " z=" + z +
               " d=" + (2 * rx) + " deg=" + User3D.creatorPolygonDegree + " r=" + rot);
-          } else if (CreateObject == CREATE.Hyper) {
+          } else if (CreateObject == CREATE.Crown) {
 
             runScriptLine("PolygonHyper" + creatorCommandArgs() +
               " x=" + x + " y=" + y + " z=" + z +
@@ -2221,7 +2225,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
             // orientation), "deg" reusing Creator Polygon Degree rather
             // than a brand new dedicated setting (it's the same "how many
             // straight segments approximate a round shape" idea Polygon/
-            // Hyper/Extrude already use it for), and always a full circle
+            // Crown/Extrude already use it for), and always a full circle
             // (ang=360) - the ARC command's own m/tes/lyr/vsb/wgt/clz
             // still apply for a partial arc typed on the command line.
             runScriptLine("Arc" + creatorCommandArgs() +

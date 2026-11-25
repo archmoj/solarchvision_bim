@@ -7,7 +7,7 @@ class CREATE {
   final static int Polygon    = 2;
   final static int Extrude    = 3;
   final static int Pyramid    = 4;
-  final static int Hyper      = 5;
+  final static int Crown      = 5; // "Hyper" in the Make menu (uiMenuBar.pde) until it was renamed "Crown" - the zigzag/skew-polygon shape built by add_PolygonHyper (create3D.pde) and the PolygonHyper script command (extraCommands.pde), neither of which were renamed to keep old saved scripts working
   final static int House1     = 6;
   final static int House2     = 7;
   final static int House3     = 8;

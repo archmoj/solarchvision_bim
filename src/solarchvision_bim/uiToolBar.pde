@@ -90,7 +90,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tetrahedron", "Dodecahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Spline", "Arc", "Surface", "Building Type", "3.8"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tetrahedron", "Dodecahedron", "Pyramid", "Crown", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Spline", "Arc", "Surface", "Building Type", "3.8"
     }
     ,
     {
@@ -419,7 +419,7 @@ class UI_toolBar {
           case "Plane": runScriptLine("PolygonMesh"); break;
           case "Polygon": UI_setTo_Create_Polygon(); break;
           case "Extrude": runScriptLine("PolygonExtrude"); break;
-          case "Hyper": runScriptLine("PolygonHyper"); break;
+          case "Crown": runScriptLine("PolygonHyper"); break; // "Crown" is the renamed menu label - PolygonHyper itself is still the underlying script command, unchanged for backward compatibility
           case "House3": runScriptLine("House3"); break;
           case "House2": runScriptLine("House2"); break;
           case "House1": runScriptLine("House1"); break;

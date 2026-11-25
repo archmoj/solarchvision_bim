@@ -126,10 +126,10 @@ class UI_toolBarTest {
   }
 
   @Test
-  void livingType_hyper_reusesPolygonHyperCommand () {
-    items("", "Hyper");
+  void livingType_crown_reusesPolygonHyperCommand () {
+    items("", "Crown");
     app.UI_toolBar.performAction("Living Type", 0, 1);
-    assertEquals(app.CREATE.Hyper, app.CreateObject);
+    assertEquals(app.CREATE.Crown, app.CreateObject);
   }
 
   @Test

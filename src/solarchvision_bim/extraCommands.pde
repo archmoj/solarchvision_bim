@@ -2027,7 +2027,7 @@ String __POLYGONHYPER__ (String[] parts) {
     }
     else {
     hint = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
-    UI_setTo_Create_Hyper();
+    UI_setTo_Create_Crown();
     }
     return hint;
 }

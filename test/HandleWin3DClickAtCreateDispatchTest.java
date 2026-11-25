@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //
 //   GROUP:    SuperOBJ (whichever shape classifySuperOBJShape() picks
 //             for the default creator-power settings), Pyramid, Plane,
-//             Polygon, Hyper, Extrude, House1, House2, House3, Parametric
+//             Polygon, Crown, Extrude, House1, House2, House3, Parametric
 //   MODEL2D:  Person, Plant
 //   MODEL1D:  Model1Ds
 //   VERTEX:   Vertex
@@ -117,9 +117,9 @@ class HandleWin3DClickAtCreateDispatchTest {
   }
 
   @Test
-  void create_group_hyper_doesNotThrow_andBeginsANewGroup () {
+  void create_group_crown_doesNotThrow_andBeginsANewGroup () {
     app.currentObjectCategory = app.ObjectCategory.GROUP;
-    app.CreateObject = app.CREATE.Hyper;
+    app.CreateObject = app.CREATE.Crown;
     int groupsBefore = app.allGroups.num;
 
     assertDoesNotThrow(() -> app.handleWin3DClickAt(0, 0));

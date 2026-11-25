@@ -178,10 +178,10 @@ void UI_setTo_Create_Extrude () {
   switch_category(ObjectCategory.GROUP);
 }
 
-void UI_setTo_Create_Hyper () {
+void UI_setTo_Create_Crown () {
   UI_setTo_Create_Nothing();
 
-  CreateObject = CREATE.Hyper;
+  CreateObject = CREATE.Crown;
   switch_category(ObjectCategory.GROUP);
 }
 
