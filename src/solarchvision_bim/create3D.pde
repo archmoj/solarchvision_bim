@@ -1840,31 +1840,39 @@ class Create3D {
             z = v;
           } else if (n == 13) { // "Conoid" - a true ruled surface (unlike
                                  // every preset above, which all sweep a
-                                 // single curve around an axis): a
-                                 // straight rail on the south side (y=-1),
-                                 // raised to a ridge height (z=1), ruled
-                                 // straight across to a half-circle on
-                                 // the north side (y>=0, z=0, the eave) -
-                                 // u picks the matching point on BOTH
-                                 // directrices at once (the rail's own x,
-                                 // and the arc's own angle, chosen so
-                                 // their x endpoints line up exactly: u =
-                                 // -1/+1 both land on x = -1/+1 on either
-                                 // directrix), v (t = (v+1)/2, 0..1)
-                                 // linearly blends between them - a
-                                 // straight generator line for every
-                                 // fixed u, which is what makes this a
-                                 // conoid rather than another bowl/dish.
+                                 // single curve around an axis): a flat
+                                 // straight rail on the south side (y=-1,
+                                 // z=0 throughout - the ground-level
+                                 // ridge beam), ruled straight across to
+                                 // a VERTICAL half-circle standing on the
+                                 // north side (y=1, in the x/z plane,
+                                 // z>=0 - the open end's own archway),
+                                 // touching the ground (z=0) only at its
+                                 // own two endpoints (u=-1/+1), with its
+                                 // own apex (u=0) reaching straight up to
+                                 // z=1 - the classic conoidal-shell-roof
+                                 // shape, not tilted the way a flat-
+                                 // footprint arc would be. u picks the
+                                 // matching point on BOTH directrices at
+                                 // once (the rail's own x, and the arc's
+                                 // own angle, chosen so their x endpoints
+                                 // line up exactly: u = -1/+1 both land
+                                 // on x = -1/+1 on either directrix), v
+                                 // (t = (v+1)/2, 0..1) linearly blends
+                                 // between them - a straight generator
+                                 // line for every fixed u, which is what
+                                 // makes this a conoid rather than
+                                 // another bowl/dish.
             float t = (v + 1) / 2.0;
             float angle = (1 - u) / 2.0 * PI; // u=-1 -> PI (arc x=-1), u=+1 -> 0 (arc x=1)
             float archX = cos(angle);
-            float archY = sin(angle); // always >= 0 - the half-circle's own north side
+            float archZ = sin(angle); // always >= 0 - the arch's own upward bulge, zero only at its two endpoints
             float lineX = u; // matches archX at both endpoints (u=-1 -> -1, u=+1 -> 1)
             float lineY = -1; // the straight rail's own south side
-            float lineZ = 1; // the rail's own ridge height, above the arc's own eave height (z=0)
+            float archY = 1; // the vertical arch's own north side - a fixed plane, not swept in y like the rail
             x = lineX + t * (archX - lineX);
             y = lineY + t * (archY - lineY);
-            z = lineZ + t * (0 - lineZ);
+            z = t * archZ; // the rail's own z is 0 throughout, so this is the whole blend
           }
 
 

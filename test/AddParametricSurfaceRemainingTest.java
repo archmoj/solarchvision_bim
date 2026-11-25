@@ -277,33 +277,50 @@ class AddParametricSurfaceRemainingTest {
 
     assertSubstantialQuadGrid();
     // start_u = start_v = -1 (n==13 isn't in the "start_u = 0" list).
-    // v=-1 -> t=0 -> the point sits exactly on the straight rail:
-    // (x, y, z) = (lineX, lineY, lineZ) = (u, -1, 1) = (-1, -1, 1).
-    assertArrayEquals(new float[]{-1, -1, 1}, app.allVertices[0], 0.01f);
+    // v=-1 -> t=0 -> the point sits exactly on the straight, flat-on-the-
+    // ground rail: (x, y, z) = (lineX, lineY, 0) = (-1, -1, 0).
+    assertArrayEquals(new float[]{-1, -1, 0}, app.allVertices[0], 0.01f);
   }
 
   @Test
-  void n13_conoid_theSouthEdgeIsAStraightLine_andTheNorthEdgeIsAHalfCircle () {
-    // z = lineZ + t*(0-lineZ) = 1 - t exactly, so t is recoverable from z
-    // alone (t = 1 - z) without needing the original u/v - t=0 (z=1) is
-    // the straight south rail, t=1 (z=0) is the north half-circle.
+  void n13_conoid_theSouthEdgeIsAFlatLine_andTheNorthEdgeIsAVerticalHalfCircle () {
+    // y = lineY + t*(archY-lineY) = -1 + t*2 exactly (lineY=-1, archY=1,
+    // both constants independent of u), so t is recoverable from y alone
+    // (t = (y+1)/2) without needing the original u/v - t=0 (y=-1) is the
+    // flat south rail, t=1 (y=1) is the vertical north half-circle.
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 13, 0, 0, 20, 20);
 
     boolean foundSouthEdgePoint = false;
     boolean foundNorthEdgePoint = false;
     for (float[] v : app.allVertices) {
-      float t = 1 - v[2];
-      if (t < 0.01f) { // south rail (v==-1): straight, y fixed at -1 regardless of x
-        assertEquals(-1f, v[1], 0.01f, "the south edge must be a straight line at y=-1");
+      float t = (v[1] + 1) / 2;
+      if (t < 0.01f) { // south rail (v==-1): flat on the ground, z=0 regardless of x
+        assertEquals(0f, v[2], 0.01f, "the south edge must be flat on the ground, z=0");
         foundSouthEdgePoint = true;
-      } else if (t > 0.99f) { // north arc (v==+1): half-circle, x^2+y^2=1, y on the north (>=0) side only
-        float distSq = v[0] * v[0] + v[1] * v[1];
-        assertEquals(1f, distSq, 0.01f, "the north edge must be a unit half-circle, x^2+y^2=1");
-        assertTrue(v[1] >= -0.01f, "the north edge's half-circle must stay on the north (y>=0) side, found y=" + v[1]);
+      } else if (t > 0.99f) { // north arc (v==+1): a VERTICAL half-circle, x^2+z^2=1, z on the upward (>=0) side only
+        float distSq = v[0] * v[0] + v[2] * v[2];
+        assertEquals(1f, distSq, 0.01f, "the north edge must be a vertical unit half-circle, x^2+z^2=1");
+        assertTrue(v[2] >= -0.01f, "the north edge's half-circle must stay on the upward (z>=0) side, found z=" + v[2]);
         foundNorthEdgePoint = true;
       }
     }
     assertTrue(foundSouthEdgePoint, "setup check - this grid should sample the south rail (v=-1)");
     assertTrue(foundNorthEdgePoint, "setup check - this grid should sample the north arc (v=+1)");
+  }
+
+  @Test
+  void n13_conoid_theNorthArchTouchesTheGround_onlyAtItsOwnTwoEndpoints () {
+    // The vertical arch's own apex (u=0, angle=PI/2) reaches z=1 at its
+    // north edge (v=1) - the midpoint of the arch, well away from the
+    // ground, distinguishing this from a flat-footprint arc (which would
+    // keep z=0 everywhere along that same edge).
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 13, 0, 0, 20, 20);
+
+    float maxZAtNorthEdge = 0;
+    for (float[] v : app.allVertices) {
+      float t = (v[1] + 1) / 2;
+      if (t > 0.99f) maxZAtNorthEdge = Math.max(maxZAtNorthEdge, v[2]);
+    }
+    assertEquals(1f, maxZAtNorthEdge, 0.01f, "the vertical arch's own apex should reach exactly z=1");
   }
 }
