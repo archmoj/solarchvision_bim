@@ -1755,16 +1755,16 @@ String __PARAMETRIC__ (String[] parts) {
     // half as wide as every other n's (start_u=0 instead of -1, add_
     // ParametricSurface's own "if ((n == 0) || (n == 6)) start_u = 0"
     // line), hence the lower defaultStepsU specifically for those two.
-    // n=8/9/10/11/12 (Hyperbolic Disc/Paraboloid Dish/Hyperboloid of
-    // Revolution/Helicoid/Catenoid) never had a pre-u/v existence to
-    // preserve - grouped into this same "smooth" bucket purely because
-    // they want comparable default resolution, not for backward
-    // compatibility. n=10/11/12's own u is a full -1..1 sweep like n=7
-    // Torus's own u (full-width, not half, hence no defaultStepsU=20 for
-    // them, unlike n=0/6/8/9's own half-width u).
+    // n=8/9/10/11/12/13 (Hyperbolic Disc/Paraboloid Dish/Hyperboloid of
+    // Revolution/Helicoid/Catenoid/Conoid) never had a pre-u/v existence
+    // to preserve - grouped into this same "smooth" bucket purely
+    // because they want comparable default resolution, not for backward
+    // compatibility. n=10/11/12/13's own u is a full -1..1 sweep like
+    // n=7 Torus's own u (full-width, not half, hence no defaultStepsU=20
+    // for them, unlike n=0/6/8/9's own half-width u).
     int defaultStepsU = 20;
     int defaultStepsV = 20;
-    if ((n == 0) || (n == 4) || (n == 5) || (n == 6) || (n == 7) || (n == 8) || (n == 9) || (n == 10) || (n == 11) || (n == 12)) {
+    if ((n == 0) || (n == 4) || (n == 5) || (n == 6) || (n == 7) || (n == 8) || (n == 9) || (n == 10) || (n == 11) || (n == 12) || (n == 13)) {
       defaultStepsV = 40;
       defaultStepsU = ((n == 0) || (n == 6) || (n == 8) || (n == 9)) ? 20 : 40;
     }

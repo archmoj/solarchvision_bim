@@ -1836,6 +1836,33 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = v;
+          } else if (n == 13) { // "Conoid" - a true ruled surface (unlike
+                                 // every preset above, which all sweep a
+                                 // single curve around an axis): a
+                                 // straight rail on the south side (y=-1),
+                                 // raised to a ridge height (z=1), ruled
+                                 // straight across to a half-circle on
+                                 // the north side (y>=0, z=0, the eave) -
+                                 // u picks the matching point on BOTH
+                                 // directrices at once (the rail's own x,
+                                 // and the arc's own angle, chosen so
+                                 // their x endpoints line up exactly: u =
+                                 // -1/+1 both land on x = -1/+1 on either
+                                 // directrix), v (t = (v+1)/2, 0..1)
+                                 // linearly blends between them - a
+                                 // straight generator line for every
+                                 // fixed u, which is what makes this a
+                                 // conoid rather than another bowl/dish.
+            float t = (v + 1) / 2.0;
+            float angle = (1 - u) / 2.0 * PI; // u=-1 -> PI (arc x=-1), u=+1 -> 0 (arc x=1)
+            float archX = cos(angle);
+            float archY = sin(angle); // always >= 0 - the half-circle's own north side
+            float lineX = u; // matches archX at both endpoints (u=-1 -> -1, u=+1 -> 1)
+            float lineY = -1; // the straight rail's own south side
+            float lineZ = 1; // the rail's own ridge height, above the arc's own eave height (z=0)
+            x = lineX + t * (archX - lineX);
+            y = lineY + t * (archY - lineY);
+            z = lineZ + t * (0 - lineZ);
           }
 
 

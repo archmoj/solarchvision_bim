@@ -3,10 +3,10 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 13
+// (Create3DTest.java's own addParametricSurface_... test) of its 14
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution, 11
-// Helicoid, 12 Catenoid) - the remaining 12 are covered here, following that same existing
+// Helicoid, 12 Catenoid, 13 Conoid) - the remaining 13 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -269,5 +269,41 @@ class AddParametricSurfaceRemainingTest {
     // grid - same reasoning as n==10 Hyperboloid of Revolution's own
     // ring-thickness test above.
     assertEquals(1f, minDistFromAxis, 0.01f, "the waist's own radius should be exactly 1, and the grid should include it");
+  }
+
+  @Test
+  void n13_conoid_buildsAGrid_firstCornerAtTheSouthRailsLeftEnd () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 13, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u = start_v = -1 (n==13 isn't in the "start_u = 0" list).
+    // v=-1 -> t=0 -> the point sits exactly on the straight rail:
+    // (x, y, z) = (lineX, lineY, lineZ) = (u, -1, 1) = (-1, -1, 1).
+    assertArrayEquals(new float[]{-1, -1, 1}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n13_conoid_theSouthEdgeIsAStraightLine_andTheNorthEdgeIsAHalfCircle () {
+    // z = lineZ + t*(0-lineZ) = 1 - t exactly, so t is recoverable from z
+    // alone (t = 1 - z) without needing the original u/v - t=0 (z=1) is
+    // the straight south rail, t=1 (z=0) is the north half-circle.
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 13, 0, 0, 20, 20);
+
+    boolean foundSouthEdgePoint = false;
+    boolean foundNorthEdgePoint = false;
+    for (float[] v : app.allVertices) {
+      float t = 1 - v[2];
+      if (t < 0.01f) { // south rail (v==-1): straight, y fixed at -1 regardless of x
+        assertEquals(-1f, v[1], 0.01f, "the south edge must be a straight line at y=-1");
+        foundSouthEdgePoint = true;
+      } else if (t > 0.99f) { // north arc (v==+1): half-circle, x^2+y^2=1, y on the north (>=0) side only
+        float distSq = v[0] * v[0] + v[1] * v[1];
+        assertEquals(1f, distSq, 0.01f, "the north edge must be a unit half-circle, x^2+y^2=1");
+        assertTrue(v[1] >= -0.01f, "the north edge's half-circle must stay on the north (y>=0) side, found y=" + v[1]);
+        foundNorthEdgePoint = true;
+      }
+    }
+    assertTrue(foundSouthEdgePoint, "setup check - this grid should sample the south rail (v=-1)");
+    assertTrue(foundNorthEdgePoint, "setup check - this grid should sample the north arc (v=+1)");
   }
 }

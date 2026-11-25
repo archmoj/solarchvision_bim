@@ -353,10 +353,12 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     spiral ramp winding two full turns through its own height; 12 is a
     Catenoid - the soap-film-between-two-rings minimal surface, the same
     full-ring layout as 10 but with a catenary profile instead of a
-    hyperbola). `k` is the Torus's own minor:major tube-thickness ratio
-    (0-1) and is ignored by every other `n`. `u`/`v` set the surface's
-    own grid resolution (segment counts along each parametric direction)
-    and apply to every `n`
+    hyperbola; 13 is a Conoid - a true ruled surface between a straight
+    rail on the south side and a half-circle on the north side).
+    `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
+    ignored by every other `n`. `u`/`v` set the surface's own grid
+    resolution (segment counts along each parametric direction) and
+    apply to every `n`
 
 ```
 Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=? u=? v=?

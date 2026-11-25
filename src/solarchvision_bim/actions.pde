@@ -1282,6 +1282,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(12);
   });
 
+  putAction("Conoid", () -> { // n=13: a ruled surface between a straight rail on the south side and a half-circle on the north side
+    UI_setTo_Create_Parametric(13);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

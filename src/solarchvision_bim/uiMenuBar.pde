@@ -459,6 +459,7 @@ class UI_menuBar {
       "Hyperboloid of Revolution",
       "Helicoid",
       "Catenoid",
+      "Conoid",
       ___divider___,
       "Solid",
       "Point",
