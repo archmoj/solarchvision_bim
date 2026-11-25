@@ -1135,7 +1135,7 @@ class UI_menuBar {
     }
   }
 
-  final float padParentWidth = 0.75 * MessageSize;
+  final float padParentWidth = 0.5 * MessageSize;
   final float padChildrenWidth = 0.5 * MessageSize;
 
   // Draws the dropdown for the currently open parent tab.
