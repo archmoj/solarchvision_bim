@@ -51,9 +51,9 @@ class StarTilingTest {
   // --- appendStarTransform_UV (direct unit tests) ----------------------
 
   @Test
-  void appendStarTransform_withANegativeSpikeAngle_leavesThePolygonUntouched () {
+  void appendStarTransform_withSpikeAngleZero_leavesThePolygonUntouched () {
     float[][] square = {{0, 0}, {2, 0}, {2, 2}, {0, 2}};
-    float[][] out = app.Modify3D.appendStarTransform_UV(square, -1);
+    float[][] out = app.Modify3D.appendStarTransform_UV(square, 0);
     assertSame(square, out, "the disabled sentinel should return the exact same array, not a copy");
   }
 
@@ -77,19 +77,23 @@ class StarTilingTest {
   }
 
   @Test
-  void appendStarTransform_onARegularSquare_atSpikeAngleZero_pullsEveryNotchAllTheWayToTheCentroid () {
-    // spikeAngle=0 is this shape's own sharpest valid star - the notch
-    // radius formula's own r=0 floor, verified analytically while
-    // designing this (r = R*(cos(alpha) - sin(alpha)*cot(alpha)) = 0
-    // when gamma == the shape's own floor, i.e. halfGamma == alpha).
+  void appendStarTransform_onARegularSquare_nearTheSharpestValidAngle_pullsEveryNotchNearTheCentroid () {
+    // spikeAngleParam==0 is now the disabled sentinel (see the dedicated
+    // disabled test below), so the shape's own sharpest valid star can no
+    // longer be probed at the literal value 0. The closest practical
+    // probe is a tiny positive value just above the sentinel: the notch
+    // radius formula (r = R*(cos(alpha) - sin(alpha)*cot(halfGamma)))
+    // still drives r arbitrarily close to its own r=0 floor as
+    // spikeAngleParam shrinks toward 0, since gamma -> the shape's own
+    // floor and halfGamma -> alpha.
     float[][] square = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
-    float[][] star = app.Modify3D.appendStarTransform_UV(square, 0);
+    float[][] star = app.Modify3D.appendStarTransform_UV(square, 0.001f);
 
     assertEquals(8, star.length);
     for (int i = 0; i < 4; i++) {
       float[] notch = star[2 * i + 1];
-      assertEquals(0, notch[0], 0.0001f, "notch " + i + " x");
-      assertEquals(0, notch[1], 0.0001f, "notch " + i + " y");
+      assertEquals(0, notch[0], 0.001f, "notch " + i + " x");
+      assertEquals(0, notch[1], 0.001f, "notch " + i + " y");
     }
   }
 
@@ -159,6 +163,115 @@ class StarTilingTest {
     }
   }
 
+  // --- appendStarTransform_UV, edge mode (negative spikeAngleParam) -----
+  //
+  // Edge mode mirrors vertex mode's own gamma/alpha/cot formula with the
+  // two rings of data swapped: the KNOWN, fixed ring becomes each edge's
+  // own midpoint (the new spike) instead of each polygon corner, and the
+  // SOLVED-FOR ring becomes the original corner's own angular direction
+  // (the new notch, pulled inward) instead of the edge-midpoint bisector.
+  // Unlike vertex mode, edge mode's own "gamma=180" ceiling does NOT
+  // retrace the original polygon exactly (it draws a chamfer-like chord
+  // between two neighboring edge-midpoints instead of returning to the
+  // true corner between them) - it is still a safe, always non-negative,
+  // well-defined bound, just not an exact identity transform at 180.
+
+  @Test
+  void appendStarTransform_withNegativeSpikeAngle_putsEverySpikeExactlyAtItsEdgeMidpoint () {
+    float[][] square = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
+    float[][] star = app.Modify3D.appendStarTransform_UV(square, -30);
+
+    assertEquals(8, star.length);
+    float[][] expectedMidpoints = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+    for (int i = 0; i < 4; i++) {
+      float[] spike = star[2 * i];
+      assertEquals(expectedMidpoints[i][0], spike[0], 0.0001f, "spike " + i + " x");
+      assertEquals(expectedMidpoints[i][1], spike[1], 0.0001f, "spike " + i + " y");
+    }
+  }
+
+  @Test
+  void appendStarTransform_onARegularSquare_edgeModeNearTheSharpestValidAngle_pullsEveryNotchNearTheCentroid () {
+    // Same "near the shared floor" probe as vertex mode's analogous test
+    // above, mirrored onto edge mode's own ring of data (edge-midpoints
+    // instead of corners): a square's edge-midpoints are themselves 90
+    // deg apart, so edgeSpikeAngle -> 0 should drive every notch's own
+    // radius toward 0 too.
+    float[][] square = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
+    float[][] star = app.Modify3D.appendStarTransform_UV(square, -0.001f);
+
+    assertEquals(8, star.length);
+    for (int i = 0; i < 4; i++) {
+      float[] notch = star[2 * i + 1];
+      assertEquals(0, notch[0], 0.001f, "notch " + i + " x");
+      assertEquals(0, notch[1], 0.001f, "notch " + i + " y");
+    }
+  }
+
+  @Test
+  void appendStarTransform_onARegularHexagon_edgeMode_matchesTheMirroredClosedFormFormula () {
+    // Edge mode's own cross-check against the closed form, mirroring the
+    // vertex-mode hexagon test above: same shape, same |spikeAngle|, but
+    // now R is each edge-midpoint's own radius (R*cos(180/N), a regular
+    // hexagon's apothem) instead of each corner's radius.
+    float R = 30;
+    int N = 6;
+    float[][] hex = new float[N][2];
+    for (int k = 0; k < N; k++) {
+      double ang = Math.toRadians(k * 60.0);
+      hex[k][0] = (float) (R * Math.cos(ang));
+      hex[k][1] = (float) (R * Math.sin(ang));
+    }
+
+    float edgeSpikeAngle = 90; // gamma = floor(60) + 90 = 150, same gamma as the vertex-mode test
+    float[][] star = app.Modify3D.appendStarTransform_UV(hex, -edgeSpikeAngle);
+
+    double apothem = R * Math.cos(Math.toRadians(30));
+    double expectedR = apothem * (Math.cos(Math.toRadians(30)) - Math.sin(Math.toRadians(30)) / Math.tan(Math.toRadians(75)));
+
+    assertEquals(12, star.length);
+    for (int i = 0; i < N; i++) {
+      float[] notch = star[2 * i + 1];
+      float gotR = (float) Math.sqrt(notch[0] * notch[0] + notch[1] * notch[1]);
+      assertEquals((float) expectedR, gotR, 0.01f, "notch " + i + "'s own distance from the centroid");
+    }
+  }
+
+  @Test
+  void appendStarTransform_onAnIrregularCairoPentagon_edgeMode_stillProducesANonSelfIntersectingStar () {
+    // Edge mode's own analog of the Cairo never-negative test above -
+    // same irregular pentagon, same shared worst-case shapeFloor
+    // reasoning, just built from edge-midpoint spans instead of corner
+    // spans.
+    float a = 1;
+    float b = (float) ((Math.sqrt(3) - 1) * a);
+    float[] edgeLens = {a, b, a, a, a};
+    float[] turnDegs = {60, 60, 90, 60, 90};
+    float heading = -60;
+    float[][] pentagon = new float[5][2];
+    float x = 0, y = 0;
+    for (int k = 0; k < 5; k++) {
+      pentagon[k][0] = x;
+      pentagon[k][1] = y;
+      x += edgeLens[k] * (float) Math.cos(Math.toRadians(heading));
+      y += edgeLens[k] * (float) Math.sin(Math.toRadians(heading));
+      heading += turnDegs[k];
+    }
+
+    float[] cen = {0, 0};
+    for (float[] p : pentagon) { cen[0] += p[0]; cen[1] += p[1]; }
+    cen[0] /= 5; cen[1] /= 5;
+
+    float[][] star = app.Modify3D.appendStarTransform_UV(pentagon, -5);
+
+    assertEquals(10, star.length);
+    for (int i = 0; i < 5; i++) {
+      float[] notch = star[2 * i + 1];
+      float r = (float) Math.sqrt(Math.pow(notch[0] - cen[0], 2) + Math.pow(notch[1] - cen[1], 2));
+      assertTrue(r >= -0.0001f, "notch " + i + " should never go negative/self-intersecting, got radius " + r);
+    }
+  }
+
   // --- applyTiling_Selection / applySemiRegularTiling_Selection (wiring) --
 
   @Test
@@ -178,11 +291,29 @@ class StarTilingTest {
   }
 
   @Test
+  void tilingSquare_withNegativeTileStarSpikeAngleSet_doublesEveryTileVertexCountAndShrinksTheTotalArea () {
+    // Edge mode's own analog of the positive-angle integration test above
+    // - same wiring, just a negative tileStarSpikeAngle this time.
+    setUpOneFace(new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+    app.User3D.tileStarSpikeAngle = -30;
+
+    app.Modify3D.tilingSquare_Selection();
+
+    assertEquals(4, app.allFaces.nodes.length);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      assertEquals(8, app.allFaces.nodes[f].length, "every tile should have doubled into a star - face " + f);
+    }
+    assertTrue(totalFacesArea() < 4.0f, "notching every tile inward should leave gaps, so the total area must shrink below the original 2x2 = 4 footprint");
+  }
+
+  @Test
   void tilingSquare_withTileStarSpikeAngleLeftDisabled_tilesExactlyAsBeforeTheFeatureExisted () {
     setUpOneFace(new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}});
     app.User3D.tileEdgeSize = 1.0f;
     app.User3D.tileRotation = 0;
-    assertTrue(app.User3D.tileStarSpikeAngle < 0, "tileStarSpikeAngle's own default should already be the disabled sentinel");
+    assertEquals(0, app.User3D.tileStarSpikeAngle, 0.0001f, "tileStarSpikeAngle's own default should already be the disabled sentinel");
 
     app.Modify3D.tilingSquare_Selection();
 

@@ -2402,11 +2402,23 @@ class Modify3D {
     return abs(signedArea);
   }
 
-  // Turns one flat (u, v) tile candidate into a star by pulling a notch
-  // point in toward the candidate's own centroid, in the middle of every
-  // edge - doubling its vertex count (corner, notch, corner, notch, ...).
-  // A no-op (returns poly unchanged) whenever spikeAngleParam is negative,
-  // which is User3D.tileStarSpikeAngle's own disabled sentinel.
+  // Turns one flat (u, v) tile candidate into a star, doubling its own
+  // vertex count - by pulling a notch point in toward the candidate's
+  // own centroid at the middle of every edge, in the ORIGINAL ("vertex")
+  // mode, or (see below) the other way around. A no-op (returns poly
+  // unchanged) whenever spikeAngleParam is exactly 0 -
+  // User3D.tileStarSpikeAngle's own disabled sentinel.
+  //
+  // spikeAngleParam's own SIGN picks which point set ends up as the
+  // star's spikes (left exactly where they already are) and which ends
+  // up as its notches (pulled in): positive keeps this function's
+  // original behavior - spikes at this candidate's own corners, notches
+  // newly placed near the middle of every edge; negative flips it -
+  // spikes at the literal midpoint of every edge, notches pulled in at
+  // this candidate's own corners instead. Either way, |spikeAngleParam|
+  // is this particular mode's own shape-relative spike angle (see
+  // below), so the sharpness at a given magnitude reads the same
+  // regardless of which mode it's driving.
   //
   // Unlike the regular-polygon-only formula this was originally designed
   // and verified against (r = R*(cos(180/N) - sin(180/N)*cot(gamma/2)),
@@ -2421,18 +2433,32 @@ class Modify3D {
   // works out identical, and the formula below reduces to exactly the
   // original closed form - verified numerically before wiring this in.
   //
-  // spikeAngleParam itself is shape-relative (User3D.tileStarSpikeAngle's
-  // own comment): 0 is this particular candidate's own sharpest valid
-  // star, and the notch angle actually fed to the per-edge formula is
-  // this shape's own worst-case (largest) edge-to-edge central angle -
-  // the one edge where a notch would go negative/self-intersecting
-  // first - plus spikeAngleParam, clamped to never exceed 180 (the
-  // universal "no visible star, notch lands on the original edge"
-  // ceiling). That shared worst-case floor, rather than each edge's own
-  // individual floor, is what keeps every edge's own notch at or above
-  // zero simultaneously.
+  // spikeAngleParam's own MAGNITUDE is shape-relative (User3D.
+  // tileStarSpikeAngle's own comment): 0 is this particular candidate's
+  // own sharpest valid star in either mode, and the notch angle actually
+  // fed to the per-edge formula is this mode's own worst-case (largest)
+  // spike-to-spike central angle - the one edge where a notch would go
+  // negative/self-intersecting first - plus |spikeAngleParam|, clamped
+  // to never exceed 180. That shared worst-case floor, rather than each
+  // edge's own individual floor, is what keeps every edge's own notch at
+  // or above zero simultaneously, in either mode.
+  //
+  // The 180 clamp means something different in each mode, though. In
+  // vertex mode, the two points flanking a notch ARE a real edge of
+  // poly, so their own chord IS that edge, and gamma=180 (a straight
+  // line through the notch) places it exactly on that edge's own true
+  // midpoint - a genuine "no visible star" identity case. In edge mode,
+  // the two points flanking a notch are two DIFFERENT edges' own
+  // midpoints, not a real edge of poly, so their chord is a shortcut
+  // across the corner between them, not poly's own boundary - gamma=180
+  // there still gives a safe, fully degenerate (non-star, non-negative)
+  // result, but it chamfers that corner rather than exactly retracing
+  // poly's original vertex. Pulling the magnitude down toward 0 is what
+  // actually approaches the original corner's own position in edge mode;
+  // 180 is simply this mode's own opposite, bluntest extreme, not an
+  // identity transform.
   float[][] appendStarTransform_UV (float[][] poly, float spikeAngleParam) {
-    if (spikeAngleParam < 0) return poly; // disabled sentinel
+    if (spikeAngleParam == 0) return poly; // disabled sentinel
     int n = poly.length;
     if (n < 3) return poly;
 
@@ -2449,13 +2475,13 @@ class Modify3D {
       rad[i] = sqrt(dx * dx + dy * dy);
     }
 
-    // Each edge's own central angle, as the magnitude of the SHORTER
-    // angular step from this corner to the next one as seen from the
-    // centroid - wrapped into (-180, 180] first so this comes out
-    // correct regardless of whether poly happens to be wound CW or CCW,
-    // without needing to know or check its winding at all (always true
-    // for a convex polygon with the centroid inside it, which every
-    // candidate tile here is).
+    // Each corner-to-corner edge's own central angle, as the magnitude
+    // of the SHORTER angular step from this corner to the next one as
+    // seen from the centroid - wrapped into (-180, 180] first so this
+    // comes out correct regardless of whether poly happens to be wound
+    // CW or CCW, without needing to know or check its winding at all
+    // (always true for a convex polygon with the centroid inside it,
+    // which every candidate tile here is).
     float[] theta = new float[n];
     float shapeFloor = 0;
     for (int i = 0; i < n; i++) {
@@ -2466,28 +2492,103 @@ class Modify3D {
       shapeFloor = max(shapeFloor, theta[i]);
     }
 
-    float gamma = min(180, shapeFloor + spikeAngleParam);
+    if (spikeAngleParam > 0) {
+      // ----- "vertex" mode (the original, unchanged behavior): spikes
+      // stay exactly at this candidate's own corners; one notch is
+      // newly placed near the middle of every edge, pulled in from
+      // there toward the centroid. -----
+      float gamma = min(180, shapeFloor + spikeAngleParam);
+      float halfGamma = gamma / 2.0;
+      float sinH = funcs.sin_ang(halfGamma);
+      float cosH = funcs.cos_ang(halfGamma);
+      float cotHalfGamma = (sinH != 0) ? (cosH / sinH) : 0; // gamma==180 -> halfGamma==90 -> cot==0, the "no star" case
+
+      float[][] out = new float[2 * n][2];
+      int k = 0;
+      for (int i = 0; i < n; i++) {
+        out[k][0] = poly[i][0]; out[k][1] = poly[i][1]; k++;
+
+        int j = (i + 1) % n;
+        float d = ang[j] - ang[i];
+        d = d - 360.0 * floor((d + 180.0) / 360.0); // same wrapped step as theta[i] above, sign kept this time
+        float alpha = theta[i] / 2.0;
+        float R_edge = 0.5 * (rad[i] + rad[j]);
+        float r = R_edge * (funcs.cos_ang(alpha) - funcs.sin_ang(alpha) * cotHalfGamma);
+        if (r < 0) r = 0; // float-precision guard; gamma >= shapeFloor >= theta[i] for every edge keeps this non-negative in theory
+
+        float amid = ang[i] + d / 2.0;
+        out[k][0] = cx + r * funcs.cos_ang(amid);
+        out[k][1] = cy + r * funcs.sin_ang(amid);
+        k++;
+      }
+
+      return out;
+    }
+
+    // ----- "edge" mode (spikeAngleParam < 0): the exact dual of
+    // "vertex" mode above - spikes stay exactly at the literal midpoint
+    // of every edge; this candidate's own corners become the notches,
+    // pulled in toward the centroid instead. Every formula below is the
+    // SAME one used above, just re-anchored on the edge-midpoint "ring"
+    // (angM/radM/theta2) in place of the corner ring (ang/rad/theta) -
+    // this candidate's own corners sit (exactly, for a regular polygon;
+    // closely, for an irregular one like TILING_CAIRO - the same
+    // approximation this function's own corner-ring math already leans
+    // on) on the angular bisector between the two edge-midpoints
+    // flanking them, mirroring how the original notch sits on the
+    // bisector between the two corners flanking IT.
+    float edgeSpikeAngle = -spikeAngleParam; // this mode's own magnitude
+
+    float[] angM = new float[n]; // edge-midpoint i's own angle from the centroid (between corner i and corner i+1)
+    float[] radM = new float[n]; // ...and its own distance from the centroid
+    for (int i = 0; i < n; i++) {
+      int j = (i + 1) % n;
+      float mx = 0.5 * (poly[i][0] + poly[j][0]);
+      float my = 0.5 * (poly[i][1] + poly[j][1]);
+      float dx = mx - cx, dy = my - cy;
+      angM[i] = degrees(atan2(dy, dx));
+      radM[i] = sqrt(dx * dx + dy * dy);
+    }
+
+    float[] theta2 = new float[n]; // edge-midpoint i to edge-midpoint i+1's own central angle - this mode's analog of theta[] above
+    float shapeFloor2 = 0;
+    for (int i = 0; i < n; i++) {
+      int j = (i + 1) % n;
+      float d = angM[j] - angM[i];
+      d = d - 360.0 * floor((d + 180.0) / 360.0);
+      theta2[i] = abs(d);
+      shapeFloor2 = max(shapeFloor2, theta2[i]);
+    }
+
+    float gamma = min(180, shapeFloor2 + edgeSpikeAngle);
     float halfGamma = gamma / 2.0;
     float sinH = funcs.sin_ang(halfGamma);
     float cosH = funcs.cos_ang(halfGamma);
-    float cotHalfGamma = (sinH != 0) ? (cosH / sinH) : 0; // gamma==180 -> halfGamma==90 -> cot==0, the "no star" case
+    float cotHalfGamma = (sinH != 0) ? (cosH / sinH) : 0;
 
     float[][] out = new float[2 * n][2];
     int k = 0;
     for (int i = 0; i < n; i++) {
-      out[k][0] = poly[i][0]; out[k][1] = poly[i][1]; k++;
-
+      // spike: edge-midpoint i itself, left exactly where it is (same
+      // "leave the spike untouched" rule vertex mode applies to its own
+      // corners above).
       int j = (i + 1) % n;
-      float d = ang[j] - ang[i];
-      d = d - 360.0 * floor((d + 180.0) / 360.0); // same wrapped step as theta[i] above, sign kept this time
-      float alpha = theta[i] / 2.0;
-      float R_edge = 0.5 * (rad[i] + rad[j]);
-      float r = R_edge * (funcs.cos_ang(alpha) - funcs.sin_ang(alpha) * cotHalfGamma);
-      if (r < 0) r = 0; // float-precision guard; gamma >= shapeFloor >= theta[i] for every edge keeps this non-negative in theory
+      out[k][0] = 0.5 * (poly[i][0] + poly[j][0]);
+      out[k][1] = 0.5 * (poly[i][1] + poly[j][1]);
+      k++;
 
-      float amid = ang[i] + d / 2.0;
-      out[k][0] = cx + r * funcs.cos_ang(amid);
-      out[k][1] = cy + r * funcs.sin_ang(amid);
+      // notch: this candidate's own corner j (= i+1), pulled in from
+      // its own original position based on the central angle BETWEEN
+      // the two edge-midpoint spikes flanking it (i and j).
+      float d = angM[j] - angM[i];
+      d = d - 360.0 * floor((d + 180.0) / 360.0);
+      float alpha = theta2[i] / 2.0;
+      float R_edge = 0.5 * (radM[i] + radM[j]);
+      float r = R_edge * (funcs.cos_ang(alpha) - funcs.sin_ang(alpha) * cotHalfGamma);
+      if (r < 0) r = 0;
+
+      out[k][0] = cx + r * funcs.cos_ang(ang[j]); // pulled in along the corner's OWN angular direction, not the (closely matching) bisector
+      out[k][1] = cy + r * funcs.sin_ang(ang[j]);
       k++;
     }
 

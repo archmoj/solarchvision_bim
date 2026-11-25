@@ -52,7 +52,7 @@ class User3D {
   int modifierTessellateColumns = 2;
   float tileEdgeSize = 1.0; // 1 = 1m - shared edge length for Square/Hexagon/Equilateral Tiling
   float tileRotation = 0; // degrees, on top of the default alignment to the face's own first edge
-  float tileStarSpikeAngle = -1; // degrees ABOVE each tile shape's own self-intersection floor (not a raw notch angle) - 0 is the sharpest valid star for that shape, bigger is blunter, and any negative value (the default) disables the star transform entirely; see appendStarTransform_UV()'s own comment for why this is one float instead of a separate on/off switch
+  float tileStarSpikeAngle = 0; // degrees ABOVE each tile shape's own self-intersection floor (not a raw notch angle), signed: exactly 0 (the default) disables the star transform entirely; a positive value puts the star's spikes at each tile's own corners (bigger magnitude is blunter, 0 is the sharpest valid star for that shape); a negative value puts the spikes at the middle of each edge instead (corners become the notches), with the SAME sharpness-at-a-given-magnitude reading as the positive side; see appendStarTransform_UV()'s own comment for why this is one signed float instead of a separate on/off switch plus a mode toggle
   float modifierOpeningDepth = 1; // 1 = 1m
   float modifierOpeningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings)
   float modifierOpeningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
@@ -221,7 +221,17 @@ class User3D {
     this.modifierTessellateColumns = XML_getInt(parent, "modifierTessellateColumns");
     this.tileEdgeSize = XML_getFloat(parent, "tileEdgeSize", 1.0); // older save files never had this field - 0 would mean every tile collapses to a point, not a useful fallback
     this.tileRotation = XML_getFloat(parent, "tileRotation", 0);
-    this.tileStarSpikeAngle = XML_getFloat(parent, "tileStarSpikeAngle", -1); // older save files never had this field - -1 keeps the star transform disabled, same as the in-code default
+    float loadedTileStarSpikeAngle = XML_getFloat(parent, "tileStarSpikeAngle", 0); // older save files (from before this field existed at all) never had it - 0 is the current disabled sentinel, same as the in-code default
+    // -1 was the OLD disabled sentinel, back when this field could only
+    // ever be 0..170 (enabled) or its own spinner's hard minimum, -1
+    // (disabled) - never any other negative value. A save file from
+    // that era which explicitly stored -1 would, read by TODAY's signed
+    // convention, silently turn into "edge mode, 1 degree" instead of
+    // staying disabled - so that one legacy value is migrated to today's
+    // sentinel here, and nothing else needs to be (every other value
+    // such a file could contain, 0..170, already means the same thing
+    // under both conventions).
+    this.tileStarSpikeAngle = (loadedTileStarSpikeAngle == -1) ? 0 : loadedTileStarSpikeAngle;
     this.modifierOpeningDepth = XML_getFloat(parent, "modifierOpeningDepth");
     this.modifierOpeningArea = XML_getFloat(parent, "modifierOpeningArea");
     this.modifierOpeningDeviation = XML_getFloat(parent, "modifierOpeningDeviation");

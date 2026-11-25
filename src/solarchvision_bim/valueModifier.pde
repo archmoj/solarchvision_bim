@@ -1394,14 +1394,18 @@ class ValueModifier {
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
-    // -1 is the disabled sentinel; 0 is the sharpest valid star for
-    // whichever tile shape this lands on, and the generous upper end
-    // (170) is never actually reached by every shape - a shape with a
+    // 0 is the disabled sentinel; moving either side of 0 enables the
+    // star transform with that side's own spikes left at the tile's own
+    // corners (positive) or at the middle of each edge (negative) - see
+    // appendStarTransform_UV()'s own comment. Either side's own 0-
+    // adjacent end (±0) is the sharpest valid star for whichever tile
+    // shape this lands on, and the generous far end on both sides
+    // (±170) is never actually reached by every shape - a shape with a
     // shallow floor (e.g. a triangle's 120 deg) clamps its own usable
     // range well below that, same as appendStarTransform_UV() clamps the
     // resulting notch angle to 180 deg (no star) - see that function's
     // own comment.
-    float s1 = -1; //start
+    float s1 = -170; //start
     float s2 = 170; //stop
     float s3 = 0.5; //step
 
