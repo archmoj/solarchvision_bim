@@ -1616,11 +1616,13 @@ class Create3D {
     float end_v = 1;
 
     if ((n == 0) || (n == 6) || (n == 8) || (n == 9)) {
-      start_u = 0; // n==8/9 (Hyperbolic Disc/Paraboloid Dish): u is a radius, 0..1, not -1..1
+      start_u = 0; // n==8/9 (Hyperbolic Disc/Paraboloid Dome): u is a radius, 0..1, not -1..1
     }
 
     final float HELICOID_TURNS = 2; // n==11 Helicoid only - how many full turns the ramp winds through across its own -1..1 height range
     final float REVOLUTION_HEIGHT_SCALE = 2; // n==10/12 (Hyperboloid of Revolution/Catenoid) only - stretches v's own -1..1 domain out to -2..2 worth of actual height before r(v) sees it, so the waist (still radius 1, unaffected) ends up a smaller fraction of the now-wider open ends - shrinking the "hole" without touching the waist itself
+    final float PARABOLOID_DOME_DEPTH_SCALE = 2; // n==9 "Paraboloid Dome" only - negated too (making it a dome, apex at the top, rather than its own former "Paraboloid Dish"), and doubled so the apex-to-rim spread is 2 units instead of 1
+    final float PARABOLOID_DOME_APEX_HEIGHT = PARABOLOID_DOME_DEPTH_SCALE; // n==9 only - set equal to PARABOLOID_DOME_DEPTH_SCALE so the rim (PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE) lands at exactly raw z=0 - that's what sits the dome on the ground by default once rz scales it (0 * any rz is still 0), rather than floating above z=0 by an amount that depends on whatever rz the shape happened to be created with
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -1767,22 +1769,49 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = x * y;
-          } else if (n == 9) { // "Paraboloid Dish" - a solar-concentrator-
-                                // dish shape: z = r^2, the same polar
-                                // (u = 0..1 radius, v = angle) domain as
-                                // n==8 Hyperbolic Disc above, just a
-                                // different height field - a bowl, not a
-                                // saddle. rz (applied below, same as every
-                                // other preset) controls the dish's own
-                                // depth relative to its radius, exactly
-                                // the way it already controls bulge height
-                                // for n==1 Dome - no separate ratio
-                                // parameter needed, unlike n==7 Torus.
+          } else if (n == 9) { // "Paraboloid Dome" - renamed from its own
+                                // original "Paraboloid Dish" (z = r^2,
+                                // concave up, apex at the bottom, rim
+                                // higher up) once it was flipped the other
+                                // way: concave down, apex at the TOP (z =
+                                // PARABOLOID_DOME_APEX_HEIGHT -
+                                // PARABOLOID_DOME_DEPTH_SCALE * r^2) - same
+                                // family as n==1 Dome, just a true
+                                // paraboloid profile instead of that one's
+                                // cosine bulge. PARABOLOID_DOME_DEPTH_SCALE
+                                // (2) widens the apex-to-rim spread to 2
+                                // units instead of 1 - same "widen the
+                                // range, same reasoning as REVOLUTION_
+                                // HEIGHT_SCALE above" idea, just folded
+                                // into one existing factor rather than a
+                                // separate one, since there's no separate
+                                // height parameter here to stretch (z is
+                                // driven by r alone). PARABOLOID_DOME_
+                                // APEX_HEIGHT is set equal to PARABOLOID_
+                                // DOME_DEPTH_SCALE so the rim (its own
+                                // lowest point) sits at exactly raw z=0 -
+                                // scale-invariant, so the dome lands on
+                                // the ground by default regardless of rz,
+                                // rather than floating above z=0 by an
+                                // rz-dependent amount. A flipped dome
+                                // dipping below ground wasn't wanted
+                                // either, unlike n==10/12's own "more
+                                // below z=0 is fine" reasoning. The polar
+                                // (u = 0..1 radius,
+                                // v = angle) domain itself, shared with
+                                // n==8 Hyperbolic Disc above, is unchanged.
+                                // rz (applied below, same as every other
+                                // preset) still controls the dome's own
+                                // depth relative to its radius on top of
+                                // that, exactly the way it already
+                                // controls bulge height for n==1 Dome - no
+                                // separate ratio parameter needed, unlike
+                                // n==7 Torus.
             float r = u;
             float theta = v * PI;
             x = r * cos(theta);
             y = r * sin(theta);
-            z = r * r;
+            z = PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE * r * r;
           } else if (n == 10) { // "Hyperboloid of Revolution" - the
                                  // Shukhov-tower/cooling-tower profile: u
                                  // is the ring's own angle (full circle,

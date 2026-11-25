@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
 // (Create3DTest.java's own addParametricSurface_... test) of its 14
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
-// Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution, 11
+// Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
 // Helicoid, 12 Catenoid, 13 Conoid) - the remaining 13 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
@@ -149,28 +149,38 @@ class AddParametricSurfaceRemainingTest {
   }
 
   @Test
-  void n9_paraboloidDish_buildsAGrid_firstCornerAtTheCenter () {
+  void n9_paraboloidDome_buildsAGrid_firstCornerAtTheApex () {
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 9, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // start_u = 0 (n==9 IS in the "start_u = 0" list, same as n==8 - a
-    // radius) - so the very first corner sits at the dish's own center
-    // (r=0): x=y=z=0.
-    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.01f);
+    // radius) - so the very first corner sits at the dome's own apex
+    // (r=0): x=y=0, z = PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_
+    // DEPTH_SCALE*0 = 2.
+    assertArrayEquals(new float[]{0, 0, 2}, app.allVertices[0], 0.01f);
   }
 
   @Test
-  void n9_paraboloidDish_everyVertexSatisfiesZEqualsRSquared_andStaysWithinTheUnitDisc () {
+  void n9_paraboloidDome_everyVertexSatisfiesZEqualsTwoMinusTwoRSquared_andStaysWithinTheUnitDisc () {
+    // z = PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE * r^2
+    // = 2 - 2 * (x^2+y^2) - flipped (negated r^2 term, so the apex at
+    // r=0 is the highest point, not the lowest) and doubled (so the rim
+    // at r=1 sits 2 units below the apex, not 1) from the dish's own
+    // former z = r^2, with PARABOLOID_DOME_APEX_HEIGHT set equal to
+    // PARABOLOID_DOME_DEPTH_SCALE so the rim (z=2-2=0) lands at exactly
+    // z=0 - that's what sits the dome on the ground by default once rz
+    // scales it, regardless of what rz actually is.
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 9, 0, 0, 20, 20);
 
-    boolean foundNonCenterPoint = false;
+    boolean foundNonApexPoint = false;
     for (float[] v : app.allVertices) {
       float distSq = v[0] * v[0] + v[1] * v[1];
-      assertEquals(distSq, v[2], 0.0001f, "every vertex must satisfy z = x^2 + y^2 = r^2");
+      assertEquals(2 - 2 * distSq, v[2], 0.0001f, "every vertex must satisfy z = 2 - 2 * (x^2 + y^2)");
+      assertTrue(v[2] >= -0.0001f, "every vertex must stay at or above z=0, found z=" + v[2]);
       assertTrue(Math.sqrt(distSq) <= 1.001f, "every vertex must stay within the unit disc");
-      if (distSq > 0.01f) foundNonCenterPoint = true;
+      if (distSq > 0.01f) foundNonApexPoint = true;
     }
-    assertTrue(foundNonCenterPoint, "setup check - this grid should contain at least one point away from the center");
+    assertTrue(foundNonApexPoint, "setup check - this grid should contain at least one point away from the apex");
   }
 
   @Test

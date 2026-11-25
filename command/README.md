@@ -346,8 +346,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     Tetra Wave/Tetra Sphere/Grid Sphere surfaces; 7 is a Torus; 8 is
     a Hyperbolic Disc - the same hyperbolic paraboloid as the Saddle
     surface, swept over a circular footprint instead of a square one; 9
-    is a Paraboloid Dish - a bowl/dish shape, e.g. a solar concentrator
-    dish, over that same circular footprint; 10 is a Hyperboloid of
+    is a Paraboloid Dome - a dome shape (apex at the center, dipping 2
+    units down to a rim that sits at exactly z=0, so it lands on the
+    ground by default), over that same circular footprint; 10 is a
+    Hyperboloid of
     Revolution - the Shukhov-tower/cooling-tower shell profile, a full
     ring swept around a fixed-waist hyperbola; 11 is a Helicoid - a
     spiral ramp winding two full turns through its own height; 12 is a

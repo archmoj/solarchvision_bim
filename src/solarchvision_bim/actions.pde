@@ -1266,7 +1266,7 @@ void build_allActions() {
     UI_setTo_Create_Parametric(8);
   });
 
-  putAction("Paraboloid Dish", () -> { // n=9: z = r^2, same polar (radius/angle) footprint as n=8 Hyperbolic Disc - a bowl/dish shape, e.g. a solar concentrator dish
+  putAction("Paraboloid Dome", () -> { // n=9: z = 2 - 2*r^2, same polar (radius/angle) footprint as n=8 Hyperbolic Disc - renamed from "Paraboloid Dish" once it was flipped (apex at r=0, dipping down toward the rim; the rim sits at exactly z=0 so the dome lands on the ground by default, regardless of rz)
     UI_setTo_Create_Parametric(9);
   });
 

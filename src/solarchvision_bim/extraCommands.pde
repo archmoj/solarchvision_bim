@@ -1755,7 +1755,7 @@ String __PARAMETRIC__ (String[] parts) {
     // half as wide as every other n's (start_u=0 instead of -1, add_
     // ParametricSurface's own "if ((n == 0) || (n == 6)) start_u = 0"
     // line), hence the lower defaultStepsU specifically for those two.
-    // n=8/9/10/11/12/13 (Hyperbolic Disc/Paraboloid Dish/Hyperboloid of
+    // n=8/9/10/11/12/13 (Hyperbolic Disc/Paraboloid Dome/Hyperboloid of
     // Revolution/Helicoid/Catenoid/Conoid) never had a pre-u/v existence
     // to preserve - grouped into this same "smooth" bucket purely
     // because they want comparable default resolution, not for backward
