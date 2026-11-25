@@ -3,10 +3,10 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 14
+// (Create3DTest.java's own addParametricSurface_... test) of its 15
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
-// Helicoid, 12 Catenoid, 13 Conoid) - the remaining 13 are covered here, following that same existing
+// Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid) - the remaining 14 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -336,5 +336,42 @@ class AddParametricSurfaceRemainingTest {
       if (t > 0.99f) maxZAtNorthEdge = Math.max(maxZAtNorthEdge, v[2]);
     }
     assertEquals(1f, maxZAtNorthEdge, 0.01f, "the vertical arch's own apex should reach exactly z=1");
+  }
+
+  @Test
+  void n14_tractricoid_buildsAGrid_firstCornerAtTheRim () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 14, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u/start_v are both left at their ordinary -1 default (n==14
+    // is NOT in the "start_u = 0" list - u is a full-circle angle here,
+    // same as n==10/12/13, not a radius) - so the very first corner is
+    // u=-1, v=-1: theta = -PI, t = (v+1)/2*TRACTRICOID_T_MAX = 0 (the
+    // rim itself), so r = sech(0) = 1, z = 0 - t - tanh(t) = 0 at t=0.
+    // x = r*cos(-PI) = -1, y = r*sin(-PI) = 0.
+    assertArrayEquals(new float[]{-1, 0, 0}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n14_tractricoid_everyVertexSatisfiesTheTractrixEquation_andStaysAtOrAboveZero () {
+    // The classic tractrix equation, re-derived independently from r
+    // alone (not from t or v): z = ln((1 + sqrt(1-r^2)) / r) - sqrt(1-
+    // r^2), where r = sqrt(x^2+y^2). This is the standard closed-form
+    // height-as-a-function-of-radius formula for the pseudosphere,
+    // distinct from the function's own forward t-based computation, so
+    // matching it confirms the shape independently rather than just
+    // replaying the same steps.
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 14, 0, 0, 20, 20);
+
+    boolean foundNonRimPoint = false;
+    for (float[] v : app.allVertices) {
+      double r = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+      double oneMinusRSq = Math.max(0, 1 - r * r);
+      double expectedZ = Math.log((1 + Math.sqrt(oneMinusRSq)) / r) - Math.sqrt(oneMinusRSq);
+      assertEquals(expectedZ, v[2], 0.001, "every vertex must satisfy the tractrix equation z = ln((1+sqrt(1-r^2))/r) - sqrt(1-r^2)");
+      assertTrue(v[2] >= -0.0001f, "every vertex must stay at or above z=0, found z=" + v[2]);
+      if (r < 0.99) foundNonRimPoint = true;
+    }
+    assertTrue(foundNonRimPoint, "setup check - this grid should contain at least one point away from the rim");
   }
 }

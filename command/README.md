@@ -358,7 +358,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     hyperbola; 13 is a Conoid - a true ruled surface, the classic
     conoidal-shell-roof shape, between a flat straight rail on the
     ground at the south side and a vertical half-circle standing on
-    the north side, touching the ground only at its own two endpoints).
+    the north side, touching the ground only at its own two endpoints;
+    14 is a Tractricoid (pseudosphere) - the revolution of a tractrix, a
+    trumpet/horn shape with constant negative curvature, the rim sitting
+    at exactly z=0 and flaring upward from there).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

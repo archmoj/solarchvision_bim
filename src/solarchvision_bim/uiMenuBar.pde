@@ -480,6 +480,7 @@ class UI_menuBar {
       "Paraboloid Dome",
       "Hyperboloid of Revolution",
       "Catenoid",
+      "Tractricoid",
       ___divider___,
       // Ruled surfaces - not surfaces of revolution at all.
       "Helicoid",

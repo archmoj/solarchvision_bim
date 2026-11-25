@@ -1623,6 +1623,7 @@ class Create3D {
     final float REVOLUTION_HEIGHT_SCALE = 2; // n==10/12 (Hyperboloid of Revolution/Catenoid) only - stretches v's own -1..1 domain out to -2..2 worth of actual height before r(v) sees it, so the waist (still radius 1, unaffected) ends up a smaller fraction of the now-wider open ends - shrinking the "hole" without touching the waist itself
     final float PARABOLOID_DOME_DEPTH_SCALE = 2; // n==9 "Paraboloid Dome" only - negated too (making it a dome, apex at the top, rather than its own former "Paraboloid Dish"), and doubled so the apex-to-rim spread is 2 units instead of 1
     final float PARABOLOID_DOME_APEX_HEIGHT = PARABOLOID_DOME_DEPTH_SCALE; // n==9 only - set equal to PARABOLOID_DOME_DEPTH_SCALE so the rim (PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE) lands at exactly raw z=0 - that's what sits the dome on the ground by default once rz scales it (0 * any rz is still 0), rather than floating above z=0 by an amount that depends on whatever rz the shape happened to be created with
+    final float TRACTRICOID_T_MAX = 2; // n==14 "Tractricoid" only - how far the tractrix parameter t runs before v (-1..1) remapped onto it stops, same "2 reads clearly without the default 36x36 grid getting too degenerate" reasoning as HELICOID_TURNS above - t=0 (v=-1) is the rim (r=1, z=0), t=TRACTRICOID_T_MAX (v=+1) is the narrow end (r=sech(2) =~ 0.266, still comfortably nonzero, not yet the asymptotic point at t=infinity)
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -1927,6 +1928,47 @@ class Create3D {
             x = lineX + t * (archX - lineX);
             y = lineY + t * (archY - lineY);
             z = t * archZ; // the rail's own z is 0 throughout, so this is the whole blend
+          } else if (n == 14) { // "Tractricoid" (pseudosphere) - the
+                                 // revolution of a tractrix: a trumpet/
+                                 // horn shape with constant NEGATIVE
+                                 // curvature everywhere (the geometric
+                                 // opposite of a sphere), the classic
+                                 // companion to n==12 Catenoid. Same
+                                 // full-circle u / literal (remapped) v
+                                 // layout as n==10/12 (u is the ring's own
+                                 // angle, full -1..1*PI sweep; v is not an
+                                 // angle, so start_v is left at its own
+                                 // ordinary default, same as start_u) -
+                                 // but unlike n==10/12, the tractrix
+                                 // parameter t isn't itself the height, so
+                                 // v (-1..1) is remapped onto t (0..
+                                 // TRACTRICOID_T_MAX) first, same "t=(v+1)
+                                 // /2" remap n==13 Conoid already used.
+                                 // r(t) = sech(t) (spelled out as 1/cosh,
+                                 // itself spelled out as e^t+e^-t over 2,
+                                 // same reasoning as n==12's own cosh) is
+                                 // the horn's radius, shrinking from 1 at
+                                 // the rim (t=0, v=-1) on down as t grows;
+                                 // z(t) = t - tanh(t) (tanh = sinh/cosh,
+                                 // sinh spelled out as e^t-e^-t over 2) is
+                                 // the horn's height, always >= 0 for t >=
+                                 // 0 (tanh(t) < t whenever t > 0) - so the
+                                 // rim sits right at z=0 and the horn
+                                 // flares upward from there, the same
+                                 // "sits on the ground by default" shape
+                                 // n==9 Paraboloid Dome was just fixed to
+                                 // have, without needing any extra lift
+                                 // constant here.
+            float theta = u * PI;
+            float t = (v + 1) / 2.0 * TRACTRICOID_T_MAX;
+            float et = exp(t);
+            float emt = exp(-t);
+            float coshT = (et + emt) / 2.0;
+            float tanhT = (et - emt) / (et + emt);
+            float r = 1.0 / coshT; // sech(t)
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = t - tanhT;
           }
 
 

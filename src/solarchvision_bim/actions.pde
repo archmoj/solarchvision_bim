@@ -1286,6 +1286,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(13);
   });
 
+  putAction("Tractricoid", () -> { // n=14: the revolution of a tractrix - a trumpet/horn shape (pseudosphere) with constant negative curvature, the rim sitting at exactly z=0
+    UI_setTo_Create_Parametric(14);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });
