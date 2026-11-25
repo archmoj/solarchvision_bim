@@ -24,7 +24,7 @@ class User3D {
   int creatorConeDegree = 24;
   int creatorPolygonDegree = 6;
   int creatorParametricTypeIndex = 1;
-  float creatorTorusRatio = 0.3; // minor:major radius ratio - only read by add_ParametricSurface's own n==7 (Torus) preset
+  float creatorTorusRatio = 0.5; // minor:major radius ratio - only read by add_ParametricSurface's own n==7 (Torus) preset
   int creatorPersonTypeIndex = 0;
   int creatorPlantTypeIndex = 0;
 
