@@ -3,19 +3,19 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 10
+// (Create3DTest.java's own addParametricSurface_... test) of its 11
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
-// Hyperbolic Disc, 9 Paraboloid Dish) - the remaining 9 are covered
-// here, following that same existing test's own reasoning exactly (see
-// its header comment): this function has no validity guard at all, and
-// its exact face count depends on floating-point loop-increment
-// behavior this suite doesn't try to replicate - so each test checks
-// for a substantial, non-trivial amount of quad geometry, and the
-// deterministic position of the very first grid corner (u = start_u,
-// v = start_v = -1 always; start_u is 0 for n == 0, 6, 8, or 9, -1
-// otherwise - read directly from the function's own "if ((n == 0) ||
-// (n == 6) || (n == 8) || (n == 9)) start_u = 0;" line), computed from
-// each n's own x/y/z formula.
+// Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution) -
+// the remaining 10 are covered here, following that same existing
+// test's own reasoning exactly (see its header comment): this function
+// has no validity guard at all, and its exact face count depends on
+// floating-point loop-increment behavior this suite doesn't try to
+// replicate - so each test checks for a substantial, non-trivial amount
+// of quad geometry, and the deterministic position of the very first
+// grid corner (u = start_u, v = start_v = -1 always; start_u is 0 for
+// n == 0, 6, 8, or 9, -1 otherwise - read directly from the function's
+// own "if ((n == 0) || (n == 6) || (n == 8) || (n == 9)) start_u = 0;"
+// line), computed from each n's own x/y/z formula.
 //
 // Expected first-corner positions were cross-checked against a
 // standalone Python re-implementation of each formula, not just hand-
@@ -171,5 +171,35 @@ class AddParametricSurfaceRemainingTest {
       if (distSq > 0.01f) foundNonCenterPoint = true;
     }
     assertTrue(foundNonCenterPoint, "setup check - this grid should contain at least one point away from the center");
+  }
+
+  @Test
+  void n10_hyperboloidOfRevolution_buildsAGrid_firstCornerAtTheExpectedHyperbolaPoint () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 10, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u = start_v = -1 (n==10 isn't in the "start_u = 0" list - u
+    // is a full angle sweep, same as n==7 Torus's own u, not a radius).
+    // theta = -PI, r = sqrt(1 + (-1)^2) = sqrt(2);
+    // x = sqrt(2)*cos(-PI) = -sqrt(2); y = sqrt(2)*sin(-PI) ~= 0; z = -1.
+    assertArrayEquals(new float[]{-1.4142f, 0, -1}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n10_hyperboloidOfRevolution_everyVertexSatisfiesTheHyperbolaEquation () {
+    // x^2 + y^2 = r^2 = 1 + v^2 = 1 + z^2 (since z = v exactly) - the
+    // defining equation of a single-sheet hyperboloid of revolution.
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 10, 0, 0, 20, 20);
+
+    float minDistFromAxis = Float.MAX_VALUE;
+    for (float[] v : app.allVertices) {
+      float distSq = v[0] * v[0] + v[1] * v[1];
+      assertEquals(1 + v[2] * v[2], distSq, 0.001f, "every vertex must satisfy x^2 + y^2 = 1 + z^2");
+      minDistFromAxis = Math.min(minDistFromAxis, (float) Math.sqrt(distSq));
+    }
+    // The waist (z=0, the narrowest ring) should actually appear in this
+    // grid - same "the sampled grid actually reaches the shape's own
+    // extreme" reasoning as TorusTest.java's own ring-thickness test.
+    assertEquals(1f, minDistFromAxis, 0.01f, "the waist's own radius should be exactly 1, and the grid should include it");
   }
 }

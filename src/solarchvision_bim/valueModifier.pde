@@ -1106,7 +1106,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 1; //start
-    int s2 = 9; //stop - bumped from 6 to 7 when Torus (n=7) joined the preset list, then to 8 when Hyperbolic Disc (n=8) did, then to 9 when Paraboloid Dish (n=9) did
+    int s2 = 10; //stop - bumped from 6 to 7 when Torus (n=7) joined the preset list, then to 8 when Hyperbolic Disc (n=8) did, then to 9 when Paraboloid Dish (n=9) did, then to 10 when Hyperboloid of Revolution (n=10) did
     int s3 = 1; //step
 
     int out = 0;

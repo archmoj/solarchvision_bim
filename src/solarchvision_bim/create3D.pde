@@ -1762,6 +1762,29 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = r * r;
+          } else if (n == 10) { // "Hyperboloid of Revolution" - the
+                                 // Shukhov-tower/cooling-tower profile: u
+                                 // is the ring's own angle (full circle,
+                                 // same -1..1 * PI sweep as n==7 Torus's
+                                 // own u, closing up for free), v is a
+                                 // literal height (-1..1, NOT an angle -
+                                 // unlike every other preset here, so
+                                 // start_v is left at its own ordinary
+                                 // default, same as start_u). r(v) =
+                                 // sqrt(1 + v^2) is the hyperbola traced
+                                 // out from the waist (v=0, r=1, the
+                                 // narrowest ring) to either open end
+                                 // (v=+-1, r=sqrt(2)) - a fixed waist-
+                                 // tightness, no separate ratio parameter
+                                 // like n==7 Torus's own k (rx/ry/rz,
+                                 // applied below same as every preset,
+                                 // already give plenty of control over
+                                 // the overall proportions).
+            float theta = u * PI;
+            float r = sqrt(1 + v * v);
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = v;
           }
 
 

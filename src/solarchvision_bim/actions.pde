@@ -1270,6 +1270,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(9);
   });
 
+  putAction("Hyperboloid of Revolution", () -> { // n=10: r(v) = sqrt(1+v^2) traced around a full circle (u) - the Shukhov-tower/cooling-tower shell profile
+    UI_setTo_Create_Parametric(10);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });
