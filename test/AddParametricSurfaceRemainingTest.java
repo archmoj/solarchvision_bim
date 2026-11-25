@@ -3,10 +3,10 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 12
+// (Create3DTest.java's own addParametricSurface_... test) of its 13
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution, 11
-// Helicoid) - the remaining 11 are covered here, following that same existing
+// Helicoid, 12 Catenoid) - the remaining 12 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -238,5 +238,36 @@ class AddParametricSurfaceRemainingTest {
       if (dist > 0.01f) foundOffAxisPoint = true;
     }
     assertTrue(foundOffAxisPoint, "setup check - this grid should contain at least one point away from the axis");
+  }
+
+  @Test
+  void n12_catenoid_buildsAGrid_firstCornerAtTheExpectedCatenaryPoint () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 12, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u = start_v = -1 (n==12 isn't in the "start_u = 0" list - u
+    // is a full angle sweep, same as n==7 Torus/n==10 Hyperboloid's own
+    // u). theta = -PI, r = cosh(-1) = (e + 1/e)/2 ~= 1.5431;
+    // x = 1.5431*cos(-PI) = -1.5431; y = 1.5431*sin(-PI) ~= 0; z = -1.
+    assertArrayEquals(new float[]{-1.5431f, 0, -1}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n12_catenoid_everyVertexSatisfiesTheCatenaryEquation () {
+    // x^2 + y^2 = r^2 = cosh(v)^2 = cosh(z)^2 (since z = v exactly) - the
+    // defining equation of a catenoid.
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 12, 0, 0, 20, 20);
+
+    float minDistFromAxis = Float.MAX_VALUE;
+    for (float[] v : app.allVertices) {
+      float distSq = v[0] * v[0] + v[1] * v[1];
+      float cosh = (float) ((Math.exp(v[2]) + Math.exp(-v[2])) / 2.0);
+      assertEquals(cosh * cosh, distSq, 0.001f, "every vertex must satisfy x^2 + y^2 = cosh(z)^2");
+      minDistFromAxis = Math.min(minDistFromAxis, (float) Math.sqrt(distSq));
+    }
+    // The waist (z=0, the narrowest ring) should actually appear in this
+    // grid - same reasoning as n==10 Hyperboloid of Revolution's own
+    // ring-thickness test above.
+    assertEquals(1f, minDistFromAxis, 0.01f, "the waist's own radius should be exactly 1, and the grid should include it");
   }
 }

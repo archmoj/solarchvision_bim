@@ -1278,6 +1278,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(11);
   });
 
+  putAction("Catenoid", () -> { // n=12: r(v) = cosh(v) traced around a full circle (u) - the soap-film-between-two-rings minimal surface, same layout as n=10 Hyperboloid of Revolution
+    UI_setTo_Create_Parametric(12);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

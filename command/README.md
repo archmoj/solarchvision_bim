@@ -350,11 +350,13 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     dish, over that same circular footprint; 10 is a Hyperboloid of
     Revolution - the Shukhov-tower/cooling-tower shell profile, a full
     ring swept around a fixed-waist hyperbola; 11 is a Helicoid - a
-    spiral ramp winding two full turns through its own height). `k` is
-    the Torus's own minor:major tube-thickness ratio (0-1) and is
-    ignored by every other `n`. `u`/`v` set the surface's own grid
-    resolution (segment counts along each parametric direction) and
-    apply to every `n`
+    spiral ramp winding two full turns through its own height; 12 is a
+    Catenoid - the soap-film-between-two-rings minimal surface, the same
+    full-ring layout as 10 but with a catenary profile instead of a
+    hyperbola). `k` is the Torus's own minor:major tube-thickness ratio
+    (0-1) and is ignored by every other `n`. `u`/`v` set the surface's
+    own grid resolution (segment counts along each parametric direction)
+    and apply to every `n`
 
 ```
 Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=? u=? v=?

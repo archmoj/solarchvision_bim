@@ -1816,6 +1816,26 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = v;
+          } else if (n == 12) { // "Catenoid" - the soap-film-between-two-
+                                 // rings minimal surface: same full-circle
+                                 // u / literal-height v layout as n==10
+                                 // Hyperboloid of Revolution (u is the
+                                 // ring's own angle, full -1..1*PI sweep;
+                                 // v is a literal height, not an angle, so
+                                 // start_v is left at its own ordinary
+                                 // default same as start_u), but r(v) =
+                                 // cosh(v) instead of sqrt(1+v^2) - the
+                                 // catenary curve traced out from the
+                                 // waist (v=0, r=1, the narrowest ring,
+                                 // same as n==10's own waist) to either
+                                 // open end. No exp()/cosh() built in to
+                                 // Processing's own API, so cosh(v) is
+                                 // spelled out as (e^v + e^-v)/2 directly.
+            float theta = u * PI;
+            float r = (exp(v) + exp(-v)) / 2.0;
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = v;
           }
 
 
