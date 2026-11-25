@@ -1624,6 +1624,7 @@ class Create3D {
     final float PARABOLOID_DOME_DEPTH_SCALE = 2; // n==9 "Paraboloid Dome" only - negated too (making it a dome, apex at the top, rather than its own former "Paraboloid Dish"), and doubled so the apex-to-rim spread is 2 units instead of 1
     final float PARABOLOID_DOME_APEX_HEIGHT = PARABOLOID_DOME_DEPTH_SCALE; // n==9 only - set equal to PARABOLOID_DOME_DEPTH_SCALE so the rim (PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE) lands at exactly raw z=0 - that's what sits the dome on the ground by default once rz scales it (0 * any rz is still 0), rather than floating above z=0 by an amount that depends on whatever rz the shape happened to be created with
     final float TRACTRICOID_T_MAX = 2; // n==14 "Tractricoid" only - how far the tractrix parameter t runs before v (-1..1) remapped onto it stops, same "2 reads clearly without the default 36x36 grid getting too degenerate" reasoning as HELICOID_TURNS above - t=0 (v=-1) is the rim (r=1, z=0), t=TRACTRICOID_T_MAX (v=+1) is the narrow end (r=sech(2) =~ 0.266, still comfortably nonzero, not yet the asymptotic point at t=infinity)
+    final float SCHERK_DOMAIN_HALF_WIDTH = 0.45 * PI; // n==16 "Scherk's Surface" only - how far u/v's own -1..1 domain is remapped (in radians) before cos() sees it; close to the true pole at PI/2 (for a dramatic, recognizably-Scherk upward flare near the edges) while staying safely short of it (cos(0.45*PI) =~ 0.156, nowhere near the zero that would blow z up to +-infinity)
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -1757,6 +1758,31 @@ class Create3D {
             x = u;
             y = v;
             z = u * u * u - 3 * u * v * v;
+          } else if (n == 16) { // "Scherk's Surface" - a genuine minimal
+                                 // surface (zero mean curvature
+                                 // everywhere, unlike n==1/2/3/15's own
+                                 // polynomial/trig ripples): z = ln(cos(y)
+                                 // / cos(x)), the classic single-tile
+                                 // slice of Scherk's doubly-periodic 1834
+                                 // surface - an infinite repeating lattice
+                                 // of saddle "tunnels" in the original,
+                                 // here just the one central tile. Same
+                                 // x=u/y=v flat square footprint as n==3
+                                 // Saddle/n==15 Monkey Saddle, with x/y
+                                 // themselves remapped onto a narrower
+                                 // SCHERK_DOMAIN_HALF_WIDTH angle range
+                                 // before the formula sees them, so the
+                                 // surface flares up steeply near the
+                                 // edges (the classic Scherk "wings")
+                                 // without actually reaching the true
+                                 // poles (cos(x) or cos(y) hitting zero,
+                                 // where z would blow up to +-infinity) at
+                                 // u/v = +-1.
+            float angleX = u * SCHERK_DOMAIN_HALF_WIDTH;
+            float angleY = v * SCHERK_DOMAIN_HALF_WIDTH;
+            x = u;
+            y = v;
+            z = log(cos(angleY) / cos(angleX));
           } else if (n == 7) { // "Torus" - u is the ring's own angle (major
                                 // circle, radius 1 before rx/ry/rz), v is
                                 // the tube's own angle (minor circle,

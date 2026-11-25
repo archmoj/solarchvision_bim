@@ -1250,6 +1250,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(15);
   });
 
+  putAction("Scherk's Surface", () -> { // n=16: z = ln(cos(y)/cos(x)) - a genuine minimal surface (zero mean curvature), the classic single tile of Scherk's 1834 doubly-periodic surface
+    UI_setTo_Create_Parametric(16);
+  });
+
   putAction("Tetra Wave Surface", () -> { // n=4: z = cos((u+v)*pi) - renamed from "Diagonal Wave Surface" - its own diagonal ripples pass through 4 of a cube's alternating (tetrahedral) vertices, (+-1,+-1,+-1)
     UI_setTo_Create_Parametric(4);
   });

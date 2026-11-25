@@ -469,6 +469,7 @@ class UI_menuBar {
       "Egg-Crate Surface",
       "Saddle Surface",
       "Monkey Saddle",
+      "Scherk's Surface",
       "Tetra Wave Surface",
       ___divider___,
       // Same two formulas as above, normalized onto a unit sphere.

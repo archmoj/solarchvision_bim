@@ -364,7 +364,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     at exactly z=0 and flaring upward from there; 15 is a Monkey Saddle
     (z = x^3 - 3xy^2) - the classic 3-valley/3-ridge generalization of the
     Saddle surface's own 2-valley/2-ridge shape, over that same square
-    footprint).
+    footprint; 16 is Scherk's Surface (z = ln(cos(y)/cos(x))) - a genuine
+    minimal surface, the classic single tile of Scherk's 1834 doubly-
+    periodic surface, flaring steeply upward near the edges of that same
+    square footprint).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

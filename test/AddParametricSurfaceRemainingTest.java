@@ -3,10 +3,11 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 16
+// (Create3DTest.java's own addParametricSurface_... test) of its 17
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
-// Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid, 15 Monkey Saddle) - the remaining 15 are covered here, following that same existing
+// Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid, 15 Monkey Saddle, 16
+// Scherk's Surface) - the remaining 16 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -399,5 +400,39 @@ class AddParametricSurfaceRemainingTest {
       if (x != 0 && y != 0) foundOffAxisPoint = true;
     }
     assertTrue(foundOffAxisPoint, "setup check - this grid should contain at least one point off both axes");
+  }
+
+  @Test
+  void n16_scherksSurface_buildsAGrid_firstCornerIsAtTheOriginOfTheSaddle () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 16, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u/start_v are both left at their ordinary -1 default (n==16
+    // is NOT in the "start_u = 0" list - same flat square x=u/y=v
+    // footprint as n==3/15) - so the very first corner is u=-1, v=-1:
+    // angleX = angleY = -SCHERK_DOMAIN_HALF_WIDTH, and since cos() is an
+    // even function, cos(angleY)/cos(angleX) = 1, so z = ln(1) = 0.
+    assertArrayEquals(new float[]{-1, -1, 0}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n16_scherksSurface_everyVertexSatisfiesZEqualsLogOfCosRatio_andFlaresNearTheEdges () {
+    // The classic Scherk's-surface equation, re-derived independently
+    // from x and y alone (not from u/v or the function's own
+    // SCHERK_DOMAIN_HALF_WIDTH constant - that same 0.45*PI value is
+    // simply inlined here, since x==u and y==v exactly for this preset):
+    // z = ln(cos(y * 0.45*PI) / cos(x * 0.45*PI)).
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 16, 0, 0, 20, 20);
+
+    double domainHalfWidth = 0.45 * Math.PI;
+    boolean foundSteepFlarePoint = false;
+    for (float[] v : app.allVertices) {
+      double x = v[0];
+      double y = v[1];
+      double expectedZ = Math.log(Math.cos(y * domainHalfWidth) / Math.cos(x * domainHalfWidth));
+      assertEquals(expectedZ, v[2], 0.001, "every vertex must satisfy z = ln(cos(y*0.45*PI) / cos(x*0.45*PI))");
+      if (Math.abs(v[2]) > 1) foundSteepFlarePoint = true;
+    }
+    assertTrue(foundSteepFlarePoint, "setup check - this grid should reach at least one steeply-flared point (|z| > 1) near its own edges");
   }
 }
