@@ -297,12 +297,14 @@ class WIN3DActionsTest {
   // Next/Previous Hour" (actions.pde's own comment on why) - Tropo3D.
   // i_Map() (tropo3D.pde) derives straight from SHADE_HOUR_ANGLE, so
   // these tests go through SHADE_HOUR_ANGLE and nextShadeHour()/
-  // previousShadeHour()'s own wrap behavior (STUDY.isInHourlyRange(),
-  // SHADE_FIRST_HOUR/SHADE_LAST_HOUR) - the same thing the equivalent
-  // Alt+Up/Down tests already exercise (handleAltArrowKeys()'s own
-  // comment - RIGHT/UP and LEFT/DOWN are swapped there, so it's Up/Down
-  // that drive the hour now, not Right/Left) - rather than a
-  // troposphere-specific clamp-and-revert that no longer exists.
+  // previousShadeHour()'s own wrap behavior (SHADE_FIRST_HOUR/
+  // SHADE_LAST_HOUR only now - STUDY.isInHourlyRange() no longer plays
+  // any part in it, dropped from both functions on request) - the same
+  // thing the equivalent Alt+Up/Down tests already exercise
+  // (handleAltArrowKeys()'s own comment - RIGHT/UP and LEFT/DOWN are
+  // swapped there, so it's Up/Down that drive the hour now, not Right/
+  // Left) - rather than a troposphere-specific clamp-and-revert that no
+  // longer exists.
 
   @Test
   void keyT_advancesSHADE_HOUR_ANGLEAndTropo3DsIMapTogether () {
@@ -343,22 +345,22 @@ class WIN3DActionsTest {
   }
 
   @Test
-  void keyShiftT_wrapsBeforeTheFirstHourBackToTheLastHourInRange_sameAsAltDown () {
+  void keyShiftT_wrapsBeforeTheFirstHourBackToTheLastHour_sameAsAltDown () {
     app.STUDY.startHour = 0;
     app.STUDY.endHour = 23;
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
 
     app.runScriptLine("Rewind Troposphere Time");
 
-    // Not SHADE_LAST_HOUR (24) - with this STUDY.startHour/endHour range,
-    // hour 24 isn't itself "in range" (STUDY.isInHourlyRange(24) is
-    // false: 24 % 24 == 0 is the only hour-24-equivalent value actually
-    // in [0, 23]), so previousShadeHour() keeps decrementing past it down
-    // to 23, the real last hour in range - the exact same wrap
+    // previousShadeHour() no longer consults STUDY.isInHourlyRange() at
+    // all (dropped on request), so stepping below SHADE_FIRST_HOUR (0)
+    // now lands straight on SHADE_LAST_HOUR (24) - the exact same wrap
     // previousShadeHour()'s own existing WIN3DTest.java coverage already
-    // establishes for Alt+Down.
-    assertEquals(23, app.SHADE_HOUR_ANGLE);
-    assertEquals(23, app.Tropo3D.i_Map());
+    // establishes for Alt+Down - rather than skipping past 24 down to 23.
+    // Tropo3D.i_Map() still comes out to SHADE_FIRST_HOUR (0), though:
+    // 24 % TROPO_timeSteps (24) == 0, same slot "midnight" already maps to.
+    assertEquals(app.SHADE_LAST_HOUR, app.SHADE_HOUR_ANGLE);
+    assertEquals(app.SHADE_FIRST_HOUR, app.Tropo3D.i_Map());
   }
 
   // ================= WIN3D d / WIN3D Shift+D (impact display day) ========

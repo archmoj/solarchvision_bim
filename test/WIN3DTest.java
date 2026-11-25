@@ -1122,9 +1122,10 @@ class WIN3DTest {
 
     app.nextShadeHour(); // one step past the last hour of the day
 
-    // nextShadeHour() now only wraps the hour back to SHADE_FIRST_HOUR
-    // within STUDY's own hourly range (via isInHourlyRange) - advancing
-    // the date is no longer its job, that's nextShadeDay()'s now.
+    // nextShadeHour() just wraps the hour back to SHADE_FIRST_HOUR -
+    // STUDY's own hourly range (STUDY.isInHourlyRange()) no longer plays
+    // any part in this, dropped on request - advancing the date is not
+    // its job either, that's nextShadeDay()'s.
     assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
     assertEquals(0, app.SHADE_DATE_ANGLE);
   }
@@ -1136,12 +1137,11 @@ class WIN3DTest {
 
     app.previousShadeHour(); // one step before the first hour of the day
 
-    // previousShadeHour() wraps to SHADE_LAST_HOUR (24), but with the
-    // default STUDY.startHour=0/endHour=23 that hour isn't in range
-    // (isInHourlyRange(24) is false, since 24 % 24 == 0 only makes 0
-    // valid, not 24 itself), so the loop keeps decrementing and lands on
-    // 23 - the last hour actually in range - instead of 24.
-    assertEquals(23, app.SHADE_HOUR_ANGLE);
+    // previousShadeHour() wraps straight to SHADE_LAST_HOUR (24) now -
+    // it no longer consults STUDY.isInHourlyRange() at all (dropped on
+    // request), so there's nothing left to skip 24 down to 23 for, the
+    // way it used to with the default STUDY.startHour=0/endHour=23.
+    assertEquals(app.SHADE_LAST_HOUR, app.SHADE_HOUR_ANGLE);
     // The date is no longer touched by hour navigation.
     assertEquals(0, app.SHADE_DATE_ANGLE);
   }

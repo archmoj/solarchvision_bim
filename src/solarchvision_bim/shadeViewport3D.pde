@@ -87,8 +87,12 @@ final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2;
 final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2;
 final int SHADE_STEP_DAYS = 30; //90;
 
-// initial values of choice
-int SHADE_HOUR_ANGLE = 10;
+// Seeded from the real wall-clock hour (0..23 - Processing's own hour(),
+// same pattern TIME.java/month/day (time.pde) already use for their own
+// live defaults), not a hardcoded guess, so a freshly opened project
+// starts the shading study looking at roughly "now" rather than always
+// 10 AM regardless of when it's actually opened.
+int SHADE_HOUR_ANGLE = hour();
 int SHADE_DATE_ANGLE = -1; // This would be set to TIME.beginDay later in the process.
 
 // Real epoch day for the same selected real date SHADE_DATE_ANGLE is
@@ -847,25 +851,22 @@ void ShadeViewport () {
   isShadingViewport = false;
 }
 
+// No longer skips past hours outside STUDY's own startHour/endHour
+// display range (STUDY.isInHourlyRange() - dropped here on request):
+// Shade Next/Previous Hour now always lands on the literal next/
+// previous hour, one step at a time, regardless of what range the
+// study's own display is currently restricted to.
 void nextShadeHour () {
-  for (int i = 0; i < 24; i++) {
-    SHADE_HOUR_ANGLE++;
-    if (SHADE_HOUR_ANGLE > SHADE_LAST_HOUR) {
-      SHADE_HOUR_ANGLE = SHADE_FIRST_HOUR;
-    }
-
-    if (STUDY.isInHourlyRange(SHADE_HOUR_ANGLE)) return;
+  SHADE_HOUR_ANGLE++;
+  if (SHADE_HOUR_ANGLE > SHADE_LAST_HOUR) {
+    SHADE_HOUR_ANGLE = SHADE_FIRST_HOUR;
   }
 }
 
 void previousShadeHour () {
-  for (int i = 0; i < 24; i++) {
-    SHADE_HOUR_ANGLE--;
-    if (SHADE_HOUR_ANGLE < SHADE_FIRST_HOUR) {
-      SHADE_HOUR_ANGLE = SHADE_LAST_HOUR;
-    }
-
-    if (STUDY.isInHourlyRange(SHADE_HOUR_ANGLE)) return;
+  SHADE_HOUR_ANGLE--;
+  if (SHADE_HOUR_ANGLE < SHADE_FIRST_HOUR) {
+    SHADE_HOUR_ANGLE = SHADE_LAST_HOUR;
   }
 }
 

@@ -221,12 +221,11 @@ class ValueModifier {
     return out;
   }
   // SHADE_HOUR_ANGLE's own direct setter - unlike "Shade Next/Previous
-  // Hour" (actions.pde), which only step it by +-1 at a time (and skip
-  // past any hour STUDY.isInHourlyRange() rejects along the way), this
-  // sets it to an exact value in one command, with no range-dependent
-  // skipping - for a command/test/*.svs script that wants a specific
-  // hour without counting Shade Next Hour repeats up from
-  // SHADE_HOUR_ANGLE's own hardcoded default (10, shadeViewport3D.pde).
+  // Hour" (actions.pde), which only step it by +-1 at a time, this sets
+  // it to an exact value in one command - for a command/test/*.svs
+  // script that wants a specific hour without counting Shade Next Hour
+  // repeats up from SHADE_HOUR_ANGLE's own wall-clock-seeded default
+  // (hour(), shadeViewport3D.pde).
   // No UI rollout spinner wired up (the "else" branch below is dead
   // code for now, same as beginDay()'s own - see its own comment) -
   // command-line/script only, same as Begin Day.
