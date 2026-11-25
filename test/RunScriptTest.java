@@ -1418,6 +1418,49 @@ class RunScriptTest {
     assertEquals(33.3f, app.STATION.getLatitude(), 0.001f);
   }
 
+  // ================= RUN.STAMP / RUN.NOW =====================================
+  // Zero prior coverage for either dispatch case - added here alongside
+  // RUN.NOW's own format change (YYYYMMDDHH -> YYYYMMDD_HH, the same
+  // "YYYYMMDD_HH" shape RUN.STAMP's own value already is, so a script
+  // like command/test/terrain.svs only has to spell the one real moment
+  // it cares about one way, not two).
+
+  @Test
+  void runDotStamp_withAValue_overridesRunStampVerbatim () {
+    String hint = app.runScriptLine("RUN.STAMP 20261113_23");
+
+    assertEquals("", hint);
+    assertEquals("20261113_23", app.RunStamp);
+  }
+
+  @Test
+  void runDotStamp_withNoValue_isRejected () {
+    String hint = app.runScriptLine("RUN.STAMP");
+
+    assertNotEquals("", hint); // "RUN.STAMP ?" - exact wording isn't the point, just that it's rejected
+  }
+
+  @Test
+  void runDotNow_withAValue_parsesYYYYMMDD_HHIntoTheOverrideFields () {
+    String hint = app.runScriptLine("RUN.NOW 20261113_23");
+
+    assertEquals("", hint);
+    assertEquals(2026, app.overrideNowYear);
+    assertEquals(11, app.overrideNowMonth);
+    assertEquals(13, app.overrideNowDay);
+    assertEquals(23, app.overrideNowHour);
+  }
+
+  @Test
+  void runDotNow_withNoValue_isRejected_leavingTheOverrideUntouched () {
+    app.overrideNowYear = -1; // bare-construction default - "use the real clock" (getNowInUtc.pde)
+
+    String hint = app.runScriptLine("RUN.NOW");
+
+    assertNotEquals("", hint); // "RUN.NOW ?"
+    assertEquals(-1, app.overrideNowYear);
+  }
+
   // ================= UNSHADE.VIEWPORT ========================================
   // Dispatch wiring only - dismissShading()'s own logic is already fully
   // covered directly (WIN3DTest.java), and "Unshade Viewport" the

@@ -24,7 +24,7 @@
 #   could only ever be true on the one real calendar day this fixture
 #   happens to be dated, not whenever this test actually runs.
 RUN.STAMP 20261113_23
-RUN.NOW 2026111323
+RUN.NOW 20261113_23
 
 # NEW takes no existing file to work - it just points Folder_Project at
 # the given path's own parent directory and clears the scene (see

@@ -460,7 +460,7 @@ This page has two parts:
     "right now" happens to be - only takes effect for folders derived
     *after* this runs (a following `NEW`'s own project-folder
     derivation, typically), not retroactively.
--   `RUN.NOW <YYYYMMDDHH>`: Overrides `getNow_inUTC()`'s own idea of
+-   `RUN.NOW <YYYYMMDD_HH>`: Overrides `getNow_inUTC()`'s own idea of
     "right now" (normally the real system clock too) with the given
     value. A few things compare the current simulated date/time against
     this to decide whether to show something at all (`Load Troposphere`'s

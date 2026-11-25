@@ -233,14 +233,16 @@ String __RUN_STAMP__ (String[] parts) {
 }
 
 // Overrides getNow_inUTC()'s own idea of "right now" (overrideNowYear/
-// Month/Day/Hour - getNowInUtc.pde) - a single YYYYMMDDHH argument,
-// parsed the same digit-grouped way RUN.STAMP's own real fixture value
-// is already shaped (RunStamp's own own "YYYYMMDD_HH" format, just
-// without the underscore). See getNowInUtc.pde's own comment on why
-// this exists: Tropo3D.selectedDayHasForecastAvailable() (and anything
-// else gated on real-clock "now") can otherwise never pass against a
-// fixed, pre-captured fixture except on the one real calendar day/hour
-// it happens to be dated.
+// Month/Day/Hour - getNowInUtc.pde) - a single "YYYYMMDD_HH" argument,
+// the exact same shape RUN.STAMP's own RunStamp value already is (and
+// still fully distinct from it - this overrides getNow_inUTC()'s "right
+// now", RUN.STAMP overrides RunStamp's own folder-naming value - just
+// no longer spelled two different ways for what's otherwise the same
+// one real moment in a script like terrain.svs). See getNowInUtc.pde's
+// own comment on why this exists: Tropo3D.selectedDayHasForecastAvailable()
+// (and anything else gated on real-clock "now") can otherwise never pass
+// against a fixed, pre-captured fixture except on the one real calendar
+// day/hour it happens to be dated.
 String __RUN_NOW__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) {
@@ -248,7 +250,7 @@ String __RUN_NOW__ (String[] parts) {
       overrideNowYear = int(s.substring(0, 4));
       overrideNowMonth = int(s.substring(4, 6));
       overrideNowDay = int(s.substring(6, 8));
-      overrideNowHour = int(s.substring(8, 10));
+      overrideNowHour = int(s.substring(9, 11));
     }
     else hint = "RUN.NOW ?";
     return hint;
