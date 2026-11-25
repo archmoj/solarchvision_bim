@@ -349,10 +349,12 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     is a Paraboloid Dish - a bowl/dish shape, e.g. a solar concentrator
     dish, over that same circular footprint; 10 is a Hyperboloid of
     Revolution - the Shukhov-tower/cooling-tower shell profile, a full
-    ring swept around a fixed-waist hyperbola). `k` is the Torus's own
-    minor:major tube-thickness ratio (0-1) and is ignored by every other
-    `n`. `u`/`v` set the surface's own grid resolution (segment counts
-    along each parametric direction) and apply to every `n`
+    ring swept around a fixed-waist hyperbola; 11 is a Helicoid - a
+    spiral ramp winding two full turns through its own height). `k` is
+    the Torus's own minor:major tube-thickness ratio (0-1) and is
+    ignored by every other `n`. `u`/`v` set the surface's own grid
+    resolution (segment counts along each parametric direction) and
+    apply to every `n`
 
 ```
 Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=? u=? v=?

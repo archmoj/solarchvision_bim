@@ -1274,6 +1274,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(10);
   });
 
+  putAction("Helicoid", () -> { // n=11: a spiral ramp - radius u (-1..1, both signs) swept through an angle tied to height v, winding HELICOID_TURNS full turns
+    UI_setTo_Create_Parametric(11);
+  });
+
   putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });

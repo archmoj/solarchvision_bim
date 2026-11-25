@@ -1619,6 +1619,8 @@ class Create3D {
       start_u = 0; // n==8/9 (Hyperbolic Disc/Paraboloid Dish): u is a radius, 0..1, not -1..1
     }
 
+    final float HELICOID_TURNS = 2; // n==11 Helicoid only - how many full turns the ramp winds through across its own -1..1 height range
+
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
     // this function's own former hardcoded 0.1/0.05 step sizes (which
@@ -1782,6 +1784,35 @@ class Create3D {
                                  // the overall proportions).
             float theta = u * PI;
             float r = sqrt(1 + v * v);
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = v;
+          } else if (n == 11) { // "Helicoid" - a spiral ramp/parking-garage
+                                 // shape: u is the radius (-1..1, both
+                                 // signs - a NEGATIVE u lands on the
+                                 // opposite side of the axis at the SAME
+                                 // height/turn, same as a positive u would
+                                 // at one turn further around, which is
+                                 // exactly what makes the ramp pass
+                                 // through the central axis rather than
+                                 // leaving a hole there), v is both the
+                                 // height (z = v directly, same -1..1
+                                 // convention rz already scales for every
+                                 // other preset) and, scaled by a fixed
+                                 // HELICOID_TURNS, the ramp's own
+                                 // winding angle - unlike n==7 Torus/n==10
+                                 // Hyperboloid, u and v are NOT independent
+                                 // angle/radius pairs here: the angle is
+                                 // tied to the height, which is what makes
+                                 // this a spiral rather than a surface of
+                                 // revolution. No separate turns parameter
+                                 // (unlike n==7 Torus's own k) - two turns
+                                 // reads clearly as a helicoid without the
+                                 // default 36x36 grid's quads getting too
+                                 // twisted to render as sensible flat-ish
+                                 // faces.
+            float r = u;
+            float theta = v * HELICOID_TURNS * PI;
             x = r * cos(theta);
             y = r * sin(theta);
             z = v;

@@ -457,6 +457,7 @@ class UI_menuBar {
       "Hyperbolic Disc",
       "Paraboloid Dish",
       "Hyperboloid of Revolution",
+      "Helicoid",
       ___divider___,
       "Solid",
       "Point",

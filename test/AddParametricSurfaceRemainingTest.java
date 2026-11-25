@@ -3,10 +3,10 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 11
+// (Create3DTest.java's own addParametricSurface_... test) of its 12
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
-// Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution) -
-// the remaining 10 are covered here, following that same existing
+// Hyperbolic Disc, 9 Paraboloid Dish, 10 Hyperboloid of Revolution, 11
+// Helicoid) - the remaining 11 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -201,5 +201,42 @@ class AddParametricSurfaceRemainingTest {
     // grid - same "the sampled grid actually reaches the shape's own
     // extreme" reasoning as TorusTest.java's own ring-thickness test.
     assertEquals(1f, minDistFromAxis, 0.01f, "the waist's own radius should be exactly 1, and the grid should include it");
+  }
+
+  @Test
+  void n11_helicoid_buildsAGrid_firstCornerAtTheExpectedRampPoint () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 11, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u = start_v = -1 (n==11 isn't in the "start_u = 0" list - u is
+    // a radius, both signs, same -1..1 convention as n==3 Saddle's own u,
+    // not the 0..1 radius n==8/9 use). theta = v * HELICOID_TURNS * PI =
+    // -1*2*PI = -2*PI; r = u = -1; x = -1*cos(-2*PI) = -1;
+    // y = -1*sin(-2*PI) ~= 0; z = v = -1.
+    assertArrayEquals(new float[]{-1, 0, -1}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n11_helicoid_everyVertexLiesOnItsOwnRadialRampLine_withinUnitRadiusAndHeight () {
+    // z = v exactly, and theta = z * HELICOID_TURNS * PI (HELICOID_TURNS
+    // = 2, create3D.pde) - so every vertex (x, y, z) must lie on the
+    // line through the axis at that angle, whichever sign r = u itself
+    // had (a negative r just lands on the same line, opposite side):
+    // x*sin(theta) = r*cos(theta)*sin(theta) = y*cos(theta) always.
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 11, 0, 0, 20, 20);
+
+    boolean foundOffAxisPoint = false;
+    for (float[] v : app.allVertices) {
+      float theta = (float) (v[2] * 2 * Math.PI);
+      float lhs = (float) (v[0] * Math.sin(theta));
+      float rhs = (float) (v[1] * Math.cos(theta));
+      assertEquals(lhs, rhs, 0.01f, "every vertex must lie on the ramp's own radial line at its height's winding angle");
+
+      float dist = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+      assertTrue(dist <= 1.001f, "every vertex must stay within unit radius of the axis, found distance " + dist);
+      assertTrue(Math.abs(v[2]) <= 1.001f, "every vertex must stay within unit height");
+      if (dist > 0.01f) foundOffAxisPoint = true;
+    }
+    assertTrue(foundOffAxisPoint, "setup check - this grid should contain at least one point away from the axis");
   }
 }
