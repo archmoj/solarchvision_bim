@@ -9,9 +9,19 @@
 # but enough to invalidate the committed baseline for no reason related
 # to this app's own behavior. 2025 is a common year, matching the angle
 # (295 degrees) the current committed baseline was generated under.
+#
+# Hour is pinned too, for the same reason: SHADE_HOUR_ANGLE's own
+# bare-construction default is now the real wall-clock hour
+# (shadeViewport3D.pde's own hour()-seeded default, not a fixed constant
+# anymore), which would shift the sun's own rendered angle in every
+# Shade.* mode below from one baseline regeneration to the next
+# depending on what time of day this happens to run - 10 matches
+# SHADE_HOUR_ANGLE's own previous hardcoded default, so this keeps the
+# committed baseline valid.
 Year 2025
 Month 1
 Day 15
+Hour 10
 
 # clear default model
 Delete all

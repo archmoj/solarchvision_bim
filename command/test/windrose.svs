@@ -7,9 +7,18 @@
 # funcs.MoonPosition's own comment on SHADE_EPOCH_DAY). 2026 matches
 # terrain.svs's own pinned year, for one consistent year across this
 # whole test suite rather than picking a different one per script.
+#
+# Hour is pinned too, same reasoning: SHADE_HOUR_ANGLE's own
+# bare-construction default is now the real wall-clock hour
+# (shadeViewport3D.pde's own hour()-seeded default, not a fixed
+# constant anymore), so without this it would drift from one baseline
+# regeneration to the next depending on what time of day this happens
+# to run - 10 matches SHADE_HOUR_ANGLE's own previous hardcoded
+# default, so this keeps every existing committed baseline valid.
 Year 2026
 Month 1
 Day 15
+Hour 10
 
 # clear default model
 Delete all

@@ -67,6 +67,18 @@ Year 2026
 Month 11
 Day 13
 
+# SHADE_HOUR_ANGLE - not TIME.hour just above, a separate field (see
+# shadeViewport3D.pde/time.pde) - is pinned here too: its own
+# bare-construction default is now the real wall-clock hour
+# (shadeViewport3D.pde's own hour()-seeded default, not a fixed constant
+# anymore), which the fourteen "shade next hour" steps below start
+# counting from, so without this the final SHADE_HOUR_ANGLE those steps
+# land on - and therefore this baseline's own rendered sun angle - would
+# drift depending on what time of day this test happens to run. 10
+# matches SHADE_HOUR_ANGLE's own previous hardcoded default, so this
+# keeps the committed baseline valid.
+Hour 10
+
 # Loads every real NAEFS layer file that exists for that date (TMP-SFC/
 # MSLP/RELH-SFC/APCP-SFC - projects/test/data/NAEFS/) AND switches
 # STUDY's own current data source to it in the same step (currentDataSource/
