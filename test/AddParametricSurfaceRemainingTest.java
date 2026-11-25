@@ -3,10 +3,10 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 15
+// (Create3DTest.java's own addParametricSurface_... test) of its 16
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
-// Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid) - the remaining 14 are covered here, following that same existing
+// Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid, 15 Monkey Saddle) - the remaining 15 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -373,5 +373,31 @@ class AddParametricSurfaceRemainingTest {
       if (r < 0.99) foundNonRimPoint = true;
     }
     assertTrue(foundNonRimPoint, "setup check - this grid should contain at least one point away from the rim");
+  }
+
+  @Test
+  void n15_monkeySaddle_buildsAGrid_firstCornerMatchesTheFormula () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 15, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u/start_v are both left at their ordinary -1 default (n==15
+    // is NOT in the "start_u = 0" list - same flat square x=u/y=v
+    // footprint as n==3 Saddle Surface) - so the very first corner is
+    // u=-1, v=-1: x=-1, y=-1, z = u^3 - 3uv^2 = -1 - 3*(-1)*1 = 2.
+    assertArrayEquals(new float[]{-1, -1, 2}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n15_monkeySaddle_everyVertexSatisfiesZEqualsXCubedMinusThreeXYSquared () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 15, 0, 0, 20, 20);
+
+    boolean foundOffAxisPoint = false;
+    for (float[] v : app.allVertices) {
+      float x = v[0];
+      float y = v[1];
+      assertEquals(x * x * x - 3 * x * y * y, v[2], 0.0001f, "every vertex must satisfy z = x^3 - 3*x*y^2");
+      if (x != 0 && y != 0) foundOffAxisPoint = true;
+    }
+    assertTrue(foundOffAxisPoint, "setup check - this grid should contain at least one point off both axes");
   }
 }

@@ -1246,6 +1246,10 @@ void build_allActions() {
     UI_setTo_Create_Parametric(3);
   });
 
+  putAction("Monkey Saddle", () -> { // n=15: z = u^3 - 3uv^2 - the classic 3-valley/3-ridge generalization of n=3 Saddle Surface's own 2-valley/2-ridge shape
+    UI_setTo_Create_Parametric(15);
+  });
+
   putAction("Tetra Wave Surface", () -> { // n=4: z = cos((u+v)*pi) - renamed from "Diagonal Wave Surface" - its own diagonal ripples pass through 4 of a cube's alternating (tetrahedral) vertices, (+-1,+-1,+-1)
     UI_setTo_Create_Parametric(4);
   });

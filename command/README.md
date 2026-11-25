@@ -361,7 +361,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     the north side, touching the ground only at its own two endpoints;
     14 is a Tractricoid (pseudosphere) - the revolution of a tractrix, a
     trumpet/horn shape with constant negative curvature, the rim sitting
-    at exactly z=0 and flaring upward from there).
+    at exactly z=0 and flaring upward from there; 15 is a Monkey Saddle
+    (z = x^3 - 3xy^2) - the classic 3-valley/3-ridge generalization of the
+    Saddle surface's own 2-valley/2-ridge shape, over that same square
+    footprint).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

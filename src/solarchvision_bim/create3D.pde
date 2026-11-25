@@ -1743,6 +1743,20 @@ class Create3D {
             x = u;
             y = v;
             z = u * v;
+          } else if (n == 15) { // "Monkey Saddle" - the classic z = x^3 -
+                                 // 3xy^2 generalization of n==3 Saddle:
+                                 // instead of 2 valleys and 2 ridges
+                                 // alternating around the center, this has
+                                 // 3 of each (room for a monkey's two legs
+                                 // AND its tail, hence the name) - same
+                                 // flat square u/v footprint as n==3, no
+                                 // extra depth scale needed since z's own
+                                 // natural range over the -1..1 domain
+                                 // (+-2 at the 4 corners) is already
+                                 // comparable to n==3's own (+-1).
+            x = u;
+            y = v;
+            z = u * u * u - 3 * u * v * v;
           } else if (n == 7) { // "Torus" - u is the ring's own angle (major
                                 // circle, radius 1 before rx/ry/rz), v is
                                 // the tube's own angle (minor circle,
