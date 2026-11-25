@@ -593,11 +593,7 @@ class UI_menuBar {
       "Cap Holes",
       ___divider___,
       "Extrude Face Edges",
-      "Thicken Selected Faces",
-      "Optimize Faces",
-      "Auto-Normal Selected Faces",
-      "Force Triangulate Selected Faces",
-      "Merge Coplanar Faces"
+      "Thicken Selected Faces"
     },
     {
       PARENT_MODIFY,
@@ -621,7 +617,12 @@ class UI_menuBar {
       "Skew Selected Group",
       "Twist Selected Group",
       "Bend Selected Group",
-      "Passive Solar Touch Selected Group"
+      "Passive Solar Touch Selected Group",
+      ___divider___,
+      "Optimize Faces",
+      "Auto-Normal Selected Faces",
+      "Force Triangulate Selected Faces",
+      "Merge Coplanar Faces"
     },
     {
       PARENT_MATCH,
