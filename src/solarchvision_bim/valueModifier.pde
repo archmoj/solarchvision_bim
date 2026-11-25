@@ -1106,7 +1106,7 @@ class ValueModifier {
     int u3 = 0; // updateWORLD
 
     int s1 = 1; //start
-    int s2 = 17; //stop - bumped from 6 to 7 when Torus (n=7) joined the preset list, then to 8 when Hyperbolic Disc (n=8) did, then to 9 when Paraboloid Dome (n=9) did, then to 10 when Hyperboloid of Revolution (n=10) did, then to 11 when Helicoid (n=11) did, then to 12 when Catenoid (n=12) did, then to 13 when Conoid (n=13) did, then to 14 when Tractricoid (n=14) did, then to 15 when Monkey Saddle (n=15) did, then to 16 when Scherk's Surface (n=16) did, then to 17 when Dini's Surface (n=17) did
+    int s2 = 18; //stop - bumped from 6 to 7 when Torus (n=7) joined the preset list, then to 8 when Hyperbolic Disc (n=8) did, then to 9 when Paraboloid Dome (n=9) did, then to 10 when Hyperboloid of Revolution (n=10) did, then to 11 when Helicoid (n=11) did, then to 12 when Catenoid (n=12) did, then to 13 when Conoid (n=13) did, then to 14 when Tractricoid (n=14) did, then to 15 when Monkey Saddle (n=15) did, then to 16 when Scherk's Surface (n=16) did, then to 17 when Dini's Surface (n=17) did, then to 18 when Seashell (n=18) did
     int s3 = 1; //step
 
     int out = 0;

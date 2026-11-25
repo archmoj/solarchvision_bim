@@ -3,11 +3,11 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 18
+// (Create3DTest.java's own addParametricSurface_... test) of its 19
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
 // Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid, 15 Monkey Saddle, 16
-// Scherk's Surface, 17 Dini's Surface) - the remaining 17 are covered here, following that same existing
+// Scherk's Surface, 17 Dini's Surface, 18 Seashell) - the remaining 18 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -485,5 +485,49 @@ class AddParametricSurfaceRemainingTest {
       if (Math.abs(theta) > 0.5) foundTwistedPoint = true;
     }
     assertTrue(foundTwistedPoint, "setup check - this grid should contain at least one point where the twist term clearly matters");
+  }
+
+  @Test
+  void n18_seashell_buildsAGrid_firstCornerAtTheInnermostCoil () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 18, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // start_u/start_v are both left at their ordinary -1 default (n==18
+    // is NOT in the "start_u = 0" list) - so the very first corner is
+    // u=-1, v=-1: growthFraction=0, R=pow(4,0)=1, tubeRadius=0.3,
+    // centerZ=0, spiralAngle=-1*2.5*PI=-2.5*PI (which, being a quarter-
+    // turn past a half-turn, lands exactly on the y-axis: cos=0, sin=-1)
+    // - ringR = 1 + 0.3*cos(-PI) = 1 - 0.3 = 0.7, so x = 0.7*0 = 0, y =
+    // 0.7*(-1) = -0.7, z = 0 + 0.3*sin(-PI) = 0.
+    assertArrayEquals(new float[]{0, -0.7f, 0}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n18_seashell_spiralsOutwardAndUpward_fromInnerToOuterCoil () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 18, 0, 0, 20, 20);
+
+    float minRingR = Float.MAX_VALUE;
+    float maxRingR = -Float.MAX_VALUE;
+    float minZ = Float.MAX_VALUE;
+    float maxZ = -Float.MAX_VALUE;
+    for (float[] v : app.allVertices) {
+      float ringR = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+      minRingR = Math.min(minRingR, ringR);
+      maxRingR = Math.max(maxRingR, ringR);
+      minZ = Math.min(minZ, v[2]);
+      maxZ = Math.max(maxZ, v[2]);
+    }
+    // Innermost coil (R=1, tubeRadius=0.3) keeps the ring within
+    // 0.7..1.3 of the axis and its own tube within -0.3..0.3 of the
+    // ground; the outermost coil (R=SEASHELL_GROWTH=4, tubeRadius=1.2)
+    // swells out to roughly 2.8..5.2 from the axis and climbs to
+    // roughly 3.3..5.7 up - so a substantial, clearly-spiraling shell
+    // should reach noticeably past the innermost coil's own bounds in
+    // both radius and height, while still keeping its own innermost
+    // coil close to the ground.
+    assertTrue(minRingR < 1.0f, "innermost coil should come within 1.0 of the axis, found min=" + minRingR);
+    assertTrue(maxRingR > 4.0f, "outermost coil should swell out past 4.0 from the axis, found max=" + maxRingR);
+    assertTrue(minZ > -0.5f && minZ < 0.1f, "the innermost coil's own tube should keep the lowest point near ground level, found min z=" + minZ);
+    assertTrue(maxZ > 5.0f, "the outermost coil should climb well above the innermost coil, found max z=" + maxZ);
   }
 }

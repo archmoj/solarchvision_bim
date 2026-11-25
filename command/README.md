@@ -370,7 +370,12 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     square footprint; 17 is Dini's Surface - the 14 Tractricoid's own
     pseudosphere profile wound into a helical twist as it revolves, the
     same "surface of revolution turned into a spiral" idea as the
-    Helicoid is to a flat ramp).
+    Helicoid is to a flat ramp; 18 is a Seashell - a direct
+    generalization of the Torus's own tube-swept-around-a-ring
+    mechanism, except the ring is a logarithmic spiral that grows
+    outward and climbs upward instead of closing back on itself, the
+    same way a conch or nautilus shell's whorls widen and rise as they
+    wind out).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

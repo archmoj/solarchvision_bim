@@ -478,6 +478,7 @@ class UI_menuBar {
       ___divider___,
       // Surfaces of revolution - a circular footprint swept around an axis.
       "Torus",
+      "Seashell",
       "Hyperbolic Disc",
       "Paraboloid Dome",
       "Hyperboloid of Revolution",
