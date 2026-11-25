@@ -92,6 +92,14 @@ void selectFile_ImportGeojson () {
   selectInput("Select GeoJSON file to import:", "_fileSelected_ImportGeojson", new File(Folder_Import + "/_.geojson"));
 }
 
+void selectFile_ImportTopojson () {
+  // Arms topojsonImportShowOptionsDialog (importTopojson.pde) the same way.
+  topojsonImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
+  selectInput("Select TopoJSON file to import:", "_fileSelected_ImportTopojson", new File(Folder_Import + "/_.topojson"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see importObj.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
@@ -175,17 +183,21 @@ boolean dxfShowImportOptionsDialog () {
   return true;
 }
 
-// Lets the person importing type the two Feature "properties" keys
+// Lets the person importing type the two "properties" keys
 // geojsonHeightProperty/geojsonGroupProperty (importGeojson.pde) read -
-// GeoJSON has no up-axis question at all (see that file's own header
-// comment for why), so unlike dxfShowImportOptionsDialog()/
-// objShowImportOptionsDialog()/... above, this dialog has no axis-swap
-// checkbox; two plain text fields instead of checkboxes, since both
-// options are open-ended property NAMES, not on/off toggles. Called
-// from import_objects_GEOJSON() itself (importGeojson.pde), not from
-// here - same reasoning, and the same "a cancelled dialog must never
-// half-apply a choice" behavior, as dxfShowImportOptionsDialog()'s own
-// comment above.
+// shared as-is between GeoJSON and TopoJSON import (importTopojson.pde's
+// own header comment on why the whole GeoJSON core, this option state
+// included, is reused rather than duplicated), since a TopoJSON geometry
+// object's own "properties" member means exactly the same thing a GeoJSON
+// Feature's own "properties" does. Neither format has an up-axis question
+// at all (see importGeojson.pde's own header comment for why), so unlike
+// dxfShowImportOptionsDialog()/objShowImportOptionsDialog()/... above,
+// this dialog has no axis-swap checkbox; two plain text fields instead of
+// checkboxes, since both options are open-ended property NAMES, not on/off
+// toggles. Called from import_objects_GEOJSON()/import_objects_TOPOJSON()
+// themselves (importGeojson.pde/importTopojson.pde), not from here - same
+// reasoning, and the same "a cancelled dialog must never half-apply a
+// choice" behavior, as dxfShowImportOptionsDialog()'s own comment above.
 boolean geojsonShowImportOptionsDialog () {
 
   javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
@@ -205,7 +217,7 @@ boolean geojsonShowImportOptionsDialog () {
   panel.add(groupRow);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
-    null, panel, "GeoJSON import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+    null, panel, "GeoJSON/TopoJSON import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
 
   if (result != javax.swing.JOptionPane.OK_OPTION) return false;
 
@@ -1074,6 +1086,61 @@ void _fileSelected_ImportGeojson (File selectedFile) {
     // calls just above this one's siblings - import_objects_GEOJSON()
     // adds points/faces/polylines straight into allPoints/allFaces/
     // allPolylines without ever calling endScene3DChange() itself.
+    endScene3DChange();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
+  }
+}
+
+void _fileSelected_ImportTopojson (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for
+  // why - set here too (not just in selectFile_ImportTopojson(), above),
+  // since extraCommands.pde's own console IMPORT.TOPOJSON command can
+  // reach this function directly, with a path already given, bypassing
+  // selectFile_ImportTopojson() and its own dialog entirely. Cleared at
+  // each of this function's own 2 exit points below.
+  isImportingInProgress = true;
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportGeojson()'s own identical
+    // lines above: cancelling the native file chooser itself never
+    // reaches import_objects_TOPOJSON(), which is otherwise what consumes
+    // topojsonImportShowOptionsDialog - without this, it would stay
+    // armed and pop the options dialog up on the next
+    // import_objects_TOPOJSON() call regardless of how that one was
+    // started.
+    topojsonImportShowOptionsDialog = false;
+    isImportingInProgress = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+    beginScene3DChange();
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_TOPOJSON(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_GEOJSON()'s own identical call just
+    // above - import_objects_TOPOJSON() adds points/faces/polylines
+    // straight into allPoints/allFaces/allPolylines without ever calling
+    // endScene3DChange() itself.
     endScene3DChange();
 
     int number_of_allGroups_after = allGroups.num;

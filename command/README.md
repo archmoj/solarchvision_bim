@@ -89,6 +89,20 @@ This page has two parts:
     group/cycle material by, the GeoJSON-native equivalent of DXF's own
     per-entity layer; leaving either field blank skips that option (the
     default: every polygon flat, the whole file one single group)
+-   `IMPORT.TOPOJSON`: Imports a `.topojson` file, built directly on top
+    of `IMPORT.GEOJSON`'s own geometry handling (same projection, same
+    Point/MultiPoint/LineString/MultiLineString/Polygon/MultiPolygon/
+    GeometryCollection treatment, same **Import GeoJSON**/**Import
+    TopoJSON** options dialog - shared between the two formats, same two
+    fields/same defaults). The only difference is where the coordinates
+    come from: a TopoJSON file's own "arcs" are shared, and optionally
+    quantized/delta-encoded, line segments that every LineString/Polygon
+    references by index (a negative index meaning that arc, reversed);
+    these are decoded and stitched back into the same plain point lists
+    GeoJSON carries directly before anything else happens, so the two
+    formats behave identically beyond that one decoding step. An
+    out-of-range arc index is skipped (noted in the same end-of-import
+    skipped-item count `IMPORT.GEOJSON` already prints), not an error
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

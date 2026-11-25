@@ -66,6 +66,18 @@
 // Feature, or (RFC 7946 section 3) a bare Geometry object directly -
 // all three are handled; a bare Geometry has no "properties" of its own,
 // so geojsonHeightProperty/geojsonGroupProperty never apply to one.
+//
+// Shared core: geojsonEmitPointFromXYZ()/geojsonEmitLineStringFromPoints()/
+// geojsonEmitPolygonFromRings()/geojsonLonLatAltToXYZ() below are the
+// actual "build the app's own geometry" steps, deliberately split out from
+// their own GeoJSON-coordinate-reading callers in this file so
+// importTopojson.pde's own TopoJSON decoder - built directly on top of
+// this file, per the build order agreed before Phase 1 started - can
+// drive the exact same steps (plus this same geojsonHeightProperty/
+// geojsonGroupProperty/geojsonApplyGrouping()/geojsonResolveHeight()/
+// geojsonStripClosingDuplicate() option/behavior set, reused as-is, not
+// duplicated) from its own arc-resolved points instead of GeoJSON's own
+// "coordinates" JSONArrays.
 
 boolean geojsonImportShowOptionsDialog = false;
 
@@ -337,6 +349,17 @@ void geojsonHandleGeometry (JSONObject geometry, JSONObject properties, int clzP
 void geojsonHandlePoint (JSONArray coord, float cx, float cy, float cz, float sx, float sy, float sz) {
   if (coord == null || coord.size() < 2) { geojsonNoteSkipped("Point with fewer than 2 coordinate values"); return; }
   float[] xyz = geojsonCoordToXYZ(coord, cx, cy, cz, sx, sy, sz);
+  geojsonEmitPointFromXYZ(xyz);
+}
+
+// The actual "create a bare vertex" step, split out of geojsonHandlePoint()
+// so importTopojson.pde's own topojsonHandlePoint() - whose own Point
+// "coordinates" are dequantized straight from the transform rather than
+// read off a GeoJSON [lon,lat(,alt)] JSONArray - can share this exact same
+// final step (and its own point-count bookkeeping) rather than
+// reimplementing it. See this file's own header comment for why a bare
+// Point never becomes anything more than this.
+void geojsonEmitPointFromXYZ (float[] xyz) {
   allPoints.create(xyz[0], xyz[1], xyz[2]);
   geojsonPointsImported++;
 }
@@ -350,6 +373,18 @@ void geojsonHandlePoint (JSONArray coord, float cx, float cy, float cz, float sx
 // clzParam only applies when the file itself leaves it open.
 void geojsonHandleLineString (JSONArray coordsArray, int clzParam, float cx, float cy, float cz, float sx, float sy, float sz) {
   ArrayList<PVector> pts = geojsonCoordsArrayToPVectors(coordsArray, cx, cy, cz, sx, sy, sz);
+  geojsonEmitLineStringFromPoints(pts, clzParam);
+}
+
+// The actual "build one Polyline from a finished point list" step, split
+// out of geojsonHandleLineString() so importTopojson.pde's own
+// topojsonHandleGeometry() - whose own LineString/MultiLineString points
+// come from resolving/stitching one or more "arcs" (importTopojson.pde's
+// own topojsonResolveArcIndexesToPVectors()) rather than reading a
+// GeoJSON "coordinates" JSONArray directly - can share this exact same
+// closing-duplicate auto-detect and allPolylines.add_Polyline() call
+// (and its own line-count bookkeeping) rather than reimplementing it.
+void geojsonEmitLineStringFromPoints (ArrayList<PVector> pts, int clzParam) {
   boolean closed = geojsonStripClosingDuplicate(pts);
   if (pts.size() < 2) { geojsonNoteSkipped("LineString with fewer than 2 distinct points"); return; }
 
@@ -385,6 +420,22 @@ void geojsonHandlePolygonRings (JSONArray rings, JSONObject properties, float cx
     if (hole.size() >= 3) holes.add(hole);
   }
 
+  geojsonEmitPolygonFromRings(outer, holes, properties, sz);
+}
+
+// The actual "merge holes, decide flat vs extruded, emit" step, split out
+// of geojsonHandlePolygonRings() so importTopojson.pde's own
+// topojsonHandlePolygonRingsArcs() - whose own outer/hole rings come from
+// resolving/stitching "arcs" rather than reading GeoJSON "coordinates"
+// rings directly - can share this exact same hole-bridging (PolygonHoles.
+// mergeHolesIntoOuterLoop(), see this file's own header comment) and
+// flat-face-vs-extruded-solid decision (geojsonResolveHeight(), same
+// "properties" key either format's own Feature/geometry object carries)
+// rather than reimplementing it. `outer`/each member of `holes` must
+// already be closing-duplicate-stripped and have at least 3 points - any
+// hole with fewer than 3 points should already have been dropped by the
+// caller, same as geojsonHandlePolygonRings()'s own filtering above.
+void geojsonEmitPolygonFromRings (ArrayList<PVector> outer, ArrayList<ArrayList<PVector>> holes, JSONObject properties, float sz) {
   ArrayList<PVector> ring = (holes.size() > 0) ? PolygonHoles.mergeHolesIntoOuterLoop(outer, holes) : outer;
 
   Float heightValue = geojsonResolveHeight(properties);
@@ -469,6 +520,17 @@ float[] geojsonCoordToXYZ (JSONArray coord, float cx, float cy, float cz, float 
   float lon = coord.getFloat(0);
   float lat = coord.getFloat(1);
   float alt = (coord.size() > 2) ? coord.getFloat(2) : 0;
+  return geojsonLonLatAltToXYZ(lon, lat, alt, cx, cy, cz, sx, sy, sz);
+}
+
+// The actual lon/lat/alt -> local XYZ projection step, split out of
+// geojsonCoordToXYZ() so importTopojson.pde's own topojsonHandlePoint()/
+// topojsonResolveArcIndexesToPVectors() - whose own lon/lat/alt values
+// come from dequantizing a TopoJSON "transform"/decoding delta-encoded
+// "arcs" rather than reading a GeoJSON [lon,lat(,alt)] JSONArray directly
+// - can share this exact same projection (and cx/cy/cz offset, sx/sy/sz
+// scale convention) rather than reimplementing it.
+float[] geojsonLonLatAltToXYZ (float lon, float lat, float alt, float cx, float cy, float cz, float sx, float sy, float sz) {
   float[] XY = funcs.convert_lonlat2XY(locationLongitude, locationLatitude, lon, lat);
   return new float[]{ cx + sx * XY[0], cy + sy * XY[1], cz + sz * alt };
 }

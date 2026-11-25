@@ -186,6 +186,7 @@ class UI_menuBar {
       "Import OBJ",
       "Import PLY",
       "Import STL",
+      "Import TopoJSON",
       ___divider___,
       "Export 3D > SCR",
       "Export 3D > RAD",

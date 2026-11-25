@@ -367,6 +367,10 @@ void build_allActions() {
     selectFile_ImportStl();
   });
 
+  putAction("Import TopoJSON", () -> {
+    selectFile_ImportTopojson();
+  });
+
   putAction("Import DXF", () -> {
     selectFile_ImportDxf();
   });
