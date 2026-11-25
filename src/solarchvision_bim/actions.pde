@@ -375,6 +375,10 @@ void build_allActions() {
     selectFile_ImportKml();
   });
 
+  putAction("Import CityGML", () -> {
+    selectFile_ImportCitygml();
+  });
+
   putAction("Import DXF", () -> {
     selectFile_ImportDxf();
   });

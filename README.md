@@ -173,12 +173,17 @@ SOLARCHVISION-BIM can use existing project geometry as well as geometry created 
 | **GeoJSON** (`.geojson`) | GIS/mapping geometry exchange (points, lines, polygons, optionally extruded) |
 | **TopoJSON** (`.topojson`) | Topology-encoded GIS/mapping geometry exchange (same geometry as GeoJSON, shared/quantized arcs) |
 | **KML** (`.kml`) | GIS/mapping geometry exchange (same geometry as GeoJSON/TopoJSON, XML-based; KMZ not supported) |
+| **CityGML** (`.gml`) | 3D city/building-model geometry exchange (LOD0 footprints through LOD2+ semantic surfaces; namespace-prefix-agnostic XML) |
 
 Import behavior and the geometry or attributes retained depend on the source format and the contents of the file. Check the imported result before using it for measurement or analysis. A successful geometry import does not necessarily mean that all source BIM properties, classifications, materials, or relationships are preserved.
 
 ### GeoJSON / TopoJSON / KML workflow
 
 GeoJSON, TopoJSON, and KML points/lines/polygons are all projected into the project's own local coordinate space around its site location (the same latitude/longitude used for the weather station and sun position), not a separate geodetic coordinate system. Polygons import as flat faces by default; the **Import GeoJSON**/**Import TopoJSON**/**Import KML** options dialog (shared across all three formats) can name a feature property to extrude polygons by (as a height) and a feature property to group/cycle material by, each optional. TopoJSON's own topology (shared/quantized arcs) and KML's own XML structure (a Placemark's `<ExtendedData>`/`<SchemaData>` standing in for a GeoJSON Feature's "properties") are both resolved back into the same plain point/line/polygon geometry GeoJSON carries directly before either import option is applied, so all three formats behave identically beyond their own decoding step.
+
+### CityGML workflow
+
+CityGML Buildings (and BuildingParts) are imported by finding every `<gml:Polygon>` inside each one, regardless of how deeply nested it is in a Solid/CompositeSurface/MultiSurface/`boundedBy` wrapper - no explicit LOD-structure parsing is required. A Building with any real LOD1-4 solid/semantic-surface geometry imports every one of those polygons directly as flat faces (already 3D, never extruded); a Building with only a flat LOD0 footprint (`lod0FootPrint`/`lod0RoofEdge`) is extrusion-eligible via the same height-property option GeoJSON/TopoJSON/KML already offer, and CityGML's own `<bldg:measuredHeight>` is exposed as a ready-made `measuredHeight` property for exactly this case. Coordinates default to already-local-planar meters (the common case for real CityGML data, typically in a national/local projected CRS) rather than longitude/latitude - the **Import CityGML** options dialog has its own checkbox to instead project longitude/latitude coordinates the same way GeoJSON/TopoJSON/KML already do, for the less common geographic-CRS case. Unlike the other three GIS formats, this importer is namespace-prefix-agnostic: it matches elements and attributes by their own local name (the part after any `:`), not a hard-coded `bldg:`/`gml:` prefix, since CityGML files are free to declare their own prefix for each namespace.
 
 ### LAS point-cloud workflow
 
@@ -203,6 +208,7 @@ IMPORT.STL
 IMPORT.GEOJSON
 IMPORT.TOPOJSON
 IMPORT.KML
+IMPORT.CITYGML
 ```
 
 See the [command reference](command/README.md) for command syntax and details.

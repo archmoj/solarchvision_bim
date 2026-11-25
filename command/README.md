@@ -118,6 +118,38 @@ This page has two parts:
     of a GeoJSON Feature's "properties"), and `<MultiGeometry>` recursively.
     A Placemark with no recognized geometry (a `<Model>`, `<NetworkLink>`,
     a `<Style>`-only entry, ...) is skipped, not an error
+-   `IMPORT.CITYGML`: Imports a CityGML `.gml` file, also built directly
+    on top of `IMPORT.GEOJSON`'s own geometry handling, but with its own
+    **Import CityGML** options dialog (same two height/group-property
+    fields, plus one extra checkbox - see below). Every `<bldg:Building>`
+    (or `<bldg:BuildingPart>`, for the unusual case of one with no
+    enclosing Building) anywhere in the document is found and imported:
+    every `<gml:Polygon>` nested anywhere inside it - however deeply, and
+    regardless of which `Solid`/`CompositeSurface`/`MultiSurface`/
+    `boundedBy`/`_BoundarySurface` wrapping is used - is imported as one
+    flat n-gon Face (holes bridged the same way `IMPORT.GEOJSON`'s own
+    holes are). A Building with any real LOD1-4 solid or semantic-surface
+    geometry (`lod1Solid`...`lod4Solid`, `lod1MultiSurface`...
+    `lod4MultiSurface`, or `boundedBy`) imports every one of its own
+    Polygons directly, never extruded (that geometry is already real 3D);
+    only when a Building has NO such geometry, just a flat LOD0 footprint
+    (`lod0FootPrint`/`lod0RoofEdge`/a bare `lod0MultiSurface`), does the
+    same height-property extrusion option apply - and CityGML's own
+    `<bldg:measuredHeight>` is read into a ready-made `measuredHeight`
+    property for exactly this case, so typing that into the height-
+    property field extrudes every LOD0-only Building automatically. The
+    Building's own `gml:id` is likewise read into a `gmlId` property,
+    typeable into the group-property field for one group per building.
+    Unlike `IMPORT.GEOJSON`/`IMPORT.TOPOJSON`/`IMPORT.KML` (always
+    longitude/latitude per their own specs), CityGML coordinates default
+    to already-local-planar meters (offset/scaled directly, the same as
+    `IMPORT.DXF`/`IMPORT.OBJ`'s own planar coordinates) rather than being
+    projected - the **Import CityGML** options dialog's own extra
+    checkbox opts into the longitude/latitude projection instead, for the
+    less common geographic-CRS case. Every element/attribute is matched
+    by its own local name (the part after any `:`), not a hard-coded
+    prefix, since real-world CityGML files are free to declare their own
+    namespace prefixes
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

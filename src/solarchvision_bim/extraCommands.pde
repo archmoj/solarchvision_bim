@@ -185,6 +185,13 @@ String __IMPORT_KML__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_CITYGML__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportCitygml(new File(parts[1]));
+    else selectFile_ImportCitygml();
+    return hint;
+}
+
 String __RUN_SCRIPT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));

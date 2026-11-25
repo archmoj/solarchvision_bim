@@ -108,6 +108,14 @@ void selectFile_ImportKml () {
   selectInput("Select KML file to import:", "_fileSelected_ImportKml", new File(Folder_Import + "/_.kml"));
 }
 
+void selectFile_ImportCitygml () {
+  // Arms citygmlImportShowOptionsDialog (importCitygml.pde) the same way.
+  citygmlImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
+  selectInput("Select CityGML file to import:", "_fileSelected_ImportCitygml", new File(Folder_Import + "/_.gml"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see importObj.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
@@ -237,6 +245,50 @@ boolean geojsonShowImportOptionsDialog () {
   // actually pressed - same reasoning as every dialog above.
   geojsonHeightProperty = heightField.getText().trim();
   geojsonGroupProperty = groupField.getText().trim();
+
+  return true;
+}
+
+// CityGML's own dialog - reuses the exact same geojsonHeightProperty/
+// geojsonGroupProperty shared state/fields as geojsonShowImportOptionsDialog()
+// just above (same meaning: a synthetic "properties" key this format's own
+// importCitygml.pde builds per Building - "measuredHeight"/"gmlId" among
+// others, see that file's own citygmlReadProperties() comment), but needs
+// its own separate dialog (not that shared one) for the same "one extra
+// option beside the shared two" reason dxfShowImportOptionsDialog()/
+// objShowImportOptionsDialog()/... above each do - here that extra option is
+// citygmlCoordinatesAreLonLat (importCitygml.pde's own header comment on why
+// CityGML, unlike GeoJSON/TopoJSON/KML, actually needs this choice at all).
+boolean citygmlShowImportOptionsDialog () {
+
+  javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
+  javax.swing.JTextField groupField = new javax.swing.JTextField(geojsonGroupProperty, 20);
+  javax.swing.JCheckBox lonLatBox = new javax.swing.JCheckBox("Coordinates are longitude/latitude (project around site location)", citygmlCoordinatesAreLonLat);
+
+  javax.swing.JPanel heightRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  heightRow.add(new javax.swing.JLabel("Extrude LOD0-footprint-only buildings using height property (e.g. \"measuredHeight\"):"));
+  heightRow.add(heightField);
+
+  javax.swing.JPanel groupRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+  groupRow.add(new javax.swing.JLabel("Group/cycle material by property (e.g. \"gmlId\" for one group per building):"));
+  groupRow.add(groupField);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(new javax.swing.JLabel("Leave either field blank to skip that option."));
+  panel.add(heightRow);
+  panel.add(groupRow);
+  panel.add(lonLatBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "CityGML import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where they were unless this dialog's own OK button is
+  // actually pressed - same reasoning as every dialog above.
+  geojsonHeightProperty = heightField.getText().trim();
+  geojsonGroupProperty = groupField.getText().trim();
+  citygmlCoordinatesAreLonLat = lonLatBox.isSelected();
 
   return true;
 }
@@ -1205,6 +1257,60 @@ void _fileSelected_ImportKml (File selectedFile) {
 
     // Same reason as import_objects_GEOJSON()'s own identical call above -
     // import_objects_KML() adds points/faces/polylines straight into
+    // allPoints/allFaces/allPolylines without ever calling
+    // endScene3DChange() itself.
+    endScene3DChange();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
+  }
+}
+
+void _fileSelected_ImportCitygml (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for why -
+  // set here too (not just in selectFile_ImportCitygml(), above), since
+  // extraCommands.pde's own console IMPORT.CITYGML command can reach this
+  // function directly, with a path already given, bypassing
+  // selectFile_ImportCitygml() and its own dialog entirely. Cleared at each
+  // of this function's own 2 exit points below.
+  isImportingInProgress = true;
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportGeojson()'s own identical
+    // lines above: cancelling the native file chooser itself never
+    // reaches import_objects_CITYGML(), which is otherwise what consumes
+    // citygmlImportShowOptionsDialog - without this, it would stay armed
+    // and pop the options dialog up on the next import_objects_CITYGML()
+    // call regardless of how that one was started.
+    citygmlImportShowOptionsDialog = false;
+    isImportingInProgress = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+    beginScene3DChange();
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_CITYGML(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_GEOJSON()'s own identical call above -
+    // import_objects_CITYGML() adds points/faces/polylines straight into
     // allPoints/allFaces/allPolylines without ever calling
     // endScene3DChange() itself.
     endScene3DChange();

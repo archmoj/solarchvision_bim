@@ -176,6 +176,7 @@ class UI_menuBar {
       "Open",
       ___divider___,
       "Import Commands",
+      "Import CityGML",
       "Import DAE",
       "Import DXF",
       "Import gbXML",
