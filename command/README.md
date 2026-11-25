@@ -367,7 +367,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     footprint; 16 is Scherk's Surface (z = ln(cos(y)/cos(x))) - a genuine
     minimal surface, the classic single tile of Scherk's 1834 doubly-
     periodic surface, flaring steeply upward near the edges of that same
-    square footprint).
+    square footprint; 17 is Dini's Surface - the 14 Tractricoid's own
+    pseudosphere profile wound into a helical twist as it revolves, the
+    same "surface of revolution turned into a spiral" idea as the
+    Helicoid is to a flat ramp).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

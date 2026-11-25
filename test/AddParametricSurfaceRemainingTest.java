@@ -3,11 +3,11 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Create3D.add_ParametricSurface() (create3D.pde) only had n=1 covered
-// (Create3DTest.java's own addParametricSurface_... test) of its 17
+// (Create3DTest.java's own addParametricSurface_... test) of its 18
 // surface types (n=0 Cushion, 1, 2, 3, 4, 5, 6 LOGO, 7 Torus, 8
 // Hyperbolic Disc, 9 Paraboloid Dome, 10 Hyperboloid of Revolution, 11
 // Helicoid, 12 Catenoid, 13 Conoid, 14 Tractricoid, 15 Monkey Saddle, 16
-// Scherk's Surface) - the remaining 16 are covered here, following that same existing
+// Scherk's Surface, 17 Dini's Surface) - the remaining 17 are covered here, following that same existing
 // test's own reasoning exactly (see its header comment): this function
 // has no validity guard at all, and its exact face count depends on
 // floating-point loop-increment behavior this suite doesn't try to
@@ -434,5 +434,56 @@ class AddParametricSurfaceRemainingTest {
       if (Math.abs(v[2]) > 1) foundSteepFlarePoint = true;
     }
     assertTrue(foundSteepFlarePoint, "setup check - this grid should reach at least one steeply-flared point (|z| > 1) near its own edges");
+  }
+
+  @Test
+  void n17_dinisSurface_buildsAGrid_firstCornerIsAtTheRim_twistedByTheta () {
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 17, 0, 0, 20, 20);
+
+    assertSubstantialQuadGrid();
+    // Same first corner as n==14 Tractricoid (u=-1, v=-1 -> theta=-PI,
+    // t=0, r=1, x=-1, y=0, untwisted height=0), plus the twist term:
+    // z = 0 + DINI_TWIST_PITCH * (-PI) = -0.2*PI =~ -0.6283.
+    assertArrayEquals(new float[]{-1, 0, -0.6283f}, app.allVertices[0], 0.01f);
+  }
+
+  @Test
+  void n17_dinisSurface_everyVertexSatisfiesTheTwistedTractrixEquation () {
+    // Same independent re-derivation as n==14 Tractricoid's own test (z =
+    // ln((1+sqrt(1-r^2))/r) - sqrt(1-r^2), using r = sqrt(x^2+y^2) alone),
+    // plus the twist term added back in using theta = atan2(y, x) - also
+    // independent of the function's own forward u-based theta, and safe
+    // from wraparound ambiguity here since theta = u*PI never reaches all
+    // the way to +-PI (u's own loop is exclusive of its end) and atan2's
+    // own principal range is (-PI, PI].
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 17, 0, 0, 20, 20);
+
+    double DINI_TWIST_PITCH = 0.2;
+    double twoPiPitch = DINI_TWIST_PITCH * 2 * Math.PI;
+    boolean foundTwistedPoint = false;
+    for (float[] v : app.allVertices) {
+      double x = v[0];
+      double y = v[1];
+      double r = Math.sqrt(x * x + y * y);
+      double theta = Math.atan2(y, x);
+      double oneMinusRSq = Math.max(0, 1 - r * r);
+      double expectedUntwistedZ = Math.log((1 + Math.sqrt(oneMinusRSq)) / r) - Math.sqrt(oneMinusRSq);
+      double expectedZ = expectedUntwistedZ + DINI_TWIST_PITCH * theta;
+      // atan2's own branch cut sits exactly at theta=+-PI, which is also
+      // this surface's own documented seam (see the n==17 formula's own
+      // comment) - right at that single boundary, a sign-of-zero
+      // difference in sin(-PI) can flip atan2's recovered theta by a
+      // full 2*PI, which (after DINI_TWIST_PITCH) shows up here as a
+      // twoPiPitch-sized jump; resolve it by picking whichever candidate
+      // (as-is, or shifted by one twoPiPitch either way) actually lands
+      // closest to the real z, rather than failing on an ambiguity this
+      // test's own atan2-based reconstruction can't otherwise resolve.
+      double diff = expectedZ - v[2];
+      if (Math.abs(diff - twoPiPitch) < Math.abs(diff)) diff -= twoPiPitch;
+      if (Math.abs(diff + twoPiPitch) < Math.abs(diff)) diff += twoPiPitch;
+      assertEquals(0, diff, 0.001, "every vertex must satisfy the twisted tractrix equation");
+      if (Math.abs(theta) > 0.5) foundTwistedPoint = true;
+    }
+    assertTrue(foundTwistedPoint, "setup check - this grid should contain at least one point where the twist term clearly matters");
   }
 }

@@ -1625,6 +1625,7 @@ class Create3D {
     final float PARABOLOID_DOME_APEX_HEIGHT = PARABOLOID_DOME_DEPTH_SCALE; // n==9 only - set equal to PARABOLOID_DOME_DEPTH_SCALE so the rim (PARABOLOID_DOME_APEX_HEIGHT - PARABOLOID_DOME_DEPTH_SCALE) lands at exactly raw z=0 - that's what sits the dome on the ground by default once rz scales it (0 * any rz is still 0), rather than floating above z=0 by an amount that depends on whatever rz the shape happened to be created with
     final float TRACTRICOID_T_MAX = 2; // n==14 "Tractricoid" only - how far the tractrix parameter t runs before v (-1..1) remapped onto it stops, same "2 reads clearly without the default 36x36 grid getting too degenerate" reasoning as HELICOID_TURNS above - t=0 (v=-1) is the rim (r=1, z=0), t=TRACTRICOID_T_MAX (v=+1) is the narrow end (r=sech(2) =~ 0.266, still comfortably nonzero, not yet the asymptotic point at t=infinity)
     final float SCHERK_DOMAIN_HALF_WIDTH = 0.45 * PI; // n==16 "Scherk's Surface" only - how far u/v's own -1..1 domain is remapped (in radians) before cos() sees it; close to the true pole at PI/2 (for a dramatic, recognizably-Scherk upward flare near the edges) while staying safely short of it (cos(0.45*PI) =~ 0.156, nowhere near the zero that would blow z up to +-infinity)
+    final float DINI_TWIST_PITCH = 0.2; // n==17 "Dini's Surface" only - how much z rises per radian of theta (u*PI) - over the full -PI..PI sweep that's a total rise of 0.2*2*PI =~ 1.26, comparable to the untwisted n==14 Tractricoid's own z range (0..~1.04 at TRACTRICOID_T_MAX), so the helical twist reads clearly without dwarfing the pseudosphere profile it's twisting
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -2009,6 +2010,35 @@ class Create3D {
             x = r * cos(theta);
             y = r * sin(theta);
             z = t - tanhT;
+          } else if (n == 17) { // "Dini's Surface" - n==14 Tractricoid's
+                                 // own pseudosphere profile (same r(t) =
+                                 // sech(t), t - tanh(t) height formula,
+                                 // same theta/t layout) with a helical
+                                 // twist added: z rises by DINI_TWIST_
+                                 // PITCH for every radian of theta, on
+                                 // top of the untwisted height - the same
+                                 // "take a surface of revolution and wind
+                                 // it into a spiral as it goes" idea as
+                                 // n==11 Helicoid is to a flat ramp, just
+                                 // applied to the pseudosphere instead.
+                                 // Unlike every actual surface of
+                                 // revolution here (n==7/10/12), this
+                                 // doesn't close up as theta sweeps a
+                                 // full turn - the twist term leaves a
+                                 // visible seam where z at theta=-PI
+                                 // doesn't match z at theta=+PI, same as
+                                 // Helicoid's own ramp never re-joining
+                                 // itself after one turn.
+            float theta = u * PI;
+            float t = (v + 1) / 2.0 * TRACTRICOID_T_MAX;
+            float et = exp(t);
+            float emt = exp(-t);
+            float coshT = (et + emt) / 2.0;
+            float tanhT = (et - emt) / (et + emt);
+            float r = 1.0 / coshT; // sech(t)
+            x = r * cos(theta);
+            y = r * sin(theta);
+            z = (t - tanhT) + DINI_TWIST_PITCH * theta;
           }
 
 
