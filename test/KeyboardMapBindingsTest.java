@@ -58,9 +58,10 @@ class KeyboardMapBindingsTest {
   @Test
   void describeKey_keyWithNoBindings_returnsEmpty () {
     // "k" used to be this test's example key, but it's now Alt+K for
-    // the "Faces" parent menu (split out of "Modify") - "q" remains
-    // genuinely unbound (neither a direct keyboardMapBindings row nor
-    // any PARENT_SHORTCUTS letter).
+    // the "Make" parent menu (split out of "Modify", named "Faces" at
+    // the time, briefly "Look" after that) - "q" remains genuinely
+    // unbound (neither a direct keyboardMapBindings row nor any
+    // PARENT_SHORTCUTS letter).
     assertTrue(app.keyboardMapDescribeKey("q").isEmpty());
   }
 

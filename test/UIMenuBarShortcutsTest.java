@@ -145,7 +145,7 @@ class UIMenuBarShortcutsTest {
   void parentShortcuts_hasExactlyTwentyOneEntries () {
     // 19 + "G" for the "Guide" menu (uiKeyboardMap.pde's own
     // UIKeyboardMapTest.java covers that one specifically) + "K" for
-    // "Faces", split out of what used to be the single "Modify" menu.
+    // "Make", split out of what used to be the single "Modify" menu.
     assertEquals(21, app.UI_menuBar.PARENT_SHORTCUTS.length);
   }
 
@@ -159,17 +159,15 @@ class UIMenuBarShortcutsTest {
 
   @Test
   void parentShortcuts_everyLetterActuallyAppearsInItsOwnParentName () {
-    // "Faces" is the one documented exception (see PARENT_SHORTCUTS'
-    // own comment): by the time it was split out of "Modify", every
-    // letter actually in "Faces" was already claimed by another tab, so
-    // it got the nearest unclaimed letter ("K") instead of one from its
-    // own name.
-    java.util.Set<String> namelessExceptions = new java.util.HashSet<>(java.util.Arrays.asList(app.UI_menuBar.PARENT_FACES));
-
+    // No documented exceptions left: this tab was "Faces" (split out of
+    // "Modify") when it first got "K" - every letter actually in "Faces"
+    // was already claimed by another tab at the time, so it took the
+    // nearest unclaimed letter instead of one from its own name - but
+    // renaming it (first to "Look", then to "Make") kept the same
+    // letter, which is now actually in the name too.
     for (String[] entry : app.UI_menuBar.PARENT_SHORTCUTS) {
       String letter = entry[0];
       String parentName = entry[1];
-      if (namelessExceptions.contains(parentName)) continue;
       assertTrue(
         parentName.toUpperCase().contains(letter),
         "\"" + letter + "\" is not a letter in \"" + parentName + "\""

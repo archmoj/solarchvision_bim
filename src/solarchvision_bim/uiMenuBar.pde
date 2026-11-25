@@ -147,7 +147,7 @@ class UI_menuBar {
   static final String PARENT_SELECT     = "Select";
   static final String PARENT_SELECTION  = "Selection";
   static final String PARENT_CONVERT    = "Convert";
-  static final String PARENT_FACES      = "Faces";
+  static final String PARENT_MAKE       = "Make";
   static final String PARENT_MODIFY     = "Modify";
   static final String PARENT_MATCH      = "Match";
   static final String PARENT_TRANSFORM  = "Transform";
@@ -567,7 +567,7 @@ class UI_menuBar {
       "TerrainGap >> Group"
     },
     {
-      PARENT_FACES,
+      PARENT_MAKE,
       "Triangle Tessellate",
       "Quad Tessellate",
       "Grid Tessellate",
@@ -807,10 +807,12 @@ class UI_menuBar {
   // a letter that's actually in that parent's own name - several needed
   // a letter other than the first (e.g. Layer -> "Y" since "L" already
   // went to Location, Shade -> "H" since "S" went to Select) to make
-  // that work out. By the time Faces was split out of Modify, every
-  // letter actually in "Faces" was already claimed elsewhere, so it's
-  // the one exception: "K" isn't in the name at all, just the nearest
-  // unclaimed letter left.
+  // that work out. "Make" -> "K" is one of these: when this tab was
+  // split out of "Modify" it was still named "Faces", and every letter
+  // actually in "Faces" was already claimed elsewhere, so it took the
+  // nearest unclaimed letter ("K") instead of one from its own name;
+  // it was later renamed, first to "Look" and then to "Make" - both
+  // names happen to contain "K" too, so the same letter still fits.
   final String[][] PARENT_SHORTCUTS = {
     {"A", PARENT_ABOUT},
     {"F", PARENT_FILE},
@@ -826,7 +828,7 @@ class UI_menuBar {
     {"S", PARENT_SELECT},
     {"I", PARENT_SELECTION},
     {"R", PARENT_CONVERT},
-    {"K", PARENT_FACES},
+    {"K", PARENT_MAKE},
     {"O", PARENT_MODIFY},
     {"M", PARENT_MATCH},
     {"T", PARENT_TRANSFORM},
