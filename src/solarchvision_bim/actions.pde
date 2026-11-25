@@ -355,6 +355,10 @@ void build_allActions() {
     selectFile_ImportGbxml();
   });
 
+  putAction("Import GeoJSON", () -> {
+    selectFile_ImportGeojson();
+  });
+
   putAction("Import GLB", () -> {
     selectFile_ImportGlb();
   });

@@ -312,6 +312,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "+SCALEALLMODEL": return  __$SCALEALLMODEL__(parts);
     case "+TARGETROLLXYZ": return  __$TARGETROLLXYZ__(parts);
     case "GROUP>POLYLINE": return  __GROUP$POLYLINE__(parts);
+    case "IMPORT.GEOJSON": return  __IMPORT_GEOJSON__(parts);
     case "POLYGONEXTRUDE": return  __POLYGONEXTRUDE__(parts);
     case "POLYLINE>GROUP": return  __POLYLINE$GROUP__(parts);
     case "SHADE.VIEWPORT": return  __SHADE_VIEWPORT__(parts);

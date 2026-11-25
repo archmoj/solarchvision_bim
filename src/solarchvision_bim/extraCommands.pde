@@ -164,6 +164,13 @@ String __IMPORT_DAE__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_GEOJSON__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportGeojson(new File(parts[1]));
+    else selectFile_ImportGeojson();
+    return hint;
+}
+
 String __RUN_SCRIPT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));

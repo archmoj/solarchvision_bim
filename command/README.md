@@ -73,6 +73,22 @@ This page has two parts:
     let a minimum index be set, not just a maximum - not available as
     a script argument yet)
 -   `IMPORT.STL`: Imports a `.stl` file
+-   `IMPORT.GEOJSON`: Imports a `.geojson` file. Every coordinate is
+    projected into the project's own local meters around its own site
+    location (`locationLatitude`/`locationLongitude` - the same lat/lon
+    the weather station and sun position already use), via `Functions.
+    convert_lonlat2XY()`. Point/MultiPoint import as bare vertices;
+    LineString/MultiLineString import as Polylines (closed automatically
+    when the file's own coordinates already loop back to their start);
+    Polygon/MultiPolygon import as one flat n-gon Face per polygon (any
+    holes bridged into a single boundary loop, never triangulated) -
+    or, when the **Import GeoJSON** options dialog's own height-property
+    field names a numeric `properties` key a given polygon's Feature
+    actually carries a positive value for, an extruded solid instead. The
+    options dialog's own second field names a `properties` key to
+    group/cycle material by, the GeoJSON-native equivalent of DXF's own
+    per-entity layer; leaving either field blank skips that option (the
+    default: every polygon flat, the whole file one single group)
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

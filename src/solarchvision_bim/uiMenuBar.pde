@@ -179,6 +179,7 @@ class UI_menuBar {
       "Import DAE",
       "Import DXF",
       "Import gbXML",
+      "Import GeoJSON",
       "Import GLB",
       "Import IFC",
       "Import LAS",
