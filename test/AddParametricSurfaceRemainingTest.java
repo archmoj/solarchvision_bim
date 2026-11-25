@@ -36,7 +36,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n0_cushion_buildsAGrid_firstCornerAtUZeroVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // start_u = 0 (n == 0), start_v = -1 always.
@@ -46,7 +46,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n2_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // x=u=-1; y=v=-1; z=0.5*sin(-PI)*sin(-PI) ~= 0.
@@ -55,7 +55,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n3_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // x=u=-1; y=v=-1; z=u*v=1.
@@ -64,7 +64,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n4_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // x=sin(-PI)~=0; y=sin(-PI)~=0; z=cos(-2*PI)=1.
@@ -73,7 +73,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n5_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 5, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 5, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // Same x0/y0/z0 as n=4 at this corner (~0,~0,1), already length 1,
@@ -83,7 +83,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n6_logo_buildsAGrid_firstCornerAtUZeroVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 6, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 6, 0, 0, 20, 20);
 
     assertSubstantialQuadGrid();
     // Same x0/y0/z0 as n=0 at this corner (1,~0,0), already length 1,
@@ -93,7 +93,7 @@ class AddParametricSurfaceRemainingTest {
 
   @Test
   void n7_torus_buildsAGrid_firstCornerAtUMinusOneVMinusOne () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 0.3f);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 0.3f, 20, 20);
 
     assertSubstantialQuadGrid();
     // start_u = start_v = -1 (n==7 isn't in the "start_u = 0" list).

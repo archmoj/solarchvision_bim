@@ -25,6 +25,8 @@ class User3D {
   int creatorPolygonDegree = 6;
   int creatorParametricTypeIndex = 1;
   float creatorTorusRatio = 0.5; // minor:major radius ratio - only read by add_ParametricSurface's own n==7 (Torus) preset
+  int creatorParametricStepsU = 36; // u/v grid resolution - shared across every add_ParametricSurface preset (n=0..7, Torus included), not per-shape
+  int creatorParametricStepsV = 36;
   int creatorPersonTypeIndex = 0;
   int creatorPlantTypeIndex = 0;
 
@@ -114,6 +116,8 @@ class User3D {
     XML_setInt(parent, "creatorPolygonDegree", this.creatorPolygonDegree);
     XML_setInt(parent, "creatorParametricTypeIndex", this.creatorParametricTypeIndex);
     XML_setFloat(parent, "creatorTorusRatio", this.creatorTorusRatio);
+    XML_setInt(parent, "creatorParametricStepsU", this.creatorParametricStepsU);
+    XML_setInt(parent, "creatorParametricStepsV", this.creatorParametricStepsV);
     XML_setInt(parent, "creatorPersonTypeIndex", this.creatorPersonTypeIndex);
     XML_setInt(parent, "creatorPlantTypeIndex", this.creatorPlantTypeIndex);
 
@@ -197,6 +201,8 @@ class User3D {
 
     this.creatorParametricTypeIndex = XML_getInt(parent, "creatorParametricTypeIndex");
     this.creatorTorusRatio = XML_getFloat(parent, "creatorTorusRatio", 0.3); // older save files never had this field - 0 would collapse the tube to nothing, not a useful fallback
+    this.creatorParametricStepsU = XML_getInt(parent, "creatorParametricStepsU", 36); // older save files never had this field - 0 would collapse the whole surface to nothing, not a useful fallback
+    this.creatorParametricStepsV = XML_getInt(parent, "creatorParametricStepsV", 36);
     this.creatorPersonTypeIndex = XML_getInt(parent, "creatorPersonTypeIndex");
     this.creatorPlantTypeIndex = XML_getInt(parent, "creatorPlantTypeIndex");
 

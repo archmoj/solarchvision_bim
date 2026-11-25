@@ -1148,6 +1148,57 @@ class ValueModifier {
     }
     return out;
   }
+  int creatorParametricStepsU (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    // Shared across every add_ParametricSurface preset (n=0..7, Torus
+    // included) - a generic u-direction grid-resolution control, not a
+    // per-shape one, same as creatorTorusRatio above being read only by
+    // n==7 but living as one single field regardless of which preset is
+    // selected.
+    int s1 = 3; //start
+    int s2 = 120; //stop
+    int s3 = 1; //step
+
+    int out = 0;
+    String command = "Creator Parametric Steps U";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (float) User3D.creatorParametricStepsU,
+        (v) -> { User3D.creatorParametricStepsU = int(v); },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorParametricStepsU, s1, s2, s3);
+    }
+    return out;
+  }
+  int creatorParametricStepsV (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    // v-direction counterpart to creatorParametricStepsU above - see its
+    // own comment.
+    int s1 = 3; //start
+    int s2 = 120; //stop
+    int s3 = 1; //step
+
+    int out = 0;
+    String command = "Creator Parametric Steps V";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (float) User3D.creatorParametricStepsV,
+        (v) -> { User3D.creatorParametricStepsV = int(v); },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorParametricStepsV, s1, s2, s3);
+    }
+    return out;
+  }
   int creatorPersonTypeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

@@ -345,10 +345,12 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     parametric formula to use (1-6 are the Dome/Egg-Crate/Saddle/
     Diagonal Wave/Wavy Sphere/Twisted Sphere surfaces; 7 is a Torus).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
-    ignored by every other `n`
+    ignored by every other `n`. `u`/`v` set the surface's own grid
+    resolution (segment counts along each parametric direction) and
+    apply to every `n`
 
 ```
-Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=?
+Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=? u=? v=?
 ```
 
 -   `CUSHION`: Creates a cushion-like object

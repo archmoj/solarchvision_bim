@@ -2135,7 +2135,7 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
             runScriptLine("House1" + houseCommandArgs(x, y, z, rx, ry, rz, h, rot));
           } else if (CreateObject == CREATE.Parametric) {
 
-            runScriptLine("Parametric" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " n=" + User3D.creatorParametricTypeIndex + " k=" + User3D.creatorTorusRatio);
+            runScriptLine("Parametric" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " n=" + User3D.creatorParametricTypeIndex + " k=" + User3D.creatorTorusRatio + " u=" + User3D.creatorParametricStepsU + " v=" + User3D.creatorParametricStepsV);
           }
         } else if (currentObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
           if (CreateObject == CREATE.Person) {

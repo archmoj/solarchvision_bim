@@ -1594,7 +1594,7 @@ class Create3D {
   // produces a self-intersecting "spindle torus" (the tube's own radius
   // would reach past the ring's own center) - a real shape, just not
   // the one this clamp is meant to hand back by default.
-  void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot, float k) {
+  void add_ParametricSurface (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot, float k, int stepsU, int stepsV) {
     beginScene3DChange();
 
 
@@ -1610,9 +1610,6 @@ class Create3D {
 
     float teta = rot * PI / 180.0;
 
-    float stp_u = 0.1;
-    float stp_v = 0.1;
-
     float start_u = -1;
     float start_v = -1;
     float end_u = 1;
@@ -1622,10 +1619,19 @@ class Create3D {
       start_u = 0;
     }
 
-    if ((n == 0) || (n == 4) || (n == 5) || (n == 6) || (n == 7)) {
-      stp_u = 0.05;
-      stp_v = 0.05;
-    }
+    // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
+    // V pair feeding every preset here (n=0..7, Torus included), replacing
+    // this function's own former hardcoded 0.1/0.05 step sizes (which
+    // varied by n, not user-controllable). stepsU/stepsV count GRID CELLS,
+    // not grid lines, so dividing the domain's own span directly by the
+    // count (not count-1) is what makes e.g. stepsU=36 produce exactly 36
+    // quads across the u direction. Clamped to at least 1 - a 0 or
+    // negative step count would either divide by zero or run the loop
+    // below backwards/not at all.
+    int clampedStepsU = max(1, stepsU);
+    int clampedStepsV = max(1, stepsV);
+    float stp_u = (end_u - start_u) / clampedStepsU;
+    float stp_v = (end_v - start_v) / clampedStepsV;
 
     for (float a = start_u; a < end_u; a += stp_u) {
       for (float b = start_v; b < end_v; b += stp_v) {

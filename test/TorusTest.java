@@ -33,7 +33,7 @@ class TorusTest {
   @Test
   void n7_torus_everyVertexStaysWithinTheExpectedRingThickness () {
     float k = 0.4f;
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, k);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, k, 20, 20);
 
     float minDist = Float.MAX_VALUE, maxDist = 0;
     for (float[] v : app.allVertices) {
@@ -51,7 +51,7 @@ class TorusTest {
     // rx/ry apply AFTER the raw (x, y, z) formula, same as every other
     // n value here - so a torus with rx != ry should trace an
     // elliptical, not circular, ring footprint.
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 1, 1, 7, 0, 0.3f);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 1, 1, 7, 0, 0.3f, 20, 20);
 
     float maxX = 0, maxY = 0;
     for (float[] v : app.allVertices) {
@@ -70,7 +70,7 @@ class TorusTest {
     // make the tube's own radius reach past the ring's own center,
     // self-intersecting - add_ParametricSurface()'s own comment on its
     // k parameter documents clamping to (0, 1) for exactly this reason.
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 0, 20, 20);
     float minDistAtZero = Float.MAX_VALUE;
     for (float[] v : app.allVertices) {
       minDistAtZero = Math.min(minDistAtZero, (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]));
@@ -79,7 +79,7 @@ class TorusTest {
 
     app.allVertices = new float[0][];
     app.allFaces.nodes = new int[0][];
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 1.5f);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 7, 0, 1.5f, 20, 20);
     float maxDistAboveOne = 0;
     for (float[] v : app.allVertices) {
       maxDistAboveOne = Math.max(maxDistAboveOne, (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]));
@@ -93,12 +93,12 @@ class TorusTest {
     // non-zero k passed alongside an ordinary n=1..6 preset changes
     // nothing, confirming the new parameter is additive, not a
     // regression risk for the 6 presets that already existed.
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 20, 20);
     float[] withoutK = app.allVertices[0].clone();
 
     app.allVertices = new float[0][];
     app.allFaces.nodes = new int[0][];
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0.9f);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0.9f, 20, 20);
     float[] withK = app.allVertices[0];
 
     assertArrayEquals(withoutK, withK, 0.0001f);

@@ -1745,12 +1745,31 @@ String __PARAMETRIC__ (String[] parts) {
     float dz = getF(p, "dz", 6);
     float r = getF(p, "r", 0);
     float k = getF(p, "k", 0.3); // only n==7 (Torus) reads this - the default (0.3) keeps every older "Parametric n=1..6 ..." script line, saved before k existed, behaving exactly as it always did
+
+    // u/v grid-resolution defaults, chosen per-n to reproduce this
+    // function's own former hardcoded step sizes exactly (0.1 for n=1,2,3;
+    // 0.05 for n=0,4,5,6,7 - see add_ParametricSurface's own former
+    // stp_u/stp_v logic, now moved to the caller) - so every older
+    // "Parametric n=... ..." script line, saved before u/v existed, keeps
+    // behaving exactly as it always did. n=0/6's own u domain is only
+    // half as wide as every other n's (start_u=0 instead of -1, add_
+    // ParametricSurface's own "if ((n == 0) || (n == 6)) start_u = 0"
+    // line), hence the lower defaultStepsU specifically for those two.
+    int defaultStepsU = 20;
+    int defaultStepsV = 20;
+    if ((n == 0) || (n == 4) || (n == 5) || (n == 6) || (n == 7)) {
+      defaultStepsV = 40;
+      defaultStepsU = ((n == 0) || (n == 6)) ? 20 : 40;
+    }
+    int u = getI(p, "u", defaultStepsU);
+    int v = getI(p, "v", defaultStepsV);
+
     if ((dx != 0) && (dy != 0) && (dz != 0)) {
-        Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r, k);
+        Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r, k, u, v);
     }
     }
     else {
-    hint = "Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=?";
+    hint = "Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=? k=? u=? v=?";
     UI_setTo_Create_Parametric(0);
     }
     return hint;

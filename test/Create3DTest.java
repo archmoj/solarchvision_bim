@@ -509,7 +509,7 @@ class Create3DTest {
 
   @Test
   void addParametricSurface_buildsAGridOfQuadsFromTheFirstCornerOnward () {
-    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0);
+    app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 20, 20);
 
     assertTrue(app.allFaces.nodes.length > 100); // a substantial grid, not a handful of faces
     for (int[] face : app.allFaces.nodes) assertEquals(4, face.length);

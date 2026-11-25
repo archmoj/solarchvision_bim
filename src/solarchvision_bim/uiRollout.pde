@@ -227,6 +227,8 @@ class UI_rollout {
     vm.creatorPolygonDegree(0);
     vm.creatorParametricTypeIndex(0);
     vm.creatorTorusRatio(0);
+    vm.creatorParametricStepsU(0);
+    vm.creatorParametricStepsV(0);
     vm.creatorPersonTypeIndex(0);
     vm.creatorPlantTypeIndex(0);
     vm.modifierOpeningDepth(0);
@@ -624,6 +626,8 @@ class UI_rollout {
         User3D.creatorPolygonDegree = vm.creatorPolygonDegree(1);
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
         User3D.creatorTorusRatio = vm.creatorTorusRatio(1);
+        User3D.creatorParametricStepsU = vm.creatorParametricStepsU(1);
+        User3D.creatorParametricStepsV = vm.creatorParametricStepsV(1);
       }
 
       if (this.child == CHILD_GEOMETRY_FIGURE) {

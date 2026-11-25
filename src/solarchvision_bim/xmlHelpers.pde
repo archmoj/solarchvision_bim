@@ -43,6 +43,18 @@ int XML_getInt(XML xml, String tag) {
  return result;
 }
 
+// Same as XML_getInt(xml, tag) above, but falls back to defaultValue
+// when the attribute is missing entirely - wraps XML's own
+// getInt(String, int) overload, rather than its bare single-arg one
+// (which silently defaults a missing attribute to 0) - same reasoning
+// as XML_getFloat's own 3-arg overload above.
+int XML_getInt(XML xml, String tag, int defaultValue) {
+ if (diag_XML_input) print(tag + "=");
+ int result = xml.getInt(tag, defaultValue);
+ if (diag_XML_input) println(result);
+ return result;
+}
+
 Boolean XML_getBoolean(XML xml, String tag) {
  if (diag_XML_input) print(tag + "=");
  Boolean result = Boolean.parseBoolean(xml.getString(tag));
