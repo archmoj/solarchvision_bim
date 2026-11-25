@@ -103,6 +103,21 @@ This page has two parts:
     formats behave identically beyond that one decoding step. An
     out-of-range arc index is skipped (noted in the same end-of-import
     skipped-item count `IMPORT.GEOJSON` already prints), not an error
+-   `IMPORT.KML`: Imports a `.kml` file (plain, already-unzipped KML only -
+    no KMZ support), also built directly on top of `IMPORT.GEOJSON`'s own
+    geometry handling and sharing the same **Import GeoJSON**/**Import
+    TopoJSON**/**Import KML** options dialog. Every `<Placemark>` anywhere
+    in the document (any nesting of `<Document>`/`<Folder>`) is found and
+    imported: `<Point>` as a bare vertex, `<LineString>`/a bare
+    `<LinearRing>` as a Polyline (closed automatically when its own
+    coordinates already loop back to their start), `<Polygon>` as one flat
+    n-gon Face (`<outerBoundaryIs>` the boundary, every `<innerBoundaryIs>`
+    a hole, bridged the same way `IMPORT.GEOJSON`'s own holes are - or
+    extruded, under the same height-property option, reading a numeric
+    value from the Placemark's own `<ExtendedData>`/`<SchemaData>` instead
+    of a GeoJSON Feature's "properties"), and `<MultiGeometry>` recursively.
+    A Placemark with no recognized geometry (a `<Model>`, `<NetworkLink>`,
+    a `<Style>`-only entry, ...) is skipped, not an error
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

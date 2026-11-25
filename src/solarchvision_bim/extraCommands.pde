@@ -178,6 +178,13 @@ String __IMPORT_TOPOJSON__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_KML__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportKml(new File(parts[1]));
+    else selectFile_ImportKml();
+    return hint;
+}
+
 String __RUN_SCRIPT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));

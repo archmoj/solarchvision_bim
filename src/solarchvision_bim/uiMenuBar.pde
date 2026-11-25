@@ -182,6 +182,7 @@ class UI_menuBar {
       "Import GeoJSON",
       "Import GLB",
       "Import IFC",
+      "Import KML",
       "Import LAS",
       "Import OBJ",
       "Import PLY",

@@ -172,12 +172,13 @@ SOLARCHVISION-BIM can use existing project geometry as well as geometry created 
 | **STL** (`.stl`) | Triangulated surface and solid-mesh geometry |
 | **GeoJSON** (`.geojson`) | GIS/mapping geometry exchange (points, lines, polygons, optionally extruded) |
 | **TopoJSON** (`.topojson`) | Topology-encoded GIS/mapping geometry exchange (same geometry as GeoJSON, shared/quantized arcs) |
+| **KML** (`.kml`) | GIS/mapping geometry exchange (same geometry as GeoJSON/TopoJSON, XML-based; KMZ not supported) |
 
 Import behavior and the geometry or attributes retained depend on the source format and the contents of the file. Check the imported result before using it for measurement or analysis. A successful geometry import does not necessarily mean that all source BIM properties, classifications, materials, or relationships are preserved.
 
-### GeoJSON / TopoJSON workflow
+### GeoJSON / TopoJSON / KML workflow
 
-GeoJSON and TopoJSON points/lines/polygons are projected into the project's own local coordinate space around its site location (the same latitude/longitude used for the weather station and sun position), not a separate geodetic coordinate system. Polygons import as flat faces by default; the **Import GeoJSON**/**Import TopoJSON** options dialog (shared between the two formats) can name a feature property to extrude polygons by (as a height) and a feature property to group/cycle material by, each optional. TopoJSON's own topology (shared/quantized arcs) is resolved back into the same plain point/line/polygon geometry GeoJSON carries directly before either import option is applied, so the two formats behave identically beyond that decoding step.
+GeoJSON, TopoJSON, and KML points/lines/polygons are all projected into the project's own local coordinate space around its site location (the same latitude/longitude used for the weather station and sun position), not a separate geodetic coordinate system. Polygons import as flat faces by default; the **Import GeoJSON**/**Import TopoJSON**/**Import KML** options dialog (shared across all three formats) can name a feature property to extrude polygons by (as a height) and a feature property to group/cycle material by, each optional. TopoJSON's own topology (shared/quantized arcs) and KML's own XML structure (a Placemark's `<ExtendedData>`/`<SchemaData>` standing in for a GeoJSON Feature's "properties") are both resolved back into the same plain point/line/polygon geometry GeoJSON carries directly before either import option is applied, so all three formats behave identically beyond their own decoding step.
 
 ### LAS point-cloud workflow
 
@@ -201,6 +202,7 @@ IMPORT.LAS
 IMPORT.STL
 IMPORT.GEOJSON
 IMPORT.TOPOJSON
+IMPORT.KML
 ```
 
 See the [command reference](command/README.md) for command syntax and details.
