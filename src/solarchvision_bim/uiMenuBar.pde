@@ -644,6 +644,7 @@ class UI_menuBar {
       "Optimize Faces",
       "Auto-Normal Selected Faces",
       "Force Triangulate Selected Faces",
+      "Zigzag Selected Faces",
       "Merge Coplanar Faces"
     },
     {

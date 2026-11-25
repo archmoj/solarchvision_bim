@@ -2411,6 +2411,10 @@ void build_allActions() {
     Modify3D.forceTriangulateFaces_Selection();
   });
 
+  putAction("Zigzag Selected Faces", () -> {
+    Modify3D.zigzagFaces_Selection();
+  });
+
   putAction("Insert Corner Openings", () -> {
     Modify3D.insertCornerOpenings_Selection();
   });

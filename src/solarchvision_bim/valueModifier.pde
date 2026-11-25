@@ -1792,6 +1792,28 @@ class ValueModifier {
     }
     return out;
   }
+  float modifierZigzagBumpAmount (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    float s1 = -2; //start - a FRACTION of each vertex's own local quad size, not a world-unit offset (see zigzagFaces_Selection()'s own comment), so the range only needs to stay sane multiples of "one local quad", not the model's absolute scale
+    float s2 = 2; //stop
+    float s3 = 0.01; //step
+
+    float out = 0;
+    String command = "Modifier Zigzag Bump Amount";
+    if (created == 0) {
+      putValueAction(command,
+        () -> User3D.modifierZigzagBumpAmount,
+        (v) -> { User3D.modifierZigzagBumpAmount = v; },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.modifierZigzagBumpAmount, s1, s2, s3);
+    }
+    return out;
+  }
   float softSelectionFalloffPower (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

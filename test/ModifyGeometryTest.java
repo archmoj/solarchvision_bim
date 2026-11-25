@@ -1558,6 +1558,448 @@ class ModifyGeometryTest {
     assertFalse(app.Modify3D.isCoplanarFace(2, refNormal, refPoint), "parallel but on a different plane");
   }
 
+  // --- zigzagFaces_Selection (a full integration test) ------------------
+  //
+  // A flat 2x2 grid of quads (a 3x3 grid of vertices, facing +Z), index
+  // layout v(p,q) = p*3+q for p,q in 0..2:
+  //
+  //   2---5---8
+  //   |   |   |
+  //   1---4---7
+  //   |   |   |
+  //   0---3---6
+  //
+  // face0={0,3,4,1}, face1={3,6,7,4}, face2={1,4,5,2}, face3={4,7,8,5} -
+  // this is the exact "2x2 grid" case the feature's own design was
+  // confirmed against. The diagonal choice comes from a checkerboard
+  // 2-coloring of the mesh's own VERTICES (not of the quads - see
+  // zigzagFaces_Selection()'s own comment for why coloring the quads
+  // directly isn't rotation-safe once a selection nests Quad
+  // Tessellate's own pinwheel output inside itself): each quad connects
+  // its own A-C pair whenever A's vertex color is 0, otherwise its own
+  // B-D pair. For this plain, non-rotated grid that colors the 4 true
+  // corners (0, 6, 2, 8) and the shared center (4) one way and the 4
+  // edge-midpoints (1, 3, 5, 7) the other, and every quad ends up
+  // connecting one true-corner-or-center vertex to the OTHER
+  // true-corner-or-center vertex it shares a diagonal with - which
+  // means the corners and center are the diagonals' own endpoints
+  // (hubs, left in place) and the 4 edge-midpoints are the untouched
+  // ones that actually get bumped. Each processed quad's own UNUSED
+  // diagonal still links its two untouched (edge-midpoint) corners -
+  // (1,3) from face0, (3,7) from face1, (1,5) from face2, (5,7) from
+  // face3 - a 4-cycle whose own 2-coloring puts 1 and 7 in one half and
+  // 3 and 5 in the other, so those two pairs bump in opposite
+  // directions from each other.
+  @Test
+  void zigzag_2x2FlatGrid_bumpsCornersAndCenter_leavesEdgeMidpointsAsHubsInPlace () {
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {0, 1, 0}, {0, 2, 0},
+      {1, 0, 0}, {1, 1, 0}, {1, 2, 0},
+      {2, 0, 0}, {2, 1, 0}, {2, 2, 0}
+    };
+    app.allFaces.nodes = new int[][]{{0, 3, 4, 1}, {3, 6, 7, 4}, {1, 4, 5, 2}, {4, 7, 8, 5}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    // 4 quads -> 8 triangles, no new vertices (every bump moves an
+    // EXISTING point, it never creates one).
+    assertEquals(8, app.allFaces.nodes.length);
+    assertEquals(9, app.allVertices.length);
+
+    // Each original quad is replaced in place (spliceFaceWithNewFaces()
+    // keeps the first new face at the replaced face's own old index),
+    // so face0's pair lands at [0,1], face1's at [2,3], face2's at
+    // [4,5], face3's at [6,7] - each one shifted up by however many
+    // OTHER, smaller-original-id quads were also replaced ahead of it.
+    assertArrayEquals(new int[]{0, 3, 4}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{4, 1, 0}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{6, 7, 4}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{4, 3, 6}, app.allFaces.nodes[3]);
+    assertArrayEquals(new int[]{4, 5, 2}, app.allFaces.nodes[4]);
+    assertArrayEquals(new int[]{2, 1, 4}, app.allFaces.nodes[5]);
+    assertArrayEquals(new int[]{4, 7, 8}, app.allFaces.nodes[6]);
+    assertArrayEquals(new int[]{8, 5, 4}, app.allFaces.nodes[7]);
+
+    // The one group's own face range grew by 4 (one net extra face per
+    // replaced quad).
+    assertArrayEquals(new int[]{0, 7}, app.allGroups.Faces[0]);
+
+    // Every new triangle ends up selected.
+    assertArrayEquals(new int[]{0, 1, 2, 3, 4, 5, 6, 7}, app.Select3D.faceSelection);
+
+    // The 4 true corners and the shared center vertex each end up an
+    // endpoint of some chosen diagonal (a "hub" - see this test's own
+    // header comment above) and so are left exactly where they started.
+    for (int v : new int[]{0, 2, 6, 8, 4}) {
+      assertEquals(0f, app.allVertices[v][2], 0.0001f, "vertex " + v + " should NOT have been bumped");
+    }
+
+    // The 4 edge-midpoints never end up a diagonal's endpoint, so all 4
+    // get bumped along their averaged (flat, +Z) normal - but the
+    // 4-cycle's own 2-coloring (see header comment) puts 1 and 7 in the
+    // opposite half from 3 and 5, so those two pairs bump oppositely.
+    for (int v : new int[]{1, 7}) {
+      assertEquals(0.25f, app.allVertices[v][2], 0.0001f, "edge-midpoint " + v + " should have been bumped +0.25");
+    }
+    for (int v : new int[]{3, 5}) {
+      assertEquals(-0.25f, app.allVertices[v][2], 0.0001f, "edge-midpoint " + v + " should have been bumped the OTHER way, -0.25");
+    }
+
+    // The X/Y of every vertex is untouched either way - only Z (the
+    // flat grid's own normal direction) ever moves.
+    float[][] expectedXY = {{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};
+    for (int v = 0; v < 9; v++) {
+      assertEquals(expectedXY[v][0], app.allVertices[v][0], 0.0001f);
+      assertEquals(expectedXY[v][1], app.allVertices[v][1], 0.0001f);
+    }
+  }
+
+  @Test
+  void zigzag_negativeBumpAmount_movesTheUntouchedVertexTheOtherWay () {
+    // A single flat quad, facing +Z - a lone quad is its own,
+    // single-cell "cluster," so its own vertex-coloring BFS always
+    // starts on one of its 4 corners (see zigzagFaces_Selection()'s own
+    // comment on why the checkerboard is colored on vertices, not
+    // quads) - for this exact vertex order that colors A and C one way
+    // and B and D the other, and the quad connects its own A-C pair
+    // whenever A's own color is 0, which it is here - leaving corners B
+    // and D untouched.
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}}; // A, B, C, D
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = -0.4f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    assertEquals(2, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]); // A,B,C - the A-C diagonal
+    assertArrayEquals(new int[]{2, 3, 0}, app.allFaces.nodes[1]); // C,D,A
+
+    // B (vertex 1) and D (vertex 3) are untouched by the A-C diagonal,
+    // so they're the ones bumped - but they're also each other's only
+    // "other diagonal" partner (the unused B-D diagonal links exactly
+    // them), so they land in opposite halves and get opposite signs:
+    // B gets the plain (negative) bump amount, D gets it inverted.
+    assertEquals(-0.4f, app.allVertices[1][2], 0.0001f);
+    assertEquals(0.4f, app.allVertices[3][2], 0.0001f);
+
+    // A (0) and C (2), the diagonal's own endpoints, are left in place.
+    assertEquals(0f, app.allVertices[0][2], 0.0001f);
+    assertEquals(0f, app.allVertices[2][2], 0.0001f);
+  }
+
+  @Test
+  void zigzag_bumpScalesWithLocalQuadSize_notAFlatWorldUnitOffset () {
+    // The exact same single flat quad as the negative-bump test above,
+    // just scaled down to a tiny 0.01-unit square - a fixed, flat
+    // world-unit bump (the ORIGINAL behavior) would have displaced
+    // vertices by a whole 25x the quad's own size, folding/overlapping
+    // the surface into what reads as disconnected pieces rather than a
+    // gentle zigzag relief. The move must come out proportional to the
+    // quad's own edge length instead.
+    float s = 0.01f;
+    app.allVertices = new float[][]{{0, 0, 0}, {s, 0, 0}, {s, s, 0}, {0, s, 0}}; // A, B, C, D
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    // B and D (the untouched corners, with this same vertex-coloring -
+    // see the negative-bump test above) move by 0.25 * (this quad's
+    // own edge length, s) - not by a flat 0.25 world units.
+    assertEquals(0.25f * s, app.allVertices[1][2], 0.0001f * s);
+    assertEquals(-0.25f * s, app.allVertices[3][2], 0.0001f * s);
+  }
+
+  @Test
+  void zigzag_nonQuadFaceInSelection_isLeftCompletelyUntouched () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}}; // a triangle, not a quad
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+    for (float[] p : app.allVertices) assertEquals(0f, p[2], 0.0001f, "a triangle isn't a quad - zigzag must leave it alone");
+  }
+
+  @Test
+  void zigzag_unweldedGrid_movesEveryDuplicateOfASharedCornerTogether () {
+    // The same flat 2x2 grid as zigzag_2x2FlatGrid_... above, but built
+    // the way every shape generator in this app actually builds one
+    // (add_ParametricSurface, for one): each of the 4 quads gets its
+    // OWN private 4 vertices via its own allPoints.create() calls, so
+    // two quads that are geometric neighbors never actually share a
+    // raw vertex index, even though their matching corners sit at the
+    // exact same position. This is the real "completely fragmented on
+    // a Hyperboloid of Revolution" bug - a position-unaware version of
+    // this modifier bumps only ONE of a shared corner's several raw
+    // copies, leaving its neighbors' copies behind and tearing the
+    // surface open at every quad boundary. Grid layout and expected
+    // phase/inversion choice are identical to the welded test above;
+    // only the vertex-sharing differs.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, // Q0: A,B,C,D = v0..v3
+      {1, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}, // Q1: A,B,C,D = v4..v7
+      {0, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}, // Q2: A,B,C,D = v8..v11
+      {1, 1, 0}, {2, 1, 0}, {2, 2, 0}, {1, 2, 0}, // Q3: A,B,C,D = v12..v15
+    };
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    assertEquals(8, app.allFaces.nodes.length, "4 quads, each split into 2 triangles");
+
+    // The 4 outer corners - each a "true corner" owned by only one
+    // quad - end up a diagonal's own endpoint (a "hub", see the welded
+    // test's own header comment for why this grid's vertex-coloring
+    // puts the true corners and the center on the "hub" side and the
+    // edge-midpoints on the "bumped" side), so each is left at z=0.
+    assertEquals(0f, app.allVertices[0][2], 0.0001f, "Q0's own copy of corner (0,0)");
+    assertEquals(0f, app.allVertices[5][2], 0.0001f, "Q1's own copy of corner (2,0)");
+    assertEquals(0f, app.allVertices[11][2], 0.0001f, "Q2's own copy of corner (0,2)");
+    assertEquals(0f, app.allVertices[14][2], 0.0001f, "Q3's own copy of corner (2,2)");
+
+    // The shared center position (1,1) is duplicated 4 times - once
+    // per quad (v2, v7, v9, v12) - and is also a hub, left at z=0. This
+    // is still the actual regression check: every one of its 4 raw
+    // copies must move IDENTICALLY (here, not at all), or the 4 quads
+    // pull apart at that corner instead of staying welded in
+    // appearance.
+    float[] centerCopies = { app.allVertices[2][2], app.allVertices[7][2], app.allVertices[9][2], app.allVertices[12][2] };
+    for (float z : centerCopies) assertEquals(0f, z, 0.0001f, "every one of the center position's 4 unwelded copies must move identically");
+
+    // The 4 edge-midpoint positions - each shared by exactly 2 quads -
+    // are the ones actually bumped here (unit grid, so the
+    // local-edge-length scale factor is exactly 1), and that holds
+    // identically for BOTH of each one's duplicate copies. The
+    // 4-midpoint cycle's own 2-coloring (see the welded test's header
+    // comment) puts (1,0)&(1,2) in one half and (0,1)&(2,1) in the
+    // other, so those two pairs bump oppositely.
+    float[] pos10 = { app.allVertices[1][2], app.allVertices[4][2] }; // position (1,0): Q0's B, Q1's A
+    float[] pos01 = { app.allVertices[3][2], app.allVertices[8][2] }; // position (0,1): Q0's D, Q2's A
+    float[] pos21 = { app.allVertices[6][2], app.allVertices[13][2] }; // position (2,1): Q1's C, Q3's B
+    float[] pos12 = { app.allVertices[10][2], app.allVertices[15][2] }; // position (1,2): Q2's C, Q3's D
+    for (float z : pos10) assertEquals(0.25f, z, 0.0001f, "both unwelded copies of position (1,0) must move identically");
+    for (float z : pos12) assertEquals(0.25f, z, 0.0001f, "both unwelded copies of position (1,2) must move identically");
+    for (float z : pos01) assertEquals(-0.25f, z, 0.0001f, "both unwelded copies of position (0,1) must move identically, the other way");
+    for (float z : pos21) assertEquals(-0.25f, z, 0.0001f, "both unwelded copies of position (2,1) must move identically, the other way");
+  }
+
+  @Test
+  void zigzag_tessellatedPlanePinwheel_alternatesTheDiagonalAroundTheSharedCenter () {
+    // The exact real-world repro that exposed the "no real alternation"
+    // bug: add a plane (one quad) and apply Quad Tessellate once -
+    // tessellateRectangular_Selection() replaces it with 4 welded
+    // sub-quads fanned around one shared center, one per original
+    // corner:
+    //
+    //   D--7--C
+    //   |  |  |
+    //   0--3--5
+    //   |  |  |
+    //   A--2--B
+    //
+    // face0 (near A) = {0,1,2,3}, face1 (near B) = {2,4,5,3},
+    // face2 (near C) = {5,6,7,3}, face3 (near D) = {7,8,0,3} - a
+    // 4-cycle (each face shares an edge with exactly 2 others, all
+    // through the center, vertex 3). Each sector's own stored corner
+    // order is rotated relative to its neighbors' (sector-near-A's own
+    // "A" sits at its own sector's edge-midpoint-of-D-A; sector-near-B's
+    // own "A" sits at ITS sector's edge-midpoint-of-A-B, one quarter-
+    // turn further around), which is exactly why a rule that compares
+    // one quad's own A/B/C/D labels against its NEIGHBOR's (whether by
+    // a 2-way vote over "true corners left untouched" or by a fixed
+    // quad-level BFS color) can end up choosing the SAME geometric
+    // diagonal for every quad here instead of alternating. Coloring the
+    // mesh's own VERTICES instead - and picking each quad's own A-C vs
+    // B-D purely from its own A's resulting color (see
+    // zigzagFaces_Selection()'s own comment) - never compares one
+    // quad's labels against another's, so this rotation can't throw it
+    // off: every one of this pinwheel's 4 edge-midpoints (0, 2, 5, 7)
+    // ends up one color, and the center (3) and all 4 real corners (1,
+    // 4, 6, 8) end up the other, regardless of each quad's own
+    // rotation.
+    app.allVertices = new float[][]{
+      {0, 0.5f, 0}, // 0: midpoint of D-A
+      {0, 0, 0},    // 1: A
+      {0.5f, 0, 0}, // 2: midpoint of A-B
+      {0.5f, 0.5f, 0}, // 3: center
+      {1, 0, 0},    // 4: B
+      {1, 0.5f, 0}, // 5: midpoint of B-C
+      {1, 1, 0},    // 6: C
+      {0.5f, 1, 0}, // 7: midpoint of C-D
+      {0, 1, 0},    // 8: D
+    };
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}, {2, 4, 5, 3}, {5, 6, 7, 3}, {7, 8, 0, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.zigzagFaces_Selection();
+
+    assertEquals(8, app.allFaces.nodes.length, "4 quads, each split into 2 triangles");
+
+    // Every face's own "A" corner lands on the edge-midpoint color, so
+    // every face connects its own A-C pair: ABC then CDA, each time.
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{2, 3, 0}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{2, 4, 5}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{5, 3, 2}, app.allFaces.nodes[3]);
+    assertArrayEquals(new int[]{5, 6, 7}, app.allFaces.nodes[4]);
+    assertArrayEquals(new int[]{7, 3, 5}, app.allFaces.nodes[5]);
+    assertArrayEquals(new int[]{7, 8, 0}, app.allFaces.nodes[6]);
+    assertArrayEquals(new int[]{0, 3, 7}, app.allFaces.nodes[7]);
+
+    // Every face's own A-C pair is a pair of edge-midpoints, so the 4
+    // edge-midpoints (0, 2, 5, 7) are the diagonals' own endpoints -
+    // hubs, left exactly in place.
+    for (int v : new int[]{0, 2, 5, 7}) {
+      assertEquals(0f, app.allVertices[v][2], 0.0001f, "edge-midpoint " + v + " is a hub, left in place");
+    }
+
+    // Every face's own UNTOUCHED B-D pair is the center plus one real
+    // corner, so the center (3) and all 4 real corners (1, 4, 6, 8) are
+    // the ones actually bumped - each by 0.25 * 0.5 (this pinwheel's
+    // own local edge length, half the original plane's own unit size,
+    // since Quad Tessellate halves it). Each quad's own unused B-D
+    // diagonal links the center to exactly one real corner (never two
+    // real corners to each other), so the center ends up alone in one
+    // half of that graph's own 2-coloring and all 4 real corners
+    // together in the other, bumping oppositely.
+    assertEquals(-0.125f, app.allVertices[3][2], 0.0001f, "the shared center is bumped");
+    for (int v : new int[]{1, 4, 6, 8}) {
+      assertEquals(0.125f, app.allVertices[v][2], 0.0001f, "real corner " + v + " is bumped the other way from the center");
+    }
+  }
+
+  @Test
+  void zigzag_nestedQuadTessellateTwice_stillFormsAGenuineCheckerboard () {
+    // The exact real-world repro reported against this feature: start
+    // with one plane, apply Quad Tessellate (replacing it with a
+    // 4-quad pinwheel), then apply Quad Tessellate AGAIN to all 4 of
+    // those sub-quads (nesting a further pinwheel inside each sector) -
+    // the actual workflow confirmed when this was reported as "all the
+    // diagonals are in one direction" rather than the expected 45-
+    // degree checkerboard. Each of the resulting 16 sub-quads is a
+    // true axis-aligned unit square (Quad Tessellate's own pinwheel
+    // sectors are always axis-aligned squares when the parent is one -
+    // see zigzagFaces_Selection()'s own comment on why that still
+    // doesn't make every sector's own stored corner order line up with
+    // its neighbors'), tiling a clean 4x4 grid over the original 4x4
+    // plane - so this checks the diagonal choice is a genuine
+    // checkerboard (alternating in BOTH grid directions, diagonal
+    // neighbors sharing the same choice) across that full 4x4 grid,
+    // not just within a single pinwheel's own 4 sectors.
+    app.allVertices = new float[][]{{0, 0, 0}, {4, 0, 0}, {4, 4, 0}, {0, 4, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.Select3D.faceSelection = new int[]{0};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateRectangular_Selection();
+    app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
+    app.Modify3D.tessellateRectangular_Selection();
+
+    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.Modify3D.zigzagFaces_Selection();
+
+    assertEquals(32, app.allFaces.nodes.length, "16 unit-square sub-quads, each split into 2 triangles");
+
+    // "/" means this unit cell's own diagonal connects its bottom-left
+    // corner to its top-right (so its own (col+row) parity determines
+    // which of the two diagonal types it should be, for a genuine
+    // checkerboard); "\" means bottom-right to top-left.
+    boolean[][] isSlashByColRow = new boolean[4][4]; // [col][row]
+    boolean[][] seen = new boolean[4][4];
+
+    for (int i = 0; i < app.allFaces.nodes.length; i += 2) {
+      int[] t1 = app.allFaces.nodes[i];
+      int[] t2 = app.allFaces.nodes[i + 1];
+
+      // this unit cell's own 4 corners/bounds, from every vertex across
+      // both of its triangles.
+      float minX = Float.MAX_VALUE, maxX = -Float.MAX_VALUE, minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+      for (int[] tri : new int[][]{t1, t2}) {
+        for (int idx : tri) {
+          float[] p = app.allVertices[idx];
+          minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]);
+          minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+        }
+      }
+      int col = Math.round((minX + maxX) / 2 - 0.5f);
+      int row = Math.round((minY + maxY) / 2 - 0.5f);
+
+      // the chosen diagonal is whichever 2 vertices t1 and t2 share.
+      ArrayList<Integer> shared = new ArrayList<Integer>();
+      for (int a : t1) for (int b : t2) if (a == b) shared.add(a);
+      assertEquals(2, shared.size(), "the two triangles from one split quad must share exactly one edge (the diagonal)");
+      float[] d0 = app.allVertices[shared.get(0)];
+      float[] d1 = app.allVertices[shared.get(1)];
+
+      // "/" (bottom-left to top-right) iff the diagonal's two endpoints
+      // don't have matching min/max X with matching min/max Y - i.e.
+      // one endpoint is at (minX,minY) and the other at (maxX,maxY).
+      boolean isSlash = (d0[0] < d1[0]) == (d0[1] < d1[1]);
+
+      isSlashByColRow[col][row] = isSlash;
+      seen[col][row] = true;
+    }
+
+    for (int col = 0; col < 4; col++) {
+      for (int row = 0; row < 4; row++) {
+        assertTrue(seen[col][row], "every one of the 16 unit cells (col=" + col + ",row=" + row + ") should have been found");
+        boolean expectedSlash = ((col + row) % 2 == 0);
+        assertEquals(expectedSlash, isSlashByColRow[col][row],
+          "cell (col=" + col + ",row=" + row + ") should use the '" + (expectedSlash ? "/" : "\\") + "' diagonal to form a genuine checkerboard");
+      }
+    }
+  }
+
   // --- mergeCoplanarFaces_Selection (a full integration test) -----------
 
   @Test

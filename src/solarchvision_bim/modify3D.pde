@@ -3776,6 +3776,464 @@ class Modify3D {
     endScene3DChange();
   }
 
+  // "Zigzag": re-triangulates every selected QUAD face (triangles and
+  // other n-gons in the selection are left alone, same as Force
+  // Triangulate's own "n-gon only" scope above) using one of the two
+  // 4-vertex diagonal splits - ABC+CDA (the A-C diagonal) or BCD+DAB
+  // (the B-D diagonal) - alternating between the two across the
+  // selection so each quad gets the OPPOSITE diagonal from every quad
+  // it shares an edge with (a checkerboard pattern), then bumps every
+  // vertex that ends up on NEITHER chosen diagonal (so keeps its
+  // original, lower edge count) out along its own averaged vertex
+  // normal - producing a surface that self-shades. A vertex that IS an
+  // endpoint of some chosen diagonal (a "hub", gaining extra edges
+  // there) is left exactly where it was. Half of the bumped vertices
+  // have that bump INVERTED (so the surface actually peaks and dips,
+  // not just rises as one uniformly offset plane) - found the same
+  // way: every quad's own UNUSED diagonal still links its two
+  // untouched corners, and flood-filling THAT graph into its own
+  // 2-coloring is what decides which half gets the inverted bump. The
+  // move itself is a FRACTION of that vertex's own local quad size
+  // (its own adjacent processed quads' average edge length), not a
+  // flat world-unit offset - a fixed offset would dwarf a dense or
+  // small-scale grid's own quads and tear the surface into what looks
+  // like disconnected, overlapping pieces rather than a gentle relief.
+  //
+  // The alternation is found by flood-filling each edge-connected
+  // cluster of selected quads (within one group at a time, same
+  // per-group scoping mergeCoplanarFaces_Selection() above uses) into
+  // a 2-coloring - any two quads sharing an edge always land in
+  // opposite colors, the same structure a rectangular grid's own
+  // checkerboard has - and the diagonal choice is a FIXED function of
+  // that color: whichever quad the flood-fill started from (color 0)
+  // always uses the B-D diagonal (DAB+BCD), and every quad colored 1 -
+  // its immediate edge-neighbors, and every quad an even BFS-distance
+  // further out again - always uses the A-C diagonal (ABC+CDA). This
+  // used to be a vote (whichever of the two choices left more of the
+  // cluster's own single-quad-owned "true corner" vertices off of any
+  // diagonal), but that heuristic ties on anything but a plain
+  // rectangular grid - a single quad tessellated into its own 4-quad
+  // "pinwheel" around one shared center ties 2-vs-2, for instance -
+  // and a tie silently fell back to an arbitrary default, which could
+  // leave a whole selection using the SAME diagonal throughout instead
+  // of actually alternating. The checkerboard coloring itself still
+  // guarantees every pair of edge-adjacent quads gets opposite colors
+  // regardless of cluster shape, so fixing the choice to that color
+  // alone is what makes the diagonal alternate in both grid directions,
+  // with nothing left to a vote or a tie-break.
+  // Every raw vertex index at (or within zigzagPosKey()'s own rounding
+  // of) this position, rounded to resolve floating-point noise while
+  // keeping genuinely distinct vertices distinct - every shape this
+  // app generates (create3D.pde's own add_ParametricSurface, for one)
+  // builds each grid cell's own 4 corner points independently via its
+  // own allPoints.create() calls, so two quads that are geometric
+  // neighbors almost never actually SHARE a vertex index, even though
+  // their matching corners sit at the exact same 3D position - this is
+  // what lets zigzagFaces_Selection() below treat them as one vertex
+  // anyway.
+  String zigzagPosKey (int v) {
+    long kx = Math.round(allVertices[v][0] * 1000000.0);
+    long ky = Math.round(allVertices[v][1] * 1000000.0);
+    long kz = Math.round(allVertices[v][2] * 1000000.0);
+    return kx + "_" + ky + "_" + kz;
+  }
+
+  void zigzagFaces_Selection () {
+    if (!isGroupOrFaceCategorySelected()) return;
+
+    beginScene3DChange();
+
+    this.selectFacesAndGroups_fromCurrentSelection();
+    int[] primary_list = Select3D.faceSelection;
+
+    Select3D.deselect_Faces();
+
+    // Pass 0: every raw vertex index seen below, grouped by its own
+    // zigzagPosKey() - since two geometrically-neighboring quads
+    // almost never share a vertex INDEX (see zigzagPosKey()'s own
+    // comment above), working off of raw indices alone found every
+    // quad "isolated" with no real neighbor, and then bumping one
+    // quad's own private copy of a shared corner left its neighbors'
+    // still-unmoved copies behind, tearing the surface open at every
+    // single quad boundary - the very "completely fragmented" bug
+    // this whole function is written around now. So everything below
+    // - which quads are neighbors, how many quads own a corner, and
+    // the bump itself - works off of these position groups instead,
+    // and every member of a bumped group moves together, by the same
+    // amount.
+    HashMap<String, ArrayList<Integer>> posGroupMembers = new HashMap<String, ArrayList<Integer>>();
+
+    // Pass 1 (read-only, over the ORIGINAL mesh): decide every selected
+    // quad's own diagonal choice, and collect the full set of
+    // (position-keyed) vertices that will need a pre-modifier averaged
+    // normal (every corner of every quad about to be re-triangulated).
+    HashMap<Integer, Integer> face_OBJ_ID = new HashMap<Integer, Integer>(); // quad face id -> owning group id
+    HashMap<Integer, Boolean> face_usesACDiagonal = new HashMap<Integer, Boolean>(); // quad face id -> true: A-C diagonal, false: B-D diagonal
+    HashSet<String> touchedPositions = new HashSet<String>(); // ends up an endpoint of SOME chosen diagonal - a "hub", left in place
+    HashSet<String> candidatePositions = new HashSet<String>(); // every corner position of every quad being re-triangulated
+    HashMap<String, ArrayList<String>> untouchedPairAdj = new HashMap<String, ArrayList<String>>(); // untouched position -> every OTHER untouched position it was left opposite of, across the quad(s) that left both of them untouched - half of this graph's own 2-coloring gets its bump inverted, below
+
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
+
+      ArrayList<Integer> groupFaces_L = new ArrayList<Integer>();
+      for (int q = 0; q < primary_list.length; q++) {
+        int f = primary_list[q];
+        if ((allFaces.nodes[f].length == 4) && isFaceInGroupRange(f, OBJ_ID)) groupFaces_L.add(f);
+      }
+      if (groupFaces_L.size() == 0) continue;
+
+      int[] groupFaces = new int[groupFaces_L.size()];
+      for (int i = 0; i < groupFaces.length; i++) groupFaces[i] = groupFaces_L.get(i);
+
+      // this group's own per-corner position keys, cached once (also
+      // feeding posGroupMembers above, so every raw index sharing a
+      // position can be found again later for the actual bump)
+      String[][] posKeys = new String[groupFaces.length][4]; // [local face index][corner 0..3]
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int f = groupFaces[fi];
+        for (int s = 0; s < 4; s++) {
+          int v = allFaces.nodes[f][s];
+          String key = zigzagPosKey(v);
+          posKeys[fi][s] = key;
+          ArrayList<Integer> members = posGroupMembers.computeIfAbsent(key, k -> new ArrayList<Integer>());
+          if (!members.contains(v)) members.add(v); // same raw vertex is revisited once per face corner that uses it (every quad meeting at a WELDED vertex, for one) - add it only once, or Pass 4 below would move it that many times over
+        }
+      }
+
+      // this group's own vertex adjacency graph, keyed by POSITION (not
+      // by raw vertex index - see zigzagPosKey()'s own comment above) so
+      // two quads that are geometric neighbors still connect here even
+      // when their own vertex arrays are unwelded duplicates. Every
+      // quad's own 4 sides contribute one undirected edge each.
+      //
+      // The checkerboard is colored on these VERTICES, not on the
+      // quads themselves (as an earlier version of this function did,
+      // by flood-filling a quad-adjacency graph and picking A-C vs B-D
+      // from which color each quad's own BFS cell landed on). That
+      // quad-coloring approach is only correct when every quad's own
+      // stored corner order (A,B,C,D) carries the SAME rotation
+      // relative to world space - true for a plain NxM grid (every
+      // cell's own A,B,C,D is always its own bottom-left, bottom-right,
+      // top-right, top-left, with zero rotation, uniformly) but FALSE
+      // for a Quad-Tessellate pinwheel, where different sectors' own
+      // A,B,C,D are rotated by different amounts relative to each other
+      // (the sector near original corner A has its own "B" sitting at
+      // its sector's own bottom-left; the sector near original corner B
+      // has ITS own "B" sitting at its sector's own bottom-right, one
+      // quarter-turn further around; and so on). Once two adjacent
+      // quads' own rotations differ by an odd number of quarter-turns,
+      // their "A-C" and "B-D" semantics are actually SWAPPED relative
+      // to each other, and a rule built on comparing those labels
+      // across quads (whether by a 2-way vote or by a fixed BFS color)
+      // can end up choosing the SAME geometric diagonal for every quad
+      // in a cluster instead of actually alternating - exactly the "all
+      // the diagonals are in one direction" bug reported against a
+      // plane that had Quad Tessellate applied (repeatedly, nesting one
+      // pinwheel's own sectors into further pinwheels of their own,
+      // which only sharpens the effect).
+      //
+      // Coloring the VERTICES instead sidesteps all of that: a quad's 4
+      // corners always alternate color going around it (each is
+      // adjacent, via a quad side, to the next), so A and C always land
+      // on the SAME color and B and D always land on the OTHER -
+      // regardless of which of a quad's corners happens to be stored as
+      // its own "A". So "connect this quad's own A-C pair whenever A's
+      // own vertex color is 0" only ever asks about ONE quad's own
+      // geometry at a time; it never compares one quad's labels against
+      // another's, so no rotation mismatch between neighboring quads can
+      // throw it off.
+      HashMap<String, ArrayList<String>> vertexAdj = new HashMap<String, ArrayList<String>>();
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        for (int s = 0; s < 4; s++) {
+          int s_next = (s + 1) % 4;
+          String a = posKeys[fi][s];
+          String b = posKeys[fi][s_next];
+          vertexAdj.computeIfAbsent(a, k -> new ArrayList<String>()).add(b);
+          vertexAdj.computeIfAbsent(b, k -> new ArrayList<String>()).add(a);
+        }
+      }
+
+      // 2-color every vertex in this group's own adjacency graph via a
+      // flood-fill, same idea as mergeCoplanarFaces_Selection()'s own
+      // coplanarity flood-fill - any two position-keyed vertices linked
+      // by a quad side always land on opposite colors. Walked in a
+      // deterministic order (each position's own smallest raw member
+      // index, same tie-break invertColor uses below) purely so a
+      // repeated run over an already-welded mesh picks the same overall
+      // phase as before - the actual diagonal choice doesn't depend on
+      // WHICH of the two valid colorings gets picked; swapping color 0
+      // and color 1 everywhere would just swap A-C for B-D on every
+      // single quad, which is still a fully alternating checkerboard,
+      // only flipped.
+      HashMap<String, Integer> vertexColor = new HashMap<String, Integer>();
+      java.util.TreeSet<String> vertexSeeds = new java.util.TreeSet<String>((ka, kb) -> {
+        int ma = java.util.Collections.min(posGroupMembers.get(ka));
+        int mb = java.util.Collections.min(posGroupMembers.get(kb));
+        if (ma != mb) return Integer.compare(ma, mb);
+        return ka.compareTo(kb);
+      });
+      vertexSeeds.addAll(vertexAdj.keySet());
+      for (String seed : vertexSeeds) {
+        if (vertexColor.containsKey(seed)) continue;
+
+        ArrayList<String> queue = new ArrayList<String>();
+        queue.add(seed);
+        vertexColor.put(seed, 0);
+
+        while (queue.size() > 0) {
+          String cur = queue.remove(queue.size() - 1);
+          for (String nbr : vertexAdj.get(cur)) {
+            if (vertexColor.containsKey(nbr)) continue;
+            vertexColor.put(nbr, 1 - vertexColor.get(cur));
+            queue.add(nbr);
+          }
+        }
+      }
+
+      for (int fi = 0; fi < groupFaces.length; fi++) {
+        int cf = groupFaces[fi];
+        boolean usesAC = (vertexColor.get(posKeys[fi][0]) == 0);
+        int A = allFaces.nodes[cf][0];
+        int B = allFaces.nodes[cf][1];
+        int C = allFaces.nodes[cf][2];
+        int D = allFaces.nodes[cf][3];
+        String keyA = posKeys[fi][0];
+        String keyB = posKeys[fi][1];
+        String keyC = posKeys[fi][2];
+        String keyD = posKeys[fi][3];
+
+        face_OBJ_ID.put(cf, OBJ_ID);
+        face_usesACDiagonal.put(cf, usesAC);
+
+        candidatePositions.add(keyA);
+        candidatePositions.add(keyB);
+        candidatePositions.add(keyC);
+        candidatePositions.add(keyD);
+
+        String untouchedKey1, untouchedKey2;
+        if (usesAC) {
+          touchedPositions.add(keyA);
+          touchedPositions.add(keyC);
+          untouchedKey1 = keyB;
+          untouchedKey2 = keyD;
+        } else {
+          touchedPositions.add(keyB);
+          touchedPositions.add(keyD);
+          untouchedKey1 = keyA;
+          untouchedKey2 = keyC;
+        }
+
+        // this quad's own OTHER (unused) diagonal links its two
+        // untouched corners - remembered so the two of them can be
+        // put in opposite halves below
+        untouchedPairAdj.computeIfAbsent(untouchedKey1, k -> new ArrayList<String>()).add(untouchedKey2);
+        untouchedPairAdj.computeIfAbsent(untouchedKey2, k -> new ArrayList<String>()).add(untouchedKey1);
+      }
+    }
+
+    if (face_usesACDiagonal.size() == 0) {
+      selection_changed();
+      endScene3DChange();
+      return;
+    }
+
+    // Half of the untouched (to-be-bumped) positions get their bump
+    // INVERTED, so the modifier produces actual alternating peaks and
+    // valleys (real self-shading) rather than a uniformly raised
+    // plane. Found the same way the quad/diagonal checkerboard above
+    // was: flood-fill untouchedPairAdj - every processed quad's own
+    // UNUSED diagonal links its two untouched corners - into a
+    // 2-coloring; any two untouched positions left opposite by the
+    // same quad always land on opposite sides. Processed in sorted
+    // order (not a HashSet's own unordered iteration) so the result is
+    // deterministic - sorted by each position's own smallest raw vertex
+    // index (falling back to the position key itself only to break a
+    // tie, which two DIFFERENT positions should never actually have),
+    // rather than by the position key string itself, so this still
+    // starts the flood-fill from the same vertex an already-welded mesh
+    // would have under the old, purely index-based version of this
+    // function.
+    HashMap<String, Integer> invertColor = new HashMap<String, Integer>();
+    final HashMap<String, ArrayList<Integer>> posGroupMembersForSort = posGroupMembers;
+    java.util.TreeSet<String> untouchedSorted = new java.util.TreeSet<String>((ka, kb) -> {
+      int ma = java.util.Collections.min(posGroupMembersForSort.get(ka));
+      int mb = java.util.Collections.min(posGroupMembersForSort.get(kb));
+      if (ma != mb) return Integer.compare(ma, mb);
+      return ka.compareTo(kb);
+    });
+    untouchedSorted.addAll(untouchedPairAdj.keySet());
+    for (String startKey : untouchedSorted) {
+      if (invertColor.containsKey(startKey)) continue;
+
+      ArrayList<String> queue = new ArrayList<String>();
+      queue.add(startKey);
+      invertColor.put(startKey, 0);
+
+      while (queue.size() > 0) {
+        String curKey = queue.remove(queue.size() - 1);
+        for (String nbr : untouchedPairAdj.get(curKey)) {
+          if (invertColor.containsKey(nbr)) continue;
+          invertColor.put(nbr, 1 - invertColor.get(curKey));
+          queue.add(nbr);
+        }
+      }
+    }
+
+    // Pass 1b (still read-only): the bump spinner is a FRACTION of each
+    // position's own local quad size, not a flat world-unit offset - a
+    // fixed offset would dwarf a dense/small-scale grid's own quads
+    // (far more than the grid spacing between them) and tear the
+    // surface apart into what looks like disconnected, overlapping
+    // pieces instead of a gentle zigzag relief. So average, per
+    // candidate position, the length of every edge of every PROCESSED
+    // quad meeting at it (not the whole mesh - just the quads actually
+    // being zigzagged), and scale that position's own bump by it below.
+    HashMap<String, float[]> edgeLengthAccum = new HashMap<String, float[]>(); // position -> {sum, count}
+    for (int f : face_usesACDiagonal.keySet()) {
+      int[] fNodes = allFaces.nodes[f];
+      int fLen = fNodes.length;
+      for (int k = 0; k < fLen; k++) {
+        int vA = fNodes[k];
+        int vB = fNodes[(k + 1) % fLen];
+        String keyA = zigzagPosKey(vA);
+        String keyB = zigzagPosKey(vB);
+        float dx = allVertices[vA][0] - allVertices[vB][0];
+        float dy = allVertices[vA][1] - allVertices[vB][1];
+        float dz = allVertices[vA][2] - allVertices[vB][2];
+        float edgeLen = sqrt(dx * dx + dy * dy + dz * dz);
+
+        float[] accA = edgeLengthAccum.computeIfAbsent(keyA, k2 -> new float[2]);
+        accA[0] += edgeLen;
+        accA[1]++;
+
+        float[] accB = edgeLengthAccum.computeIfAbsent(keyB, k2 -> new float[2]);
+        accB[0] += edgeLen;
+        accB[1]++;
+      }
+    }
+
+    // Pass 2 (still read-only, still the ORIGINAL mesh): snapshot one
+    // averaged vertex normal per candidate position, pooling every raw
+    // (unwelded) duplicate index sharing that position - from whatever
+    // faces (selected or not) already use any of them - BEFORE any
+    // zigzag triangulation or bump touches the mesh, matching how
+    // Passive Solar Touch's own averaging
+    // (collectFaceNormals_atVertex()/averageNormalizedDirection()
+    // above) is reused here.
+    HashMap<String, float[]> vertexNormalSnapshot = new HashMap<String, float[]>();
+    for (String posKey : candidatePositions) {
+      FloatList normX = new FloatList();
+      FloatList normY = new FloatList();
+      FloatList normZ = new FloatList();
+      ArrayList<Integer> members = posGroupMembers.get(posKey);
+      if (members != null) {
+        for (int v : members) collectFaceNormals_atVertex(allFaces.nodes, v, normX, normY, normZ);
+      }
+      if (normX.size() == 0) continue; // position isn't part of any face - no normal to bump along
+
+      float[] avgNormal = new float[3];
+      if (!averageNormalizedDirection(normX, normY, normZ, avgNormal)) continue; // face normals cancel out exactly
+
+      vertexNormalSnapshot.put(posKey, avgNormal);
+    }
+
+    // Pass 3: actually re-triangulate every decided quad, strictly in
+    // DESCENDING face-id order - spliceFaceWithNewFaces()/inserted_
+    // nFaces() insert new faces at the replaced face's own position,
+    // shifting every face AFTER it up by one; processing the largest
+    // remaining face id first means every face still waiting to be
+    // processed always has a SMALLER id, so it's never disturbed by an
+    // insertion that hasn't happened yet, and no running index-shift
+    // needs tracking during this loop at all (each face's own owning
+    // group was already resolved, once, in Pass 1's face_OBJ_ID above).
+    Integer[] processedFaces = face_usesACDiagonal.keySet().toArray(new Integer[0]);
+    java.util.Arrays.sort(processedFaces, java.util.Collections.reverseOrder());
+
+    for (int f : processedFaces) {
+      int OBJ_ID = face_OBJ_ID.get(f);
+      boolean usesAC = face_usesACDiagonal.get(f);
+      int A = allFaces.nodes[f][0];
+      int B = allFaces.nodes[f][1];
+      int C = allFaces.nodes[f][2];
+      int D = allFaces.nodes[f][3];
+
+      int[] faceOptions = { allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f) };
+
+      ArrayList<int[]> midNodes = new ArrayList<int[]>();
+      ArrayList<int[]> midOptions = new ArrayList<int[]>();
+      if (usesAC) {
+        midNodes.add(new int[] { A, B, C });
+        midNodes.add(new int[] { C, D, A });
+      } else {
+        midNodes.add(new int[] { B, C, D });
+        midNodes.add(new int[] { D, A, B });
+      }
+      midOptions.add(faceOptions);
+      midOptions.add(faceOptions);
+
+      allGroups.inserted_nFaces(OBJ_ID, f, midNodes.size() - 1); // one quad becomes two triangles - one net extra face
+      spliceFaceWithNewFaces(f, midNodes, midOptions);
+    }
+
+    // Pass 4: bump every candidate position that never ended up on any
+    // chosen diagonal (so kept its original, lower edge count) along
+    // its PRE-MODIFIER averaged normal snapshotted in Pass 2 above -
+    // vertex positions are independent of face topology, so this can
+    // happen in any order relative to Pass 3's own re-triangulation.
+    // Half of them (invertColor's own second color class, found above)
+    // bump the OTHER way, so the surface actually peaks and dips
+    // instead of just rising as one uniformly offset plane. The actual
+    // move is scaled by that position's own local edge length (Pass 1b
+    // above), so "0.25" always means "a quarter of this vertex's own
+    // quads" rather than a fixed, scale-oblivious world-unit offset.
+    // Every RAW index sharing this position (posGroupMembers - every
+    // shape this app generates hands each quad its own private, unwelded
+    // copy of what is geometrically the same corner, see zigzagPosKey()'s
+    // own comment above) moves by the IDENTICAL delta, so the mesh stays
+    // seamless across quad boundaries after the bump instead of tearing
+    // open at every quad edge, which is the actual fragmentation bug
+    // this rewrite fixes.
+    float bump = User3D.modifierZigzagBumpAmount;
+    for (String posKey : candidatePositions) {
+      if (touchedPositions.contains(posKey)) continue;
+      float[] n = vertexNormalSnapshot.get(posKey);
+      if (n == null) continue;
+      float[] edgeAcc = edgeLengthAccum.get(posKey);
+      float localEdgeLength = (edgeAcc == null || edgeAcc[1] == 0) ? 0 : (edgeAcc[0] / edgeAcc[1]);
+      float sign = (invertColor.get(posKey) == 1) ? -1 : 1;
+      float move = bump * sign * localEdgeLength;
+      ArrayList<Integer> members = posGroupMembers.get(posKey);
+      if (members == null) continue;
+      for (int v : members) allPoints.move(v, n[0] * move, n[1] * move, n[2] * move);
+    }
+
+    // Pass 5: the new selection - each replaced quad's own two new
+    // triangles - found with the same closed-form reasoning Pass 3's
+    // own comment above relies on: processing happened in descending
+    // original-id order, so a given quad's CURRENT index (at the
+    // moment it was spliced) always equalled its ORIGINAL id; its
+    // FINAL index (after every other quad has also been spliced) is
+    // that original id plus however many OTHER processed quads had a
+    // SMALLER original id (each one of those inserts exactly one net
+    // extra face ahead of it).
+    Integer[] ascendingFaces = face_usesACDiagonal.keySet().toArray(new Integer[0]);
+    java.util.Arrays.sort(ascendingFaces);
+
+    int[] finalSelection = new int[ascendingFaces.length * 2];
+    int selOut = 0;
+    for (int i = 0; i < ascendingFaces.length; i++) {
+      int f = ascendingFaces[i];
+      finalSelection[selOut++] = f + i;
+      finalSelection[selOut++] = f + i + 1;
+    }
+    Select3D.faceSelection = sort(finalSelection);
+
+    switch_category(ObjectCategory.FACE);
+    selection_changed();
+    endScene3DChange();
+  }
+
   void optimizeFace_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 

@@ -256,6 +256,7 @@ class UI_rollout {
     vm.modifierPassiveSolarInsetDepth(0);
     vm.modifierPassiveSolarInsetStep(0);
     vm.modifierWeldThreshold(0);
+    vm.modifierZigzagBumpAmount(0);
     vm.softSelectionFalloffPower(0);
     vm.softSelectionFalloffRadius(0);
     vm.positionVectorIndex(0);
@@ -662,6 +663,7 @@ class UI_rollout {
         User3D.modifierOffsetAmount = vm.modifierOffsetAmount(1);
         User3D.modifierInsetDepth = vm.modifierInsetDepth(1);
         User3D.modifierWeldThreshold = vm.modifierWeldThreshold(1);
+        User3D.modifierZigzagBumpAmount = vm.modifierZigzagBumpAmount(1);
       }
 
       // Split out of CHILD_GEOMETRY_REFORM above: the Relax/Skew/Twist/
