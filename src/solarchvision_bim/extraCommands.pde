@@ -314,6 +314,12 @@ String __EXPORT_SHAPEFILE__ (String[] parts) {
     return hint;
 }
 
+String __EXPORT_DXF__ (String[] parts) {
+    String hint = "";
+    exportDxf();
+    return hint;
+}
+
 String __EXPORT_TOPOJSON__ (String[] parts) {
     String hint = "";
     exportTopojson();

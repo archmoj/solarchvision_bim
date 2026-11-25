@@ -419,6 +419,10 @@ void build_allActions() {
     exportObj("");
   });
 
+  putAction("Export 3D > DXF", () -> {
+    exportDxf();
+  });
+
   putAction("Export 3D > LAS", () -> {
     exportLas("");
   });

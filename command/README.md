@@ -248,6 +248,45 @@ This page has two parts:
     `.las` point cloud (geometry only - position data, nothing else)
 -   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
 -   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
+-   `EXPORT.DXF`: Exports the scene in DXF `.dxf` format, the write-side
+    counterpart to `IMPORT.DXF` - unlike the GIS-family exporters just
+    below, this is not built on `EXPORT.GEOJSON`'s own shared core: DXF
+    coordinates are written already-local-planar, exactly as stored,
+    with no reverse-projection step at all. Every visible Face with 3 or
+    4 corners becomes one 3DFACE entity (a 3-corner Face repeats its own
+    3rd point's coordinates as a 4th, the same real-world convention
+    `IMPORT.DXF` itself already prefers reading back as a true triangle);
+    a Face with more than 4 corners is written as one polyface-mesh
+    POLYLINE entity instead, since neither 3DFACE nor a polyface mesh's
+    own per-face VERTEX record can hold more than 4 corners either way -
+    its own point list is fan-triangulated from the first corner into
+    (corners-2) triangular face-definition records, so reimporting such
+    a Face back through `IMPORT.DXF` recovers that many separate
+    triangular Faces, not the original single polygon (this app keeps
+    no "these triangles were really one n-gon" link to reconstruct from,
+    the same one-way restraint `EXPORT.GEOJSON`'s own extruded-solid
+    note already documents). Every visible Polyline, any point count,
+    becomes one plain (non-polyface) 3D POLYLINE entity - closed
+    (group 70's own bit 1) only when `getClose()` says so; reimporting
+    any of this exporter's own Polylines back through `IMPORT.DXF`
+    needs that importer's own `dxfImportCurves` toggle on, the same as
+    reading anyone else's plain POLYLINE/LINE/LWPOLYLINE/CIRCLE/ARC
+    drafting geometry already does. Because `IMPORT.DXF`'s own grouping
+    mechanism reacts only to a change in an entity's own DXF layer name
+    (group code 8) - it has no separate per-entity "material"/color
+    channel it reads back the way a GeoJSON Feature's "properties" can
+    carry "material" and "layer" as two independent fields - this
+    exporter folds both of a Face's/Polyline's own material and layer
+    numbers into one composite layer name, `LAYER_<layer>_MAT_<material>`,
+    so that a change in EITHER one (not just layer alone) still starts a
+    new group/material cycle when the file is reimported with cycling
+    requested. No `TABLES`/`BLOCKS` section is written at all (`IMPORT.
+    DXF` needs neither, and real-world DXF readers already fall back to
+    default definitions for an undefined layer name) - just a minimal
+    `HEADER` section declaring `$ACADVER` `AC1009` (DXF's R12 dialect,
+    the plainest one, and already the implicit dialect every entity
+    type and group code here belongs to) followed directly by the
+    `ENTITIES` section
 -   `EXPORT.GEOJSON`: Exports every visible Face as a GeoJSON (RFC 7946)
     Polygon Feature and every visible Polyline as a LineString Feature,
     the write-side counterpart to `IMPORT.GEOJSON` and the shared "GIS
