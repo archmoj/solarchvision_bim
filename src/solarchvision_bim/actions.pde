@@ -1302,7 +1302,7 @@ void build_allActions() {
     UI_setTo_Create_Parametric(14);
   });
 
-  putAction("Dini's Surface", () -> { // n=17: n=14 Tractricoid's own pseudosphere profile wound into a helical twist (z rises with theta), the same "surface of revolution to spiral" idea as n=11 Helicoid is to a flat ramp
+  putAction("Dini's Surface", () -> { // n=17: n=14 Tractricoid's own pseudosphere profile wound into a helical twist (z falls with theta, negated so the rim stays at z=0 and the horn descends), the same "surface of revolution to spiral" idea as n=11 Helicoid is to a flat ramp
     UI_setTo_Create_Parametric(17);
   });
 

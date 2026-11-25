@@ -2059,15 +2059,21 @@ class Create3D {
                                  // "take a surface of revolution and wind
                                  // it into a spiral as it goes" idea as
                                  // n==11 Helicoid is to a flat ramp, just
-                                 // applied to the pseudosphere instead.
-                                 // Unlike every actual surface of
-                                 // revolution here (n==7/10/12), this
-                                 // doesn't close up as theta sweeps a
-                                 // full turn - the twist term leaves a
-                                 // visible seam where z at theta=-PI
-                                 // doesn't match z at theta=+PI, same as
-                                 // Helicoid's own ramp never re-joining
-                                 // itself after one turn.
+                                 // applied to the pseudosphere instead -
+                                 // then the whole thing is negated, so
+                                 // the rim (t=0) still sits at z=0 but
+                                 // the horn descends below it as t grows
+                                 // instead of flaring upward, the same
+                                 // upside-down flip n==18 Seashell's own
+                                 // apex/body-whorl just got. Unlike every
+                                 // actual surface of revolution here
+                                 // (n==7/10/12), this doesn't close up as
+                                 // theta sweeps a full turn - the twist
+                                 // term leaves a visible seam where z at
+                                 // theta=-PI doesn't match z at
+                                 // theta=+PI, same as Helicoid's own ramp
+                                 // never re-joining itself after one
+                                 // turn.
             float theta = u * PI;
             float t = (v + 1) / 2.0 * TRACTRICOID_T_MAX;
             float et = exp(t);
@@ -2077,7 +2083,7 @@ class Create3D {
             float r = 1.0 / coshT; // sech(t)
             x = r * cos(theta);
             y = r * sin(theta);
-            z = (t - tanhT) + DINI_TWIST_PITCH * theta;
+            z = -((t - tanhT) + DINI_TWIST_PITCH * theta);
           }
 
 

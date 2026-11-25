@@ -442,9 +442,10 @@ class AddParametricSurfaceRemainingTest {
 
     assertSubstantialQuadGrid();
     // Same first corner as n==14 Tractricoid (u=-1, v=-1 -> theta=-PI,
-    // t=0, r=1, x=-1, y=0, untwisted height=0), plus the twist term:
-    // z = 0 + DINI_TWIST_PITCH * (-PI) = -0.2*PI =~ -0.6283.
-    assertArrayEquals(new float[]{-1, 0, -0.6283f}, app.allVertices[0], 0.01f);
+    // t=0, r=1, x=-1, y=0, untwisted height=0), plus the twist term,
+    // then negated (see this preset's own formula comment for why):
+    // z = -(0 + DINI_TWIST_PITCH * (-PI)) = -(-0.2*PI) =~ 0.6283.
+    assertArrayEquals(new float[]{-1, 0, 0.6283f}, app.allVertices[0], 0.01f);
   }
 
   @Test
@@ -468,7 +469,7 @@ class AddParametricSurfaceRemainingTest {
       double theta = Math.atan2(y, x);
       double oneMinusRSq = Math.max(0, 1 - r * r);
       double expectedUntwistedZ = Math.log((1 + Math.sqrt(oneMinusRSq)) / r) - Math.sqrt(oneMinusRSq);
-      double expectedZ = expectedUntwistedZ + DINI_TWIST_PITCH * theta;
+      double expectedZ = -(expectedUntwistedZ + DINI_TWIST_PITCH * theta); // negated - see this preset's own formula comment for why
       // atan2's own branch cut sits exactly at theta=+-PI, which is also
       // this surface's own documented seam (see the n==17 formula's own
       // comment) - right at that single boundary, a sign-of-zero
