@@ -447,6 +447,10 @@ void build_allActions() {
     exportShapefile();
   });
 
+  putAction("Export 3D > TopoJSON", () -> {
+    exportTopojson();
+  });
+
   putAction("Quit", () -> {
     println();
     exit();

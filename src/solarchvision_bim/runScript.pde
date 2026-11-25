@@ -323,6 +323,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "SHADE.VIEWPORT": return  __SHADE_VIEWPORT__(parts);
     case "+ORBITSELECTION": return  __$ORBITSELECTION__(parts);
     case "+SCALESELECTION": return  __$SCALESELECTION__(parts);
+    case "EXPORT.TOPOJSON": return  __EXPORT_TOPOJSON__(parts);
     case "IMPORT.TOPOJSON": return  __IMPORT_TOPOJSON__(parts);
     case "POLYLINE>VERTEX": return  __POLYLINE$VERTEX__(parts);
     case "SHADE.ELEVATION": return  __SHADE_ELEVATION__(parts);

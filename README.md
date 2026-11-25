@@ -407,6 +407,7 @@ Use the application's project save/load functions to retain supported scene and 
 - **KML:** Export scene faces as Polygon Placemarks and polylines as LineString Placemarks, built directly on the same geo-referencing as the GeoJSON export above.
 - **CityGML:** Export scene faces as Buildings (one per face), each carrying a flat Polygon surface in its own local coordinates (no longitude/latitude projection).
 - **Shapefile:** Export scene faces as a PolygonZ shapefile and, if any polylines are present, a second PolyLineZ shapefile, both geo-referenced like the GeoJSON export above and accompanied by a WGS84 `.prj` file.
+- **TopoJSON:** Export scene faces and polylines the same way the GeoJSON export above does, each as its own named object with its own arc(s) in a shared topology (no arc sharing between objects, since this app keeps no boundary-adjacency data to exploit for it).
 - **HTML:** Export through the available HTML workflow.
 - **Image capture:** Record viewport frames in PNG, JPG, TIF, or BMP formats using the command interface.
 

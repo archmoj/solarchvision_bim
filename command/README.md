@@ -284,6 +284,28 @@ This page has two parts:
     back for its own group-property option; and the `.prj` declares plain
     geographic WGS84, the exact trigger `IMPORT.SHAPEFILE`'s own
     `.prj`-based lon/lat auto-detection checks for
+-   `EXPORT.TOPOJSON`: Exports the exact same Faces/Polylines
+    `EXPORT.GEOJSON` does - same reverse-projection, ring-winding, scope
+    restrictions (no holes/extruded-solid reconstruction, no standalone
+    points, hidden geometry skipped) and `"material"`/`"layer"` property
+    round trip, reused as-is - the write-side counterpart to
+    `IMPORT.TOPOJSON`. Unlike `EXPORT.GEOJSON`, every visible Face/Polyline
+    becomes its own top-level entry under the file's own `"objects"` (a
+    bare `Polygon`/`LineString` geometry, named `face_N`/`line_N`) rather
+    than one Feature in a shared array, since `IMPORT.TOPOJSON` applies
+    its own material/layer grouping option exactly once per top-level
+    `"objects"` entry - wrapping every geometry into one shared
+    `GeometryCollection` instead would merge all of them into a single
+    group on the way back in. Every ring/line is written as its own,
+    never-shared arc into the file's own top-level `"arcs"` array (arc
+    sharing between neighboring geometries is an optimization real-world
+    TopoJSON encoders may perform, never a requirement the format itself
+    imposes, and this app keeps no "these two Faces share a boundary"
+    adjacency link to exploit for it anyway), and no `"transform"` member
+    is ever written - every arc position is a plain, final
+    `[longitude, latitude, altitude]` triple, the same "file simply isn't
+    quantized" case `IMPORT.TOPOJSON` already treats as its own normal
+    default when a file carries no `"transform"` at all
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page

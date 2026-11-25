@@ -292,10 +292,29 @@ void geojsonHandleFeature (JSONObject feature, int clzParam, float cx, float cy,
 // off, or no Features have carried the key yet) never counts as a
 // change, so leaving geojsonGroupProperty blank costs nothing - the
 // whole file stays one single group, same as today.
+//
+// Read via the generic get()/toString(), not getString() directly - a
+// genuine GeoJSON/TopoJSON "properties" value keeps its own native JSON
+// type (importKml.pde's/importCitygml.pde's own citygmlReadProperties()
+// instead always build a String-only properties object off their own
+// XML text content, which is why this distinction never surfaces for
+// those two formats). exportGeojson.pde's/exportTopojson.pde's own
+// "material"/"layer" properties are written as genuine JSON integers
+// (not quoted strings) - the overwhelmingly likely real case for this
+// option's two documented round-trip values - and getString() on a
+// non-String JSON value throws rather than converting, per org.json's
+// own JSONObject.getString() behavior. toString() on the boxed value
+// get() returns (Integer/Double/Boolean/String alike) gives the exact
+// same grouping-key comparison getString() would for an actual String
+// property, and the same digits a DBF/XML-text-based property would
+// already show (ExportObjectsSHAPEFILETest.java's/
+// ExportObjectsKMLTest.java's own round-trip grouping tests), while
+// also working for a genuine JSON number.
 void geojsonApplyGrouping (JSONObject properties) {
   String key = null;
   if (geojsonGroupProperty != null && geojsonGroupProperty.length() > 0 && properties != null && properties.hasKey(geojsonGroupProperty)) {
-    key = properties.getString(geojsonGroupProperty);
+    Object rawValue = properties.get(geojsonGroupProperty);
+    key = (rawValue != null) ? rawValue.toString() : null;
   }
 
   boolean changed = (key == null) ? (geojsonCurrentGroupKey != null) : !key.equals(geojsonCurrentGroupKey);
