@@ -3903,25 +3903,37 @@ class Modify3D {
   // The alternation is found by flood-filling each edge-connected
   // cluster of selected quads (within one group at a time, same
   // per-group scoping mergeCoplanarFaces_Selection() above uses) into
-  // a 2-coloring - any two quads sharing an edge always land in
-  // opposite colors, the same structure a rectangular grid's own
-  // checkerboard has - and the diagonal choice is a FIXED function of
-  // that color: whichever quad the flood-fill started from (color 0)
-  // always uses the B-D diagonal (DAB+BCD), and every quad colored 1 -
-  // its immediate edge-neighbors, and every quad an even BFS-distance
-  // further out again - always uses the A-C diagonal (ABC+CDA). This
-  // used to be a vote (whichever of the two choices left more of the
-  // cluster's own single-quad-owned "true corner" vertices off of any
-  // diagonal), but that heuristic ties on anything but a plain
-  // rectangular grid - a single quad tessellated into its own 4-quad
-  // "pinwheel" around one shared center ties 2-vs-2, for instance -
-  // and a tie silently fell back to an arbitrary default, which could
-  // leave a whole selection using the SAME diagonal throughout instead
-  // of actually alternating. The checkerboard coloring itself still
-  // guarantees every pair of edge-adjacent quads gets opposite colors
-  // regardless of cluster shape, so fixing the choice to that color
-  // alone is what makes the diagonal alternate in both grid directions,
-  // with nothing left to a vote or a tie-break.
+  // a 2-coloring of its own VERTICES (by position key, not of the
+  // quads/faces themselves): any two position-keyed vertices sharing a
+  // quad edge always land in opposite colors, and each quad's diagonal
+  // choice is then a FIXED function of its OWN corner A's own color
+  // alone - A colored 0 uses the A-C diagonal (ABC+CDA), A colored 1
+  // uses the B-D diagonal (DAB+BCD) - never compared against any
+  // neighboring quad's own label.
+  //
+  // This used to color the QUADS themselves (flood-filling face
+  // adjacency instead of vertex adjacency, with the diagonal fixed by
+  // which color the flood-fill gave that face), and before that, a
+  // vote (whichever of the two choices left more of the cluster's own
+  // single-quad-owned "true corner" vertices off of any diagonal). The
+  // vote heuristic ties on anything but a plain rectangular grid - a
+  // single quad tessellated into its own 4-quad "pinwheel" around one
+  // shared center ties 2-vs-2, for instance - and a tie silently fell
+  // back to an arbitrary default, which could leave a whole selection
+  // using the SAME diagonal throughout instead of actually alternating.
+  // Coloring the quads fixed that tie, but is NOT rotation-safe across
+  // a nested, multi-level Quad Tessellate: each pinwheel sector's own
+  // quads are wound/rotated differently relative to world space, so
+  // two face-adjacent quads landing in "opposite" boolean colors can
+  // still end up choosing the SAME geometric diagonal direction once
+  // each quad's own corner order is accounted for - verified by hand
+  // and with a standalone numeric check while tracking this down.
+  // Coloring the VERTICES instead sidesteps that entirely: a quad's
+  // diagonal is read off its own corner A alone, so it can never be
+  // thrown off by how that quad happens to be rotated relative to its
+  // neighbors, only by whether A's own position is one color or the
+  // other - which the shared position-keyed vertex graph still gets
+  // right for every pinwheel sector simultaneously.
   // Every raw vertex index at (or within zigzagPosKey()'s own rounding
   // of) this position, rounded to resolve floating-point noise while
   // keeping genuinely distinct vertices distinct - every shape this

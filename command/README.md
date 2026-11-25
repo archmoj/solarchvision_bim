@@ -813,9 +813,10 @@ the user interface.
 | `Modifier Opening Deviation` | Allowed random deviation applied to inserted openings | 0 to 1 |
 | `Modifier Tessellate Rows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
 | `Modifier Tessellate Columns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
+| `Modifier Zigzag Bump Amount` | How far `Zigzag Selected Faces` bumps each non-hub vertex out along its own averaged normal, as a fraction of that vertex's own local quad size (not a world-unit offset, so it stays sane at any model scale) | -2 to 2 |
 | `Tile Edge Size` | Shared edge length used by the Square/Hexagon/Equilateral Tiling tools | 0.01 to 25 |
 | `Tile Rotation` | Rotation (degrees), on top of the default alignment to the face's own first edge, used by every Tiling tool | -360 to 360 |
-| `Tile Star Spike Angle` | Shape-relative star-notch angle (degrees above each tile shape's own self-intersection floor) used by every Tiling tool; any negative value (the default) disables the star transform | -1 to 170 |
+| `Tile Star Spike Angle` | Shape-relative star-notch angle (degrees above each tile shape's own self-intersection floor) used by every Tiling tool; 0 (the default) disables the star transform, a positive value stars each tile with spikes at its own corners and notches pulled in near each edge's midpoint, a negative value flips that - spikes at each edge's own midpoint, notches pulled in at the tile's own corners - with the same magnitude giving the same sharpness either way | -170 to 170 |
 | `Modifier Weld Threshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
 | `Modifier Relax Amount` | How strongly `Relax Selected Vertices` pulls each vertex toward its neighbors' average position (0 = no change, 1 = fully snaps) | 0 to 1 |
 | `Modifier Skew XY` | Shear factor for `Skew Selected Vertices`: offsets X per 1m of Y from the selection's bounding-box center | -5 to 5 |
@@ -1478,6 +1479,11 @@ under [Shading and rendering](#shading-and-rendering) above)
     `Reverse Visibility of All Faces`
 -   `Quad Tessellate`, `Triangle Tessellate`,
     `Grid Tessellate`
+-   `Zigzag Selected Faces`: re-triangulates every selected quad with a
+    checkerboard-alternating diagonal, then bumps every vertex that
+    isn't an endpoint of a chosen diagonal out along its own averaged
+    normal (half of them inverted, so the surface peaks and dips rather
+    than just rising), by `Modifier Zigzag Bump Amount`
 -   `Faces >> Vertices`, `Vertices >> Faces`, `Polylines >> Vertices`,
     `Vertices >> Polylines`
 
