@@ -124,6 +124,14 @@ void selectFile_ImportShapefile () {
   selectInput("Select Shapefile (.shp) to import:", "_fileSelected_ImportShapefile", new File(Folder_Import + "/_.shp"));
 }
 
+void selectFile_ImportSvg () {
+  // Arms svgImportShowOptionsDialog (importSvg.pde) the same way.
+  svgImportShowOptionsDialog = true;
+  // Same reasoning as selectFile_ImportObj()'s own identical line above.
+  isImportingInProgress = true;
+  selectInput("Select SVG file to import:", "_fileSelected_ImportSvg", new File(Folder_Import + "/_.svg"));
+}
+
 // Whether to rotate the file's own Y-up axis convention into this app's
 // own (commonly Z-up) one - see importObj.pde's own
 // "allPoints.create(x, -z, y)" vs "allPoints.create(x, y, z)" comment,
@@ -203,6 +211,35 @@ boolean dxfShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   dxfImportCurves = curvesBox.isSelected();
+
+  return true;
+}
+
+// SVG's own dialog - no axis-swap checkbox (unlike
+// dxfShowImportOptionsDialog()/objShowImportOptionsDialog()/...): an SVG
+// document's own Y-down convention is unambiguous, not a genuine up-axis
+// question the person needs to resolve per file (importSvg.pde's own
+// header comment), so this importer always flips it on its own rather
+// than asking. The one option offered is whether to treat each shape's
+// own (or nearest ancestor `<g>`'s own) "id" attribute as a grouping/
+// material-cycling boundary - off by default, since an arbitrary SVG's
+// own ids are far less reliably a meaningful grouping signal than a DXF
+// layer is (importSvg.pde's own header comment).
+boolean svgShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox groupByIdBox = new javax.swing.JCheckBox("Group/cycle material by each shape's own id", svgGroupById);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(groupByIdBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "SVG import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Left exactly where it was unless this dialog's own OK button is
+  // actually pressed - same reasoning as every dialog above.
+  svgGroupById = groupByIdBox.isSelected();
 
   return true;
 }
@@ -1417,6 +1454,60 @@ void _fileSelected_ImportShapefile (File selectedFile) {
 
     // Same reason as import_objects_GEOJSON()'s own identical call above -
     // import_objects_SHP() adds points/faces/polylines straight into
+    // allPoints/allFaces/allPolylines without ever calling
+    // endScene3DChange() itself.
+    endScene3DChange();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+
+    isImportingInProgress = false;
+  }
+}
+
+void _fileSelected_ImportSvg (File selectedFile) {
+
+  // See isImportingInProgress's own comment (globalFunctions.pde) for why -
+  // set here too (not just in selectFile_ImportSvg(), above), since
+  // extraCommands.pde's own console IMPORT.SVG command can reach this
+  // function directly, with a path already given, bypassing
+  // selectFile_ImportSvg() and its own dialog entirely. Cleared at each of
+  // this function's own 2 exit points below.
+  isImportingInProgress = true;
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+    // Same reasoning as _fileSelected_ImportGeojson()'s own identical
+    // lines above: cancelling the native file chooser itself never
+    // reaches import_objects_SVG(), which is otherwise what consumes
+    // svgImportShowOptionsDialog - without this, it would stay armed and
+    // pop the options dialog up on the next import_objects_SVG() call
+    // regardless of how that one was started.
+    svgImportShowOptionsDialog = false;
+    isImportingInProgress = false;
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+    beginScene3DChange();
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    import_objects_SVG(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
+
+    // Same reason as import_objects_GEOJSON()'s own identical call above -
+    // import_objects_SVG() adds points/faces/polylines straight into
     // allPoints/allFaces/allPolylines without ever calling
     // endScene3DChange() itself.
     endScene3DChange();

@@ -182,6 +182,63 @@ This page has two parts:
     all keeps already-local-planar meters; either way, the **Import
     Shapefile** options dialog's own extra checkbox shows the detected
     setting and can be overridden before importing
+-   `IMPORT.SVG`: Imports an SVG `.svg` file. Unlike every GIS import
+    above, this is NOT built on `IMPORT.GEOJSON`'s own geometry handling -
+    SVG is a 2D vector-drawing format with no coordinate reference system
+    of its own, so there is no longitude/latitude projection and no
+    height/extrusion option at all; every shape imports flat, at Z = 0
+    before any cz/sz offset/scale. The file's own raw XML is walked
+    directly (the same `loadXML()`-based, no-external-library approach
+    `IMPORT.KML`/`IMPORT.CITYGML` already use for their own XML) rather
+    than using Processing's own built-in `loadShape()`/SVG loader, because
+    that built-in loader keeps a shape's own accumulated `<g transform>`
+    matrix in a field with no public getter - unreadable from outside
+    Processing's own core package, which would silently produce wrong,
+    untransformed geometry for the many real-world SVGs that wrap content
+    in a transform-bearing `<g>`. `<path>` `d` data is parsed by a small
+    hand-written tokenizer supporting the `M`/`L`/`H`/`V`/`C`/`S`/`Q`/`T`/
+    `Z` commands (cubic/quadratic Bezier curves tessellated at a fixed
+    sample count per segment, with the `S`/`T` smooth-curve commands'
+    own control-point reflection correctly applied); the elliptical arc
+    `A`/`a` command is not supported - encountering one stops that one
+    subpath where it is, keeping whatever was already read rather than
+    erroring. `<rect>`, `<circle>`, `<ellipse>`, `<line>`, `<polyline>`,
+    and `<polygon>` are each converted into the same shape a `<path>`
+    would produce (a `<rect>`'s own rounded corners, when present, are
+    not read - treated as a plain rectangle). Every `<g>`/`<svg>`/`<a>`
+    element is recursed into, composing its own `transform` attribute
+    (`translate`/`scale`/`rotate`/`skewX`/`skewY`/`matrix`, hand-parsed
+    and combined into a single 2D affine matrix) onto its descendants',
+    exactly mirroring nested-group equivalence per the SVG specification;
+    `<defs>`, `<symbol>`, `<clipPath>`, `<mask>`, and `<pattern>` are
+    template-only content and are never walked directly, the same way an
+    unreferenced DXF `BLOCK` is never acted on by `IMPORT.DXF`. A shape's
+    own `fill` (direct `fill` attribute, or a basic `fill:` entry inside
+    its own `style` attribute - no CSS stylesheet/class-selector support -
+    inherited down from the nearest ancestor that sets one, defaulting to
+    filled per the SVG specification's own default) decides whether it
+    imports as a flat n-gon Face or as an open/closed Polyline; `<line>`
+    is always imported as a Polyline regardless of its own fill, since the
+    specification itself gives `fill` no effect on a line. A filled
+    `<path>`'s first subpath is its own outer ring, and every subsequent
+    subpath is unconditionally treated as a hole and bridged into it -
+    the shape's own fill-rule (nonzero/evenodd) is never evaluated, the
+    same "ring order, not a winding-rule evaluation, decides hole-vs-
+    outer" convention every other GIS importer already uses for its own
+    rings. SVG's own downward-Y coordinate convention is always flipped
+    to this app's own north-up XY plane - unlike the shared axis-swap
+    checkbox `IMPORT.OBJ`/`IMPORT.STL`/`IMPORT.DXF`/`IMPORT.PLY`/
+    `IMPORT.DAE`/`IMPORT.GLB` already offer for a genuinely ambiguous
+    up-axis, this flip is unconditional, since SVG's own Y-down
+    convention is unambiguous and there is nothing to choose between. The
+    **Import SVG** options dialog has exactly one checkbox, off by
+    default: group/cycle material by each shape's own `id` attribute
+    (inherited from the nearest ancestor `<g>`'s own `id` when a shape
+    has none of its own), the SVG-native equivalent of `IMPORT.DXF`'s own
+    per-entity layer grouping - off by default, unlike DXF's own
+    unconditional layer grouping, since an arbitrary SVG file's own `id`
+    attributes are a far less reliable organizational signal than a DXF
+    layer
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at

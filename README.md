@@ -175,6 +175,7 @@ SOLARCHVISION-BIM can use existing project geometry as well as geometry created 
 | **KML** (`.kml`) | GIS/mapping geometry exchange (same geometry as GeoJSON/TopoJSON, XML-based; KMZ not supported) |
 | **CityGML** (`.gml`) | 3D city/building-model geometry exchange (LOD0 footprints through LOD2+ semantic surfaces; namespace-prefix-agnostic XML) |
 | **Shapefile** (`.shp`) | GIS/mapping geometry exchange (points, lines, polygons, optionally extruded; binary, with sibling `.dbf`/`.prj` read automatically) |
+| **SVG** (`.svg`) | 2D vector-drawing geometry exchange (paths, basic shapes; filled shapes import as flat faces, unfilled/stroke-only shapes as polylines) |
 
 Import behavior and the geometry or attributes retained depend on the source format and the contents of the file. Check the imported result before using it for measurement or analysis. A successful geometry import does not necessarily mean that all source BIM properties, classifications, materials, or relationships are preserved.
 
@@ -189,6 +190,10 @@ CityGML Buildings (and BuildingParts) are imported by finding every `<gml:Polygo
 ### Shapefile workflow
 
 Shapefile (`.shp`) points, lines, and polygons are built directly on top of `IMPORT.GEOJSON`'s own geometry handling, so the same height and grouping options apply. When a sibling `.dbf` file with the same base name is found next to the selected `.shp` file, its per-record attributes are read and used for height/extrusion and grouping exactly like a GeoJSON feature's properties; a `.dbf` row marked deleted still leaves its shape in place but contributes no attributes. No `.shx` index file is read (one sequential pass through the `.shp` file is enough), and zipped `.shz` shapefiles are not supported. Point, MultiPoint, PolyLine, and Polygon shapes are supported, including their Z variants (M values, when present, are ignored); MultiPatch shapes are not supported and are skipped. Polygon rings are grouped into faces using the shapefile format's own winding-direction convention: a clockwise ring starts a new outer face, and an immediately following counterclockwise ring is treated as a hole bridged into that face, matching the same hole-handling already used for GeoJSON/TopoJSON/KML/CityGML polygons. Coordinates are imported as already-local planar meters by default, but when a sibling `.prj` file is found its coordinate system is checked and geographic (longitude/latitude) `.prj` files switch the import to the same lon/lat projection used by GeoJSON/TopoJSON/KML/CityGML; either way, the import options dialog shows the detected setting and allows it to be overridden before importing.
+
+### SVG workflow
+
+SVG (`.svg`) `<path>` data and basic shapes (`<rect>`, `<circle>`, `<ellipse>`, `<line>`, `<polyline>`, `<polygon>`) are read directly from the file's own XML, including every `<g>` group's own `transform` attribute - no external library and no reliance on Processing's own `loadShape()` is used, since that built-in SVG loader has no public way to read back a shape's own accumulated transform, which would otherwise silently produce incorrectly-positioned geometry for transform-bearing content. A shape's own fill (inherited from its nearest ancestor when not set directly, defaulting to filled per the SVG specification) decides whether it imports as a flat face or an open/closed polyline; a filled path's additional subpaths are treated as holes, bridged into the first subpath the same way GeoJSON/TopoJSON/KML/CityGML/Shapefile polygons already are. SVG's own downward Y axis is always flipped to match the project's own north-up plane. Curves (cubic and quadratic Bezier) are tessellated at a fixed sampling density; elliptical arc (`A`/`a`) path commands are not supported. The **Import SVG** options dialog has one optional checkbox to group/cycle material by each shape's own `id` attribute (inherited from the nearest ancestor `<g>` when a shape has none of its own), off by default.
 
 ### LAS point-cloud workflow
 
@@ -215,6 +220,7 @@ IMPORT.TOPOJSON
 IMPORT.KML
 IMPORT.CITYGML
 IMPORT.SHAPEFILE
+IMPORT.SVG
 ```
 
 See the [command reference](command/README.md) for command syntax and details.

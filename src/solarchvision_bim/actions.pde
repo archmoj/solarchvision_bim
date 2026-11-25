@@ -399,6 +399,10 @@ void build_allActions() {
     selectFile_ImportDae();
   });
 
+  putAction("Import SVG", () -> {
+    selectFile_ImportSvg();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });

@@ -271,6 +271,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "IMPORT.OBJ": return  __IMPORT_OBJ__(parts);
     case "IMPORT.PLY": return  __IMPORT_PLY__(parts);
     case "IMPORT.STL": return  __IMPORT_STL__(parts);
+    case "IMPORT.SVG": return  __IMPORT_SVG__(parts);
     case "NORMALZOOM": return  __NORMALZOOM__(parts);
     case "OCTAHEDRON": return  __OCTAHEDRON__(parts);
     case "TETRAHEDRON": return  __TETRAHEDRON__(parts);

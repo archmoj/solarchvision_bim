@@ -189,6 +189,7 @@ class UI_menuBar {
       "Import PLY",
       "Import Shapefile",
       "Import STL",
+      "Import SVG",
       "Import TopoJSON",
       ___divider___,
       "Export 3D > SCR",

@@ -178,6 +178,13 @@ String __IMPORT_TOPOJSON__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_SVG__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportSvg(new File(parts[1]));
+    else selectFile_ImportSvg();
+    return hint;
+}
+
 String __IMPORT_KML__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_ImportKml(new File(parts[1]));
