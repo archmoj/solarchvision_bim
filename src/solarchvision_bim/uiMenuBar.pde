@@ -452,7 +452,7 @@ class UI_menuBar {
       "Saddle Surface",
       "Diagonal Wave Surface",
       "Wavy Sphere",
-      "Twisted Sphere",
+      "Grid Sphere",
       "Torus",
       "Hyperbolic Disc",
       "Paraboloid Dish",

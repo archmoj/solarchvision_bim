@@ -343,7 +343,7 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
 
 -   `PARAMETRIC`: Creates a parametric surface. `n` selects which
     parametric formula to use (1-6 are the Dome/Egg-Crate/Saddle/
-    Diagonal Wave/Wavy Sphere/Twisted Sphere surfaces; 7 is a Torus; 8 is
+    Diagonal Wave/Wavy Sphere/Grid Sphere surfaces; 7 is a Torus; 8 is
     a Hyperbolic Disc - the same hyperbolic paraboloid as the Saddle
     surface, swept over a circular footprint instead of a square one; 9
     is a Paraboloid Dish - a bowl/dish shape, e.g. a solar concentrator

@@ -1254,7 +1254,7 @@ void build_allActions() {
     UI_setTo_Create_Parametric(5);
   });
 
-  putAction("Twisted Sphere", () -> { // n=6: x/y/z driven asymmetrically by u and v then projected onto a unit sphere - lumpier/less regular than Wavy Sphere
+  putAction("Grid Sphere", () -> { // n=6: x/y/z driven asymmetrically by u and v then projected onto a unit sphere - renamed from "Twisted Sphere", which didn't match the shape's own regular crossing-grid pattern
     UI_setTo_Create_Parametric(6);
   });
 

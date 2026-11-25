@@ -1571,7 +1571,7 @@ class Create3D {
   // formulas, picked by n (0..7) - the switch below is the one place
   // that actually defines what each n looks like. n=1..7 are the Create
   // menu's own "Dome Surface" / "Egg-Crate Surface" / "Saddle Surface" /
-  // "Diagonal Wave Surface" / "Wavy Sphere" / "Twisted Sphere" / "Torus"
+  // "Diagonal Wave Surface" / "Wavy Sphere" / "Grid Sphere" / "Torus"
   // items (uiMenuBar.pde's PARENT_CREATE, wired in actions.pde) -
   // User3D.creatorParametricTypeIndex just carries whichever one was
   // picked through to here, unchanged, so this comment is the map from
@@ -1653,7 +1653,9 @@ class Create3D {
           float y = 0;
           float z = 0;
 
-          if (n == 6) { // "Twisted Sphere" in the Create menu (uiMenuBar.pde) -
+          if (n == 6) { // "Grid Sphere" in the Create menu (uiMenuBar.pde) -
+                         // renamed from "Twisted Sphere", which didn't match
+                         // the shape's own regular crossing-grid pattern.
                          // x/y/z driven asymmetrically by u and v (x depends only
                          // on u, y only on v), then normalized onto a unit
                          // sphere - lumpier than the more regular n==5 "Wavy
@@ -1683,7 +1685,7 @@ class Create3D {
                                 // SUPEROBJ_SHAPE_PARAMETRIC, which runs
                                 // "Parametric ... n=0" - landing right here. n=0
                                 // isn't reachable through the Create menu's own
-                                // "Dome/Egg-Crate/Saddle/.../Twisted Sphere"
+                                // "Dome/Egg-Crate/Saddle/.../Grid Sphere"
                                 // items (those only ever pass n=1..6), only
                                 // through Cushion's own SuperOBJ power preset.
                                 // Same raw formula as n==6 above, just not
