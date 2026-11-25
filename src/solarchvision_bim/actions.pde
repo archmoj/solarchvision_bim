@@ -435,6 +435,10 @@ void build_allActions() {
     exportGeojson();
   });
 
+  putAction("Export 3D > KML", () -> {
+    exportKml();
+  });
+
   putAction("Quit", () -> {
     println();
     exit();

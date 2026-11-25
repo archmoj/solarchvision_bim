@@ -194,8 +194,9 @@ This page has two parts:
 -   `EXPORT.GEOJSON`: Exports every visible Face as a GeoJSON (RFC 7946)
     Polygon Feature and every visible Polyline as a LineString Feature,
     the write-side counterpart to `IMPORT.GEOJSON` and the shared "GIS
-    export core" future KML/TopoJSON/Shapefile/CityGML exporters are
-    meant to build on. A Face's own single ring is exported exactly as
+    export core" `EXPORT.KML` (below) is already built directly on, and
+    future TopoJSON/Shapefile/CityGML exporters are meant to build on
+    too. A Face's own single ring is exported exactly as
     stored - this app keeps no separate "this was really a hole"
     bookkeeping once a hole has been bridged into a Face on import, and
     no "these N faces were really one extruded building" link either, so
@@ -215,6 +216,20 @@ This page has two parts:
     same file and typing `"material"` or `"layer"` into `IMPORT.GEOJSON`'s
     own group-property option regroups it exactly the way it was grouped
     here
+-   `EXPORT.KML`: Exports the exact same Faces/Polylines `EXPORT.GEOJSON`
+    does - built directly on that command's own shared "GIS export core"
+    (the same reverse-projection and ring-winding logic, reused as-is,
+    not duplicated), the write-side counterpart to `IMPORT.KML`. Every
+    visible Face becomes one `<Placemark>` with a `<Polygon>` geometry
+    (its ring written as a single `<outerBoundaryIs>`/`<LinearRing>` - no
+    `<innerBoundaryIs>` is ever written, for the same "holes are never
+    reconstructed" reason `EXPORT.GEOJSON` already documents), and every
+    visible Polyline becomes one `<Placemark>` with a `<LineString>`
+    geometry, closed the same way. Each Placemark's own material/layer
+    are written as `<ExtendedData><Data name="material">`/
+    `<Data name="layer">` entries, the exact shape `IMPORT.KML` already
+    reads back, so the same material/layer re-grouping round trip
+    `EXPORT.GEOJSON`'s own bullet describes works here too
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page

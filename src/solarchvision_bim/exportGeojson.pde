@@ -128,18 +128,7 @@ void exportGeojson () {
 // solid reconstruction is out of scope).
 JSONObject exportGeojsonBuildPolygonFeature (int[] faceNodes, int material, int layer) {
 
-  ArrayList<float[]> ring = new ArrayList<float[]>();
-  for (int i = 0; i < faceNodes.length; i++) {
-    ring.add(exportGeojsonPointToLonLatAlt(faceNodes[i]));
-  }
-
-  if (exportGeojsonSignedRingArea(ring) < 0) {
-    java.util.Collections.reverse(ring);
-  }
-
-  // Close the ring - RFC 7946 section 3.1.6 requires the first and last
-  // positions to be equivalent.
-  ring.add(ring.get(0));
+  ArrayList<float[]> ring = exportGeojsonBuildClosedWoundRing(faceNodes);
 
   JSONArray outerRing = new JSONArray();
   for (float[] lla : ring) {
@@ -190,6 +179,32 @@ JSONObject exportGeojsonWrapFeature (JSONObject geometry, int material, int laye
   feature.setJSONObject("geometry", geometry);
   feature.setJSONObject("properties", properties);
   return feature;
+}
+
+// One allFaces node loop -> one closed, correctly-wound ring of
+// [lon, lat, alt] points - the shared geometry step behind
+// exportGeojsonBuildPolygonFeature() above and exportKml.pde's own
+// Polygon writer, which needs the exact same ring (reverse-projected,
+// rewound counterclockwise, closed) but wrapped in KML's own
+// <coordinates> text rather than a GeoJSON JSONArray.
+ArrayList<float[]> exportGeojsonBuildClosedWoundRing (int[] faceNodes) {
+
+  ArrayList<float[]> ring = new ArrayList<float[]>();
+  for (int i = 0; i < faceNodes.length; i++) {
+    ring.add(exportGeojsonPointToLonLatAlt(faceNodes[i]));
+  }
+
+  if (exportGeojsonSignedRingArea(ring) < 0) {
+    java.util.Collections.reverse(ring);
+  }
+
+  // Close the ring - RFC 7946 section 3.1.6 requires the first and last
+  // positions to be equivalent, and a KML LinearRing conventionally does
+  // the exact same thing (see importKml.pde's own
+  // "geojsonStripClosingDuplicate(outer)" comment on reading one back).
+  ring.add(ring.get(0));
+
+  return ring;
 }
 
 // allPoints vertex index -> [lon, lat, alt] (a plain 3-element float[],
