@@ -200,6 +200,7 @@ class UI_menuBar {
       "Export 3D > LAS",
       "Export 3D > GeoJSON",
       "Export 3D > KML",
+      "Export 3D > CityGML",
       ___divider___,
       "Quit"
     },

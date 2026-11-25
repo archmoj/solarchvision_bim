@@ -439,6 +439,10 @@ void build_allActions() {
     exportKml();
   });
 
+  putAction("Export 3D > CityGML", () -> {
+    exportCitygml();
+  });
+
   putAction("Quit", () -> {
     println();
     exit();

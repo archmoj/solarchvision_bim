@@ -230,6 +230,29 @@ This page has two parts:
     `<Data name="layer">` entries, the exact shape `IMPORT.KML` already
     reads back, so the same material/layer re-grouping round trip
     `EXPORT.GEOJSON`'s own bullet describes works here too
+-   `EXPORT.CITYGML`: Exports every visible Face as its own CityGML
+    `<bldg:Building>`, the write-side counterpart to `IMPORT.CITYGML`.
+    Unlike `EXPORT.GEOJSON`/`EXPORT.KML`, this shares only the general
+    per-feature/visibility-skip pattern and XML-writing helpers with
+    those two, not their coordinate math: every vertex is written
+    exactly as this app's own scene already stores it (no reverse
+    projection to longitude/latitude - CityGML is routinely used with an
+    already-local/projected CRS, the same planar-by-default convention
+    `IMPORT.CITYGML` itself defaults to), and no ring is ever rewound
+    (`EXPORT.GEOJSON`/`EXPORT.KML`'s own counterclockwise rewinding is a
+    purely 2D, horizontal-plane notion that would be meaningless for a
+    building's own vertical wall surfaces). Each Building's single ring
+    is written as one `<bldg:lod2MultiSurface>`/`<gml:MultiSurface>`/
+    `<gml:surfaceMember>`/`<gml:Polygon>`/`<gml:exterior>`/
+    `<gml:LinearRing>`/`<gml:posList>` - no holes or extruded-solid
+    reconstruction, same reasoning as `EXPORT.GEOJSON`. Material/layer
+    are written as `<gen:intAttribute name="material">`/
+    `<gen:intAttribute name="layer">` generic attributes, the exact
+    shape `IMPORT.CITYGML` already reads back for its own group-property
+    option, and each Building gets a generated `gml:id` of `face_N`.
+    Polylines are never exported at all - `IMPORT.CITYGML` has no
+    LineString/Curve reading of any kind (Polygon geometry only), so
+    writing one here would produce a file it could never read back
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page

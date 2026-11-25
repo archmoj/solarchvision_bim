@@ -405,6 +405,7 @@ Use the application's project save/load functions to retain supported scene and 
 - **SCR:** Export an AutoCAD script.
 - **GeoJSON:** Export scene faces as Polygon features and polylines as LineString features, geo-referenced back to real longitude/latitude around the project's own site location.
 - **KML:** Export scene faces as Polygon Placemarks and polylines as LineString Placemarks, built directly on the same geo-referencing as the GeoJSON export above.
+- **CityGML:** Export scene faces as Buildings (one per face), each carrying a flat Polygon surface in its own local coordinates (no longitude/latitude projection).
 - **HTML:** Export through the available HTML workflow.
 - **Image capture:** Record viewport frames in PNG, JPG, TIF, or BMP formats using the command interface.
 
