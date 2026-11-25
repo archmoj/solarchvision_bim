@@ -373,9 +373,10 @@ SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
     Helicoid is to a flat ramp; 18 is a Seashell - a direct
     generalization of the Torus's own tube-swept-around-a-ring
     mechanism, except the ring is a logarithmic spiral that grows
-    outward and climbs upward instead of closing back on itself, the
-    same way a conch or nautilus shell's whorls widen and rise as they
-    wind out).
+    outward instead of closing back on itself, with its pointed spire/
+    apex held near z=0 on top and its wide body whorl descending below
+    it, the same resting orientation (point up, body down) a real
+    shell sits in).
     `k` is the Torus's own minor:major tube-thickness ratio (0-1) and is
     ignored by every other `n`. `u`/`v` set the surface's own grid
     resolution (segment counts along each parametric direction) and

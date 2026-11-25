@@ -1627,9 +1627,9 @@ class Create3D {
     final float SCHERK_DOMAIN_HALF_WIDTH = 0.45 * PI; // n==16 "Scherk's Surface" only - how far u/v's own -1..1 domain is remapped (in radians) before cos() sees it; close to the true pole at PI/2 (for a dramatic, recognizably-Scherk upward flare near the edges) while staying safely short of it (cos(0.45*PI) =~ 0.156, nowhere near the zero that would blow z up to +-infinity)
     final float DINI_TWIST_PITCH = 0.2; // n==17 "Dini's Surface" only - how much z rises per radian of theta (u*PI) - over the full -PI..PI sweep that's a total rise of 0.2*2*PI =~ 1.26, comparable to the untwisted n==14 Tractricoid's own z range (0..~1.04 at TRACTRICOID_T_MAX), so the helical twist reads clearly without dwarfing the pseudosphere profile it's twisting
     final float SEASHELL_TURNS = 2.5; // n==18 "Seashell" only - how many full turns the spiral winds through across its own -1..1 domain, same "reads clearly as a spiral without the default grid's quads getting too twisted" reasoning as HELICOID_TURNS above - 2.5 (not a whole number) also means u=-1's own spiralAngle (-2.5*PI) lands exactly a quarter-turn off from u=+1's own (2.5*PI), which is what gives the shell's own first corner a clean, exactly-testable position
-    final float SEASHELL_GROWTH = 4; // n==18 only - the ratio between the shell's own outermost coil radius (u=+1) and its innermost coil radius (u=-1, fixed at 1) - a dramatic but still recognizably shell-like flare, same spirit as a nautilus's own visibly-widening whorls
-    final float SEASHELL_HEIGHT_SCALE = 1.5; // n==18 only - how much the shell's own spiral climbs in z for every unit its centerline radius R grows, turning a flat spiral disk into a proper 3D conch/turban shape that rises as it winds outward
-    final float SEASHELL_TUBE_RATIO = 0.3; // n==18 only - the tube's own radius as a fraction of the local centerline radius R, so the tube (and the shell's own "aperture") widens right along with the whorl it sits on, same as a real shell's growth
+    final float SEASHELL_GROWTH = 2.5; // n==18 only - the ratio between the shell's own outermost coil radius (u=+1) and its innermost coil radius (u=-1, fixed at 1) - toned down from an earlier 4 (which read as oversized next to every other preset here) to a still-recognizably-widening, but more modestly-scaled, nautilus-like flare
+    final float SEASHELL_HEIGHT_SCALE = 0.6; // n==18 only - how much the shell's own spiral climbs in z for every unit its centerline radius R grows, turning a flat spiral disk into a proper 3D conch/turban shape - toned down from an earlier 1.5 (which made the shell far taller than every other preset here) to a height more in line with the rest of the family
+    final float SEASHELL_TUBE_RATIO = 0.25; // n==18 only - the tube's own radius as a fraction of the local centerline radius R, so the tube (and the shell's own "aperture") widens right along with the whorl it sits on, same as a real shell's growth - also toned down slightly (from 0.3) alongside the two constants above
 
     // U/V grid resolution - a shared, generic User3D.creatorParametricStepsU/
     // V pair feeding every preset here (n=0..7, Torus included), replacing
@@ -1810,14 +1810,20 @@ class Create3D {
                                  // fixed-radius circle, u sweeps a
                                  // logarithmic spiral (SEASHELL_TURNS full
                                  // turns) whose own radius R grows from 1
-                                 // (u=-1, the shell's own innermost coil)
-                                 // up to SEASHELL_GROWTH (u=+1, the
-                                 // outermost coil/opening), climbing in
-                                 // height right along with it (centerZ =
-                                 // SEASHELL_HEIGHT_SCALE * (R-1), the
-                                 // same "grows outward AND upward" logic
-                                 // real shells use) - the tube's own
-                                 // radius (SEASHELL_TUBE_RATIO * R) grows
+                                 // (u=-1, the shell's own innermost coil,
+                                 // the pointed spire/apex) up to
+                                 // SEASHELL_GROWTH (u=+1, the outermost
+                                 // coil/opening, the body whorl), with
+                                 // the apex held near z=0 and the body
+                                 // whorl descending BELOW it as R grows
+                                 // (centerZ = -SEASHELL_HEIGHT_SCALE *
+                                 // (R-1), negated so the narrow spire
+                                 // sits on top and the wide opening hangs
+                                 // down below it - a real shell's own
+                                 // resting orientation, point up, body
+                                 // down - rather than the other way
+                                 // around) - the tube's own radius
+                                 // (SEASHELL_TUBE_RATIO * R) grows
                                  // proportionally too, same as a real
                                  // shell's aperture widening along with
                                  // the whorl it sits on.
@@ -1825,7 +1831,7 @@ class Create3D {
             float growthFraction = (u + 1) / 2.0; // 0 at the innermost coil (u=-1), 1 at the outermost (u=+1)
             float R = pow(SEASHELL_GROWTH, growthFraction);
             float tubeRadius = SEASHELL_TUBE_RATIO * R;
-            float centerZ = SEASHELL_HEIGHT_SCALE * (R - 1);
+            float centerZ = -SEASHELL_HEIGHT_SCALE * (R - 1); // negated - see this branch's own comment above for why
             float ringR = R + tubeRadius * cos(v * PI);
             x = ringR * cos(spiralAngle);
             y = ringR * sin(spiralAngle);

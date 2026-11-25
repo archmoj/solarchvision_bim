@@ -494,16 +494,16 @@ class AddParametricSurfaceRemainingTest {
     assertSubstantialQuadGrid();
     // start_u/start_v are both left at their ordinary -1 default (n==18
     // is NOT in the "start_u = 0" list) - so the very first corner is
-    // u=-1, v=-1: growthFraction=0, R=pow(4,0)=1, tubeRadius=0.3,
-    // centerZ=0, spiralAngle=-1*2.5*PI=-2.5*PI (which, being a quarter-
-    // turn past a half-turn, lands exactly on the y-axis: cos=0, sin=-1)
-    // - ringR = 1 + 0.3*cos(-PI) = 1 - 0.3 = 0.7, so x = 0.7*0 = 0, y =
-    // 0.7*(-1) = -0.7, z = 0 + 0.3*sin(-PI) = 0.
-    assertArrayEquals(new float[]{0, -0.7f, 0}, app.allVertices[0], 0.01f);
+    // u=-1, v=-1: growthFraction=0, R=pow(2.5,0)=1, tubeRadius=0.25,
+    // centerZ=-0.6*(1-1)=0, spiralAngle=-1*2.5*PI=-2.5*PI (which, being
+    // a quarter-turn past a half-turn, lands exactly on the y-axis:
+    // cos=0, sin=-1) - ringR = 1 + 0.25*cos(-PI) = 1 - 0.25 = 0.75, so
+    // x = 0.75*0 = 0, y = 0.75*(-1) = -0.75, z = 0 + 0.25*sin(-PI) = 0.
+    assertArrayEquals(new float[]{0, -0.75f, 0}, app.allVertices[0], 0.01f);
   }
 
   @Test
-  void n18_seashell_spiralsOutwardAndUpward_fromInnerToOuterCoil () {
+  void n18_seashell_spiralsOutwardAndDownward_fromApexToBodyWhorl () {
     app.Create3D.add_ParametricSurface(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 18, 0, 0, 20, 20);
 
     float minRingR = Float.MAX_VALUE;
@@ -517,17 +517,17 @@ class AddParametricSurfaceRemainingTest {
       minZ = Math.min(minZ, v[2]);
       maxZ = Math.max(maxZ, v[2]);
     }
-    // Innermost coil (R=1, tubeRadius=0.3) keeps the ring within
-    // 0.7..1.3 of the axis and its own tube within -0.3..0.3 of the
-    // ground; the outermost coil (R=SEASHELL_GROWTH=4, tubeRadius=1.2)
-    // swells out to roughly 2.8..5.2 from the axis and climbs to
-    // roughly 3.3..5.7 up - so a substantial, clearly-spiraling shell
-    // should reach noticeably past the innermost coil's own bounds in
-    // both radius and height, while still keeping its own innermost
-    // coil close to the ground.
-    assertTrue(minRingR < 1.0f, "innermost coil should come within 1.0 of the axis, found min=" + minRingR);
-    assertTrue(maxRingR > 4.0f, "outermost coil should swell out past 4.0 from the axis, found max=" + maxRingR);
-    assertTrue(minZ > -0.5f && minZ < 0.1f, "the innermost coil's own tube should keep the lowest point near ground level, found min z=" + minZ);
-    assertTrue(maxZ > 5.0f, "the outermost coil should climb well above the innermost coil, found max z=" + maxZ);
+    // The innermost coil/apex (R=1, tubeRadius=0.25) keeps the ring
+    // within 0.75..1.25 of the axis and its own tube within -0.25..0.25
+    // of z=0; the outermost coil/body whorl (R=SEASHELL_GROWTH=2.5,
+    // tubeRadius=0.625) swells out to roughly 1.875..3.125 from the
+    // axis and descends to roughly -1.525..-0.275 - so a substantial,
+    // clearly-spiraling shell should reach noticeably past the apex's
+    // own bounds in both radius and depth, while the apex itself stays
+    // close to z=0 (on top, not below).
+    assertTrue(minRingR < 1.0f, "apex coil should come within 1.0 of the axis, found min=" + minRingR);
+    assertTrue(maxRingR > 2.5f, "body whorl should swell out past 2.5 from the axis, found max=" + maxRingR);
+    assertTrue(maxZ > -0.1f && maxZ < 0.5f, "the apex's own tube should keep the highest point near z=0, found max z=" + maxZ);
+    assertTrue(minZ < -1.0f, "the body whorl should descend well below the apex, found min z=" + minZ);
   }
 }

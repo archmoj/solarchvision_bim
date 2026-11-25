@@ -1270,7 +1270,7 @@ void build_allActions() {
     UI_setTo_Create_Parametric(7);
   });
 
-  putAction("Seashell", () -> { // n=18: a direct generalization of n=7 Torus's own tube-swept-around-a-ring mechanism, except the ring is a logarithmic spiral that grows outward and climbs upward instead of closing back on itself
+  putAction("Seashell", () -> { // n=18: a direct generalization of n=7 Torus's own tube-swept-around-a-ring mechanism, except the ring is a logarithmic spiral that grows outward instead of closing back on itself, with the pointed spire/apex held near z=0 on top and the wide body whorl descending below it
     UI_setTo_Create_Parametric(18);
   });
 
