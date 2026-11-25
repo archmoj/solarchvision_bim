@@ -3877,7 +3877,7 @@ class Modify3D {
     endScene3DChange();
   }
 
-  // "Zigzag": re-triangulates every selected QUAD face (triangles and
+  // "Corrugate": re-triangulates every selected QUAD face (triangles and
   // other n-gons in the selection are left alone, same as Force
   // Triangulate's own "n-gon only" scope above) using one of the two
   // 4-vertex diagonal splits - ABC+CDA (the A-C diagonal) or BCD+DAB
@@ -3934,7 +3934,7 @@ class Modify3D {
   // neighbors, only by whether A's own position is one color or the
   // other - which the shared position-keyed vertex graph still gets
   // right for every pinwheel sector simultaneously.
-  // Every raw vertex index at (or within zigzagPosKey()'s own rounding
+  // Every raw vertex index at (or within corrugatePosKey()'s own rounding
   // of) this position, rounded to resolve floating-point noise while
   // keeping genuinely distinct vertices distinct - every shape this
   // app generates (create3D.pde's own add_ParametricSurface, for one)
@@ -3942,16 +3942,16 @@ class Modify3D {
   // own allPoints.create() calls, so two quads that are geometric
   // neighbors almost never actually SHARE a vertex index, even though
   // their matching corners sit at the exact same 3D position - this is
-  // what lets zigzagFaces_Selection() below treat them as one vertex
+  // what lets corrugateFaces_Selection() below treat them as one vertex
   // anyway.
-  String zigzagPosKey (int v) {
+  String corrugatePosKey (int v) {
     long kx = Math.round(allVertices[v][0] * 1000000.0);
     long ky = Math.round(allVertices[v][1] * 1000000.0);
     long kz = Math.round(allVertices[v][2] * 1000000.0);
     return kx + "_" + ky + "_" + kz;
   }
 
-  void zigzagFaces_Selection () {
+  void corrugateFaces_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     beginScene3DChange();
@@ -3962,8 +3962,8 @@ class Modify3D {
     Select3D.deselect_Faces();
 
     // Pass 0: every raw vertex index seen below, grouped by its own
-    // zigzagPosKey() - since two geometrically-neighboring quads
-    // almost never share a vertex INDEX (see zigzagPosKey()'s own
+    // corrugatePosKey() - since two geometrically-neighboring quads
+    // almost never share a vertex INDEX (see corrugatePosKey()'s own
     // comment above), working off of raw indices alone found every
     // quad "isolated" with no real neighbor, and then bumping one
     // quad's own private copy of a shared corner left its neighbors'
@@ -4007,7 +4007,7 @@ class Modify3D {
         int f = groupFaces[fi];
         for (int s = 0; s < 4; s++) {
           int v = allFaces.nodes[f][s];
-          String key = zigzagPosKey(v);
+          String key = corrugatePosKey(v);
           posKeys[fi][s] = key;
           ArrayList<Integer> members = posGroupMembers.computeIfAbsent(key, k -> new ArrayList<Integer>());
           if (!members.contains(v)) members.add(v); // same raw vertex is revisited once per face corner that uses it (every quad meeting at a WELDED vertex, for one) - add it only once, or Pass 4 below would move it that many times over
@@ -4015,7 +4015,7 @@ class Modify3D {
       }
 
       // this group's own vertex adjacency graph, keyed by POSITION (not
-      // by raw vertex index - see zigzagPosKey()'s own comment above) so
+      // by raw vertex index - see corrugatePosKey()'s own comment above) so
       // two quads that are geometric neighbors still connect here even
       // when their own vertex arrays are unwelded duplicates. Every
       // quad's own 4 sides contribute one undirected edge each.
@@ -4198,10 +4198,10 @@ class Modify3D {
     // fixed offset would dwarf a dense/small-scale grid's own quads
     // (far more than the grid spacing between them) and tear the
     // surface apart into what looks like disconnected, overlapping
-    // pieces instead of a gentle zigzag relief. So average, per
+    // pieces instead of a gentle corrugated relief. So average, per
     // candidate position, the length of every edge of every PROCESSED
     // quad meeting at it (not the whole mesh - just the quads actually
-    // being zigzagged), and scale that position's own bump by it below.
+    // being corrugated), and scale that position's own bump by it below.
     HashMap<String, float[]> edgeLengthAccum = new HashMap<String, float[]>(); // position -> {sum, count}
     for (int f : face_usesACDiagonal.keySet()) {
       int[] fNodes = allFaces.nodes[f];
@@ -4209,8 +4209,8 @@ class Modify3D {
       for (int k = 0; k < fLen; k++) {
         int vA = fNodes[k];
         int vB = fNodes[(k + 1) % fLen];
-        String keyA = zigzagPosKey(vA);
-        String keyB = zigzagPosKey(vB);
+        String keyA = corrugatePosKey(vA);
+        String keyB = corrugatePosKey(vB);
         float dx = allVertices[vA][0] - allVertices[vB][0];
         float dy = allVertices[vA][1] - allVertices[vB][1];
         float dz = allVertices[vA][2] - allVertices[vB][2];
@@ -4230,7 +4230,7 @@ class Modify3D {
     // averaged vertex normal per candidate position, pooling every raw
     // (unwelded) duplicate index sharing that position - from whatever
     // faces (selected or not) already use any of them - BEFORE any
-    // zigzag triangulation or bump touches the mesh, matching how
+    // corrugate triangulation or bump touches the mesh, matching how
     // Passive Solar Touch's own averaging
     // (collectFaceNormals_atVertex()/averageNormalizedDirection()
     // above) is reused here.
@@ -4302,12 +4302,12 @@ class Modify3D {
     // quads" rather than a fixed, scale-oblivious world-unit offset.
     // Every RAW index sharing this position (posGroupMembers - every
     // shape this app generates hands each quad its own private, unwelded
-    // copy of what is geometrically the same corner, see zigzagPosKey()'s
+    // copy of what is geometrically the same corner, see corrugatePosKey()'s
     // own comment above) moves by the IDENTICAL delta, so the mesh stays
     // seamless across quad boundaries after the bump instead of tearing
     // open at every quad edge, which is the actual fragmentation bug
     // this rewrite fixes.
-    float bump = User3D.modifierZigzagBumpAmount;
+    float bump = User3D.modifierCorrugateBumpAmount;
     for (String posKey : candidatePositions) {
       if (touchedPositions.contains(posKey)) continue;
       float[] n = vertexNormalSnapshot.get(posKey);

@@ -73,7 +73,7 @@ class User3D {
   float modifierPassiveSolarInsetDepth = 0.125; // 0.125 = 12.5cm inward, in-plane, from every edge of a face Passive Solar Inset recesses - its own dedicated value, deliberately different from modifierInsetDepth above, so tuning one doesn't retune the other
   float modifierPassiveSolarInsetStep = 0.25; // meters the new inner face is pushed inward along the face's own normal, away from the sun - matches modifierPassiveSolarTouchStep's own default
   float modifierWeldThreshold = 0.1;
-  float modifierZigzagBumpAmount = 0.25; // Zigzag Selected Faces - a FRACTION of each vertex's own local quad size (not a flat world-unit offset) moved along its averaged normal, one way or the other depending on which half of the pattern it falls in; can be negative; a vertex that ends up a diagonal "hub" is left in place regardless
+  float modifierCorrugateBumpAmount = 0.25; // Corrugate Selected Faces - a FRACTION of each vertex's own local quad size (not a flat world-unit offset) moved along its averaged normal, one way or the other depending on which half of the pattern it falls in; can be negative; a vertex that ends up a diagonal "hub" is left in place regardless
 
   float exporterScale = 1.0; //0.001; // 0.001: 1km --> 1
   int exporterYaxisUp = 1; //1; // 1: to fit in Unity3D
@@ -144,7 +144,7 @@ class User3D {
     XML_setFloat(parent, "modifierPassiveSolarInsetDepth", this.modifierPassiveSolarInsetDepth);
     XML_setFloat(parent, "modifierPassiveSolarInsetStep", this.modifierPassiveSolarInsetStep);
     XML_setFloat(parent, "modifierWeldThreshold", this.modifierWeldThreshold);
-    XML_setFloat(parent, "modifierZigzagBumpAmount", this.modifierZigzagBumpAmount);
+    XML_setFloat(parent, "modifierCorrugateBumpAmount", this.modifierCorrugateBumpAmount);
     XML_setFloat(parent, "modifierOffsetAmount", this.modifierOffsetAmount);
     XML_setFloat(parent, "modifierInsetDepth", this.modifierInsetDepth);
     XML_setFloat(parent, "modifierRelaxAmount", this.modifierRelaxAmount);
@@ -240,7 +240,7 @@ class User3D {
     this.modifierPassiveSolarInsetDepth = XML_getFloat(parent, "modifierPassiveSolarInsetDepth", 0.125); // older save files never had this field - 0 would mean no in-plane shrink at all, not a useful fallback
     this.modifierPassiveSolarInsetStep = XML_getFloat(parent, "modifierPassiveSolarInsetStep", 0.25); // older save files never had this field - 0 would mean Passive Solar Inset never recedes inward, not a useful fallback
     this.modifierWeldThreshold = XML_getFloat(parent, "modifierWeldThreshold");
-    this.modifierZigzagBumpAmount = XML_getFloat(parent, "modifierZigzagBumpAmount", 0.25); // older save files never had this field
+    this.modifierCorrugateBumpAmount = XML_getFloat(parent, "modifierCorrugateBumpAmount", 0.25); // older save files never had this field
     this.modifierOffsetAmount = XML_getFloat(parent, "modifierOffsetAmount");
     this.modifierInsetDepth = XML_getFloat(parent, "modifierInsetDepth", 0.1); // older save files never had this field - 0 would mean "no inset at all", not a useful fallback
     this.modifierRelaxAmount = XML_getFloat(parent, "modifierRelaxAmount", 0.5); // older save files never had this field - 0 would mean "relax does nothing", not a useful fallback

@@ -1179,7 +1179,7 @@ class RunScriptTest {
       checkedCount++;
     }
 
-    assertEquals(257, checkedCount, "expected exactly 257 value-modifier methods"); // +1 for creatorTorusRatio (Torus parametric-surface preset), +2 for creatorParametricStepsU/V (shared u/v grid resolution, every parametric-surface preset), +1 for modifierZigzagBumpAmount (Zigzag Selected Faces)
+    assertEquals(257, checkedCount, "expected exactly 257 value-modifier methods"); // +1 for creatorTorusRatio (Torus parametric-surface preset), +2 for creatorParametricStepsU/V (shared u/v grid resolution, every parametric-surface preset), +1 for modifierCorrugateBumpAmount (Corrugate Selected Faces)
   }
 
   // ================= parseParams / getF / getI ================================

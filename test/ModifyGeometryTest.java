@@ -1558,7 +1558,7 @@ class ModifyGeometryTest {
     assertFalse(app.Modify3D.isCoplanarFace(2, refNormal, refPoint), "parallel but on a different plane");
   }
 
-  // --- zigzagFaces_Selection (a full integration test) ------------------
+  // --- corrugateFaces_Selection (a full integration test) ------------------
   //
   // A flat 2x2 grid of quads (a 3x3 grid of vertices, facing +Z), index
   // layout v(p,q) = p*3+q for p,q in 0..2:
@@ -1573,7 +1573,7 @@ class ModifyGeometryTest {
   // this is the exact "2x2 grid" case the feature's own design was
   // confirmed against. The diagonal choice comes from a checkerboard
   // 2-coloring of the mesh's own VERTICES (not of the quads - see
-  // zigzagFaces_Selection()'s own comment for why coloring the quads
+  // corrugateFaces_Selection()'s own comment for why coloring the quads
   // directly isn't rotation-safe once a selection nests Quad
   // Tessellate's own pinwheel output inside itself): each quad connects
   // its own A-C pair whenever A's vertex color is 0, otherwise its own
@@ -1591,7 +1591,7 @@ class ModifyGeometryTest {
   // 3 and 5 in the other, so those two pairs bump in opposite
   // directions from each other.
   @Test
-  void zigzag_2x2FlatGrid_bumpsCornersAndCenter_leavesEdgeMidpointsAsHubsInPlace () {
+  void corrugate_2x2FlatGrid_bumpsCornersAndCenter_leavesEdgeMidpointsAsHubsInPlace () {
     app.allVertices = new float[][]{
       {0, 0, 0}, {0, 1, 0}, {0, 2, 0},
       {1, 0, 0}, {1, 1, 0}, {1, 2, 0},
@@ -1599,7 +1599,7 @@ class ModifyGeometryTest {
     };
     app.allFaces.nodes = new int[][]{{0, 3, 4, 1}, {3, 6, 7, 4}, {1, 4, 5, 2}, {4, 7, 8, 5}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 3};
@@ -1607,7 +1607,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     // 4 quads -> 8 triangles, no new vertices (every bump moves an
     // EXISTING point, it never creates one).
@@ -1663,10 +1663,10 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void zigzag_negativeBumpAmount_movesTheUntouchedVertexTheOtherWay () {
+  void corrugate_negativeBumpAmount_movesTheUntouchedVertexTheOtherWay () {
     // A single flat quad, facing +Z - a lone quad is its own,
     // single-cell "cluster," so its own vertex-coloring BFS always
-    // starts on one of its 4 corners (see zigzagFaces_Selection()'s own
+    // starts on one of its 4 corners (see corrugateFaces_Selection()'s own
     // comment on why the checkerboard is colored on vertices, not
     // quads) - for this exact vertex order that colors A and C one way
     // and B and D the other, and the quad connects its own A-C pair
@@ -1675,7 +1675,7 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}}; // A, B, C, D
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = -0.4f;
+    app.User3D.modifierCorrugateBumpAmount = -0.4f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
@@ -1683,7 +1683,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     assertEquals(2, app.allFaces.nodes.length);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]); // A,B,C - the A-C diagonal
@@ -1703,19 +1703,19 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void zigzag_bumpScalesWithLocalQuadSize_notAFlatWorldUnitOffset () {
+  void corrugate_bumpScalesWithLocalQuadSize_notAFlatWorldUnitOffset () {
     // The exact same single flat quad as the negative-bump test above,
     // just scaled down to a tiny 0.01-unit square - a fixed, flat
     // world-unit bump (the ORIGINAL behavior) would have displaced
     // vertices by a whole 25x the quad's own size, folding/overlapping
     // the surface into what reads as disconnected pieces rather than a
-    // gentle zigzag relief. The move must come out proportional to the
+    // gentle corrugate relief. The move must come out proportional to the
     // quad's own edge length instead.
     float s = 0.01f;
     app.allVertices = new float[][]{{0, 0, 0}, {s, 0, 0}, {s, s, 0}, {0, s, 0}}; // A, B, C, D
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
@@ -1723,7 +1723,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     // B and D (the untouched corners, with this same vertex-coloring -
     // see the negative-bump test above) move by 0.25 * (this quad's
@@ -1733,11 +1733,11 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void zigzag_nonQuadFaceInSelection_isLeftCompletelyUntouched () {
+  void corrugate_nonQuadFaceInSelection_isLeftCompletelyUntouched () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}}; // a triangle, not a quad
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
@@ -1745,16 +1745,16 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     assertEquals(1, app.allFaces.nodes.length);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
-    for (float[] p : app.allVertices) assertEquals(0f, p[2], 0.0001f, "a triangle isn't a quad - zigzag must leave it alone");
+    for (float[] p : app.allVertices) assertEquals(0f, p[2], 0.0001f, "a triangle isn't a quad - corrugate must leave it alone");
   }
 
   @Test
-  void zigzag_unweldedGrid_movesEveryDuplicateOfASharedCornerTogether () {
-    // The same flat 2x2 grid as zigzag_2x2FlatGrid_... above, but built
+  void corrugate_unweldedGrid_movesEveryDuplicateOfASharedCornerTogether () {
+    // The same flat 2x2 grid as corrugate_2x2FlatGrid_... above, but built
     // the way every shape generator in this app actually builds one
     // (add_ParametricSurface, for one): each of the 4 quads gets its
     // OWN private 4 vertices via its own allPoints.create() calls, so
@@ -1775,7 +1775,7 @@ class ModifyGeometryTest {
     };
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 3};
@@ -1783,7 +1783,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     assertEquals(8, app.allFaces.nodes.length, "4 quads, each split into 2 triangles");
 
@@ -1824,7 +1824,7 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void zigzag_tessellatedPlanePinwheel_alternatesTheDiagonalAroundTheSharedCenter () {
+  void corrugate_tessellatedPlanePinwheel_alternatesTheDiagonalAroundTheSharedCenter () {
     // The exact real-world repro that exposed the "no real alternation"
     // bug: add a plane (one quad) and apply Quad Tessellate once -
     // tessellateRectangular_Selection() replaces it with 4 welded
@@ -1851,7 +1851,7 @@ class ModifyGeometryTest {
     // diagonal for every quad here instead of alternating. Coloring the
     // mesh's own VERTICES instead - and picking each quad's own A-C vs
     // B-D purely from its own A's resulting color (see
-    // zigzagFaces_Selection()'s own comment) - never compares one
+    // corrugateFaces_Selection()'s own comment) - never compares one
     // quad's labels against another's, so this rotation can't throw it
     // off: every one of this pinwheel's 4 edge-midpoints (0, 2, 5, 7)
     // ends up one color, and the center (3) and all 4 real corners (1,
@@ -1870,7 +1870,7 @@ class ModifyGeometryTest {
     };
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}, {2, 4, 5, 3}, {5, 6, 7, 3}, {7, 8, 0, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 3};
@@ -1878,7 +1878,7 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.zigzagFaces_Selection();
+    app.Modify3D.corrugateFaces_Selection();
 
     assertEquals(8, app.allFaces.nodes.length, "4 quads, each split into 2 triangles");
 
@@ -1916,7 +1916,7 @@ class ModifyGeometryTest {
   }
 
   @Test
-  void zigzag_nestedQuadTessellateTwice_stillFormsAGenuineCheckerboard () {
+  void corrugate_nestedQuadTessellateTwice_stillFormsAGenuineCheckerboard () {
     // The exact real-world repro reported against this feature: start
     // with one plane, apply Quad Tessellate (replacing it with a
     // 4-quad pinwheel), then apply Quad Tessellate AGAIN to all 4 of
@@ -1926,7 +1926,7 @@ class ModifyGeometryTest {
     // degree checkerboard. Each of the resulting 16 sub-quads is a
     // true axis-aligned unit square (Quad Tessellate's own pinwheel
     // sectors are always axis-aligned squares when the parent is one -
-    // see zigzagFaces_Selection()'s own comment on why that still
+    // see corrugateFaces_Selection()'s own comment on why that still
     // doesn't make every sector's own stored corner order line up with
     // its neighbors'), tiling a clean 4x4 grid over the original 4x4
     // plane - so this checks the diagonal choice is a genuine
@@ -1945,8 +1945,8 @@ class ModifyGeometryTest {
     app.Select3D.faceSelection = new int[]{0, 1, 2, 3};
     app.Modify3D.tessellateRectangular_Selection();
 
-    app.User3D.modifierZigzagBumpAmount = 0.25f;
-    app.Modify3D.zigzagFaces_Selection();
+    app.User3D.modifierCorrugateBumpAmount = 0.25f;
+    app.Modify3D.corrugateFaces_Selection();
 
     assertEquals(32, app.allFaces.nodes.length, "16 unit-square sub-quads, each split into 2 triangles");
 
