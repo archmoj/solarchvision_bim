@@ -372,12 +372,21 @@ class UI_toolBar {
     switch (Bar_Switch) {
 
       case "Layer Type":
+        // beginScene3DChange()/endScene3DChange() (globalFunctions.pde) -
+        // not just for Select3D.convert_Vertex_to_softSelection()'s own
+        // selection-state change below, but for currentObjectCategory
+        // itself: buildScene3DSnapshot()/restoreScene3DSnapshot()
+        // (undoRedoScene3D.pde) now capture and restore that global
+        // alongside Select3D, specifically so switching Layer Type is
+        // its own undo/redo-able step, the same as every other
+        // Select3D-affecting action already wrapped here.
+        beginScene3DChange();
         currentObjectCategory = j - 1;
         if (currentObjectCategory == ObjectCategory.SOFTVERTEX) {
           Select3D.convert_Vertex_to_softSelection();
         }
+        endScene3DChange(); // calls view_changed() itself
         UI_rollout.revise();
-        view_changed();
         break;
 
       case "Model Type":

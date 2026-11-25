@@ -605,4 +605,28 @@ class UI_toolBarTest {
     assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
     assertArrayEquals(new int[]{9}, app.Select3D.softSelection);
   }
+
+  // Regression test for the bug this fixed: switching "Layer Type" used
+  // to mutate currentObjectCategory with no beginScene3DChange()/
+  // endScene3DChange() wrapping at all, so Ctrl+Z right afterward had
+  // no step to undo - the switch was invisible to undo/redo entirely,
+  // not merely "undone but not visibly restored". seedScene3DHistory()
+  // (drawInitialFrames.pde, normally frame-22-gated) is called directly
+  // here, same workaround UndoRedoTest.java's own seed() helper uses,
+  // since a bare `new solarchvision_bim()` never reaches that frame.
+  @Test
+  void layerType_switch_isItsOwnUndoableStep () {
+    app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3]; // buildScene3DSnapshot() reaches Terrain.to_XML(), which needs this - unlike every other test in this file, this one actually seeds scene3DHistory
+    app.seedScene3DHistory();
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory); // globalVariables.pde's own default
+
+    app.UI_toolBar.performAction("Layer Type", 0, 6); // j-1=5 -> OBJECTTYPE.VERTEX
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory);
+
+    app.undoScene3DChange();
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory); // restored, not left at VERTEX
+
+    app.redoScene3DChange();
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory); // redo brings it back
+  }
 }

@@ -142,6 +142,7 @@ class Scene3DSnapshot {
   XML groups;
   XML terrain;
   XML select3D;
+  int currentObjectCategory; // uiToolBar.pde's "Layer Type" switch - see buildScene3DSnapshot()'s own comment on why this one plain field rides alongside the eleven XML subtrees above instead of getting a twelfth Scene3DSubtreeWriter of its own
 }
 
 ArrayList<Scene3DSnapshot> scene3DHistory = new ArrayList<Scene3DSnapshot>();
@@ -249,6 +250,21 @@ Scene3DSnapshot buildScene3DSnapshot () {
   snapshot.groups    = buildOrReuseSubtree(allGroups::to_XML,    (previous == null) ? null : previous.groups);
   snapshot.terrain   = buildOrReuseSubtree((xml) -> Terrain.to_XML(xml, false), (previous == null) ? null : previous.terrain);
   snapshot.select3D  = buildOrReuseSubtree(Select3D::to_XML,     (previous == null) ? null : previous.select3D);
+
+  // currentObjectCategory (globalVariables.pde) isn't one of the eleven
+  // classes buildOrReuseSubtree() above shares/dedupes - it's a single
+  // global int, not a class with its own to_XML()/from_XML() - but it's
+  // exactly the thing Select3D's own selection is scoped to (Group/
+  // Face/Vertex/Soft/Solid/Section/Camera/Polyline/Terrain/1D/2D - see
+  // uiToolBar.pde's "Layer Type" switch and ObjectCategory), so landing
+  // on the right SELECTION after an undo/redo (this class's whole
+  // reason for including Select3D at all, per this file's own header
+  // comment) needs this restored right alongside it, or a restored
+  // Face selection could end up read back while still in Vertex mode.
+  // Cheap enough (one int copy) that it isn't worth its own
+  // buildOrReuseSubtree()/previous-reuse treatment the way the XML
+  // subtrees above get.
+  snapshot.currentObjectCategory = currentObjectCategory;
 
   return snapshot;
 }
@@ -388,6 +404,15 @@ void restoreScene3DSnapshot (Scene3DSnapshot snapshot) {
   Terrain.from_XML(snapshot.terrain);
 
   Select3D.from_XML(snapshot.select3D);
+
+  // See buildScene3DSnapshot()'s own comment on why this plain int rides
+  // alongside Select3D here too, rather than being left for the
+  // toolbar's own live read of currentObjectCategory to somehow catch up -
+  // nothing else re-derives it, so without this line an undo/redo would
+  // keep whatever Layer Type was active right up until the undo/redo
+  // itself, not the one that was actually in effect at the snapshot
+  // being restored.
+  currentObjectCategory = snapshot.currentObjectCategory;
 }
 
 // A restored snapshot's own selection state is internally consistent at
@@ -462,6 +487,19 @@ void restoreProjectScene3DSnapshot (Scene3DSnapshot snapshot) {
     // would block it anyway - this keeps the cache invalidation itself
     // unconditional regardless).
     invalidateWin3DRetainedCaches();
+
+    // Same follow-up undoRedoStation.pde's own restore already fires on
+    // itself, and for the same reason (see that file's own comment on
+    // its call): restoreScene3DSnapshot() above just wrote a possibly-
+    // different currentObjectCategory straight into the global int, but
+    // the rollout panel showing Face/Vertex/Soft/Solid/... properties
+    // for the current Layer Type only rebuilds when UI_rollout.update is
+    // set (applyRolloutUpdate.pde bails out immediately otherwise) -
+    // without this, an undo/redo across a Layer Type change still
+    // correctly restores currentObjectCategory and Select3D together, but
+    // LOOKS like nothing happened until some other, unrelated revise()
+    // call happens to fire first.
+    UI_rollout.revise();
 
     find_which_bakings_to_regenerate();
     VertexSolar_resize_array();
