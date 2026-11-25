@@ -2,13 +2,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Covers modify3D.pde's applyTiling_Selection() and its three Modify-menu
-// entry points (tilingSquare_Selection/tilingHexagon_Selection/
-// tilingEquilateral_Selection), plus the geometry helpers built for them
-// (clipPolygonToFaceBoundary3D/clipPolygon_halfPlane3D/polygonArea3D/
-// buildTilingCandidates_UV). Same hand-built one-face, one-group fixture
-// style as ModifyGeometryTest.java's own tessellateTriangular_Selection
-// integration tests.
+// Covers modify3D.pde's applyTiling_Selection() and its Modify-menu entry
+// points (tilingSquare_Selection/tilingHexagon_Selection/
+// tilingEquilateral_Selection/tilingRhombille_Selection), plus the
+// geometry helpers built for them (clipPolygonToFaceBoundary3D/
+// clipPolygon_halfPlane3D/polygonArea3D/buildTilingCandidates_UV). Same
+// hand-built one-face, one-group fixture style as ModifyGeometryTest.java's
+// own tessellateTriangular_Selection integration tests.
 class TilingSelectionTest {
 
   private solarchvision_bim app;
@@ -162,6 +162,63 @@ class TilingSelectionTest {
       if ((app.allFaces.nodes[f].length == 6) && !selectedSet.contains(f)) foundUnselectedSixVertexFace = true;
     }
     assertTrue(foundUnselectedSixVertexFace, "setup check - this face size should produce at least one clipped-but-still-6-vertex boundary fragment to tell apart from a true whole hexagon");
+  }
+
+  // --- tilingRhombille_Selection (a full integration test) --------------
+  // Dual of the trihexagonal tiling: the same hexagon lattice as
+  // tilingHexagon_Selection above, with each hexagon split into 3 rhombi.
+
+  @Test
+  void tilingRhombille_tilesALargeFaceWithoutLosingOrDoublingAnyArea () {
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingRhombille_Selection();
+
+    assertTrue(app.allFaces.nodes.length > 1, "a 5x5 face at edgeSize=1 should produce more than one rhombille-pattern piece");
+    assertEquals(25.0f, totalFacesArea(), 0.01f);
+
+    boolean foundWholeRhombus = false;
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if (app.allFaces.nodes[f].length == 4) foundWholeRhombus = true;
+    }
+    assertTrue(foundWholeRhombus, "a face this much bigger than one tile should contain at least one unclipped, whole rhombus");
+  }
+
+  @Test
+  void tilingRhombille_selectsOnlyTheWholeUnclippedRhombi () {
+    // Same selection discipline as tilingHexagon_Selection: every tile
+    // still gets created, but only the whole, unclipped ones end up
+    // selected afterward (full replace, not append) - including any
+    // clipped boundary fragment that happened to still land on 4 vertices.
+    setUpOneFace(new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}, {0, 5, 0}});
+    app.User3D.tileEdgeSize = 1.0f;
+    app.User3D.tileRotation = 0;
+
+    app.Modify3D.tilingRhombille_Selection();
+
+    int[] selection = app.Select3D.faceSelection;
+    assertTrue(selection.length > 0, "a 5x5 face at edgeSize=1 should contain at least one whole, unclipped rhombus");
+
+    float expectedRhombusArea = ((float) Math.sqrt(3) / 2) * app.User3D.tileEdgeSize * app.User3D.tileEdgeSize;
+
+    for (int idx : selection) {
+      assertEquals(4, app.allFaces.nodes[idx].length, "every selected face must be a rhombus");
+
+      float[][] verts = app.Modify3D.faceBaseVertices(idx);
+      float[] normal = app.Modify3D.faceNormalUnit(verts);
+      float area = app.Modify3D.polygonArea3D(verts, normal);
+      assertEquals(expectedRhombusArea, area, 0.0001f, "a selected rhombus must be a true, unclipped 60/120 deg rhombus, not a same-vertex-count clipped fragment");
+    }
+
+    boolean foundUnselectedFourVertexFace = false;
+    java.util.HashSet<Integer> selectedSet = new java.util.HashSet<Integer>();
+    for (int idx : selection) selectedSet.add(idx);
+    for (int f = 0; f < app.allFaces.nodes.length; f++) {
+      if ((app.allFaces.nodes[f].length == 4) && !selectedSet.contains(f)) foundUnselectedFourVertexFace = true;
+    }
+    assertTrue(foundUnselectedFourVertexFace, "setup check - this face size should produce at least one clipped-but-still-4-vertex boundary fragment to tell apart from a true whole rhombus");
   }
 
   // --- tilingEquilateral_Selection (a full integration test) -----------

@@ -1888,12 +1888,13 @@ class Modify3D {
   // Semi-Regular family's own applySemiRegularTiling_Selection() below) -
   // so the user can go straight on to add openings, etc., inside just
   // those, the same reasoning as that family's own "higher degree" rule,
-  // just without needing a vertex-count comparison since each of these 4
+  // just without needing a vertex-count comparison since each of these 5
   // patterns only ever has the one shape.
   final static int TILING_EQUILATERAL = 3;
   final static int TILING_SQUARE = 4;
   final static int TILING_CAIRO = 5;
   final static int TILING_HEXAGON = 6;
+  final static int TILING_RHOMBILLE = 7;
 
   void tilingSquare_Selection () {
     applyTiling_Selection(TILING_SQUARE);
@@ -1905,6 +1906,10 @@ class Modify3D {
 
   void tilingEquilateral_Selection () {
     applyTiling_Selection(TILING_EQUILATERAL);
+  }
+
+  void tilingRhombille_Selection () {
+    applyTiling_Selection(TILING_RHOMBILLE);
   }
 
   void tilingCairo_Selection () {
@@ -2586,6 +2591,54 @@ class Modify3D {
             hex[k][1] = vc + R * funcs.sin_ang(ang);
           }
           result.add(hex);
+        }
+      }
+
+    } else if (patternKind == TILING_RHOMBILLE) {
+      // Dual of the trihexagonal tiling (3.6.3.6): the same flat-top
+      // hexagon lattice as TILING_HEXAGON above, but every hexagon is
+      // split into 3 congruent 60/120 deg rhombi by connecting its own
+      // center to its own alternating corners (indices 0, 2, 4 of the
+      // same k*60 deg vertex numbering TILING_HEXAGON uses) - the classic
+      // "isometric cube" decomposition of a regular hexagon. Every
+      // hexagon in the lattice gets split the same way in this shared
+      // (u, v) frame (not relative to its own lattice position), so the
+      // 3 rhombi always meet their neighbors' own rhombi edge-to-edge
+      // across every hexagon boundary, with no gap or overlap - the
+      // split is purely internal to each hexagon and never depends on
+      // how a neighboring hexagon happens to be split.
+      float R = edgeSize;
+      float colSpacing = 1.5 * R;
+      float rowSpacing = sqrt(3) * R;
+
+      int nCols = int(ceil((uMax - uMin) / colSpacing - FLOAT_tiny)) + 2;
+      if (nCols < 1) nCols = 1;
+      int nRows = int(ceil((vMax - vMin) / rowSpacing - FLOAT_tiny)) + 2;
+      if (nRows < 1) nRows = 1;
+      int halfCols = nCols / 2 + 1;
+      int halfRows = nRows / 2 + 1;
+
+      for (int i = -halfCols; i <= halfCols; i++) {
+        float uc = uCenter + i * colSpacing;
+        float rowOffsetParity = (((i % 2) + 2) % 2 == 0) ? 0 : 0.5 * rowSpacing;
+
+        for (int j = -halfRows; j <= halfRows; j++) {
+          float vc = vCenter + rowOffsetParity + j * rowSpacing;
+
+          float[][] hexVerts = new float[6][2];
+          for (int k = 0; k < 6; k++) {
+            float ang = k * 60;
+            hexVerts[k][0] = uc + R * funcs.cos_ang(ang);
+            hexVerts[k][1] = vc + R * funcs.sin_ang(ang);
+          }
+          float[] center = { uc, vc };
+
+          for (int spoke = 0; spoke < 3; spoke++) {
+            int k0 = (spoke * 2) % 6;
+            int k1 = (spoke * 2 + 1) % 6;
+            int k2 = (spoke * 2 + 2) % 6;
+            result.add(new float[][] { center, hexVerts[k0], hexVerts[k1], hexVerts[k2] });
+          }
         }
       }
 

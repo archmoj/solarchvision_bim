@@ -576,6 +576,7 @@ class UI_menuBar {
       "Square Tiling",
       "Cairo Tiling",
       "Hexagon Tiling",
+      "Rhombille Tiling",
       ___divider___,
       "Rhombitrihexagon Tiling",
       "Truncated Hexagon Tiling",

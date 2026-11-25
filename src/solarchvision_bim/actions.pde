@@ -2423,6 +2423,10 @@ void build_allActions() {
     Modify3D.tilingEquilateral_Selection();
   });
 
+  putAction("Rhombille Tiling", () -> {
+    Modify3D.tilingRhombille_Selection();
+  });
+
   putAction("Rhombitrihexagon Tiling", () -> {
     Modify3D.tilingRhombitrihexagon_Selection();
   });
