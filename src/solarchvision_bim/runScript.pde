@@ -335,6 +335,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "UNSHADE.VIEWPORT": return  __UNSHADE_VIEWPORT__(parts);
     case "+MOVETOWARDSMOUSE": return  __$MOVETOWARDSMOUSE__(parts);
     case "+ORBITSELECTIONXY": return  __$ORBITSELECTIONXY__(parts);
+    case "EXPORT.SHAPEFILE": return  __EXPORT_SHAPEFILE__(parts);
     case "+MOVETOWARDSSELECTION": return  __$MOVETOWARDSSELECTION__(parts);
     case "EXPORT.OBJ.DATESERIES": return  __EXPORT_OBJ_DATESERIES__(parts);
     case "EXPORT.OBJ.TIMESERIES": return  __EXPORT_OBJ_TIMESERIES__(parts);

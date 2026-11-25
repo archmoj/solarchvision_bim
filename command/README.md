@@ -194,9 +194,9 @@ This page has two parts:
 -   `EXPORT.GEOJSON`: Exports every visible Face as a GeoJSON (RFC 7946)
     Polygon Feature and every visible Polyline as a LineString Feature,
     the write-side counterpart to `IMPORT.GEOJSON` and the shared "GIS
-    export core" `EXPORT.KML` (below) is already built directly on, and
-    future TopoJSON/Shapefile/CityGML exporters are meant to build on
-    too. A Face's own single ring is exported exactly as
+    export core" `EXPORT.KML` and `EXPORT.SHAPEFILE` (below) are already
+    built directly on (a future TopoJSON exporter is meant to build on it
+    too). A Face's own single ring is exported exactly as
     stored - this app keeps no separate "this was really a hole"
     bookkeeping once a hole has been bridged into a Face on import, and
     no "these N faces were really one extruded building" link either, so
@@ -253,6 +253,37 @@ This page has two parts:
     Polylines are never exported at all - `IMPORT.CITYGML` has no
     LineString/Curve reading of any kind (Polygon geometry only), so
     writing one here would produce a file it could never read back
+-   `EXPORT.SHAPEFILE`: Exports the exact same Faces/Polylines
+    `EXPORT.GEOJSON` does, reusing that command's own reverse-projection
+    and signed-ring-area logic (not its ring-building/winding target,
+    which is the opposite one), the write-side counterpart to
+    `IMPORT.SHAPEFILE`. Because a single `.shp` file's own header can only
+    declare one shape type for the whole file, every visible Face is
+    written as a PolygonZ record into a primary `<ProjectName>.shp/.shx/
+    .dbf/.prj` file set (always written, even with zero Faces, matching
+    the "always write, possibly empty" convention the other three GIS
+    exporters already follow for their own primary output), and - only
+    when at least one visible Polyline exists - every one of those is
+    written as a PolyLineZ record into a second, optional
+    `<ProjectName>_lines.shp/.shx/.dbf/.prj` file set; no file set is ever
+    written for Point/MultiPoint geometry, since this app has no dedicated
+    point/marker object. Each ring is rewound clockwise (the exact
+    opposite of `EXPORT.GEOJSON`/`EXPORT.KML`'s own counterclockwise
+    convention) when needed, matching the clockwise-outer/counterclockwise
+    -hole convention `IMPORT.SHAPEFILE` itself already expects. Both
+    PolygonZ and PolyLineZ records are written with their own Z (altitude)
+    range and values but no M range/values at all, following the same
+    "M omitted entirely" real-world convention established GIS tooling
+    (such as GDAL's own `ogr2ogr`) already follows, which costs nothing on
+    the read side either since `IMPORT.SHAPEFILE` locates each record by
+    its length, never by M presence. The `.shx` index file is written
+    alongside even though `IMPORT.SHAPEFILE` itself never needs one, since
+    many other GIS tools expect one to be present; the `.dbf` carries each
+    record's own material/layer as two Numeric fields, `"material"` and
+    `"layer"`, in exactly the same shape `IMPORT.SHAPEFILE` already reads
+    back for its own group-property option; and the `.prj` declares plain
+    geographic WGS84, the exact trigger `IMPORT.SHAPEFILE`'s own
+    `.prj`-based lon/lat auto-detection checks for
 -   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
     multiple commands, one per line - see the `=` section-divider note
     near the top of this page

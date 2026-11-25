@@ -180,6 +180,9 @@ class CommandRegistryTest {
 
   @Test
   void ensembleObservationMaxDays_isRegisteredUnderItsExactTitle () {
+    // See the same call in solidImpactsRotX_isRegisteredUnderItsExactTitle
+    // below for why this can't rely on method-execution order.
+    app.build_allActions();
     app.vm.ensembleObservationMaxDays(0);
 
     assertTrue(app.allActions.containsKey(normalizeKey("Ensemble Observation Max Days")));
@@ -187,6 +190,13 @@ class CommandRegistryTest {
 
   @Test
   void solidImpactsRotX_isRegisteredUnderItsExactTitle () {
+    // This fallback runner (unlike real JUnit5) iterates
+    // Class.getDeclaredMethods() to find tests, whose order is
+    // unspecified by the JVM and can shift between runs - so this test
+    // cannot rely on hideSelectedFacesEdges_isReachableAndDistinctFromHideSelectedFaces()
+    // (elsewhere in this class) having already called build_allActions()
+    // on the shared static app. Call it here too, directly.
+    app.build_allActions();
     app.vm.SolidImpacts_rotX(0);
 
     assertTrue(app.allActions.containsKey(normalizeKey("Solid Impacts RotX")));

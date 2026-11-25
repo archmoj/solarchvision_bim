@@ -443,6 +443,10 @@ void build_allActions() {
     exportCitygml();
   });
 
+  putAction("Export 3D > Shapefile", () -> {
+    exportShapefile();
+  });
+
   putAction("Quit", () -> {
     println();
     exit();
