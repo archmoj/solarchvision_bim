@@ -264,7 +264,9 @@ class Delete3D {
     // The existing float[][] removeIndices() overload already handles
     // this correctly even though corners' rows are variable-length
     // (jagged), since it only ever copies the outer row references.
+    allSections.ensureExtraParamsLength(); // see its own comment (sections.pde) - guarantees the removeIndices() call below is safe even if f_data/i_data/corners/num were ever changed directly without extraParams kept in lockstep
     allSections.corners = removeIndices(allSections.corners, ids);
+    allSections.extraParams = removeIndices(allSections.extraParams, ids);
     allSections.SolidImpact = removeIndices(allSections.SolidImpact, ids);
     allSections.SolarImpact = removeIndices(allSections.SolarImpact, ids);
     allSections.num -= ids.length;

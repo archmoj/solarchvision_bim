@@ -259,6 +259,8 @@ class Clone3D {
 
     for (int o = 0; o < Select3D.sectionSelection.length; o++) {
       int OBJ_ID = Select3D.sectionSelection[o];
+      String sourceExtraParams = allSections.getExtraParams(OBJ_ID);
+      allSections.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allSections.num - 1, even if f_data/i_data/corners/num were ever changed directly without extraParams kept in lockstep (see solids.pde's cloneSolid() - same reason)
       // The real n corners (a copy, not the stored array itself - so
       // scaling/editing the clone never aliases back into the
       // original), not the derived bounding-box getSizeX/getSizeY - a
@@ -270,6 +272,11 @@ class Clone3D {
         (float[]) allSections.getCornersXY(OBJ_ID).clone(),
         allSections.get_resX(OBJ_ID), allSections.get_resY(OBJ_ID)
       );
+      // create() alone would default the clone's extraParams to "" - this
+      // duplicate DOES have a single source, OBJ_ID, so this overwrites
+      // that default, same split/merge/duplicate policy as cloneFace()/
+      // clonePolyline()/cloneSolid().
+      allSections.setExtraParams(allSections.num - 1, sourceExtraParams);
     }
 
     Select3D.deselect_Sections();

@@ -45,12 +45,22 @@ class Sections {
   // picking all trace the real polygon, not its bounding box.
   float[][] corners = new float[0][];
 
+  // Opaque, caller-defined JSON metadata, one entry per section - "" is
+  // the canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde/groups.pde/model1Ds.pde/
+  // model2Ds.pde/solids.pde/cameras.pde). Parsed lazily, only via
+  // getExtraParamsObject()/setExtraParamsObject() below, never during
+  // to_XML/from_XML or any structural resize.
+  String[] extraParams = new String[0];
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.f_data = new float[n][6];
     this.i_data = new int[n][2];
     this.corners = new float[n][];
+    this.extraParams = new String[n];
+    java.util.Arrays.fill(this.extraParams, "");
     this.SolidImpact = new PImage[n];
     this.SolarImpact = new PImage[n][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     this.num = n;
@@ -105,7 +115,41 @@ class Sections {
     }
     this.SolarImpact = (PImage[][][]) concat(this.SolarImpact, Temp_SolarImpact);
 
+    // Blind append, same as every other class's create() - defaults the
+    // new section's extraParams to "" and does NOT self-heal/guard itself
+    // against extraParams already being out of sync with f_data/i_data/
+    // corners/num. A caller about to index extraParams at [this.num]
+    // right after this call (e.g. clone3D.pde's Sections()) must call
+    // ensureExtraParamsLength() itself first.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+
     this.num += 1;
+  }
+
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.num) return;
+    String[] resized = new String[this.num];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
   int get_resX (int n) { return this.i_data[n][0]; }
@@ -730,6 +774,8 @@ class Sections {
           txt += nf(this.getCornerY(i, k), 0, 4).replace(",", ".");
         }
         XML_setContent(child, txt);
+
+        XML_setString(child, "extraParams", this.getExtraParams(i));
       }
       XML_setBoolean(parent, "displayAll", this.displayAll);
     }
@@ -782,6 +828,8 @@ class Sections {
       this.f_data = new float[ni][6];
       this.i_data = new int[ni][2];
       this.corners = new float[ni][];
+      this.extraParams = new String[ni];
+      java.util.Arrays.fill(this.extraParams, "");
       this.num = ni;
       XML[] children = parent.getChildren("item");
       for (int i = 0; i < ni; i++) {
@@ -803,6 +851,12 @@ class Sections {
           cornersXY[2 * k + 1] = float(parts[9 + 2 * k + 1]);
         }
         this.corners[i] = cornersXY;
+
+        // Falls back to "" (this field's own "nothing here" default) for
+        // a save file written before extraParams existed at all - see
+        // the 3-arg XML_getString() overload's own comment
+        // (xmlHelpers.pde).
+        this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }

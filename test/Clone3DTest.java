@@ -330,6 +330,8 @@ class Clone3DTest {
     app.allSections.SolidImpact = new processing.core.PImage[1];
     app.allSections.SolarImpact = new processing.core.PImage[1][1][1];
     app.allSections.num = 1;
+    // Deliberately no extraParams set here - confirms Sections()'s own
+    // ensureExtraParamsLength() guard, not just the happy path below.
 
     app.Select3D.sectionSelection = new int[]{0};
 
@@ -338,6 +340,26 @@ class Clone3DTest {
     assertEquals(2, app.allSections.num);
     assertArrayEquals(new int[]{1}, app.Select3D.sectionSelection);
     assertEquals(1f, app.allSections.f_data[1][0], 0.0001f); // position carried over
+    assertEquals(2, app.allSections.extraParams.length);
+    assertEquals("", app.allSections.getExtraParams(1));
+  }
+
+  @Test
+  void sectionsBatch_inheritsExtraParamsFromTheSourceSection () {
+    app.allSections.f_data = new float[][]{{1, 2, 3, 4, 5, 6}};
+    app.allSections.corners = new float[][]{{-7, -8, 7, -8, 7, 8, -7, 8}};
+    app.allSections.i_data = new int[][]{{4, 4}};
+    app.allSections.extraParams = new String[]{"{\"material\":\"glass\"}"};
+    app.allSections.SolidImpact = new processing.core.PImage[1];
+    app.allSections.SolarImpact = new processing.core.PImage[1][1][1];
+    app.allSections.num = 1;
+
+    app.Select3D.sectionSelection = new int[]{0};
+
+    app.Clone3D.Sections(true);
+
+    assertEquals(2, app.allSections.extraParams.length);
+    assertEquals("{\"material\":\"glass\"}", app.allSections.getExtraParams(1));
   }
 
   // ================= Cameras (batch) ===================================

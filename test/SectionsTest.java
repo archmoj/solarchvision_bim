@@ -202,6 +202,7 @@ class SectionsTest {
     app.allSections.f_data = new float[][]{{10, 20, 30, 45, 15, 25}};
     app.allSections.i_data = new int[][]{{4, 4}};
     app.allSections.corners = new float[][]{{-1, -1, 1, -1, 1, 1, -1, 1}};
+    app.allSections.extraParams = new String[]{"{\"material\":\"glass\"}"};
     app.allSections.num = 1;
     app.allSections.SolidImpact = new processing.core.PImage[0];
     app.allSections.SolarImpact = new processing.core.PImage[0][0][0];
@@ -224,7 +225,143 @@ class SectionsTest {
     assertEquals(-1f, fresh.getCornerY(0, 0), 0.0001f);
     assertEquals(1f, fresh.getCornerX(0, 2), 0.0001f);
     assertEquals(1f, fresh.getCornerY(0, 2), 0.0001f);
+    assertEquals("{\"material\":\"glass\"}", fresh.getExtraParams(0));
     assertFalse(fresh.displayAll);
+  }
+
+  // ================= extraParams ======================================
+
+  @Test
+  void makeEmpty_setsExtraParamsToEmptyStringsForEveryEntry () {
+    app.allSections.makeEmpty(3);
+    assertEquals(3, app.allSections.extraParams.length);
+    assertEquals("", app.allSections.getExtraParams(0));
+    assertEquals("", app.allSections.getExtraParams(1));
+    assertEquals("", app.allSections.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewSectionsExtraParamsToEmptyString () {
+    app.allSections.create(10, 20, 30, 45, 2, 3, 4, 4);
+    assertEquals("", app.allSections.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
+    assertEquals("", app.allSections.getExtraParams(0));
+
+    app.allSections.makeEmpty(2);
+    assertEquals("", app.allSections.getExtraParams(-1));
+    assertEquals("", app.allSections.getExtraParams(5));
+  }
+
+  @Test
+  void setExtraParamsThenGetExtraParams_roundTripsTheRawString () {
+    app.allSections.makeEmpty(1);
+    app.allSections.setExtraParams(0, "{\"material\":\"steel\"}");
+    assertEquals("{\"material\":\"steel\"}", app.allSections.getExtraParams(0));
+  }
+
+  @Test
+  void ensureExtraParamsLength_padsShortArrayWithEmptyStringsAndPreservesExisting () {
+    app.allSections.f_data = new float[][]{new float[6], new float[6]};
+    app.allSections.i_data = new int[][]{new int[2], new int[2]};
+    app.allSections.corners = new float[][]{new float[6], new float[6]};
+    app.allSections.num = 2;
+    app.allSections.extraParams = new String[]{"{\"a\":1}"};
+
+    app.allSections.ensureExtraParamsLength();
+
+    assertEquals(2, app.allSections.extraParams.length);
+    assertEquals("{\"a\":1}", app.allSections.getExtraParams(0));
+    assertEquals("", app.allSections.getExtraParams(1));
+  }
+
+  @Test
+  void ensureExtraParamsLength_isANoOpWhenAlreadyTheRightLength () {
+    app.allSections.makeEmpty(2);
+    app.allSections.setExtraParams(0, "{\"a\":1}");
+    app.allSections.ensureExtraParamsLength();
+    assertEquals("{\"a\":1}", app.allSections.getExtraParams(0));
+    assertEquals(2, app.allSections.extraParams.length);
+  }
+
+  @Test
+  void getExtraParamsObject_parsesValidJSONIntoAJSONObject () {
+    app.allSections.makeEmpty(1);
+    app.allSections.setExtraParams(0, "{\"material\":\"glass\",\"count\":3}");
+
+    processing.data.JSONObject obj = app.allSections.getExtraParamsObject(0);
+
+    assertEquals("glass", obj.getString("material"));
+    assertEquals(3, obj.getInt("count"));
+  }
+
+  @Test
+  void getExtraParamsObject_collapsesEmptyOrMissingOrBadDataToAnEmptyObject () {
+    app.allSections.makeEmpty(3);
+    app.allSections.setExtraParams(1, null);
+    app.allSections.setExtraParams(2, "not valid json");
+
+    assertEquals(0, app.allSections.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allSections.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allSections.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToEmptyString () {
+    app.allSections.makeEmpty(1);
+    processing.data.JSONObject empty = new processing.data.JSONObject();
+    app.allSections.setExtraParamsObject(0, empty);
+    assertEquals("", app.allSections.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObjectThenGetExtraParamsObject_roundTripsViaJSON () {
+    app.allSections.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("material", "wood");
+    obj.setInt("count", 7);
+
+    app.allSections.setExtraParamsObject(0, obj);
+    processing.data.JSONObject fresh = app.allSections.getExtraParamsObject(0);
+
+    assertEquals("wood", fresh.getString("material"));
+    assertEquals(7, fresh.getInt("count"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allSections.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("10,20,30,45,15,25,4,4,3,-1,-1,1,-1,1,1");
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+
+    // from_XML() also reads 2 sibling blocks (SolidImpact/SolarImpact) -
+    // present but empty here, same as
+    // toXMLThenFromXML_roundTripsPositionData's own real to_XML() output
+    // with those 2 arrays at length 0.
+    processing.data.XML solidImpactParent = root.addChild(app.allSections.CLASS_STAMP + "SolidImpact");
+    solidImpactParent.setInt("ni", 0);
+    processing.data.XML solarImpactParent = root.addChild(app.allSections.CLASS_STAMP + "SolarImpact");
+    solarImpactParent.setInt("ni", 0);
+    solarImpactParent.setInt("nj", 0);
+    solarImpactParent.setInt("nk", 0);
+
+    solarchvision_bim.Sections fresh = app.new Sections();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.num);
+    assertEquals("", fresh.getExtraParams(0));
   }
 
   // ================= draw()/intersect() trace the real n-gon, not its

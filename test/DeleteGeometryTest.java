@@ -521,6 +521,10 @@ class DeleteGeometryTest {
     app.allSections.SolarImpact = new PImage[3][1][1];
     app.allSections.num = 3;
 
+    // Deliberately no extraParams set here - confirms sectionSelection()'s
+    // own ensureExtraParamsLength() guard, not just the happy path in
+    // selectedSections_compactsExtraParamsInLockstepWithTheOtherArrays
+    // below.
     app.Select3D.sectionSelection = new int[]{1};
 
     app.Delete3D.sectionSelection();
@@ -530,6 +534,30 @@ class DeleteGeometryTest {
     assertEquals(5, app.allSections.getNumCorners(1)); // the pentagon, shifted down from index 2
     assertEquals(2f, app.allSections.getCornerX(1, 4), 0.0001f);
     assertEquals(2f, app.allSections.getCornerY(1, 4), 0.0001f);
+    assertEquals(2, app.allSections.extraParams.length);
+  }
+
+  @Test
+  void selectedSections_compactsExtraParamsInLockstepWithTheOtherArrays () {
+    app.allSections.f_data = new float[][]{
+      floatRow(6, 100), floatRow(6, 200), floatRow(6, 300)
+    };
+    app.allSections.i_data = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    app.allSections.corners = new float[][]{
+      {0, 0, 1, 0, 1, 1}, {0, 0, 1, 0, 1, 1, 0, 1}, {0, 0, 1, 0, 1, 1, 0, 1, 2, 2}
+    };
+    app.allSections.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}"};
+    app.allSections.SolidImpact = new PImage[3];
+    app.allSections.SolarImpact = new PImage[3][1][1];
+    app.allSections.num = 3;
+
+    app.Select3D.sectionSelection = new int[]{1};
+
+    app.Delete3D.sectionSelection();
+
+    assertEquals(2, app.allSections.extraParams.length);
+    assertEquals("{\"i\":0}", app.allSections.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allSections.getExtraParams(1));
   }
 
   // --- model1DSelection (a full integration test) ----------------------
