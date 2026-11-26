@@ -405,6 +405,28 @@ class FacesTest {
   }
 
   @Test
+  void create_picksUpCurrentExtraParamsWhenACallerHasSetIt () {
+    // Mirrors current_Material/current_Tessellation/etc.'s own ambient-
+    // global pattern (globalVariables.pde) - a caller (an add_*_Core
+    // primitive builder, an importXxx.pde file) sets this immediately
+    // before calling create(), the same way it already sets
+    // current_Material = m; today.
+    app.current_ExtraParams = "{\"globalId\":\"abc123\"}";
+    app.allFaces.create(new int[]{0, 1, 2});
+    app.current_ExtraParams = ""; // restore the default for every other test
+    assertEquals("{\"globalId\":\"abc123\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void createBatch_appliesCurrentExtraParamsToEveryFaceInTheBatch () {
+    app.current_ExtraParams = "{\"globalId\":\"abc123\"}";
+    app.allFaces.createBatch(new int[][]{{0, 1, 2}, {3, 4, 5}});
+    app.current_ExtraParams = ""; // restore the default for every other test
+    assertEquals("{\"globalId\":\"abc123\"}", app.allFaces.getExtraParams(0));
+    assertEquals("{\"globalId\":\"abc123\"}", app.allFaces.getExtraParams(1));
+  }
+
+  @Test
   void getSetExtraParams_roundTripsTheRawString () {
     app.allFaces.makeEmpty(1);
     app.allFaces.setExtraParams(0, "{\"name\":\"wall A\",\"percentCompleted\":50}");

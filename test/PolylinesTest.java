@@ -329,6 +329,18 @@ class PolylinesTest {
   }
 
   @Test
+  void create_picksUpCurrentExtraParamsWhenACallerHasSetIt () {
+    // Mirrors current_Material/current_Tessellation/etc.'s own ambient-
+    // global pattern (globalVariables.pde) - a caller sets this
+    // immediately before calling create(), the same way it already sets
+    // current_Material = m; today.
+    app.current_ExtraParams = "{\"globalId\":\"abc123\"}";
+    app.allPolylines.create(new int[]{0, 1, 2});
+    app.current_ExtraParams = ""; // restore the default for every other test
+    assertEquals("{\"globalId\":\"abc123\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
   void getSetExtraParams_roundTripsTheRawString () {
     app.allPolylines.makeEmpty(1);
     app.allPolylines.setExtraParams(0, "{\"name\":\"fence\"}");

@@ -225,11 +225,11 @@ class Polylines {
 
       this.nodes = (int[][]) concat(this.nodes, newPolyline_nodes);
 
-      // New-from-scratch polyline - no source to inherit extraParams
-      // from, so it gets this field's own "nothing here" default (""),
-      // same as current_Material/etc. above are this class's own
-      // current defaults, not copied from anywhere.
-      this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+      // Reads the same ambient-global current_ExtraParams used above for
+      // current_Material/etc. (globalVariables.pde's own comment) - ""
+      // by default (this field's own "nothing here" value), or whatever
+      // a caller set it to immediately before this call.
+      this.extraParams = (String[]) concat(this.extraParams, new String[]{ current_ExtraParams });
     }
 
     if (allGroups.num > 0) allGroups.Polylines[allGroups.num - 1][1] = this.nodes.length - 1;

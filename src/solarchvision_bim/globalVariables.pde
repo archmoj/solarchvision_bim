@@ -33,6 +33,24 @@ int current_CurveType = 0; // Polylines.CURVE_STRAIGHT; see polylines.pde
 int current_IsArc = 0;
 float[] current_ArcParams = {0, 0, 0, 0, 0, 0, 0}; // cx, cy, cz, r, rot, totalAngle, segments - only meaningful when current_IsArc==1; see polylines.pde
 
+// Opaque, caller-defined JSON metadata for the NEXT new Face/Polyline
+// Faces.create()/Polylines.create() builds - same ambient-global
+// pattern as current_Material/current_Tessellation/etc. above, which
+// those two create() methods already read instead of taking parameters
+// directly (see their own call sites across create3D.pde's add_*_Core
+// primitive builders and every importXxx.pde file, which already set
+// current_Material = m; etc. right before calling create()).
+//
+// Unlike current_Material and its siblings, this one is NOT meant to
+// persist as "the active setting" across unrelated calls - there's no
+// UI concept of "the currently selected extraParams" the way there is
+// for material/layer/weight/etc. Every call site that sets this to
+// something real must reset it back to "" (this field's own "nothing
+// here" default, same as extraParams everywhere else in this project)
+// immediately after its own create() call(s), so it never silently
+// leaks into the next, unrelated piece of geometry someone creates.
+String current_ExtraParams = "";
+
 final String[] STR_SHD = {"F", "T"};
 
 class DATATYPE {
