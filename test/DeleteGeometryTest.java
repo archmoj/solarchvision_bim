@@ -317,6 +317,70 @@ class DeleteGeometryTest {
     assertEquals("{\"name\":\"second\"}", app.allGroups.getExtraParams(0));
   }
 
+  @Test
+  void selectedGroups_cascadesIntoTheGroupsOwnModel1DsAndCompactsExtraParamsTheSameWay () {
+    // Same splice shape as the Faces/Polylines cascade tests above,
+    // against allModel1Ds instead, confirming extraParams is kept in
+    // lockstep by the subset()/concat() splice in groupSelection()'s
+    // Model1Ds branch.
+    app.allModel1Ds.f_data = new float[][]{new float[11], new float[11], new float[11], new float[11]};
+    app.allModel1Ds.i_data = new int[][]{new int[3], new int[3], new int[3], new int[3]};
+    app.allModel1Ds.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+    app.allModel1Ds.num = 4;
+
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Model1Ds[0] = new int[]{0, 1}; // group 0 owns trees 0-1 - being deleted
+    app.allGroups.Model1Ds[1] = new int[]{2, 3}; // group 1 owns trees 2-3 - survives, shifted down
+
+    for (int[][] ranges : new int[][][]{
+      app.allGroups.Faces, app.allGroups.Polylines, app.allGroups.Model2Ds, app.allGroups.Solids
+    }) {
+      ranges[0] = new int[]{0, -1};
+      ranges[1] = new int[]{0, -1};
+    }
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Delete3D.groupSelection();
+
+    assertEquals(2, app.allModel1Ds.f_data.length);
+    assertEquals(2, app.allModel1Ds.extraParams.length);
+    assertEquals("{\"i\":2}", app.allModel1Ds.getExtraParams(0));
+    assertEquals("{\"i\":3}", app.allModel1Ds.getExtraParams(1));
+  }
+
+  @Test
+  void selectedGroups_cascadesIntoTheGroupsOwnModel2DsAndCompactsExtraParamsTheSameWay () {
+    app.allModel2Ds.XYZS = new float[][]{new float[4], new float[4], new float[4], new float[4]};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{
+      app.TREES_KIND, app.TREES_KIND, app.TREES_KIND, app.TREES_KIND
+    };
+    app.allModel2Ds.FileIndex = new int[]{0, 0, 0, 0};
+    app.allModel2Ds.Mirror = new boolean[]{false, false, false, false};
+    app.allModel2Ds.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+    app.allModel2Ds.num = 4;
+
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Model2Ds[0] = new int[]{0, 1}; // group 0 owns instances 0-1 - being deleted
+    app.allGroups.Model2Ds[1] = new int[]{2, 3}; // group 1 owns instances 2-3 - survives, shifted down
+
+    for (int[][] ranges : new int[][][]{
+      app.allGroups.Faces, app.allGroups.Polylines, app.allGroups.Model1Ds, app.allGroups.Solids
+    }) {
+      ranges[0] = new int[]{0, -1};
+      ranges[1] = new int[]{0, -1};
+    }
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Delete3D.groupSelection();
+
+    assertEquals(2, app.allModel2Ds.XYZS.length);
+    assertEquals(2, app.allModel2Ds.extraParams.length);
+    assertEquals("{\"i\":2}", app.allModel2Ds.getExtraParams(0));
+    assertEquals("{\"i\":3}", app.allModel2Ds.getExtraParams(1));
+  }
+
   // --- cameraSelection (a full integration test) ----------------------
 
   @Test
@@ -437,6 +501,7 @@ class DeleteGeometryTest {
       floatRow(11, 100), floatRow(11, 200), floatRow(11, 300), floatRow(11, 400)
     };
     app.allModel1Ds.i_data = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    app.allModel1Ds.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
     app.allModel1Ds.num = 4;
 
     app.allGroups.makeEmpty(2);
@@ -456,6 +521,10 @@ class DeleteGeometryTest {
     assertEquals(300f, app.allModel1Ds.f_data[1][0], 0.0001f);
     assertEquals(400f, app.allModel1Ds.f_data[2][0], 0.0001f);
     assertEquals(3, app.allModel1Ds.i_data.length);
+    assertEquals(3, app.allModel1Ds.extraParams.length);
+    assertEquals("{\"i\":0}", app.allModel1Ds.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allModel1Ds.getExtraParams(1));
+    assertEquals("{\"i\":3}", app.allModel1Ds.getExtraParams(2));
   }
 
   // --- model2DSelection (a full integration test) ----------------------
@@ -474,6 +543,7 @@ class DeleteGeometryTest {
     };
     app.allModel2Ds.FileIndex = new int[]{10, 20, 30, 40};
     app.allModel2Ds.Mirror = new boolean[]{false, true, false, true};
+    app.allModel2Ds.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
     app.allModel2Ds.num = 4;
 
     app.allGroups.makeEmpty(2);
@@ -494,6 +564,10 @@ class DeleteGeometryTest {
     assertEquals(400f, app.allModel2Ds.XYZS[2][0], 0.0001f);
     assertArrayEquals(new int[]{10, 30, 40}, app.allModel2Ds.FileIndex); // row 1 (value 20) removed, the rest compacted
     assertArrayEquals(new boolean[]{false, false, true}, app.allModel2Ds.Mirror);
+    assertEquals(3, app.allModel2Ds.extraParams.length);
+    assertEquals("{\"i\":0}", app.allModel2Ds.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allModel2Ds.getExtraParams(1));
+    assertEquals("{\"i\":3}", app.allModel2Ds.getExtraParams(2));
     assertSame(app.PEOPLE_KIND, app.allModel2Ds.Kind[0]);
     assertSame(app.PEOPLE_KIND, app.allModel2Ds.Kind[1]);
     assertSame(app.TREES_KIND, app.allModel2Ds.Kind[2]);

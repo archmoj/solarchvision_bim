@@ -119,7 +119,14 @@ class Clone3D {
       }
     }
 
+    String sourceExtraParams = allModel1Ds.getExtraParams(OBJ_ID);
+    allModel1Ds.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allModel1Ds.num - 1, even if f_data/i_data were ever replaced directly without extraParams kept in lockstep (see faces.pde's cloneFace() - same reason)
     allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+    // create() alone would default the clone's extraParams to "" - this
+    // duplicate DOES have a single source, OBJ_ID, so this overwrites
+    // that default, same split/merge/duplicate policy as cloneFace()/
+    // clonePolyline().
+    allModel1Ds.setExtraParams(allModel1Ds.num - 1, sourceExtraParams);
   }
 
   void cloneModel2D (int OBJ_ID, boolean produce_same_variation) {
@@ -136,7 +143,12 @@ class Clone3D {
       if (allModel2Ds.Mirror[OBJ_ID]) n = -n;
     }
 
+    String sourceExtraParams = allModel2Ds.getExtraParams(OBJ_ID);
+    allModel2Ds.ensureExtraParamsLength(); // same reason as cloneModel1D() above
     allModel2Ds.create(kind.tag, n, x, y, z, s);
+    // Same duplicate-inherits-from-its-one-source policy as
+    // cloneModel1D() above.
+    allModel2Ds.setExtraParams(allModel2Ds.num - 1, sourceExtraParams);
   }
 
   void cloneSolid (int OBJ_ID) {

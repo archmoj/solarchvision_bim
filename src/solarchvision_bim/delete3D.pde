@@ -278,8 +278,11 @@ class Delete3D {
       }
     }
 
+    allModel1Ds.ensureExtraParamsLength(); // see its own comment (model1Ds.pde) - guarantees the removeIndices() call below is safe even if f_data/i_data were ever changed directly without extraParams kept in lockstep
+
     allModel1Ds.f_data = removeIndices(allModel1Ds.f_data, ids);
     allModel1Ds.i_data = removeIndices(allModel1Ds.i_data, ids);
+    allModel1Ds.extraParams = removeIndices(allModel1Ds.extraParams, ids);
     allModel1Ds.num -= ids.length;
 
     endScene3DChange();
@@ -303,10 +306,13 @@ class Delete3D {
       }
     }
 
+    allModel2Ds.ensureExtraParamsLength(); // see its own comment (model2Ds.pde) - guarantees the removeIndices() call below is safe even if XYZS/Kind/FileIndex/Mirror were ever changed directly without extraParams kept in lockstep
+
     allModel2Ds.XYZS = removeIndices(allModel2Ds.XYZS, ids);
     allModel2Ds.Kind = removeIndices(allModel2Ds.Kind, ids);
     allModel2Ds.FileIndex = removeIndices(allModel2Ds.FileIndex, ids);
     allModel2Ds.Mirror = removeIndices(allModel2Ds.Mirror, ids);
+    allModel2Ds.extraParams = removeIndices(allModel2Ds.extraParams, ids);
     allModel2Ds.num -= ids.length;
 
     endScene3DChange();
@@ -479,6 +485,8 @@ class Delete3D {
             allGroups.Model1Ds[i][j] -= 1 + endModel1Ds - startModel1Ds;
           }
         }
+        allModel1Ds.ensureExtraParamsLength(); // see its own comment (model1Ds.pde) - guarantees the subset() calls below are safe even if f_data/i_data were replaced directly somewhere without extraParams kept in lockstep
+
         float[][] startListF = (float[][]) subset(allModel1Ds.f_data, 0, startModel1Ds);
         float[][] endListF = (float[][]) subset(allModel1Ds.f_data, endModel1Ds + 1);
         allModel1Ds.f_data = (float[][]) concat(startListF, endListF);
@@ -486,6 +494,15 @@ class Delete3D {
         int[][] startListI = (int[][]) subset(allModel1Ds.i_data, 0, startModel1Ds);
         int[][] endListI = (int[][]) subset(allModel1Ds.i_data, endModel1Ds + 1);
         allModel1Ds.i_data = (int[][]) concat(startListI, endListI);
+
+        // extraParams has to be spliced the exact same way, or its
+        // length falls out of step with f_data/i_data and every tree
+        // after this range would read/write the wrong extraParams from
+        // then on (see this file's own String[] removeIndices()
+        // overload and its comment).
+        String[] startListE = (String[]) subset(allModel1Ds.extraParams, 0, startModel1Ds);
+        String[] endListE = (String[]) subset(allModel1Ds.extraParams, endModel1Ds + 1);
+        allModel1Ds.extraParams = (String[]) concat(startListE, endListE);
 
         allModel1Ds.num = allModel1Ds.f_data.length;
       }
@@ -498,6 +515,8 @@ class Delete3D {
             allGroups.Model2Ds[i][j] -= 1 + endModel2Ds - startModel2Ds;
           }
         }
+        allModel2Ds.ensureExtraParamsLength(); // see its own comment (model2Ds.pde) - guarantees the subset() calls below are safe even if XYZS/Kind/FileIndex/Mirror were replaced directly somewhere without extraParams kept in lockstep
+
         float[][] startListF = (float[][]) subset(allModel2Ds.XYZS, 0, startModel2Ds);
         float[][] endListF = (float[][]) subset(allModel2Ds.XYZS, endModel2Ds + 1);
         allModel2Ds.XYZS = (float[][]) concat(startListF, endListF);
@@ -513,6 +532,15 @@ class Delete3D {
         boolean[] startListMi = (boolean[]) subset(allModel2Ds.Mirror, 0, startModel2Ds);
         boolean[] endListMi = (boolean[]) subset(allModel2Ds.Mirror, endModel2Ds + 1);
         allModel2Ds.Mirror = (boolean[]) concat(startListMi, endListMi);
+
+        // extraParams has to be spliced the exact same way, or its
+        // length falls out of step with XYZS/Kind/FileIndex/Mirror and
+        // every instance after this range would read/write the wrong
+        // extraParams from then on (see this file's own String[]
+        // removeIndices() overload and its comment).
+        String[] startListE = (String[]) subset(allModel2Ds.extraParams, 0, startModel2Ds);
+        String[] endListE = (String[]) subset(allModel2Ds.extraParams, endModel2Ds + 1);
+        allModel2Ds.extraParams = (String[]) concat(startListE, endListE);
 
         allModel2Ds.num = allModel2Ds.XYZS.length;
       }

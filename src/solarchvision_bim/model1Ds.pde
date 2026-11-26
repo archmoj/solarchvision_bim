@@ -15,6 +15,12 @@ class Model1Ds {
   float[][] f_data;
   int[][]   i_data;
 
+  // Opaque, caller-defined JSON metadata, one entry per tree - "" is the
+  // canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde/groups.pde). Parsed
+  // lazily, only via getExtraParamsObject()/setExtraParamsObject() below,
+  // never during to_XML/from_XML or any structural resize.
+  String[] extraParams;
 
   void makeEmpty (int n) {
     beginScene3DChange();
@@ -22,6 +28,8 @@ class Model1Ds {
     this.num = n;
     this.f_data = new float [n][11];
     this.i_data = new int   [n][3];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -54,6 +62,17 @@ class Model1Ds {
       }
     };
     this.f_data = (float[][]) concat(this.f_data, new_f_data);
+
+    // New-from-scratch tree - no source to inherit extraParams from, so
+    // it gets this field's own "nothing here" default (""), same as
+    // faces.pde's/polylines.pde's own create(). Note this is a blind
+    // append, same as those - it does NOT self-heal extraParams against
+    // f_data/i_data here (see ensureExtraParamsLength()'s own comment);
+    // a caller about to index extraParams at this.f_data.length - 1
+    // right after create() (clone3D.pde's cloneModel1D()) calls
+    // ensureExtraParamsLength() itself first, same as cloneFace()/
+    // clonePolyline() do.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
 
     this.num += 1;
 
@@ -194,6 +213,42 @@ class Model1Ds {
 
   void setDegreeMax (int n, int t) {
     this.i_data[n][2] = t;
+  }
+
+  // Defensive against extraParams being shorter than f_data/i_data (or
+  // null) at the time of the call - never throws, just reads as "no
+  // extra params" past the end, same as a genuinely-empty entry would
+  // (see faces.pde's own identical getExtraParams()/comment).
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.f_data's
+  // own current length, filling any new/missing entries with "" - same
+  // self-healing purpose as faces.pde's own ensureExtraParamsLength().
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.f_data.length) return;
+    String[] resized = new String[this.f_data.length];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - nothing else in this file should call
+  // JSONObject.parse()/extraParamsFromJSONObject() directly.
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
 
@@ -1131,6 +1186,7 @@ class Model1Ds {
       XML_setInt(child, "type", getType(i));
       XML_setInt(child, "seed", getSeed(i));
       XML_setInt(child, "degreeMax", getDegreeMax(i));
+      XML_setString(child, "extraParams", this.getExtraParams(i));
 
 
       String txt = "";
@@ -1177,6 +1233,10 @@ class Model1Ds {
       this.setType(i, children[i].getInt("type"));
       this.setSeed(i, children[i].getInt("seed"));
       this.setDegreeMax(i, children[i].getInt("degreeMax"));
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
 
       String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");

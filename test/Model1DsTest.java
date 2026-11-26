@@ -138,6 +138,7 @@ class Model1DsTest {
   void toXMLThenFromXML_roundTripsEveryColumn () {
     app.allModel1Ds.f_data = new float[][]{{10, 20, 30, 2, 45, 1, 2, 3, 4, 5, 6}};
     app.allModel1Ds.i_data = new int[][]{{7, 99, 5}};
+    app.allModel1Ds.extraParams = new String[]{"{\"species\":\"oak\"}"};
     app.allModel1Ds.num = 1;
     app.allModel1Ds.displayAll = false;
     app.allModel1Ds.displayLeaves = false;
@@ -155,7 +156,112 @@ class Model1DsTest {
     assertEquals(7, fresh.getType(0));
     assertEquals(99, fresh.getSeed(0));
     assertEquals(5, fresh.getDegreeMax(0));
+    assertEquals("{\"species\":\"oak\"}", fresh.getExtraParams(0));
     assertFalse(fresh.displayAll);
     assertFalse(fresh.displayLeaves);
+  }
+
+  // ================= extraParams =======================================
+
+  @Test
+  void makeEmpty_defaultsExtraParamsToEmptyStringForEveryRow () {
+    app.allModel1Ds.makeEmpty(3);
+    assertEquals(3, app.allModel1Ds.extraParams.length);
+    assertEquals("", app.allModel1Ds.getExtraParams(0));
+    assertEquals("", app.allModel1Ds.getExtraParams(1));
+    assertEquals("", app.allModel1Ds.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewTreesExtraParamsToEmptyString () {
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+    assertEquals("", app.allModel1Ds.getExtraParams(0));
+  }
+
+  @Test
+  void getSetExtraParams_roundTripsTheRawString () {
+    app.allModel1Ds.makeEmpty(1);
+    app.allModel1Ds.setExtraParams(0, "{\"species\":\"oak\"}");
+    assertEquals("{\"species\":\"oak\"}", app.allModel1Ds.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParamsObject_parsesTheStoredJSON () {
+    app.allModel1Ds.makeEmpty(1);
+    app.allModel1Ds.setExtraParams(0, "{\"species\":\"oak\",\"age\":5}");
+    processing.data.JSONObject obj = app.allModel1Ds.getExtraParamsObject(0);
+    assertEquals("oak", obj.getString("species"));
+    assertEquals(5, obj.getInt("age"));
+  }
+
+  @Test
+  void getExtraParamsObject_isAnEmptyObject_whenTheFieldIsEmptyMissingOrBadData () {
+    app.allModel1Ds.makeEmpty(3);
+    app.allModel1Ds.setExtraParams(0, "");
+    app.allModel1Ds.setExtraParams(1, "{}");
+    app.allModel1Ds.setExtraParams(2, "not json");
+
+    assertEquals(0, app.allModel1Ds.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allModel1Ds.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allModel1Ds.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToTheEmptyString () {
+    app.allModel1Ds.makeEmpty(1);
+    app.allModel1Ds.setExtraParamsObject(0, new processing.data.JSONObject());
+    assertEquals("", app.allModel1Ds.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObject_thenGetExtraParamsObject_roundTrips () {
+    app.allModel1Ds.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("species", "oak");
+    obj.setInt("age", 5);
+    app.allModel1Ds.setExtraParamsObject(0, obj);
+
+    processing.data.JSONObject result = app.allModel1Ds.getExtraParamsObject(0);
+    assertEquals("oak", result.getString("species"));
+    assertEquals(5, result.getInt("age"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allModel1Ds.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setInt("type", 0);
+    child.setInt("seed", 0);
+    child.setInt("degreeMax", 0);
+    // deliberately no "extraParams" attribute
+    child.setContent("10,20,30,2,45,1,2,3,4,5,6");
+    parent.setString("displayAll", "true");
+    parent.setString("displayLeaves", "true");
+
+    solarchvision_bim.Model1Ds fresh = app.new Model1Ds();
+    fresh.from_XML(root);
+
+    assertEquals("", fresh.getExtraParams(0));
+  }
+
+  @Test
+  void cloneModel1D_inheritsExtraParamsFromTheSourceTree () {
+    app.allModel1Ds.f_data = new float[][]{new float[11]};
+    app.allModel1Ds.i_data = new int[][]{new int[3]};
+    app.allModel1Ds.extraParams = new String[]{"{\"species\":\"oak\"}"};
+    app.allModel1Ds.num = 1;
+
+    app.Clone3D.cloneModel1D(0, true, false);
+
+    assertEquals(2, app.allModel1Ds.num);
+    assertEquals("{\"species\":\"oak\"}", app.allModel1Ds.getExtraParams(1));
   }
 }

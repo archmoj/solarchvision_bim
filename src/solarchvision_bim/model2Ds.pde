@@ -46,6 +46,13 @@ class Model2Ds {
   int num;
   float[][] XYZS;
 
+  // Opaque, caller-defined JSON metadata, one entry per instance - "" is
+  // the canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde/groups.pde/model1Ds.pde).
+  // Parsed lazily, only via getExtraParamsObject()/setExtraParamsObject()
+  // below, never during to_XML/from_XML or any structural resize.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
@@ -54,6 +61,8 @@ class Model2Ds {
     this.Kind = new Model2DKind [n];
     this.FileIndex = new int [n];
     this.Mirror = new boolean [n];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -110,6 +119,13 @@ class Model2Ds {
       }
     };
     this.XYZS = (float[][]) concat(this.XYZS, Temp_XYZS);
+
+    // New-from-scratch instance - no source to inherit extraParams from,
+    // so it gets this field's own "nothing here" default (""), same as
+    // faces.pde's/polylines.pde's/model1Ds.pde's own create(). Blind
+    // append, same as those - see model1Ds.pde's own create() comment on
+    // why this doesn't self-heal here.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
 
     this.num += 1;
 
@@ -170,6 +186,42 @@ class Model2Ds {
 
   void magS (int n, float f) {
     this.XYZS[n][3] *= f;
+  }
+
+  // Defensive against extraParams being shorter than XYZS/Kind/FileIndex/
+  // Mirror (or null) at the time of the call - never throws, just reads
+  // as "no extra params" past the end, same as a genuinely-empty entry
+  // would (see faces.pde's own identical getExtraParams()/comment).
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.XYZS's own
+  // current length, filling any new/missing entries with "" - same
+  // self-healing purpose as faces.pde's own ensureExtraParamsLength().
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.XYZS.length) return;
+    String[] resized = new String[this.XYZS.length];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - nothing else in this file should call
+  // JSONObject.parse()/extraParamsFromJSONObject() directly.
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
   // Per-instance identity: which kind (PEOPLE_KIND/TREES_KIND), which
@@ -1437,6 +1489,8 @@ class Model2Ds {
         txt += (this.Mirror[i] ? "1" : "0");
 
         XML_setContent(child, txt);
+
+        XML_setString(child, "extraParams", this.getExtraParams(i));
       }
 
       XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -1480,6 +1534,12 @@ class Model2Ds {
         this.Kind[i] = kind;
         this.FileIndex[i] = localIndex;
         this.Mirror[i] = (parts.length > 6) && parts[6].equals("1");
+
+        // Falls back to "" (this field's own "nothing here" default) for
+        // a save file written before extraParams existed at all - see
+        // the 3-arg XML_getString() overload's own comment
+        // (xmlHelpers.pde).
+        this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
       }
 
       this.displayAll = XML_getBoolean(parent, "displayAll");

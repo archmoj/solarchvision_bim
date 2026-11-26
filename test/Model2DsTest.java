@@ -447,6 +447,7 @@ class Model2DsTest {
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
     app.allModel2Ds.FileIndex = new int[]{5}; // "e.png"
     app.allModel2Ds.Mirror = new boolean[]{true};
+    app.allModel2Ds.extraParams = new String[]{"{\"sku\":\"T-001\"}"};
     app.allModel2Ds.num = 1;
     app.allModel2Ds.displayAll = false;
 
@@ -464,6 +465,7 @@ class Model2DsTest {
     assertSame(app.TREES_KIND, fresh.Kind[0]); // resolved from the saved "TREES" tag
     assertEquals(5, fresh.FileIndex[0]); // resolved from the saved "e.png" filename
     assertTrue(fresh.Mirror[0]);
+    assertEquals("{\"sku\":\"T-001\"}", fresh.getExtraParams(0));
     assertFalse(fresh.displayAll);
   }
 
@@ -524,5 +526,111 @@ class Model2DsTest {
 
     assertSame(app.TREES_KIND, fresh.Kind[0]);
     assertEquals(2, fresh.FileIndex[0]); // still "pine.png" - unaffected by PEOPLE_KIND's file count
+  }
+
+  // ================= extraParams =======================================
+
+  @Test
+  void makeEmpty_defaultsExtraParamsToEmptyStringForEveryRow () {
+    app.allModel2Ds.makeEmpty(3);
+    assertEquals(3, app.allModel2Ds.extraParams.length);
+    assertEquals("", app.allModel2Ds.getExtraParams(0));
+    assertEquals("", app.allModel2Ds.getExtraParams(1));
+    assertEquals("", app.allModel2Ds.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewInstancesExtraParamsToEmptyString () {
+    app.TREES_KIND.fileCount = 1;
+    app.allModel2Ds.create("TREES", 1, 0, 0, 0, 1);
+    assertEquals("", app.allModel2Ds.getExtraParams(0));
+  }
+
+  @Test
+  void getSetExtraParams_roundTripsTheRawString () {
+    app.allModel2Ds.makeEmpty(1);
+    app.allModel2Ds.setExtraParams(0, "{\"sku\":\"T-001\"}");
+    assertEquals("{\"sku\":\"T-001\"}", app.allModel2Ds.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParamsObject_parsesTheStoredJSON () {
+    app.allModel2Ds.makeEmpty(1);
+    app.allModel2Ds.setExtraParams(0, "{\"sku\":\"T-001\",\"cost\":899}");
+    processing.data.JSONObject obj = app.allModel2Ds.getExtraParamsObject(0);
+    assertEquals("T-001", obj.getString("sku"));
+    assertEquals(899, obj.getInt("cost"));
+  }
+
+  @Test
+  void getExtraParamsObject_isAnEmptyObject_whenTheFieldIsEmptyMissingOrBadData () {
+    app.allModel2Ds.makeEmpty(3);
+    app.allModel2Ds.setExtraParams(0, "");
+    app.allModel2Ds.setExtraParams(1, "{}");
+    app.allModel2Ds.setExtraParams(2, "not json");
+
+    assertEquals(0, app.allModel2Ds.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allModel2Ds.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allModel2Ds.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToTheEmptyString () {
+    app.allModel2Ds.makeEmpty(1);
+    app.allModel2Ds.setExtraParamsObject(0, new processing.data.JSONObject());
+    assertEquals("", app.allModel2Ds.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObject_thenGetExtraParamsObject_roundTrips () {
+    app.allModel2Ds.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("sku", "T-001");
+    obj.setInt("cost", 899);
+    app.allModel2Ds.setExtraParamsObject(0, obj);
+
+    processing.data.JSONObject result = app.allModel2Ds.getExtraParamsObject(0);
+    assertEquals("T-001", result.getString("sku"));
+    assertEquals(899, result.getInt("cost"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    app.TREES_KIND.Filenames = new String[]{"oak.png"};
+    app.TREES_KIND.fileCount = 1;
+
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allModel2Ds.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,0,0,1,TREES,oak.png,0");
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
+    fresh.from_XML(root);
+
+    assertEquals("", fresh.getExtraParams(0));
+  }
+
+  @Test
+  void cloneModel2D_inheritsExtraParamsFromTheSourceInstance () {
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 1}};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.allModel2Ds.extraParams = new String[]{"{\"sku\":\"T-001\"}"};
+    app.allModel2Ds.num = 1;
+
+    app.Clone3D.cloneModel2D(0, true);
+
+    assertEquals(2, app.allModel2Ds.num);
+    assertEquals("{\"sku\":\"T-001\"}", app.allModel2Ds.getExtraParams(1));
   }
 }
