@@ -147,6 +147,20 @@ void selectFile_ImportSvg () {
 // importer silently guessing.
 boolean importSwapAxisYZ = false;
 
+// Lets the person importing skip capturing extraParams (see faces.pde's/
+// current_ExtraParams's own comment, globalVariables.pde) for a
+// simplified import - on by default (capture whatever source metadata
+// each importer finds), same shared-global shape as importSwapAxisYZ
+// just above, surfaced as the same kind of checkbox in every import
+// dialog that has one (dxfShowImportOptionsDialog()/
+// svgShowImportOptionsDialog()/geojsonShowImportOptionsDialog()/
+// citygmlShowImportOptionsDialog()/shpShowImportOptionsDialog()/
+// objShowImportOptionsDialog()/glbShowImportOptionsDialog()/
+// daeShowImportOptionsDialog()/ifcShowImportOptionsDialog()/
+// gbxmlShowImportOptionsDialog() below) - checked by each importer
+// itself right where it would otherwise set current_ExtraParams.
+boolean importExtraParams = true;
+
 // Shared by STL alone now (one option, one checkbox) since that's
 // exactly the axis convention it already agrees to share - see
 // importStl.pde's own stlImportShowOptionsDialog for how it arms this
@@ -196,10 +210,12 @@ boolean dxfShowImportOptionsDialog () {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines, arcs and curves", dxfImportCurves);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (layer name) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(curvesBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "DXF import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -211,6 +227,7 @@ boolean dxfShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   dxfImportCurves = curvesBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -228,9 +245,11 @@ boolean dxfShowImportOptionsDialog () {
 boolean svgShowImportOptionsDialog () {
 
   javax.swing.JCheckBox groupByIdBox = new javax.swing.JCheckBox("Group/cycle material by each shape's own id", svgGroupById);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (shape id) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(groupByIdBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "SVG import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -240,6 +259,7 @@ boolean svgShowImportOptionsDialog () {
   // Left exactly where it was unless this dialog's own OK button is
   // actually pressed - same reasoning as every dialog above.
   svgGroupById = groupByIdBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -267,6 +287,7 @@ boolean geojsonShowImportOptionsDialog () {
 
   javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
   javax.swing.JTextField groupField = new javax.swing.JTextField(geojsonGroupProperty, 20);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (the feature's own properties) as extraParams", importExtraParams);
 
   javax.swing.JPanel heightRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
   heightRow.add(new javax.swing.JLabel("Extrude polygons using height property:"));
@@ -280,6 +301,7 @@ boolean geojsonShowImportOptionsDialog () {
   panel.add(new javax.swing.JLabel("Leave either field blank to skip that option."));
   panel.add(heightRow);
   panel.add(groupRow);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "GeoJSON/TopoJSON/KML import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -290,6 +312,7 @@ boolean geojsonShowImportOptionsDialog () {
   // actually pressed - same reasoning as every dialog above.
   geojsonHeightProperty = heightField.getText().trim();
   geojsonGroupProperty = groupField.getText().trim();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -309,6 +332,7 @@ boolean citygmlShowImportOptionsDialog () {
   javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
   javax.swing.JTextField groupField = new javax.swing.JTextField(geojsonGroupProperty, 20);
   javax.swing.JCheckBox lonLatBox = new javax.swing.JCheckBox("Coordinates are longitude/latitude (project around site location)", citygmlCoordinatesAreLonLat);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (gml:id, measuredHeight, generic attributes, ...) as extraParams", importExtraParams);
 
   javax.swing.JPanel heightRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
   heightRow.add(new javax.swing.JLabel("Extrude LOD0-footprint-only buildings using height property (e.g. \"measuredHeight\"):"));
@@ -323,6 +347,7 @@ boolean citygmlShowImportOptionsDialog () {
   panel.add(heightRow);
   panel.add(groupRow);
   panel.add(lonLatBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "CityGML import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -334,6 +359,7 @@ boolean citygmlShowImportOptionsDialog () {
   geojsonHeightProperty = heightField.getText().trim();
   geojsonGroupProperty = groupField.getText().trim();
   citygmlCoordinatesAreLonLat = lonLatBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -353,6 +379,7 @@ boolean shpShowImportOptionsDialog () {
   javax.swing.JTextField heightField = new javax.swing.JTextField(geojsonHeightProperty, 20);
   javax.swing.JTextField groupField = new javax.swing.JTextField(geojsonGroupProperty, 20);
   javax.swing.JCheckBox lonLatBox = new javax.swing.JCheckBox("Coordinates are longitude/latitude (project around site location)", shpCoordinatesAreLonLat);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (the record's own .dbf attributes) as extraParams", importExtraParams);
 
   javax.swing.JPanel heightRow = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
   heightRow.add(new javax.swing.JLabel("Extrude polygons using height property (a .dbf field name):"));
@@ -367,6 +394,7 @@ boolean shpShowImportOptionsDialog () {
   panel.add(heightRow);
   panel.add(groupRow);
   panel.add(lonLatBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "Shapefile import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -378,6 +406,7 @@ boolean shpShowImportOptionsDialog () {
   geojsonHeightProperty = heightField.getText().trim();
   geojsonGroupProperty = groupField.getText().trim();
   shpCoordinatesAreLonLat = lonLatBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -397,10 +426,12 @@ boolean objShowImportOptionsDialog () {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines", objImportCurves);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (object/group name) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(curvesBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "OBJ import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -412,6 +443,7 @@ boolean objShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   objImportCurves = curvesBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -432,10 +464,12 @@ boolean glbShowImportOptionsDialog () {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines (LINES/LINE_LOOP/LINE_STRIP primitives)", glbImportCurves);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (node/mesh name, extras) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(curvesBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "GLB import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -447,6 +481,7 @@ boolean glbShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   glbImportCurves = curvesBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -468,10 +503,12 @@ boolean daeShowImportOptionsDialog () {
 
   javax.swing.JCheckBox swapAxisBox = new javax.swing.JCheckBox("Rotate Y-up to Z-up (swap Y/Z axes)", importSwapAxisYZ);
   javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines (<lines>/<linestrips> primitives)", daeImportCurves);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (<extra> blocks, node/geometry name) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(swapAxisBox);
   panel.add(curvesBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "DAE import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -483,6 +520,7 @@ boolean daeShowImportOptionsDialog () {
   // choice.
   importSwapAxisYZ = swapAxisBox.isSelected();
   daeImportCurves = curvesBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -550,6 +588,7 @@ boolean ifcShowImportOptionsDialog () {
   javax.swing.JCheckBox indoorSpaceBox = new javax.swing.JCheckBox("Import indoor spaces (rooms/zones)", ifcImportIndoorSpace);
   javax.swing.JCheckBox outdoorSpaceBox = new javax.swing.JCheckBox("Import outdoor spaces (courtyards, terraces)", ifcImportOutdoorSpace);
   javax.swing.JCheckBox curvesBox = new javax.swing.JCheckBox("Import lines, arcs and curves (annotation geometry)", ifcImportCurves);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (GlobalId, Name, Description, ObjectType) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(furnitureBox);
@@ -558,6 +597,7 @@ boolean ifcShowImportOptionsDialog () {
   panel.add(indoorSpaceBox);
   panel.add(outdoorSpaceBox);
   panel.add(curvesBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "IFC import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -573,6 +613,7 @@ boolean ifcShowImportOptionsDialog () {
   ifcImportIndoorSpace = indoorSpaceBox.isSelected();
   ifcImportOutdoorSpace = outdoorSpaceBox.isSelected();
   ifcImportCurves = curvesBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
@@ -600,10 +641,12 @@ boolean gbxmlShowImportOptionsDialog () {
 
   javax.swing.JCheckBox orientBox = new javax.swing.JCheckBox("Rotate to the project's true north", gbxmlImportOrient);
   javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", gbxmlImportRelocate);
+  javax.swing.JCheckBox extraParamsBox = new javax.swing.JCheckBox("Import extra metadata (the Surface's own id) as extraParams", importExtraParams);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(orientBox);
   panel.add(relocateBox);
+  panel.add(extraParamsBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "gbXML import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -612,6 +655,7 @@ boolean gbxmlShowImportOptionsDialog () {
 
   gbxmlImportOrient = orientBox.isSelected();
   gbxmlImportRelocate = relocateBox.isSelected();
+  importExtraParams = extraParamsBox.isSelected();
 
   return true;
 }
