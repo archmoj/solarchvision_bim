@@ -255,6 +255,16 @@ class Delete3D {
 
     allSections.f_data = removeIndices(allSections.f_data, ids);
     allSections.i_data = removeIndices(allSections.i_data, ids);
+    // Pre-existing bug: corners (sections.pde) is this class's 5th
+    // parallel array - one variable-length row of local (x,y) corners
+    // per section - but it was never compacted here, so it silently
+    // drifted out of sync with f_data/i_data/SolidImpact/SolarImpact
+    // (stayed at the old, pre-delete length, and every surviving
+    // section's corners after a deleted one pointed at the wrong row).
+    // The existing float[][] removeIndices() overload already handles
+    // this correctly even though corners' rows are variable-length
+    // (jagged), since it only ever copies the outer row references.
+    allSections.corners = removeIndices(allSections.corners, ids);
     allSections.SolidImpact = removeIndices(allSections.SolidImpact, ids);
     allSections.SolarImpact = removeIndices(allSections.SolarImpact, ids);
     allSections.num -= ids.length;

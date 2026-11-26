@@ -498,6 +498,40 @@ class DeleteGeometryTest {
     assertEquals(2, app.allSections.SolarImpact.length);
   }
 
+  @Test
+  void selectedSections_compactsCornersInLockstepWithTheOtherFourArrays () {
+    // Regression test for a pre-existing bug: corners (sections.pde) is
+    // this class's 5th parallel array - one variable-length row of local
+    // (x,y) corners per section - but sectionSelection() never compacted
+    // it, so after a delete it silently drifted out of sync with
+    // f_data/i_data/SolidImpact/SolarImpact (stayed at the old, pre-delete
+    // length, and every surviving section after a deleted one ended up
+    // reading the wrong row of corners). Distinct per-section corner
+    // counts (3, 4, 5) make the post-delete mismatch impossible to miss.
+    app.allSections.f_data = new float[][]{
+      floatRow(6, 100), floatRow(6, 200), floatRow(6, 300)
+    };
+    app.allSections.i_data = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    app.allSections.corners = new float[][]{
+      {0, 0, 1, 0, 1, 1},          // section 0: a 3-corner triangle
+      {0, 0, 1, 0, 1, 1, 0, 1},    // section 1: a 4-corner quad - being deleted
+      {0, 0, 1, 0, 1, 1, 0, 1, 2, 2} // section 2: a 5-corner pentagon
+    };
+    app.allSections.SolidImpact = new PImage[3];
+    app.allSections.SolarImpact = new PImage[3][1][1];
+    app.allSections.num = 3;
+
+    app.Select3D.sectionSelection = new int[]{1};
+
+    app.Delete3D.sectionSelection();
+
+    assertEquals(2, app.allSections.corners.length);
+    assertEquals(3, app.allSections.getNumCorners(0)); // the triangle, untouched
+    assertEquals(5, app.allSections.getNumCorners(1)); // the pentagon, shifted down from index 2
+    assertEquals(2f, app.allSections.getCornerX(1, 4), 0.0001f);
+    assertEquals(2f, app.allSections.getCornerY(1, 4), 0.0001f);
+  }
+
   // --- model1DSelection (a full integration test) ----------------------
   //
   // Same owning-group cascade shape as faceSelection, but against
