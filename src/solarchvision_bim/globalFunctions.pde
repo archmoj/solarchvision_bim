@@ -311,6 +311,20 @@ void view_changed () {
   // WIN3D.shadingNeedsRebuild's own comment (viewport3D.pde) covers where this
   // gets consumed and cleared again.
   if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
+
+  // PARENT_EXTRAPARAMS (uiRollout.pde) shows whatever Select3D currently
+  // has selected - stale otherwise, since UI_rollout.draw() only runs
+  // when UI_rollout.update is set (applyRolloutUpdate.pde's own guard),
+  // and nothing before this routed a plain selection/model change into
+  // that. view_changed() is the one place both selection_changed() (a
+  // new/changed selection, below) and endScene3DChange() (every create/
+  // edit/move/delete/import site) already funnel through, so hooking it
+  // here - rather than each of those call sites individually - covers a
+  // new selection, a new addition, and a deletion alike in one place.
+  // Scoped to only fire while that panel is actually the one showing, so
+  // every other, unrelated view_changed() call (most of them) still
+  // costs nothing extra.
+  if (UI_rollout.parent == UI_rollout.PARENT_EXTRAPARAMS) UI_rollout.revise();
 }
 
 void selection_changed () {

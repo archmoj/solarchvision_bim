@@ -3228,3 +3228,101 @@ String __SETLAT__ (String[] parts) {
     }
     return hint;
 }
+
+// Returns the first whitespace-delimited token of s (s is assumed to
+// have no leading whitespace of its own - every caller here only ever
+// passes something sanitizeScriptLine() already stripTrailing()/
+// stripLeading()'d, or this function's own "rest" output, which already
+// skipped past any separating whitespace below), or null if s is empty.
+String extraParamsFirstToken (String s) {
+  if (s == null) return null;
+  int i = 0;
+  while (i < s.length() && Character.isWhitespace(s.charAt(i))) i++;
+  int start = i;
+  while (i < s.length() && !Character.isWhitespace(s.charAt(i))) i++;
+  if (i == start) return null;
+  return s.substring(start, i);
+}
+
+// Everything in s AFTER its first whitespace-delimited token and the
+// single run of whitespace separating it from what follows - verbatim,
+// no further trimming or collapsing of whatever comes after that. Returns
+// null when s has no second token at all (nothing follows the first
+// token, not even whitespace to trim away), so a caller can tell
+// "nothing after the key" apart from "an empty string value" (which
+// would come back as "" instead, e.g. from a value of ""). This is the
+// one place EXTRAPARAMS.SET's own untokenized raw line is split - see
+// its own comment in runScript.pde for why it bypasses tokenizeScriptLine
+// entirely rather than reusing its `parts` array.
+String extraParamsRestAfterFirstToken (String s) {
+  if (s == null) return null;
+  int i = 0;
+  while (i < s.length() && Character.isWhitespace(s.charAt(i))) i++;
+  while (i < s.length() && !Character.isWhitespace(s.charAt(i))) i++; // skip first token
+  int afterToken = i;
+  while (i < s.length() && Character.isWhitespace(s.charAt(i))) i++; // skip separating whitespace
+  if (afterToken == s.length()) return null; // nothing after the first token at all
+  return s.substring(i);
+}
+
+// EXTRAPARAMS.SET <key> <value> - upserts, on whatever single item
+// Select3D currently has selected (extraParamsSelection.pde), the given
+// dotted-path key (extraParamsPath.pde) to the given value. Dispatched
+// with the line's own raw (sanitized, but NOT tokenizeScriptLine()'d)
+// text - see runScript.pde's switch-case comment - so a value can
+// contain quotes, spaces, braces, or a JSON "\n" escape without any of
+// it being stripped or collapsed before this ever sees it.
+String __EXTRAPARAMS_SET__ (String lineSTR) {
+    String hint = "";
+    String usage = "EXTRAPARAMS.SET <key> <value>";
+
+    String afterCommand = extraParamsRestAfterFirstToken(lineSTR); // drops "EXTRAPARAMS.SET" itself
+    String key = extraParamsFirstToken(afterCommand);
+    String value = extraParamsRestAfterFirstToken(afterCommand);
+    if (key == null || value == null) {
+    hint = usage;
+    return hint;
+    }
+
+    ExtraParamsSelectionTarget target = currentExtraParamsSelection();
+    if (target == null) {
+    hint = usage + " (exactly one item must be selected)";
+    return hint;
+    }
+
+    JSONObject obj = getExtraParamsObjectForSelection(target);
+    extraParamsSetAtPath(obj, key, value);
+    setExtraParamsObjectForSelection(target, obj);
+    UI_rollout.revise();
+
+    return hint;
+}
+
+// EXTRAPARAMS.REMOVE <key> - removes the dotted-path key (no value
+// argument, so this - unlike EXTRAPARAMS.SET above - dispatches through
+// the ordinary tokenized `parts` array every other command already uses;
+// a path never contains quotes/spaces/"=" that tokenizeScriptLine()
+// would need to be bypassed for).
+String __EXTRAPARAMS_REMOVE__ (String[] parts) {
+    String hint = "";
+    String usage = "EXTRAPARAMS.REMOVE <key>";
+
+    if (parts.length < 2) {
+    hint = usage;
+    return hint;
+    }
+
+    ExtraParamsSelectionTarget target = currentExtraParamsSelection();
+    if (target == null) {
+    hint = usage + " (exactly one item must be selected)";
+    return hint;
+    }
+
+    JSONObject obj = getExtraParamsObjectForSelection(target);
+    if (extraParamsRemoveAtPath(obj, parts[1])) {
+    setExtraParamsObjectForSelection(target, obj);
+    UI_rollout.revise();
+    }
+
+    return hint;
+}

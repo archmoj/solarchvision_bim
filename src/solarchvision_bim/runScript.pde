@@ -345,6 +345,20 @@ String ___executeScriptLine___ (String lineSTR) {
     case "+MOVETOWARDSSELECTION": return  __$MOVETOWARDSSELECTION__(parts);
     case "EXPORT.OBJ.DATESERIES": return  __EXPORT_OBJ_DATESERIES__(parts);
     case "EXPORT.OBJ.TIMESERIES": return  __EXPORT_OBJ_TIMESERIES__(parts);
+
+    // EXTRAPARAMS.SET is a deliberate, documented exception to every
+    // other case above: it's handed lineSTR itself (sanitized, but not
+    // yet run through tokenizeScriptLine() a few lines up) instead of
+    // parts, because tokenizeScriptLine() strips quotes, collapses
+    // repeated whitespace, and turns "=" into ":" - exactly the syntax a
+    // JSON value (quoted strings, a "\n" escape, {...}/[...], internal
+    // spaces) needs to survive intact to reach extraParamsParseCommandValue()
+    // unharmed (extraParamsPath.pde). __EXTRAPARAMS_SET__ does its own
+    // key/value split off that raw text - see its own comment. REMOVE
+    // takes no value and so has no need for this exception; it uses
+    // parts like every other command here.
+    case "EXTRAPARAMS.SET": return  __EXTRAPARAMS_SET__(lineSTR);
+    case "EXTRAPARAMS.REMOVE": return  __EXTRAPARAMS_REMOVE__(parts);
   }
 
   return UnrecognizedCommand;

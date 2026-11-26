@@ -25,6 +25,17 @@ class UI_rollout {
   boolean editCommit = false;
   boolean editStateChanged = false;
 
+  // Which keys keyPressed()'s own '-'/default cases (below) accept while
+  // editActive: false for the numeric Spinner()/_Spinner() family
+  // (digits and a single '.', '-' only as the first character), true for
+  // the text-row _SpinnerText() family (PARENT_EXTRAPARAMS, below) -
+  // any printable character, since a text row's commit takes editText
+  // verbatim rather than Float.parseFloat()'ing it. Set by
+  // beginSpinnerEdit()/beginSpinnerTextEdit() respectively - every
+  // edit-entry point in this file goes through one of those two, so
+  // there's nowhere else this needs setting.
+  boolean editIsText = false;
+
   // Captions of every spinner drawn on the current page, in on-screen
   // order, rebuilt each drawView() pass. Used by Tab / Shift+Tab to know
   // which spinner comes next/previous.
@@ -83,6 +94,9 @@ class UI_rollout {
     CHILD_EXPORT_MODEL = pushChild("Model");
     CHILD_EXPORT_DATA = pushChild("Data");
     CHILD_EXPORT_CONTENT = pushChild("Content");
+
+    PARENT_EXTRAPARAMS = pushParent("Extra Params");
+    CHILD_EXTRAPARAMS_MAIN = pushChild("Selected Item");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -125,6 +139,9 @@ class UI_rollout {
   int CHILD_EXPORT_MODEL;
   int CHILD_EXPORT_DATA;
   int CHILD_EXPORT_CONTENT;
+
+  int PARENT_EXTRAPARAMS;
+  int CHILD_EXTRAPARAMS_MAIN;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -440,6 +457,7 @@ class UI_rollout {
 
     this.editStateChanged = false;
     this.spinnerOrderThisPass.clear();
+    this.textEditJustCommitted = false;
 
     stroke(255);
     fill(255);
@@ -503,6 +521,18 @@ class UI_rollout {
 
         if (i % 2 == 1) Y_control += 15 * this.view_S;
       }
+
+      // The loop above only bumps Y_control once a ROW of 2 is complete
+      // (i % 2 == 1) - fine while allRollouts.size() was always even (8
+      // parents, 4 full rows), but with PARENT_EXTRAPARAMS added as a
+      // 9th, the last row holds a single, lone tab (i = 8, i % 2 == 0),
+      // whose row the loop never accounts for. Without this, the child-
+      // tab background/grid below would start drawing at that same row's
+      // own y, overlapping the 9th parent tab instead of landing below
+      // it. Same odd/incomplete-last-row correction the child grid below
+      // already does for its own count via "% 3 != 1" - this is that
+      // same fix, just for the parent grid's "% 2" instead.
+      if (allRollouts.size() % 2 == 1) Y_control += 15 * this.view_S;
 
       noStroke();
       fill(127);
@@ -988,6 +1018,11 @@ class UI_rollout {
         allSolarImpacts.record_IMG = vm.Record_Solar_Analysis_in_JPG(1);
       }
 
+    } else if (this.parent == PARENT_EXTRAPARAMS) {
+
+      if (this.child == CHILD_EXTRAPARAMS_MAIN) {
+        this.drawExtraParamsPanel();
+      }
     }
 
     if (this.include) {
@@ -1236,6 +1271,22 @@ class UI_rollout {
     this.editText = this.formatSpinnerValue(value);
     this.editCursor = this.editText.length();
     this.editCommit = false;
+    this.editIsText = false; // numeric - keyPressed()'s default/'-' cases restrict typed characters accordingly
+    this.editStateChanged = true;
+  }
+
+  // Text-row counterpart of beginSpinnerEdit() above, used by
+  // _SpinnerText() (below) instead - the only difference keyPressed()
+  // actually cares about is editIsText, which is what lets it accept
+  // letters/spaces/punctuation for a text row while keeping the numeric
+  // Spinner()/_Spinner() family above digits-and-one-decimal-point-only.
+  void beginSpinnerTextEdit (String caption, String value) {
+    this.editActive = true;
+    this.editCaption = caption;
+    this.editText = value;
+    this.editCursor = this.editText.length();
+    this.editCommit = false;
+    this.editIsText = true;
     this.editStateChanged = true;
   }
 
@@ -1453,6 +1504,783 @@ class UI_rollout {
     return new_value;
   }
 
+  // ===================================================================
+  // PARENT_EXTRAPARAMS - view/edit the single currently-selected item's
+  // extraParams (extraParamsHelpers.pde/extraParamsPath.pde/
+  // extraParamsSelection.pde). See that planning discussion for the
+  // locked shape of this: single-item scope, one row per top-level key,
+  // a per-row level control (reusing the plain int Spinner() below
+  // unmodified) that reveals an object-valued key's own children as
+  // further rows capped at that one extra level, and a remove button per
+  // row styled like hover.pde's own pinned-hover-box close button.
+  // Every edit is dispatched as EXTRAPARAMS.SET/EXTRAPARAMS.REMOVE
+  // through runScriptLine() - the same command a user could type by hand
+  // - rather than writing into extraParams directly from here, so the
+  // console log/history always shows a faithful record of every edit
+  // made through this panel too.
+  // ===================================================================
+
+  // Text-edit commit flag for _SpinnerText() below - set at most once
+  // per draw() pass (reset at its top, alongside editStateChanged/
+  // spinnerOrderThisPass), read and cleared immediately by whichever
+  // drawExtraParams*() call just drew the row that committed. Carries
+  // the committed text itself, verbatim - no float parsing, unlike
+  // _Spinner()'s own editCommit handling.
+  boolean textEditJustCommitted = false;
+  String textEditCommittedValue = "";
+
+  // Wraps text into however many lines fit within maxWidth, appending
+  // each line's text to outLines and that line's own start offset
+  // (within the ORIGINAL, unwrapped string) to outStarts in lockstep -
+  // the offsets are what let _SpinnerText() below place its "|" cursor
+  // marker on the right wrapped line while editing, not just at the end.
+  // A real embedded newline (a decoded JSON "\n") always starts a fresh
+  // line of its own first; within each such segment, text is then
+  // character-wrapped (not word-wrapped) to fit maxWidth, since a
+  // compact JSON blob - this widget's single longest-running case,
+  // PARENT_EXTRAPARAMS's own object-valued rows - has no spaces at all
+  // for a word-wrap to ever break on.
+  void wrapTextLines (String text, float maxWidth, ArrayList<String> outLines, ArrayList<Integer> outStarts) {
+    String[] rawLines = text.split("\n", -1);
+    int globalOffset = 0;
+    for (String raw : rawLines) {
+      if (raw.length() == 0) {
+        outLines.add("");
+        outStarts.add(globalOffset);
+      } else {
+        int start = 0;
+        while (start < raw.length()) {
+          int end = start + 1;
+          while (end <= raw.length() && textWidth(raw.substring(start, end)) <= maxWidth) end++;
+          end--; // step back to the last length that still fit
+          if (end <= start) end = start + 1; // always make progress, even if a single character alone is wider than maxWidth
+          if (end > raw.length()) end = raw.length();
+          outLines.add(raw.substring(start, end));
+          outStarts.add(globalOffset + start);
+          start = end;
+        }
+      }
+      globalOffset += raw.length() + 1; // +1 for the "\n" this rawLine was split off of (harmless once past the real string's own length - nothing reads an offset that far)
+    }
+    if (outLines.size() == 0) { outLines.add(""); outStarts.add(0); }
+  }
+
+  // Finds which wrapped line a character offset (an editCursor position
+  // into the ORIGINAL unwrapped string) falls on, given that line's own
+  // wrapTextLines() output - shared by _SpinnerText() (to place the "|"
+  // marker) and dispatchEditKey()'s Up/Down handling (to know which line
+  // the cursor is leaving and compute its column within it).
+  //
+  // Every line's own end position matches inclusively (cursor <= lineEnd),
+  // not just the overall-last line's. wrapTextLines() consumes each real
+  // "\n" as a 1-character gap between two lines - it belongs to neither
+  // line's own text, so a cursor sitting exactly on it (reachable by
+  // ordinary Left/Right movement, not just Up/Down, any time the value
+  // has an embedded newline) falls in the gap between lineEnd of the
+  // line before it and lineStart of the line after, which is 1 higher.
+  // Matching only the LAST line inclusively left every such gap
+  // unmatched, falling through to the wrong line entirely and handing
+  // back a column that could be deeply negative - the direct cause of a
+  // StringIndexOutOfBoundsException two frames down this function's
+  // callers. Matching every line inclusively closes every gap (a cursor
+  // on a wrap boundary between two sub-lines of the same source line,
+  // where lineEnd(i) == lineStart(i+1), now simply resolves to the
+  // earlier of the two - an ordinary, harmless rendering choice, not a
+  // second gap, since that boundary carries no consumed character).
+  int spinnerTextLineIndexForCursor (ArrayList<Integer> lineStarts, ArrayList<String> lines, int cursor) {
+    int idx = lines.size() - 1;
+    for (int li = 0; li < lines.size(); li++) {
+      int lineStart = lineStarts.get(li);
+      int lineEnd = lineStart + lines.get(li).length();
+      if (cursor >= lineStart && cursor <= lineEnd) {
+        idx = li;
+        break;
+      }
+    }
+    return idx;
+  }
+
+  // At most this many wrapped lines are ever drawn for one _SpinnerText()
+  // row at once; a longer value scrolls within that window instead of
+  // growing the row without bound. 3 keeps a handful of rows, and their
+  // remove buttons and level controls, all visible together on one
+  // screen even when several hold long JSON blobs.
+  int spinnerTextMaxVisibleLines = 3;
+
+  // Per-row (keyed by caption, same key _SpinnerText()'s caller already
+  // uses for extraParamsRowLevel) first-visible-wrapped-line index, so
+  // each row remembers its own scroll position across frames
+  // independently of whichever row is currently being edited.
+  HashMap<String,Integer> spinnerTextScroll = new HashMap<String,Integer>();
+
+  // _SpinnerText()'s own fixed line height and the pixel width its value
+  // text wraps within - factored out so dispatchEditKey()'s Up/Down
+  // handling (below) can re-wrap this.editText itself, from scratch,
+  // every time it needs to know which line the cursor is on. An earlier
+  // version instead cached _SpinnerText()'s own wrap for dispatchEditKey
+  // to reuse, but that cache was only refreshed when a row actually drew
+  // itself in edit mode - stale for the rest of the very frame a click
+  // first put a (possibly much shorter) row into edit mode, since the
+  // click is handled further down in the same _SpinnerText() call than
+  // where the wrap/cache used to be computed. An Up/Down press in that
+  // window reused a previous row's offsets against the new row's text
+  // and could send editCursor miles outside it. Recomputing fresh here
+  // is a little more work per keypress, but it can never disagree with
+  // the text it's actually moving a cursor through.
+  float spinnerTextLineHeight () {
+    return 13 * UI_rollout.view_S;
+  }
+
+  float spinnerTextWrapWidth () {
+    float w1 = 100 * UI_rollout.view_S;
+    float lineH = spinnerTextLineHeight();
+    float t_oW = lineH * UI_rollout.view_S / 8.0;
+    return w1 - 2 * t_oW;
+  }
+
+  // The first wrapped line's own vertical center, for whichever row
+  // _SpinnerText() (below) just drew - read by drawExtraParamsPanel()
+  // right after each call to align that row's remove button (and, for
+  // an object-valued row, the level-control Spinner right after it)
+  // with the row's TOP line, regardless of how many further lines a
+  // long value wrapped into beneath it. Same single-flag-per-call shape
+  // textEditJustCommitted already uses, just read unconditionally
+  // instead of only on a commit.
+  float lastSpinnerTextRowFirstLineY = 0;
+
+  // The "text" sibling to the numeric Spinner()/_Spinner() family above:
+  // same shared click-to-edit state (editActive/editCaption/editText/
+  // editCursor/editCommit), so Tab/Shift+Tab/Esc/Enter (keyPressed(),
+  // above) already work on it unmodified - but none of _Spinner()'s
+  // numeric-only machinery (no min/max clamping, no DecimalFormat, no
+  // Float.parseFloat on commit), and, unlike _Spinner(), a variable
+  // number of wrapped display lines capped at spinnerTextMaxVisibleLines
+  // and scrollable (mouse-wheel-style up/down arrows, reusing _Spinner's
+  // own triangle-button look) rather than a single fixed-height one - a
+  // long value (a compact JSON blob especially) would otherwise run off
+  // the edge of the box, or grow the row without bound and push every
+  // row below it off-screen. caption doubles as both the Tab-order key
+  // and, for every PARENT_EXTRAPARAMS row, the exact dotted path
+  // EXTRAPARAMS.SET/REMOVE would also take for that same row - so what's
+  // shown here is always what could be typed on the command line too.
+  String _SpinnerText (float x, float topY, String caption, String v) {
+    return this._SpinnerText(x, topY, caption, v, false);
+  }
+
+  // darker: true for a row drawn as one of an expanded PARENT_EXTRAPARAMS
+  // key's own children - same gray as extraParamsLevelToggle()'s own row
+  // above them, so the toggle and the child rows it reveals read as one
+  // visually grouped cluster rather than each blending into the plain
+  // top-level rows around them.
+  String _SpinnerText (float x, float topY, String caption, String v, boolean darker) {
+    return this._SpinnerText(x, topY, caption, v, darker, null);
+  }
+
+  // placeholder: shown in place of the (otherwise blank) value box, in
+  // gray rather than this row's usual black text, whenever the row is
+  // both empty and not currently being edited - a hint at the format to
+  // type, same idea as an HTML input's own placeholder text. Clicking in
+  // to edit still starts from the real (empty) v, same as always, not
+  // from this text - it is purely a display-time stand-in, never part of
+  // the actual value or of what beginSpinnerTextEdit() starts editing
+  // from.
+  String _SpinnerText (float x, float topY, String caption, String v, boolean darker, String placeholder) {
+    return this._SpinnerText(x, topY, caption, v, darker, false, placeholder);
+  }
+
+  // green: this row's own caption/value background uses the same light
+  // green (191, 255, 191) extraParamsLevelToggle()'s own value-fill bar
+  // does, instead of the plain 191/140 gray every other row gets - for
+  // the "+ Add" row specifically, to set it apart as the one row here
+  // that creates something rather than showing/editing an existing key.
+  String _SpinnerText (float x, float topY, String caption, String v, boolean darker, boolean green, String placeholder) {
+
+    float w1 = 100 * UI_rollout.view_S;
+    float w2 = 200 * UI_rollout.view_S;
+    float lineH = this.spinnerTextLineHeight();
+    float lineGap = 2 * UI_rollout.view_S;
+    float o = 2 * UI_rollout.view_S;
+    float t_oW = lineH * UI_rollout.view_S / 8.0;
+    float t_oH = t_oW - 3;
+    float wrapWidth = this.spinnerTextWrapWidth();
+
+    this.spinnerOrderThisPass.add(caption);
+
+    boolean editingThis = this.editActive && this.editCaption.equals(caption);
+    String displayValue = v;
+
+    if (editingThis && this.editCommit) {
+
+      this.textEditJustCommitted = true;
+      this.textEditCommittedValue = this.editText;
+
+      this.editActive = false;
+      this.editCaption = "";
+      this.editText = "";
+      this.editCursor = 0;
+      this.editCommit = false;
+
+      editingThis = false;
+      this.editStateChanged = true;
+
+      UI_rollout.revise();
+    }
+
+    if ((this.editPendingCaption != null) && this.editPendingCaption.equals(caption) && !editingThis) {
+      this.beginSpinnerTextEdit(caption, v);
+      this.editPendingCaption = null;
+      editingThis = true;
+    }
+
+    String liveText = editingThis ? this.editText : v;
+
+    textSize(1.0 * lineH); // textWidth() below measures against whatever size is currently set - match the size actually drawn further down
+    ArrayList<String> lines = new ArrayList<String>();
+    ArrayList<Integer> lineStarts = new ArrayList<Integer>();
+    wrapTextLines(liveText, wrapWidth, lines, lineStarts);
+    int totalLines = lines.size();
+
+    // Which wrapped line the cursor currently falls in, and at what
+    // offset within that line's own text, so the "|" marker lands in
+    // the right place once the value wraps across more than one line -
+    // not just always at the end.
+    int cursorLineIndex = totalLines - 1;
+    int cursorLocalOffset = lines.get(cursorLineIndex).length();
+    if (editingThis) {
+      cursorLineIndex = spinnerTextLineIndexForCursor(lineStarts, lines, this.editCursor);
+      cursorLocalOffset = this.editCursor - lineStarts.get(cursorLineIndex);
+    }
+
+    // Cap the drawn window to spinnerTextMaxVisibleLines, scrolling
+    // instead of growing the row without bound. A row currently being
+    // edited auto-scrolls to keep the cursor's own line in view; any row
+    // (editing or not) also remembers a scroll position a person set
+    // with the up/down arrow buttons below.
+    int maxScroll = max(0, totalLines - this.spinnerTextMaxVisibleLines);
+    int scrollOffset = this.spinnerTextScroll.containsKey(caption) ? this.spinnerTextScroll.get(caption) : 0;
+    if (scrollOffset > maxScroll) scrollOffset = maxScroll;
+    if (scrollOffset < 0) scrollOffset = 0;
+    if (editingThis) {
+      if (cursorLineIndex < scrollOffset) scrollOffset = cursorLineIndex;
+      else if (cursorLineIndex > scrollOffset + this.spinnerTextMaxVisibleLines - 1) scrollOffset = cursorLineIndex - this.spinnerTextMaxVisibleLines + 1;
+    }
+
+    int visibleCount = min(totalLines, this.spinnerTextMaxVisibleLines);
+    float boxHeight = visibleCount * lineH + (visibleCount - 1) * lineGap;
+    this.lastSpinnerTextRowFirstLineY = topY + o + lineH / 2.0;
+
+    Y_control = topY + boxHeight + 2 * o + 7 * UI_rollout.view_S; // the 7*view_S breathing-room term matches the old fixed single-line pitch (20*view_S total) when there's exactly one visible line
+
+    if ((!this.editActive || editingThis) && (
+      isInside(X_clicked, Y_clicked, x - w1 - w2 - o, topY, x - w1, topY + boxHeight + 2 * o) ||
+      isInside(X_clicked, Y_clicked, x - w1,          topY, x,     topY + boxHeight + 2 * o)
+    )) {
+      if (mouseButton == LEFT) {
+        if (!editingThis) {
+          this.beginSpinnerTextEdit(caption, v);
+          editingThis = true;
+        }
+        X_clicked = -1;
+        Y_clicked = -1;
+      }
+    }
+
+    strokeWeight(0);
+    if (editingThis) {
+      stroke(255, 127, 0);
+      fill(255, 127, 0);
+    } else if (green) {
+      stroke(191, 255, 191);
+      fill(191, 255, 191);
+    } else if (darker) {
+      stroke(140);
+      fill(140);
+    } else {
+      stroke(191);
+      fill(191);
+    }
+    rect(x - (w1 + w2) - o, topY, (w1 + w2) + 2 * o, boxHeight + 2 * o);
+
+    stroke(255);
+    fill(255);
+    rect(x - w1, topY + o, w1, boxHeight);
+
+    strokeWeight(2);
+    stroke(0);
+    noFill();
+    rect(x - w1, topY + o, w1, boxHeight);
+
+    // Up/down scroll arrow buttons, drawn and hit-tested exactly like
+    // _Spinner()'s own value-stepper arrows (same stacked-square-plus-
+    // triangle look, same position just right of the value box at
+    // x+o), only shown once the value actually has more wrapped lines
+    // than fit in the window. Sized to one line's own height - same
+    // scale _Spinner() uses regardless of how many lines are showing -
+    // not the whole (up to spinnerTextMaxVisibleLines-tall) box, which
+    // would blow the buttons up to several times that size. Centered on
+    // the box's own middle line rather than pinned to its top: the
+    // remove "x" button (drawExtraParamsRemoveButton(), called by the
+    // caller right after this) is itself centered on the row's FIRST
+    // line, so a top-anchored pair of arrows would sit right on top of
+    // it; the middle line is clear of that.
+    if (totalLines > this.spinnerTextMaxVisibleLines) {
+      float arrSize = lineH + 2 * o;
+      float ax = x + o;
+      float ay = topY + o + (boxHeight / 2.0) - (arrSize / 2.0);
+
+      strokeWeight(0);
+      stroke(0);
+      fill(0);
+      rect(ax, ay, 0.5 * arrSize, 0.5 * arrSize);
+      rect(ax, ay + 0.5 * arrSize, 0.5 * arrSize, 0.5 * arrSize);
+
+      stroke(255);
+      fill(255);
+      float acx = ax + 0.25 * arrSize;
+      float acyUp = ay + 0.25 * arrSize;
+      float acr = 0.25 * arrSize;
+      triangle(acx + acr * funcs.cos_ang(270), acyUp + 0.75 * acr * funcs.sin_ang(270), acx + 0.75 * acr * funcs.cos_ang(30), acyUp + 0.75 * acr * funcs.sin_ang(30), acx + 0.75 * acr * funcs.cos_ang(150), acyUp + 0.75 * acr * funcs.sin_ang(150));
+
+      float acyDown = acyUp + 0.5 * arrSize;
+      triangle(acx + acr * funcs.cos_ang(90), acyDown + 0.75 * acr * funcs.sin_ang(90), acx + 0.75 * acr * funcs.cos_ang(210), acyDown + 0.75 * acr * funcs.sin_ang(210), acx + 0.75 * acr * funcs.cos_ang(330), acyDown + 0.75 * acr * funcs.sin_ang(330));
+
+      if (isInside(X_clicked, Y_clicked, ax, ay, ax + 0.5 * arrSize, ay + 0.5 * arrSize) && (mouseButton == LEFT)) {
+        if (scrollOffset > 0) scrollOffset--;
+        X_clicked = -1;
+        Y_clicked = -1;
+      } else if (isInside(X_clicked, Y_clicked, ax, ay + 0.5 * arrSize, ax + 0.5 * arrSize, ay + arrSize) && (mouseButton == LEFT)) {
+        if (scrollOffset < maxScroll) scrollOffset++;
+        X_clicked = -1;
+        Y_clicked = -1;
+      }
+    }
+
+    this.spinnerTextScroll.put(caption, scrollOffset);
+
+    strokeWeight(0);
+    stroke(0);
+    fill(0);
+    textSize(1.0 * lineH);
+    textAlign(LEFT, CENTER);
+
+    for (int vi = 0; vi < visibleCount; vi++) {
+      int li = scrollOffset + vi;
+      float lineCenterY = topY + o + vi * (lineH + lineGap) + lineH / 2.0;
+      String lineText = lines.get(li);
+      if (editingThis && li == cursorLineIndex) {
+        lineText = lineText.substring(0, cursorLocalOffset) + "|" + lineText.substring(cursorLocalOffset);
+      }
+      text(lineText, x - w1 + t_oW, lineCenterY - t_oH);
+    }
+
+    // v is empty (so the loop above drew nothing) and this row isn't
+    // being edited - show the placeholder, in gray rather than this
+    // row's usual black, as a hint at what to type rather than an
+    // actual value. v itself - what editing would actually start
+    // from - is untouched.
+    if (!editingThis && v.equals("") && placeholder != null && !placeholder.equals("")) {
+      strokeWeight(0);
+      stroke(127);
+      fill(127);
+      textSize(1.0 * lineH);
+      textAlign(LEFT, CENTER);
+      text(placeholder, x - w1 + t_oW, this.lastSpinnerTextRowFirstLineY - t_oH);
+    }
+
+    if (editingThis) displayValue = this.editText;
+
+    strokeWeight(0);
+    stroke(0);
+    fill(0);
+    textSize(0.85 * lineH);
+    textAlign(LEFT, CENTER);
+    text(caption + ":", x - w1 - w2 + t_oW, this.lastSpinnerTextRowFirstLineY - t_oH);
+
+    return displayValue;
+  }
+
+  // {x,y,w,h} of a row's remove ("x") button - same look hover.pde's own
+  // pinned-hover-box close button uses (drawHoverCloseButton(), and that
+  // file's own hoverCloseButtonSize/hoverCloseButtonGap constants). x is
+  // the row's own left-anchor x (the same value passed as _SpinnerText()'s
+  // own x parameter), so the button lands in the SAME column as that
+  // row's up/down scroll arrows (just right of the value box, at x+o,
+  // _SpinnerText()'s own arrow placement) rather than off on the panel's
+  // far right edge - stacked directly above them instead of nowhere near
+  // them. One function for both drawing and hit-testing, same reasoning
+  // as hover.pde's own hoverCloseButtonRect(): the drawn button and the
+  // clickable area can never drift apart.
+  float[] extraParamsRemoveButtonRect (float x, float y) {
+    float size = hoverCloseButtonSize;
+    float o = 2 * this.view_S; // matches _SpinnerText()'s own "o" - the gap its scroll arrows sit at (x+o) too
+    float bx = x + o;
+    float yy = y - size / 2;
+    return new float[]{ bx, yy, size, size };
+  }
+
+  void drawExtraParamsRemoveButton (float x, float y) {
+    float[] btn = extraParamsRemoveButtonRect(x, y);
+    float bx = btn[0], by = btn[1], bw = btn[2], bh = btn[3];
+
+    stroke(0);
+    strokeWeight(1);
+    fill(63, 191, 63); // same green hover.pde's drawHoverCloseButton() uses
+    rect(bx, by, bw, bh);
+
+    float pad = bw * 0.25;
+    strokeWeight(3);
+    stroke(255); // white "x", same as hover.pde's own close button
+    line(bx + pad, by + pad, bx + bw - pad, by + bh - pad);
+    line(bx + bw - pad, by + pad, bx + pad, by + bh - pad);
+  }
+
+  // Checked by drawExtraParamsPanel() BEFORE handing that row's click to
+  // _SpinnerText() - same ordering mouseClicked.pde's own check against
+  // hover.pde's hoverPointAtCloseButton() keeps ahead of placing a new
+  // hover pin, so a click meant to remove a row can never be misread as
+  // a click into the text field sitting right behind it.
+  boolean extraParamsRemoveButtonClicked (float x, float y) {
+    float[] btn = extraParamsRemoveButtonRect(x, y);
+    return isInside(X_clicked, Y_clicked, btn[0], btn[1], btn[0] + btn[2], btn[1] + btn[3]);
+  }
+
+  // A lightweight 0/1 toggle for PARENT_EXTRAPARAMS's own per-row
+  // expand/collapse control (extraParamsRowLevel, below) - same
+  // caption/value-box look _Spinner() uses (and, like it, Tab/Shift+Tab/
+  // Esc/Enter-editable and typeable via the shared numeric keyPressed()
+  // path - beginSpinnerEdit() leaves editIsText false), but with only
+  // ONE arrow button, at the exact size and position of _Spinner()'s own
+  // down arrow (the bottom half of its usual stacked up/down pair) -
+  // nothing is drawn where the up arrow would otherwise go, above it. A
+  // control that only ever holds two values doesn't need separate
+  // increment/decrement buttons, since there's nowhere else for either
+  // one to go but the other value; a right-click, like _Spinner()'s own
+  // down arrow, also just flips it - there's no separate "jump to
+  // minimum" distinct from that here.
+  int extraParamsLevelToggle (float x, float y, String caption, int level) {
+
+    float w1 = 100 * UI_rollout.view_S;
+    float w2 = 200 * UI_rollout.view_S;
+    float h = 13 * UI_rollout.view_S;
+    float o = 2 * UI_rollout.view_S;
+    float t_oW = h * UI_rollout.view_S / 8.0;
+    float t_oH = t_oW - 3;
+
+    Y_control += 20 * UI_rollout.view_S;
+
+    this.spinnerOrderThisPass.add(caption);
+
+    int newLevel = level;
+
+    boolean editingThis = this.editActive && this.editCaption.equals(caption);
+
+    if (editingThis && this.editCommit) {
+
+      int typedValue = level;
+      try {
+        typedValue = Math.round(Float.parseFloat(this.editText));
+      } catch (Exception ex) {
+        typedValue = level;
+      }
+      newLevel = typedValue;
+
+      this.editActive = false;
+      this.editCaption = "";
+      this.editText = "";
+      this.editCursor = 0;
+      this.editCommit = false;
+
+      editingThis = false;
+      this.editStateChanged = true;
+
+      UI_rollout.revise();
+    }
+
+    if ((this.editPendingCaption != null) && this.editPendingCaption.equals(caption) && !editingThis) {
+      this.beginSpinnerEdit(caption, level);
+      this.editPendingCaption = null;
+      editingThis = true;
+    }
+
+    if ((!this.editActive || editingThis) && (
+      isInside(X_clicked, Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o) ||
+      isInside(X_clicked, Y_clicked, x - w1,          y - (h / 2), x,          y + (h / 2))
+    )) {
+      if (mouseButton == LEFT) {
+        if (!editingThis) {
+          this.beginSpinnerEdit(caption, level);
+          editingThis = true;
+        }
+        X_clicked = -1;
+        Y_clicked = -1;
+      }
+    }
+
+    // _Spinner()'s own value bar accepts a right click anywhere over it,
+    // not just on its arrows ("change value by right click over the
+    // bar"), landing on whatever value the click's own position along
+    // the bar works out to (q = fraction across the bar, 0 at the left
+    // edge to 1 at the right) - this mirrors that for the value box
+    // here, since "right click on the right half of the level spinner"
+    // (the original ask) reads as this box, the control's visually
+    // obvious right side, not the much smaller arrow button further
+    // right still. This toggle only has the two states 0/1 rather than
+    // a continuous range, so instead of _Spinner()'s own proportional
+    // q * (max_v - min_v) it just splits the box at its own midpoint:
+    // right click on the left half sets 0, right click on the right
+    // half sets 1 - same two-way split q itself would land on here.
+    if (!this.editActive && isInside(X_clicked, Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+      if (mouseButton == RIGHT) {
+        newLevel = (X_clicked < x - w1 / 2.0) ? 0 : 1;
+        X_clicked = -1;
+        Y_clicked = -1;
+      }
+    }
+
+    // Same size and position as _Spinner()'s own down arrow (the bottom
+    // half of its stacked up/down pair, below) - just that one square,
+    // with nothing drawn above it where the up arrow would otherwise go.
+    strokeWeight(0);
+    stroke(0);
+    fill(0);
+    rect(x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), 0.5 * (h + 2 * o), 0.5 * (h + 2 * o));
+
+    stroke(255);
+    fill(255);
+    float cx = x + o + 0.25 * (h + 2 * o);
+    float cy = y - (h / 2) - o + 0.75 * (h + 2 * o);
+    float cr = 0.25 * (h + 2 * o);
+    triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
+
+    if (!this.editActive && isInside(X_clicked, Y_clicked, x + o, y - (h / 2) - o + 0.5 * (h + 2 * o), x + o + 0.5 * (h + 2 * o), y - (h / 2) - o + (h + 2 * o))) {
+      if (mouseButton == LEFT) {
+        newLevel = (level == 0) ? 1 : 0;
+      } else if (mouseButton == RIGHT) {
+        // Same convention _Spinner()'s own arrows use - right-click jumps
+        // straight to an extreme (there, max_v/min_v) rather than
+        // stepping - here the only "extreme" a right-click on this
+        // single button sets is 1, expanding the row outright regardless
+        // of its current level.
+        newLevel = 1;
+      }
+      X_clicked = -1;
+      Y_clicked = -1;
+    }
+
+    if (newLevel < 0) newLevel = 0;
+    if (newLevel > 1) newLevel = 1;
+
+    // Same darker gray _SpinnerText() now uses for this key's own
+    // children (when they're showing) rather than the plain 191 every
+    // other spinner's own caption/value background uses - so this row
+    // and the child rows it reveals below read as one grouped cluster.
+    strokeWeight(0);
+    if (editingThis) {
+      stroke(255, 127, 0);
+      fill(255, 127, 0);
+    } else {
+      stroke(140);
+      fill(140);
+    }
+    rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
+
+    stroke(255);
+    fill(255);
+    rect(x - w1, y - (h / 2), w1, h);
+
+    // _Spinner()'s own light-green fill bar ("q * w1" wide, q being how
+    // far the value sits between min_v and max_v) drawn over the white
+    // box before the border goes on - this toggle's own q is just
+    // newLevel itself (0 or 1), so the bar is either empty (level 0) or
+    // fills the whole box (level 1), same look every other spinner's
+    // value box has.
+    strokeWeight(0);
+    stroke(191, 255, 191);
+    fill(191, 255, 191);
+    rect(x - w1, y - (h / 2), newLevel * w1, h);
+
+    strokeWeight(2);
+    stroke(0);
+    noFill();
+    rect(x - w1, y - (h / 2), w1, h);
+
+    strokeWeight(0);
+    stroke(0);
+    fill(0);
+    textSize(1.0 * h);
+    textAlign(LEFT, CENTER);
+    if (editingThis) {
+      String textWithCursor = this.editText.substring(0, this.editCursor) + "|" + this.editText.substring(this.editCursor);
+      text(textWithCursor, x - w1 + t_oW, y - t_oH);
+    } else {
+      text(str(newLevel), x - w1 + t_oW, y - t_oH);
+    }
+
+    strokeWeight(0);
+    stroke(0);
+    fill(0);
+    textSize(0.85 * h);
+    textAlign(LEFT, CENTER);
+    text(caption + ":", x - w1 - w2 + t_oW, y - t_oH);
+
+    if (level != newLevel) displayDirective(ACTION_HEAD + caption + " " + newLevel);
+
+    return newLevel;
+  }
+
+  // Ephemeral per-row expand/collapse state - key name to level (0 or
+  // 1), one entry per top-level JSONObject-valued key only (a level-1
+  // child never gets its own level control - see the file-header
+  // comment above). Deliberately never written into extraParams itself
+  // (would corrupt every exporter's own round-trip and this app's
+  // existing tests - see extraParamsPath.pde), and cleared whenever the
+  // single-item selection changes (drawExtraParamsPanel(), below), so
+  // selecting a different item never shows a stale expand state left
+  // over from a previous one.
+  HashMap<String,Integer> extraParamsRowLevel = new HashMap<String,Integer>();
+  String extraParamsLastSelectionSignature = "";
+
+  void drawExtraParamsPanel () {
+
+    ExtraParamsSelectionTarget target = currentExtraParamsSelection();
+
+    String signature = (target == null) ? "" : (target.category + ":" + target.index);
+    if (!signature.equals(this.extraParamsLastSelectionSignature)) {
+      this.extraParamsRowLevel.clear();
+      this.spinnerTextScroll.clear();
+      this.extraParamsLastSelectionSignature = signature;
+    }
+
+    if (target == null) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Select exactly one item to view/edit its extra parameters.",
+        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+      );
+      Y_control += 30 * this.view_S;
+      return;
+    }
+
+    JSONObject obj = getExtraParamsObjectForSelection(target);
+    boolean changed = false;
+
+    ArrayList<String> topKeys = new ArrayList<String>(obj.keys());
+    java.util.Collections.sort(topKeys); // deterministic row order - JSONObject.keys() itself makes no ordering promise
+
+    for (String key : topKeys) {
+
+      Object value = obj.get(key);
+      boolean isObject = (value instanceof JSONObject);
+      String shownValue = isObject ? ((JSONObject) value).toString() : String.valueOf(value);
+
+      this._SpinnerText(X_control, Y_control, key, shownValue);
+      float rowY = this.lastSpinnerTextRowFirstLineY; // where _SpinnerText just landed this row's TOP line - read back after the call since a wrapped multi-line value makes the row's own height variable, so this row's remove button lands on its first line, not wherever a fixed single-line guess would have put it
+
+      if (extraParamsRemoveButtonClicked(X_control, rowY)) {
+        X_clicked = -1;
+        Y_clicked = -1;
+        extraParamsRemoveAtPath(obj, key);
+        this.extraParamsRowLevel.remove(key);
+        changed = true;
+      } else {
+        this.drawExtraParamsRemoveButton(X_control, rowY);
+      }
+
+      if (this.textEditJustCommitted) {
+        extraParamsSetAtPath(obj, key, this.textEditCommittedValue);
+        this.textEditJustCommitted = false;
+        changed = true;
+      }
+
+      if (isObject) {
+        int level = this.extraParamsRowLevel.containsKey(key) ? this.extraParamsRowLevel.get(key) : 0;
+        int newLevel = this.extraParamsLevelToggle(X_control, Y_control, key + " > Level", level);
+        this.extraParamsRowLevel.put(key, newLevel);
+
+        if (newLevel >= 1) {
+          JSONObject child = (JSONObject) value;
+          ArrayList<String> childKeys = new ArrayList<String>(child.keys());
+          java.util.Collections.sort(childKeys);
+
+          for (String childKey : childKeys) {
+            String path = key + "." + childKey;
+            Object childValue = child.get(childKey);
+            String childShown = (childValue instanceof JSONObject) ? ((JSONObject) childValue).toString() : String.valueOf(childValue);
+            // A level-1 child is always shown as a leaf row, whatever its
+            // own value is - no further level control, even if childValue
+            // is itself a JSONObject (extraParamsLevelToggle()'s own fixed
+            // 0/1 range is the locked cap).
+
+            this._SpinnerText(X_control, Y_control, path, childShown, true);
+            float childRowY = this.lastSpinnerTextRowFirstLineY;
+
+            if (extraParamsRemoveButtonClicked(X_control, childRowY)) {
+              X_clicked = -1;
+              Y_clicked = -1;
+              extraParamsRemoveAtPath(obj, path);
+              changed = true;
+            } else {
+              this.drawExtraParamsRemoveButton(X_control, childRowY);
+            }
+
+            if (this.textEditJustCommitted) {
+              extraParamsSetAtPath(obj, path, this.textEditCommittedValue);
+              this.textEditJustCommitted = false;
+              changed = true;
+            }
+          }
+        }
+      }
+    }
+
+    // Blank "add a new key" row - typing "key": "value" (or bare
+    // key: value) and committing. Split on the first ":" here, UI-side,
+    // rather than on the first whitespace the way EXTRAPARAMS.SET's own
+    // raw command line is split (extraParamsFirstToken/
+    // extraParamsRestAfterFirstToken, extraCommands.pde) - a JSON value
+    // is frequently going to contain its own spaces, where it'd never
+    // contain the ":" this box asks for instead. The key side's own
+    // quotes, if typed, are purely cosmetic (matching ordinary JSON
+    // object-literal look, per the placeholder below) and are stripped
+    // here before use - unlike the value, a key is never run through
+    // extraParamsParseCommandValue()'s own JSON decoding, so a key typed
+    // AS "ifcShape" with its quotes left in would otherwise become the
+    // literal 9-character key `"ifcShape"`, quote marks and all, not
+    // the 8-character key ifcShape. Once split and unquoted, the pieces
+    // are passed on as that same space-separated
+    // "EXTRAPARAMS.SET <key> <value>" command line regardless - key
+    // still can't itself contain whitespace, same as it never could, and
+    // extraParamsRestAfterFirstToken happily takes a multi-word value
+    // from after the first space exactly as before.
+    this._SpinnerText(X_control, Y_control, "+ Add", "", false, true, "\"key\": \"value\"");
+    if (this.textEditJustCommitted) {
+      this.textEditJustCommitted = false;
+      String typed = this.textEditCommittedValue;
+      int colonIndex = typed.indexOf(':');
+      if (colonIndex >= 0) {
+        String newKey = typed.substring(0, colonIndex).strip();
+        String newValue = typed.substring(colonIndex + 1).strip();
+        if (newKey.length() >= 2 && newKey.startsWith("\"") && newKey.endsWith("\"")) {
+          newKey = newKey.substring(1, newKey.length() - 1);
+        }
+        if (!newKey.equals("")) {
+          runScriptLine("EXTRAPARAMS.SET " + newKey + " " + newValue);
+          // runScriptLine() already wrote the change straight through
+          // getExtraParamsObjectForSelection()/setExtraParamsObjectForSelection() -
+          // obj (read before this call) is now stale, so this does NOT
+          // also set changed=true/write obj back below, which would
+          // otherwise clobber the add with whatever obj looked like before it.
+        }
+      }
+    }
+
+    if (changed) {
+      setExtraParamsObjectForSelection(target, obj);
+      UI_rollout.revise();
+    }
+  }
 
   void revise () {
     this.update = true;
@@ -1489,7 +2317,7 @@ class UI_rollout {
     char keyChar = key;
     int code = keyCode;
 
-    boolean isRepeatableArrow = isCoded && ((code == LEFT) || (code == RIGHT));
+    boolean isRepeatableArrow = isCoded && ((code == LEFT) || (code == RIGHT) || (code == UP) || (code == DOWN));
     boolean isRepeatableEdit = !isCoded && ((keyChar == BACKSPACE) || (keyChar == DELETE));
 
     if (isRepeatableArrow || isRepeatableEdit) {
@@ -1547,8 +2375,14 @@ class UI_rollout {
         break;
 
       case '-':
-        // A minus sign is only meaningful as the very first character.
-        if ((this.editCursor == 0) && ((this.editText.length() == 0) || (this.editText.charAt(0) != '-'))) {
+        if (this.editIsText) {
+          // A text row has no numeric sign to restrict - '-' is just an
+          // ordinary character here, same as any letter below.
+          this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
+          this.editCursor++;
+          this.revise();
+        } else if ((this.editCursor == 0) && ((this.editText.length() == 0) || (this.editText.charAt(0) != '-'))) {
+          // A minus sign is only meaningful as the very first character.
           this.editText = "-" + this.editText;
           this.editCursor++;
           this.revise();
@@ -1556,7 +2390,19 @@ class UI_rollout {
         break;
 
       default:
-        if ((key >= '0') && (key <= '9')) {
+        if (this.editIsText) {
+          // Any printable character is valid JSON-value text (letters,
+          // spaces, punctuation, quotes, braces, ...) - unlike the
+          // numeric spinners below, a text row's own commit
+          // (_SpinnerText()'s editCommit handling) takes editText
+          // verbatim rather than Float.parseFloat()'ing it, so nothing
+          // here needs restricting beyond excluding control characters.
+          if (!Character.isISOControl(key)) {
+            this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
+            this.editCursor++;
+            this.revise();
+          }
+        } else if ((key >= '0') && (key <= '9')) {
           this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
           this.editCursor++;
           this.revise();
@@ -1570,7 +2416,7 @@ class UI_rollout {
 
   }
 
-  // Applies one Left/Right cursor move or Backspace/Delete edit.
+  // Applies one Left/Right/Up/Down cursor move or Backspace/Delete edit.
   // Shared by keyPressed() (first press) and processHeldKey() (repeat).
   void dispatchEditKey (boolean isCoded, int code, char keyChar) {
     if (isCoded) {
@@ -1587,6 +2433,38 @@ class UI_rollout {
           if (this.editCursor < this.editText.length()) {
             this.editCursor++;
             this.revise();
+          }
+          break;
+
+        case UP:
+        case DOWN:
+          // Only a text row's value can wrap across multiple lines in
+          // the first place, so only there does Up/Down mean anything.
+          // The wrap is re-derived here from this.editText itself, not
+          // read from anything _SpinnerText() cached on an earlier
+          // frame: this runs from a raw key event, which can land
+          // between frames (most obviously, the very frame a click
+          // first puts a row into edit mode - _SpinnerText() handles
+          // that click after it would otherwise have cached the wrap,
+          // so nothing valid exists yet for the row now being edited).
+          // Recomputing here instead means Up/Down can never move the
+          // cursor using another row's, or no row's, offsets.
+          if (this.editIsText) {
+            textSize(1.0 * spinnerTextLineHeight());
+            ArrayList<String> lines = new ArrayList<String>();
+            ArrayList<Integer> lineStarts = new ArrayList<Integer>();
+            wrapTextLines(this.editText, spinnerTextWrapWidth(), lines, lineStarts);
+
+            int li = spinnerTextLineIndexForCursor(lineStarts, lines, this.editCursor);
+            int col = this.editCursor - lineStarts.get(li);
+            int targetLi = (code == UP) ? (li - 1) : (li + 1);
+
+            if ((targetLi >= 0) && (targetLi < lines.size())) {
+              int targetStart = lineStarts.get(targetLi);
+              int targetLen = lines.get(targetLi).length();
+              this.editCursor = targetStart + min(col, targetLen);
+              this.revise();
+            }
           }
           break;
       }
