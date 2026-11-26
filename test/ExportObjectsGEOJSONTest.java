@@ -140,6 +140,63 @@ class ExportObjectsGEOJSONTest {
   }
 
   @Test
+  void exportGeojson_faceExtraParams_mergeIntoTheFeatureProperties () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportGeojson();
+
+    processing.data.JSONObject properties = readExported(".geojson").getJSONArray("features")
+      .getJSONObject(0).getJSONObject("properties");
+    assertEquals(7, properties.getInt("material"));
+    assertEquals(3, properties.getInt("layer"));
+    assertEquals("Acme", properties.getString("owner"));
+  }
+
+  @Test
+  void exportGeojson_faceExtraParamsCollidingWithMaterial_winsOverTheGeneratedMaterial () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"material\": \"glass\"}");
+
+    app.exportGeojson();
+
+    processing.data.JSONObject properties = readExported(".geojson").getJSONArray("features")
+      .getJSONObject(0).getJSONObject("properties");
+    assertEquals("glass", properties.getString("material"), "extraParams always wins a material/layer key collision");
+    assertEquals(3, properties.getInt("layer"));
+  }
+
+  @Test
+  void exportGeojson_exportExtraParamsOff_suppressesTheMergeEntirely () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    app.exportExtraParams = false;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportGeojson();
+
+    processing.data.JSONObject properties = readExported(".geojson").getJSONArray("features")
+      .getJSONObject(0).getJSONObject("properties");
+    assertEquals(7, properties.getInt("material"));
+    assertEquals(3, properties.getInt("layer"));
+    assertFalse(properties.hasKey("owner"), "exportExtraParams = false: no extraParams keys should be merged in");
+  }
+
+  @Test
   void exportGeojson_aHiddenFace_isSkipped () throws IOException {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);

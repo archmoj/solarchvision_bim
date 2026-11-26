@@ -148,6 +148,73 @@ class ExportObjectsDXFTest {
   }
 
   @Test
+  void exportDxf_faceExtraParams_isWrittenAsXdataAndRoundTripsThroughImport () throws IOException {
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportDxf();
+
+    String text = readExported();
+    assertTrue(text.contains("1001"), "expected an XDATA application-name group code");
+    assertTrue(text.contains("SOLARCHVISION"), "expected the app's own XDATA application name");
+    assertTrue(text.contains("{\"owner\": \"Acme\"}"), "expected the raw extraParams JSON written verbatim as the 1000 string value");
+
+    Path exported = Path.of(app.Folder_Export3D, app.ProjectName + ".dxf");
+    solarchvision_bim reader = newReader();
+    reader.import_objects_DXF(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, reader.allFaces.nodes.length);
+    processing.data.JSONObject extraParams = reader.allFaces.getExtraParamsObject(0);
+    processing.data.JSONObject xdata = extraParams.getJSONObject("xdata");
+    processing.data.JSONArray values = xdata.getJSONArray("SOLARCHVISION");
+    assertEquals(1, values.size());
+    assertEquals("{\"owner\": \"Acme\"}", values.getString(0), "the original extraParams JSON survives verbatim as one XDATA array entry - see exportDxfWriteXdata()'s own comment on why this is nested, not a flat merge");
+  }
+
+  @Test
+  void exportDxf_exportExtraParamsOff_writesNoXdataEvenIfExtraParamsIsSet () throws IOException {
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+    app.exportExtraParams = false;
+
+    app.exportDxf();
+
+    String text = readExported();
+    assertFalse(text.contains("1001"), "exportExtraParams = false: no XDATA should be written at all");
+    assertFalse(text.contains("SOLARCHVISION"));
+  }
+
+  @Test
+  void exportDxf_pentagonFaceExtraParams_isDuplicatedOntoEveryFanTriangleOnReimport () throws IOException {
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(10, 0, 0);
+    int p2 = app.allPoints.create(15, 5, 0);
+    int p3 = app.allPoints.create(5, 10, 0);
+    int p4 = app.allPoints.create(-5, 5, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2, p3, p4 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportDxf();
+    Path exported = Path.of(app.Folder_Export3D, app.ProjectName + ".dxf");
+
+    solarchvision_bim reader = newReader();
+    reader.import_objects_DXF(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, reader.allFaces.nodes.length, "fan-triangulated into (n-2) triangles");
+    for (int f = 0; f < reader.allFaces.nodes.length; f++) {
+      processing.data.JSONObject extraParams = reader.allFaces.getExtraParamsObject(f);
+      processing.data.JSONArray values = extraParams.getJSONObject("xdata").getJSONArray("SOLARCHVISION");
+      assertEquals("{\"owner\": \"Acme\"}", values.getString(0), "every fan triangle should carry the original Face's own extraParams - see exportDxfWritePolyfaceMesh()'s own comment");
+    }
+  }
+
+  @Test
   void exportDxf_hiddenFace_isSkipped () throws IOException {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
@@ -204,6 +271,27 @@ class ExportObjectsDXFTest {
     assertEquals(1, reader.allPolylines.nodes.length);
     assertEquals(3, reader.allPolylines.nodes[0].length, "the written closing duplicate (none, in this case - DXF's own plain-polyline closed flag needs no repeated point) leaves the 3 distinct points");
     assertEquals(1, reader.allPolylines.getClose(0));
+  }
+
+  @Test
+  void exportDxf_polylineExtraParams_isWrittenAsXdataOnSeqendAndRoundTripsThroughImport () throws IOException {
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(5, 0, 0);
+    int p2 = app.allPoints.create(5, 5, 0);
+    app.allPolylines.create(new int[]{ p0, p1, p2 });
+    app.allPolylines.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportDxf();
+    Path exported = Path.of(app.Folder_Export3D, app.ProjectName + ".dxf");
+
+    solarchvision_bim reader = newReader();
+    reader.dxfImportCurves = true;
+    reader.import_objects_DXF(exported.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, reader.allPolylines.nodes.length);
+    processing.data.JSONObject extraParams = reader.allPolylines.getExtraParamsObject(0);
+    processing.data.JSONArray values = extraParams.getJSONObject("xdata").getJSONArray("SOLARCHVISION");
+    assertEquals("{\"owner\": \"Acme\"}", values.getString(0));
   }
 
   @Test

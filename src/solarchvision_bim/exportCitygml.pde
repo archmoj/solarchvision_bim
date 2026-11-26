@@ -63,19 +63,27 @@
 //     same filter exportGeojson.pde/exportKml.pde already apply.
 //
 // Properties: every <bldg:Building> carries its own source Face's
-// material and layer as <gen:intAttribute name="material">/
-// <gen:intAttribute name="layer"> generic-attribute entries (each an
-// <gen:intAttribute name="..."><gen:value>N</gen:value></gen:intAttribute>
-// child) - the exact shape importCitygml.pde's own citygmlReadProperties()
-// already reads back (its own "stringAttribute"/"doubleAttribute"/
-// "intAttribute" branch), so re-importing this same file and typing
-// "material" or "layer" into IMPORT.CITYGML's own group-property option
-// regroups it exactly the way it was grouped here - the same round trip
-// exportGeojson.pde's own "Properties" comment documents for GeoJSON,
-// reused unchanged in spirit if not in code. Each Building's own gml:id
-// is a simple generated "face_N" (N = that Face's own index in
-// allFaces), which also round-trips back into a synthetic "gmlId"
-// property on import (citygmlReadProperties()'s own first branch).
+// material and layer as <gen:stringAttribute name="material">/
+// <gen:stringAttribute name="layer"> generic-attribute entries (each an
+// <gen:stringAttribute name="..."><gen:value>...</gen:value>
+// </gen:stringAttribute> child) - the exact shape importCitygml.pde's own
+// citygmlReadProperties() already reads back (its own "stringAttribute"/
+// "doubleAttribute"/"intAttribute" branch - every one of the three reads
+// back identically, a plain String, so this exporter only ever writes
+// stringAttribute, see exportCitygmlAddGenericAttribute()'s own comment),
+// so re-importing this same file and typing "material" or "layer" into
+// IMPORT.CITYGML's own group-property option regroups it exactly the way
+// it was grouped here - the same round trip exportGeojson.pde's own
+// "Properties" comment documents for GeoJSON, reused unchanged in spirit
+// if not in code. Every other key that source Face's own extraParams
+// holds (unless exportExtraParams, fileSelected.pde, is off) becomes its
+// own generic attribute entry alongside them, via the exact same merged
+// material/layer/extraParams "properties" bag exportGeojson.pde's own
+// exportBuildProperties() builds for every other GIS export format in
+// this app. Each Building's own gml:id is a simple generated "face_N"
+// (N = that Face's own index in allFaces), which also round-trips back
+// into a synthetic "gmlId" property on import (citygmlReadProperties()'s
+// own first branch).
 
 void exportCitygml () {
 
@@ -103,8 +111,11 @@ void exportCitygml () {
     XML building = cityObjectMember.addChild("bldg:Building");
     XML_setString(building, "gml:id", "face_" + f);
 
-    exportCitygmlAddGenericAttribute(building, "material", allFaces.getMaterial(f));
-    exportCitygmlAddGenericAttribute(building, "layer", allFaces.getLayer(f));
+    JSONObject properties = exportBuildProperties(allFaces.getMaterial(f), allFaces.getLayer(f), allFaces.getExtraParams(f));
+    for (Object keyObj : properties.keys()) {
+      String key = (String) keyObj;
+      exportCitygmlAddGenericAttribute(building, key, exportJsonValueToDisplayString(properties, key));
+    }
 
     XML multiSurfaceWrapper = building.addChild("bldg:lod2MultiSurface");
     XML multiSurface = multiSurfaceWrapper.addChild("gml:MultiSurface");
@@ -124,13 +135,21 @@ void exportCitygml () {
   isFileOperationInProgress = false;
 }
 
-// <gen:intAttribute name="..."><gen:value>N</gen:value></gen:intAttribute>
-// - see this file's own header comment, "Properties".
-void exportCitygmlAddGenericAttribute (XML building, String name, int value) {
-  XML attr = building.addChild("gen:intAttribute");
+// <gen:stringAttribute name="..."><gen:value>...</gen:value>
+// </gen:stringAttribute> - see this file's own header comment,
+// "Properties". Always written as a stringAttribute, never
+// intAttribute/doubleAttribute, even for material/layer's own numeric
+// values: citygmlReadProperties() (importCitygml.pde) reads every one of
+// the three generic-attribute element names back into a plain String the
+// exact same way regardless of which was used, so there is no round-trip
+// reason to pick a different element per Java value - same reasoning
+// exportKmlAddExtendedData()'s own comment (exportKml.pde) gives for its
+// own, directly analogous <Data> entries.
+void exportCitygmlAddGenericAttribute (XML building, String name, String value) {
+  XML attr = building.addChild("gen:stringAttribute");
   XML_setString(attr, "name", name);
   XML valueEl = attr.addChild("gen:value");
-  XML_setContent(valueEl, str(value));
+  XML_setContent(valueEl, value);
 }
 
 // One allFaces node loop -> a whitespace-separated "x y z x y z ..."

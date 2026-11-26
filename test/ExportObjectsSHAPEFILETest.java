@@ -163,6 +163,73 @@ class ExportObjectsSHAPEFILETest {
   }
 
   @Test
+  void exportShapefile_faceExtraParams_getsItsOwnDbfColumn () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportShapefile();
+
+    byte[] dbf = Files.readAllBytes(Path.of(app.Folder_Export3D, app.ProjectName + ".dbf"));
+    ByteBuffer dbfLE = ByteBuffer.wrap(dbf).order(ByteOrder.LITTLE_ENDIAN);
+    int headerLen = dbfLE.getShort(8) & 0xFFFF;
+    int recordLen = dbfLE.getShort(10) & 0xFFFF;
+    assertEquals(1 + 10 + 10 + 254, recordLen, "deletion flag + material/layer fields + the extraParams field");
+
+    // Field descriptor #3 (after the 32-byte header proper and the two
+    // material/layer descriptors) should be the Character field named
+    // "extraParams".
+    int thirdFieldDescriptorOffset = 32 + 32 * 2;
+    String thirdFieldName = new String(dbf, thirdFieldDescriptorOffset, 11, java.nio.charset.StandardCharsets.US_ASCII).trim();
+    assertEquals("extraParams", thirdFieldName);
+    assertEquals('C', (char) dbf[thirdFieldDescriptorOffset + 11]);
+
+    String row = new String(dbf, headerLen, recordLen, java.nio.charset.StandardCharsets.ISO_8859_1);
+    String extraParamsField = row.substring(1 + 10 + 10, 1 + 10 + 10 + 254).trim();
+    assertEquals("{\"owner\": \"Acme\"}", extraParamsField);
+  }
+
+  @Test
+  void exportShapefile_noFaceHasExtraParams_omitsTheExtraParamsColumnEntirely () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+
+    app.exportShapefile();
+
+    byte[] dbf = Files.readAllBytes(Path.of(app.Folder_Export3D, app.ProjectName + ".dbf"));
+    ByteBuffer dbfLE = ByteBuffer.wrap(dbf).order(ByteOrder.LITTLE_ENDIAN);
+    int recordLen = dbfLE.getShort(10) & 0xFFFF;
+    assertEquals(1 + 10 + 10, recordLen, "no record has extraParams: the dbf should be unchanged from before this feature existed");
+  }
+
+  @Test
+  void exportShapefile_exportExtraParamsOff_omitsTheExtraParamsColumnEvenIfSet () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    app.exportExtraParams = false;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportShapefile();
+
+    byte[] dbf = Files.readAllBytes(Path.of(app.Folder_Export3D, app.ProjectName + ".dbf"));
+    ByteBuffer dbfLE = ByteBuffer.wrap(dbf).order(ByteOrder.LITTLE_ENDIAN);
+    int recordLen = dbfLE.getShort(10) & 0xFFFF;
+    assertEquals(1 + 10 + 10, recordLen, "exportExtraParams = false: no extraParams column should be added");
+  }
+
+  @Test
   void exportShapefile_aHiddenFace_isSkipped () throws IOException {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);

@@ -102,6 +102,88 @@ class ExportObjectsKMLTest {
   }
 
   @Test
+  void exportKml_faceExtraParams_mergeIntoTheExtendedDataEntries () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportKml();
+
+    processing.data.XML placemark = readExported().getChild("Document").getChildren("Placemark")[0];
+    processing.data.XML extendedData = placemark.getChild("ExtendedData");
+    assertNotNull(extendedData);
+
+    boolean sawMaterial = false, sawLayer = false, sawOwner = false;
+    for (processing.data.XML data : extendedData.getChildren("Data")) {
+      String name = data.getString("name");
+      String value = data.getChild("value").getContent();
+      if (name.equals("material")) { assertEquals("7", value); sawMaterial = true; }
+      if (name.equals("layer")) { assertEquals("3", value); sawLayer = true; }
+      if (name.equals("owner")) { assertEquals("Acme", value); sawOwner = true; }
+    }
+    assertTrue(sawMaterial, "expected a material Data entry");
+    assertTrue(sawLayer, "expected a layer Data entry");
+    assertTrue(sawOwner, "expected an owner Data entry merged in from extraParams");
+  }
+
+  @Test
+  void exportKml_faceExtraParamsCollidingWithMaterial_winsOverTheGeneratedMaterial () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"material\": \"glass\"}");
+
+    app.exportKml();
+
+    processing.data.XML placemark = readExported().getChild("Document").getChildren("Placemark")[0];
+    processing.data.XML extendedData = placemark.getChild("ExtendedData");
+
+    boolean sawMaterial = false;
+    for (processing.data.XML data : extendedData.getChildren("Data")) {
+      if (data.getString("name").equals("material")) {
+        assertEquals("glass", data.getChild("value").getContent(), "extraParams always wins a material/layer key collision");
+        sawMaterial = true;
+      }
+    }
+    assertTrue(sawMaterial, "expected a material Data entry");
+  }
+
+  @Test
+  void exportKml_exportExtraParamsOff_suppressesTheMergeEntirely () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    app.exportExtraParams = false;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportKml();
+
+    processing.data.XML placemark = readExported().getChild("Document").getChildren("Placemark")[0];
+    processing.data.XML extendedData = placemark.getChild("ExtendedData");
+
+    boolean sawMaterial = false, sawLayer = false, sawOwner = false;
+    for (processing.data.XML data : extendedData.getChildren("Data")) {
+      String name = data.getString("name");
+      if (name.equals("material")) sawMaterial = true;
+      if (name.equals("layer")) sawLayer = true;
+      if (name.equals("owner")) sawOwner = true;
+    }
+    assertTrue(sawMaterial, "expected a material Data entry");
+    assertTrue(sawLayer, "expected a layer Data entry");
+    assertFalse(sawOwner, "exportExtraParams = false: no extraParams keys should be merged in");
+  }
+
+  @Test
   void exportKml_aHiddenFace_isSkipped () {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);

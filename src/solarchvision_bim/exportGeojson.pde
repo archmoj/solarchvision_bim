@@ -76,7 +76,12 @@
 // material and layer as "material"/"layer" integer properties - the
 // reverse purpose of geojsonGroupProperty (importGeojson.pde): typing
 // "material" or "layer" back into that option when re-importing this
-// exact file regroups it exactly the way it was grouped here.
+// exact file regroups it exactly the way it was grouped here. Every
+// other key that source's own extraParams holds (if any, and unless the
+// exportExtraParams toggle, fileSelected.pde, is off) is merged in
+// alongside them - see exportBuildProperties()'s own comment, further
+// down, for exactly how, including which one wins if extraParams itself
+// uses "material"/"layer" as one of its own keys.
 //
 // Written with Processing's own saveJSONObject() - the write side of the
 // same built-in loadJSONObject() importGeojson.pde already reads with -
@@ -101,7 +106,7 @@ void exportGeojson () {
     if (allFaces.getVisibility(f) <= 0) continue;
     if (allFaces.nodes[f].length < 3) continue;
 
-    features.append(exportGeojsonBuildPolygonFeature(allFaces.nodes[f], allFaces.getMaterial(f), allFaces.getLayer(f)));
+    features.append(exportGeojsonBuildPolygonFeature(allFaces.nodes[f], allFaces.getMaterial(f), allFaces.getLayer(f), allFaces.getExtraParams(f)));
   }
 
   for (int p = 0; p < allPolylines.nodes.length; p++) {
@@ -109,7 +114,7 @@ void exportGeojson () {
     if (allPolylines.getVisibility(p) <= 0) continue;
     if (allPolylines.nodes[p].length < 2) continue;
 
-    features.append(exportGeojsonBuildLineStringFeature(allPolylines.nodes[p], allPolylines.getClose(p), allPolylines.getMaterial(p), allPolylines.getLayer(p)));
+    features.append(exportGeojsonBuildLineStringFeature(allPolylines.nodes[p], allPolylines.getClose(p), allPolylines.getMaterial(p), allPolylines.getLayer(p), allPolylines.getExtraParams(p)));
   }
 
   JSONObject root = new JSONObject();
@@ -126,7 +131,7 @@ void exportGeojson () {
 // One allFaces node loop -> one GeoJSON Polygon Feature (a single ring -
 // see this file's own header comment, "Scope", on why holes/extruded-
 // solid reconstruction is out of scope).
-JSONObject exportGeojsonBuildPolygonFeature (int[] faceNodes, int material, int layer) {
+JSONObject exportGeojsonBuildPolygonFeature (int[] faceNodes, int material, int layer, String extraParams) {
 
   ArrayList<float[]> ring = exportGeojsonBuildClosedWoundRing(faceNodes);
 
@@ -142,13 +147,13 @@ JSONObject exportGeojsonBuildPolygonFeature (int[] faceNodes, int material, int 
   geometry.setString("type", "Polygon");
   geometry.setJSONArray("coordinates", coordinates);
 
-  return exportGeojsonWrapFeature(geometry, material, layer);
+  return exportGeojsonWrapFeature(geometry, material, layer, extraParams);
 }
 
 // One allPolylines node list -> one GeoJSON LineString Feature, closed
 // (first coordinate repeated at the end) only when close==1 - see this
 // file's own header comment, "Scope".
-JSONObject exportGeojsonBuildLineStringFeature (int[] polylineNodes, int close, int material, int layer) {
+JSONObject exportGeojsonBuildLineStringFeature (int[] polylineNodes, int close, int material, int layer, String extraParams) {
 
   JSONArray lineCoordinates = new JSONArray();
   for (int i = 0; i < polylineNodes.length; i++) {
@@ -162,23 +167,89 @@ JSONObject exportGeojsonBuildLineStringFeature (int[] polylineNodes, int close, 
   geometry.setString("type", "LineString");
   geometry.setJSONArray("coordinates", lineCoordinates);
 
-  return exportGeojsonWrapFeature(geometry, material, layer);
+  return exportGeojsonWrapFeature(geometry, material, layer, extraParams);
 }
 
 // Shared "Feature" envelope (type/geometry/properties) - the "material"/
 // "layer" properties are this file's own header comment's "Properties"
-// section, reused as-is by both Feature builders above.
-JSONObject exportGeojsonWrapFeature (JSONObject geometry, int material, int layer) {
-
-  JSONObject properties = new JSONObject();
-  properties.setInt("material", material);
-  properties.setInt("layer", layer);
+// section; extraParams is this feature's own additional, opaque
+// metadata - see exportBuildProperties()'s own comment below for how the
+// two are merged.
+JSONObject exportGeojsonWrapFeature (JSONObject geometry, int material, int layer, String extraParams) {
 
   JSONObject feature = new JSONObject();
   feature.setString("type", "Feature");
   feature.setJSONObject("geometry", geometry);
-  feature.setJSONObject("properties", properties);
+  feature.setJSONObject("properties", exportBuildProperties(material, layer, extraParams));
   return feature;
+}
+
+// ---------------------------------------------------------------------
+// Shared GIS export "properties" core - the write-side mirror of
+// geojsonPropertiesToExtraParams()/geojsonApplyGrouping() (importGeojson.
+// pde): builds the one properties/attribute bag every GIS exporter in
+// this app writes, reused as-is by exportTopojson.pde (a native JSON
+// properties object, like GeoJSON itself) and, via
+// exportJsonValueToDisplayString() below, by exportKml.pde/
+// exportCitygml.pde (each of which writes the exact same key/value set
+// as its own flat per-key XML element instead of a nested JSON object -
+// see either file's own "ExtendedData"/"generic attribute" comment).
+// exportShapefile.pde/exportDxf.pde do NOT reuse this - DBF's fixed
+// columns and DXF's XDATA have no natural "properties object" shape to
+// merge into, so each writes its own source Face's/Polyline's extraParams
+// as a single raw-JSON blob instead (that file's own comment explains).
+// ---------------------------------------------------------------------
+
+// Starts from material/layer - this app's own two reserved, always-
+// present properties, the same two every GIS exporter already wrote
+// before this feature existed - then, when exportExtraParams is on and
+// extraParams itself parses to a non-empty object, merges every one of
+// ITS keys in on top. Each value is copied via get()/put() rather than
+// through a single typed getter/setter pair, so a String, int, float,
+// boolean, nested JSONObject or JSONArray value all survive with their
+// own original type intact, not just coerced to a string.
+//
+// extraParams wins a key collision: a Face/Polyline that itself still
+// carries extraParams literally named "material" or "layer" (e.g. one
+// captured, on import, from an external file whose own properties
+// already used those names - importGeojson.pde's own
+// geojsonPropertiesToExtraParams() keeps a source Feature's ENTIRE
+// properties object verbatim, whatever keys it happened to use) has its
+// own value take precedence over this app's generated material/layer,
+// simply by being written second, overwriting whatever setInt() above
+// already put there.
+JSONObject exportBuildProperties (int material, int layer, String extraParams) {
+  JSONObject properties = new JSONObject();
+  properties.setInt("material", material);
+  properties.setInt("layer", layer);
+
+  if (exportExtraParams) {
+    JSONObject extra = extraParamsToJSONObject(extraParams);
+    for (Object keyObj : extra.keys()) {
+      String key = (String) keyObj;
+      properties.put(key, extra.get(key));
+    }
+  }
+
+  return properties;
+}
+
+// A properties object's own key, rendered as plain display text - for
+// KML's <value>/CityGML's <gen:value>, which (like every other property
+// value this app's own GIS importers read back - kmlReadProperties()'s/
+// citygmlReadProperties()'s own comments) are always read back as a
+// plain String regardless of which XML element wrote them, so there is
+// no round-trip reason to pick a different element/type per Java value.
+// A nested JSONObject/JSONArray value (extraParams holding an object or
+// array under one of its own keys, not just flat scalars) is rendered as
+// its own raw JSON text via toString() - lossy for a true structural
+// round trip through KML/CityGML's own flat per-key attribute model, but
+// still fully inspectable, the same "best-effort, not lossless" stance
+// exportShapefile.pde's/exportDxf.pde's own blob-field approach already
+// takes for these two formats' own, even flatter metadata mechanisms.
+String exportJsonValueToDisplayString (JSONObject obj, String key) {
+  if (!obj.hasKey(key) || obj.isNull(key)) return "";
+  return String.valueOf(obj.get(key));
 }
 
 // One allFaces node loop -> one closed, correctly-wound ring of

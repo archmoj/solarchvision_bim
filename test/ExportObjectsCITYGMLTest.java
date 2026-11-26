@@ -114,14 +114,92 @@ class ExportObjectsCITYGMLTest {
     processing.data.XML building = readExported().getChildren("cityObjectMember")[0].getChild("bldg:Building");
 
     boolean sawMaterial = false, sawLayer = false;
-    for (processing.data.XML attr : building.getChildren("gen:intAttribute")) {
+    for (processing.data.XML attr : building.getChildren("gen:stringAttribute")) {
       String name = attr.getString("name");
       String value = attr.getChild("gen:value").getContent();
       if (name.equals("material")) { assertEquals("7", value); sawMaterial = true; }
       if (name.equals("layer")) { assertEquals("3", value); sawLayer = true; }
     }
-    assertTrue(sawMaterial, "expected a material gen:intAttribute entry");
-    assertTrue(sawLayer, "expected a layer gen:intAttribute entry");
+    assertTrue(sawMaterial, "expected a material gen:stringAttribute entry");
+    assertTrue(sawLayer, "expected a layer gen:stringAttribute entry");
+  }
+
+  @Test
+  void exportCitygml_faceExtraParams_mergeIntoTheGenericAttributes () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportCitygml();
+
+    processing.data.XML building = readExported().getChildren("cityObjectMember")[0].getChild("bldg:Building");
+
+    boolean sawMaterial = false, sawLayer = false, sawOwner = false;
+    for (processing.data.XML attr : building.getChildren("gen:stringAttribute")) {
+      String name = attr.getString("name");
+      String value = attr.getChild("gen:value").getContent();
+      if (name.equals("material")) { assertEquals("7", value); sawMaterial = true; }
+      if (name.equals("layer")) { assertEquals("3", value); sawLayer = true; }
+      if (name.equals("owner")) { assertEquals("Acme", value); sawOwner = true; }
+    }
+    assertTrue(sawMaterial, "expected a material gen:stringAttribute entry");
+    assertTrue(sawLayer, "expected a layer gen:stringAttribute entry");
+    assertTrue(sawOwner, "expected an owner gen:stringAttribute entry merged in from extraParams");
+  }
+
+  @Test
+  void exportCitygml_faceExtraParamsCollidingWithLayer_winsOverTheGeneratedLayer () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"layer\": \"roof\"}");
+
+    app.exportCitygml();
+
+    processing.data.XML building = readExported().getChildren("cityObjectMember")[0].getChild("bldg:Building");
+
+    boolean sawLayer = false;
+    for (processing.data.XML attr : building.getChildren("gen:stringAttribute")) {
+      if (attr.getString("name").equals("layer")) {
+        assertEquals("roof", attr.getChild("gen:value").getContent(), "extraParams always wins a material/layer key collision");
+        sawLayer = true;
+      }
+    }
+    assertTrue(sawLayer, "expected a layer gen:stringAttribute entry");
+  }
+
+  @Test
+  void exportCitygml_exportExtraParamsOff_suppressesTheMergeEntirely () {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    app.exportExtraParams = false;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportCitygml();
+
+    processing.data.XML building = readExported().getChildren("cityObjectMember")[0].getChild("bldg:Building");
+
+    boolean sawMaterial = false, sawLayer = false, sawOwner = false;
+    for (processing.data.XML attr : building.getChildren("gen:stringAttribute")) {
+      String name = attr.getString("name");
+      if (name.equals("material")) sawMaterial = true;
+      if (name.equals("layer")) sawLayer = true;
+      if (name.equals("owner")) sawOwner = true;
+    }
+    assertTrue(sawMaterial, "expected a material gen:stringAttribute entry");
+    assertTrue(sawLayer, "expected a layer gen:stringAttribute entry");
+    assertFalse(sawOwner, "exportExtraParams = false: no extraParams keys should be merged in");
   }
 
   @Test

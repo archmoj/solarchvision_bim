@@ -47,7 +47,10 @@
 // "material" or "layer" into IMPORT.KML's own group-property option
 // regroups it exactly the way it was grouped here - the same round trip
 // exportGeojson.pde's own "Properties" comment already documents for
-// GeoJSON, reused unchanged.
+// GeoJSON, reused unchanged. Every other key that source's own
+// extraParams holds (unless exportExtraParams, fileSelected.pde, is off)
+// becomes its own <Data> entry alongside them - see
+// exportKmlAddExtendedData()'s own comment, further down.
 //
 // Written with Processing's own XML class and saveXML() - the same
 // "parseXML() an empty root, then setName()/addChild() it into shape"
@@ -80,7 +83,7 @@ void exportKml () {
     if (allFaces.nodes[f].length < 3) continue;
 
     XML placemark = document.addChild("Placemark");
-    exportKmlAddExtendedData(placemark, allFaces.getMaterial(f), allFaces.getLayer(f));
+    exportKmlAddExtendedData(placemark, allFaces.getMaterial(f), allFaces.getLayer(f), allFaces.getExtraParams(f));
 
     ArrayList<float[]> ring = exportGeojsonBuildClosedWoundRing(allFaces.nodes[f]);
 
@@ -97,7 +100,7 @@ void exportKml () {
     if (allPolylines.nodes[p].length < 2) continue;
 
     XML placemark = document.addChild("Placemark");
-    exportKmlAddExtendedData(placemark, allPolylines.getMaterial(p), allPolylines.getLayer(p));
+    exportKmlAddExtendedData(placemark, allPolylines.getMaterial(p), allPolylines.getLayer(p), allPolylines.getExtraParams(p));
 
     ArrayList<float[]> pts = new ArrayList<float[]>();
     for (int node : allPolylines.nodes[p]) {
@@ -120,20 +123,33 @@ void exportKml () {
 }
 
 // <ExtendedData><Data name="material"><value>N</value></Data>
-// <Data name="layer"><value>N</value></Data></ExtendedData> - the exact
-// shape importKml.pde's own kmlReadProperties() already reads back (see
-// this file's own header comment, "Properties").
-void exportKmlAddExtendedData (XML placemark, int material, int layer) {
+// <Data name="layer"><value>N</value></Data>...</ExtendedData> - the
+// exact shape importKml.pde's own kmlReadProperties() already reads back
+// (see this file's own header comment, "Properties"). One <Data> entry
+// per key of the SAME merged material/layer/extraParams bag
+// exportGeojson.pde's own exportBuildProperties() already builds for
+// GeoJSON/TopoJSON - reused directly here rather than duplicated, so
+// material/layer and a source Face's/Polyline's own extraParams (if any)
+// are merged, and a key collision between them resolved, exactly the
+// same way for every GIS export format in this app. kmlReadProperties()
+// always reads a <Data> entry's own value back as a plain String
+// regardless of what it looks like, so every value here is written via
+// exportJsonValueToDisplayString() (exportGeojson.pde) rather than a
+// per-type writer.
+void exportKmlAddExtendedData (XML placemark, int material, int layer, String extraParams) {
+  JSONObject properties = exportBuildProperties(material, layer, extraParams);
   XML extendedData = placemark.addChild("ExtendedData");
-  exportKmlAddDataEntry(extendedData, "material", material);
-  exportKmlAddDataEntry(extendedData, "layer", layer);
+  for (Object keyObj : properties.keys()) {
+    String key = (String) keyObj;
+    exportKmlAddDataEntry(extendedData, key, exportJsonValueToDisplayString(properties, key));
+  }
 }
 
-void exportKmlAddDataEntry (XML extendedData, String name, int value) {
+void exportKmlAddDataEntry (XML extendedData, String name, String value) {
   XML data = extendedData.addChild("Data");
   XML_setString(data, "name", name);
   XML valueEl = data.addChild("value");
-  XML_setContent(valueEl, str(value));
+  XML_setContent(valueEl, value);
 }
 
 // [lon, lat, alt] points -> one whitespace-separated "lon,lat,alt ..."

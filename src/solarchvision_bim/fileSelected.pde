@@ -161,6 +161,24 @@ boolean importSwapAxisYZ = false;
 // itself right where it would otherwise set current_ExtraParams.
 boolean importExtraParams = true;
 
+// The write-side mirror of importExtraParams just above - lets the
+// person exporting skip writing extraParams out into whichever GIS
+// format they're exporting to, for a simplified file - on by default
+// (write whatever each Face's/Polyline's own extraParams holds), same
+// shared-global shape. Checked by every GIS exporter that writes a
+// "properties"-shaped bag at all (exportGeojson.pde's own
+// exportBuildProperties(), reused as-is by exportTopojson.pde/
+// exportKml.pde/exportCitygml.pde) right where it would otherwise merge
+// a Face's/Polyline's own extraParams into that bag, and by
+// exportShapefile.pde/exportDxf.pde for their own, non-JSON-properties-
+// shaped equivalents (a DBF column, DXF XDATA). No export-options dialog
+// exists yet for any format (none of this app's exporters have one at
+// all, unlike every importer above) - this is a plain toggle for now,
+// the same "a constant/global for the starting value, no UI yet" shape
+// dxfImportCurves/DXF_IMPORT_CURVES (importDxf.pde) took before IFC's
+// own curve toggle got a dialog checkbox.
+boolean exportExtraParams = true;
+
 // Shared by STL alone now (one option, one checkbox) since that's
 // exactly the axis convention it already agrees to share - see
 // importStl.pde's own stlImportShowOptionsDialog for how it arms this

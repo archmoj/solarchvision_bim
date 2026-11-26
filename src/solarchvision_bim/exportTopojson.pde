@@ -82,7 +82,7 @@ void exportTopojson () {
     JSONObject geometry = new JSONObject();
     geometry.setString("type", "Polygon");
     geometry.setJSONArray("arcs", polygonRings);
-    geometry.setJSONObject("properties", exportTopojsonBuildProperties(allFaces.getMaterial(f), allFaces.getLayer(f)));
+    geometry.setJSONObject("properties", exportTopojsonBuildProperties(allFaces.getMaterial(f), allFaces.getLayer(f), allFaces.getExtraParams(f)));
 
     objects.setJSONObject("face_" + f, geometry);
   }
@@ -107,7 +107,7 @@ void exportTopojson () {
     JSONObject geometry = new JSONObject();
     geometry.setString("type", "LineString");
     geometry.setJSONArray("arcs", lineArcIndexes);
-    geometry.setJSONObject("properties", exportTopojsonBuildProperties(allPolylines.getMaterial(p), allPolylines.getLayer(p)));
+    geometry.setJSONObject("properties", exportTopojsonBuildProperties(allPolylines.getMaterial(p), allPolylines.getLayer(p), allPolylines.getExtraParams(p)));
 
     objects.setJSONObject("line_" + p, geometry);
   }
@@ -140,13 +140,10 @@ int exportTopojsonAppendArc (JSONArray arcs, ArrayList<float[]> points) {
 }
 
 // Shared "properties" object - the "material"/"layer" round-trip this
-// file's own header comment describes, reused as-is by both the Polygon
-// and LineString builders above (same meaning as
-// exportGeojsonWrapFeature()'s own identical properties object,
-// exportGeojson.pde).
-JSONObject exportTopojsonBuildProperties (int material, int layer) {
-  JSONObject properties = new JSONObject();
-  properties.setInt("material", material);
-  properties.setInt("layer", layer);
-  return properties;
+// file's own header comment describes, plus extraParams merged in on
+// top of them (exportGeojson.pde's own exportBuildProperties() - reused
+// directly, not duplicated - has the full comment on exactly how and why
+// extraParams wins a key collision).
+JSONObject exportTopojsonBuildProperties (int material, int layer, String extraParams) {
+  return exportBuildProperties(material, layer, extraParams);
 }

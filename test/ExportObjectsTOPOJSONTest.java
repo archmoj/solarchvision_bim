@@ -136,6 +136,60 @@ class ExportObjectsTOPOJSONTest {
   }
 
   @Test
+  void exportTopojson_faceExtraParams_mergeIntoTheTopLevelObjectsProperties () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportTopojson();
+
+    processing.data.JSONObject properties = readExported().getJSONObject("objects").getJSONObject("face_0").getJSONObject("properties");
+    assertEquals(7, properties.getInt("material"));
+    assertEquals(3, properties.getInt("layer"));
+    assertEquals("Acme", properties.getString("owner"));
+  }
+
+  @Test
+  void exportTopojson_faceExtraParamsCollidingWithLayer_winsOverTheGeneratedLayer () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"layer\": \"roof\"}");
+
+    app.exportTopojson();
+
+    processing.data.JSONObject properties = readExported().getJSONObject("objects").getJSONObject("face_0").getJSONObject("properties");
+    assertEquals(7, properties.getInt("material"));
+    assertEquals("roof", properties.getString("layer"), "extraParams always wins a material/layer key collision");
+  }
+
+  @Test
+  void exportTopojson_exportExtraParamsOff_suppressesTheMergeEntirely () throws IOException {
+    app.current_Material = 7;
+    app.current_Layer = 3;
+    app.exportExtraParams = false;
+    int p0 = app.allPoints.create(0, 0, 0);
+    int p1 = app.allPoints.create(1, 0, 0);
+    int p2 = app.allPoints.create(1, 1, 0);
+    app.allFaces.create(new int[]{ p0, p1, p2 });
+    app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
+
+    app.exportTopojson();
+
+    processing.data.JSONObject properties = readExported().getJSONObject("objects").getJSONObject("face_0").getJSONObject("properties");
+    assertEquals(7, properties.getInt("material"));
+    assertEquals(3, properties.getInt("layer"));
+    assertFalse(properties.hasKey("owner"), "exportExtraParams = false: no extraParams keys should be merged in");
+  }
+
+  @Test
   void exportTopojson_aHiddenFace_isSkipped () throws IOException {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);

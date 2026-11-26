@@ -108,6 +108,21 @@
 // dxfWritePair()-style helper - the same hand-rolled, no-external-
 // library choice importDxf.pde's own header comment already documents
 // making for its own, read-side half of this exact format.
+//
+// extraParams: when exportExtraParams is on (fileSelected.pde) and a
+// Face's/Polyline's own extraParams string is non-empty, it's written
+// out as that same entity's own XDATA (one 1001 application-name/1000
+// string-value pair, under the app name "SOLARCHVISION") - the write-
+// side counterpart to importDxf.pde's own Step 6 capture
+// (dxfEntityToExtraParams()). See exportDxfWriteXdata()'s own comment
+// for exactly which physical record each entity kind's own XDATA lands
+// on (not always the entity the geometry itself is named after - a
+// polyface mesh's own extraParams goes on each face-definition VERTEX,
+// and a plain Polyline's own goes on its SEQEND, not its POLYLINE
+// header), why this is a single whole-string value rather than a
+// flat per-key merge the way GeoJSON/KML/CityGML/Shapefile's own
+// exportBuildProperties()/dbf-column mechanisms already are, and the
+// 255-byte truncation this format's own XDATA string grammar imposes.
 
 void exportDxf () {
 
@@ -136,11 +151,12 @@ void exportDxf () {
     if (allFaces.nodes[f].length < 3) continue;
 
     String layerName = exportDxfLayerName(allFaces.getMaterial(f), allFaces.getLayer(f));
+    String extraParams = exportExtraParams ? allFaces.getExtraParams(f) : "";
 
     if (allFaces.nodes[f].length <= 4) {
-      exportDxfWrite3dFace(dxfOutput, allFaces.nodes[f], layerName);
+      exportDxfWrite3dFace(dxfOutput, allFaces.nodes[f], layerName, extraParams);
     } else {
-      exportDxfWritePolyfaceMesh(dxfOutput, allFaces.nodes[f], layerName);
+      exportDxfWritePolyfaceMesh(dxfOutput, allFaces.nodes[f], layerName, extraParams);
     }
   }
 
@@ -150,8 +166,9 @@ void exportDxf () {
     if (allPolylines.nodes[p].length < 2) continue;
 
     String layerName = exportDxfLayerName(allPolylines.getMaterial(p), allPolylines.getLayer(p));
+    String extraParams = exportExtraParams ? allPolylines.getExtraParams(p) : "";
 
-    exportDxfWritePolyline(dxfOutput, allPolylines.nodes[p], allPolylines.getClose(p) == 1, layerName);
+    exportDxfWritePolyline(dxfOutput, allPolylines.nodes[p], allPolylines.getClose(p) == 1, layerName, extraParams);
   }
 
   dxfWritePair(dxfOutput, 0, "ENDSEC");
@@ -174,7 +191,7 @@ String exportDxfLayerName (int material, int layer) {
 
 // A 3- or 4-point Face -> one 3DFACE entity - this file's own header
 // comment, "Entity choice per allFaces entry".
-void exportDxfWrite3dFace (PrintWriter out, int[] faceNodes, String layerName) {
+void exportDxfWrite3dFace (PrintWriter out, int[] faceNodes, String layerName, String extraParams) {
 
   dxfWritePair(out, 0, "3DFACE");
   dxfWritePair(out, 8, layerName);
@@ -187,13 +204,15 @@ void exportDxfWrite3dFace (PrintWriter out, int[] faceNodes, String layerName) {
   // 4th - this file's own header comment explains why.
   int fourthNode = (faceNodes.length >= 4) ? faceNodes[3] : faceNodes[2];
   exportDxfWritePoint(out, fourthNode, 13, 23, 33);
+
+  exportDxfWriteXdata(out, extraParams);
 }
 
 // A Face with more than 4 points -> one polyface-mesh POLYLINE entity,
 // its own point list fan-triangulated into (n-2) triangular face-
 // definition records - this file's own header comment, "Entity choice
 // per allFaces entry".
-void exportDxfWritePolyfaceMesh (PrintWriter out, int[] faceNodes, String layerName) {
+void exportDxfWritePolyfaceMesh (PrintWriter out, int[] faceNodes, String layerName, String extraParams) {
 
   int n = faceNodes.length;
   int triangleCount = n - 2;
@@ -212,6 +231,18 @@ void exportDxfWritePolyfaceMesh (PrintWriter out, int[] faceNodes, String layerN
     exportDxfWritePoint(out, faceNodes[i], 10, 20, 30);
   }
 
+  // extraParams is written onto EVERY face-definition VERTEX record
+  // below, not the point-list VERTEX records above or the owning
+  // POLYLINE header - dxfHandleVertex() (importDxf.pde) creates one real
+  // Face per face-definition VERTEX it reads, each picking up its own
+  // extraParams from THAT VERTEX's own eCodes (dxfHandleEntity()'s own
+  // comment on why), the exact same per-record placement this function
+  // already uses for material/layer (group code 8, written on every
+  // VERTEX here too) - so every one of the (n-2) triangular Faces this
+  // mesh reimports as ends up with the same extraParams the original
+  // single n-gon Face had, the same lossy-but-consistent duplication
+  // this file's own header comment already documents for
+  // material/layer across a fan-triangulated n-gon.
   for (int i = 1; i <= triangleCount; i++) {
     dxfWritePair(out, 0, "VERTEX");
     dxfWritePair(out, 8, layerName);
@@ -227,6 +258,7 @@ void exportDxfWritePolyfaceMesh (PrintWriter out, int[] faceNodes, String layerN
     dxfWritePair(out, 71, 1); // 1-based index into the point list above, in writing order
     dxfWritePair(out, 72, i + 1);
     dxfWritePair(out, 73, i + 2);
+    exportDxfWriteXdata(out, extraParams);
   }
 
   dxfWritePair(out, 0, "SEQEND");
@@ -234,7 +266,7 @@ void exportDxfWritePolyfaceMesh (PrintWriter out, int[] faceNodes, String layerN
 
 // Every Polyline, any point count - a plain (non-polyface) 3D POLYLINE
 // entity - this file's own header comment, "Polylines".
-void exportDxfWritePolyline (PrintWriter out, int[] polylineNodes, boolean closed, String layerName) {
+void exportDxfWritePolyline (PrintWriter out, int[] polylineNodes, boolean closed, String layerName, String extraParams) {
 
   dxfWritePair(out, 0, "POLYLINE");
   dxfWritePair(out, 8, layerName);
@@ -248,7 +280,15 @@ void exportDxfWritePolyline (PrintWriter out, int[] polylineNodes, boolean close
     exportDxfWritePoint(out, polylineNodes[i], 10, 20, 30);
   }
 
+  // extraParams is written onto the SEQEND entity, not the POLYLINE
+  // header or any VERTEX - dxfHandleEntity() (importDxf.pde) only
+  // actually creates the real Polyline (dxfEmitPolyline()) once SEQEND
+  // itself is dispatched, picking up current_ExtraParams from THAT
+  // SEQEND's own eCodes at that point, so this is the one record whose
+  // own XDATA this app's own importer will actually read back for this
+  // Polyline.
   dxfWritePair(out, 0, "SEQEND");
+  exportDxfWriteXdata(out, extraParams);
 }
 
 // One allPoints index -> one point's own x/y/z group-code triple, at
@@ -280,4 +320,61 @@ void dxfWritePair (PrintWriter out, int code, String value) {
 void dxfWritePair (PrintWriter out, int code, int value) {
   out.println(code);
   out.println(value);
+}
+
+// The one application name every entity's own extraParams XDATA (below)
+// is written under - matches dxfEntityToExtraParams()'s own (importDxf.
+// pde) "any application name" reading, so round-tripping a file this
+// exporter wrote needs no particular app name match on the way back in,
+// but gives every app-name-cycling GIS/BIM tool that inspects XDATA by
+// hand a single recognizable, namespaced source to look for.
+String DXF_EXTRAPARAMS_XDATA_APP = "SOLARCHVISION";
+
+// A classic DXF group-1000 string value is limited to 255 bytes - a
+// real structural constraint of this format's own extended-entity-data
+// grammar (ASCII strings in XDATA share the same 255-byte ceiling as
+// every other DXF string group code), so an extraParams JSON string
+// longer than that is truncated at export - a documented v1 limitation
+// of this one XDATA channel, the same spirit as this app's own other
+// exporters' "v1 limitation" notes (e.g. exportShapefile.pde's own
+// SHP_EXTRAPARAMS_FIELD_WIDTH comment for exactly the same reason).
+int DXF_EXTRAPARAMS_XDATA_MAX_LENGTH = 255;
+
+// Writes one entity's own extraParams, if any, as a single 1001
+// (application name)/1000 (string value) XDATA pair - gated by
+// exportExtraParams (fileSelected.pde, checked by every call site above
+// before even reaching here) and a non-empty extraParams string. Unlike
+// dxfEntityToExtraParams()'s own read side, which collects a whole RUN
+// of 1000 values per 1001 application name into a JSONArray (this
+// file's own header comment, "Layer AND material..." paragraph's
+// sibling comment in importDxf.pde), this write side only ever emits
+// ONE 1000 value per entity: the entity's own raw extraParams JSON
+// string, verbatim (truncated to DXF_EXTRAPARAMS_XDATA_MAX_LENGTH if
+// needed) - not decomposed key-by-key the way exportGeojson.pde's own
+// exportBuildProperties() merges extraParams into a native JSON/XML
+// properties bag for the other 4 "natural target" formats. A DXF entity
+// has no such native per-entity properties bag of its own XDATA can
+// fold into (XDATA is itself the only per-entity metadata channel this
+// format offers) - so writing the one JSON string whole is what keeps
+// this lossless (up to the 255-byte ceiling above) rather than losing
+// structure the way splitting it into separate 1000 values per key
+// would (dxfEntityToExtraParams() has no way to tell "these came from
+// one JSON object" from "these were always separate plain strings").
+// Reimporting a file this wrote therefore recovers
+// {"layer": ..., "handle": ..., "xdata": {"SOLARCHVISION": ["<the
+// original extraParams JSON, as one array entry>"]}} - a nested, but
+// still fully lossless (up to truncation) round trip, not a flat merge
+// the way GeoJSON/KML/CityGML achieve - a real, documented asymmetry of
+// this one format, the same spirit as exportShapefile.pde's own header
+// comment already documents for its own "extraParams" DBF column.
+void exportDxfWriteXdata (PrintWriter out, String extraParams) {
+  if (extraParams == null || extraParams.length() == 0) return;
+
+  String value = extraParams;
+  if (value.length() > DXF_EXTRAPARAMS_XDATA_MAX_LENGTH) {
+    value = value.substring(0, DXF_EXTRAPARAMS_XDATA_MAX_LENGTH);
+  }
+
+  dxfWritePair(out, 1001, DXF_EXTRAPARAMS_XDATA_APP);
+  dxfWritePair(out, 1000, value);
 }
