@@ -585,6 +585,7 @@ class DeleteGeometryTest {
     app.allSolids.DEF = new float[][]{
       floatRow(13, 100), floatRow(13, 200), floatRow(13, 300), floatRow(13, 400)
     };
+    app.allSolids.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
 
     app.allGroups.makeEmpty(2);
     app.allGroups.Solids[0] = new int[]{0, 1};
@@ -601,5 +602,43 @@ class DeleteGeometryTest {
     assertEquals(100f, app.allSolids.DEF[0][0], 0.0001f);
     assertEquals(300f, app.allSolids.DEF[1][0], 0.0001f);
     assertEquals(400f, app.allSolids.DEF[2][0], 0.0001f);
+    assertEquals(3, app.allSolids.extraParams.length);
+    assertEquals("{\"i\":0}", app.allSolids.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allSolids.getExtraParams(1));
+    assertEquals("{\"i\":3}", app.allSolids.getExtraParams(2));
+  }
+
+  @Test
+  void selectedGroups_cascadesIntoTheGroupsOwnSolidsAndCompactsExtraParamsTheSameWay () {
+    // Same splice shape as the Model1Ds/Model2Ds cascade tests above,
+    // against allSolids instead, confirming extraParams is kept in
+    // lockstep by the subset()/concat() splice in groupSelection()'s
+    // Solid branch.
+    app.allSolids.DEF = new float[][]{
+      floatRow(13, 100), floatRow(13, 200), floatRow(13, 300), floatRow(13, 400)
+    };
+    app.allSolids.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Solids[0] = new int[]{0, 1}; // group 0 owns solids 0-1 - being deleted
+    app.allGroups.Solids[1] = new int[]{2, 3}; // group 1 owns solids 2-3 - survives, shifted down
+
+    for (int[][] ranges : new int[][][]{
+      app.allGroups.Faces, app.allGroups.Polylines, app.allGroups.Model1Ds, app.allGroups.Model2Ds
+    }) {
+      ranges[0] = new int[]{0, -1};
+      ranges[1] = new int[]{0, -1};
+    }
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Delete3D.groupSelection();
+
+    assertEquals(2, app.allSolids.DEF.length);
+    assertEquals(300f, app.allSolids.DEF[0][0], 0.0001f);
+    assertEquals(400f, app.allSolids.DEF[1][0], 0.0001f);
+    assertEquals(2, app.allSolids.extraParams.length);
+    assertEquals("{\"i\":2}", app.allSolids.getExtraParams(0));
+    assertEquals("{\"i\":3}", app.allSolids.getExtraParams(1));
   }
 }

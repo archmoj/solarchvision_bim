@@ -165,7 +165,14 @@ class Clone3D {
     float rotY = allSolids.get_rotY(OBJ_ID);
     float rotZ = allSolids.get_rotZ(OBJ_ID);
     float value = allSolids.get_value(OBJ_ID);
-    allSolids.create(posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, value);
+    String sourceExtraParams = allSolids.getExtraParams(OBJ_ID);
+    allSolids.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allSolids.DEF.length - 1, even if DEF was ever replaced directly without extraParams kept in lockstep (see faces.pde's cloneFace() - same reason)
+    int new_OBJ_ID = allSolids.create(posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, value);
+    // create() alone would default the clone's extraParams to "" - this
+    // duplicate DOES have a single source, OBJ_ID, so this overwrites
+    // that default, same split/merge/duplicate policy as cloneFace()/
+    // clonePolyline().
+    allSolids.setExtraParams(new_OBJ_ID, sourceExtraParams);
   }
 
 

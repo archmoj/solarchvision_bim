@@ -170,6 +170,7 @@ class SolidsTest {
   @Test
   void toXMLThenFromXML_roundTripsEveryFieldIncludingValue () {
     app.allSolids.DEF = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99}};
+    app.allSolids.extraParams = new String[]{"{\"material\":\"concrete\"}"};
     app.allSolids.displayAll = false;
     app.allSolids.colorScaleIndex = 5;
     app.allSolids.colorScaleDirection = -1;
@@ -185,10 +186,131 @@ class SolidsTest {
     assertEquals(1f, fresh.get_posX(0), 0.0001f);
     assertEquals(12f, fresh.get_rotZ(0), 0.0001f);
     assertEquals(99f, fresh.get_value(0), 0.0001f); // now correctly restored
+    assertEquals("{\"material\":\"concrete\"}", fresh.getExtraParams(0));
 
     assertFalse(fresh.displayAll);
     assertEquals(5, fresh.colorScaleIndex);
     assertEquals(-1, fresh.colorScaleDirection);
     assertEquals(0.75f, fresh.colorScaleFactor, 0.0001f);
+  }
+
+  // ================= extraParams ======================================
+
+  @Test
+  void makeEmpty_setsExtraParamsToEmptyStringsForEveryEntry () {
+    app.allSolids.makeEmpty(3);
+    assertEquals(3, app.allSolids.extraParams.length);
+    assertEquals("", app.allSolids.getExtraParams(0));
+    assertEquals("", app.allSolids.getExtraParams(1));
+    assertEquals("", app.allSolids.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewSolidsExtraParamsToEmptyString () {
+    int newId = app.allSolids.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+    assertEquals("", app.allSolids.getExtraParams(newId));
+  }
+
+  @Test
+  void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
+    assertEquals("", app.allSolids.getExtraParams(0));
+
+    app.allSolids.makeEmpty(2);
+    assertEquals("", app.allSolids.getExtraParams(-1));
+    assertEquals("", app.allSolids.getExtraParams(5));
+  }
+
+  @Test
+  void setExtraParamsThenGetExtraParams_roundTripsTheRawString () {
+    app.allSolids.makeEmpty(1);
+    app.allSolids.setExtraParams(0, "{\"material\":\"steel\"}");
+    assertEquals("{\"material\":\"steel\"}", app.allSolids.getExtraParams(0));
+  }
+
+  @Test
+  void ensureExtraParamsLength_padsShortArrayWithEmptyStringsAndPreservesExisting () {
+    app.allSolids.DEF = new float[][]{{0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0,0}};
+    app.allSolids.extraParams = new String[]{"{\"a\":1}"};
+
+    app.allSolids.ensureExtraParamsLength();
+
+    assertEquals(2, app.allSolids.extraParams.length);
+    assertEquals("{\"a\":1}", app.allSolids.getExtraParams(0));
+    assertEquals("", app.allSolids.getExtraParams(1));
+  }
+
+  @Test
+  void ensureExtraParamsLength_isANoOpWhenAlreadyTheRightLength () {
+    app.allSolids.makeEmpty(2);
+    app.allSolids.setExtraParams(0, "{\"a\":1}");
+    app.allSolids.ensureExtraParamsLength();
+    assertEquals("{\"a\":1}", app.allSolids.getExtraParams(0));
+    assertEquals(2, app.allSolids.extraParams.length);
+  }
+
+  @Test
+  void getExtraParamsObject_parsesValidJSONIntoAJSONObject () {
+    app.allSolids.makeEmpty(1);
+    app.allSolids.setExtraParams(0, "{\"material\":\"glass\",\"count\":3}");
+
+    processing.data.JSONObject obj = app.allSolids.getExtraParamsObject(0);
+
+    assertEquals("glass", obj.getString("material"));
+    assertEquals(3, obj.getInt("count"));
+  }
+
+  @Test
+  void getExtraParamsObject_collapsesEmptyOrMissingOrBadDataToAnEmptyObject () {
+    app.allSolids.makeEmpty(3);
+    app.allSolids.setExtraParams(1, null);
+    app.allSolids.setExtraParams(2, "not valid json");
+
+    assertEquals(0, app.allSolids.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allSolids.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allSolids.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToEmptyString () {
+    app.allSolids.makeEmpty(1);
+    processing.data.JSONObject empty = new processing.data.JSONObject();
+    app.allSolids.setExtraParamsObject(0, empty);
+    assertEquals("", app.allSolids.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObjectThenGetExtraParamsObject_roundTripsViaJSON () {
+    app.allSolids.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("material", "wood");
+    obj.setInt("count", 7);
+
+    app.allSolids.setExtraParamsObject(0, obj);
+    processing.data.JSONObject fresh = app.allSolids.getExtraParamsObject(0);
+
+    assertEquals("wood", fresh.getString("material"));
+    assertEquals(7, fresh.getInt("count"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all - no
+    // "extraParams" attribute on the <item> element whatsoever, not even
+    // an empty one. XML_getString()'s own 3-arg overload (xmlHelpers.pde)
+    // is what makes this fall back to "" instead of null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allSolids.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("1,2,3,4,5,6,7,8,9,10,11,12,99");
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Solids fresh = app.new Solids();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.DEF.length);
+    assertEquals("", fresh.getExtraParams(0));
   }
 }

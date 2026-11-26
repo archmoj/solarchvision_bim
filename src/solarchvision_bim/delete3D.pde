@@ -336,7 +336,10 @@ class Delete3D {
       }
     }
 
+    allSolids.ensureExtraParamsLength(); // see its own comment (solids.pde) - guarantees the removeIndices() call below is safe even if DEF was ever changed directly without extraParams kept in lockstep
+
     allSolids.DEF = removeIndices(allSolids.DEF, ids);
+    allSolids.extraParams = removeIndices(allSolids.extraParams, ids);
 
     endScene3DChange();
   }
@@ -555,9 +558,21 @@ class Delete3D {
         }
       }
       if ((0 <= startSolid) && (startSolid <= endSolid)) {
+        allSolids.ensureExtraParamsLength(); // see its own comment (solids.pde) - guarantees the subset() calls below are safe even if DEF was replaced directly somewhere without extraParams kept in lockstep
+
         float[][] startListF = (float[][]) subset(allSolids.DEF, 0, startSolid);
         float[][] endListF = (float[][]) subset(allSolids.DEF, endSolid + 1);
         allSolids.DEF = (float[][]) concat(startListF, endListF);
+
+        // extraParams has to be spliced the exact same way, or its
+        // length falls out of step with DEF and every solid after this
+        // range would read/write the wrong extraParams from then on
+        // (see this file's own String[] removeIndices() overload and
+        // its comment).
+        String[] startListE = (String[]) subset(allSolids.extraParams, 0, startSolid);
+        String[] endListE = (String[]) subset(allSolids.extraParams, endSolid + 1);
+        allSolids.extraParams = (String[]) concat(startListE, endListE);
+
         allSolids_updated = true;
       }
     }

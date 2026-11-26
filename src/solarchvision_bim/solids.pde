@@ -13,10 +13,20 @@ class Solids {
 
   float[][] DEF;
 
+  // Opaque, caller-defined JSON metadata, one entry per solid - "" is the
+  // canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde/groups.pde/model1Ds.pde/
+  // model2Ds.pde). Parsed lazily, only via getExtraParamsObject()/
+  // setExtraParamsObject() below, never during to_XML/from_XML or any
+  // structural resize.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.DEF = new float [n][13];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -201,6 +211,42 @@ class Solids {
     return this.DEF[n][12];
   }
 
+  // Defensive against extraParams being shorter than DEF (or null) at the
+  // time of the call - never throws, just reads as "no extra params"
+  // past the end, same as a genuinely-empty entry would (see faces.pde's
+  // own identical getExtraParams()/comment).
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.DEF's own
+  // current length, filling any new/missing entries with "" - same
+  // self-healing purpose as faces.pde's own ensureExtraParamsLength().
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.DEF.length) return;
+    String[] resized = new String[this.DEF.length];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - nothing else in this file should call
+  // JSONObject.parse()/extraParamsFromJSONObject() directly.
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
+  }
+
   float get_Distance (int n, float a, float b, float c) {
 
     float posX = this.DEF[n][0];
@@ -271,6 +317,15 @@ class Solids {
       }
     };
     this.DEF = (float[][]) concat(this.DEF, newSolid);
+
+    // New-from-scratch solid - no source to inherit extraParams from, so
+    // it gets this field's own "nothing here" default (""), same as
+    // faces.pde's/polylines.pde's own create(). Blind append, same as
+    // those - a caller about to index extraParams at this.DEF.length - 1
+    // right after create() (clone3D.pde's cloneSolid()) calls
+    // ensureExtraParamsLength() itself first, same as cloneFace()/
+    // clonePolyline() do.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
 
     if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = this.DEF.length - 1;
 
@@ -576,6 +631,8 @@ class Solids {
       txt += nf(this.get_value(i), 0, 4).replace(",", "."); // <<<<
 
       XML_setContent(child, txt);
+
+      XML_setString(child, "extraParams", this.getExtraParams(i));
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -611,6 +668,11 @@ class Solids {
       this.set_rotY(i, float(parts[10]));
       this.set_rotZ(i, float(parts[11]));
       this.set_value(i, float(parts[12]));
+
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

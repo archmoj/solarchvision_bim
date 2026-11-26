@@ -233,6 +233,19 @@ class Clone3DTest {
     assertArrayEquals(app.allSolids.DEF[0], app.allSolids.DEF[1], 0.0001f);
   }
 
+  @Test
+  void cloneSolid_inheritsExtraParamsFromTheSourceSolid () {
+    app.allSolids.DEF = new float[][]{
+      {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}
+    };
+    app.allSolids.extraParams = new String[]{"{\"material\":\"concrete\"}"};
+
+    app.Clone3D.cloneSolid(0);
+
+    assertEquals(2, app.allSolids.extraParams.length);
+    assertEquals("{\"material\":\"concrete\"}", app.allSolids.getExtraParams(1));
+  }
+
   // ================= Faces / Polylines (batch) ========================
 
   @Test
