@@ -211,10 +211,10 @@ class ExportObjectsSHAPEFILETest {
   }
 
   @Test
-  void exportShapefile_exportExtraParamsOff_omitsTheExtraParamsColumnEvenIfSet () throws IOException {
+  void exportShapefile_exporterExtraParamsOff_omitsTheExtraParamsColumnEvenIfSet () throws IOException {
     app.current_Material = 7;
     app.current_Layer = 3;
-    app.exportExtraParams = false;
+    app.User3D.exporterExtraParams = false;
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
     int p2 = app.allPoints.create(1, 1, 0);
@@ -226,7 +226,7 @@ class ExportObjectsSHAPEFILETest {
     byte[] dbf = Files.readAllBytes(Path.of(app.Folder_Export3D, app.ProjectName + ".dbf"));
     ByteBuffer dbfLE = ByteBuffer.wrap(dbf).order(ByteOrder.LITTLE_ENDIAN);
     int recordLen = dbfLE.getShort(10) & 0xFFFF;
-    assertEquals(1 + 10 + 10, recordLen, "exportExtraParams = false: no extraParams column should be added");
+    assertEquals(1 + 10 + 10, recordLen, "exporterExtraParams = false: no extraParams column should be added");
   }
 
   @Test

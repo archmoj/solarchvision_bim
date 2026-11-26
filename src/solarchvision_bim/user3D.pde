@@ -84,6 +84,7 @@ class User3D {
 
   boolean exporterMaterialLibrary = true;
   boolean exporterDoubleSided = true;
+  boolean exporterExtraParams = true; // write-side mirror of importExtraParams (fileSelected.pde) - gates whether any exporter writes extraParams out at all; see exportGeojson.pde's/exportDxf.pde's/exportShapefile.pde's own "Properties"/header comments for what each format actually does with it
   int exporterColorScaleResolution = 256;
 
   int currentTool = UITASK.zoom_Orbit_Pan;
@@ -165,6 +166,7 @@ class User3D {
     XML_setInt(parent, "exporterMaintainPolygons", this.exporterMaintainPolygons);
     XML_setBoolean(parent, "exporterMaterialLibrary", this.exporterMaterialLibrary);
     XML_setBoolean(parent, "exporterDoubleSided", this.exporterDoubleSided);
+    XML_setBoolean(parent, "exporterExtraParams", this.exporterExtraParams);
     XML_setInt(parent, "exporterColorScaleResolution", this.exporterColorScaleResolution);
 
     XML_setInt(parent, "currentTool", this.currentTool);
@@ -261,6 +263,7 @@ class User3D {
     this.exporterMaintainPolygons = XML_getInt(parent, "exporterMaintainPolygons");
     this.exporterMaterialLibrary  = XML_getBoolean(parent, "exporterMaterialLibrary");
     this.exporterDoubleSided = XML_getBoolean(parent, "exporterDoubleSided");
+    this.exporterExtraParams = XML_getBoolean(parent, "exporterExtraParams");
     this.exporterColorScaleResolution = XML_getInt(parent, "exporterColorScaleResolution");
 
     this.currentTool = XML_getInt(parent, "currentTool");

@@ -78,7 +78,7 @@
 // "material" or "layer" back into that option when re-importing this
 // exact file regroups it exactly the way it was grouped here. Every
 // other key that source's own extraParams holds (if any, and unless the
-// exportExtraParams toggle, fileSelected.pde, is off) is merged in
+// User3D.exporterExtraParams toggle, user3D.pde, is off) is merged in
 // alongside them - see exportBuildProperties()'s own comment, further
 // down, for exactly how, including which one wins if extraParams itself
 // uses "material"/"layer" as one of its own keys.
@@ -202,7 +202,7 @@ JSONObject exportGeojsonWrapFeature (JSONObject geometry, int material, int laye
 
 // Starts from material/layer - this app's own two reserved, always-
 // present properties, the same two every GIS exporter already wrote
-// before this feature existed - then, when exportExtraParams is on and
+// before this feature existed - then, when User3D.exporterExtraParams is on and
 // extraParams itself parses to a non-empty object, merges every one of
 // ITS keys in on top. Each value is copied via get()/put() rather than
 // through a single typed getter/setter pair, so a String, int, float,
@@ -223,7 +223,7 @@ JSONObject exportBuildProperties (int material, int layer, String extraParams) {
   properties.setInt("material", material);
   properties.setInt("layer", layer);
 
-  if (exportExtraParams) {
+  if (User3D.exporterExtraParams) {
     JSONObject extra = extraParamsToJSONObject(extraParams);
     for (Object keyObj : extra.keys()) {
       String key = (String) keyObj;

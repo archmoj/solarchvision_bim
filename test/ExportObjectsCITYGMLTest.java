@@ -176,10 +176,10 @@ class ExportObjectsCITYGMLTest {
   }
 
   @Test
-  void exportCitygml_exportExtraParamsOff_suppressesTheMergeEntirely () {
+  void exportCitygml_exporterExtraParamsOff_suppressesTheMergeEntirely () {
     app.current_Material = 7;
     app.current_Layer = 3;
-    app.exportExtraParams = false;
+    app.User3D.exporterExtraParams = false;
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
     int p2 = app.allPoints.create(1, 1, 0);
@@ -199,7 +199,7 @@ class ExportObjectsCITYGMLTest {
     }
     assertTrue(sawMaterial, "expected a material gen:stringAttribute entry");
     assertTrue(sawLayer, "expected a layer gen:stringAttribute entry");
-    assertFalse(sawOwner, "exportExtraParams = false: no extraParams keys should be merged in");
+    assertFalse(sawOwner, "exporterExtraParams = false: no extraParams keys should be merged in");
   }
 
   @Test

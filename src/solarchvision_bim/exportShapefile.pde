@@ -82,7 +82,7 @@
 //     fields, "material" and "layer", holding that record's own source
 //     Face's/Polyline's material/layer, the same round-trip purpose
 //     exportGeojson.pde's own "Properties" comment already documents.
-//     When exportExtraParams is on (fileSelected.pde) and at least one
+//     When User3D.exporterExtraParams is on (user3D.pde) and at least one
 //     written record actually has a non-empty extraParams string, a
 //     third, Character ('C') field is added too - literally named
 //     "extraParams", holding that record's own raw extraParams JSON
@@ -138,7 +138,7 @@ void exportShapefile () {
     faceRings.add(ring);
     faceMaterials.add(allFaces.getMaterial(f));
     faceLayers.add(allFaces.getLayer(f));
-    faceExtraParams.add(exportExtraParams ? allFaces.getExtraParams(f) : "");
+    faceExtraParams.add(User3D.exporterExtraParams ? allFaces.getExtraParams(f) : "");
   }
 
   exportShapefileWriteFileSet(ProjectName, 15 /* PolygonZ */, faceRings, faceMaterials, faceLayers, faceExtraParams);
@@ -163,7 +163,7 @@ void exportShapefile () {
     lineStrings.add(pts);
     lineMaterials.add(allPolylines.getMaterial(p));
     lineLayers.add(allPolylines.getLayer(p));
-    lineExtraParams.add(exportExtraParams ? allPolylines.getExtraParams(p) : "");
+    lineExtraParams.add(User3D.exporterExtraParams ? allPolylines.getExtraParams(p) : "");
   }
 
   if (lineStrings.size() > 0) {
@@ -326,7 +326,7 @@ int SHP_EXTRAPARAMS_FIELD_WIDTH = 254;
 // space-padded for the two Numeric fields (the conventional dBASE
 // Numeric field layout) and left-justified/space-padded for the
 // Character field (the conventional dBASE Character field layout). The
-// "extraParams" column itself is only added when exportExtraParams is on
+// "extraParams" column itself is only added when User3D.exporterExtraParams is on
 // AND at least one record in this file set actually has a non-empty
 // extraParams string - so a scene with the toggle on but nothing actually
 // using extraParams still gets the exact same two-column .dbf this

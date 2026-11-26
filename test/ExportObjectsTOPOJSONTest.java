@@ -171,10 +171,10 @@ class ExportObjectsTOPOJSONTest {
   }
 
   @Test
-  void exportTopojson_exportExtraParamsOff_suppressesTheMergeEntirely () throws IOException {
+  void exportTopojson_exporterExtraParamsOff_suppressesTheMergeEntirely () throws IOException {
     app.current_Material = 7;
     app.current_Layer = 3;
-    app.exportExtraParams = false;
+    app.User3D.exporterExtraParams = false;
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
     int p2 = app.allPoints.create(1, 1, 0);
@@ -186,7 +186,7 @@ class ExportObjectsTOPOJSONTest {
     processing.data.JSONObject properties = readExported().getJSONObject("objects").getJSONObject("face_0").getJSONObject("properties");
     assertEquals(7, properties.getInt("material"));
     assertEquals(3, properties.getInt("layer"));
-    assertFalse(properties.hasKey("owner"), "exportExtraParams = false: no extraParams keys should be merged in");
+    assertFalse(properties.hasKey("owner"), "exporterExtraParams = false: no extraParams keys should be merged in");
   }
 
   @Test

@@ -175,18 +175,18 @@ class ExportObjectsDXFTest {
   }
 
   @Test
-  void exportDxf_exportExtraParamsOff_writesNoXdataEvenIfExtraParamsIsSet () throws IOException {
+  void exportDxf_exporterExtraParamsOff_writesNoXdataEvenIfExtraParamsIsSet () throws IOException {
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
     int p2 = app.allPoints.create(1, 1, 0);
     app.allFaces.create(new int[]{ p0, p1, p2 });
     app.allFaces.setExtraParams(0, "{\"owner\": \"Acme\"}");
-    app.exportExtraParams = false;
+    app.User3D.exporterExtraParams = false;
 
     app.exportDxf();
 
     String text = readExported();
-    assertFalse(text.contains("1001"), "exportExtraParams = false: no XDATA should be written at all");
+    assertFalse(text.contains("1001"), "exporterExtraParams = false: no XDATA should be written at all");
     assertFalse(text.contains("SOLARCHVISION"));
   }
 

@@ -5370,6 +5370,24 @@ class ValueModifier {
     }
     return out;
   }
+  boolean exporterExtraParams (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    boolean out = false;
+    String command = "Exporter Extra Params";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (User3D.exporterExtraParams ? 1f : 0f),
+        (v) -> { User3D.exporterExtraParams = (v >= 0.5f); },
+        0, 1, 1,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.exporterExtraParams);
+    }
+    return out;
+  }
   int exporterColorScaleResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

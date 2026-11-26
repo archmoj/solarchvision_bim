@@ -76,7 +76,7 @@
 // it was grouped here - the same round trip exportGeojson.pde's own
 // "Properties" comment documents for GeoJSON, reused unchanged in spirit
 // if not in code. Every other key that source Face's own extraParams
-// holds (unless exportExtraParams, fileSelected.pde, is off) becomes its
+// holds (unless User3D.exporterExtraParams, user3D.pde, is off) becomes its
 // own generic attribute entry alongside them, via the exact same merged
 // material/layer/extraParams "properties" bag exportGeojson.pde's own
 // exportBuildProperties() builds for every other GIS export format in

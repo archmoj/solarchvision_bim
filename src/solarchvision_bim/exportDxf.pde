@@ -109,7 +109,7 @@
 // library choice importDxf.pde's own header comment already documents
 // making for its own, read-side half of this exact format.
 //
-// extraParams: when exportExtraParams is on (fileSelected.pde) and a
+// extraParams: when User3D.exporterExtraParams is on (user3D.pde) and a
 // Face's/Polyline's own extraParams string is non-empty, it's written
 // out as that same entity's own XDATA (one 1001 application-name/1000
 // string-value pair, under the app name "SOLARCHVISION") - the write-
@@ -151,7 +151,7 @@ void exportDxf () {
     if (allFaces.nodes[f].length < 3) continue;
 
     String layerName = exportDxfLayerName(allFaces.getMaterial(f), allFaces.getLayer(f));
-    String extraParams = exportExtraParams ? allFaces.getExtraParams(f) : "";
+    String extraParams = User3D.exporterExtraParams ? allFaces.getExtraParams(f) : "";
 
     if (allFaces.nodes[f].length <= 4) {
       exportDxfWrite3dFace(dxfOutput, allFaces.nodes[f], layerName, extraParams);
@@ -166,7 +166,7 @@ void exportDxf () {
     if (allPolylines.nodes[p].length < 2) continue;
 
     String layerName = exportDxfLayerName(allPolylines.getMaterial(p), allPolylines.getLayer(p));
-    String extraParams = exportExtraParams ? allPolylines.getExtraParams(p) : "";
+    String extraParams = User3D.exporterExtraParams ? allPolylines.getExtraParams(p) : "";
 
     exportDxfWritePolyline(dxfOutput, allPolylines.nodes[p], allPolylines.getClose(p) == 1, layerName, extraParams);
   }
@@ -342,7 +342,7 @@ int DXF_EXTRAPARAMS_XDATA_MAX_LENGTH = 255;
 
 // Writes one entity's own extraParams, if any, as a single 1001
 // (application name)/1000 (string value) XDATA pair - gated by
-// exportExtraParams (fileSelected.pde, checked by every call site above
+// User3D.exporterExtraParams (user3D.pde, checked by every call site above
 // before even reaching here) and a non-empty extraParams string. Unlike
 // dxfEntityToExtraParams()'s own read side, which collects a whole RUN
 // of 1000 values per 1001 application name into a JSONArray (this

@@ -48,7 +48,7 @@
 // regroups it exactly the way it was grouped here - the same round trip
 // exportGeojson.pde's own "Properties" comment already documents for
 // GeoJSON, reused unchanged. Every other key that source's own
-// extraParams holds (unless exportExtraParams, fileSelected.pde, is off)
+// extraParams holds (unless User3D.exporterExtraParams, user3D.pde, is off)
 // becomes its own <Data> entry alongside them - see
 // exportKmlAddExtendedData()'s own comment, further down.
 //

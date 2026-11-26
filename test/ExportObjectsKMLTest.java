@@ -156,10 +156,10 @@ class ExportObjectsKMLTest {
   }
 
   @Test
-  void exportKml_exportExtraParamsOff_suppressesTheMergeEntirely () {
+  void exportKml_exporterExtraParamsOff_suppressesTheMergeEntirely () {
     app.current_Material = 7;
     app.current_Layer = 3;
-    app.exportExtraParams = false;
+    app.User3D.exporterExtraParams = false;
     int p0 = app.allPoints.create(0, 0, 0);
     int p1 = app.allPoints.create(1, 0, 0);
     int p2 = app.allPoints.create(1, 1, 0);
@@ -180,7 +180,7 @@ class ExportObjectsKMLTest {
     }
     assertTrue(sawMaterial, "expected a material Data entry");
     assertTrue(sawLayer, "expected a layer Data entry");
-    assertFalse(sawOwner, "exportExtraParams = false: no extraParams keys should be merged in");
+    assertFalse(sawOwner, "exporterExtraParams = false: no extraParams keys should be merged in");
   }
 
   @Test

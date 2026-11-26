@@ -428,6 +428,7 @@ class UI_rollout {
     vm.exporterMaintainPolygons(0);
     vm.exporterMaterialLibrary(0);
     vm.exporterDoubleSided(0);
+    vm.exporterExtraParams(0);
     vm.exporterColorScaleResolution(0);
     vm.Record_SolidImpact_in_JPG(0);
     vm.Record_SolidImpact_in_PDF(0);
@@ -976,6 +977,7 @@ class UI_rollout {
         User3D.exporterMaintainPolygons = vm.exporterMaintainPolygons(1);
         User3D.exporterMaterialLibrary = vm.exporterMaterialLibrary(1);
         User3D.exporterDoubleSided = vm.exporterDoubleSided(1);
+        User3D.exporterExtraParams = vm.exporterExtraParams(1);
         User3D.exporterColorScaleResolution = vm.exporterColorScaleResolution(1);
       }
 

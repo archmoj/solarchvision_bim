@@ -1179,7 +1179,7 @@ class RunScriptTest {
       checkedCount++;
     }
 
-    assertEquals(257, checkedCount, "expected exactly 257 value-modifier methods"); // +1 for creatorTorusRatio (Torus parametric-surface preset), +2 for creatorParametricStepsU/V (shared u/v grid resolution, every parametric-surface preset), +1 for modifierCorrugateBumpAmount (Corrugate Selected Faces)
+    assertEquals(258, checkedCount, "expected exactly 258 value-modifier methods"); // +1 for creatorTorusRatio (Torus parametric-surface preset), +2 for creatorParametricStepsU/V (shared u/v grid resolution, every parametric-surface preset), +1 for modifierCorrugateBumpAmount (Corrugate Selected Faces), +1 for exporterExtraParams (write-side mirror of importExtraParams, User3D.exporterExtraParams)
   }
 
   // ================= parseParams / getF / getI ================================
