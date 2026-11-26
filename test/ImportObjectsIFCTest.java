@@ -3799,6 +3799,225 @@ class ImportObjectsIFCTest {
     }
   }
 
+  // ================= extraParams (Step 8: GlobalId/Name/Description/ObjectType) ==
+
+  @Test
+  void importObjectsIFC_wall_capturesItsOwnGlobalIdAsExtraParams () throws IOException {
+    Path f = ifcFile("ifc-extraparams-globalid-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    // Name/Description/ObjectType are all $ (unset) on this wall - only
+    // "globalId" should be present.
+    assertEquals("{\"globalId\": \"guid-1\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsIFC_wall_capturesNameDescriptionAndObjectTypeAlongsideGlobalId () throws IOException {
+    Path f = ifcFile("ifc-extraparams-all-fields-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,'North Wall','Exterior load-bearing wall','Loadbearing',$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("guid-1", obj.getString("globalId"));
+    assertEquals("North Wall", obj.getString("name"));
+    assertEquals("Exterior load-bearing wall", obj.getString("description"));
+    assertEquals("Loadbearing", obj.getString("objectType"));
+  }
+
+  @Test
+  void importObjectsIFC_wall_withEveryAttributeUnset_hasNoExtraParams () throws IOException {
+    // GlobalId itself is $ here too - unrealistic for a real export
+    // (every IfcRoot always writes a real GUID), but confirms
+    // ifcProductToExtraParams() really does check all four rather than
+    // assuming GlobalId is always present.
+    Path f = ifcFile("ifc-extraparams-all-unset-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL($,$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsIFC_extrudedAreaSolid_everyFaceFromTheSameProductSharesItsExtraParams () throws IOException {
+    // A box extrusion produces 6 faces (2 caps + 4 sides, same shape as
+    // importObjectsIFC_largeBuildingElementProxy_stillImports...() above)
+    // from the one product - every one of them should carry the exact
+    // same extraParams, since ifcCurrentProductExtraParams is computed
+    // once per product, not per face.
+    Path f = ifcFile("ifc-extraparams-extrusion-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,2.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,2.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-elevator',$,'Elevator',$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length);
+    for (int i = 0; i < 6; i++) {
+      processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(i);
+      assertEquals("guid-elevator", obj.getString("globalId"), "face " + i);
+      assertEquals("Elevator", obj.getString("name"), "face " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_twoDifferentProducts_eachFacesKeepsItsOwnProductsExtraParams () throws IOException {
+    // Two separate IfcWall products, each its own single-quad
+    // IfcFacetedBrep, one straight after the other - the second
+    // product's own extraParams must never leak onto the first's own
+    // face, and vice versa (ifcCurrentProductExtraParams is reset to ""
+    // and recomputed fresh for every product in the per-product loop).
+    Path f = ifcFile("ifc-extraparams-two-products-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-wall-a',$,'Wall A',$,$,$,#11);
+        #21=IFCCARTESIANPOINT((0.,0.,1.));
+        #22=IFCCARTESIANPOINT((1.,0.,1.));
+        #23=IFCCARTESIANPOINT((1.,1.,1.));
+        #24=IFCCARTESIANPOINT((0.,1.,1.));
+        #25=IFCPOLYLOOP((#21,#22,#23,#24));
+        #26=IFCFACEOUTERBOUND(#25,.T.);
+        #27=IFCFACE((#26));
+        #28=IFCCLOSEDSHELL((#27));
+        #29=IFCFACETEDBREP(#28);
+        #30=IFCSHAPEREPRESENTATION($,'Body','Brep',(#29));
+        #31=IFCPRODUCTDEFINITIONSHAPE($,$,(#30));
+        #32=IFCWALL('guid-wall-b',$,'Wall B',$,$,$,#31);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allFaces.nodes.length);
+    assertEquals("Wall A", app.allFaces.getExtraParamsObject(0).getString("name"));
+    assertEquals("Wall B", app.allFaces.getExtraParamsObject(1).getString("name"));
+  }
+
+  @Test
+  void importObjectsIFC_smallObjectExcluded_itsExtraParamsNeverLeaksOntoTheNextKeptProduct () throws IOException {
+    // The coffee-cup-sized proxy below is discarded by the small-object
+    // exclusion (importObjectsIFC_smallBuildingElementProxy_isExcludedByDefault()'s
+    // own fixture) - ifcCurrentProductExtraParams was still set (and its
+    // own faces queued, product-locally) while it was being processed,
+    // before the size check ran and discarded them via
+    // ifcDiscardProductStaging(); this confirms that discard really does
+    // clear ifcProductPendingFaceExtraParams too, not just nodes/
+    // options, so none of the cup's own extraParams can land on the
+    // wall processed right after it.
+    Path f = ifcFile("ifc-extraparams-small-object-no-leak-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.1,0.1);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.1);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-cup',$,'Coffee Cup',$,$,$,#5);
+        #11=IFCCARTESIANPOINT((0.,0.,0.));
+        #12=IFCCARTESIANPOINT((1.,0.,0.));
+        #13=IFCCARTESIANPOINT((1.,1.,0.));
+        #14=IFCCARTESIANPOINT((0.,1.,0.));
+        #15=IFCPOLYLOOP((#11,#12,#13,#14));
+        #16=IFCFACEOUTERBOUND(#15,.T.);
+        #17=IFCFACE((#16));
+        #18=IFCCLOSEDSHELL((#17));
+        #19=IFCFACETEDBREP(#18);
+        #20=IFCSHAPEREPRESENTATION($,'Body','Brep',(#19));
+        #21=IFCPRODUCTDEFINITIONSHAPE($,$,(#20));
+        #22=IFCWALL('guid-wall',$,'Wall A',$,$,$,#21);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "only the wall's own face survives - the cup is excluded as a small object");
+    assertEquals(1, app.ifcImportSmallObjectExcludedCount);
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("guid-wall", obj.getString("globalId"));
+    assertEquals("Wall A", obj.getString("name"));
+  }
+
+  @Test
+  void importObjectsIFC_importExtraParamsFalse_suppressesCaptureEvenWithRealAttributes () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = ifcFile("ifc-extraparams-off-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,'North Wall','Exterior wall','Loadbearing',$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
+
   // ================= progress window headless-safety =======================
   // import_objects_IFC() now shows a ProgressWindow (preBakeViewport3D.pde) -
   // a real java.awt.Frame - while showImportProgress (globals.pde) is on,

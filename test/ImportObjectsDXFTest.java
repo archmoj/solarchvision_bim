@@ -604,6 +604,198 @@ class ImportObjectsDXFTest {
   }
 
   @Test
+  void importObjectsDXF_3dFace_capturesItsOwnHandleAsExtraParams () throws IOException {
+    Path f = dxfFile("dxf-3dface-handle-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE", "5", "2A",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    // No layer group (8) on this entity, but dxfHandleEntity()'s own
+    // canStartGeometry block (Step 4) still defaults dxfCurrentLayer to
+    // "0" - DXF's own default layer - so "layer" is present here too,
+    // same as it always has been; "handle" is simply layered on top of
+    // it, same split-into-object-then-check-each-key convention the
+    // layerAndHandleBothPresent test below uses, since JSONObject's own
+    // toString() doesn't preserve insertion order.
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("0", obj.getString("layer"));
+    assertEquals("2A", obj.getString("handle"));
+  }
+
+  @Test
+  void importObjectsDXF_3dFace_layerAndHandleBothPresent_capturesBothInOneObject () throws IOException {
+    Path f = dxfFile("dxf-3dface-layer-and-handle-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE", "8", "Walls", "5", "2A",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("Walls", obj.getString("layer"));
+    assertEquals("2A", obj.getString("handle"));
+  }
+
+  @Test
+  void importObjectsDXF_3dFace_capturesItsOwnXDataStringsGroupedByApplicationName () throws IOException {
+    Path f = dxfFile("dxf-3dface-xdata-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "1001", "QCAD", "1000", "roomId=101", "1000", "zone=A",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    processing.data.JSONArray qcad = obj.getJSONObject("xdata").getJSONArray("QCAD");
+    assertEquals(2, qcad.size());
+    assertEquals("roomId=101", qcad.getString(0));
+    assertEquals("zone=A", qcad.getString(1));
+  }
+
+  @Test
+  void importObjectsDXF_3dFace_xDataFromTwoDifferentApplications_keepsThemSeparate () throws IOException {
+    Path f = dxfFile("dxf-3dface-xdata-two-apps-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "1001", "QCAD", "1000", "roomId=101",
+        "1001", "REVIT", "1000", "ElementId=99",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject xdata = app.allFaces.getExtraParamsObject(0).getJSONObject("xdata");
+    assertEquals("roomId=101", xdata.getJSONArray("QCAD").getString(0));
+    assertEquals("ElementId=99", xdata.getJSONArray("REVIT").getString(0));
+  }
+
+  @Test
+  void importObjectsDXF_3dFace_xDataNumericGroupsAreIgnored_onlyStringGroup1000IsRead () throws IOException {
+    // 1070 (a 16-bit integer) under the same application - deliberately
+    // not read (this step's own "optional, best-effort" scope, see
+    // dxfEntityToExtraParams()'s own comment) - only the 1000 string
+    // survives into the captured xdata.
+    Path f = dxfFile("dxf-3dface-xdata-numeric-ignored-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "1001", "QCAD", "1070", "42", "1000", "roomId=101",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONArray qcad = app.allFaces.getExtraParamsObject(0).getJSONObject("xdata").getJSONArray("QCAD");
+    assertEquals(1, qcad.size());
+    assertEquals("roomId=101", qcad.getString(0));
+  }
+
+  @Test
+  void importObjectsDXF_3dFace_applicationNameWithNoStringValues_isOmittedEntirely () throws IOException {
+    // QCAD's own 1001 block here has no 1000 string under it at all (just
+    // a 1070 integer) - the whole "QCAD" key, and "xdata" itself, should
+    // be absent entirely, not present as an empty array/object. "layer"
+    // still defaults to "0" (Step 4's own canStartGeometry default, see
+    // the handle-only test above), so the object isn't empty, but it
+    // carries no "xdata" key.
+    Path f = dxfFile("dxf-3dface-xdata-empty-app-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "1001", "QCAD", "1070", "42",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("0", obj.getString("layer"));
+    assertFalse(obj.hasKey("xdata"));
+  }
+
+  @Test
+  void importObjectsDXF_polyfaceMeshVertex_capturesItsOwnHandleSeparateFromItsOwningPolylinesHandle () throws IOException {
+    // The owning POLYLINE's own handle ("P1") must NOT leak onto the
+    // VERTEX-created face below - each VERTEX's own handle (read fresh
+    // from THAT entity's own eCodes/eValues, see dxfEntityToExtraParams()'s
+    // own comment) is its own, unlike layer (which persists from the
+    // owning POLYLINE, by design).
+    Path f = dxfFile("dxf-polyface-vertex-handle-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "POLYLINE", "5", "P1", "70", "64",
+        "0", "VERTEX", "10", "0", "20", "0", "30", "0",
+        "0", "VERTEX", "10", "1", "20", "0", "30", "0",
+        "0", "VERTEX", "10", "1", "20", "1", "30", "0",
+        "0", "VERTEX", "10", "0", "20", "1", "30", "0",
+        "0", "VERTEX", "5", "F1", "71", "1", "72", "2", "73", "3", "74", "4",
+        "0", "SEQEND",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    // Same "0" default layer as the handle-only 3DFACE test above - the
+    // owning POLYLINE has no "8" group either, so dxfCurrentLayer still
+    // defaults to "0" and persists onto the VERTEX-created face; "F1" is
+    // that face-definition VERTEX's own handle, NOT the owning
+    // POLYLINE's ("P1" - deliberately never used anywhere here).
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+    assertEquals("0", obj.getString("layer"));
+    assertEquals("F1", obj.getString("handle"));
+  }
+
+  @Test
+  void importObjectsDXF_importExtraParamsFalse_suppressesHandleAndXDataCaptureToo () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = dxfFile("dxf-extraparams-off-handle-xdata-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE", "8", "Walls", "5", "2A",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "1001", "QCAD", "1000", "roomId=101",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option opts out of handle/XDATA capture too, same as layer");
+  }
+
+  @Test
   void importObjectsDXF_importExtraParamsFalse_suppressesCaptureEvenWithARealLayer () throws IOException {
     app.importExtraParams = false;
 

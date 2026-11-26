@@ -334,17 +334,20 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
     }
   }
 
-  // Step 4's own DXF capture - every entity dispatched below that goes on
-  // to create a Face/Polyline (3DFACE directly; LINE/LWPOLYLINE/CIRCLE/
-  // ARC while dxfImportCurves is true; VERTEX/SEQEND for the POLYLINE
-  // currently being read) picks up dxfCurrentLayer's own extraParams, set
-  // right before dispatch and reset right after - same ambient-global
-  // discipline current_ExtraParams's own comment (globalVariables.pde)
-  // already requires. VERTEX/SEQEND are deliberately NOT among the types
-  // that update dxfCurrentLayer just above (that block's own comment on
-  // why), so every face/polyline they go on to create here still picks
-  // up the owning POLYLINE's own layer, read once at its own start.
-  current_ExtraParams = dxfLayerToExtraParams(dxfCurrentLayer);
+  // Step 4's own DXF capture (layer) plus Step 6's own (handle/XDATA) -
+  // every entity dispatched below that goes on to create a Face/Polyline
+  // (3DFACE directly; LINE/LWPOLYLINE/CIRCLE/ARC while dxfImportCurves is
+  // true; VERTEX/SEQEND for the POLYLINE currently being read) picks up
+  // this combined extraParams, set right before dispatch and reset right
+  // after - same ambient-global discipline current_ExtraParams's own
+  // comment (globalVariables.pde) already requires. VERTEX/SEQEND are
+  // deliberately NOT among the types that update dxfCurrentLayer just
+  // above (that block's own comment on why), so every face/polyline they
+  // go on to create here still picks up the owning POLYLINE's own layer,
+  // read once at its own start - but each VERTEX's own handle/XDATA
+  // (read fresh below, from THIS entity's own eCodes/eValues, not the
+  // owning POLYLINE's) is its own, separate from its owning POLYLINE's.
+  current_ExtraParams = dxfEntityToExtraParams(dxfCurrentLayer, eCodes, eValues);
 
   if (entityType.equals("3DFACE")) {
     dxfHandle3DFace(eCodes, eValues);
@@ -387,11 +390,86 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
 // that's unchecked or no layer has been read yet (dxfCurrentLayer starts
 // null, import_objects_DXF()'s own reset) that
 // geojsonPropertiesToExtraParams()/svgIdToExtraParams() (importGeojson.
-// pde/importSvg.pde) already follow for their own formats.
+// pde/importSvg.pde) already follow for their own formats. Kept as its
+// own small function (rather than folded into dxfEntityToExtraParams()
+// below) since it's still the one piece tests/comments elsewhere refer
+// to as "Step 4's own" capture.
 String dxfLayerToExtraParams (String layer) {
   if (!importExtraParams || layer == null || layer.trim().length() == 0) return "";
   JSONObject obj = new JSONObject();
   obj.setString("layer", layer);
+  return obj.toString();
+}
+
+// Step 6's own DXF capture, layered on top of Step 4's layer capture
+// above: this entity's own handle (group code 5 - DXF's own unique-per-
+// entity hex ID) and XDATA (any run of group 1001 "application name"
+// followed by that application's own group 1000 string values - DXF's
+// mechanism for a third-party app, e.g. a GIS or BIM tool, to attach its
+// own data to an entity). Both are optional and entity-specific - unlike
+// dxfCurrentLayer (persisted across a POLYLINE's own VERTEX/SEQEND run,
+// see dxfHandleEntity()'s own comment on why), handle/XDATA are read
+// fresh from THIS call's own eCodes/eValues every time, so each VERTEX
+// of a polyface mesh picks up its own handle/XDATA, not its owning
+// POLYLINE's.
+//
+// XDATA's own full grammar is large (1010/1020/1030 points, 1040 reals,
+// 1070/1071 integers, 1002 "{"/"}" nesting markers, ...) - only the
+// 1000 string values under each 1001 application name are read here,
+// collected into a JSON array per application name, same "optional,
+// best-effort" scope this whole step is named for (see the user-facing
+// plan this implements: "Step 6 (DXF XDATA/handle, optional)"). An
+// application name with no own 1000 strings under it (e.g. one that
+// only ever writes 1070 integers) is dropped entirely rather than kept
+// as an empty array - same "don't emit an empty placeholder" spirit
+// geojsonPropertiesToExtraParams() already follows for an empty/missing
+// properties object.
+//
+// layer/handle/xdata are merged into one JSON object, each key present
+// only when it actually has data - an entity with a layer but no
+// handle/XDATA (every pre-Step-6 DXF file) produces exactly what
+// dxfLayerToExtraParams() alone already did, so this is purely additive.
+String dxfEntityToExtraParams (String layer, IntList eCodes, StringList eValues) {
+  if (!importExtraParams) return "";
+
+  String handle = dxfFind(eCodes, eValues, 5, null);
+
+  // Collected into a plain Java map first, rather than directly into the
+  // JSONObject this function returns - an application name with a 1001
+  // but no 1000 string under it (see this function's own comment on
+  // "omitted entirely") must never show up as a key at all, and a
+  // JSONObject has no "remove this key again" call cheaper than just not
+  // adding it in the first place.
+  java.util.LinkedHashMap<String, JSONArray> xdataByApp = new java.util.LinkedHashMap<String, JSONArray>();
+  String currentApp = null;
+  for (int i = 0; i < eCodes.size(); i++) {
+    int code = eCodes.get(i);
+    if (code == 1001) {
+      currentApp = eValues.get(i);
+    } else if ((code == 1000) && (currentApp != null)) {
+      JSONArray values = xdataByApp.get(currentApp);
+      if (values == null) {
+        values = new JSONArray();
+        xdataByApp.put(currentApp, values);
+      }
+      values.append(eValues.get(i));
+    }
+  }
+  JSONObject xdata = new JSONObject();
+  for (String app : xdataByApp.keySet()) {
+    xdata.setJSONArray(app, xdataByApp.get(app));
+  }
+
+  boolean hasLayer = (layer != null) && (layer.trim().length() > 0);
+  boolean hasHandle = (handle != null) && (handle.trim().length() > 0);
+  boolean hasXdata = xdata.keys().size() > 0;
+
+  if (!hasLayer && !hasHandle && !hasXdata) return "";
+
+  JSONObject obj = new JSONObject();
+  if (hasLayer) obj.setString("layer", layer);
+  if (hasHandle) obj.setString("handle", handle);
+  if (hasXdata) obj.setJSONObject("xdata", xdata);
   return obj.toString();
 }
 

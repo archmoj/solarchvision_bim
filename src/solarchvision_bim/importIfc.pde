@@ -1448,6 +1448,18 @@ void ifcEmitFace (ArrayList<PVector> localPts, IfcFrame productFrame,
 ArrayList<float[]> ifcPendingPoints = new ArrayList<float[]>();
 ArrayList<int[]> ifcPendingFaceNodes = new ArrayList<int[]>();
 ArrayList<int[]> ifcPendingFaceOptions = new ArrayList<int[]>();
+// Step 8's own capture - parallel to ifcPendingFaceNodes/
+// ifcPendingFaceOptions above, one entry per queued face: that face's
+// own OWNING PRODUCT's extraParams (GlobalId/Name/Description/
+// ObjectType), computed once per product (ifcProductToExtraParams(),
+// further down) rather than per face, since every face a single
+// product's own Representation produces shares the same product-level
+// metadata. Filled via the same product-local-staging-then-promote
+// shape ifcProductPendingFaceNodes/ifcProductPendingFaceOptions already
+// use (ifcProductPendingFaceExtraParams below) - see
+// ifcFlushPendingGeometry()'s own comment for where this finally lands
+// in allFaces.extraParams.
+ArrayList<String> ifcPendingFaceExtraParams = new ArrayList<String>();
 int ifcBasePointCount = 0;
 int ifcBaseFaceCount = 0;
 // How many allModel2Ds entries (trees, people - see ifcLooksLikeATree()/
@@ -1517,13 +1529,34 @@ ArrayList<int[]> ifcPendingCurveOptions = new ArrayList<int[]>();
 ArrayList<float[]> ifcProductPendingPoints = new ArrayList<float[]>();
 ArrayList<int[]> ifcProductPendingFaceNodes = new ArrayList<int[]>();
 ArrayList<int[]> ifcProductPendingFaceOptions = new ArrayList<int[]>();
+// Parallel to ifcProductPendingFaceNodes/ifcProductPendingFaceOptions -
+// see ifcPendingFaceExtraParams' own comment above for what this holds
+// and why it's product-level, not per-face.
+ArrayList<String> ifcProductPendingFaceExtraParams = new ArrayList<String>();
 float ifcProductBBoxMinX, ifcProductBBoxMinY, ifcProductBBoxMinZ;
 float ifcProductBBoxMaxX, ifcProductBBoxMaxY, ifcProductBBoxMaxZ;
+
+// The CURRENT product's own extraParams - set once per product, right
+// before ifcProcessProductRepresentation() is called (import_objects_
+// IFC()'s own per-product loop), from that product's own GlobalId/Name/
+// Description/ObjectType via ifcProductToExtraParams() below. Read by
+// ifcQueueFace() - every face this product's Representation goes on to
+// produce, however many processing layers deep (ifcProcessShell() ->
+// ifcProcessFace() -> ifcEmitFace() -> ifcQueueFace(), or
+// ifcProcessExtrudedAreaSolid() -> ifcEmitFace() -> ifcQueueFace(), ...)
+// - picks up this same ambient value, rather than threading an explicit
+// extraParams parameter through every one of those functions' own
+// m/tes/lyr/vsb/wgt/clz parameter lists. Same ambient-global discipline
+// current_ExtraParams's own comment (globalVariables.pde) already
+// requires: reset to "" right after the product it was set for is done,
+// in import_objects_IFC()'s own per-product loop.
+String ifcCurrentProductExtraParams = "";
 
 void ifcBeginProductStaging () {
   ifcProductPendingPoints.clear();
   ifcProductPendingFaceNodes.clear();
   ifcProductPendingFaceOptions.clear();
+  ifcProductPendingFaceExtraParams.clear();
   ifcProductBBoxMinX = ifcProductBBoxMinY = ifcProductBBoxMinZ = Float.MAX_VALUE;
   ifcProductBBoxMaxX = ifcProductBBoxMaxY = ifcProductBBoxMaxZ = -Float.MAX_VALUE;
 }
@@ -1543,6 +1576,7 @@ void ifcDiscardProductStaging () {
   ifcProductPendingPoints.clear();
   ifcProductPendingFaceNodes.clear();
   ifcProductPendingFaceOptions.clear();
+  ifcProductPendingFaceExtraParams.clear();
 }
 
 // Appends this product's own staged points/faces onto the real pending
@@ -1566,6 +1600,7 @@ void ifcPromoteProductStaging () {
     }
     ifcPendingFaceNodes.add(globalNodes);
     ifcPendingFaceOptions.add(ifcProductPendingFaceOptions.get(i));
+    ifcPendingFaceExtraParams.add(ifcProductPendingFaceExtraParams.get(i));
     if (allGroups.num > 0) {
       allGroups.Faces[allGroups.num - 1][1] = ifcBaseFaceCount + ifcPendingFaceNodes.size() - 1;
     }
@@ -1573,6 +1608,7 @@ void ifcPromoteProductStaging () {
   ifcProductPendingPoints.clear();
   ifcProductPendingFaceNodes.clear();
   ifcProductPendingFaceOptions.clear();
+  ifcProductPendingFaceExtraParams.clear();
 }
 
 int ifcQueuePoint (float x, float y, float z) {
@@ -1589,6 +1625,10 @@ int ifcQueuePoint (float x, float y, float z) {
 void ifcQueueFace (int[] nodes, int m, int tes, int lyr, int vsb, int wgt, int clz) {
   ifcProductPendingFaceNodes.add(nodes);
   ifcProductPendingFaceOptions.add(new int[]{m, tes, lyr, vsb, wgt, clz});
+  // Step 8's own capture - see ifcCurrentProductExtraParams' own comment
+  // for why this is read as an ambient value here rather than threaded
+  // through as a parameter.
+  ifcProductPendingFaceExtraParams.add(ifcCurrentProductExtraParams);
 }
 
 // Called right after allGroups.beginNewGroup(): that call itself stamps
@@ -1626,9 +1666,14 @@ void ifcFlushPendingGeometry () {
   if (ifcPendingFaceNodes.size() > 0) {
     int[][] newNodes = new int[ifcBaseFaceCount + ifcPendingFaceNodes.size()][];
     int[][] newOptions = new int[ifcBaseFaceCount + ifcPendingFaceOptions.size()][];
-    // Brand new faces, imported fresh - get this field's own default
-    // (""), not copied from anywhere (faces.pde's own create()/
-    // createBatch() follow the same policy).
+    // Step 8's own capture - each brand new face gets its own owning
+    // product's extraParams, queued alongside it in
+    // ifcPendingFaceExtraParams (ifcQueueFace()'s own comment); "" (this
+    // field's own "nothing here" default, same as faces.pde's own
+    // create()/createBatch() use for a face with no particular source to
+    // inherit from) whenever importExtraParams is unchecked or that
+    // product had none of GlobalId/Name/Description/ObjectType set
+    // (ifcProductToExtraParams()'s own comment).
     String[] newExtraParams = new String[ifcBaseFaceCount + ifcPendingFaceNodes.size()];
     System.arraycopy(allFaces.nodes, 0, newNodes, 0, ifcBaseFaceCount);
     System.arraycopy(allFaces.options, 0, newOptions, 0, ifcBaseFaceCount);
@@ -1636,7 +1681,7 @@ void ifcFlushPendingGeometry () {
     for (int i = 0; i < ifcPendingFaceNodes.size(); i++) {
       newNodes[ifcBaseFaceCount + i] = ifcPendingFaceNodes.get(i);
       newOptions[ifcBaseFaceCount + i] = ifcPendingFaceOptions.get(i);
-      newExtraParams[ifcBaseFaceCount + i] = "";
+      newExtraParams[ifcBaseFaceCount + i] = ifcPendingFaceExtraParams.get(i);
     }
     allFaces.nodes = newNodes;
     allFaces.options = newOptions;
@@ -1646,6 +1691,7 @@ void ifcFlushPendingGeometry () {
   ifcPendingPoints.clear();
   ifcPendingFaceNodes.clear();
   ifcPendingFaceOptions.clear();
+  ifcPendingFaceExtraParams.clear();
 }
 
 ArrayList<PVector> ifcPolyLoopPoints (HashMap<Integer, StepEntity> ents, StepEntity loopEntity) {
@@ -2724,6 +2770,63 @@ String ifcUnquote (String token) {
   return token;
 }
 
+// ---------------------------------------------------------------------
+// Step 8's own extraParams capture - an IfcProduct's own GlobalId/Name/
+// Description/ObjectType (the fixed IfcRoot/IfcObject/IfcProduct
+// attribute prefix every subtype shares - see
+// ifcLooksLikeImportableProduct()'s own comment for the full list and
+// why index 0/2/3/4 are always these, regardless of which concrete
+// IfcWall/IfcSlab/IfcDoor/... subtype e actually is), same fields the
+// IFC import-options dialog's own checkbox label already names
+// (fileSelected.pde's ifcShowImportOptionsDialog(), added in Step 2).
+// ---------------------------------------------------------------------
+
+// This product's own attrs[index], unquoted and IFC-null-checked - null
+// (not "") whenever the attribute is missing entirely (a malformed/
+// truncated entity), the STEP "$" token (IFC's own "this attribute is
+// unset" marker - see ifcProcessMappedItem()'s own scale-token check for
+// the same ".equals(\"$\")" pattern), or unquotes down to an empty
+// string (an explicit '' - a Name/Description some authoring tools do
+// write as present-but-blank, treated the same as absent here, same
+// "don't emit a known-empty value" policy ifcProductToExtraParams()
+// below follows as a whole).
+String ifcAttrString (StepEntity e, int index) {
+  if (e == null || e.attrs.length <= index) return null;
+  String raw = e.attrs[index].trim();
+  if (raw.length() == 0 || raw.equals("$")) return null;
+  String unquoted = ifcUnquote(raw);
+  return (unquoted.length() == 0) ? null : unquoted;
+}
+
+// Builds one IfcProduct's raw extraParams string from its own GlobalId/
+// Name/Description/ObjectType - gated by the shared importExtraParams
+// checkbox (fileSelected.pde), same "" (this field's own default/
+// "nothing here" value) whenever that's unchecked, e is null, or none of
+// the four attributes actually has a value, that every other importer's
+// own equivalent (geojsonPropertiesToExtraParams()/dxfEntityToExtraParams()/
+// ...) already follows. Each key is present only when that attribute
+// itself has a value - a product with a GlobalId but no Name/
+// Description/ObjectType set (common - those three are all optional in
+// IFC) gets a single-key object, not three empty-string keys alongside
+// it.
+String ifcProductToExtraParams (StepEntity e) {
+  if (!importExtraParams || e == null) return "";
+
+  String globalId = ifcAttrString(e, 0);
+  String name = ifcAttrString(e, 2);
+  String description = ifcAttrString(e, 3);
+  String objectType = ifcAttrString(e, 4);
+
+  if (globalId == null && name == null && description == null && objectType == null) return "";
+
+  JSONObject obj = new JSONObject();
+  if (globalId != null) obj.setString("globalId", globalId);
+  if (name != null) obj.setString("name", name);
+  if (description != null) obj.setString("description", description);
+  if (objectType != null) obj.setString("objectType", objectType);
+  return obj.toString();
+}
+
 // Takes the first resolvable material name out of a list of refs
 // (IfcMaterialLayer/IfcMaterialProfile/IfcMaterialConstituent/IfcMaterial
 // refs, however this particular wrapper type names its members) - "the
@@ -3332,8 +3435,10 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcPendingPoints.clear();
   ifcPendingFaceNodes.clear();
   ifcPendingFaceOptions.clear();
+  ifcPendingFaceExtraParams.clear();
   ifcPendingCurvePoints.clear();
   ifcPendingCurveOptions.clear();
+  ifcCurrentProductExtraParams = "";
   ifcBasePointCount = allPoints.getLength();
   ifcBaseFaceCount = allFaces.nodes.length;
   ifcBaseModel2DCount = allModel2Ds.num;
@@ -3651,9 +3756,19 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     }
 
     int repId = ifcRefId(e.attrs[6]);
+    // Step 8's own capture - this product's own GlobalId/Name/
+    // Description/ObjectType, set once here (before any of its own
+    // geometry is processed) and read ambiently by every ifcQueueFace()
+    // call this product's Representation goes on to make, however many
+    // processing layers deep - see ifcCurrentProductExtraParams' own
+    // comment for why. Reset to "" right after this product is done,
+    // same ambient-global discipline current_ExtraParams's own comment
+    // (globalVariables.pde) already requires.
+    ifcCurrentProductExtraParams = ifcProductToExtraParams(e);
     ifcBeginProductStaging();
     ifcProcessProductRepresentation(ents, repId, productFrame, cx, cy, cz, sx, sy, sz,
       materialForThisProduct, tes, lyr, vsb, wgt, clz);
+    ifcCurrentProductExtraParams = "";
 
     // Small-object exclusion (see IFC_SMALL_OBJECT_MAX_DIMENSION's own
     // comment): only for IfcBuildingElementProxy, IFC's and most
