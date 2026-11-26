@@ -547,6 +547,14 @@ class Model2DsTest {
   }
 
   @Test
+  void create_withExplicitExtraParams_setsItDirectlyInsteadOfDefaultingToEmptyString () {
+    app.TREES_KIND.fileCount = 1;
+    app.allModel2Ds.create("TREES", 1, 0, 0, 0, 1, "{\"sku\":\"T-001\"}");
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals("{\"sku\":\"T-001\"}", app.allModel2Ds.getExtraParams(0));
+  }
+
+  @Test
   void getSetExtraParams_roundTripsTheRawString () {
     app.allModel2Ds.makeEmpty(1);
     app.allModel2Ds.setExtraParams(0, "{\"sku\":\"T-001\"}");

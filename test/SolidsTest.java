@@ -212,6 +212,12 @@ class SolidsTest {
   }
 
   @Test
+  void create_withExplicitExtraParams_setsItDirectlyInsteadOfDefaultingToEmptyString () {
+    int newId = app.allSolids.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "{\"material\":\"concrete\"}");
+    assertEquals("{\"material\":\"concrete\"}", app.allSolids.getExtraParams(newId));
+  }
+
+  @Test
   void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
     assertEquals("", app.allSolids.getExtraParams(0));
 

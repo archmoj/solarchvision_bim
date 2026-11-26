@@ -47,7 +47,25 @@ class Model1Ds {
   }
 
 
+  // New-from-scratch tree - no source to inherit extraParams from, so it
+  // gets this field's own "nothing here" default (""), same as faces
+  // .pde's/polylines.pde's own create(). Delegates to the explicit-
+  // extraParams overload below.
   void create (int type, int seed, int degreeMax, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, float base, float trunkSize, float leafSize) {
+    this.create(type, seed, degreeMax, x, y, z, s, rot, tilt, twist, ratio, base, trunkSize, leafSize, "");
+  }
+
+  // Same as the no-extraParams overload above, but lets the caller supply
+  // the new tree's extraParams directly - e.g. clone3D.pde's
+  // cloneModel1D() passes its source tree's own extraParams straight
+  // through here, instead of this blind-append default plus a later
+  // setExtraParams() fixup. Note this is still a blind append - it does
+  // NOT self-heal extraParams against f_data/i_data here (see
+  // ensureExtraParamsLength()'s own comment); a caller about to index
+  // extraParams at this.f_data.length - 1 right after create() calls
+  // ensureExtraParamsLength() itself first, same as cloneFace()/
+  // clonePolyline() do.
+  void create (int type, int seed, int degreeMax, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, float base, float trunkSize, float leafSize, String extraParams) {
 
     int[][] new_i_data = {
       {
@@ -63,16 +81,7 @@ class Model1Ds {
     };
     this.f_data = (float[][]) concat(this.f_data, new_f_data);
 
-    // New-from-scratch tree - no source to inherit extraParams from, so
-    // it gets this field's own "nothing here" default (""), same as
-    // faces.pde's/polylines.pde's own create(). Note this is a blind
-    // append, same as those - it does NOT self-heal extraParams against
-    // f_data/i_data here (see ensureExtraParamsLength()'s own comment);
-    // a caller about to index extraParams at this.f_data.length - 1
-    // right after create() (clone3D.pde's cloneModel1D()) calls
-    // ensureExtraParamsLength() itself first, same as cloneFace()/
-    // clonePolyline() do.
-    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
     this.num += 1;
 

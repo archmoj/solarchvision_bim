@@ -154,6 +154,13 @@ class CamerasTest {
   }
 
   @Test
+  void create_withExplicitExtraParams_setsItDirectlyInsteadOfDefaultingToEmptyString () {
+    int numBefore = app.allCameras.num;
+    app.allCameras.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 1, "{\"preset\":\"aerial\"}");
+    assertEquals("{\"preset\":\"aerial\"}", app.allCameras.getExtraParams(numBefore));
+  }
+
+  @Test
   void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
     app.allCameras.extraParams = null;
     assertEquals("", app.allCameras.getExtraParams(0));

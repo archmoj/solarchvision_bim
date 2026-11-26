@@ -247,6 +247,13 @@ class SectionsTest {
   }
 
   @Test
+  void create_withExplicitExtraParams_setsItDirectlyInsteadOfDefaultingToEmptyString () {
+    float[] cornersXY = { -1, -1, 1, -1, 1, 1, -1, 1 };
+    app.allSections.create(10, 20, 30, 0, 0, 0, cornersXY, 4, 4, "{\"material\":\"glass\"}");
+    assertEquals("{\"material\":\"glass\"}", app.allSections.getExtraParams(0));
+  }
+
+  @Test
   void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
     assertEquals("", app.allSections.getExtraParams(0));
 

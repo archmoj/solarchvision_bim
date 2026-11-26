@@ -309,7 +309,23 @@ class Solids {
 
 
 
+  // New-from-scratch solid - no source to inherit extraParams from, so it
+  // gets this field's own "nothing here" default (""), same as faces
+  // .pde's/polylines.pde's own create(). Delegates to the explicit-
+  // extraParams overload below.
   int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float rx, float ry, float rz, float v) {
+    return this.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v, "");
+  }
+
+  // Same as the no-extraParams overload above, but lets the caller supply
+  // the new solid's extraParams directly - e.g. clone3D.pde's
+  // cloneSolid() passes its source solid's own extraParams straight
+  // through here, instead of this blind-append default plus a later
+  // setExtraParams() fixup. Still a blind append - a caller about to
+  // index extraParams at this.DEF.length - 1 right after create() calls
+  // ensureExtraParamsLength() itself first, same as cloneFace()/
+  // clonePolyline() do.
+  int create (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float rx, float ry, float rz, float v, String extraParams) {
 
     float[][] newSolid = {
       {
@@ -318,14 +334,7 @@ class Solids {
     };
     this.DEF = (float[][]) concat(this.DEF, newSolid);
 
-    // New-from-scratch solid - no source to inherit extraParams from, so
-    // it gets this field's own "nothing here" default (""), same as
-    // faces.pde's/polylines.pde's own create(). Blind append, same as
-    // those - a caller about to index extraParams at this.DEF.length - 1
-    // right after create() (clone3D.pde's cloneSolid()) calls
-    // ensureExtraParamsLength() itself first, same as cloneFace()/
-    // clonePolyline() do.
-    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
     if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = this.DEF.length - 1;
 

@@ -323,7 +323,13 @@ class Groups {
           float trunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
           float leafSize = allModel1Ds.getLeafSize(OBJ_ID);
 
-          allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+          // This is a duplicate of OBJ_ID (moved into the new/target
+          // group) - its own extraParams is passed straight into
+          // create()'s explicit-extraParams overload (model1Ds.pde), same
+          // split/merge/duplicate policy as clone3D.pde's cloneModel1D().
+          String sourceExtraParams = allModel1Ds.getExtraParams(OBJ_ID);
+          allModel1Ds.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allModel1Ds.num - 1, even if f_data/i_data were ever replaced directly without extraParams kept in lockstep (see clone3D.pde's cloneModel1D() - same reason)
+          allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize, sourceExtraParams);
         }
       }
 
@@ -342,7 +348,13 @@ class Groups {
           int n = allModel2Ds.FileIndex[OBJ_ID];
           if (allModel2Ds.Mirror[OBJ_ID]) n = -n;
 
-          allModel2Ds.create(kind.tag, n, x, y, z, s);
+          // This is a duplicate of OBJ_ID (moved into the new/target
+          // group) - its own extraParams is passed straight into
+          // create()'s explicit-extraParams overload (model2Ds.pde), same
+          // split/merge/duplicate policy as clone3D.pde's cloneModel2D().
+          String sourceExtraParams = allModel2Ds.getExtraParams(OBJ_ID);
+          allModel2Ds.ensureExtraParamsLength(); // same reason as the MODEL1D branch above
+          allModel2Ds.create(kind.tag, n, x, y, z, s, sourceExtraParams);
         }
       }
 
@@ -367,7 +379,13 @@ class Groups {
           float Solid_rotZ = allSolids.get_rotZ(OBJ_ID);
           float Solid_value = allSolids.get_value(OBJ_ID);
 
-          allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+          // This is a duplicate of OBJ_ID (moved into the new/target
+          // group) - its own extraParams is passed straight into
+          // create()'s explicit-extraParams overload (solids.pde), same
+          // split/merge/duplicate policy as clone3D.pde's cloneSolid().
+          String sourceExtraParams = allSolids.getExtraParams(OBJ_ID);
+          allSolids.ensureExtraParamsLength(); // same reason as the MODEL1D branch above
+          allSolids.create(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value, sourceExtraParams);
         }
       }
 

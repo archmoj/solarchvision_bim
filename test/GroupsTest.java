@@ -454,6 +454,28 @@ class GroupsTest {
   }
 
   @Test
+  void groupSelection_model1DCategoryCloneInheritsTheSourceTreesExtraParams () {
+    // Same clone-then-delete-original fixture as
+    // groupSelection_model1DCategoryClonesAttributesWithNoVertexInvolvement
+    // above - here just confirming the surviving clone's extraParams,
+    // which this code path used to drop entirely (create() had no way to
+    // accept it directly, and unlike the FACE/POLYLINE branches above,
+    // this one never did the capture-then-setExtraParams fixup).
+    app.allModel1Ds.f_data = new float[][]{{5, 0, 0, 2, 10, 0, 0, 0, 0, 0, 0}};
+    app.allModel1Ds.i_data = new int[][]{{1, 2, 3}};
+    app.allModel1Ds.extraParams = new String[]{"{\"species\":\"oak\"}"};
+    app.allModel1Ds.num = 1;
+
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
+    app.Select3D.model1DSelection = new int[]{0};
+
+    app.allGroups.group_Selection(1);
+
+    assertEquals(1, app.allModel1Ds.num); // original deleted, clone remains
+    assertEquals("{\"species\":\"oak\"}", app.allModel1Ds.getExtraParams(0));
+  }
+
+  @Test
   void groupSelection_model2DCategoryClonesPositionAndPreservesTreeVariant () {
     app.allModel2Ds.XYZS = new float[][]{{5, 0, 0, 2}};
     app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
@@ -477,6 +499,46 @@ class GroupsTest {
     assertEquals(3, app.allModel2Ds.FileIndex[0]);
     assertFalse(app.allModel2Ds.Mirror[0]);
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Model2Ds[0]);
+  }
+
+  @Test
+  void groupSelection_model2DCategoryCloneInheritsTheSourceInstancesExtraParams () {
+    // Same clone-then-delete-original fixture as
+    // groupSelection_model2DCategoryClonesPositionAndPreservesTreeVariant
+    // above - here just confirming the surviving clone's extraParams,
+    // same gap as groupSelection_model1DCategoryCloneInheritsTheSourceTreesExtraParams
+    // above.
+    app.allModel2Ds.XYZS = new float[][]{{5, 0, 0, 2}};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{3};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.allModel2Ds.extraParams = new String[]{"{\"sku\":\"T-001\"}"};
+    app.allModel2Ds.num = 1;
+    app.TREES_KIND.fileCount = 10; // wide enough that 3 is never clamped
+
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
+    app.Select3D.model2DSelection = new int[]{0};
+
+    app.allGroups.group_Selection(1);
+
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals("{\"sku\":\"T-001\"}", app.allModel2Ds.getExtraParams(0));
+  }
+
+  @Test
+  void groupSelection_solidCategoryCloneInheritsTheSourceSolidsExtraParams () {
+    // Same gap as the MODEL1D/MODEL2D cases above, now for SOLID.
+    app.allSolids.DEF = new float[][]{new float[13]};
+    app.allSolids.DEF[0][0] = 5;
+    app.allSolids.extraParams = new String[]{"{\"material\":\"concrete\"}"};
+
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    app.Select3D.solidSelection = new int[]{0};
+
+    app.allGroups.group_Selection(1);
+
+    assertEquals(1, app.allSolids.DEF.length); // original deleted, clone remains
+    assertEquals("{\"material\":\"concrete\"}", app.allSolids.getExtraParams(0));
   }
 
   @Test

@@ -94,7 +94,23 @@ class Sections {
   // more closing back to p1 needed (the old fixed-4-slot p1..p4 model's
   // "p4 defaults to p1" convention no longer applies - there's no fixed
   // slot to default).
+  // New-from-scratch section - no source to inherit extraParams from, so
+  // it gets this field's own "nothing here" default (""). Delegates to
+  // the explicit-extraParams overload below.
   void create (float x, float y, float z, float rotX, float rotY, float rotZ, float[] cornersXY, int resX, int resY) {
+    this.create(x, y, z, rotX, rotY, rotZ, cornersXY, resX, resY, "");
+  }
+
+  // Same as the no-extraParams overload above, but lets the caller supply
+  // the new section's extraParams directly - e.g. clone3D.pde's
+  // Sections() passes its source section's own extraParams straight
+  // through here, instead of this blind-append default plus a later
+  // setExtraParams() fixup. Still a blind append and does NOT self-heal/
+  // guard itself against extraParams already being out of sync with
+  // f_data/i_data/corners/num. A caller about to index extraParams at
+  // [this.num] right after this call must call ensureExtraParamsLength()
+  // itself first.
+  void create (float x, float y, float z, float rotX, float rotY, float rotZ, float[] cornersXY, int resX, int resY, String extraParams) {
     int[][] Temp_i_data = { { resX, resY } };
     this.i_data = (int[][]) concat(this.i_data, Temp_i_data);
 
@@ -115,13 +131,7 @@ class Sections {
     }
     this.SolarImpact = (PImage[][][]) concat(this.SolarImpact, Temp_SolarImpact);
 
-    // Blind append, same as every other class's create() - defaults the
-    // new section's extraParams to "" and does NOT self-heal/guard itself
-    // against extraParams already being out of sync with f_data/i_data/
-    // corners/num. A caller about to index extraParams at [this.num]
-    // right after this call (e.g. clone3D.pde's Sections()) must call
-    // ensureExtraParamsLength() itself first.
-    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
     this.num += 1;
   }

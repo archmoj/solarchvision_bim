@@ -179,6 +179,13 @@ class Model1DsTest {
   }
 
   @Test
+  void create_withExplicitExtraParams_setsItDirectlyInsteadOfDefaultingToEmptyString () {
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "{\"species\":\"oak\"}");
+    assertEquals(1, app.allModel1Ds.num);
+    assertEquals("{\"species\":\"oak\"}", app.allModel1Ds.getExtraParams(0));
+  }
+
+  @Test
   void getSetExtraParams_roundTripsTheRawString () {
     app.allModel1Ds.makeEmpty(1);
     app.allModel1Ds.setExtraParams(0, "{\"species\":\"oak\"}");

@@ -121,12 +121,11 @@ class Clone3D {
 
     String sourceExtraParams = allModel1Ds.getExtraParams(OBJ_ID);
     allModel1Ds.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allModel1Ds.num - 1, even if f_data/i_data were ever replaced directly without extraParams kept in lockstep (see faces.pde's cloneFace() - same reason)
-    allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
-    // create() alone would default the clone's extraParams to "" - this
-    // duplicate DOES have a single source, OBJ_ID, so this overwrites
-    // that default, same split/merge/duplicate policy as cloneFace()/
-    // clonePolyline().
-    allModel1Ds.setExtraParams(allModel1Ds.num - 1, sourceExtraParams);
+    // This duplicate DOES have a single source, OBJ_ID, so its own
+    // extraParams is passed straight into create()'s explicit-extraParams
+    // overload (model1Ds.pde), same split/merge/duplicate policy as
+    // cloneFace()/clonePolyline().
+    allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize, sourceExtraParams);
   }
 
   void cloneModel2D (int OBJ_ID, boolean produce_same_variation) {
@@ -145,10 +144,10 @@ class Clone3D {
 
     String sourceExtraParams = allModel2Ds.getExtraParams(OBJ_ID);
     allModel2Ds.ensureExtraParamsLength(); // same reason as cloneModel1D() above
-    allModel2Ds.create(kind.tag, n, x, y, z, s);
     // Same duplicate-inherits-from-its-one-source policy as
-    // cloneModel1D() above.
-    allModel2Ds.setExtraParams(allModel2Ds.num - 1, sourceExtraParams);
+    // cloneModel1D() above, via model2Ds.pde's own explicit-extraParams
+    // create() overload.
+    allModel2Ds.create(kind.tag, n, x, y, z, s, sourceExtraParams);
   }
 
   void cloneSolid (int OBJ_ID) {
@@ -167,12 +166,11 @@ class Clone3D {
     float value = allSolids.get_value(OBJ_ID);
     String sourceExtraParams = allSolids.getExtraParams(OBJ_ID);
     allSolids.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allSolids.DEF.length - 1, even if DEF was ever replaced directly without extraParams kept in lockstep (see faces.pde's cloneFace() - same reason)
-    int new_OBJ_ID = allSolids.create(posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, value);
-    // create() alone would default the clone's extraParams to "" - this
-    // duplicate DOES have a single source, OBJ_ID, so this overwrites
-    // that default, same split/merge/duplicate policy as cloneFace()/
-    // clonePolyline().
-    allSolids.setExtraParams(new_OBJ_ID, sourceExtraParams);
+    // This duplicate DOES have a single source, OBJ_ID, so its own
+    // extraParams is passed straight into create()'s explicit-extraParams
+    // overload (solids.pde), same split/merge/duplicate policy as
+    // cloneFace()/clonePolyline().
+    allSolids.create(posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, value, sourceExtraParams);
   }
 
 
@@ -266,17 +264,17 @@ class Clone3D {
       // original), not the derived bounding-box getSizeX/getSizeY - a
       // non-rectangular section cloned via those would silently turn
       // into its own bounding rectangle instead.
+      // This duplicate DOES have a single source, OBJ_ID, so its own
+      // extraParams is passed straight into create()'s explicit-
+      // extraParams overload (sections.pde), same split/merge/duplicate
+      // policy as cloneFace()/clonePolyline()/cloneSolid().
       allSections.create(
         allSections.getX(OBJ_ID), allSections.getY(OBJ_ID), allSections.getZ(OBJ_ID),
         allSections.getRotX(OBJ_ID), allSections.getRotY(OBJ_ID), allSections.getRotZ(OBJ_ID),
         (float[]) allSections.getCornersXY(OBJ_ID).clone(),
-        allSections.get_resX(OBJ_ID), allSections.get_resY(OBJ_ID)
+        allSections.get_resX(OBJ_ID), allSections.get_resY(OBJ_ID),
+        sourceExtraParams
       );
-      // create() alone would default the clone's extraParams to "" - this
-      // duplicate DOES have a single source, OBJ_ID, so this overwrites
-      // that default, same split/merge/duplicate policy as cloneFace()/
-      // clonePolyline()/cloneSolid().
-      allSections.setExtraParams(allSections.num - 1, sourceExtraParams);
     }
 
     Select3D.deselect_Sections();
@@ -294,16 +292,16 @@ class Clone3D {
       int OBJ_ID = Select3D.cameraSelection[o];
       String sourceExtraParams = allCameras.getExtraParams(OBJ_ID);
       allCameras.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allCameras.num - 1, even if options/Type/num were ever changed directly without extraParams kept in lockstep (see solids.pde's cloneSolid() - same reason)
+      // This duplicate DOES have a single source, OBJ_ID, so its own
+      // extraParams is passed straight into create()'s explicit-
+      // extraParams overload (cameras.pde), same split/merge/duplicate
+      // policy as cloneFace()/clonePolyline()/cloneSolid().
       allCameras.create(
         allCameras.get_posX(OBJ_ID), allCameras.get_posY(OBJ_ID), allCameras.get_posZ(OBJ_ID), allCameras.get_posT(OBJ_ID),
         allCameras.get_rotX(OBJ_ID), allCameras.get_rotY(OBJ_ID), allCameras.get_rotZ(OBJ_ID), allCameras.get_rotT(OBJ_ID),
-        allCameras.get_zoom(OBJ_ID), allCameras.get_type(OBJ_ID)
+        allCameras.get_zoom(OBJ_ID), allCameras.get_type(OBJ_ID),
+        sourceExtraParams
       );
-      // create() alone would default the clone's extraParams to "" - this
-      // duplicate DOES have a single source, OBJ_ID, so this overwrites
-      // that default, same split/merge/duplicate policy as cloneFace()/
-      // clonePolyline()/cloneSolid().
-      allCameras.setExtraParams(allCameras.num - 1, sourceExtraParams);
     }
 
     Select3D.deselect_Cameras();

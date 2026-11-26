@@ -39,7 +39,22 @@ class Cameras {
   }
 
 
+  // New-from-scratch camera - no source to inherit extraParams from, so
+  // it gets this field's own "nothing here" default (""). Delegates to
+  // the explicit-extraParams overload below.
   void create (float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f, int t) {
+    this.create(x, y, z, s, rx, ry, rz, rs, f, t, "");
+  }
+
+  // Same as the no-extraParams overload above, but lets the caller supply
+  // the new camera's extraParams directly - e.g. clone3D.pde's Cameras()
+  // passes its source camera's own extraParams straight through here,
+  // instead of this blind-append default plus a later setExtraParams()
+  // fixup. Still a blind append and does NOT self-heal/guard itself
+  // against extraParams already being out of sync with options/Type/num.
+  // A caller about to index extraParams at [this.num] right after this
+  // call must call ensureExtraParamsLength() itself first.
+  void create (float x, float y, float z, float s, float rx, float ry, float rz, float rs, float f, int t, String extraParams) {
 
     int[] TempCamera_type = {
       t
@@ -53,13 +68,7 @@ class Cameras {
     };
     this.options = (float[][]) concat(this.options, TempCamera_options);
 
-    // Blind append, same as every other class's create() - defaults the
-    // new camera's extraParams to "" and does NOT self-heal/guard itself
-    // against extraParams already being out of sync with options/Type/num.
-    // A caller about to index extraParams at [this.num] right after this
-    // call (e.g. the batch clone in clone3D.pde's Cameras()) must call
-    // ensureExtraParamsLength() itself first.
-    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
     this.num += 1;
   }

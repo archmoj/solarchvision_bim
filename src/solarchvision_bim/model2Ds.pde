@@ -92,7 +92,21 @@ class Model2Ds {
   // needs peopleFileCount added to it first - a tree-local index is
   // passed through exactly as-is now, regardless of how many PEOPLE
   // files happen to exist.
+  // New-from-scratch instance - no source to inherit extraParams from, so
+  // it gets this field's own "nothing here" default (""), same as faces
+  // .pde's/polylines.pde's/model1Ds.pde's own create(). Delegates to the
+  // explicit-extraParams overload below.
   void create (String t, int m, float x, float y, float z, float s) {
+    this.create(t, m, x, y, z, s, "");
+  }
+
+  // Same as the no-extraParams overload above, but lets the caller supply
+  // the new instance's extraParams directly - e.g. clone3D.pde's
+  // cloneModel2D() passes its source instance's own extraParams straight
+  // through here, instead of this blind-append default plus a later
+  // setExtraParams() fixup. Still a blind append - see model1Ds.pde's
+  // own create() comment on why this doesn't self-heal here.
+  void create (String t, int m, float x, float y, float z, float s, String extraParams) {
 
     Model2DKind kind = model2DKindByTag(t);
 
@@ -120,12 +134,7 @@ class Model2Ds {
     };
     this.XYZS = (float[][]) concat(this.XYZS, Temp_XYZS);
 
-    // New-from-scratch instance - no source to inherit extraParams from,
-    // so it gets this field's own "nothing here" default (""), same as
-    // faces.pde's/polylines.pde's/model1Ds.pde's own create(). Blind
-    // append, same as those - see model1Ds.pde's own create() comment on
-    // why this doesn't self-heal here.
-    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
     this.num += 1;
 
