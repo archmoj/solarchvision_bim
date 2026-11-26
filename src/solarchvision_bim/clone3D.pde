@@ -293,11 +293,17 @@ class Clone3D {
 
       if (!hasFaces && !hasPolylines) continue;
 
+      String sourceExtraParams = allGroups.getExtraParams(OBJ_ID);
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       int new_OBJ_ID = allGroups.num - 1;
       for (int j = 0; j < allGroups.Pivots[OBJ_ID].length; j++) {
         allGroups.Pivots[new_OBJ_ID][j] = allGroups.Pivots[OBJ_ID][j];
       }
+      // beginNewGroup() alone would default the new group's extraParams
+      // to "" - this duplicate DOES have a single source, OBJ_ID, so this
+      // overwrites that default, same split/merge/duplicate policy as
+      // cloneFace()/clonePolyline() above.
+      allGroups.setExtraParams(new_OBJ_ID, sourceExtraParams);
 
       // Each loop's own range check (0 <= stop, start <= stop) confirms
       // the stored range is well-formed, not that it still fits the

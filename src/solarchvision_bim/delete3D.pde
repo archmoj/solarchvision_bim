@@ -534,12 +534,15 @@ class Delete3D {
       }
     }
 
+    allGroups.ensureExtraParamsLength(); // see its own comment (groups.pde) - guarantees the removeIndices() call below is safe even if Faces/Polylines/etc. (and num) were ever changed directly without extraParams kept in lockstep
+
     allGroups.Faces = removeIndices(allGroups.Faces, ids);
     allGroups.Polylines = removeIndices(allGroups.Polylines, ids);
     allGroups.Model1Ds = removeIndices(allGroups.Model1Ds, ids);
     allGroups.Model2Ds = removeIndices(allGroups.Model2Ds, ids);
     allGroups.Solids = removeIndices(allGroups.Solids, ids);
     allGroups.Pivots = removeIndices(allGroups.Pivots, ids);
+    allGroups.extraParams = removeIndices(allGroups.extraParams, ids);
     allGroups.num -= ids.length;
 
     if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();

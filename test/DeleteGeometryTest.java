@@ -286,6 +286,37 @@ class DeleteGeometryTest {
     assertEquals("{\"i\":3}", app.allPolylines.getExtraParams(1));
   }
 
+  @Test
+  void selectedGroups_compactsTheGroupRowsOwnExtraParamsInLockstepWithTheRestOfItsRow () {
+    // Same deletion as selectedGroups_cascadesIntoTheGroupsOwnFacesThenRemovesTheGroupItself
+    // above, but confirming the GROUP ROW's own extraParams (allGroups.extraParams,
+    // one entry per group) survives the removeIndices() compaction at the
+    // end of groupSelection() in step with every other per-group array.
+    app.allVertices = new float[4][3];
+    app.allFaces.nodes = new int[][]{{0}, {1}, {2}, {3}};
+    app.allFaces.options = new int[][]{{0}, {1}, {2}, {3}};
+
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Faces[0] = new int[]{0, 1}; // group 0 - being deleted
+    app.allGroups.Faces[1] = new int[]{2, 3}; // group 1 - survives
+    app.allGroups.extraParams = new String[]{"{\"name\":\"first\"}", "{\"name\":\"second\"}"};
+
+    for (int[][] ranges : new int[][][]{
+      app.allGroups.Polylines, app.allGroups.Model1Ds, app.allGroups.Model2Ds, app.allGroups.Solids
+    }) {
+      ranges[0] = new int[]{0, -1};
+      ranges[1] = new int[]{0, -1};
+    }
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Delete3D.groupSelection();
+
+    assertEquals(1, app.allGroups.num);
+    assertEquals(1, app.allGroups.extraParams.length);
+    assertEquals("{\"name\":\"second\"}", app.allGroups.getExtraParams(0));
+  }
+
   // --- cameraSelection (a full integration test) ----------------------
 
   @Test

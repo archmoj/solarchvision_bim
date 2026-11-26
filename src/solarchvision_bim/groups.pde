@@ -14,6 +14,13 @@ class Groups {
   int[][] Model2Ds;
   float[][] Pivots;
 
+  // Opaque, caller-defined JSON metadata, one entry per group - "" is the
+  // canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde). Parsed lazily, only
+  // via getExtraParamsObject()/setExtraParamsObject() below, never during
+  // to_XML/from_XML or any structural resize.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
@@ -24,6 +31,8 @@ class Groups {
     this.Polylines = new int [n][2];
     this.Solids = new int [n][2];
     this.Pivots = new float [n][9];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (Select3D != null) {
       Select3D.deselect_Groups();
@@ -124,6 +133,42 @@ class Groups {
     this.Model2Ds[n][1] = t;
   }
 
+  // Defensive against extraParams being shorter than this.num (or null)
+  // at the time of the call - never throws, just reads as "no extra
+  // params" past the end, same as a genuinely-empty entry would (see
+  // faces.pde's own identical getExtraParams()/comment).
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.num's own
+  // current length, filling any new/missing entries with "" - same
+  // self-healing purpose as faces.pde's own ensureExtraParamsLength().
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.num) return;
+    String[] resized = new String[this.num];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - nothing else in this file should call
+  // JSONObject.parse()/extraParamsFromJSONObject() directly.
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
+  }
+
 
   void inserted_nFaces (int n, int fromFace, int howMany) {
     for (int i = n + 1; i < this.num; i++) {
@@ -187,7 +232,11 @@ class Groups {
     }; // i.e. null because start > end
     this.Polylines = (int[][]) concat(this.Polylines, newObject_Polylines);
 
-
+    // New-from-scratch group - no source to inherit extraParams from, so
+    // it gets this field's own "nothing here" default (""), same as
+    // faces.pde's/polylines.pde's own create().
+    this.ensureExtraParamsLength(); // so the append below lands at exactly this.num (now stale by one, about to be incremented) - guards the same way every other structural Groups operation does
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
 
     this.num += 1;
 
@@ -600,6 +649,8 @@ class Groups {
                     nf(this.getStart_Solid(i), 0) + "|" +
                     nf(this.getStop_Solid(i), 0));
 
+      XML_setString(child, "extraParams", this.getExtraParams(i));
+
       String txt = "";
       for (int j = 0; j < 9; j++) {
         txt += nf(this.Pivots[i][j], 0, 4).replace(",", "."); // <<<<
@@ -652,7 +703,10 @@ class Groups {
         this.setStop_Solid(i, int(parts[1]));
       }
 
-
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
 
       String txt = XML_getContent(children[i]);
       String[] parts = split(txt, ",");

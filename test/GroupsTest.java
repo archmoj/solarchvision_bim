@@ -25,6 +25,10 @@ class GroupsTest {
     assertEquals(3, app.allGroups.Solids.length);
     assertEquals(3, app.allGroups.Pivots.length);
     assertEquals(9, app.allGroups.Pivots[0].length);
+    assertEquals(3, app.allGroups.extraParams.length);
+    assertEquals("", app.allGroups.getExtraParams(0));
+    assertEquals("", app.allGroups.getExtraParams(1));
+    assertEquals("", app.allGroups.getExtraParams(2));
   }
 
   // ================= getters' degenerate-empty-array fallback ==========
@@ -88,6 +92,75 @@ class GroupsTest {
     assertArrayEquals(new int[]{4, -1}, app.allGroups.Solids[0]);
     assertArrayEquals(new int[]{5, -1}, app.allGroups.Faces[0]);
     assertArrayEquals(new int[]{6, -1}, app.allGroups.Polylines[0]);
+    assertEquals("", app.allGroups.getExtraParams(0)); // new-from-scratch group, nothing to inherit
+  }
+
+  // ================= extraParams =======================================
+
+  @Test
+  void getSetExtraParams_roundTripsTheRawString () {
+    app.allGroups.makeEmpty(1);
+    app.allGroups.setExtraParams(0, "{\"name\":\"building\"}");
+    assertEquals("{\"name\":\"building\"}", app.allGroups.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParamsObject_parsesTheStoredJSON () {
+    app.allGroups.makeEmpty(1);
+    app.allGroups.setExtraParams(0, "{\"name\":\"building\",\"floors\":3}");
+    processing.data.JSONObject obj = app.allGroups.getExtraParamsObject(0);
+    assertEquals("building", obj.getString("name"));
+    assertEquals(3, obj.getInt("floors"));
+  }
+
+  @Test
+  void getExtraParamsObject_isAnEmptyObject_whenTheFieldIsEmptyMissingOrBadData () {
+    app.allGroups.makeEmpty(3);
+    app.allGroups.setExtraParams(0, "");
+    app.allGroups.setExtraParams(1, "{}");
+    app.allGroups.setExtraParams(2, "not json");
+
+    assertEquals(0, app.allGroups.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allGroups.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allGroups.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToTheEmptyString () {
+    app.allGroups.makeEmpty(1);
+    app.allGroups.setExtraParamsObject(0, new processing.data.JSONObject());
+    assertEquals("", app.allGroups.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObject_thenGetExtraParamsObject_roundTrips () {
+    app.allGroups.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("name", "building");
+    obj.setInt("floors", 3);
+    app.allGroups.setExtraParamsObject(0, obj);
+
+    processing.data.JSONObject result = app.allGroups.getExtraParamsObject(0);
+    assertEquals("building", result.getString("name"));
+    assertEquals(3, result.getInt("floors"));
+  }
+
+  @Test
+  void cloneGroups_duplicateInheritsExtraParamsFromTheSourceGroup () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 1, 0, 0}};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+    app.allGroups.extraParams = new String[]{"{\"name\":\"building\"}"};
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Clone3D.Groups(false);
+
+    assertEquals(2, app.allGroups.num);
+    assertEquals("{\"name\":\"building\"}", app.allGroups.getExtraParams(1));
   }
 
   // ================= findGroupContainingFace ===========================
@@ -243,6 +316,7 @@ class GroupsTest {
     app.allGroups.Model2Ds[0] = new int[]{7, 8};
     app.allGroups.Solids[0] = new int[]{9, 10};
     app.allGroups.Pivots[0] = new float[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    app.allGroups.extraParams = new String[]{"{\"name\":\"building\"}"};
 
     processing.data.XML root = new processing.data.XML("root");
     app.allGroups.to_XML(root);
@@ -257,6 +331,33 @@ class GroupsTest {
     assertArrayEquals(new int[]{7, 8}, fresh.Model2Ds[0]);
     assertArrayEquals(new int[]{9, 10}, fresh.Solids[0]);
     assertArrayEquals(new float[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, fresh.Pivots[0], 0.0001f);
+    assertEquals("{\"name\":\"building\"}", fresh.getExtraParams(0));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allGroups.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setString("model1Ds", "0|-1");
+    child.setString("model2Ds", "0|-1");
+    child.setString("faces", "0|-1");
+    child.setString("polylines", "0|-1");
+    child.setString("solids", "0|-1");
+    // deliberately no "extraParams" attribute
+    child.setContent("0,0,0,1,1,1,0,0,0");
+
+    solarchvision_bim.Groups fresh = app.new Groups();
+    fresh.from_XML(root);
+
+    assertEquals("", fresh.getExtraParams(0));
   }
 
   // ================= more getter/setter round trips ====================
