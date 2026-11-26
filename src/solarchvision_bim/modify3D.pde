@@ -1035,21 +1035,40 @@ class Modify3D {
     return G;
   }
 
+  // The one shared place every "split face f into N new faces" operation
+  // in this file (tessellate, add-vertex, split-by-line, extrude, snap,
+  // ...) goes through - so it's also the one place extraParams needs
+  // wiring in for all of them at once: every resulting piece simply
+  // inherits face f's own extraParams verbatim (the chosen policy for
+  // every split/merge/duplicate operation - mergeCoplanarFaces_
+  // Selection()'s own comment on the merge side of the same policy),
+  // since f is their one and only source.
   void spliceFaceWithNewFaces (int f, ArrayList<int[]> midNodes, ArrayList<int[]> midOptions) {
+    allFaces.ensureExtraParamsLength(); // see its own comment - guarantees the subset() calls below are safe even if nodes/options were replaced directly somewhere without extraParams kept in lockstep
+
     int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
     int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
     int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
     int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
+    String[] startList_Faces_extraParams = (String[]) subset(allFaces.extraParams, 0, f);
+    String[] endList_Faces_extraParams = (String[]) subset(allFaces.extraParams, f + 1);
+
     int[][] midList_Faces_nodes = midNodes.toArray(new int[0][]);
     int[][] midList_Faces_options = midOptions.toArray(new int[0][]);
 
+    String inheritedExtraParams = allFaces.getExtraParams(f);
+    String[] midList_Faces_extraParams = new String[midNodes.size()];
+    java.util.Arrays.fill(midList_Faces_extraParams, inheritedExtraParams);
+
     startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
     startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
+    startList_Faces_extraParams = (String[]) concat(startList_Faces_extraParams, midList_Faces_extraParams);
 
     allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
     allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);
+    allFaces.extraParams = (String[]) concat(startList_Faces_extraParams, endList_Faces_extraParams);
   }
 
   void appendNewFaceSelection (ArrayList<Integer> newfaceSelection_L) {
@@ -4396,6 +4415,8 @@ class Modify3D {
 
     beginScene3DChange();
 
+    allFaces.ensureExtraParamsLength(); // see its own comment - cheap up-front guarantee that every allFaces.getExtraParams(f) read below reflects a genuinely in-sync array, not just "didn't crash" (getExtraParams() itself is already defensive either way)
+
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
 
@@ -4405,6 +4426,7 @@ class Modify3D {
     int runningCount = 0;
     ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
     ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+    ArrayList<String> newFace_extraParams_all = new ArrayList<String>();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
 
     for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
@@ -4456,6 +4478,10 @@ class Modify3D {
         int face_Visibility = allFaces.getVisibility(f);
         int face_Weight = allFaces.getWeight(f);
         int face_Close = allFaces.getClose(f);
+        // Every wall + the cap below all derive from this one source
+        // face f, same as material/tessellation/etc. above - so they all
+        // inherit f's own extraParams too (the chosen split policy).
+        String face_ExtraParams = allFaces.getExtraParams(f);
 
         for (int s = 0; s < nSides; s++) {
           int s_next = (s + 1) % nSides;
@@ -4475,6 +4501,7 @@ class Modify3D {
         for (int s = 0; s < newFace_nodes_batch.length; s++) {
           newFace_nodes_all.add(newFace_nodes_batch[s]);
           newFace_options_all.add(newFace_options_batch[s]);
+          newFace_extraParams_all.add(face_ExtraParams);
         }
         runningCount += newFace_nodes_batch.length;
 
@@ -4487,9 +4514,11 @@ class Modify3D {
     if (newFace_nodes_all.size() > 0) {
       int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
       int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+      String[] newFace_extraParams_batch_all = newFace_extraParams_all.toArray(new String[0]);
 
       allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
       allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+      allFaces.extraParams = (String[]) concat(allFaces.extraParams, newFace_extraParams_batch_all);
 
       appendNewFaceSelection(newfaceSelection_L);
     }
@@ -4547,6 +4576,8 @@ class Modify3D {
 
     beginScene3DChange();
 
+    allFaces.ensureExtraParamsLength(); // see its own comment
+
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
 
@@ -4556,6 +4587,7 @@ class Modify3D {
     int runningCount = 0;
     ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
     ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+    ArrayList<String> newFace_extraParams_all = new ArrayList<String>();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
 
     for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
@@ -4635,11 +4667,16 @@ class Modify3D {
         if (n < 3) continue; // no offset vertices exist for this face's own nodes - see pass 1/3's own guard
 
         int[] faceOptions = { allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f) };
+        // The offset copy and every one of its boundary walls below all
+        // derive from this one source face f - same split policy as
+        // extrudeFaceEdges_Selection()'s own comment.
+        String faceExtraParams = allFaces.getExtraParams(f);
 
         int[] backFace_nodes = new int[n];
         for (int s = 0; s < n; s++) backFace_nodes[s] = offsetVertexMap.get(allFaces.nodes[f][s]);
         newFace_nodes_all.add(backFace_nodes);
         newFace_options_all.add(faceOptions);
+        newFace_extraParams_all.add(faceExtraParams);
         runningCount++;
         int lastFaceIndex = baseLen + runningCount - 1;
         newfaceSelection_L.add(lastFaceIndex);
@@ -4664,6 +4701,7 @@ class Modify3D {
 
           newFace_nodes_all.add(wall_nodes);
           newFace_options_all.add(faceOptions);
+          newFace_extraParams_all.add(faceExtraParams);
           runningCount++;
           lastFaceIndex = baseLen + runningCount - 1;
           newfaceSelection_L.add(lastFaceIndex);
@@ -4675,9 +4713,11 @@ class Modify3D {
     if (newFace_nodes_all.size() > 0) {
       int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
       int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+      String[] newFace_extraParams_batch_all = newFace_extraParams_all.toArray(new String[0]);
 
       allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
       allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+      allFaces.extraParams = (String[]) concat(allFaces.extraParams, newFace_extraParams_batch_all);
 
       appendNewFaceSelection(newfaceSelection_L);
     }
@@ -4710,6 +4750,8 @@ class Modify3D {
 
     beginScene3DChange();
 
+    allFaces.ensureExtraParamsLength(); // see its own comment
+
     this.selectFacesAndGroups_fromCurrentSelection();
 
     Select3D.deselect_Faces();
@@ -4718,6 +4760,7 @@ class Modify3D {
     int runningCount = 0;
     ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
     ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+    ArrayList<String> newFace_extraParams_all = new ArrayList<String>();
     ArrayList<Integer> newfaceSelection_L = new ArrayList<Integer>();
 
     for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
@@ -4792,14 +4835,23 @@ class Modify3D {
         for (int i = 0; i < loop_L.size(); i++) capFace_nodes[i] = loop_L.get(loop_L.size() - 1 - i);
 
         int[] capFace_options;
+        String capFace_extraParams;
         if (ownerFaceForOptions >= 0) {
           capFace_options = new int[] { allFaces.getMaterial(ownerFaceForOptions), allFaces.getTessellation(ownerFaceForOptions), allFaces.getLayer(ownerFaceForOptions), allFaces.getVisibility(ownerFaceForOptions), allFaces.getWeight(ownerFaceForOptions), allFaces.getClose(ownerFaceForOptions) };
+          // Same "copy the first/representative source" policy as its
+          // options above - mergeCoplanarFaces_Selection()'s own comment.
+          capFace_extraParams = allFaces.getExtraParams(ownerFaceForOptions);
         } else {
           capFace_options = new int[] { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+          // No real source face at all (this method's own comment on
+          // the -1/degenerate case) - this field's own brand-new-item
+          // default, same as create()'s own policy.
+          capFace_extraParams = "";
         }
 
         newFace_nodes_all.add(capFace_nodes);
         newFace_options_all.add(capFace_options);
+        newFace_extraParams_all.add(capFace_extraParams);
         runningCount++;
         int lastFaceIndex = baseLen + runningCount - 1;
         newfaceSelection_L.add(lastFaceIndex);
@@ -4810,9 +4862,11 @@ class Modify3D {
     if (newFace_nodes_all.size() > 0) {
       int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
       int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+      String[] newFace_extraParams_batch_all = newFace_extraParams_all.toArray(new String[0]);
 
       allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
       allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+      allFaces.extraParams = (String[]) concat(allFaces.extraParams, newFace_extraParams_batch_all);
 
       appendNewFaceSelection(newfaceSelection_L);
     }
@@ -4877,6 +4931,8 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     beginScene3DChange();
+
+    allFaces.ensureExtraParamsLength(); // see its own comment
 
     this.selectFacesAndGroups_fromCurrentSelection();
     int[] primary_list = Select3D.faceSelection;
@@ -5040,6 +5096,12 @@ class Modify3D {
 
             allFaces.nodes = (int[][]) concat(allFaces.nodes, new int[][] { mergedFace_nodes });
             allFaces.options = (int[][]) concat(allFaces.options, new int[][] { mergedFace_options });
+            // extraParams follows the exact same "first/representative
+            // face" (ownerFaceForOptions) every other option column above
+            // already copies from - matching the chosen policy for every
+            // split/merge/duplicate operation: the result simply inherits
+            // the first input's own extra params, not some combination.
+            allFaces.extraParams = (String[]) concat(allFaces.extraParams, new String[]{ allFaces.getExtraParams(ownerFaceForOptions) });
             int newIndex = allFaces.nodes.length - 1;
 
             newFacePreDeleteIndex_L.add(newIndex);

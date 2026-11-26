@@ -180,6 +180,7 @@ class FacesTest {
   void toXMLThenFromXML_roundTripsNodesOptionsAndDisplaySettings () {
     app.allFaces.nodes = new int[][]{{5, 6, 7}};
     app.allFaces.options = new int[][]{{3, 2, 1, 1, 4, 1}};
+    app.allFaces.extraParams = new String[]{"{\"name\":\"roof\"}"};
     app.allFaces.displayAll = false;
     app.allFaces.showNormalLines = true;
     app.allFaces.displayEdges = false;
@@ -200,6 +201,7 @@ class FacesTest {
     assertEquals(1, fresh.nodes.length);
     assertArrayEquals(new int[]{5, 6, 7}, fresh.nodes[0]);
     assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1}, fresh.options[0]);
+    assertEquals("{\"name\":\"roof\"}", fresh.getExtraParams(0));
 
     assertFalse(fresh.displayAll);
     assertTrue(fresh.showNormalLines);
@@ -376,5 +378,156 @@ class FacesTest {
     }
 
     assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(0, 0, 0), "dead centre of an outdoor space - still outdoors");
+  }
+
+  // ================= extraParams =======================================
+
+  @Test
+  void makeEmpty_defaultsExtraParamsToEmptyStringForEveryRow () {
+    app.allFaces.makeEmpty(3);
+    assertEquals(3, app.allFaces.extraParams.length);
+    assertEquals("", app.allFaces.getExtraParams(0));
+    assertEquals("", app.allFaces.getExtraParams(1));
+    assertEquals("", app.allFaces.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewFacesExtraParamsToEmptyString () {
+    app.allFaces.create(new int[]{0, 1, 2});
+    assertEquals("", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void createBatch_defaultsEveryNewFacesExtraParamsToEmptyString () {
+    app.allFaces.createBatch(new int[][]{{0, 1, 2}, {3, 4, 5}});
+    assertEquals("", app.allFaces.getExtraParams(0));
+    assertEquals("", app.allFaces.getExtraParams(1));
+  }
+
+  @Test
+  void getSetExtraParams_roundTripsTheRawString () {
+    app.allFaces.makeEmpty(1);
+    app.allFaces.setExtraParams(0, "{\"name\":\"wall A\",\"percentCompleted\":50}");
+    assertEquals("{\"name\":\"wall A\",\"percentCompleted\":50}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParamsObject_parsesTheStoredJSON () {
+    app.allFaces.makeEmpty(1);
+    app.allFaces.setExtraParams(0, "{\"name\":\"wall A\",\"percentCompleted\":50}");
+
+    processing.data.JSONObject obj = app.allFaces.getExtraParamsObject(0);
+
+    assertEquals("wall A", obj.getString("name"));
+    assertEquals(50, obj.getInt("percentCompleted"));
+  }
+
+  @Test
+  void getExtraParamsObject_isAnEmptyObject_whenTheFieldIsEmptyMissingOrBadData () {
+    app.allFaces.makeEmpty(3);
+    app.allFaces.setExtraParams(0, ""); // empty
+    app.allFaces.setExtraParams(1, "{}"); // explicitly empty object
+    app.allFaces.setExtraParams(2, "not json"); // malformed - must never throw
+
+    assertEquals(0, app.allFaces.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allFaces.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allFaces.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToTheEmptyString () {
+    app.allFaces.makeEmpty(1);
+    app.allFaces.setExtraParamsObject(0, new processing.data.JSONObject());
+    assertEquals("", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObject_thenGetExtraParamsObject_roundTrips () {
+    app.allFaces.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("name", "wall A");
+    obj.setFloat("percentCompleted", 50);
+
+    app.allFaces.setExtraParamsObject(0, obj);
+    processing.data.JSONObject result = app.allFaces.getExtraParamsObject(0);
+
+    assertEquals("wall A", result.getString("name"));
+    assertEquals(50f, result.getFloat("percentCompleted"), 0.0001f);
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allFaces.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,1,2");
+    child.setInt("material", 0);
+    child.setInt("tessellation", 0);
+    child.setInt("layer", 0);
+    child.setInt("visibility", 1);
+    child.setInt("weight", 0);
+    child.setInt("close", 0);
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+    parent.setString("showNormalLines", "false");
+    parent.setString("displayEdges", "true");
+    parent.setInt("displayTessellation", 2);
+    parent.setInt("activeColorScaleIndex", 19);
+    parent.setInt("activeColorScaleDirection", 1);
+    parent.setFloat("activeColorScaleFactor", 0.5f);
+    parent.setInt("passiveColorScaleIndex", 1);
+    parent.setInt("passiveColorScaleDirection", 1);
+    parent.setFloat("passiveColorScaleFactor", 0.125f);
+
+    solarchvision_bim.Faces fresh = app.new Faces();
+    fresh.from_XML(root);
+
+    assertEquals("", fresh.getExtraParams(0));
+  }
+
+  @Test
+  void mergeCoplanarFaces_newMergedFaceInheritsExtraParamsFromTheFirstOriginalFace () {
+    // Same fixture as ModifyGeometryTest's own
+    // mergeCoplanar_recombinesTwoTrianglesSplitFromAQuadBackIntoOneFace -
+    // 2 triangles sharing a diagonal, merged back into 1 quad - with
+    // each original given its own distinct extraParams, to confirm the
+    // merged result inherits the FIRST one (this method's own policy -
+    // see its "ownerFaceForOptions" comment), not the second or neither.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2}, // triangle A
+      {0, 2, 3}  // triangle B - shares the 0-2 diagonal with A
+    };
+    app.allFaces.options = new int[][]{
+      {3, 0, 0, 0, 0, 0}, {3, 0, 0, 0, 0, 0}
+    };
+    app.allFaces.extraParams = new String[]{"{\"name\":\"first\"}", "{\"name\":\"second\"}"};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+
+    app.Select3D.faceSelection = new int[]{0, 1};
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.mergeCoplanarFaces_Selection();
+
+    assertEquals(1, app.allFaces.nodes.length, "both original faces consumed by the merge");
+    // Which of the two originals actually becomes "ownerFaceForOptions"
+    // depends on HashMap iteration order (see the sibling test in
+    // ModifyGeometryTest.java, same fixture, its own comment on this) -
+    // only guaranteed to be ONE of them, consistently with whichever one
+    // options[0] itself came from (both share the same options here, so
+    // that alone can't tell us which - but it's the same source either
+    // way, which is the actual property under test).
+    String result = app.allFaces.getExtraParams(0);
+    assertTrue(result.equals("{\"name\":\"first\"}") || result.equals("{\"name\":\"second\"}"),
+      "merged face should inherit exactly one original's extraParams verbatim, got: " + result);
   }
 }

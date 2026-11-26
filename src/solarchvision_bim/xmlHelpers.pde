@@ -14,6 +14,23 @@ String XML_getString(XML xml, String tag) {
  return result;
 }
 
+// Same as XML_getString(xml, tag) above, but falls back to defaultValue
+// when the attribute is missing entirely - wraps XML's own
+// getString(String, String) overload, rather than its bare single-arg
+// one (which silently defaults a missing attribute to null) - same
+// reasoning as XML_getFloat/XML_getInt's own 3-arg overloads above.
+// Needed for extraParams (faces.pde and friends): a save file written
+// before that field existed has no such attribute at all, and its
+// correct "this was never saved" fallback is "" (this class's own
+// canonical "no extra params" value - see getExtraParamsObject()'s own
+// comment), not null.
+String XML_getString(XML xml, String tag, String defaultValue) {
+ if (diag_XML_input) print(tag + "=");
+ String result = xml.getString(tag, defaultValue);
+ if (diag_XML_input) println('"' + result + '"');
+ return result;
+}
+
 float XML_getFloat(XML xml, String tag) {
  if (diag_XML_input) print(tag + "=");
  float result = xml.getFloat(tag);

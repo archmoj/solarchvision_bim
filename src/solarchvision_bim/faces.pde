@@ -205,11 +205,24 @@ class Faces {
   int[][] nodes;
   int[][] options;
 
+  // One opaque JSON-encoded blob of arbitrary extra named fields per
+  // face (e.g. name, percentCompleted - see the architecture discussion
+  // this implements), default "" same as every brand-new row below.
+  // Parsed/serialized lazily and only on demand (getExtraParamsObject()/
+  // setExtraParamsObject(), below) - to_XML()/from_XML() and every
+  // mutation site here move the raw string verbatim, the same as any
+  // other field, so undo/redo (built on to_XML()/from_XML() already -
+  // undoRedoScene3D.pde) and every array resize below never touch JSON
+  // at all.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.nodes = new int [n][0];
     this.options = new int [n][6];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -275,6 +288,57 @@ class Faces {
     this.options[n][5] = close;
   }
 
+  // Defensive against extraParams being shorter than nodes/options (or
+  // null) at the time of the call - never throws, just reads as "no
+  // extra params" past the end, same as a genuinely-empty entry would.
+  // This can legitimately happen: plenty of call sites (several of this
+  // class's own unit tests included) replace this.nodes/this.options
+  // directly, wholesale, without extending every parallel array in
+  // lockstep - ensureExtraParamsLength() (below) is what a structural
+  // splice/delete calls to self-heal that before it would otherwise
+  // slice/concat extraParams at a length nodes/options have already
+  // moved past; this getter is what every ordinary read stays safe
+  // through in the meantime.
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.nodes'
+  // own current length, filling any new/missing entries with "" - see
+  // getExtraParams()'s own comment on why this can be needed at all.
+  // Called once, up front, by any structural operation below that's
+  // about to subset()/concat()/removeIndices() extraParams alongside
+  // nodes/options, so that operation can safely assume matching lengths
+  // from here on, rather than every such call separately guarding against
+  // a mismatch it didn't cause.
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.nodes.length) return;
+    String[] resized = new String[this.nodes.length];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - see its own comment for what "never null, never
+  // throws" and "collapses back to """ actually mean here. Nothing else
+  // in this file should call JSONObject.parse()/extraParamsFromJSONObject()
+  // directly - this is the one place that does, same as getMaterial()/
+  // setMaterial() are the one place that reaches into options[n][0].
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
+  }
+
 
   void beginNewFace () {
 
@@ -315,6 +379,10 @@ class Faces {
 
     this.nodes = (int[][]) concat(this.nodes, newFace_nodes);
 
+    // Brand new face, not derived from any other - gets this field's own
+    // default (""), same as current_Material/etc. above are this class's
+    // own current defaults, not copied from anywhere.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
 
     if (allGroups.num > 0) allGroups.Faces[allGroups.num - 1][1] = this.nodes.length - 1;
 
@@ -346,6 +414,12 @@ class Faces {
     this.options = (int[][]) concat(this.options, newOptions);
 
     this.nodes = (int[][]) concat(this.nodes, newFacesNodes);
+
+    // Brand new faces, not derived from any other - see create()'s own
+    // comment on why these all just get the default, not a copy.
+    String[] newExtraParams = new String[n];
+    java.util.Arrays.fill(newExtraParams, "");
+    this.extraParams = (String[]) concat(this.extraParams, newExtraParams);
 
     if (allGroups.num > 0) allGroups.Faces[allGroups.num - 1][1] = this.nodes.length - 1;
 
@@ -1952,6 +2026,7 @@ class Faces {
       XML_setInt(child, "visibility", this.getVisibility(i));
       XML_setInt(child, "weight", this.getWeight(i));
       XML_setInt(child, "close", this.getClose(i));
+      XML_setString(child, "extraParams", this.getExtraParams(i));
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -1993,6 +2068,10 @@ class Faces {
       this.setVisibility(i, children[i].getInt("visibility"));
       this.setWeight(i, children[i].getInt("weight"));
       this.setClose(i, children[i].getInt("close"));
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

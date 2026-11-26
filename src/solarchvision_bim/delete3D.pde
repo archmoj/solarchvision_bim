@@ -137,6 +137,31 @@ class Delete3D {
     return result;
   }
 
+  // Added for extraParams (one String per item - faces.pde's own
+  // comment on it): every other per-item array on a class that has it
+  // (nodes/options above) already gets compacted here on delete, so
+  // extraParams has to go through the same call or its own length would
+  // fall out of step with nodes/options, corrupting every index after
+  // the first deletion.
+  String[] removeIndices(String[] arr, int[] ids) {
+    if (ids.length == 0) return arr;
+    boolean[] remove = new boolean[arr.length];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    String[] result = new String[arr.length - removedCount];
+    int k = 0;
+    for (int i = 0; i < arr.length; i++) {
+      if (!remove[i]) result[k++] = arr[i];
+    }
+    return result;
+  }
+
   // This composite didn't call model_changed() itself before - only its
   // several sub-methods below did, independently - which is exactly why
   // it needs its OWN beginScene3DChange()/endScene3DChange() pair now, not
@@ -330,8 +355,11 @@ class Delete3D {
       }
     }
 
+    allFaces.ensureExtraParamsLength(); // see its own comment
+
     allFaces.nodes = removeIndices(allFaces.nodes, ids);
     allFaces.options = removeIndices(allFaces.options, ids);
+    allFaces.extraParams = removeIndices(allFaces.extraParams, ids);
 
     endScene3DChange();
   }
@@ -392,6 +420,8 @@ class Delete3D {
             allGroups.Faces[i][j] -= 1 + endFace - startFace;
           }
         }
+        allFaces.ensureExtraParamsLength(); // see its own comment - guarantees the subset() calls below are safe even if nodes/options were replaced directly somewhere without extraParams kept in lockstep
+
         int[][] startList = (int[][]) subset(allFaces.nodes, 0, startFace);
         int[][] endList = (int[][]) subset(allFaces.nodes, endFace + 1);
         allFaces.nodes = (int[][]) concat(startList, endList);
@@ -399,6 +429,15 @@ class Delete3D {
         int[][] startListO = (int[][]) subset(allFaces.options, 0, startFace);
         int[][] endListO = (int[][]) subset(allFaces.options, endFace + 1);
         allFaces.options = (int[][]) concat(startListO, endListO);
+
+        // extraParams has to be spliced the exact same way, or its
+        // length falls out of step with nodes/options and every face
+        // after this range would read/write the wrong extraParams from
+        // then on (see delete3D.pde's own removeIndices() overload for
+        // String[] and its comment).
+        String[] startListE = (String[]) subset(allFaces.extraParams, 0, startFace);
+        String[] endListE = (String[]) subset(allFaces.extraParams, endFace + 1);
+        allFaces.extraParams = (String[]) concat(startListE, endListE);
       }
 
       int startPolyline = allGroups.getStart_Polyline(OBJ_ID);

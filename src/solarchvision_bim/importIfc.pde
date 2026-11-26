@@ -1609,6 +1609,7 @@ void ifcBeginGroupForPendingFaces () {
 // The flush itself - one allocation and one fill per array, each
 // sized exactly right, rather than growing one element at a time.
 void ifcFlushPendingGeometry () {
+  allFaces.ensureExtraParamsLength(); // see its own comment (faces.pde) - guarantees the arraycopy below is safe even if allFaces.nodes/options were ever set up directly without extraParams kept in lockstep
   // allVertices (allPoints' own backing array) is a top-level global in
   // globals.pde, not a field of the Points class itself - Points' own
   // methods just reference it directly as an enclosing-instance field,
@@ -1625,14 +1626,21 @@ void ifcFlushPendingGeometry () {
   if (ifcPendingFaceNodes.size() > 0) {
     int[][] newNodes = new int[ifcBaseFaceCount + ifcPendingFaceNodes.size()][];
     int[][] newOptions = new int[ifcBaseFaceCount + ifcPendingFaceOptions.size()][];
+    // Brand new faces, imported fresh - get this field's own default
+    // (""), not copied from anywhere (faces.pde's own create()/
+    // createBatch() follow the same policy).
+    String[] newExtraParams = new String[ifcBaseFaceCount + ifcPendingFaceNodes.size()];
     System.arraycopy(allFaces.nodes, 0, newNodes, 0, ifcBaseFaceCount);
     System.arraycopy(allFaces.options, 0, newOptions, 0, ifcBaseFaceCount);
+    System.arraycopy(allFaces.extraParams, 0, newExtraParams, 0, ifcBaseFaceCount);
     for (int i = 0; i < ifcPendingFaceNodes.size(); i++) {
       newNodes[ifcBaseFaceCount + i] = ifcPendingFaceNodes.get(i);
       newOptions[ifcBaseFaceCount + i] = ifcPendingFaceOptions.get(i);
+      newExtraParams[ifcBaseFaceCount + i] = "";
     }
     allFaces.nodes = newNodes;
     allFaces.options = newOptions;
+    allFaces.extraParams = newExtraParams;
   }
 
   ifcPendingPoints.clear();
