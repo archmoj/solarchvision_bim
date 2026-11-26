@@ -673,6 +673,12 @@ class Moon3DTest {
 
   @Test
   void loadImages_appliesTheDefaultBrighteningToTheRealBundledTexture () {
+    // brightenTexture()'s own one-time bake no longer runs straight out
+    // of load_images() (moon3D.pde's own comment on why - the "moon's
+    // cache bug during initialization" fix) - it's deferred to
+    // ensureTextureBrightened(), called once from build_win3DCache(), so
+    // this test calls that explicitly to exercise the same bake this
+    // test has always been about.
     app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
     float theDefault = app.Moon3D.brightenLevel; // read, not hardcoded - this test
                                                    // shouldn't need editing every
@@ -680,13 +686,44 @@ class Moon3DTest {
 
     app.Moon3D.brightenLevel = 1.0f; // effectively raw, for comparison
     app.Moon3D.load_images();
+    app.Moon3D.ensureTextureBrightened();
     double rawAvg = averageChannelValue(app.Moon3D.Map);
 
     app.Moon3D.brightenLevel = theDefault;
     app.Moon3D.load_images();
+    app.Moon3D.ensureTextureBrightened();
     double brightAvg = averageChannelValue(app.Moon3D.Map);
 
     assertTrue(brightAvg > rawAvg, "raw=" + rawAvg + " brightened=" + brightAvg);
+  }
+
+  @Test
+  void ensureTextureBrightened_onlyEverBrightensOnce_untilTheNextLoadImages () {
+    // The actual regression this guards against: brightenTexture()'s
+    // mixWithSkyColor contribution (halfSkyColor()) is a LIVE read of
+    // Sky3D.currentFlatColor() - calling ensureTextureBrightened() twice
+    // without an intervening load_images() must not bake it in twice.
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+    app.Moon3D.load_images();
+    app.Moon3D.ensureTextureBrightened();
+    double firstAvg = averageChannelValue(app.Moon3D.Map);
+
+    app.Moon3D.ensureTextureBrightened(); // should be a no-op this time
+    double secondAvg = averageChannelValue(app.Moon3D.Map);
+
+    assertEquals(firstAvg, secondAvg, 0.0001);
+  }
+
+  @Test
+  void loadImages_resetsTheBrightenedGuard_soAReloadCanBeBrightenedAgain () {
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+    app.Moon3D.load_images();
+    assertFalse(app.Moon3D.textureBrightened);
+    app.Moon3D.ensureTextureBrightened();
+    assertTrue(app.Moon3D.textureBrightened);
+
+    app.Moon3D.load_images();
+    assertFalse(app.Moon3D.textureBrightened);
   }
 
   private double averageChannelValue (processing.core.PImage img) {

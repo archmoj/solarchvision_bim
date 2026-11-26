@@ -107,6 +107,53 @@ class Moon3D {
 
   void load_images () {
     this.Map = loadImage(this.Filename);
+    // brightenTexture()'s own one-time bake is deferred to
+    // ensureTextureBrightened() (below), not run here - see its own
+    // comment on why. this.Map is freshly loaded, unbaked pixels, so
+    // reset the guard too - otherwise a reload (e.g. a test calling
+    // load_images() a second time, or a project that reloads its own
+    // Moon texture) would find ensureTextureBrightened() already
+    // considers the (brand new) image done and skip it entirely.
+    this.textureBrightened = false;
+  }
+
+  boolean textureBrightened = false;
+
+  // brightenTexture()'s own "once, right after loading" bake (its own
+  // comment) used to run straight out of load_images() - called from
+  // setup(), before ANY command/script line (including a project's own
+  // saved Hour/Day/Year, or a command/test/*.svs script's "Hour 13")
+  // has had a chance to run. Its mixWithSkyColor branch reads
+  // halfSkyColor() -> Sky3D.currentFlatColor() -> sunIsBelowHorizon(),
+  // which is itself a live function of STATION/SHADE_DATE_ANGLE/
+  // SHADE_HOUR_ANGLE (sky3D.pde) - at setup() time those are still at
+  // their bare-construction defaults (SHADE_DATE_ANGLE's own sentinel
+  // -1, and SHADE_HOUR_ANGLE's own, shadeViewport3D.pde), not the
+  // scene's real ones, so the sky-color contribution this bakes
+  // permanently into the texture's own stored pixels could be wrong for
+  // the hour the scene actually ends up shown at - and unlike the
+  // per-vertex tint tintColorForGray()/vertexColor() add on top of this
+  // at real draw time (using SHADE_HOUR_ANGLE's then-current, correct
+  // value), nothing ever redid this one-time bake to match.
+  // This went unnoticed as long as SHADE_HOUR_ANGLE's own bare-
+  // construction default was a fixed, always-daytime 10 - close enough
+  // to most scenes' own real hour that the stale bake was never
+  // visibly wrong. Now that default is the real wall-clock hour (same
+  // file), which lands at night just as easily as day, so the gap
+  // between "whatever hour setup() happened to see" and "the hour the
+  // scene is actually shown at" can be large enough to show up in the
+  // baked-in tint (see e.g. command/test/solids.svs's own baseline -
+  // this is "the moon's cache bug during initialization").
+  // Fixed by deferring this bake to the first real win3DCache build
+  // (build_win3DCache(), below) instead - win3DCache_isValid() already
+  // guarantees SHADE_HOUR_ANGLE/SHADE_DATE_ANGLE have their real,
+  // script-applied values by then (same frame a script's own Hour/Day/
+  // Year lines take effect - see draw()'s own frame-ordering), and the
+  // textureBrightened guard above keeps this a true one-time bake,
+  // same as before, just correctly timed now.
+  void ensureTextureBrightened () {
+    if (this.textureBrightened) return;
+    this.textureBrightened = true;
     brightenTexture(this.Map, this.brightenLevel);
   }
 
@@ -414,6 +461,12 @@ class Moon3D {
   }
 
   PShape build_win3DCache () {
+    // Runs brightenTexture()'s one-time sky-tint bake the first time it's
+    // actually safe to (see ensureTextureBrightened()'s own comment) -
+    // win3DCache_isValid() already guarantees this only fires once,
+    // on-demand, the same way the rest of this cache does.
+    this.ensureTextureBrightened();
+
     // ONE shape, QUADS mode, for the whole sphere - see model1Ds.pde's own
     // fix for why: plain beginShape() is generic POLYGON mode, GLU-
     // tessellated and retained per shape. buildSubFace() always returns
