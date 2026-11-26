@@ -744,12 +744,12 @@ class Moon3DTest {
 
   @Test
   void loadImages_appliesTheDefaultBrighteningToTheRealBundledTexture () {
-    // brightenTexture()'s own one-time bake no longer runs straight out
-    // of load_images() (moon3D.pde's own comment on why - the "moon's
-    // cache bug during initialization" fix) - it's deferred to
-    // ensureTextureBrightened(), called once from build_win3DCache(), so
-    // this test calls that explicitly to exercise the same bake this
-    // test has always been about.
+    // brightenTexture()'s own bake no longer runs straight out of
+    // load_images() (moon3D.pde's own comment on why - the "moon's cache
+    // bug during initialization" fix) - it's deferred to
+    // ensureTextureBrightened(), called from build_win3DCache(), so this
+    // test calls that explicitly to exercise the same bake this test has
+    // always been about.
     app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
     float theDefault = app.Moon3D.brightenLevel; // read, not hardcoded - this test
                                                    // shouldn't need editing every
@@ -769,11 +769,12 @@ class Moon3DTest {
   }
 
   @Test
-  void ensureTextureBrightened_onlyEverBrightensOnce_untilTheNextLoadImages () {
-    // The actual regression this guards against: brightenTexture()'s
+  void ensureTextureBrightened_isANoOp_whenSkyIsBlackHasNotChanged () {
+    // The original regression this guards against: brightenTexture()'s
     // mixWithSkyColor contribution (halfSkyColor()) is a LIVE read of
     // Sky3D.currentFlatColor() - calling ensureTextureBrightened() twice
-    // without an intervening load_images() must not bake it in twice.
+    // without Sky3D.skyIsBlack() changing in between must not bake it in
+    // twice (see ensureTextureBrightened()'s own comment).
     app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
     app.Moon3D.load_images();
     app.Moon3D.ensureTextureBrightened();
@@ -786,15 +787,66 @@ class Moon3DTest {
   }
 
   @Test
+  void ensureTextureBrightened_reBakes_whenSkyIsBlackChangesLater () {
+    // The actual regression this guards against (the "camera leaves the
+    // atmosphere" variant of the same bug - ensureTextureBrightened()'s
+    // own comment): this bake used to be a true one-time thing, so if it
+    // first fired while Sky3D.skyIsBlack() happened to read true (even
+    // only transiently), the texture's own sky-tint contribution got
+    // stuck wrong for the rest of the session. Simulated here directly
+    // via SHADE_HOUR_ANGLE (sunIsBelowHorizon() - one of skyIsBlack()'s
+    // own two inputs, sky3D.pde) rather than the camera, since it's the
+    // simpler one to drive from a unit test.
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+    app.Moon3D.mixWithSkyColor = true;
+
+    app.SHADE_HOUR_ANGLE = 12; // setUp()'s own daytime baseline - sky lit
+    app.Moon3D.load_images();
+    app.Moon3D.ensureTextureBrightened();
+    double litAvg = averageChannelValue(app.Moon3D.Map);
+
+    app.SHADE_HOUR_ANGLE = 0; // midnight - unambiguously night at this latitude
+    app.Moon3D.ensureTextureBrightened();
+    double darkAvg = averageChannelValue(app.Moon3D.Map);
+
+    assertTrue(darkAvg < litAvg, "lit=" + litAvg + " dark=" + darkAvg);
+  }
+
+  @Test
+  void ensureTextureBrightened_matchesTheOriginalBake_afterFlippingBackAndForth () {
+    // Confirms re-baking (above) never compounds - this.originalPixels
+    // (moon3D.pde's own comment) keeps every bake starting fresh from the
+    // real, as-loaded texture, so flipping skyIsBlack() back to a value
+    // it was already baked for once reproduces that exact same bake,
+    // rather than drifting further each time it toggles.
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+    app.Moon3D.mixWithSkyColor = true;
+
+    app.SHADE_HOUR_ANGLE = 12; // setUp()'s own daytime baseline - sky lit
+    app.Moon3D.load_images();
+    app.Moon3D.ensureTextureBrightened();
+    double firstLitAvg = averageChannelValue(app.Moon3D.Map);
+
+    app.SHADE_HOUR_ANGLE = 0; // midnight - sky black
+    app.Moon3D.ensureTextureBrightened();
+
+    app.SHADE_HOUR_ANGLE = 12; // back to daytime
+    app.Moon3D.ensureTextureBrightened();
+    double secondLitAvg = averageChannelValue(app.Moon3D.Map);
+
+    assertEquals(firstLitAvg, secondLitAvg, 0.0001);
+  }
+
+  @Test
   void loadImages_resetsTheBrightenedGuard_soAReloadCanBeBrightenedAgain () {
     app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
     app.Moon3D.load_images();
-    assertFalse(app.Moon3D.textureBrightened);
+    assertNull(app.Moon3D.textureBrightenedForSkyIsBlack);
     app.Moon3D.ensureTextureBrightened();
-    assertTrue(app.Moon3D.textureBrightened);
+    assertNotNull(app.Moon3D.textureBrightenedForSkyIsBlack);
 
     app.Moon3D.load_images();
-    assertFalse(app.Moon3D.textureBrightened);
+    assertNull(app.Moon3D.textureBrightenedForSkyIsBlack);
   }
 
   private double averageChannelValue (processing.core.PImage img) {
