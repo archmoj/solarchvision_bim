@@ -353,6 +353,38 @@ class Moon3DTest {
     assertEquals(app.Moon3D.DARK_SIDE_AMBIENT, subFace[0].brightness, 0.001f);
   }
 
+  @Test
+  void buildSubFace_antisolarPointIsTrueBlack_whenTheSunIsDown () {
+    // DARK_SIDE_AMBIENT's own earthshine floor (its own comment) only
+    // makes sense against a lit sky - Sky3D.currentFlatColor() is
+    // already plain black once the Sun's below the horizon (same
+    // halfSkyColor_isBlackWhenTheSunIsDown reasoning below), so the
+    // Moon's own darkest point should go all the way to 0, not stop at
+    // DARK_SIDE_AMBIENT, once the sky itself is black too.
+    app.SHADE_HOUR_ANGLE = 0; // midnight - unambiguously night at this latitude
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(0f, subFace[0].brightness, 0.001f);
+  }
+
+  @Test
+  void buildSubFace_terminatorMidpointDropsTheAmbientFloorToo_whenTheSunIsDown () {
+    app.Moon3D.illuminateDaySide = false; // isolate from its own reshaping, same as the daytime version of this test
+    app.SHADE_HOUR_ANGLE = 0; // midnight - unambiguously night at this latitude
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    // Same Alpha=0 "exactly mid-terminator, litAmount=0.5" point as
+    // buildSubFace_terminatorSitsExactlyOnTheGridsEquator_regardlessOfLongitude
+    // above, but with ambient now 0 instead of DARK_SIDE_AMBIENT.
+    solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(0, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(0.5f, subFace[0].brightness, 0.001f);
+  }
+
   // ================= illuminateDaySide =================================
   // Brightness is already fully saturated (1.0) everywhere beyond a
   // narrow TERMINATOR_SOFTNESS-wide band around the terminator - these

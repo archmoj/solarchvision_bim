@@ -709,7 +709,13 @@ class Moon3D {
           litAmount = sqrt(litAmount);
         }
 
-        vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
+        // DARK_SIDE_AMBIENT's own earthshine floor (its own comment) only
+        // makes sense against a lit sky - at night, Sky3D.currentFlatColor()
+        // is already plain black (nightFlatColor, sky3D.pde), so the
+        // unlit side should go all the way to true black too, not stop
+        // at the floor: 0 here, not DARK_SIDE_AMBIENT.
+        float ambient = Sky3D.sunIsBelowHorizon() ? 0 : DARK_SIDE_AMBIENT;
+        vtx.brightness = ambient + (1 - ambient) * litAmount;
       } else {
         vtx.brightness = 1; // fully lit - same as before phase shading existed
       }
