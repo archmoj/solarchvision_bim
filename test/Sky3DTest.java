@@ -199,13 +199,94 @@ class Sky3DTest {
   }
 
   @Test
-  void win3DCache_recordState_capturesTheCurrentSunIsBelowHorizonValue () {
+  void win3DCache_recordState_capturesTheCurrentSkyIsBlackValue () {
     app.STATION.latitude = 0;
     app.SHADE_DATE_ANGLE = 0;
     app.SHADE_HOUR_ANGLE = 12; // sun up
 
     app.Sky3D.win3DCache_recordState(0, 1, 1);
 
-    assertFalse(app.Sky3D.win3DCache_sunIsBelowHorizon);
+    assertFalse(app.Sky3D.win3DCache_skyIsBlack);
+  }
+
+  // ================= cameraIsOutsideAtmosphere / skyIsBlack ============
+  // "In space" is the other way the sky reads as black, same as night -
+  // see moon3D.pde's own request this was added for. WIN3D.
+  // cameraPositionScaled() (viewport3D.pde) is what actually carries the
+  // camera's real-world position here, already divided back down out of
+  // overallScale into this class's own real units (radius, e.g.).
+
+  @Test
+  void cameraIsOutsideAtmosphere_isFalseWellInsideTheRadius () {
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 0.5f;
+
+    assertFalse(app.Sky3D.cameraIsOutsideAtmosphere());
+  }
+
+  @Test
+  void cameraIsOutsideAtmosphere_isTrueWellBeyondTheRadius () {
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2;
+
+    assertTrue(app.Sky3D.cameraIsOutsideAtmosphere());
+  }
+
+  @Test
+  void cameraIsOutsideAtmosphere_dividesOutOverallScaleFirst () {
+    // Same camera-space position as the "well beyond" test above, but
+    // stored at a different overallScale - cameraPositionScaled() has to
+    // divide that back out before comparing against radius (a real-
+    // world distance), or this would wrongly read as outside (or
+    // inside) depending on whatever overallScale the project happens to
+    // be at, rather than the camera's actual real-world distance.
+    app.overallScale = 100;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2 * app.overallScale;
+
+    assertTrue(app.Sky3D.cameraIsOutsideAtmosphere());
+
+    app.WIN3D.cameraZ = app.Sky3D.radius * 0.5f * app.overallScale;
+
+    assertFalse(app.Sky3D.cameraIsOutsideAtmosphere());
+  }
+
+  @Test
+  void skyIsBlack_isTrueFromSpace_evenAtSolarNoon () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12; // sun up - sunIsBelowHorizon() alone is false
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2; // but the camera's left the atmosphere
+
+    assertFalse(app.Sky3D.sunIsBelowHorizon());
+    assertTrue(app.Sky3D.skyIsBlack());
+    assertEquals(app.Sky3D.nightFlatColor, app.Sky3D.currentFlatColor());
+  }
+
+  @Test
+  void win3DCache_isValid_invalidatesWhenTheCameraLeavesTheAtmosphere () {
+    app.STATION.latitude = 0;
+    app.SHADE_DATE_ANGLE = 0;
+    app.SHADE_HOUR_ANGLE = 12; // sun up
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 0.5f; // inside
+
+    app.Sky3D.win3DCache = new PShape();
+    app.Sky3D.win3DCache_recordState(0, 1, 1);
+    assertTrue(app.Sky3D.win3DCache_isValid(0, 1, 1));
+
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2; // camera dollies out past the atmosphere - nothing else changed
+
+    assertFalse(app.Sky3D.win3DCache_isValid(0, 1, 1));
   }
 }

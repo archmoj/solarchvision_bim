@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import processing.core.PShape;
 
 // Same reasoning, and the same tests, as Sun3DTest.java - moon3D.pde's
 // computeFrame()/buildSubFace() share the exact same (forward, up, right)
@@ -383,6 +384,44 @@ class Moon3DTest {
     solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(0, 0, 1, 10, 0, 0, 1, 1, frame);
 
     assertEquals(0.5f, subFace[0].brightness, 0.001f);
+  }
+
+  @Test
+  void buildSubFace_antisolarPointIsTrueBlack_whenTheCameraLeavesTheAtmosphere () {
+    // Same "true black" outcome as the night-time test above, but driven
+    // by Sky3D.cameraIsOutsideAtmosphere() (sky3D.pde) instead of the
+    // Sun's own position - buildSubFace() reads Sky3D.skyIsBlack(),
+    // which is true for either reason (its own comment).
+    app.SHADE_HOUR_ANGLE = 12; // sun up - stays up for this whole test
+    app.SHADE_DATE_ANGLE = 7;
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2; // camera's left the atmosphere
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(0f, subFace[0].brightness, 0.001f);
+  }
+
+  @Test
+  void win3DCache_isValid_invalidatesWhenTheCameraLeavesTheAtmosphere () {
+    // Same reasoning, and the same new PShape()-standing-in-for-a-real-
+    // shape trick, as Sky3DTest's own
+    // win3DCache_isValid_invalidatesWhenTheCameraLeavesTheAtmosphere.
+    app.overallScale = 1;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = app.Sky3D.radius * 0.5f; // inside
+
+    app.Moon3D.win3DCache = new PShape();
+    app.Moon3D.win3DCache_recordState();
+    assertTrue(app.Moon3D.win3DCache_isValid());
+
+    app.WIN3D.cameraZ = app.Sky3D.radius * 2; // camera dollies out past the atmosphere - nothing else changed
+
+    assertFalse(app.Moon3D.win3DCache_isValid());
   }
 
   // ================= illuminateDaySide =================================

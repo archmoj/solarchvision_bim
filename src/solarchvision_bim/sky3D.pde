@@ -49,12 +49,13 @@ class Sky3D {
   // (SHADE.vertexRender_Global_Solar) already derives its per-vertex
   // colors from the actual sun position via calculate_GlobalSolar_array.
   // pde's own recompute, which bumps winCacheGeneration above. The flat
-  // branch has no such trigger of its own, so sunIsBelowHorizon() (below)
-  // has to be part of this cache's own key too, or switching from day to
-  // night (or back) via Alt+arrow/the command line would leave the dome
-  // showing the wrong flat color until something else happened to
-  // invalidate the cache for an unrelated reason.
-  boolean win3DCache_sunIsBelowHorizon = false;
+  // branch has no such trigger of its own, so skyIsBlack() (below) has
+  // to be part of this cache's own key too, or switching from day to
+  // night (or in/out of the atmosphere - same method, see its own
+  // comment) via Alt+arrow/the command line/a camera move would leave
+  // the dome showing the wrong flat color until something else happened
+  // to invalidate the cache for an unrelated reason.
+  boolean win3DCache_skyIsBlack = false;
 
   boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
     return this.win3DCache != null &&
@@ -66,7 +67,7 @@ class Sky3D {
       this.win3DCache_PAL_direction       == PAL_direction &&
       this.win3DCache_PAL_multiplier      == PAL_multiplier &&
       this.win3DCache_impactDisplayDay    == impactDisplayDay &&
-      this.win3DCache_sunIsBelowHorizon   == this.sunIsBelowHorizon();
+      this.win3DCache_skyIsBlack          == this.skyIsBlack();
   }
 
   void win3DCache_recordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
@@ -78,7 +79,7 @@ class Sky3D {
     this.win3DCache_PAL_direction       = PAL_direction;
     this.win3DCache_PAL_multiplier      = PAL_multiplier;
     this.win3DCache_impactDisplayDay    = impactDisplayDay;
-    this.win3DCache_sunIsBelowHorizon   = this.sunIsBelowHorizon();
+    this.win3DCache_skyIsBlack          = this.skyIsBlack();
   }
 
   // Whether the Sun is at or below the horizon right now - same
@@ -93,6 +94,32 @@ class Sky3D {
   boolean sunIsBelowHorizon () {
     float[] SunR = funcs.SunPosition(STATION.getLatitude(), SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
     return SunR[3] <= 0;
+  }
+
+  // Whether the camera's own real-world position (WIN3D.cameraPositionScaled() -
+  // already in this class's own real units, same as radius above, not
+  // WIN3D's screen-pixel scale) currently sits beyond this dome's own
+  // radius altogether - once out here there's no atmosphere left between
+  // the camera and whatever it's looking at, so the sky reads as black
+  // the same way it does at night, regardless of where the Sun actually
+  // is. transform_3DViewport() (viewport3D.pde) recomputes cameraX/Y/Z
+  // every frame, before this dome (or Sun3D/Moon3D) ever draws, so this
+  // is always checking the current frame's real camera position, not a
+  // stale one.
+  boolean cameraIsOutsideAtmosphere () {
+    float[] cam = WIN3D.cameraPositionScaled();
+    float camDistanceSq = cam[0] * cam[0] + cam[1] * cam[1] + cam[2] * cam[2];
+    return camDistanceSq > this.radius * this.radius;
+  }
+
+  // Whether the sky should read as plain black right now - either the
+  // Sun's below the horizon, or the camera's own position has left the
+  // atmosphere outright (cameraIsOutsideAtmosphere() above) - the single
+  // combined source of truth currentFlatColor() (below) and moon3D.pde's
+  // own halfSkyColor()/vertexColor()/brightness computation all share,
+  // so none of them can drift out of sync over which one it is.
+  boolean skyIsBlack () {
+    return this.sunIsBelowHorizon() || this.cameraIsOutsideAtmosphere();
   }
 
   float inclinationStep;
@@ -315,22 +342,24 @@ class Sky3D {
 
   color flatColor = color(127, 191, 255);
 
-  // Used instead of flatColor above whenever sunIsBelowHorizon() is true -
-  // plain black, rather than some other shade of blue, since there's no
-  // real "flat daytime sky color" left to approximate once direct
-  // sunlight is gone.
+  // Used instead of flatColor above whenever skyIsBlack() is true (the
+  // Sun's below the horizon, or the camera's left the atmosphere - see
+  // its own comment) - plain black, rather than some other shade of
+  // blue, since there's no real "flat daytime sky color" left to
+  // approximate either way.
   final color nightFlatColor = color(0);
 
   // Whichever of flatColor/nightFlatColor above actually represents the
   // sky right now - the single source of truth for "the sky's own flat
   // color", so this dome (cacheWriteDomeFlat() below) and anything else
   // that wants to blend with or tint towards the sky's color (moon3D.pde's
-  // own halfSkyColor()/vertexColor(), e.g. - the Moon's visible at night
-  // far more than during the day, so it has every reason to track this
-  // the same way the dome itself does) never drift out of sync with each
+  // own halfSkyColor()/vertexColor()/brightness computation, e.g. - the
+  // Moon's visible at night and from space far more than during an
+  // ordinary daytime view, so it has every reason to track this the
+  // same way the dome itself does) never drift out of sync with each
   // other over which flat color is "current".
   color currentFlatColor () {
-    return this.sunIsBelowHorizon() ? this.nightFlatColor : this.flatColor;
+    return this.skyIsBlack() ? this.nightFlatColor : this.flatColor;
   }
 
   void cacheWriteDomeFlat (PShape shape) {

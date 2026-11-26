@@ -405,13 +405,18 @@ class Moon3D {
   // it's not SHADE_DATE_ANGLE); phase shading additionally depends on
   // the Sun's own direction (via computeFrame()'s own SunPosition()
   // call, which does use SHADE_DATE_ANGLE) plus the handful of toggles
-  // below, none of which ever touch the camera. Both SHADE_DATE_ANGLE
-  // and SHADE_EPOCH_DAY need checking here even though sync_
-  // SHADE_DATE_ANGLE() always sets them together: dateAngleFromRealDate
-  // repeats its own last value once per solarchvisionMonthLength
-  // position (see its own comment) while SHADE_EPOCH_DAY keeps
-  // advancing underneath it, so SHADE_DATE_ANGLE alone would miss a
-  // real phase change on exactly those days.
+  // below. Both SHADE_DATE_ANGLE and SHADE_EPOCH_DAY need checking here
+  // even though sync_SHADE_DATE_ANGLE() always sets them together:
+  // dateAngleFromRealDate repeats its own last value once per
+  // solarchvisionMonthLength position (see its own comment) while
+  // SHADE_EPOCH_DAY keeps advancing underneath it, so SHADE_DATE_ANGLE
+  // alone would miss a real phase change on exactly those days.
+  // win3DCache_skyIsBlack is the one key below that DOES touch the
+  // camera (Sky3D.skyIsBlack() -> cameraIsOutsideAtmosphere() -> the
+  // live WIN3D.cameraPositionScaled() - sky3D.pde's own comment) - the
+  // brightness formula above (buildSubFace()) reads it, so a pure
+  // dolly/zoom move across the atmosphere's own boundary has to
+  // invalidate this cache too, not just an Hour/Day/Year change.
   PShape win3DCache = null;
   float win3DCache_stationLat = Float.NaN;
   int win3DCache_SHADE_DATE_ANGLE = Integer.MIN_VALUE;
@@ -426,6 +431,7 @@ class Moon3D {
   boolean win3DCache_fitInSkyDome = true;
   float win3DCache_celestialMagnification = Float.NaN;
   float win3DCache_skyRadius = Float.NaN;
+  boolean win3DCache_skyIsBlack = false;
 
   boolean win3DCache_isValid () {
     return this.win3DCache != null &&
@@ -441,7 +447,8 @@ class Moon3D {
       this.win3DCache_useSkyColorForNightSide    == this.useSkyColorForNightSide &&
       this.win3DCache_fitInSkyDome               == this.fitInSkyDome &&
       this.win3DCache_celestialMagnification     == celestialMagnification &&
-      this.win3DCache_skyRadius                  == Sky3D.radius;
+      this.win3DCache_skyRadius                  == Sky3D.radius &&
+      this.win3DCache_skyIsBlack                 == Sky3D.skyIsBlack();
   }
 
   void win3DCache_recordState () {
@@ -458,6 +465,7 @@ class Moon3D {
     this.win3DCache_fitInSkyDome               = this.fitInSkyDome;
     this.win3DCache_celestialMagnification     = celestialMagnification;
     this.win3DCache_skyRadius                  = Sky3D.radius;
+    this.win3DCache_skyIsBlack                 = Sky3D.skyIsBlack();
   }
 
   PShape build_win3DCache () {
@@ -710,11 +718,13 @@ class Moon3D {
         }
 
         // DARK_SIDE_AMBIENT's own earthshine floor (its own comment) only
-        // makes sense against a lit sky - at night, Sky3D.currentFlatColor()
-        // is already plain black (nightFlatColor, sky3D.pde), so the
-        // unlit side should go all the way to true black too, not stop
-        // at the floor: 0 here, not DARK_SIDE_AMBIENT.
-        float ambient = Sky3D.sunIsBelowHorizon() ? 0 : DARK_SIDE_AMBIENT;
+        // makes sense against a lit sky - whenever Sky3D.skyIsBlack() is
+        // true (the Sun's below the horizon, or the camera's left the
+        // atmosphere entirely - sky3D.pde's own comment), Sky3D.
+        // currentFlatColor() is already plain black (nightFlatColor), so
+        // the unlit side should go all the way to true black too, not
+        // stop at the floor: 0 here, not DARK_SIDE_AMBIENT.
+        float ambient = Sky3D.skyIsBlack() ? 0 : DARK_SIDE_AMBIENT;
         vtx.brightness = ambient + (1 - ambient) * litAmount;
       } else {
         vtx.brightness = 1; // fully lit - same as before phase shading existed
