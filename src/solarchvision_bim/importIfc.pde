@@ -1411,10 +1411,27 @@ void ifcEmitFace (ArrayList<PVector> localPts, IfcFrame productFrame,
 
   int[] newFace_nodes = new int[cleaned.size()];
   for (int i = 0; i < cleaned.size(); i++) {
-    PVector world = productFrame.toWorldPoint(cleaned.get(i));
-    newFace_nodes[i] = ifcQueuePoint(cx + sx * world.x, cy + sy * world.y, cz + sz * world.z);
+    PVector app = ifcLocalToAppPoint(cleaned.get(i), productFrame, cx, cy, cz, sx, sy, sz);
+    newFace_nodes[i] = ifcQueuePoint(app.x, app.y, app.z);
   }
   ifcQueueFace(newFace_nodes, m, tes, lyr, vsb, wgt, clz);
+}
+
+// The one point-transform every face vertex goes through on its way from
+// "local to the product" (productFrame's own coordinate system - see
+// ifcProcessExtrudedAreaSolid()'s own comment, "still local to the
+// product, not world yet") to this app's own world/scene coordinates:
+// productFrame's own placement first, then this import's own cx/cy/cz
+// (translate) and sx/sy/sz (per-axis scale) the person chose on the
+// import dialog. Pulled out of ifcEmitFace() above as its own function,
+// rather than left inline there, so ifcCaptureExtrudedAreaSolidShape()
+// below can put a handful of its own reference points through the
+// EXACT same transform (guaranteed in sync, not a second hand-rolled
+// copy that could drift from this one over time).
+PVector ifcLocalToAppPoint (PVector local, IfcFrame productFrame,
+  float cx, float cy, float cz, float sx, float sy, float sz) {
+  PVector world = productFrame.toWorldPoint(local);
+  return new PVector(cx + sx * world.x, cy + sy * world.y, cz + sz * world.z);
 }
 
 // ---------------------------------------------------------------------
@@ -2460,6 +2477,16 @@ void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity 
   PVector extrusionOffset = solidFrame.toWorldVector(direction);
   extrusionOffset.mult(depth);
 
+  // Step 9's own parametric-shape capture - merged into this same
+  // product's own extraParams (ifcCurrentProductExtraParams) before any
+  // of this extrusion's own faces are queued below, so every one of
+  // them (top/bottom cap, every side face) picks it up the same
+  // ambient-global way they already pick up GlobalId/Name/Description/
+  // ObjectType (ifcProductToExtraParams()) - see
+  // ifcCaptureExtrudedAreaSolidShape()'s own comment for exactly what
+  // this keeps and why.
+  ifcCaptureExtrudedAreaSolidShape(profile2D, solidFrame, extrusionOffset, productFrame, cx, cy, cz, sx, sy, sz);
+
   int n = profile2D.size();
   PVector[] bottom = new PVector[n];
   PVector[] top = new PVector[n];
@@ -2490,6 +2517,102 @@ void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity 
     side.add(top[i]);
     ifcEmitFace(side, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
   }
+}
+
+// Step 9: captures this one IfcExtrudedAreaSolid's own profile + plane +
+// extrusion as a new "ifcShape" extraParams key, additive to Step 8's
+// own GlobalId/Name/Description/ObjectType capture (ifcProductToExtra
+// Params()) already sitting in ifcCurrentProductExtraParams by the time
+// this runs. For export-fidelity only (see the "export could regenerate
+// a true IfcExtrudedAreaSolid" discussion this implements) - nothing
+// else in this app reads this key; it's inert cargo the same way
+// GlobalId/Name are.
+//
+// What's kept, and why it's enough to exactly reconstruct the same
+// mesh later, with no further transform math needed on the way back
+// out: `profile2D` (already a plain, format-agnostic closed polygon in
+// its own local 2D plane - ifcProfilePoints() already flattens both
+// IfcRectangleProfileDef and IfcArbitraryClosedProfileDef down to this
+// same shape, so there's no separate "profile type" to remember) is
+// stored as-is, verbatim. Everything that locates and orients that
+// profile in SPACE (solidFrame's own origin/axes, extrusionOffset) is
+// instead captured as four already-fully-transformed REFERENCE POINTS,
+// in this app's own final world/scene coordinates (i.e. already carried
+// through productFrame's own placement AND this import's own cx/cy/cz/
+// sx/sy/sz, via ifcLocalToAppPoint() - the exact same point-transform
+// every one of this extrusion's own real faces, just below, goes
+// through) rather than as a symbolic placement (origin+axes+direction+
+// depth) a reader would have to re-compose the same way this importer
+// itself does. That choice is deliberate, not just simpler: this
+// composition is affine (productFrame's own placement, and this
+// import's own translate+per-axis-scale, both are), and for any affine
+// map f, f(o + v) - f(o) == (the properly transformed version of v) for
+// ANY vector v and base point o - so the difference between two
+// TRANSFORMED reference points already IS the correctly transformed
+// basis vector/extrusion vector, with no rotation/scale/skew math of
+// its own left for a reader (an exporter) to redo or get subtly wrong.
+// Concretely, on the way back out: worldPoint(x, y) = origin + x*(xRef -
+// origin) + y*(yRef - origin), and its extruded twin is that same point
+// plus (extrusionRef - origin) - using `profile2D`'s own original (x, y)
+// values unchanged. uAxis/vAxis kept this way are NOT necessarily unit
+// length (solidFrame's own axes can themselves carry embedded scale from
+// a nested IfcMappedItem - ifcAxis2Placement3DToFrame()'s own "scale"
+// parameter) and the extrusion vector already encodes BOTH direction and
+// depth together, matching exactly what this importer's own `bottom`/
+// `top` arrays, just below, actually use.
+//
+// Guarded by `importExtraParams` (same as every other import-side
+// extraParams capture) and by "only the FIRST extrusion a product's own
+// Representation contains sets this" (a product with more than one
+// IfcExtrudedAreaSolid representation item - uncommon, but not
+// prohibited - keeps just its first one here; every one of its own
+// faces, from every representation item, still imports as real
+// geometry either way, same as today - this key is export-fidelity
+// cargo, not something any face is ever dropped over).
+void ifcCaptureExtrudedAreaSolidShape (ArrayList<float[]> profile2D, IfcFrame solidFrame, PVector extrusionOffset,
+  IfcFrame productFrame, float cx, float cy, float cz, float sx, float sy, float sz) {
+
+  if (!importExtraParams) return;
+
+  JSONObject obj = extraParamsToJSONObject(ifcCurrentProductExtraParams);
+  if (obj.hasKey("ifcShape")) return; // first extrusion wins - this product's own extraParams already carries one
+
+  PVector originLocal = solidFrame.toWorldPoint(0, 0, 0);
+  PVector xRefLocal = solidFrame.toWorldPoint(1, 0, 0);
+  PVector yRefLocal = solidFrame.toWorldPoint(0, 1, 0);
+  PVector extrusionRefLocal = PVector.add(originLocal, extrusionOffset);
+
+  PVector origin = ifcLocalToAppPoint(originLocal, productFrame, cx, cy, cz, sx, sy, sz);
+  PVector xRef = ifcLocalToAppPoint(xRefLocal, productFrame, cx, cy, cz, sx, sy, sz);
+  PVector yRef = ifcLocalToAppPoint(yRefLocal, productFrame, cx, cy, cz, sx, sy, sz);
+  PVector extrusionRef = ifcLocalToAppPoint(extrusionRefLocal, productFrame, cx, cy, cz, sx, sy, sz);
+
+  JSONArray profile = new JSONArray();
+  for (float[] p : profile2D) {
+    JSONArray pt = new JSONArray();
+    pt.append(p[0]);
+    pt.append(p[1]);
+    profile.append(pt);
+  }
+
+  JSONObject shape = new JSONObject();
+  shape.setString("type", "extrudedAreaSolid");
+  shape.setJSONArray("profile", profile);
+  shape.setJSONArray("origin", ifcVectorToJSONArray(origin));
+  shape.setJSONArray("uAxis", ifcVectorToJSONArray(PVector.sub(xRef, origin)));
+  shape.setJSONArray("vAxis", ifcVectorToJSONArray(PVector.sub(yRef, origin)));
+  shape.setJSONArray("extrusion", ifcVectorToJSONArray(PVector.sub(extrusionRef, origin)));
+
+  obj.setJSONObject("ifcShape", shape);
+  ifcCurrentProductExtraParams = extraParamsFromJSONObject(obj);
+}
+
+JSONArray ifcVectorToJSONArray (PVector v) {
+  JSONArray a = new JSONArray();
+  a.append(v.x);
+  a.append(v.y);
+  a.append(v.z);
+  return a;
 }
 
 void ifcProcessRepresentationItem (HashMap<Integer, StepEntity> ents, int itemId, IfcFrame productFrame,

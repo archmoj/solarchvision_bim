@@ -257,6 +257,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "CLEARHOVER": return  __CLEARHOVER__(parts);
     case "EXPORT.OBJ": return  __EXPORT_OBJ__(parts);
     case "EXPORT.DXF": return  __EXPORT_DXF__(parts);
+    case "EXPORT.IFC": return  __EXPORT_IFC__(parts);
     case "EXPORT.KML": return  __EXPORT_KML__(parts);
     case "EXPORT.LAS": return  __EXPORT_LAS__(parts);
     case "EXPORT.PLY": return  __EXPORT_PLY__(parts);

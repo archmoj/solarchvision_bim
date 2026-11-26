@@ -423,6 +423,10 @@ void build_allActions() {
     exportDxf();
   });
 
+  putAction("Export 3D > IFC", () -> {
+    exportIfc();
+  });
+
   putAction("Export 3D > STL", () -> {
     exportStl();
   });

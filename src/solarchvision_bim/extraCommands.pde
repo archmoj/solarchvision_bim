@@ -322,6 +322,12 @@ String __EXPORT_DXF__ (String[] parts) {
     return hint;
 }
 
+String __EXPORT_IFC__ (String[] parts) {
+    String hint = "";
+    exportIfc();
+    return hint;
+}
+
 String __EXPORT_STL__ (String[] parts) {
     String hint = "";
     exportStl();

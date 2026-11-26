@@ -270,6 +270,191 @@ class ImportObjectsIFCTest {
     assertTrue(sawMinY && sawMaxY, "rectangle should be centered: y in [-YDim/2, YDim/2] = [-2, 2]");
   }
 
+  // ================= Step 9: parametric "ifcShape" extraParams capture =======
+
+  @Test
+  void importObjectsIFC_extrudedRectangleProfile_capturesIfcShapeExtraParamsOnEveryFace () throws IOException {
+    Path f = ifcFile("ifc-extrusion-shape-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length);
+
+    for (int fIdx = 0; fIdx < app.allFaces.nodes.length; fIdx++) {
+      processing.data.JSONObject extraParams = app.allFaces.getExtraParamsObject(fIdx);
+      assertTrue(extraParams.hasKey("ifcShape"), "every one of this extrusion's own faces (cap and side alike) should carry the same ifcShape key, face " + fIdx);
+      assertEquals("extrudedAreaSolid", extraParams.getJSONObject("ifcShape").getString("type"));
+    }
+
+    processing.data.JSONObject shape = app.allFaces.getExtraParamsObject(0).getJSONObject("ifcShape");
+
+    // The rectangle profile itself: centered 2x4, so [-1,-2],[1,-2],[1,2],[-1,2].
+    processing.data.JSONArray profile = shape.getJSONArray("profile");
+    assertEquals(4, profile.size());
+    float[][] expectedProfile = {{-1, -2}, {1, -2}, {1, 2}, {-1, 2}};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expectedProfile[i][0], profile.getJSONArray(i).getFloat(0), 0.0001f, "profile point " + i + " x");
+      assertEquals(expectedProfile[i][1], profile.getJSONArray(i).getFloat(1), 0.0001f, "profile point " + i + " y");
+    }
+
+    // origin/uAxis/vAxis/extrusion should exactly reconstruct the same
+    // world-space geometry import_objects_IFC() itself already produced -
+    // see ifcCaptureExtrudedAreaSolidShape()'s own comment for why
+    // worldPoint(x, y) = origin + x*uAxis + y*vAxis is exact, not an
+    // approximation. A flat, unrotated, unscaled extrusion along +Z
+    // (this fixture's own case) keeps this reconstruction simple:
+    // uAxis=(1,0,0), vAxis=(0,1,0), extrusion=(0,0,3), origin=(0,0,0).
+    processing.data.JSONArray origin = shape.getJSONArray("origin");
+    processing.data.JSONArray uAxis = shape.getJSONArray("uAxis");
+    processing.data.JSONArray vAxis = shape.getJSONArray("vAxis");
+    processing.data.JSONArray extrusion = shape.getJSONArray("extrusion");
+
+    assertEquals(0f, origin.getFloat(0), 0.0001f);
+    assertEquals(0f, origin.getFloat(1), 0.0001f);
+    assertEquals(0f, origin.getFloat(2), 0.0001f);
+
+    assertEquals(1f, uAxis.getFloat(0), 0.0001f);
+    assertEquals(0f, uAxis.getFloat(1), 0.0001f);
+    assertEquals(0f, uAxis.getFloat(2), 0.0001f);
+
+    assertEquals(0f, vAxis.getFloat(0), 0.0001f);
+    assertEquals(1f, vAxis.getFloat(1), 0.0001f);
+    assertEquals(0f, vAxis.getFloat(2), 0.0001f);
+
+    assertEquals(0f, extrusion.getFloat(0), 0.0001f);
+    assertEquals(0f, extrusion.getFloat(1), 0.0001f);
+    assertEquals(3f, extrusion.getFloat(2), 0.0001f, "the extrusion vector should encode both direction and Depth=3 together");
+
+    // Reconstructing the bottom-left profile corner (-1,-2) through
+    // worldPoint(x,y) = origin + x*uAxis + y*vAxis should land exactly on
+    // one of the real imported points.
+    float rx = origin.getFloat(0) + expectedProfile[0][0] * uAxis.getFloat(0) + expectedProfile[0][1] * vAxis.getFloat(0);
+    float ry = origin.getFloat(1) + expectedProfile[0][0] * uAxis.getFloat(1) + expectedProfile[0][1] * vAxis.getFloat(1);
+    float rz = origin.getFloat(2) + expectedProfile[0][0] * uAxis.getFloat(2) + expectedProfile[0][1] * vAxis.getFloat(2);
+    boolean foundReconstructedPoint = false;
+    for (int i = 0; i < app.allPoints.getLength(); i++) {
+      if (Math.abs(app.allPoints.getX(i) - rx) < 0.0001f && Math.abs(app.allPoints.getY(i) - ry) < 0.0001f && Math.abs(app.allPoints.getZ(i) - rz) < 0.0001f) {
+        foundReconstructedPoint = true;
+        break;
+      }
+    }
+    assertTrue(foundReconstructedPoint, "reconstructing the profile's own bottom-left corner from ifcShape should land on a real imported point");
+  }
+
+  @Test
+  void importObjectsIFC_extrudedProfilePlacedAndRotated_ifcShapeStillReconstructsTheRealTopFace () throws IOException {
+    // A non-trivial placement (Location + Axis/RefDirection, i.e. a real
+    // local coordinate frame, not the identity default every other
+    // extrusion test above leaves implicit) plus a non-default world-up
+    // (0,0,1) direction - confirms the captured origin/uAxis/vAxis/
+    // extrusion already carry solidFrame's own placement baked in, not
+    // just the profile's own raw (x, y) values.
+    Path f = ifcFile("ifc-extrusion-shape-placed-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,2.);
+        #2=IFCCARTESIANPOINT((5.,1.,0.));
+        #3=IFCDIRECTION((0.,1.,0.));
+        #4=IFCDIRECTION((1.,0.,0.));
+        #5=IFCAXIS2PLACEMENT3D(#2,#3,#4);
+        #6=IFCDIRECTION((0.,0.,1.));
+        #7=IFCEXTRUDEDAREASOLID(#1,#5,#6,4.);
+        #8=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#7));
+        #9=IFCPRODUCTDEFINITIONSHAPE($,$,(#8));
+        #10=IFCWALL('guid-1',$,$,$,$,$,#9);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    processing.data.JSONObject shape = app.allFaces.getExtraParamsObject(0).getJSONObject("ifcShape");
+    processing.data.JSONArray profile = shape.getJSONArray("profile");
+    processing.data.JSONArray origin = shape.getJSONArray("origin");
+    processing.data.JSONArray uAxis = shape.getJSONArray("uAxis");
+    processing.data.JSONArray vAxis = shape.getJSONArray("vAxis");
+    processing.data.JSONArray extrusion = shape.getJSONArray("extrusion");
+
+    // Reconstruct every one of the profile's own 4 corners, both bottom
+    // and top, and confirm each one lands on a real imported point -
+    // the strongest available confirmation that origin/uAxis/vAxis/
+    // extrusion together still exactly describe the real, placed/
+    // rotated geometry, not just the unplaced default case.
+    for (int i = 0; i < profile.size(); i++) {
+      float px = profile.getJSONArray(i).getFloat(0);
+      float py = profile.getJSONArray(i).getFloat(1);
+
+      float bx = origin.getFloat(0) + px * uAxis.getFloat(0) + py * vAxis.getFloat(0);
+      float by = origin.getFloat(1) + px * uAxis.getFloat(1) + py * vAxis.getFloat(1);
+      float bz = origin.getFloat(2) + px * uAxis.getFloat(2) + py * vAxis.getFloat(2);
+      assertTrue(ifcPointExistsAt(bx, by, bz), "reconstructed bottom corner " + i + " should match a real imported point");
+
+      float tx = bx + extrusion.getFloat(0);
+      float ty = by + extrusion.getFloat(1);
+      float tz = bz + extrusion.getFloat(2);
+      assertTrue(ifcPointExistsAt(tx, ty, tz), "reconstructed top corner " + i + " should match a real imported point");
+    }
+  }
+
+  private boolean ifcPointExistsAt (float x, float y, float z) {
+    for (int i = 0; i < app.allPoints.getLength(); i++) {
+      if (Math.abs(app.allPoints.getX(i) - x) < 0.001f && Math.abs(app.allPoints.getY(i) - y) < 0.001f && Math.abs(app.allPoints.getZ(i) - z) < 0.001f) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Test
+  void importObjectsIFC_facetedBrep_doesNotCaptureAnIfcShape_onlyExtrusionsDo () throws IOException {
+    Path f = ifcFile("ifc-facetedbrep-no-shape-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertFalse(app.allFaces.getExtraParamsObject(0).hasKey("ifcShape"), "a B-rep face has no parametric extrusion to capture - see ifcCaptureExtrudedAreaSolidShape()'s own comment");
+  }
+
+  @Test
+  void importObjectsIFC_importExtraParamsOff_suppressesIfcShapeToo () throws IOException {
+    Path f = ifcFile("ifc-extrusion-shape-off-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.importExtraParams = false;
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length);
+    for (int fIdx = 0; fIdx < app.allFaces.nodes.length; fIdx++) {
+      assertEquals("", app.allFaces.getExtraParams(fIdx), "importExtraParams = false: no extraParams at all, ifcShape included");
+    }
+  }
+
   // ================= unsupported geometry: skipped and counted, not guessed ==
 
   @Test
