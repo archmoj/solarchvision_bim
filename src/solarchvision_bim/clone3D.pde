@@ -285,11 +285,18 @@ class Clone3D {
 
     for (int o = 0; o < Select3D.cameraSelection.length; o++) {
       int OBJ_ID = Select3D.cameraSelection[o];
+      String sourceExtraParams = allCameras.getExtraParams(OBJ_ID);
+      allCameras.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allCameras.num - 1, even if options/Type/num were ever changed directly without extraParams kept in lockstep (see solids.pde's cloneSolid() - same reason)
       allCameras.create(
         allCameras.get_posX(OBJ_ID), allCameras.get_posY(OBJ_ID), allCameras.get_posZ(OBJ_ID), allCameras.get_posT(OBJ_ID),
         allCameras.get_rotX(OBJ_ID), allCameras.get_rotY(OBJ_ID), allCameras.get_rotZ(OBJ_ID), allCameras.get_rotT(OBJ_ID),
         allCameras.get_zoom(OBJ_ID), allCameras.get_type(OBJ_ID)
       );
+      // create() alone would default the clone's extraParams to "" - this
+      // duplicate DOES have a single source, OBJ_ID, so this overwrites
+      // that default, same split/merge/duplicate policy as cloneFace()/
+      // clonePolyline()/cloneSolid().
+      allCameras.setExtraParams(allCameras.num - 1, sourceExtraParams);
     }
 
     Select3D.deselect_Cameras();

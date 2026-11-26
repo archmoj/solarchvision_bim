@@ -235,8 +235,10 @@ class Delete3D {
       WIN3D.currentCameraIndex -= shiftBefore;
     }
 
+    allCameras.ensureExtraParamsLength(); // see its own comment (cameras.pde) - guarantees the removeIndices() call below is safe even if options/Type/num were ever changed directly without extraParams kept in lockstep
     allCameras.options = removeIndices(allCameras.options, ids);
     allCameras.Type = removeIndices(allCameras.Type, ids);
+    allCameras.extraParams = removeIndices(allCameras.extraParams, ids);
     allCameras.num -= ids.length;
 
     if (allCameras.num == 0) {

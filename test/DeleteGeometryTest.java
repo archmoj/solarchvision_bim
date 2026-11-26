@@ -387,6 +387,7 @@ class DeleteGeometryTest {
   void selectedCameras_shiftsCurrentCameraDownWhenAnEarlierOneIsDeleted () {
     app.allCameras.options = new float[][]{new float[9], new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0, 0};
+    app.allCameras.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}"};
     app.allCameras.num = 3;
     app.WIN3D.currentCameraIndex = 2;
 
@@ -396,6 +397,9 @@ class DeleteGeometryTest {
 
     assertEquals(1, app.WIN3D.currentCameraIndex); // shifted down by 1, not reset
     assertEquals(2, app.allCameras.num);
+    assertEquals(2, app.allCameras.extraParams.length);
+    assertEquals("{\"i\":1}", app.allCameras.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allCameras.getExtraParams(1));
   }
 
   @Test
@@ -421,6 +425,7 @@ class DeleteGeometryTest {
   void selectedCameras_addsABackDefaultCameraWhenTheLastOneIsDeleted () {
     app.allCameras.options = new float[][]{new float[9]};
     app.allCameras.Type = new int[]{0};
+    app.allCameras.extraParams = new String[]{"{\"i\":0}"};
     app.allCameras.num = 1;
     app.WIN3D.currentCameraIndex = 0;
 
@@ -428,8 +433,12 @@ class DeleteGeometryTest {
 
     app.Delete3D.cameraSelection();
 
-    // num dropped to 0, which triggers add_first() to put one back.
+    // num dropped to 0, which triggers add_first() to put one back - the
+    // re-seeded camera gets a fresh "" extraParams, same as any other
+    // brand-new-from-scratch item (create()'s own default).
     assertEquals(1, app.allCameras.num);
+    assertEquals(1, app.allCameras.extraParams.length);
+    assertEquals("", app.allCameras.getExtraParams(0));
     assertEquals(1, app.allCameras.options.length);
   }
 

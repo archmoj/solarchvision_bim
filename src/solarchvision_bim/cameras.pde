@@ -12,12 +12,22 @@ class Cameras {
   int[] Type;
   int num;
 
+  // Opaque, caller-defined JSON metadata, one entry per camera - "" is the
+  // canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde/polylines.pde/groups.pde/model1Ds.pde/
+  // model2Ds.pde/solids.pde). Parsed lazily, only via
+  // getExtraParamsObject()/setExtraParamsObject() below, never during
+  // to_XML/from_XML or any structural resize.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.num = n;
     this.options = new float [n][9];
     this.Type = new int [n];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     this.add_first();
 
@@ -43,7 +53,42 @@ class Cameras {
     };
     this.options = (float[][]) concat(this.options, TempCamera_options);
 
+    // Blind append, same as every other class's create() - defaults the
+    // new camera's extraParams to "" and does NOT self-heal/guard itself
+    // against extraParams already being out of sync with options/Type/num.
+    // A caller about to index extraParams at [this.num] right after this
+    // call (e.g. the batch clone in clone3D.pde's Cameras()) must call
+    // ensureExtraParamsLength() itself first.
+    this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
+
     this.num += 1;
+  }
+
+
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.num) return;
+    String[] resized = new String[this.num];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
 
@@ -471,6 +516,8 @@ class Cameras {
       txt += nf(this.get_type(i), 0);
 
       XML_setContent(child, txt);
+
+      XML_setString(child, "extraParams", this.getExtraParams(i));
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -485,6 +532,8 @@ class Cameras {
 
     this.options = new float [ni][9];
     this.Type = new int [ni];
+    this.extraParams = new String [ni];
+    java.util.Arrays.fill(this.extraParams, "");
 
     this.num = ni;
 
@@ -503,6 +552,11 @@ class Cameras {
       this.set_rotT(i, float(parts[7]));
       this.set_zoom(i, float(parts[8]));
       this.set_type(i,   int(parts[9]));
+
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

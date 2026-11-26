@@ -119,6 +119,7 @@ class CamerasTest {
   void toXMLThenFromXML_roundTripsEveryColumn () {
     app.allCameras.options = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9}};
     app.allCameras.Type = new int[]{2};
+    app.allCameras.extraParams = new String[]{"{\"preset\":\"walkthrough\"}"};
     app.allCameras.num = 1;
     app.allCameras.displayAll = false;
 
@@ -132,7 +133,131 @@ class CamerasTest {
     assertEquals(1f, fresh.get_posX(0), 0.0001f);
     assertEquals(9f, fresh.get_zoom(0), 0.0001f);
     assertEquals(2, fresh.get_type(0));
+    assertEquals("{\"preset\":\"walkthrough\"}", fresh.getExtraParams(0));
     assertFalse(fresh.displayAll);
+  }
+
+  // ================= extraParams ======================================
+
+  @Test
+  void makeEmpty_setsExtraParamsToEmptyStringForTheDefaultCamera () {
+    app.allCameras.makeEmpty(0); // still ends up with exactly 1 camera, per add_first()
+    assertEquals(1, app.allCameras.extraParams.length);
+    assertEquals("", app.allCameras.getExtraParams(0));
+  }
+
+  @Test
+  void create_defaultsTheNewCamerasExtraParamsToEmptyString () {
+    int numBefore = app.allCameras.num;
+    app.allCameras.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 1);
+    assertEquals("", app.allCameras.getExtraParams(numBefore));
+  }
+
+  @Test
+  void getExtraParams_isDefensiveForNullOrOutOfRangeIndex () {
+    app.allCameras.extraParams = null;
+    assertEquals("", app.allCameras.getExtraParams(0));
+
+    app.allCameras.extraParams = new String[]{"{}"};
+    assertEquals("", app.allCameras.getExtraParams(-1));
+    assertEquals("", app.allCameras.getExtraParams(5));
+  }
+
+  @Test
+  void setExtraParamsThenGetExtraParams_roundTripsTheRawString () {
+    app.allCameras.extraParams = new String[]{""};
+    app.allCameras.setExtraParams(0, "{\"preset\":\"aerial\"}");
+    assertEquals("{\"preset\":\"aerial\"}", app.allCameras.getExtraParams(0));
+  }
+
+  @Test
+  void ensureExtraParamsLength_padsShortArrayWithEmptyStringsAndPreservesExisting () {
+    app.allCameras.options = new float[][]{new float[9], new float[9]};
+    app.allCameras.Type = new int[]{0, 0};
+    app.allCameras.num = 2;
+    app.allCameras.extraParams = new String[]{"{\"a\":1}"};
+
+    app.allCameras.ensureExtraParamsLength();
+
+    assertEquals(2, app.allCameras.extraParams.length);
+    assertEquals("{\"a\":1}", app.allCameras.getExtraParams(0));
+    assertEquals("", app.allCameras.getExtraParams(1));
+  }
+
+  @Test
+  void ensureExtraParamsLength_isANoOpWhenAlreadyTheRightLength () {
+    app.allCameras.options = new float[][]{new float[9]};
+    app.allCameras.Type = new int[]{0};
+    app.allCameras.num = 1;
+    app.allCameras.extraParams = new String[]{"{\"a\":1}"};
+
+    app.allCameras.ensureExtraParamsLength();
+
+    assertEquals("{\"a\":1}", app.allCameras.getExtraParams(0));
+    assertEquals(1, app.allCameras.extraParams.length);
+  }
+
+  @Test
+  void getExtraParamsObject_parsesValidJSONIntoAJSONObject () {
+    app.allCameras.extraParams = new String[]{"{\"preset\":\"walkthrough\",\"count\":3}"};
+
+    processing.data.JSONObject obj = app.allCameras.getExtraParamsObject(0);
+
+    assertEquals("walkthrough", obj.getString("preset"));
+    assertEquals(3, obj.getInt("count"));
+  }
+
+  @Test
+  void getExtraParamsObject_collapsesEmptyOrMissingOrBadDataToAnEmptyObject () {
+    app.allCameras.extraParams = new String[]{"", null, "not valid json"};
+
+    assertEquals(0, app.allCameras.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allCameras.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allCameras.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToEmptyString () {
+    app.allCameras.extraParams = new String[]{"{\"preset\":\"aerial\"}"};
+    processing.data.JSONObject empty = new processing.data.JSONObject();
+    app.allCameras.setExtraParamsObject(0, empty);
+    assertEquals("", app.allCameras.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObjectThenGetExtraParamsObject_roundTripsViaJSON () {
+    app.allCameras.extraParams = new String[]{""};
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("preset", "aerial");
+    obj.setInt("count", 7);
+
+    app.allCameras.setExtraParamsObject(0, obj);
+    processing.data.JSONObject fresh = app.allCameras.getExtraParamsObject(0);
+
+    assertEquals("aerial", fresh.getString("preset"));
+    assertEquals(7, fresh.getInt("count"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all - no
+    // "extraParams" attribute on the <item> element whatsoever, not even
+    // an empty one. XML_getString()'s own 3-arg overload (xmlHelpers.pde)
+    // is what makes this fall back to "" instead of null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allCameras.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("1,2,3,4,5,6,7,8,9,2");
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Cameras fresh = app.new Cameras();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.num);
+    assertEquals("", fresh.getExtraParams(0));
   }
 
   // ================= add_first =============================================

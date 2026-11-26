@@ -348,6 +348,8 @@ class Clone3DTest {
     app.allCameras.Type = new int[]{0};
     app.allCameras.num = 1;
     app.allCameras.options[0][0] = 5; // posX
+    // Deliberately no extraParams set here - confirms Cameras()'s own
+    // ensureExtraParamsLength() guard, not just the happy path below.
 
     app.Select3D.cameraSelection = new int[]{0};
 
@@ -356,6 +358,23 @@ class Clone3DTest {
     assertEquals(2, app.allCameras.num);
     assertArrayEquals(new int[]{1}, app.Select3D.cameraSelection);
     assertEquals(5f, app.allCameras.options[1][0], 0.0001f);
+    assertEquals(2, app.allCameras.extraParams.length);
+    assertEquals("", app.allCameras.getExtraParams(1));
+  }
+
+  @Test
+  void camerasBatch_inheritsExtraParamsFromEachSourceCamera () {
+    app.allCameras.options = new float[][]{new float[9]};
+    app.allCameras.Type = new int[]{0};
+    app.allCameras.extraParams = new String[]{"{\"preset\":\"aerial\"}"};
+    app.allCameras.num = 1;
+
+    app.Select3D.cameraSelection = new int[]{0};
+
+    app.Clone3D.Cameras(true);
+
+    assertEquals(2, app.allCameras.extraParams.length);
+    assertEquals("{\"preset\":\"aerial\"}", app.allCameras.getExtraParams(1));
   }
 
   // ================= Groups (a full integration test) ===================
