@@ -261,6 +261,7 @@ class PolylinesTest {
   void toXMLThenFromXML_roundTripsNodesOptionsAndDisplayAll () {
     app.allPolylines.nodes = new int[][]{{5, 6, 7}};
     app.allPolylines.options = new int[][]{{3, 2, 1, 1, 4, 1, 1, 0}};
+    app.allPolylines.extraParams = new String[]{"{\"name\":\"fence\"}"};
     app.allPolylines.displayAll = false;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -273,6 +274,7 @@ class PolylinesTest {
     assertArrayEquals(new int[]{5, 6, 7}, fresh.nodes[0]);
     assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1, 1, 0}, fresh.options[0]);
     assertEquals(app.allPolylines.CURVE_SPLINE, fresh.getCurveType(0));
+    assertEquals("{\"name\":\"fence\"}", fresh.getExtraParams(0));
     assertFalse(fresh.displayAll);
   }
 
@@ -308,4 +310,100 @@ class PolylinesTest {
 
     assertEquals(0, fresh.getIsArc(0));
   }
+
+  // ================= extraParams =======================================
+
+  @Test
+  void makeEmpty_defaultsExtraParamsToEmptyStringForEveryRow () {
+    app.allPolylines.makeEmpty(3);
+    assertEquals(3, app.allPolylines.extraParams.length);
+    assertEquals("", app.allPolylines.getExtraParams(0));
+    assertEquals("", app.allPolylines.getExtraParams(1));
+    assertEquals("", app.allPolylines.getExtraParams(2));
+  }
+
+  @Test
+  void create_defaultsTheNewPolylinesExtraParamsToEmptyString () {
+    app.allPolylines.create(new int[]{0, 1, 2});
+    assertEquals("", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void getSetExtraParams_roundTripsTheRawString () {
+    app.allPolylines.makeEmpty(1);
+    app.allPolylines.setExtraParams(0, "{\"name\":\"fence\"}");
+    assertEquals("{\"name\":\"fence\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void getExtraParamsObject_parsesTheStoredJSON () {
+    app.allPolylines.makeEmpty(1);
+    app.allPolylines.setExtraParams(0, "{\"name\":\"fence\",\"height\":2}");
+    processing.data.JSONObject obj = app.allPolylines.getExtraParamsObject(0);
+    assertEquals("fence", obj.getString("name"));
+    assertEquals(2, obj.getInt("height"));
+  }
+
+  @Test
+  void getExtraParamsObject_isAnEmptyObject_whenTheFieldIsEmptyMissingOrBadData () {
+    app.allPolylines.makeEmpty(3);
+    app.allPolylines.setExtraParams(0, "");
+    app.allPolylines.setExtraParams(1, "{}");
+    app.allPolylines.setExtraParams(2, "not json");
+
+    assertEquals(0, app.allPolylines.getExtraParamsObject(0).keys().size());
+    assertEquals(0, app.allPolylines.getExtraParamsObject(1).keys().size());
+    assertEquals(0, app.allPolylines.getExtraParamsObject(2).keys().size());
+  }
+
+  @Test
+  void setExtraParamsObject_canonicalizesAnEmptyObjectBackToTheEmptyString () {
+    app.allPolylines.makeEmpty(1);
+    app.allPolylines.setExtraParamsObject(0, new processing.data.JSONObject());
+    assertEquals("", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void setExtraParamsObject_thenGetExtraParamsObject_roundTrips () {
+    app.allPolylines.makeEmpty(1);
+    processing.data.JSONObject obj = new processing.data.JSONObject();
+    obj.setString("name", "fence");
+    obj.setInt("height", 2);
+    app.allPolylines.setExtraParamsObject(0, obj);
+
+    processing.data.JSONObject result = app.allPolylines.getExtraParamsObject(0);
+    assertEquals("fence", result.getString("name"));
+    assertEquals(2, result.getInt("height"));
+  }
+
+  @Test
+  void fromXML_defaultsExtraParamsToEmptyString_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before extraParams existed at all -
+    // no "extraParams" attribute on the <item> element whatsoever, not
+    // even an empty one. XML_getString()'s own 3-arg overload
+    // (xmlHelpers.pde) is what makes this fall back to "" instead of
+    // null.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allPolylines.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,1,2");
+    child.setInt("material", 0);
+    child.setInt("tessellation", 0);
+    child.setInt("layer", 0);
+    child.setInt("visibility", 1);
+    child.setInt("weight", 0);
+    child.setInt("close", 0);
+    child.setInt("curveType", 0);
+    child.setInt("isArc", 0);
+    // deliberately no "extraParams" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Polylines fresh = app.new Polylines();
+    fresh.from_XML(root);
+
+    assertEquals("", fresh.getExtraParams(0));
+  }
+
 }

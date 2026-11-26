@@ -36,12 +36,22 @@ class Polylines {
   // subdivided).
   float[][] arcParams;
 
+  // Opaque, caller-defined JSON metadata, one entry per item - "" is the
+  // canonical "nothing here" value (see extraParamsHelpers.pde's own
+  // comment, shared with faces.pde). Parsed lazily, only via
+  // getExtraParamsObject()/setExtraParamsObject() below, never during
+  // to_XML/from_XML or any structural resize, so this stays a plain
+  // String[] exactly parallel to nodes/options/arcParams.
+  String[] extraParams;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.nodes = new int [n][0];
     this.options = new int [n][8];
     this.arcParams = new float [n][7];
+    this.extraParams = new String [n];
+    java.util.Arrays.fill(this.extraParams, "");
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -132,6 +142,42 @@ class Polylines {
     this.arcParams[n] = params;
   }
 
+  // Defensive against extraParams being shorter than nodes/options (or
+  // null) at the time of the call - never throws, just reads as "no
+  // extra params" past the end, same as a genuinely-empty entry would
+  // (see faces.pde's own identical getExtraParams()/comment).
+  String getExtraParams (int n) {
+    if (this.extraParams == null || n < 0 || n >= this.extraParams.length) return "";
+    return this.extraParams[n];
+  }
+
+  void setExtraParams (int n, String json) {
+    this.extraParams[n] = json;
+  }
+
+  // Pads (or, in principle, trims) extraParams to exactly this.nodes'
+  // own current length, filling any new/missing entries with "" - same
+  // self-healing purpose as faces.pde's own ensureExtraParamsLength().
+  void ensureExtraParamsLength () {
+    if (this.extraParams != null && this.extraParams.length == this.nodes.length) return;
+    String[] resized = new String[this.nodes.length];
+    int copyLen = (this.extraParams == null) ? 0 : min(this.extraParams.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = "";
+    this.extraParams = resized;
+  }
+
+  // Convenience wrappers around extraParamsHelpers.pde's own shared
+  // parse/stringify - nothing else in this file should call
+  // JSONObject.parse()/extraParamsFromJSONObject() directly.
+  JSONObject getExtraParamsObject (int n) {
+    return extraParamsToJSONObject(this.getExtraParams(n));
+  }
+
+  void setExtraParamsObject (int n, JSONObject obj) {
+    this.setExtraParams(n, extraParamsFromJSONObject(obj));
+  }
+
 
 
   void beginNewPolyline () {
@@ -178,6 +224,12 @@ class Polylines {
       };
 
       this.nodes = (int[][]) concat(this.nodes, newPolyline_nodes);
+
+      // New-from-scratch polyline - no source to inherit extraParams
+      // from, so it gets this field's own "nothing here" default (""),
+      // same as current_Material/etc. above are this class's own
+      // current defaults, not copied from anywhere.
+      this.extraParams = (String[]) concat(this.extraParams, new String[]{ "" });
     }
 
     if (allGroups.num > 0) allGroups.Polylines[allGroups.num - 1][1] = this.nodes.length - 1;
@@ -801,6 +853,7 @@ class Polylines {
       XML_setInt(child, "close", this.getClose(i));
       XML_setInt(child, "curveType", this.getCurveType(i));
       XML_setInt(child, "isArc", this.getIsArc(i));
+      XML_setString(child, "extraParams", this.getExtraParams(i));
       if (this.getIsArc(i) == 1) {
         float[] arcP = this.getArcParams(i);
         XML_setFloat(child, "arcCX", arcP[0]);
@@ -846,6 +899,10 @@ class Polylines {
       this.setClose(i, children[i].getInt("close"));
       this.setCurveType(i, children[i].getInt("curveType"));
       this.setIsArc(i, children[i].getInt("isArc"));
+      // Falls back to "" (this field's own "nothing here" default) for a
+      // save file written before extraParams existed at all - see the
+      // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
+      this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
       if (this.getIsArc(i) == 1) {
         this.setArcParams(i, new float[] {
           XML_getFloat(children[i], "arcCX"),

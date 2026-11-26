@@ -84,11 +84,13 @@ class Clone3DTest {
     app.allVertices = new float[][]{{1, 1, 1}};
     app.allFaces.nodes = new int[][]{{0}};
     app.allFaces.options = new int[][]{{7, 1, 2, 1, 0, 0}}; // material=7, tessellation=1, layer=2, visible
+    app.allFaces.extraParams = new String[]{"{\"name\":\"roof\"}"};
 
     app.Clone3D.cloneFace(0, new HashMap<Integer, Integer>());
 
     assertEquals(2, app.allFaces.nodes.length);
     assertArrayEquals(new int[]{7, 1, 2, 1, 0, 0}, app.allFaces.options[1]);
+    assertEquals("{\"name\":\"roof\"}", app.allFaces.getExtraParams(1), "the duplicate inherits its one source face's extraParams verbatim");
   }
 
   @Test
@@ -103,6 +105,7 @@ class Clone3DTest {
     app.allVertices = new float[][]{{1, 1, 1}};
     app.allPolylines.nodes = new int[][]{{0}};
     app.allPolylines.options = new int[][]{{3, 0, 1, 1, 5, 1, 1, 0}}; // weight=5, closed=1, curveType=CURVE_SPLINE, isArc=0
+    app.allPolylines.extraParams = new String[]{"{\"name\":\"fence\"}"};
 
     app.Clone3D.clonePolyline(0, new HashMap<Integer, Integer>());
 
@@ -110,6 +113,7 @@ class Clone3DTest {
     assertArrayEquals(new int[]{3, 0, 1, 1, 5, 1, 1, 0}, app.allPolylines.options[1]);
     assertEquals(app.allPolylines.CURVE_SPLINE, app.allPolylines.getCurveType(1));
     assertEquals(0, app.allPolylines.getIsArc(1));
+    assertEquals("{\"name\":\"fence\"}", app.allPolylines.getExtraParams(1), "the duplicate inherits its one source polyline's extraParams verbatim");
   }
 
   @Test

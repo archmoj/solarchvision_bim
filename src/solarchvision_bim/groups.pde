@@ -383,7 +383,14 @@ class Groups {
             current_Layer = allFaces.getLayer(f);
             current_Visibility = allFaces.getVisibility(f);
 
+            String sourceExtraParams = allFaces.getExtraParams(f);
+            allFaces.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allFaces.nodes.length - 1 (see clone3D.pde's cloneFace() - same reason)
             allFaces.create(newFace_nodes);
+            // This is a duplicate of f (fresh vertices, same options) -
+            // create() alone would default extraParams to "", so this
+            // overwrites that with f's own, same policy as clone3D.pde's
+            // cloneFace().
+            allFaces.setExtraParams(allFaces.nodes.length - 1, sourceExtraParams);
           }
         }
       }
@@ -452,7 +459,14 @@ class Groups {
             current_IsArc = allPolylines.getIsArc(f);
             if (current_IsArc == 1) current_ArcParams = allPolylines.getArcParams(f);
 
+            String sourceExtraParams = allPolylines.getExtraParams(f);
+            allPolylines.ensureExtraParamsLength(); // same reason as the Faces branch above
             allPolylines.create(newPolyline_nodes);
+            // Same duplicate-inherits-from-its-one-source policy as
+            // clone3D.pde's clonePolyline() - create() alone would
+            // default extraParams to "", so this overwrites that with
+            // f's own.
+            allPolylines.setExtraParams(allPolylines.nodes.length - 1, sourceExtraParams);
           }
         }
       }

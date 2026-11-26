@@ -296,6 +296,45 @@ class GroupsTest {
   }
 
   @Test
+  void groupSelection_faceCategoryCloneInheritsTheSourceFacesExtraParams () {
+    // Same clone-then-delete-original fixture as
+    // groupSelection_faceCategoryClonesVerticesIntoANewGroupAndDeletesTheOriginalFace
+    // above - here just confirming the surviving clone's extraParams,
+    // not just its nodes/options.
+    app.allVertices = new float[][]{{1, 1, 1}, {2, 2, 2}};
+    app.allFaces.nodes = new int[][]{{0, 1}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.allFaces.extraParams = new String[]{"{\"name\":\"roof\"}"};
+
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.faceSelection = new int[]{0};
+
+    app.allGroups.group_Selection(1);
+
+    assertEquals(1, app.allFaces.nodes.length); // the original was deleted, only the clone remains
+    assertEquals("{\"name\":\"roof\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void groupSelection_polylineCategoryCloneInheritsTheSourcePolylinesExtraParams () {
+    // Same clone-then-delete-original fixture as
+    // groupSelection_polylineCategoryClonesVerticesTheSameWayFacesDoes
+    // above - here just confirming the surviving clone's extraParams.
+    app.allVertices = new float[][]{{1, 1, 1}, {2, 2, 2}};
+    app.allPolylines.nodes = new int[][]{{0, 1}};
+    app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}};
+    app.allPolylines.extraParams = new String[]{"{\"name\":\"fence\"}"};
+
+    app.currentObjectCategory = app.ObjectCategory.POLYLINE;
+    app.Select3D.polylineSelection = new int[]{0};
+
+    app.allGroups.group_Selection(1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"name\":\"fence\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
   void groupSelection_model1DCategoryClonesAttributesWithNoVertexInvolvement () {
     app.allModel1Ds.f_data = new float[][]{{5, 0, 0, 2, 10, 0, 0, 0, 0, 0, 0}};
     app.allModel1Ds.i_data = new int[][]{{1, 2, 3}};

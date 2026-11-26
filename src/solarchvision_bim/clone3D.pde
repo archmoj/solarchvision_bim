@@ -60,7 +60,16 @@ class Clone3D {
     current_Tessellation = allFaces.getTessellation(f);
     current_Layer = allFaces.getLayer(f);
     current_Visibility = allFaces.getVisibility(f);
+    String sourceExtraParams = allFaces.getExtraParams(f);
+    allFaces.ensureExtraParamsLength(); // so create()'s own append below lands at exactly allFaces.nodes.length - 1, even if nodes/options were ever replaced directly without extraParams kept in lockstep
     allFaces.create(newNodes);
+    // create() always defaults the new face's extraParams to "" (it has
+    // no source to inherit from in the general case) - a duplicate DOES
+    // have one, namely f itself, so this is the one place that overwrites
+    // that default, copying the source verbatim per this feature's own
+    // split/merge/duplicate policy (see faces.pde's own extraParams
+    // comment).
+    allFaces.setExtraParams(allFaces.nodes.length - 1, sourceExtraParams);
   }
 
   void clonePolyline (int f, HashMap<Integer, Integer> vertexMap) {
@@ -75,7 +84,13 @@ class Clone3D {
     current_CurveType = allPolylines.getCurveType(f);
     current_IsArc = allPolylines.getIsArc(f);
     if (current_IsArc == 1) current_ArcParams = allPolylines.getArcParams(f);
+    String sourceExtraParams = allPolylines.getExtraParams(f);
+    allPolylines.ensureExtraParamsLength(); // same reason as cloneFace() above
     allPolylines.create(newNodes);
+    // Same duplicate-inherits-from-its-one-source policy as cloneFace()
+    // above - create() itself has no source to copy from, so this
+    // overwrites its "" default with f's own extraParams.
+    allPolylines.setExtraParams(allPolylines.nodes.length - 1, sourceExtraParams);
   }
 
   // randomizeRotationAndSeed matches the extra rot/seed randomization that

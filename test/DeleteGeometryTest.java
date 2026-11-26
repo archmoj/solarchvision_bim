@@ -148,6 +148,26 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{3}, app.allFaces.nodes[2]);
   }
 
+  @Test
+  void selectedFaces_compactsExtraParamsInLockstepWithNodesAndOptions () {
+    app.allVertices = new float[4][3];
+    app.allFaces.nodes = new int[][]{{0}, {1}, {2}, {3}};
+    app.allFaces.options = new int[][]{{0}, {1}, {2}, {3}};
+    app.allFaces.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 3};
+
+    app.Select3D.faceSelection = new int[]{1};
+
+    app.Delete3D.faceSelection();
+
+    assertEquals(3, app.allFaces.extraParams.length);
+    assertEquals("{\"i\":0}", app.allFaces.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allFaces.getExtraParams(1));
+    assertEquals("{\"i\":3}", app.allFaces.getExtraParams(2));
+  }
+
   // --- polylineSelection ---------------------------------------------
   //
   // Structurally identical to faceSelection above, just against
@@ -175,6 +195,26 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{0}, app.allPolylines.nodes[0]);
     assertArrayEquals(new int[]{2}, app.allPolylines.nodes[1]);
     assertArrayEquals(new int[]{3}, app.allPolylines.nodes[2]);
+  }
+
+  @Test
+  void selectedPolylines_compactsExtraParamsInLockstepWithNodesAndOptions () {
+    app.allVertices = new float[4][3];
+    app.allPolylines.nodes = new int[][]{{0}, {1}, {2}, {3}};
+    app.allPolylines.options = new int[][]{{0}, {1}, {2}, {3}};
+    app.allPolylines.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Polylines[0] = new int[]{0, 3};
+
+    app.Select3D.polylineSelection = new int[]{1};
+
+    app.Delete3D.polylineSelection();
+
+    assertEquals(3, app.allPolylines.extraParams.length);
+    assertEquals("{\"i\":0}", app.allPolylines.getExtraParams(0));
+    assertEquals("{\"i\":2}", app.allPolylines.getExtraParams(1));
+    assertEquals("{\"i\":3}", app.allPolylines.getExtraParams(2));
   }
 
   // --- groupSelection (a full integration test) -----------------------
@@ -212,6 +252,38 @@ class DeleteGeometryTest {
     // Faces range shifted down by the 2 faces removed ahead of it.
     assertEquals(1, app.allGroups.num);
     assertArrayEquals(new int[]{0, 1}, app.allGroups.Faces[0]); // this is (former) group 1's row
+  }
+
+  @Test
+  void selectedGroups_cascadesIntoTheGroupsOwnPolylinesAndCompactsExtraParamsTheSameWay () {
+    // Same splice as selectedGroups_cascadesIntoTheGroupsOwnFacesThenRemovesTheGroupItself
+    // above, against allPolylines instead, confirming extraParams is kept
+    // in lockstep by the subset()/concat() splice in groupSelection()'s
+    // Polylines branch.
+    app.allVertices = new float[4][3];
+    app.allPolylines.nodes = new int[][]{{0}, {1}, {2}, {3}};
+    app.allPolylines.options = new int[][]{{0}, {1}, {2}, {3}};
+    app.allPolylines.extraParams = new String[]{"{\"i\":0}", "{\"i\":1}", "{\"i\":2}", "{\"i\":3}"};
+
+    app.allGroups.makeEmpty(2);
+    app.allGroups.Polylines[0] = new int[]{0, 1}; // group 0 owns polylines 0-1 - being deleted
+    app.allGroups.Polylines[1] = new int[]{2, 3}; // group 1 owns polylines 2-3 - survives, shifted down
+
+    for (int[][] ranges : new int[][][]{
+      app.allGroups.Faces, app.allGroups.Model1Ds, app.allGroups.Model2Ds, app.allGroups.Solids
+    }) {
+      ranges[0] = new int[]{0, -1};
+      ranges[1] = new int[]{0, -1};
+    }
+
+    app.Select3D.groupSelection = new int[]{0};
+
+    app.Delete3D.groupSelection();
+
+    assertEquals(2, app.allPolylines.nodes.length);
+    assertEquals(2, app.allPolylines.extraParams.length);
+    assertEquals("{\"i\":2}", app.allPolylines.getExtraParams(0));
+    assertEquals("{\"i\":3}", app.allPolylines.getExtraParams(1));
   }
 
   // --- cameraSelection (a full integration test) ----------------------

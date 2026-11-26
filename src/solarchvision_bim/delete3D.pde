@@ -384,8 +384,11 @@ class Delete3D {
       }
     }
 
+    allPolylines.ensureExtraParamsLength(); // see its own comment (polylines.pde) - guarantees the removeIndices() call below is safe even if nodes/options were ever set up directly without extraParams kept in lockstep
+
     allPolylines.nodes = removeIndices(allPolylines.nodes, ids);
     allPolylines.options = removeIndices(allPolylines.options, ids);
+    allPolylines.extraParams = removeIndices(allPolylines.extraParams, ids);
 
     endScene3DChange();
   }
@@ -448,6 +451,8 @@ class Delete3D {
             allGroups.Polylines[i][j] -= 1 + endPolyline - startPolyline;
           }
         }
+        allPolylines.ensureExtraParamsLength(); // see its own comment (polylines.pde) - guarantees the subset() calls below are safe even if nodes/options were replaced directly somewhere without extraParams kept in lockstep
+
         int[][] startList = (int[][]) subset(allPolylines.nodes, 0, startPolyline);
         int[][] endList = (int[][]) subset(allPolylines.nodes, endPolyline + 1);
         allPolylines.nodes = (int[][]) concat(startList, endList);
@@ -455,6 +460,15 @@ class Delete3D {
         int[][] startListO = (int[][]) subset(allPolylines.options, 0, startPolyline);
         int[][] endListO = (int[][]) subset(allPolylines.options, endPolyline + 1);
         allPolylines.options = (int[][]) concat(startListO, endListO);
+
+        // extraParams has to be spliced the exact same way, or its
+        // length falls out of step with nodes/options and every
+        // polyline after this range would read/write the wrong
+        // extraParams from then on (see this file's own String[]
+        // removeIndices() overload and its comment).
+        String[] startListE = (String[]) subset(allPolylines.extraParams, 0, startPolyline);
+        String[] endListE = (String[]) subset(allPolylines.extraParams, endPolyline + 1);
+        allPolylines.extraParams = (String[]) concat(startListE, endListE);
       }
 
       int startModel1Ds = allGroups.getStart_Model1D(OBJ_ID);
