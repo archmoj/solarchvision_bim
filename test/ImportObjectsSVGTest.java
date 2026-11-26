@@ -392,7 +392,7 @@ class ImportObjectsSVGTest {
     assertEquals(0, app.allFaces.nodes.length);
   }
 
-  // ================= Step 4: extraParams captured from "id" =========
+  // ================= extraParams captured from "id" =========
 
   @Test
   void importObjectsSVG_filledPathWithId_capturesItsOwnIdAsExtraParams () throws IOException {

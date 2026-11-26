@@ -113,8 +113,8 @@
 // Face's/Polyline's own extraParams string is non-empty, it's written
 // out as that same entity's own XDATA (one 1001 application-name/1000
 // string-value pair, under the app name "SOLARCHVISION") - the write-
-// side counterpart to importDxf.pde's own Step 6 capture
-// (dxfEntityToExtraParams()). See exportDxfWriteXdata()'s own comment
+// side counterpart to importDxf.pde's own handle/XDATA extraParams
+// capture (dxfEntityToExtraParams()). See exportDxfWriteXdata()'s own comment
 // for exactly which physical record each entity kind's own XDATA lands
 // on (not always the entity the geometry itself is named after - a
 // polyface mesh's own extraParams goes on each face-definition VERTEX,

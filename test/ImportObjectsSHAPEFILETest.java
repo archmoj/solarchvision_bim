@@ -527,7 +527,7 @@ class ImportObjectsSHAPEFILETest {
     assertDoesNotThrow(() -> doImport(f));
   }
 
-  // ================= Step 3: extraParams captured from the sibling .dbf =========
+  // ================= extraParams captured from the sibling .dbf =========
 
   @Test
   void importObjectsSHAPEFILE_polygon_capturesItsOwnDbfAttributesAsExtraParams () throws IOException {

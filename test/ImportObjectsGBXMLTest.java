@@ -677,7 +677,7 @@ class ImportObjectsGBXMLTest {
     });
   }
 
-  // ================= Step 5: extraParams captured from the Surface's own id =====
+  // ================= extraParams captured from the Surface's own id =====
 
   @Test
   void importObjectsGBXML_surface_capturesItsOwnIdAsExtraParams () throws IOException {

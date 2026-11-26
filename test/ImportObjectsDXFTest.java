@@ -559,7 +559,7 @@ class ImportObjectsDXFTest {
     assertEquals(2, app.allPolylines.getMaterial(1));
   }
 
-  // ================= Step 4: extraParams captured from the entity's own layer ====
+  // ================= extraParams captured from the entity's own layer ============
 
   @Test
   void importObjectsDXF_3dFace_capturesItsOwnLayerAsExtraParams () throws IOException {
@@ -619,7 +619,7 @@ class ImportObjectsDXFTest {
 
     assertEquals(1, app.allFaces.nodes.length);
     // No layer group (8) on this entity, but dxfHandleEntity()'s own
-    // canStartGeometry block (Step 4) still defaults dxfCurrentLayer to
+    // canStartGeometry block still defaults dxfCurrentLayer to
     // "0" - DXF's own default layer - so "layer" is present here too,
     // same as it always has been; "handle" is simply layered on top of
     // it, same split-into-object-then-check-each-key convention the
@@ -721,7 +721,7 @@ class ImportObjectsDXFTest {
     // QCAD's own 1001 block here has no 1000 string under it at all (just
     // a 1070 integer) - the whole "QCAD" key, and "xdata" itself, should
     // be absent entirely, not present as an empty array/object. "layer"
-    // still defaults to "0" (Step 4's own canStartGeometry default, see
+    // still defaults to "0" (canStartGeometry's own default, see
     // the handle-only test above), so the object isn't empty, but it
     // carries no "xdata" key.
     Path f = dxfFile("dxf-3dface-xdata-empty-app-test", dxfLines(

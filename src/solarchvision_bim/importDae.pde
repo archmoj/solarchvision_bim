@@ -333,7 +333,7 @@ void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
     if (daeCycleMaterial) current_Material = 1 + (current_Material % 8);
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-    // Step 5's own DAE capture - the instancing node's own "name"/"id"
+    // This DAE importer's own extraParams capture - the instancing node's own "name"/"id"
     // (preferred, since the same <geometry> can be instanced by several
     // differently-named <node>s, same "instance vs definition" split
     // glbNameToExtraParams()'s own comment, importGlb.pde, makes for its

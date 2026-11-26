@@ -564,7 +564,7 @@ class ImportObjectsDAETest {
     });
   }
 
-  // ================= Step 5: extraParams captured from node/geometry name =======
+  // ================= extraParams captured from node/geometry name =======
 
   @Test
   void importObjectsDAE_triangles_capturesTheInstancingNodesOwnNameAsExtraParams () throws IOException {

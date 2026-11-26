@@ -128,7 +128,7 @@ void geojsonNoteSkipped (String reason) {
   geojsonImportSkippedReasons.put(reason, (prior == null ? 0 : prior) + 1);
 }
 
-// Shared Step 3 entry point: builds the raw extraParams string this
+// Shared extraParams entry point: builds the raw extraParams string this
 // shared core's own geojsonEmitLineStringFromPoints()/
 // geojsonEmitPolygonFromRings() set current_ExtraParams to (Faces/
 // Polylines' own ambient-global mechanism, globalVariables.pde/faces.

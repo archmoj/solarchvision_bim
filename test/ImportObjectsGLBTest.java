@@ -564,7 +564,7 @@ class ImportObjectsGLBTest {
     });
   }
 
-  // ================= Step 5: extraParams captured from node/mesh "name" =========
+  // ================= extraParams captured from node/mesh "name" =========
 
   @Test
   void importObjectsGLB_oneTriangleMesh_capturesTheOwningNodesOwnNameAsExtraParams () throws IOException {

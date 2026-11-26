@@ -314,7 +314,7 @@ class ImportObjectsKMLTest {
     assertDoesNotThrow(() -> doImport(f));
   }
 
-  // ================= Step 3: extraParams captured from ExtendedData =============
+  // ================= extraParams captured from ExtendedData =============
 
   @Test
   void importObjectsKML_polygonPlacemark_capturesItsOwnExtendedDataAsExtraParams () throws IOException {

@@ -334,8 +334,8 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
     }
   }
 
-  // Step 4's own DXF capture (layer) plus Step 6's own (handle/XDATA) -
-  // every entity dispatched below that goes on to create a Face/Polyline
+  // This DXF importer's own layer-based extraParams capture plus its
+  // handle/XDATA capture - every entity dispatched below that goes on to create a Face/Polyline
   // (3DFACE directly; LINE/LWPOLYLINE/CIRCLE/ARC while dxfImportCurves is
   // true; VERTEX/SEQEND for the POLYLINE currently being read) picks up
   // this combined extraParams, set right before dispatch and reset right
@@ -393,7 +393,7 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
 // pde/importSvg.pde) already follow for their own formats. Kept as its
 // own small function (rather than folded into dxfEntityToExtraParams()
 // below) since it's still the one piece tests/comments elsewhere refer
-// to as "Step 4's own" capture.
+// to as this importer's own layer-based extraParams capture.
 String dxfLayerToExtraParams (String layer) {
   if (!importExtraParams || layer == null || layer.trim().length() == 0) return "";
   JSONObject obj = new JSONObject();
@@ -401,8 +401,8 @@ String dxfLayerToExtraParams (String layer) {
   return obj.toString();
 }
 
-// Step 6's own DXF capture, layered on top of Step 4's layer capture
-// above: this entity's own handle (group code 5 - DXF's own unique-per-
+// This DXF importer's own handle/XDATA extraParams capture, layered on
+// top of its layer capture above: this entity's own handle (group code 5 - DXF's own unique-per-
 // entity hex ID) and XDATA (any run of group 1001 "application name"
 // followed by that application's own group 1000 string values - DXF's
 // mechanism for a third-party app, e.g. a GIS or BIM tool, to attach its
@@ -416,9 +416,8 @@ String dxfLayerToExtraParams (String layer) {
 // XDATA's own full grammar is large (1010/1020/1030 points, 1040 reals,
 // 1070/1071 integers, 1002 "{"/"}" nesting markers, ...) - only the
 // 1000 string values under each 1001 application name are read here,
-// collected into a JSON array per application name, same "optional,
-// best-effort" scope this whole step is named for (see the user-facing
-// plan this implements: "Step 6 (DXF XDATA/handle, optional)"). An
+// collected into a JSON array per application name, the same optional,
+// best-effort scope this whole feature already takes elsewhere. An
 // application name with no own 1000 strings under it (e.g. one that
 // only ever writes 1070 integers) is dropped entirely rather than kept
 // as an empty array - same "don't emit an empty placeholder" spirit

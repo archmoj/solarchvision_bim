@@ -1465,7 +1465,8 @@ PVector ifcLocalToAppPoint (PVector local, IfcFrame productFrame,
 ArrayList<float[]> ifcPendingPoints = new ArrayList<float[]>();
 ArrayList<int[]> ifcPendingFaceNodes = new ArrayList<int[]>();
 ArrayList<int[]> ifcPendingFaceOptions = new ArrayList<int[]>();
-// Step 8's own capture - parallel to ifcPendingFaceNodes/
+// This importer's own GlobalId/Name/Description/ObjectType extraParams
+// capture - parallel to ifcPendingFaceNodes/
 // ifcPendingFaceOptions above, one entry per queued face: that face's
 // own OWNING PRODUCT's extraParams (GlobalId/Name/Description/
 // ObjectType), computed once per product (ifcProductToExtraParams(),
@@ -1642,9 +1643,10 @@ int ifcQueuePoint (float x, float y, float z) {
 void ifcQueueFace (int[] nodes, int m, int tes, int lyr, int vsb, int wgt, int clz) {
   ifcProductPendingFaceNodes.add(nodes);
   ifcProductPendingFaceOptions.add(new int[]{m, tes, lyr, vsb, wgt, clz});
-  // Step 8's own capture - see ifcCurrentProductExtraParams' own comment
-  // for why this is read as an ambient value here rather than threaded
-  // through as a parameter.
+  // This importer's own GlobalId/Name/Description/ObjectType extraParams
+  // capture - see ifcCurrentProductExtraParams' own comment for why this
+  // is read as an ambient value here rather than threaded through as a
+  // parameter.
   ifcProductPendingFaceExtraParams.add(ifcCurrentProductExtraParams);
 }
 
@@ -1683,7 +1685,8 @@ void ifcFlushPendingGeometry () {
   if (ifcPendingFaceNodes.size() > 0) {
     int[][] newNodes = new int[ifcBaseFaceCount + ifcPendingFaceNodes.size()][];
     int[][] newOptions = new int[ifcBaseFaceCount + ifcPendingFaceOptions.size()][];
-    // Step 8's own capture - each brand new face gets its own owning
+    // This importer's own GlobalId/Name/Description/ObjectType extraParams
+    // capture - each brand new face gets its own owning
     // product's extraParams, queued alongside it in
     // ifcPendingFaceExtraParams (ifcQueueFace()'s own comment); "" (this
     // field's own "nothing here" default, same as faces.pde's own
@@ -2477,7 +2480,8 @@ void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity 
   PVector extrusionOffset = solidFrame.toWorldVector(direction);
   extrusionOffset.mult(depth);
 
-  // Step 9's own parametric-shape capture - merged into this same
+  // This importer's own parametric-shape ("ifcShape") extraParams
+  // capture - merged into this same
   // product's own extraParams (ifcCurrentProductExtraParams) before any
   // of this extrusion's own faces are queued below, so every one of
   // them (top/bottom cap, every side face) picks it up the same
@@ -2519,14 +2523,16 @@ void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity 
   }
 }
 
-// Step 9: captures this one IfcExtrudedAreaSolid's own profile + plane +
-// extrusion as a new "ifcShape" extraParams key, additive to Step 8's
-// own GlobalId/Name/Description/ObjectType capture (ifcProductToExtra
-// Params()) already sitting in ifcCurrentProductExtraParams by the time
-// this runs. For export-fidelity only (see the "export could regenerate
-// a true IfcExtrudedAreaSolid" discussion this implements) - nothing
-// else in this app reads this key; it's inert cargo the same way
-// GlobalId/Name are.
+// Captures this one IfcExtrudedAreaSolid's own profile + plane +
+// extrusion as a new "ifcShape" extraParams key, additive to this
+// importer's own GlobalId/Name/Description/ObjectType capture
+// (ifcProductToExtraParams()) already sitting in
+// ifcCurrentProductExtraParams by the time this runs. For export-fidelity
+// only - exportIfc.pde's own ifcValidateShapeForExport()/
+// ifcWriteExtrusionShape() are the one place in this app that reads this
+// key back, to regenerate a true IfcExtrudedAreaSolid (rather than a flat
+// mesh) when re-exporting; nothing else in this app reads it, so outside
+// of that one round trip it's inert cargo the same way GlobalId/Name are.
 //
 // What's kept, and why it's enough to exactly reconstruct the same
 // mesh later, with no further transform math needed on the way back
@@ -2894,14 +2900,14 @@ String ifcUnquote (String token) {
 }
 
 // ---------------------------------------------------------------------
-// Step 8's own extraParams capture - an IfcProduct's own GlobalId/Name/
+// This importer's own extraParams capture - an IfcProduct's own GlobalId/Name/
 // Description/ObjectType (the fixed IfcRoot/IfcObject/IfcProduct
 // attribute prefix every subtype shares - see
 // ifcLooksLikeImportableProduct()'s own comment for the full list and
 // why index 0/2/3/4 are always these, regardless of which concrete
 // IfcWall/IfcSlab/IfcDoor/... subtype e actually is), same fields the
 // IFC import-options dialog's own checkbox label already names
-// (fileSelected.pde's ifcShowImportOptionsDialog(), added in Step 2).
+// (fileSelected.pde's ifcShowImportOptionsDialog()).
 // ---------------------------------------------------------------------
 
 // This product's own attrs[index], unquoted and IFC-null-checked - null
@@ -3879,7 +3885,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     }
 
     int repId = ifcRefId(e.attrs[6]);
-    // Step 8's own capture - this product's own GlobalId/Name/
+    // This importer's own extraParams capture - this product's own GlobalId/Name/
     // Description/ObjectType, set once here (before any of its own
     // geometry is processed) and read ambiently by every ifcQueueFace()
     // call this product's Representation goes on to make, however many

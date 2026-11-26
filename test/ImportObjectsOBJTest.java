@@ -315,7 +315,7 @@ class ImportObjectsOBJTest {
     assertEquals(0, app.allPolylines.nodes.length);
   }
 
-  // ================= Step 5: extraParams captured from "g"/"o" name =============
+  // ================= extraParams captured from "g"/"o" name =============
 
   @Test
   void importObjectsOBJ_face_capturesItsOwnGGroupNameAsExtraParams () throws IOException {

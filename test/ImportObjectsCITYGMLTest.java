@@ -87,7 +87,7 @@ class ImportObjectsCITYGMLTest {
     for (int[] face : app.allFaces.nodes) assertEquals(4, face.length, "every box face's own closing duplicate should be stripped to 4 points");
   }
 
-  // ================= Step 3: extraParams captured even for a volumetric building ==
+  // ================= extraParams captured even for a volumetric building ==
 
   @Test
   void importObjectsCITYGML_lod1Solid_stillCapturesItsOwnGmlIdAsExtraParamsEvenThoughItsNeverExtruded () throws IOException {

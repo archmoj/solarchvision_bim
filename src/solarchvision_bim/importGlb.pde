@@ -389,7 +389,7 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
   JSONObject meshObj = meshes.getJSONObject(meshIndex);
   JSONArray primitives = meshObj.getJSONArray("primitives");
 
-  // Step 5's own GLB capture - the owning node's own "name" (preferred,
+  // This GLB importer's own extraParams capture - the owning node's own "name" (preferred,
   // since the same mesh can be instanced by several differently-named
   // nodes - glTF's own node/mesh split), falling back to the mesh's own
   // "name" when the node has none - gated by the shared importExtraParams

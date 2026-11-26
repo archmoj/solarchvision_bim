@@ -430,7 +430,7 @@ class ImportObjectsGEOJSONTest {
     assertEquals(0, app.allPoints.getLength());
   }
 
-  // ================= Step 3: extraParams captured from Feature "properties" =====
+  // ================= extraParams captured from Feature "properties" =====
 
   @Test
   void importObjectsGEOJSON_polygonFeature_capturesItsOwnPropertiesAsExtraParams () throws IOException {

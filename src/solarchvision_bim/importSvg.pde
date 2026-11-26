@@ -396,7 +396,7 @@ void svgApplyGrouping (String key) {
   }
 }
 
-// Step 4's own SVG capture - this shape's own (or its nearest ancestor
+// This SVG importer's own extraParams capture - this shape's own (or its nearest ancestor
 // <g>'s own) resolved "id", the same value svgApplyGrouping() above
 // already reads for grouping, now ALSO offered as this item's own
 // extraParams - gated by the shared importExtraParams checkbox

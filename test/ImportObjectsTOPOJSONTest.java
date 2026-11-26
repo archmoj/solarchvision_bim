@@ -341,7 +341,7 @@ class ImportObjectsTOPOJSONTest {
     assertDoesNotThrow(() -> doImport(f));
   }
 
-  // ================= Step 3: extraParams captured from object "properties" ======
+  // ================= extraParams captured from object "properties" ======
 
   @Test
   void importObjectsTOPOJSON_polygonObject_capturesItsOwnPropertiesAsExtraParams () throws IOException {

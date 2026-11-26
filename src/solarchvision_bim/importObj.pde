@@ -54,7 +54,7 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   IntList importVerticeNumber = new IntList();
   importVerticeNumber.append(0);
 
-  // Step 5's own OBJ capture - the most recent "g <name>"/"o <name>"
+  // This OBJ importer's own extraParams capture - the most recent "g <name>"/"o <name>"
   // statement's own name (null until the file's first one, if any),
   // reapplied as every subsequently-created Face's/Polyline's own
   // extraParams below (objNameToExtraParams()'s own comment) - "g" alone

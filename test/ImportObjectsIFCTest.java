@@ -270,7 +270,7 @@ class ImportObjectsIFCTest {
     assertTrue(sawMinY && sawMaxY, "rectangle should be centered: y in [-YDim/2, YDim/2] = [-2, 2]");
   }
 
-  // ================= Step 9: parametric "ifcShape" extraParams capture =======
+  // ================= parametric "ifcShape" extraParams capture ===============
 
   @Test
   void importObjectsIFC_extrudedRectangleProfile_capturesIfcShapeExtraParamsOnEveryFace () throws IOException {
@@ -3984,7 +3984,7 @@ class ImportObjectsIFCTest {
     }
   }
 
-  // ================= extraParams (Step 8: GlobalId/Name/Description/ObjectType) ==
+  // ================= extraParams (GlobalId/Name/Description/ObjectType) ==========
 
   @Test
   void importObjectsIFC_wall_capturesItsOwnGlobalIdAsExtraParams () throws IOException {
