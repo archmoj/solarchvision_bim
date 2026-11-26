@@ -526,4 +526,51 @@ class ImportObjectsSHAPEFILETest {
 
     assertDoesNotThrow(() -> doImport(f));
   }
+
+  // ================= Step 3: extraParams captured from the sibling .dbf =========
+
+  @Test
+  void importObjectsSHAPEFILE_polygon_capturesItsOwnDbfAttributesAsExtraParams () throws IOException {
+    byte[] shp = buildShp(5, polyBody(5, new double[][][]{
+        {{0, 0, 0}, {0, 2, 0}, {2, 2, 0}, {2, 0, 0}, {0, 0, 0}}
+    }));
+    byte[] dbf = buildDbf(new String[]{"NAME"}, 8, new String[][]{{"Lot 7"}});
+    Path f = writeShapefile("polygon-extraparams-test", shp, dbf, null);
+
+    doImport(f);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"NAME\": \"Lot 7\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsSHAPEFILE_polyLine_capturesItsOwnDbfAttributesAsExtraParamsOnEveryPart () throws IOException {
+    byte[] shp = buildShp(3, polyBody(3, new double[][][]{
+        {{0, 0, 0}, {1, 0, 0}},
+        {{5, 5, 0}, {6, 5, 0}, {6, 6, 0}}
+    }));
+    byte[] dbf = buildDbf(new String[]{"NAME"}, 10, new String[][]{{"Trail A"}});
+    Path f = writeShapefile("polyline-extraparams-test", shp, dbf, null);
+
+    doImport(f);
+
+    assertEquals(2, app.allPolylines.nodes.length);
+    assertEquals("{\"NAME\": \"Trail A\"}", app.allPolylines.getExtraParams(0));
+    assertEquals("{\"NAME\": \"Trail A\"}", app.allPolylines.getExtraParams(1), "both parts of the one record should share that record's own attributes");
+  }
+
+  @Test
+  void importObjectsSHAPEFILE_importExtraParamsFalse_suppressesCaptureEvenWithRealDbfAttributes () throws IOException {
+    app.importExtraParams = false;
+
+    byte[] shp = buildShp(5, polyBody(5, new double[][][]{
+        {{0, 0, 0}, {0, 2, 0}, {2, 2, 0}, {2, 0, 0}, {0, 0, 0}}
+    }));
+    byte[] dbf = buildDbf(new String[]{"NAME"}, 8, new String[][]{{"Lot 7"}});
+    Path f = writeShapefile("polygon-extraparams-off-test", shp, dbf, null);
+
+    doImport(f);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

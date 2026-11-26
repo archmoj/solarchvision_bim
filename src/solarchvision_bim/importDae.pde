@@ -333,7 +333,13 @@ void daeWalkNode (XML collada, XML nodeEl, PMatrix3D parentMatrix) {
     if (daeCycleMaterial) current_Material = 1 + (current_Material % 8);
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-    daeProcessGeometry(collada, geometryEl, worldMatrix);
+    // Step 5's own DAE capture - the instancing node's own "name"/"id"
+    // (preferred, since the same <geometry> can be instanced by several
+    // differently-named <node>s, same "instance vs definition" split
+    // glbNameToExtraParams()'s own comment, importGlb.pde, makes for its
+    // own node/mesh), falling back to the <geometry> element's own
+    // "name"/"id" when the node has neither.
+    daeProcessGeometry(collada, geometryEl, worldMatrix, daeNameToExtraParams(nodeEl, geometryEl));
   }
 
   for (XML child : nodeEl.getChildren("node")) {
@@ -397,7 +403,25 @@ PMatrix3D daeNodeLocalMatrix (XML nodeEl) {
 // straight at <source> - see this file's own header comment) - then its
 // own <triangles>/<polylist> primitives, each built against that same,
 // once-built point list.
-void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix) {
+// Builds one <instance_geometry>'s own raw extraParams string from
+// `nodeEl`'s own "name" (falling back to its own "id" when it has no
+// "name") or, when neither is present, `geometryEl`'s own "name"/"id" -
+// gated by the shared importExtraParams checkbox (fileSelected.pde), same
+// "" (this field's own default/"nothing here" value) whenever that's
+// unchecked or none of the four is present at all.
+String daeNameToExtraParams (XML nodeEl, XML geometryEl) {
+  if (!importExtraParams) return "";
+  String name = daeAttr(nodeEl, "name");
+  if (name.length() == 0) name = daeAttr(nodeEl, "id");
+  if (name.length() == 0) name = daeAttr(geometryEl, "name");
+  if (name.length() == 0) name = daeAttr(geometryEl, "id");
+  if (name.length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("name", name);
+  return obj.toString();
+}
+
+void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix, String extraParams) {
   XML mesh = geometryEl.getChild("mesh");
   if (mesh == null) return; // not polygon geometry (e.g. <spline>/<convex_mesh>) - not supported in this version
 
@@ -437,6 +461,13 @@ void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix) {
     pointIndex[i] = daeCreatePoint(world.x, world.y, world.z);
   }
 
+  // Set right before, reset right after - current_ExtraParams must never
+  // leak into the next, unrelated piece of geometry someone creates (its
+  // own comment, globalVariables.pde). Applies uniformly to every
+  // primitive inside this one <mesh> (triangles/polylist/lines/
+  // linestrips alike), same mesh-level granularity glbEmitMesh() (importGlb.
+  // pde) already uses for its own format.
+  current_ExtraParams = extraParams;
   for (XML prim : mesh.getChildren()) {
     String tag = prim.getName();
     if (tag == null) continue;
@@ -456,6 +487,7 @@ void daeProcessGeometry (XML collada, XML geometryEl, PMatrix3D worldMatrix) {
     // that same "skipped" list right along with them while
     // daeImportCurves is false (the default).
   }
+  current_ExtraParams = "";
 }
 
 // A primitive's own stride (how many index numbers each of its own

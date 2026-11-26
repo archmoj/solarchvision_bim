@@ -558,4 +558,67 @@ class ImportObjectsDXFTest {
     assertEquals(1, app.allPolylines.getMaterial(0), "m == -1 cycles once per layer change, starting at 1");
     assertEquals(2, app.allPolylines.getMaterial(1));
   }
+
+  // ================= Step 4: extraParams captured from the entity's own layer ====
+
+  @Test
+  void importObjectsDXF_3dFace_capturesItsOwnLayerAsExtraParams () throws IOException {
+    Path f = dxfFile("dxf-3dface-extraparams-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE", "8", "Walls",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"layer\": \"Walls\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsDXF_plainPolyline_capturesItsOwnLayerAsExtraParamsOnEveryVertexCreatedSegment () throws IOException {
+    // A plain/2D POLYLINE's own VERTEX/SEQEND run deliberately never
+    // re-reads a layer of its own (dxfHandleEntity()'s own comment) - the
+    // layer read once at POLYLINE's own start should still apply to the
+    // Polyline dxfEmitPolyline() creates at SEQEND.
+    app.dxfImportCurves = true;
+
+    Path f = dxfFile("dxf-plain-polyline-extraparams-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "POLYLINE", "8", "Roof", "70", "0",
+        "0", "VERTEX", "8", "Roof", "10", "0", "20", "0", "30", "0",
+        "0", "VERTEX", "8", "Roof", "10", "1", "20", "0", "30", "0",
+        "0", "SEQEND",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"layer\": \"Roof\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsDXF_importExtraParamsFalse_suppressesCaptureEvenWithARealLayer () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = dxfFile("dxf-extraparams-off-test", dxfLines(
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "3DFACE", "8", "Walls",
+        "10", "0", "20", "0", "30", "0",
+        "11", "1", "21", "0", "31", "0",
+        "12", "1", "22", "1", "32", "0",
+        "0", "ENDSEC",
+        "0", "EOF"
+    ));
+
+    app.import_objects_DXF(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

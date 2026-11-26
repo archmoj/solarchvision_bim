@@ -54,6 +54,14 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   IntList importVerticeNumber = new IntList();
   importVerticeNumber.append(0);
 
+  // Step 5's own OBJ capture - the most recent "g <name>"/"o <name>"
+  // statement's own name (null until the file's first one, if any),
+  // reapplied as every subsequently-created Face's/Polyline's own
+  // extraParams below (objNameToExtraParams()'s own comment) - "g" alone
+  // still drives this import's own existing group/material-cycling
+  // behavior (unchanged), "o" only ever updates this name.
+  String objCurrentGroupName = null;
+
   String[] FileALL = loadStrings(FileName);
   importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
@@ -106,8 +114,11 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
     String tag = parts[0];
 
     if (tag.equalsIgnoreCase("g")) {
+      objCurrentGroupName = (parts.length > 1) ? parts[1] : null;
       if (m == -1) current_Material = 1 + (current_Material % 8);
       if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    } else if (tag.equalsIgnoreCase("o")) {
+      objCurrentGroupName = (parts.length > 1) ? parts[1] : null;
     } else if (tag.equalsIgnoreCase("v")) {
       float x = cx + sx * float(parts[1]);
       float y = cy + sy * float(parts[2]);
@@ -131,9 +142,14 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
           newFace[n] = allPoints.getLength() - abs(vertexNumber);
         } // vertexNumber == 0: leave as default (0)
       }
+      // Set right before, reset right after - current_ExtraParams must
+      // never leak into the next, unrelated piece of geometry someone
+      // creates (its own comment, globalVariables.pde).
+      current_ExtraParams = objNameToExtraParams(objCurrentGroupName);
       allFaces.create(newFace);
+      current_ExtraParams = "";
     } else if (objImportCurves && tag.equalsIgnoreCase("l")) {
-      objHandleLine(parts, importVerticeNumber);
+      objHandleLine(parts, importVerticeNumber, objCurrentGroupName);
     }
     // any other tag (vt, vn, usemtl, mtllib, #comment, ...) is
     // intentionally ignored - and, while objImportCurves is false
@@ -174,7 +190,22 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
 // is what actually decides it here, the same auto-detect-and-dedup
 // convention dxfEmitPolyline() (importDxf.pde) and ifcEmitCurve()
 // (importIfc.pde) each already use for their own formats.
-void objHandleLine (String[] parts, IntList importVerticeNumber) {
+// Builds this Face's/Polyline's own raw extraParams string from the
+// name of the "g"/"o" statement it fell under (objCurrentGroupName,
+// above) - gated by the shared importExtraParams checkbox (fileSelected.
+// pde), same "" (this field's own default/"nothing here" value) whenever
+// that's unchecked or no name has been read yet that
+// geojsonPropertiesToExtraParams()/svgIdToExtraParams()/
+// dxfLayerToExtraParams() (importGeojson.pde/importSvg.pde/importDxf.pde)
+// already follow for their own formats.
+String objNameToExtraParams (String name) {
+  if (!importExtraParams || name == null || name.trim().length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("name", name);
+  return obj.toString();
+}
+
+void objHandleLine (String[] parts, IntList importVerticeNumber, String groupName) {
 
   int count = parts.length - 1;
   if (count < 2) return; // not even one real segment
@@ -205,6 +236,8 @@ void objHandleLine (String[] parts, IntList importVerticeNumber) {
   // whatever this whole import's own clz parameter actually said.
   int savedClosed = current_Closed;
   current_Closed = closed ? 1 : 0;
+  current_ExtraParams = objNameToExtraParams(groupName);
   allPolylines.create(nodes);
+  current_ExtraParams = "";
   current_Closed = savedClosed;
 }

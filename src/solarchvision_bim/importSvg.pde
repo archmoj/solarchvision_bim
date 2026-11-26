@@ -366,13 +366,13 @@ void svgWalkElement (XML el, float[] matrix, String inheritedFill, String inheri
 
     svgApplyGrouping(id);
     ArrayList<PVector> ring = (holes.size() > 0) ? PolygonHoles.mergeHolesIntoOuterLoop(outer, holes) : outer;
-    svgEmitFlatFace(ring);
+    svgEmitFlatFace(ring, id);
   } else {
     for (int i = 0; i < worldContours.size(); i++) {
       ArrayList<PVector> pts = worldContours.get(i);
       if (pts.size() < 2) continue;
       svgApplyGrouping(id);
-      svgEmitPolyline(pts, localContours.get(i).closed, clzParam);
+      svgEmitPolyline(pts, localContours.get(i).closed, clzParam, id);
     }
   }
 }
@@ -396,18 +396,38 @@ void svgApplyGrouping (String key) {
   }
 }
 
+// Step 4's own SVG capture - this shape's own (or its nearest ancestor
+// <g>'s own) resolved "id", the same value svgApplyGrouping() above
+// already reads for grouping, now ALSO offered as this item's own
+// extraParams - gated by the shared importExtraParams checkbox
+// (fileSelected.pde) exactly like geojsonPropertiesToExtraParams()
+// (importGeojson.pde) is for every other format sharing that core; "" (no
+// extraParams at all) whenever that's unchecked or this shape/its
+// ancestors never carried an "id" to begin with.
+String svgIdToExtraParams (String id) {
+  if (!importExtraParams || id == null || id.trim().length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("id", id);
+  return obj.toString();
+}
+
 // One hole-free (or already hole-bridged) ring -> one flat n-gon Face,
 // exactly as given - never triangulated, the same "the file's own n-gon,
 // don't triangulate" choice importGeojson.pde's own geojsonEmitFlatFace()
 // already makes for its own format.
-void svgEmitFlatFace (ArrayList<PVector> ring) {
+void svgEmitFlatFace (ArrayList<PVector> ring, String id) {
   if (ring.size() < 3) return;
   int[] nodes = new int[ring.size()];
   for (int i = 0; i < ring.size(); i++) {
     PVector p = ring.get(i);
     nodes[i] = allPoints.create(p.x, p.y, p.z);
   }
+  // Set right before, reset right after - current_ExtraParams must never
+  // leak into the next, unrelated piece of geometry someone creates (its
+  // own comment, globalVariables.pde).
+  current_ExtraParams = svgIdToExtraParams(id);
   allFaces.create(nodes);
+  current_ExtraParams = "";
   svgFacesImported++;
 }
 
@@ -420,13 +440,15 @@ void svgEmitFlatFace (ArrayList<PVector> ring) {
 // only the fallback" convention importGeojson.pde's own
 // geojsonEmitLineStringFromPoints() already documents for its own
 // format.
-void svgEmitPolyline (ArrayList<PVector> pts, boolean closed, int clzParam) {
+void svgEmitPolyline (ArrayList<PVector> pts, boolean closed, int clzParam, String id) {
   float[][] points = new float[pts.size()][3];
   for (int i = 0; i < pts.size(); i++) {
     PVector p = pts.get(i);
     points[i] = new float[]{p.x, p.y, p.z};
   }
+  current_ExtraParams = svgIdToExtraParams(id);
   allPolylines.add_Polyline(current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, closed ? 1 : clzParam, points);
+  current_ExtraParams = "";
   svgLinesImported++;
 }
 

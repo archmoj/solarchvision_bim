@@ -313,4 +313,34 @@ class ImportObjectsKMLTest {
 
     assertDoesNotThrow(() -> doImport(f));
   }
+
+  // ================= Step 3: extraParams captured from ExtendedData =============
+
+  @Test
+  void importObjectsKML_polygonPlacemark_capturesItsOwnExtendedDataAsExtraParams () throws IOException {
+    Path f = kmlFile("kml-polygon-extraparams-test", kml(
+        "<Placemark>"
+        + "<ExtendedData><Data name=\"name\"><value>Lot 7</value></Data></ExtendedData>"
+        + "<Polygon><outerBoundaryIs><LinearRing><coordinates>0,0 2,0 2,2 0,2 0,0</coordinates></LinearRing></outerBoundaryIs></Polygon>"
+        + "</Placemark>"));
+
+    doImport(f);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Lot 7\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsKML_lineStringPlacemark_capturesItsOwnExtendedDataAsExtraParams () throws IOException {
+    Path f = kmlFile("kml-linestring-extraparams-test", kml(
+        "<Placemark>"
+        + "<ExtendedData><Data name=\"name\"><value>Trail A</value></Data></ExtendedData>"
+        + "<LineString><coordinates>0,0 1,0 1,1</coordinates></LineString>"
+        + "</Placemark>"));
+
+    doImport(f);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"name\": \"Trail A\"}", app.allPolylines.getExtraParams(0));
+  }
 }

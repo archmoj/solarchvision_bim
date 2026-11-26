@@ -242,7 +242,7 @@ void kmlHandleGeometry (XML geomEl, JSONObject properties, int clzParam, float c
     // back to its own start.
     ArrayList<PVector> pts = kmlReadPointsFromCoordinatesChild(geomEl, cx, cy, cz, sx, sy, sz);
     if (pts == null) { geojsonNoteSkipped(type + " with no <coordinates>"); return; }
-    geojsonEmitLineStringFromPoints(pts, clzParam);
+    geojsonEmitLineStringFromPoints(pts, properties, clzParam);
   } else if (type.equals("Polygon")) {
     kmlHandlePolygon(geomEl, properties, cx, cy, cz, sx, sy, sz);
   } else if (type.equals("MultiGeometry")) {

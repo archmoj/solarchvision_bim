@@ -128,6 +128,34 @@ void geojsonNoteSkipped (String reason) {
   geojsonImportSkippedReasons.put(reason, (prior == null ? 0 : prior) + 1);
 }
 
+// Shared Step 3 entry point: builds the raw extraParams string this
+// shared core's own geojsonEmitLineStringFromPoints()/
+// geojsonEmitPolygonFromRings() set current_ExtraParams to (Faces/
+// Polylines' own ambient-global mechanism, globalVariables.pde/faces.
+// pde/polylines.pde) right before creating a Polyline/Face/extruded-
+// solid-face, immediately before resetting it back to "" - see
+// current_ExtraParams's own comment for why it must never persist past
+// its own call. Gated by the shared importExtraParams checkbox
+// (fileSelected.pde) every import-options dialog that captures
+// extraParams now shows, the same "simplified import" opt-out that
+// checkbox's own comment describes - "" (this field's own default/
+// "nothing here" value, same as extraParamsFromJSONObject()'s own
+// empty-object case) whenever that's unchecked, or whenever `source` is
+// null/carries no keys at all (no Feature "properties"/.dbf attributes/
+// Building gml:id etc. for this particular item). `source` is already a
+// JSONObject (a genuine GeoJSON/TopoJSON "properties" value, a Shapefile
+// record's own dbfProperties[r], a KML Placemark's own kmlReadProperties(),
+// or a CityGML Building's own citygmlReadProperties() - this file's own
+// header comment on why those three formats build a String-only
+// JSONObject off their own XML/binary attributes rather than carrying a
+// native JSON "properties" value the way GeoJSON/TopoJSON do), so
+// toString() is exactly extraParamsFromJSONObject()'s own round-trip,
+// not a second hand-rolled serialization.
+String geojsonPropertiesToExtraParams (JSONObject source) {
+  if (!importExtraParams || source == null || source.keys().size() == 0) return "";
+  return source.toString();
+}
+
 void import_objects_GEOJSON (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Same shape as import_objects_OBJ()'s/import_objects_DXF()'s own
   // identical blocks - see either one's own comment for why this sits
@@ -342,11 +370,11 @@ void geojsonHandleGeometry (JSONObject geometry, JSONObject properties, int clzP
     for (int i = 0; i < coords.size(); i++) geojsonHandlePoint(coords.getJSONArray(i), cx, cy, cz, sx, sy, sz);
   } else if (type.equals("LineString")) {
     JSONArray coords = geometry.hasKey("coordinates") ? geometry.getJSONArray("coordinates") : null;
-    geojsonHandleLineString(coords, clzParam, cx, cy, cz, sx, sy, sz);
+    geojsonHandleLineString(coords, properties, clzParam, cx, cy, cz, sx, sy, sz);
   } else if (type.equals("MultiLineString")) {
     JSONArray lines = geometry.hasKey("coordinates") ? geometry.getJSONArray("coordinates") : null;
     if (lines == null) { geojsonNoteSkipped("MultiLineString with no coordinates"); return; }
-    for (int i = 0; i < lines.size(); i++) geojsonHandleLineString(lines.getJSONArray(i), clzParam, cx, cy, cz, sx, sy, sz);
+    for (int i = 0; i < lines.size(); i++) geojsonHandleLineString(lines.getJSONArray(i), properties, clzParam, cx, cy, cz, sx, sy, sz);
   } else if (type.equals("Polygon")) {
     JSONArray rings = geometry.hasKey("coordinates") ? geometry.getJSONArray("coordinates") : null;
     geojsonHandlePolygonRings(rings, properties, cx, cy, cz, sx, sy, sz);
@@ -390,9 +418,9 @@ void geojsonEmitPointFromXYZ (float[] xyz) {
 // convention importObj.pde's own objHandleLine()/importDxf.pde's own
 // dxfEmitPolyline() already use for their own formats' line geometry;
 // clzParam only applies when the file itself leaves it open.
-void geojsonHandleLineString (JSONArray coordsArray, int clzParam, float cx, float cy, float cz, float sx, float sy, float sz) {
+void geojsonHandleLineString (JSONArray coordsArray, JSONObject properties, int clzParam, float cx, float cy, float cz, float sx, float sy, float sz) {
   ArrayList<PVector> pts = geojsonCoordsArrayToPVectors(coordsArray, cx, cy, cz, sx, sy, sz);
-  geojsonEmitLineStringFromPoints(pts, clzParam);
+  geojsonEmitLineStringFromPoints(pts, properties, clzParam);
 }
 
 // The actual "build one Polyline from a finished point list" step, split
@@ -403,7 +431,7 @@ void geojsonHandleLineString (JSONArray coordsArray, int clzParam, float cx, flo
 // GeoJSON "coordinates" JSONArray directly - can share this exact same
 // closing-duplicate auto-detect and allPolylines.add_Polyline() call
 // (and its own line-count bookkeeping) rather than reimplementing it.
-void geojsonEmitLineStringFromPoints (ArrayList<PVector> pts, int clzParam) {
+void geojsonEmitLineStringFromPoints (ArrayList<PVector> pts, JSONObject properties, int clzParam) {
   boolean closed = geojsonStripClosingDuplicate(pts);
   if (pts.size() < 2) { geojsonNoteSkipped("LineString with fewer than 2 distinct points"); return; }
 
@@ -413,7 +441,12 @@ void geojsonEmitLineStringFromPoints (ArrayList<PVector> pts, int clzParam) {
     points[i] = new float[]{p.x, p.y, p.z};
   }
 
+  // Set right before, reset right after - current_ExtraParams must never
+  // leak into the next, unrelated piece of geometry someone creates (its
+  // own comment, globalVariables.pde).
+  current_ExtraParams = geojsonPropertiesToExtraParams(properties);
   allPolylines.add_Polyline(current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, closed ? 1 : clzParam, points);
+  current_ExtraParams = "";
   geojsonLinesImported++;
 }
 
@@ -455,9 +488,35 @@ void geojsonHandlePolygonRings (JSONArray rings, JSONObject properties, float cx
 // hole with fewer than 3 points should already have been dropped by the
 // caller, same as geojsonHandlePolygonRings()'s own filtering above.
 void geojsonEmitPolygonFromRings (ArrayList<PVector> outer, ArrayList<ArrayList<PVector>> holes, JSONObject properties, float sz) {
+  geojsonEmitPolygonFromRings(outer, holes, properties, properties, sz);
+}
+
+// Same as the 4-arg overload above, except the "decide flat vs extruded"
+// source (heightProperties) and the "what becomes this item's own
+// extraParams" source (extraParamsProperties) are kept separate -
+// importCitygml.pde's own citygmlEmitPolygon() needs this: its own
+// propertiesForExtrusion is deliberately null for a "volumetric" (already
+// real 3D) Polygon so geojsonResolveHeight(null) never re-extrudes it
+// (citygmlEmitPolygon()'s own comment), but the Building's own gml:id/
+// measuredHeight/function/generic attributes should still become that
+// Polygon's extraParams either way - a volumetric building is the common
+// case, not the exception, so extraParams capture must not depend on
+// whether this particular Polygon happens to get extruded. Every other
+// caller (the 4-arg overload above) has no such distinction to make, so
+// it just passes the same `properties` for both.
+void geojsonEmitPolygonFromRings (ArrayList<PVector> outer, ArrayList<ArrayList<PVector>> holes, JSONObject heightProperties, JSONObject extraParamsProperties, float sz) {
   ArrayList<PVector> ring = (holes.size() > 0) ? PolygonHoles.mergeHolesIntoOuterLoop(outer, holes) : outer;
 
-  Float heightValue = geojsonResolveHeight(properties);
+  Float heightValue = geojsonResolveHeight(heightProperties);
+  // Set right before, reset right after - current_ExtraParams must never
+  // leak into the next, unrelated piece of geometry someone creates (its
+  // own comment, globalVariables.pde). Applies to every Face this emits
+  // below, flat or extruded (an extruded "solid" here is really several
+  // independent Faces - bottom/top/walls, geojsonEmitExtrudedSolid()'s
+  // own comment - each one picking up this same ambient snapshot, same as
+  // create3D.pde's own add_Box_Core() calling allFaces.create() several
+  // times off one ambient snapshot).
+  current_ExtraParams = geojsonPropertiesToExtraParams(extraParamsProperties);
   if (heightValue != null && heightValue > 0) {
     geojsonEmitExtrudedSolid(ring, heightValue, sz);
     geojsonSolidsImported++;
@@ -465,6 +524,7 @@ void geojsonEmitPolygonFromRings (ArrayList<PVector> outer, ArrayList<ArrayList<
     geojsonEmitFlatFace(ring);
     geojsonFlatFacesImported++;
   }
+  current_ExtraParams = "";
 }
 
 // Converts one GeoJSON coordinate-array - "coordinates" for a

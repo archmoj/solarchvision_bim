@@ -314,4 +314,53 @@ class ImportObjectsOBJTest {
 
     assertEquals(0, app.allPolylines.nodes.length);
   }
+
+  // ================= Step 5: extraParams captured from "g"/"o" name =============
+
+  @Test
+  void importObjectsOBJ_face_capturesItsOwnGGroupNameAsExtraParams () throws IOException {
+    Path objFile = Files.createTempFile("import-g-extraparams-test", ".obj");
+    Files.writeString(objFile, "g Roof\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Roof\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsOBJ_face_capturesItsOwnOObjectNameAsExtraParams () throws IOException {
+    Path objFile = Files.createTempFile("import-o-extraparams-test", ".obj");
+    Files.writeString(objFile, "o Roof\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Roof\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsOBJ_lDirective_capturesTheCurrentGroupNameAsExtraParams () throws IOException {
+    app.objImportCurves = true;
+
+    Path objFile = Files.createTempFile("import-l-extraparams-test", ".obj");
+    Files.writeString(objFile, "g Wire\nv 0 0 0\nv 1 0 0\nl 1 2\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"name\": \"Wire\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsOBJ_importExtraParamsFalse_suppressesCaptureEvenWithARealGroupName () throws IOException {
+    app.importExtraParams = false;
+
+    Path objFile = Files.createTempFile("import-extraparams-off-test", ".obj");
+    Files.writeString(objFile, "g Roof\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\n");
+
+    app.import_objects_OBJ(objFile.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

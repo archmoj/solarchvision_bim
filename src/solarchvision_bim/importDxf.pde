@@ -334,6 +334,18 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
     }
   }
 
+  // Step 4's own DXF capture - every entity dispatched below that goes on
+  // to create a Face/Polyline (3DFACE directly; LINE/LWPOLYLINE/CIRCLE/
+  // ARC while dxfImportCurves is true; VERTEX/SEQEND for the POLYLINE
+  // currently being read) picks up dxfCurrentLayer's own extraParams, set
+  // right before dispatch and reset right after - same ambient-global
+  // discipline current_ExtraParams's own comment (globalVariables.pde)
+  // already requires. VERTEX/SEQEND are deliberately NOT among the types
+  // that update dxfCurrentLayer just above (that block's own comment on
+  // why), so every face/polyline they go on to create here still picks
+  // up the owning POLYLINE's own layer, read once at its own start.
+  current_ExtraParams = dxfLayerToExtraParams(dxfCurrentLayer);
+
   if (entityType.equals("3DFACE")) {
     dxfHandle3DFace(eCodes, eValues);
   } else if (entityType.equals("POLYLINE")) {
@@ -365,6 +377,22 @@ void dxfHandleEntity (String entityType, IntList eCodes, StringList eValues) {
   // HATCH, SOLID, POINT, ELLIPSE, MESH, ...) is intentionally skipped,
   // with or without dxfImportCurves - see this file's own header
   // comment.
+
+  current_ExtraParams = "";
+}
+
+// Builds this entity's raw extraParams string from dxfCurrentLayer -
+// gated by the shared importExtraParams checkbox (fileSelected.pde),
+// same "" (this field's own default/"nothing here" value) whenever
+// that's unchecked or no layer has been read yet (dxfCurrentLayer starts
+// null, import_objects_DXF()'s own reset) that
+// geojsonPropertiesToExtraParams()/svgIdToExtraParams() (importGeojson.
+// pde/importSvg.pde) already follow for their own formats.
+String dxfLayerToExtraParams (String layer) {
+  if (!importExtraParams || layer == null || layer.trim().length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("layer", layer);
+  return obj.toString();
 }
 
 void dxfHandle3DFace (IntList eCodes, StringList eValues) {

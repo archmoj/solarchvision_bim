@@ -402,7 +402,13 @@ void citygmlHandleBuildingLike (XML buildingEl, float cx, float cy, float cz, fl
     ArrayList<XML> polygons = new ArrayList<XML>();
     citygmlCollectPolygonsUnder(container, polygons);
     for (XML polygon : polygons) {
-      citygmlEmitPolygon(polygon, propertiesForExtrusion, cx, cy, cz, sx, sy, sz);
+      // propertiesForExtrusion (null for a volumetric Polygon) decides
+      // whether THIS Polygon gets re-extruded; `properties` (the
+      // Building's own gml:id/measuredHeight/function/generic attributes,
+      // always real when citygmlReadProperties() found any) is what
+      // becomes its extraParams either way - see citygmlEmitPolygon()'s
+      // own comment.
+      citygmlEmitPolygon(polygon, propertiesForExtrusion, properties, cx, cy, cz, sx, sy, sz);
       foundAnyPolygon = true;
     }
   }
@@ -465,7 +471,12 @@ void citygmlCollectPolygonsUnder (XML el, ArrayList<XML> out) {
 // volumetric containers never get extruded again) or the real Building's
 // own properties for a "footprint" (LOD0-only) Polygon, where extrusion
 // via geojsonHeightProperty/"measuredHeight" IS meant to apply.
-void citygmlEmitPolygon (XML polygonEl, JSONObject propertiesOrNull, float cx, float cy, float cz, float sx, float sy, float sz) {
+// `propertiesForExtraParams` is always the real Building's own gml:id/
+// measuredHeight/function/generic attributes (citygmlHandleBuildingLike()'s
+// own `properties`, never gated to null the way propertiesOrNull is) -
+// extraParams capture doesn't depend on whether this particular Polygon
+// happens to get extruded.
+void citygmlEmitPolygon (XML polygonEl, JSONObject propertiesOrNull, JSONObject propertiesForExtraParams, float cx, float cy, float cz, float sx, float sy, float sz) {
   XML exterior = citygmlChild(polygonEl, "exterior");
   XML outerRing = (exterior != null) ? citygmlChild(exterior, "LinearRing") : null;
   ArrayList<PVector> outer = (outerRing != null) ? citygmlReadRingPoints(outerRing, cx, cy, cz, sx, sy, sz) : null;
@@ -483,7 +494,10 @@ void citygmlEmitPolygon (XML polygonEl, JSONObject propertiesOrNull, float cx, f
     if (hole.size() >= 3) holes.add(hole);
   }
 
-  geojsonEmitPolygonFromRings(outer, holes, propertiesOrNull, sz);
+  // See geojsonEmitPolygonFromRings()'s own 5-arg overload comment
+  // (importGeojson.pde) for exactly why these two are kept separate here
+  // (and nowhere else in this shared core).
+  geojsonEmitPolygonFromRings(outer, holes, propertiesOrNull, propertiesForExtraParams, sz);
 }
 
 // Reads one <gml:LinearRing>'s own points, via EITHER a single <gml:

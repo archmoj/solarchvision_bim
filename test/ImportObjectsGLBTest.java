@@ -563,4 +563,103 @@ class ImportObjectsGLBTest {
       app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
     });
   }
+
+  // ================= Step 5: extraParams captured from node/mesh "name" =========
+
+  @Test
+  void importObjectsGLB_oneTriangleMesh_capturesTheOwningNodesOwnNameAsExtraParams () throws IOException {
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0} };
+    int[] indices = { 0, 1, 2 };
+    byte[] bin = triangleBin(verts, indices);
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0, "name": "Roof"}],
+          "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 4}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6}
+          ],
+          "buffers": [{"byteLength": 42}]
+        }
+        """;
+
+    Path f = glbFile("glb-node-name-extraparams-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Roof\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsGLB_oneTriangleMesh_fallsBackToTheMeshesOwnNameWhenTheNodeHasNone () throws IOException {
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0} };
+    int[] indices = { 0, 1, 2 };
+    byte[] bin = triangleBin(verts, indices);
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0}],
+          "meshes": [{"name": "RoofMesh", "primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 4}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6}
+          ],
+          "buffers": [{"byteLength": 42}]
+        }
+        """;
+
+    Path f = glbFile("glb-mesh-name-extraparams-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"RoofMesh\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsGLB_importExtraParamsFalse_suppressesCaptureEvenWithARealName () throws IOException {
+    app.importExtraParams = false;
+
+    float[][] verts = { {0, 0, 0}, {1, 0, 0}, {1, 1, 0} };
+    int[] indices = { 0, 1, 2 };
+    byte[] bin = triangleBin(verts, indices);
+    String json = """
+        {
+          "asset": {"version": "2.0"},
+          "scene": 0,
+          "scenes": [{"nodes": [0]}],
+          "nodes": [{"mesh": 0, "name": "Roof"}],
+          "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1, "mode": 4}]}],
+          "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"}
+          ],
+          "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6}
+          ],
+          "buffers": [{"byteLength": 42}]
+        }
+        """;
+
+    Path f = glbFile("glb-extraparams-off-test", glb(json, bin));
+
+    app.import_objects_GLB(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

@@ -340,4 +340,30 @@ class ImportObjectsTOPOJSONTest {
 
     assertDoesNotThrow(() -> doImport(f));
   }
+
+  // ================= Step 3: extraParams captured from object "properties" ======
+
+  @Test
+  void importObjectsTOPOJSON_polygonObject_capturesItsOwnPropertiesAsExtraParams () throws IOException {
+    Path f = topojsonFile("topojson-polygon-extraparams-test",
+        "{\"type\":\"Topology\",\"arcs\":[[[0,0],[2,0],[2,2],[0,2],[0,0]]],"
+        + "\"objects\":{\"building\":{\"type\":\"Polygon\",\"properties\":{\"name\":\"Lot 7\"},\"arcs\":[[0]]}}}");
+
+    doImport(f);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Lot 7\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsTOPOJSON_lineStringObject_capturesItsOwnPropertiesAsExtraParams () throws IOException {
+    Path f = topojsonFile("topojson-linestring-extraparams-test",
+        "{\"type\":\"Topology\",\"arcs\":[[[0,0],[1,0],[1,1]]],"
+        + "\"objects\":{\"line\":{\"type\":\"LineString\",\"properties\":{\"name\":\"Trail A\"},\"arcs\":[0]}}}");
+
+    doImport(f);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"name\": \"Trail A\"}", app.allPolylines.getExtraParams(0));
+  }
 }

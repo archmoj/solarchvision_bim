@@ -374,13 +374,13 @@ void topojsonHandleGeometry (JSONObject geometry, JSONObject properties, int clz
   } else if (type.equals("LineString")) {
     JSONArray arcIndexes = geometry.hasKey("arcs") ? geometry.getJSONArray("arcs") : null;
     ArrayList<PVector> pts = topojsonResolveArcIndexesToPVectors(arcIndexes, cx, cy, cz, sx, sy, sz);
-    geojsonEmitLineStringFromPoints(pts, clzParam);
+    geojsonEmitLineStringFromPoints(pts, properties, clzParam);
   } else if (type.equals("MultiLineString")) {
     JSONArray lines = geometry.hasKey("arcs") ? geometry.getJSONArray("arcs") : null;
     if (lines == null) { geojsonNoteSkipped("MultiLineString with no arcs"); return; }
     for (int i = 0; i < lines.size(); i++) {
       ArrayList<PVector> pts = topojsonResolveArcIndexesToPVectors(lines.getJSONArray(i), cx, cy, cz, sx, sy, sz);
-      geojsonEmitLineStringFromPoints(pts, clzParam);
+      geojsonEmitLineStringFromPoints(pts, properties, clzParam);
     }
   } else if (type.equals("Polygon")) {
     JSONArray rings = geometry.hasKey("arcs") ? geometry.getJSONArray("arcs") : null;

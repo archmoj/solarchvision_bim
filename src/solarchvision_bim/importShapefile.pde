@@ -371,7 +371,7 @@ void shpHandleRecord (byte[] raw, int bodyOffset, int bodyLength, JSONObject pro
   } else if (shapeType == 8 || shapeType == 18 || shapeType == 28) {
     shpHandleMultiPoint(raw, bodyOffset, shapeType, cx, cy, cz, sx, sy, sz);
   } else if (shapeType == 3 || shapeType == 13 || shapeType == 23) {
-    shpHandlePolyLine(raw, bodyOffset, shapeType, clzParam, cx, cy, cz, sx, sy, sz);
+    shpHandlePolyLine(raw, bodyOffset, shapeType, properties, clzParam, cx, cy, cz, sx, sy, sz);
   } else if (shapeType == 5 || shapeType == 15 || shapeType == 25) {
     shpHandlePolygon(raw, bodyOffset, shapeType, properties, cx, cy, cz, sx, sy, sz);
   } else if (shapeType == 31) {
@@ -428,13 +428,13 @@ void shpHandleMultiPoint (byte[] raw, int bodyOffset, int shapeType, float cx, f
 // line), via this shared core's own geojsonEmitLineStringFromPoints()
 // (importGeojson.pde) - same closing-duplicate auto-detect every other
 // format's own LineString/Polyline handling already uses.
-void shpHandlePolyLine (byte[] raw, int bodyOffset, int shapeType, int clzParam, float cx, float cy, float cz, float sx, float sy, float sz) {
+void shpHandlePolyLine (byte[] raw, int bodyOffset, int shapeType, JSONObject properties, int clzParam, float cx, float cy, float cz, float sx, float sy, float sz) {
   ArrayList<ArrayList<PVector>> parts = shpReadParts(raw, bodyOffset, shapeType, cx, cy, cz, sx, sy, sz);
   if (parts == null) { geojsonNoteSkipped("PolyLine with a malformed part/point count"); return; }
 
   for (ArrayList<PVector> part : parts) {
     if (part.size() < 2) { geojsonNoteSkipped("PolyLine part with fewer than 2 points"); continue; }
-    geojsonEmitLineStringFromPoints(part, clzParam);
+    geojsonEmitLineStringFromPoints(part, properties, clzParam);
   }
 }
 

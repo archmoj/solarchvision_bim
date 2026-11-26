@@ -676,4 +676,96 @@ class ImportObjectsGBXMLTest {
       app.import_objects_GBXML(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
     });
   }
+
+  // ================= Step 5: extraParams captured from the Surface's own id =====
+
+  @Test
+  void importObjectsGBXML_surface_capturesItsOwnIdAsExtraParams () throws IOException {
+    Path f = gbxmlFile("gbxml-surface-extraparams-test", """
+        <gbXML lengthUnit="Meters">
+          <Campus>
+            <Surface id="wall1" surfaceType="ExteriorWall">
+              <PlanarGeometry>
+                <PolyLoop>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                </PolyLoop>
+              </PlanarGeometry>
+            </Surface>
+          </Campus>
+        </gbXML>
+        """
+    );
+
+    app.import_objects_GBXML(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"id\": \"wall1\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsGBXML_opening_capturesItsOwnIdAsExtraParamsSeparateFromItsHostSurface () throws IOException {
+    Path f = gbxmlFile("gbxml-opening-extraparams-test", """
+        <gbXML lengthUnit="Meters">
+          <Campus>
+            <Surface id="wall1" surfaceType="ExteriorWall">
+              <PlanarGeometry>
+                <PolyLoop>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                </PolyLoop>
+              </PlanarGeometry>
+              <Opening id="win1" windowType="FixedWindow">
+                <PlanarGeometry>
+                  <PolyLoop>
+                    <CartesianPoint><Coordinate>1</Coordinate><Coordinate>0</Coordinate><Coordinate>1</Coordinate></CartesianPoint>
+                    <CartesianPoint><Coordinate>2</Coordinate><Coordinate>0</Coordinate><Coordinate>1</Coordinate></CartesianPoint>
+                    <CartesianPoint><Coordinate>2</Coordinate><Coordinate>0</Coordinate><Coordinate>2</Coordinate></CartesianPoint>
+                    <CartesianPoint><Coordinate>1</Coordinate><Coordinate>0</Coordinate><Coordinate>2</Coordinate></CartesianPoint>
+                  </PolyLoop>
+                </PlanarGeometry>
+              </Opening>
+            </Surface>
+          </Campus>
+        </gbXML>
+        """
+    );
+
+    app.import_objects_GBXML(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allFaces.nodes.length);
+    assertEquals("{\"id\": \"wall1\"}", app.allFaces.getExtraParams(0));
+    assertEquals("{\"id\": \"win1\"}", app.allFaces.getExtraParams(1), "the Opening's own id, not its host Surface's");
+  }
+
+  @Test
+  void importObjectsGBXML_importExtraParamsFalse_suppressesCaptureEvenWithARealId () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = gbxmlFile("gbxml-extraparams-off-test", """
+        <gbXML lengthUnit="Meters">
+          <Campus>
+            <Surface id="wall1" surfaceType="ExteriorWall">
+              <PlanarGeometry>
+                <PolyLoop>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>0</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>4</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                  <CartesianPoint><Coordinate>0</Coordinate><Coordinate>0</Coordinate><Coordinate>3</Coordinate></CartesianPoint>
+                </PolyLoop>
+              </PlanarGeometry>
+            </Surface>
+          </Campus>
+        </gbXML>
+        """
+    );
+
+    app.import_objects_GBXML(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

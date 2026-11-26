@@ -304,7 +304,7 @@ void glbWalkNode (JSONObject json, byte[] bin, int nodeIndex, PMatrix3D parentMa
   worldMatrix.apply(glbNodeMatrix(node));
 
   if (node.hasKey("mesh")) {
-    glbEmitMesh(json, bin, node.getInt("mesh"), worldMatrix);
+    glbEmitMesh(json, bin, node.getInt("mesh"), worldMatrix, node);
   }
 
   if (node.hasKey("children") && !glb_aborted) {
@@ -379,14 +379,23 @@ PMatrix3D glbNodeMatrix (JSONObject node) {
 // carried through worldMatrix (that node's own fully-composed transform)
 // before being handed to allPoints.create() - see this file's own header
 // comment for exactly which primitive shapes are (and aren't) supported.
-void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMatrix) {
+void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMatrix, JSONObject node) {
   glb_meshesProcessed += 1;
   glbReportProgress();
 
   JSONArray meshes = json.getJSONArray("meshes");
   if ((meshIndex < 0) || (meshIndex >= meshes.size())) return;
 
-  JSONArray primitives = meshes.getJSONObject(meshIndex).getJSONArray("primitives");
+  JSONObject meshObj = meshes.getJSONObject(meshIndex);
+  JSONArray primitives = meshObj.getJSONArray("primitives");
+
+  // Step 5's own GLB capture - the owning node's own "name" (preferred,
+  // since the same mesh can be instanced by several differently-named
+  // nodes - glTF's own node/mesh split), falling back to the mesh's own
+  // "name" when the node has none - gated by the shared importExtraParams
+  // checkbox (fileSelected.pde), same as every other format sharing this
+  // mechanism.
+  String meshExtraParams = glbNameToExtraParams(node, meshObj);
 
   for (int p = 0; p < primitives.size(); p++) {
     JSONObject prim = primitives.getJSONObject(p);
@@ -454,6 +463,10 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
       pointIndex[i] = allPoints.create(finalX, finalY, finalZ);
     }
 
+    // Set right before, reset right after - current_ExtraParams must
+    // never leak into the next, unrelated piece of geometry someone
+    // creates (its own comment, globalVariables.pde).
+    current_ExtraParams = meshExtraParams;
     if (mode == GLB_MODE_TRIANGLES) {
       for (int i = 0; i + 2 < indices.length; i += 3) {
         int[] newFace = {
@@ -466,7 +479,23 @@ void glbEmitMesh (JSONObject json, byte[] bin, int meshIndex, PMatrix3D worldMat
     } else {
       glbEmitLinePrimitive(mode, indices, pointIndex);
     }
+    current_ExtraParams = "";
   }
+}
+
+// Builds this mesh's raw extraParams string from its owning node's own
+// "name" (preferred) or, failing that, the mesh's own "name" - gated by
+// the shared importExtraParams checkbox (fileSelected.pde), same "" (this
+// field's own default/"nothing here" value) whenever that's unchecked or
+// neither carries a name at all.
+String glbNameToExtraParams (JSONObject node, JSONObject mesh) {
+  if (!importExtraParams) return "";
+  String name = (node != null && node.hasKey("name")) ? node.getString("name") : null;
+  if (name == null && mesh != null && mesh.hasKey("name")) name = mesh.getString("name");
+  if (name == null || name.trim().length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("name", name);
+  return obj.toString();
 }
 
 // Turns one LINES/LINE_LOOP/LINE_STRIP primitive's own indices (already

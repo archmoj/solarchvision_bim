@@ -563,4 +563,127 @@ class ImportObjectsDAETest {
       app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
     });
   }
+
+  // ================= Step 5: extraParams captured from node/geometry name =======
+
+  @Test
+  void importObjectsDAE_triangles_capturesTheInstancingNodesOwnNameAsExtraParams () throws IOException {
+    String document = """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="9">0 0 0 1 0 0 1 1 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <triangles count="1">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2</p>
+                </triangles>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node id="node1" name="Roof">
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """;
+    Path f = daeFile("dae-node-name-extraparams-test", document);
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Roof\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsDAE_triangles_fallsBackToTheGeometrysOwnNameWhenTheNodeHasNone () throws IOException {
+    String document = """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1" name="RoofGeom">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="9">0 0 0 1 0 0 1 1 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <triangles count="1">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2</p>
+                </triangles>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node>
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """;
+    Path f = daeFile("dae-geometry-name-extraparams-test", document);
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"RoofGeom\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsDAE_importExtraParamsFalse_suppressesCaptureEvenWithARealName () throws IOException {
+    app.importExtraParams = false;
+
+    String document = """
+        <COLLADA>
+          <library_geometries>
+            <geometry id="geom1">
+              <mesh>
+                <source id="geom1-positions">
+                  <float_array count="9">0 0 0 1 0 0 1 1 0</float_array>
+                </source>
+                <vertices id="geom1-vertices">
+                  <input semantic="POSITION" source="#geom1-positions"/>
+                </vertices>
+                <triangles count="1">
+                  <input semantic="VERTEX" source="#geom1-vertices" offset="0"/>
+                  <p>0 1 2</p>
+                </triangles>
+              </mesh>
+            </geometry>
+          </library_geometries>
+          <library_visual_scenes>
+            <visual_scene id="Scene">
+              <node id="node1" name="Roof">
+                <instance_geometry url="#geom1"/>
+              </node>
+            </visual_scene>
+          </library_visual_scenes>
+          <scene>
+            <instance_visual_scene url="#Scene"/>
+          </scene>
+        </COLLADA>
+        """;
+    Path f = daeFile("dae-extraparams-off-test", document);
+
+    app.import_objects_DAE(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

@@ -87,6 +87,27 @@ class ImportObjectsCITYGMLTest {
     for (int[] face : app.allFaces.nodes) assertEquals(4, face.length, "every box face's own closing duplicate should be stripped to 4 points");
   }
 
+  // ================= Step 3: extraParams captured even for a volumetric building ==
+
+  @Test
+  void importObjectsCITYGML_lod1Solid_stillCapturesItsOwnGmlIdAsExtraParamsEvenThoughItsNeverExtruded () throws IOException {
+    // lod1Box()'s own gml:id is "BLDG_1" - propertiesForExtrusion is
+    // deliberately null for every one of this Building's own volumetric
+    // Polygons (citygmlHandleBuildingLike()'s own comment, importCitygml.
+    // pde), so geojsonResolveHeight(null) never re-extrudes them, but
+    // gml:id should still become every one of those Faces' own
+    // extraParams either way - see geojsonEmitPolygonFromRings()'s own
+    // 5-arg overload comment (importGeojson.pde) for exactly why.
+    Path f = gmlFile("citygml-lod1-extraparams-test", citygml(member(lod1Box())));
+
+    doImport(f);
+
+    assertEquals(6, app.allFaces.nodes.length);
+    for (int n = 0; n < app.allFaces.nodes.length; n++) {
+      assertEquals("{\"gmlId\": \"BLDG_1\"}", app.allFaces.getExtraParams(n), "face " + n + " should still carry the Building's own gml:id");
+    }
+  }
+
   // ================= LOD2 boundedBy / _BoundarySurface ============================
 
   @Test

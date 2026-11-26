@@ -391,4 +391,46 @@ class ImportObjectsSVGTest {
 
     assertEquals(0, app.allFaces.nodes.length);
   }
+
+  // ================= Step 4: extraParams captured from "id" =========
+
+  @Test
+  void importObjectsSVG_filledPathWithId_capturesItsOwnIdAsExtraParams () throws IOException {
+    Path f = svgFile("svg-face-extraparams-test", "<svg><path id=\"panel-1\" d=\"M0,0 L1,0 L1,1 L0,1 Z\"/></svg>");
+
+    app.import_objects_SVG(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"id\": \"panel-1\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsSVG_strokeOnlyPathWithId_capturesItsOwnIdAsExtraParams () throws IOException {
+    Path f = svgFile("svg-line-extraparams-test", "<svg><path id=\"wire-1\" fill=\"none\" d=\"M0,0 L1,0 L1,1\"/></svg>");
+
+    app.import_objects_SVG(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"id\": \"wire-1\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsSVG_shapeWithNoId_hasNoExtraParams () throws IOException {
+    Path f = svgFile("svg-no-id-extraparams-test", "<svg><path d=\"M0,0 L1,0 L1,1 L0,1 Z\"/></svg>");
+
+    app.import_objects_SVG(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsSVG_importExtraParamsFalse_suppressesCaptureEvenWithARealId () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = svgFile("svg-extraparams-off-test", "<svg><path id=\"panel-1\" d=\"M0,0 L1,0 L1,1 L0,1 Z\"/></svg>");
+
+    app.import_objects_SVG(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }

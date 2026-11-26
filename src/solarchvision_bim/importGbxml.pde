@@ -362,7 +362,19 @@ ArrayList<PVector> gbxmlGeometryPoints (XML ownerEl) {
 // per face, the same direct way importDae.pde's own
 // daeCreatePoint()/allFaces.create(face) calls already do, is simple
 // and plenty fast here.
-void gbxmlEmitFace (ArrayList<PVector> pts, int material, float cx, float cy, float cz, float sx, float sy, float sz) {
+// Builds this Surface's/Opening's own raw extraParams string from its
+// own "id" attribute (gbXML's own schema requires one on both) - gated
+// by the shared importExtraParams checkbox (fileSelected.pde), same ""
+// (this field's own default/"nothing here" value) whenever that's
+// unchecked or `id` is null/blank.
+String gbxmlIdToExtraParams (String id) {
+  if (!importExtraParams || id == null || id.trim().length() == 0) return "";
+  JSONObject obj = new JSONObject();
+  obj.setString("id", id);
+  return obj.toString();
+}
+
+void gbxmlEmitFace (ArrayList<PVector> pts, int material, String id, float cx, float cy, float cz, float sx, float sy, float sz) {
   // Drop consecutive duplicate points (zero-length edges), and a
   // trailing point that just repeats the first (an explicitly closed
   // loop), before deciding whether there's still a real polygon left -
@@ -397,7 +409,12 @@ void gbxmlEmitFace (ArrayList<PVector> pts, int material, float cx, float cy, fl
   // importDae.pde's/importDxf.pde's own per-primitive
   // material cycling already uses.
   current_Material = material;
+  // Set right before, reset right after - current_ExtraParams must never
+  // leak into the next, unrelated piece of geometry someone creates (its
+  // own comment, globalVariables.pde).
+  current_ExtraParams = gbxmlIdToExtraParams(id);
   allFaces.create(faceNodes);
+  current_ExtraParams = "";
   gbxmlImportFaceCount++;
 }
 
@@ -637,7 +654,7 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
       materialForThisSurface = nextEffectiveMaterial;
     }
 
-    gbxmlEmitFace(pts, materialForThisSurface, cx, cy, cz, sx, sy, sz);
+    gbxmlEmitFace(pts, materialForThisSurface, surfaceEl.getString("id"), cx, cy, cz, sx, sy, sz);
     effectiveMaterial = nextEffectiveMaterial;
     gbxmlImportSurfaceCount++;
 
@@ -665,7 +682,14 @@ void import_objects_GBXML (String FileName, int m, int tes, int lyr, int vsb, in
       Integer openingMaterial = gbxmlMaterialForWindowType(windowType);
       int materialForThisOpening = (openingMaterial != null) ? openingMaterial : materialForThisSurface;
 
-      gbxmlEmitFace(openingPts, materialForThisOpening, cx, cy, cz, sx, sy, sz);
+      // The Opening's own "id" when it has one, falling back to its host
+      // Surface's own "id" (same "instance vs definition" fallback
+      // glbNameToExtraParams()'s own comment, importGlb.pde, uses for its
+      // own node/mesh).
+      String openingId = openingEl.getString("id");
+      if (openingId == null || openingId.trim().length() == 0) openingId = surfaceEl.getString("id");
+
+      gbxmlEmitFace(openingPts, materialForThisOpening, openingId, cx, cy, cz, sx, sy, sz);
       gbxmlImportOpeningCount++;
     }
   }

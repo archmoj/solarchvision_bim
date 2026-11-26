@@ -429,4 +429,63 @@ class ImportObjectsGEOJSONTest {
 
     assertEquals(0, app.allPoints.getLength());
   }
+
+  // ================= Step 3: extraParams captured from Feature "properties" =====
+
+  @Test
+  void importObjectsGEOJSON_polygonFeature_capturesItsOwnPropertiesAsExtraParams () throws IOException {
+    Path f = geojsonFile("geojson-polygon-extraparams-test",
+        "{\"type\":\"Feature\",\"properties\":{\"name\":\"Lot 7\"},"
+        + "\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[2,0],[2,2],[0,2],[0,0]]]}}");
+
+    doImport(f);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"Lot 7\"}", app.allFaces.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsGEOJSON_lineStringFeature_capturesItsOwnPropertiesAsExtraParams () throws IOException {
+    Path f = geojsonFile("geojson-linestring-extraparams-test",
+        "{\"type\":\"Feature\",\"properties\":{\"name\":\"Trail A\"},"
+        + "\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[0,0],[1,0],[1,1]]}}");
+
+    doImport(f);
+
+    assertEquals(1, app.allPolylines.nodes.length);
+    assertEquals("{\"name\": \"Trail A\"}", app.allPolylines.getExtraParams(0));
+  }
+
+  @Test
+  void importObjectsGEOJSON_extraParamsNeverLeaksIntoTheNextUnrelatedFeature () throws IOException {
+    // One Feature with properties, one FeatureCollection sibling without
+    // any - current_ExtraParams must be reset right after the first
+    // Feature's own create() call(s), same discipline every ambient-global
+    // mechanism in this app already follows (current_ExtraParams's own
+    // comment, globalVariables.pde).
+    Path f = geojsonFile("geojson-no-leak-test",
+        "{\"type\":\"FeatureCollection\",\"features\":["
+        + "{\"type\":\"Feature\",\"properties\":{\"name\":\"A\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[2,0],[2,2],[0,2],[0,0]]]}},"
+        + "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[10,10],[12,10],[12,12],[10,12],[10,10]]]}}"
+        + "]}");
+
+    doImport(f);
+
+    assertEquals(2, app.allFaces.nodes.length);
+    assertEquals("{\"name\": \"A\"}", app.allFaces.getExtraParams(0));
+    assertEquals("", app.allFaces.getExtraParams(1), "an empty \"properties\" object should never leave a stray extraParams behind from the PREVIOUS Feature");
+  }
+
+  @Test
+  void importObjectsGEOJSON_importExtraParamsFalse_suppressesCaptureEvenWithRealProperties () throws IOException {
+    app.importExtraParams = false;
+
+    Path f = geojsonFile("geojson-extraparams-off-test",
+        "{\"type\":\"Feature\",\"properties\":{\"name\":\"Lot 7\"},"
+        + "\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[2,0],[2,2],[0,2],[0,0]]]}}");
+
+    doImport(f);
+
+    assertEquals("", app.allFaces.getExtraParams(0), "unchecking the shared importExtraParams option (fileSelected.pde) opts out of extraParams capture for a simplified import");
+  }
 }
