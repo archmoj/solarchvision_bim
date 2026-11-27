@@ -1,6 +1,6 @@
 // Dotted-path read/write on top of extraParamsHelpers.pde's own parsed
 // JSONObject - "ifcShape.origin" means "the origin key inside the
-// ifcShape key", the same addressing PARENT_EXTRAPARAMS' own row
+// ifcShape key", the same addressing PARENT_EXTRA_PARAMS' own row
 // captions show the user (uiRollout.pde) and that EXTRAPARAMS.SET/
 // EXTRAPARAMS.REMOVE (extraCommands.pde) take as their own <key>
 // argument - one scheme, so what a row displays is always exactly what

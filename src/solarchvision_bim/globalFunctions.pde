@@ -312,7 +312,7 @@ void view_changed () {
   // gets consumed and cleared again.
   if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
 
-  // PARENT_EXTRAPARAMS (uiRollout.pde) shows whatever Select3D currently
+  // PARENT_EXTRA_PARAMS (uiRollout.pde) shows whatever Select3D currently
   // has selected - stale otherwise, since UI_rollout.draw() only runs
   // when UI_rollout.update is set (applyRolloutUpdate.pde's own guard),
   // and nothing before this routed a plain selection/model change into
@@ -324,7 +324,7 @@ void view_changed () {
   // Scoped to only fire while that panel is actually the one showing, so
   // every other, unrelated view_changed() call (most of them) still
   // costs nothing extra.
-  if (UI_rollout.parent == UI_rollout.PARENT_EXTRAPARAMS) UI_rollout.revise();
+  if (UI_rollout.parent == UI_rollout.PARENT_EXTRA_PARAMS) UI_rollout.revise();
 }
 
 void selection_changed () {

@@ -1,9 +1,16 @@
-// Resolves "the one item PARENT_EXTRAPARAMS (uiRollout.pde) and
+// Resolves "the one entity PARENT_EXTRA_PARAMS (uiRollout.pde) and
 // EXTRAPARAMS.SET/EXTRAPARAMS.REMOVE (extraCommands.pde) operate on"
 // against Select3D's own per-category selection arrays (select3D.pde).
-// v1 scope is exactly one selected item, in exactly one category -
-// 0 or more than 1, in any combination across categories, resolves to
-// "nothing to show/act on" rather than a per-category error.
+// Each category's own selection array holds one slot per selectable
+// entity - a selected group is one such slot too, with its own single
+// extraParams object, same as a face or a solid, whatever else that
+// group's own selection may additionally pull into other categories'
+// arrays at the same time. v1 scope for the Selected Entity tab (below)
+// is exactly one selected entity, in exactly one category - 0 or more
+// than 1, in any combination across categories, resolves to "nothing to
+// show/act on" rather than a per-category error; the Bulk Edit tab
+// (currentExtraParamsSelectionList(), below) is the counterpart that
+// works across however many entities end up selected at once.
 //
 // vertexSelection/softSelection/terrainVertexSelection are sub-
 // selections *within* an already-selected object, not objects of their
@@ -36,7 +43,7 @@ int[] extraParamsSelectionArrayFor (String category) {
   return new int[0];
 }
 
-// null unless exactly one item is selected, total, across every
+// null unless exactly one entity is selected, total, across every
 // category above.
 ExtraParamsSelectionTarget currentExtraParamsSelection () {
   ExtraParamsSelectionTarget found = null;
@@ -47,6 +54,24 @@ ExtraParamsSelectionTarget currentExtraParamsSelection () {
     if (ids.length == 1 && found == null) found = new ExtraParamsSelectionTarget(category, ids[0]);
   }
   return (totalSelected == 1) ? found : null;
+}
+
+// Every currently selected entity, any count (including one), across
+// every category above - the PARENT_EXTRA_PARAMS "Bulk Edit" path's own counterpart to
+// currentExtraParamsSelection()'s exactly-one resolver. Always in the
+// same category order EXTRAPARAMS_CATEGORIES itself lists, then by each
+// category's own selection-array order, so the list (and anything
+// built from it, like a signature string) is deterministic frame to
+// frame for the same underlying selection.
+ArrayList<ExtraParamsSelectionTarget> currentExtraParamsSelectionList () {
+  ArrayList<ExtraParamsSelectionTarget> found = new ArrayList<ExtraParamsSelectionTarget>();
+  for (String category : EXTRAPARAMS_CATEGORIES) {
+    int[] ids = extraParamsSelectionArrayFor(category);
+    for (int id : ids) {
+      found.add(new ExtraParamsSelectionTarget(category, id));
+    }
+  }
+  return found;
 }
 
 JSONObject getExtraParamsObjectForSelection (ExtraParamsSelectionTarget target) {

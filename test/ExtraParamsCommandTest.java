@@ -6,7 +6,7 @@ import processing.data.JSONObject;
 // EXTRAPARAMS.SET/EXTRAPARAMS.REMOVE (extraCommands.pde, dispatched from
 // runScript.pde) and the dotted-path helpers they're built on
 // (extraParamsPath.pde) - the command-line/engine half of
-// PARENT_EXTRAPARAMS (uiRollout.pde doesn't have JUnit-reachable tests
+// PARENT_EXTRA_PARAMS (uiRollout.pde doesn't have JUnit-reachable tests
 // of its own, same as every other Processing-drawn rollout page in this
 // app; its row widgets are thin wrappers around exactly the path helpers
 // and commands covered here).

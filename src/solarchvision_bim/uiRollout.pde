@@ -28,7 +28,7 @@ class UI_rollout {
   // Which keys keyPressed()'s own '-'/default cases (below) accept while
   // editActive: false for the numeric Spinner()/_Spinner() family
   // (digits and a single '.', '-' only as the first character), true for
-  // the text-row _SpinnerText() family (PARENT_EXTRAPARAMS, below) -
+  // the text-row _SpinnerText() family (PARENT_EXTRA_PARAMS, below) -
   // any printable character, since a text row's commit takes editText
   // verbatim rather than Float.parseFloat()'ing it. Set by
   // beginSpinnerEdit()/beginSpinnerTextEdit() respectively - every
@@ -95,8 +95,9 @@ class UI_rollout {
     CHILD_EXPORT_DATA = pushChild("Data");
     CHILD_EXPORT_CONTENT = pushChild("Content");
 
-    PARENT_EXTRAPARAMS = pushParent("Extra Params");
-    CHILD_EXTRAPARAMS_MAIN = pushChild("Selected Item");
+    PARENT_EXTRA_PARAMS = pushParent("Extra Params");
+    CHILD_EXTRA_PARAMS_SELECTED_ENTITY = pushChild("Selected Entity");
+    CHILD_EXTRA_PARAMS_BULK_EDIT = pushChild("Bulk Edit");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -140,8 +141,9 @@ class UI_rollout {
   int CHILD_EXPORT_DATA;
   int CHILD_EXPORT_CONTENT;
 
-  int PARENT_EXTRAPARAMS;
-  int CHILD_EXTRAPARAMS_MAIN;
+  int PARENT_EXTRA_PARAMS;
+  int CHILD_EXTRA_PARAMS_SELECTED_ENTITY;
+  int CHILD_EXTRA_PARAMS_BULK_EDIT;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -524,7 +526,7 @@ class UI_rollout {
 
       // The loop above only bumps Y_control once a ROW of 2 is complete
       // (i % 2 == 1) - fine while allRollouts.size() was always even (8
-      // parents, 4 full rows), but with PARENT_EXTRAPARAMS added as a
+      // parents, 4 full rows), but with PARENT_EXTRA_PARAMS added as a
       // 9th, the last row holds a single, lone tab (i = 8, i % 2 == 0),
       // whose row the loop never accounts for. Without this, the child-
       // tab background/grid below would start drawing at that same row's
@@ -1018,10 +1020,12 @@ class UI_rollout {
         allSolarImpacts.record_IMG = vm.Record_Solar_Analysis_in_JPG(1);
       }
 
-    } else if (this.parent == PARENT_EXTRAPARAMS) {
+    } else if (this.parent == PARENT_EXTRA_PARAMS) {
 
-      if (this.child == CHILD_EXTRAPARAMS_MAIN) {
-        this.drawExtraParamsPanel();
+      if (this.child == CHILD_EXTRA_PARAMS_SELECTED_ENTITY) {
+        this.drawExtraParamsSelectedEntityTab();
+      } else if (this.child == CHILD_EXTRA_PARAMS_BULK_EDIT) {
+        this.drawExtraParamsBulkEditTab();
       }
     }
 
@@ -1505,10 +1509,10 @@ class UI_rollout {
   }
 
   // ===================================================================
-  // PARENT_EXTRAPARAMS - view/edit the single currently-selected item's
-  // extraParams (extraParamsHelpers.pde/extraParamsPath.pde/
+  // PARENT_EXTRA_PARAMS - view/edit the single currently-selected
+  // entity's extraParams (extraParamsHelpers.pde/extraParamsPath.pde/
   // extraParamsSelection.pde). See that planning discussion for the
-  // locked shape of this: single-item scope, one row per top-level key,
+  // locked shape of this: single-entity scope, one row per top-level key,
   // a per-row level control (reusing the plain int Spinner() below
   // unmodified) that reveals an object-valued key's own children as
   // further rows capped at that one extra level, and a remove button per
@@ -1538,7 +1542,7 @@ class UI_rollout {
   // line of its own first; within each such segment, text is then
   // character-wrapped (not word-wrapped) to fit maxWidth, since a
   // compact JSON blob - this widget's single longest-running case,
-  // PARENT_EXTRAPARAMS's own object-valued rows - has no spaces at all
+  // PARENT_EXTRA_PARAMS's own object-valued rows - has no spaces at all
   // for a word-wrap to ever break on.
   void wrapTextLines (String text, float maxWidth, ArrayList<String> outLines, ArrayList<Integer> outStarts) {
     String[] rawLines = text.split("\n", -1);
@@ -1639,8 +1643,8 @@ class UI_rollout {
   }
 
   // The first wrapped line's own vertical center, for whichever row
-  // _SpinnerText() (below) just drew - read by drawExtraParamsPanel()
-  // right after each call to align that row's remove button (and, for
+  // _SpinnerText() (below) just drew - read by drawExtraParamsSelectedEntityTab()/
+  // drawExtraParamsBulkEditPanel() right after each call to align that row's remove button (and, for
   // an object-valued row, the level-control Spinner right after it)
   // with the row's TOP line, regardless of how many further lines a
   // long value wrapped into beneath it. Same single-flag-per-call shape
@@ -1660,14 +1664,14 @@ class UI_rollout {
   // long value (a compact JSON blob especially) would otherwise run off
   // the edge of the box, or grow the row without bound and push every
   // row below it off-screen. caption doubles as both the Tab-order key
-  // and, for every PARENT_EXTRAPARAMS row, the exact dotted path
+  // and, for every PARENT_EXTRA_PARAMS row, the exact dotted path
   // EXTRAPARAMS.SET/REMOVE would also take for that same row - so what's
   // shown here is always what could be typed on the command line too.
   String _SpinnerText (float x, float topY, String caption, String v) {
     return this._SpinnerText(x, topY, caption, v, false);
   }
 
-  // darker: true for a row drawn as one of an expanded PARENT_EXTRAPARAMS
+  // darker: true for a row drawn as one of an expanded PARENT_EXTRA_PARAMS
   // key's own children - same gray as extraParamsLevelToggle()'s own row
   // above them, so the toggle and the child rows it reveals read as one
   // visually grouped cluster rather than each blending into the plain
@@ -1934,7 +1938,8 @@ class UI_rollout {
     line(bx + bw - pad, by + pad, bx + pad, by + bh - pad);
   }
 
-  // Checked by drawExtraParamsPanel() BEFORE handing that row's click to
+  // Checked by drawExtraParamsSelectedEntityTab()/drawExtraParamsBulkEditPanel()
+  // BEFORE handing that row's click to
   // _SpinnerText() - same ordering mouseClicked.pde's own check against
   // hover.pde's hoverPointAtCloseButton() keeps ahead of placing a new
   // hover pin, so a click meant to remove a row can never be misread as
@@ -1944,7 +1949,7 @@ class UI_rollout {
     return isInside(X_clicked, Y_clicked, btn[0], btn[1], btn[0] + btn[2], btn[1] + btn[3]);
   }
 
-  // A lightweight 0/1 toggle for PARENT_EXTRAPARAMS's own per-row
+  // A lightweight 0/1 toggle for PARENT_EXTRA_PARAMS's own per-row
   // expand/collapse control (extraParamsRowLevel, below) - same
   // caption/value-box look _Spinner() uses (and, like it, Tab/Shift+Tab/
   // Esc/Enter-editable and typeable via the shared numeric keyPressed()
@@ -2134,13 +2139,19 @@ class UI_rollout {
   // comment above). Deliberately never written into extraParams itself
   // (would corrupt every exporter's own round-trip and this app's
   // existing tests - see extraParamsPath.pde), and cleared whenever the
-  // single-item selection changes (drawExtraParamsPanel(), below), so
-  // selecting a different item never shows a stale expand state left
+  // single-entity selection changes (drawExtraParamsSelectedEntityTab(), below), so
+  // selecting a different entity never shows a stale expand state left
   // over from a previous one.
   HashMap<String,Integer> extraParamsRowLevel = new HashMap<String,Integer>();
   String extraParamsLastSelectionSignature = "";
 
-  void drawExtraParamsPanel () {
+  // CHILD_EXTRA_PARAMS_SELECTED_ENTITY - the single-entity view/edit tab.
+  // Bulk editing is the separate CHILD_EXTRA_PARAMS_BULK_EDIT tab
+  // (drawExtraParamsBulkEditTab(), below, which also works down to one
+  // entity) rather than something this tab auto-switches into - picking
+  // which to look at is the person's own choice of tab, not inferred
+  // from however many entities happen to be selected right now.
+  void drawExtraParamsSelectedEntityTab () {
 
     ExtraParamsSelectionTarget target = currentExtraParamsSelection();
 
@@ -2156,7 +2167,7 @@ class UI_rollout {
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Select exactly one item to view/edit its extra parameters.",
+        "Select exactly one entity to view/edit its extra parameters.",
         this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
       );
       Y_control += 30 * this.view_S;
@@ -2279,6 +2290,152 @@ class UI_rollout {
     if (changed) {
       setExtraParamsObjectForSelection(target, obj);
       UI_rollout.revise();
+    }
+  }
+
+  // CHILD_EXTRA_PARAMS_BULK_EDIT - the bulk-edit tab's own entry point,
+  // parallel to drawExtraParamsSelectedEntityTab() above. Works down to
+  // a single selected entity too (there's then nothing to disagree with,
+  // so every one of that entity's own keys is trivially "common") -
+  // the Selected Entity tab stays the one with the Level toggle/child-row
+  // expansion, so this is still the simpler, flat alternative even for
+  // one entity. Only keys common to every selected entity are shown (an
+  // intersection, not a union) - simpler to reason about than a per-
+  // entity presence/absence distinction, and matches how other
+  // applications already handle a multi-selection's shared properties.
+  // No Level toggle/child-row expansion here even for an object-valued
+  // common key - v1 scope is flat, top-level keys only; an object value
+  // still shows (and is still editable) as its own flat JSON text, same
+  // as any top-level row already does before it's expanded in the
+  // Selected Entity tab.
+  void drawExtraParamsBulkEditTab () {
+
+    ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
+
+    StringBuilder sigBuilder = new StringBuilder();
+    for (ExtraParamsSelectionTarget t : list) {
+      if (sigBuilder.length() > 0) sigBuilder.append(",");
+      sigBuilder.append(t.category).append(":").append(t.index);
+    }
+    String signature = sigBuilder.toString();
+    if (!signature.equals(this.extraParamsLastSelectionSignature)) {
+      this.extraParamsRowLevel.clear();
+      this.spinnerTextScroll.clear();
+      this.extraParamsLastSelectionSignature = signature;
+    }
+
+    if (list.size() < 1) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Select one or more entities to bulk edit their extra parameters.",
+        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+      );
+      Y_control += 30 * this.view_S;
+      return;
+    }
+
+    this.drawExtraParamsBulkEditPanel(list);
+  }
+
+  void drawExtraParamsBulkEditPanel (ArrayList<ExtraParamsSelectionTarget> list) {
+
+    fill(127);
+    textAlign(LEFT, CENTER);
+    textSize(12 * this.view_S);
+    text(
+      list.size() + " entit" + (list.size() == 1 ? "y" : "ies") + " selected",
+      this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+    );
+    Y_control += 30 * this.view_S;
+
+    ArrayList<JSONObject> objs = new ArrayList<JSONObject>();
+    for (ExtraParamsSelectionTarget t : list) objs.add(getExtraParamsObjectForSelection(t));
+
+    ArrayList<String> commonKeys = new ArrayList<String>(objs.get(0).keys());
+    for (int i = 1; i < objs.size(); i++) {
+      commonKeys.retainAll(objs.get(i).keys());
+    }
+    java.util.Collections.sort(commonKeys); // deterministic row order, same reasoning as the Selected Entity path's own topKeys sort
+
+    for (String key : commonKeys) {
+
+      // "various", placeholder-styled exactly like the "+ Add" row's own
+      // "\"key\": \"value\"" hint below - gray, not part of the real
+      // value, and editing starts from a blank box rather than any one
+      // entity's own value, so a typed edit is never mistaken for "this is
+      // what entity N already had".
+      String firstShown = null;
+      boolean uniform = true;
+      for (JSONObject o : objs) {
+        Object v = o.get(key);
+        String shown = (v instanceof JSONObject) ? ((JSONObject) v).toString() : String.valueOf(v);
+        if (firstShown == null) firstShown = shown;
+        else if (!firstShown.equals(shown)) uniform = false;
+      }
+
+      this._SpinnerText(X_control, Y_control, key, uniform ? firstShown : "", false, uniform ? null : "various");
+      float rowY = this.lastSpinnerTextRowFirstLineY;
+
+      if (extraParamsRemoveButtonClicked(X_control, rowY)) {
+        X_clicked = -1;
+        Y_clicked = -1;
+        for (int i = 0; i < list.size(); i++) {
+          extraParamsRemoveAtPath(objs.get(i), key);
+          setExtraParamsObjectForSelection(list.get(i), objs.get(i));
+        }
+        UI_rollout.revise();
+      } else {
+        this.drawExtraParamsRemoveButton(X_control, rowY);
+      }
+
+      if (this.textEditJustCommitted) {
+        String typedValue = this.textEditCommittedValue;
+        this.textEditJustCommitted = false;
+        for (int i = 0; i < list.size(); i++) {
+          extraParamsSetAtPath(objs.get(i), key, typedValue);
+          setExtraParamsObjectForSelection(list.get(i), objs.get(i));
+        }
+        UI_rollout.revise();
+      }
+    }
+
+    // Same "+ Add" row/placeholder/colon-split convention as the
+    // Selected Entity path, except its commit applies the new key/value
+    // to every selected entity rather than just one.
+    // EXTRAPARAMS.SET's own command dispatch only ever resolves a single
+    // current selection (deliberately - see
+    // extraparamsSet_multipleSelected_isTreatedAsNoSelection,
+    // test/ExtraParamsCommandTest.java), so this writes each entity's own
+    // JSONObject directly rather than going through runScriptLine(). Re-
+    // fetches each entity's object fresh here rather than reusing objs[]:
+    // only one of this row's own commit or a commonKeys row's own
+    // commit/remove above can ever fire in the same frame (one shared
+    // textEditJustCommitted flag, one click), so this is never strictly
+    // needed to avoid clobbering a same-frame edit - it's just as cheap
+    // as reusing objs[] and one less thing to reason about if that ever
+    // changes.
+    this._SpinnerText(X_control, Y_control, "+ Add", "", false, true, "\"key\": \"value\"");
+    if (this.textEditJustCommitted) {
+      this.textEditJustCommitted = false;
+      String typed = this.textEditCommittedValue;
+      int colonIndex = typed.indexOf(':');
+      if (colonIndex >= 0) {
+        String newKey = typed.substring(0, colonIndex).strip();
+        String newValue = typed.substring(colonIndex + 1).strip();
+        if (newKey.length() >= 2 && newKey.startsWith("\"") && newKey.endsWith("\"")) {
+          newKey = newKey.substring(1, newKey.length() - 1);
+        }
+        if (!newKey.equals("")) {
+          for (ExtraParamsSelectionTarget t : list) {
+            JSONObject o = getExtraParamsObjectForSelection(t);
+            extraParamsSetAtPath(o, newKey, newValue);
+            setExtraParamsObjectForSelection(t, o);
+          }
+          UI_rollout.revise();
+        }
+      }
     }
   }
 

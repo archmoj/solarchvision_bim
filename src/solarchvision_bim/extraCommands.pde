@@ -3265,7 +3265,7 @@ String extraParamsRestAfterFirstToken (String s) {
   return s.substring(i);
 }
 
-// EXTRAPARAMS.SET <key> <value> - upserts, on whatever single item
+// EXTRAPARAMS.SET <key> <value> - upserts, on whatever single entity
 // Select3D currently has selected (extraParamsSelection.pde), the given
 // dotted-path key (extraParamsPath.pde) to the given value. Dispatched
 // with the line's own raw (sanitized, but NOT tokenizeScriptLine()'d)
