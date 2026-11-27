@@ -2171,10 +2171,10 @@ class UI_rollout {
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Select exactly one entity to view/edit its extra parameters.",
-        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+        "Select exactly one entity\nto view/edit its extra parameters.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
       );
-      Y_control += 30 * this.view_S;
+      Y_control += 50 * this.view_S;
       return;
     }
 
@@ -2333,10 +2333,10 @@ class UI_rollout {
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Select one or more entities to bulk edit their extra parameters.",
-        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+        "Select one or more entities\nto bulk edit their extra parameters.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
       );
-      Y_control += 30 * this.view_S;
+      Y_control += 50 * this.view_S;
       return;
     }
 
@@ -2483,10 +2483,10 @@ class UI_rollout {
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Select two or more entities to see which properties are missing from some but not all of them.",
-        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+        "Select two or more entities\nto see which properties are missing\nfrom some but not all of them.",
+        this.cX + 10 * this.view_S, Y_control + 28 * this.view_S
       );
-      Y_control += 30 * this.view_S;
+      Y_control += 70 * this.view_S;
       return;
     }
 
@@ -2516,10 +2516,10 @@ class UI_rollout {
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Every key is either on all or none of the " + list.size() + " selected entities.",
-        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+        "Every key is either on all or none of the\n" + list.size() + " selected entities.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
       );
-      Y_control += 30 * this.view_S;
+      Y_control += 50 * this.view_S;
       return;
     }
 
