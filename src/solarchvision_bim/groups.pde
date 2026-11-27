@@ -645,6 +645,44 @@ class Groups {
     return OBJ_ID;
   }
 
+  // Every index of category (0 up to extraParamsEntityCountForCategory()'s
+  // own count for it, exclusive) that falls outside every group's own
+  // [start,stop] range for that category - Scene Explorer's own
+  // "Ungrouped" bucket (uiRollout.pde). A group's members are a
+  // contiguous index range per category (this.Faces[i] = {start,stop},
+  // etc.), not a per-entity tag - see beginNewGroup()'s/group_Selection()'s
+  // own comments above for why - so "ungrouped" can only be computed by
+  // elimination rather than read off any one field. Cameras/Sections (and
+  // Groups itself) have no range of their own here at all - every one of
+  // their own indices is therefore always "ungrouped" by this same
+  // definition, though Scene Explorer's own top-level Cameras/Sections
+  // rows never actually call this for them (they're shown flat, not
+  // nested under "Ungrouped" - see its own file for why).
+  int[] ungroupedIndicesForCategory (String category) {
+    int count = extraParamsEntityCountForCategory(category);
+    boolean[] grouped = new boolean[count];
+
+    for (int g = 0; g < this.num; g++) {
+      int start;
+      int stop;
+      if (category.equals("face")) { start = this.getStart_Face(g); stop = this.getStop_Face(g); }
+      else if (category.equals("polyline")) { start = this.getStart_Polyline(g); stop = this.getStop_Polyline(g); }
+      else if (category.equals("solid")) { start = this.getStart_Solid(g); stop = this.getStop_Solid(g); }
+      else if (category.equals("model1d")) { start = this.getStart_Model1D(g); stop = this.getStop_Model1D(g); }
+      else if (category.equals("model2d")) { start = this.getStart_Model2D(g); stop = this.getStop_Model2D(g); }
+      else { start = 1; stop = 0; } // camera/section/group: no range here at all, so this group contributes nothing and every index of theirs stays ungrouped below
+
+      for (int i = max(0, start); i <= min(stop, count - 1); i++) grouped[i] = true;
+    }
+
+    ArrayList<Integer> ungrouped = new ArrayList<Integer>();
+    for (int i = 0; i < count; i++) if (!grouped[i]) ungrouped.add(i);
+
+    int[] result = new int[ungrouped.size()];
+    for (int i = 0; i < result.length; i++) result[i] = ungrouped.get(i);
+    return result;
+  }
+
 
   public void to_XML (XML xml) {
 

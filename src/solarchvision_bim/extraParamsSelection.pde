@@ -43,6 +43,85 @@ int[] extraParamsSelectionArrayFor (String category) {
   return new int[0];
 }
 
+// The write-side counterpart of extraParamsSelectionArrayFor() above -
+// nothing needed one before now (every prior caller only ever read the
+// current selection), but Scene Explorer's own row clicks (uiRollout.pde)
+// need to drive the selection FROM a row's own target list, across
+// whichever category that row happens to be, without a per-category
+// if/else at every call site. Replaces that category's own selection
+// array outright - callers that want to add to (rather than replace)
+// the current selection build the union themselves first.
+void setExtraParamsSelectionArrayFor (String category, int[] ids) {
+  if (category.equals("face")) { Select3D.faceSelection = ids; return; }
+  if (category.equals("polyline")) { Select3D.polylineSelection = ids; return; }
+  if (category.equals("model1d")) { Select3D.model1DSelection = ids; return; }
+  if (category.equals("model2d")) { Select3D.model2DSelection = ids; return; }
+  if (category.equals("solid")) { Select3D.solidSelection = ids; return; }
+  if (category.equals("group")) { Select3D.groupSelection = ids; return; }
+  if (category.equals("camera")) { Select3D.cameraSelection = ids; return; }
+  if (category.equals("section")) { Select3D.sectionSelection = ids; return; }
+}
+
+// How many entities category currently has, total - every class behind
+// EXTRAPARAMS_CATEGORIES keeps its own extraParams array exactly in
+// step with its own entity count once ensureExtraParamsLength() has
+// run (stripAllExtraParams(), faces.pde and seven classes alongside it,
+// already relies on this same invariant), even though each class
+// tracks that count via a different internal field of its own
+// (this.nodes.length for Faces, this.num for Groups, etc. - see
+// ensureExtraParamsLength()'s own comment in each file). Reading
+// extraParams.length after calling it is therefore a uniform count
+// accessor across every category, without needing to know any one
+// class's own sizing field - Scene Explorer's own row-building
+// (sceneExplorer.pde) is the first caller that needs "how many does
+// this category have, total" independent of any selection.
+int extraParamsEntityCountForCategory (String category) {
+  if (category.equals("face")) { allFaces.ensureExtraParamsLength(); return allFaces.extraParams.length; }
+  if (category.equals("polyline")) { allPolylines.ensureExtraParamsLength(); return allPolylines.extraParams.length; }
+  if (category.equals("model1d")) { allModel1Ds.ensureExtraParamsLength(); return allModel1Ds.extraParams.length; }
+  if (category.equals("model2d")) { allModel2Ds.ensureExtraParamsLength(); return allModel2Ds.extraParams.length; }
+  if (category.equals("solid")) { allSolids.ensureExtraParamsLength(); return allSolids.extraParams.length; }
+  if (category.equals("group")) { allGroups.ensureExtraParamsLength(); return allGroups.extraParams.length; }
+  if (category.equals("camera")) { allCameras.ensureExtraParamsLength(); return allCameras.extraParams.length; }
+  if (category.equals("section")) { allSections.ensureExtraParamsLength(); return allSections.extraParams.length; }
+  return 0;
+}
+
+// Named constants for extraParamsSelectionStateFor()'s own result -
+// this codebase's established alternative to a real Java enum
+// (objectType.pde's own OBJECTTYPE class, used the same way for
+// ObjectCategory, is the precedent this follows).
+class ExtraParamsSelectionState {
+  final static int NONE = 0; // none of the targets are currently selected
+  final static int SOME = 1; // some, but not all
+  final static int ALL = 2;  // every one of them
+}
+
+// How much of targets (any list of ExtraParamsSelectionTarget, built
+// however the caller likes) is currently selected - Scene Explorer's
+// own row-highlight logic (green when a row's own entities are ALL
+// selected, yellow for SOME, no highlight for NONE - uiRollout.pde).
+// Pulled out as its own pure function, same reasoning as every other
+// extraParams helper in this file: testable without a canvas, and
+// reusable anywhere else "is this whole group selected" ever matters.
+int extraParamsSelectionStateFor (ArrayList<ExtraParamsSelectionTarget> targets) {
+  if (targets.size() == 0) return ExtraParamsSelectionState.NONE;
+
+  java.util.HashSet<String> selectedKeys = new java.util.HashSet<String>();
+  for (ExtraParamsSelectionTarget t : currentExtraParamsSelectionList()) {
+    selectedKeys.add(t.category + ":" + t.index);
+  }
+
+  int selectedCount = 0;
+  for (ExtraParamsSelectionTarget t : targets) {
+    if (selectedKeys.contains(t.category + ":" + t.index)) selectedCount++;
+  }
+
+  if (selectedCount == 0) return ExtraParamsSelectionState.NONE;
+  if (selectedCount == targets.size()) return ExtraParamsSelectionState.ALL;
+  return ExtraParamsSelectionState.SOME;
+}
+
 // null unless exactly one entity is selected, total, across every
 // category above.
 ExtraParamsSelectionTarget currentExtraParamsSelection () {

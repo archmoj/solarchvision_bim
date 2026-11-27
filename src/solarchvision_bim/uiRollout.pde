@@ -99,6 +99,9 @@ class UI_rollout {
     CHILD_EXTRA_PARAMS_SELECTED_ENTITY = pushChild("Selected Entity");
     CHILD_EXTRA_PARAMS_BULK_EDIT = pushChild("Bulk Edit");
     CHILD_EXTRA_PARAMS_ASSIGN_MISSING = pushChild("Assign Missing");
+
+    PARENT_SCENE_EXPLORER = pushParent("Scene Explorer");
+    CHILD_SCENE_EXPLORER_NAVIGATE = pushChild("Navigate");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -146,6 +149,9 @@ class UI_rollout {
   int CHILD_EXTRA_PARAMS_SELECTED_ENTITY;
   int CHILD_EXTRA_PARAMS_BULK_EDIT;
   int CHILD_EXTRA_PARAMS_ASSIGN_MISSING;
+
+  int PARENT_SCENE_EXPLORER;
+  int CHILD_SCENE_EXPLORER_NAVIGATE;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -1030,6 +1036,11 @@ class UI_rollout {
         this.drawExtraParamsBulkEditTab();
       } else if (this.child == CHILD_EXTRA_PARAMS_ASSIGN_MISSING) {
         this.drawExtraParamsAssignMissingTab();
+      }
+    } else if (this.parent == PARENT_SCENE_EXPLORER) {
+
+      if (this.child == CHILD_SCENE_EXPLORER_NAVIGATE) {
+        this.drawSceneExplorerNavigateTab();
       }
     }
 
@@ -2552,6 +2563,158 @@ class UI_rollout {
         UI_rollout.revise();
       }
     }
+  }
+
+  // CHILD_SCENE_EXPLORER_NAVIGATE - the Scene Explorer's own tree view.
+  // buildSceneExplorerRows() (sceneExplorer.pde) does all the actual
+  // data work (what rows exist, in what order, which entities each one
+  // represents) - this just walks its result and draws/clicks each row.
+  // Which category-rows are currently expanded persists here, across
+  // frames, the same way extraParamsRowLevel does for PARENT_EXTRA_PARAMS,
+  // but as a flat set of "currently expanded" keys (a Scene Explorer
+  // row's own toggle has only two states, not extraParamsLevelToggle()'s
+  // own typeable 0/1 spinner, so a HashSet is all this needs).
+  java.util.HashSet<String> sceneExplorerExpandedKeys = new java.util.HashSet<String>();
+
+  void drawSceneExplorerNavigateTab () {
+
+    ArrayList<SceneExplorerRow> rows = buildSceneExplorerRows(this.sceneExplorerExpandedKeys);
+
+    if (rows.size() == 0) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Nothing in the scene yet.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
+      );
+      Y_control += 50 * this.view_S;
+      return;
+    }
+
+    for (SceneExplorerRow row : rows) {
+      int selectionState = extraParamsSelectionStateFor(row.targets);
+      boolean clicked = this.drawSceneExplorerRow(
+        this.cX + 10 * this.view_S, Y_control, row.label, row.depth, selectionState,
+        row.hasToggle, row.expanded, this.sceneExplorerExpandedKeys, row.expandKey
+      );
+      if (clicked) {
+        this.selectSceneExplorerTargets(row.targets);
+      }
+    }
+  }
+
+  // Lightweight, dedicated row widget for Scene Explorer - unlike every
+  // other row in this file (the _Spinner()/_SpinnerText()/
+  // extraParamsLevelToggle() family), a Scene Explorer row is never
+  // text-edited: it's a label, maybe an expand toggle, and a click
+  // target. Reusing that family's own keyboard-edit/Tab-order machinery
+  // here would just be unused weight, so this is its own small widget
+  // instead. Draws the row's own background (colored by
+  // selectionState - green for ALL, yellow for SOME, plain gray
+  // otherwise - ExtraParamsSelectionState, extraParamsSelection.pde),
+  // the toggle (only when hasToggle) and the label, and returns true
+  // exactly once, on the frame a plain click lands anywhere on the row
+  // OUTSIDE the toggle's own small hit box - a click on the toggle
+  // itself is handled right here, by flipping the caller's own
+  // expandedKeys entry directly, since that never also needs to drive
+  // selection.
+  boolean drawSceneExplorerRow (
+    float x, float y, String label, int depth, int selectionState,
+    boolean hasToggle, boolean expanded, java.util.HashSet<String> expandedKeys, String expandKey
+  ) {
+
+    float rowW = this.dX - 20 * this.view_S;
+    float h = 18 * this.view_S;
+    float indent = depth * 16 * this.view_S;
+    float toggleW = 14 * this.view_S;
+
+    Y_control += h;
+
+    float rowX0 = x;
+    float rowY0 = Y_control - h;
+    float rowX1 = x + rowW;
+    float rowY1 = Y_control;
+
+    strokeWeight(1);
+    stroke(120);
+    if (selectionState == ExtraParamsSelectionState.ALL) {
+      fill(150, 220, 150);
+    } else if (selectionState == ExtraParamsSelectionState.SOME) {
+      fill(230, 215, 120);
+    } else {
+      fill(210);
+    }
+    rect(rowX0, rowY0, rowW, h);
+
+    if (hasToggle) {
+      float tX0 = rowX0 + indent;
+      float tY0 = rowY0 + (h - toggleW) / 2.0;
+
+      strokeWeight(1);
+      stroke(0);
+      fill(255);
+      rect(tX0, tY0, toggleW, toggleW);
+
+      fill(0);
+      textAlign(CENTER, CENTER);
+      textSize(11 * this.view_S);
+      text(expanded ? "-" : "+", tX0 + toggleW / 2.0, tY0 + toggleW / 2.0 + 1);
+
+      if (isInside(X_clicked, Y_clicked, tX0, tY0, tX0 + toggleW, tY0 + toggleW)) {
+        if (expanded) {
+          expandedKeys.remove(expandKey);
+        } else {
+          expandedKeys.add(expandKey);
+        }
+        X_clicked = -1;
+        Y_clicked = -1;
+        UI_rollout.revise();
+      }
+    }
+
+    fill(0);
+    textAlign(LEFT, CENTER);
+    textSize(12 * this.view_S);
+    text(label, rowX0 + indent + toggleW + 6 * this.view_S, rowY0 + h / 2.0);
+
+    boolean rowClicked = false;
+    if (isInside(X_clicked, Y_clicked, rowX0, rowY0, rowX1, rowY1)) {
+      rowClicked = true;
+      X_clicked = -1;
+      Y_clicked = -1;
+    }
+
+    return rowClicked;
+  }
+
+  // A plain click on a Scene Explorer row (drawSceneExplorerNavigateTab(),
+  // above) replaces the whole current selection with that row's own
+  // entity set - this is deliberately v1-scoped to "replace"; there's no
+  // Shift/Ctrl-to-add-or-toggle here yet, since nothing elsewhere in this
+  // app currently tracks which modifier key is held at the moment a UI
+  // widget (as opposed to the 3D viewport itself) is clicked. Builds the
+  // replacement per category via setExtraParamsSelectionArrayFor()
+  // (extraParamsSelection.pde) - a row's own targets can span more than
+  // one category at once (a Group header's targets, say), so every
+  // category gets its own fresh array here, empty for any category this
+  // row doesn't touch at all (clearing whatever was selected there
+  // before).
+  void selectSceneExplorerTargets (ArrayList<ExtraParamsSelectionTarget> targets) {
+
+    HashMap<String,ArrayList<Integer>> byCategory = new HashMap<String,ArrayList<Integer>>();
+    for (String category : EXTRAPARAMS_CATEGORIES) byCategory.put(category, new ArrayList<Integer>());
+    for (ExtraParamsSelectionTarget t : targets) byCategory.get(t.category).add(t.index);
+
+    for (String category : EXTRAPARAMS_CATEGORIES) {
+      ArrayList<Integer> list = byCategory.get(category);
+      int[] ids = new int[list.size()];
+      for (int i = 0; i < ids.length; i++) ids[i] = list.get(i);
+      setExtraParamsSelectionArrayFor(category, ids);
+    }
+
+    Select3D.calculate_BoundingBox(); // same post-selection-change bookkeeping selectNewlyCreated() (mouseClicked.pde) already does after assigning a selection array directly
+    UI_rollout.revise();
   }
 
   void revise () {
