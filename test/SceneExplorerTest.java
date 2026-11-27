@@ -401,4 +401,104 @@ class SceneExplorerTest {
     assertEquals("Group 0", rows.get(4).label);
     assertEquals("Group 1", rows.get(5).label);
   }
+
+  // ================= buildSceneExplorerRows(expandedKeys, onlyVisible) =======
+
+  @Test
+  void rows_onlyVisible_false_isIdenticalToTheOlderTwoArgOverload () {
+    // The pre-Step-5 overload (used by every test above) must keep
+    // behaving exactly like explicitly passing onlyVisible=false - this
+    // confirms the delegation in buildSceneExplorerRows(expandedKeys)
+    // itself, not just that false is a no-op filter.
+    makeFace();
+    makeFace();
+
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> viaOldOverload =
+      app.buildSceneExplorerRows(new java.util.HashSet<String>());
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> viaExplicitFalse =
+      app.buildSceneExplorerRows(new java.util.HashSet<String>(), false);
+
+    assertEquals(viaOldOverload.size(), viaExplicitFalse.size());
+    assertEquals(viaOldOverload.get(1).label, viaExplicitFalse.get(1).label); // "2 Faces"
+  }
+
+  @Test
+  void rows_onlyVisible_true_narrowsACategoryCountRowToOnlyTheVisibleEntities () {
+    int f0 = makeFace();
+    int f1 = makeFace();
+    app.allFaces.setVisibility(f0, 0); // hide the first face only
+
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rows =
+      rowsIgnoringDefaultCamera_onlyVisible(new java.util.HashSet<String>());
+
+    assertEquals("Ungrouped", rows.get(0).label);
+    assertEquals("1 Face", rows.get(1).label); // not "2 Faces" - f0 is filtered out
+
+    java.util.HashSet<String> expanded = new java.util.HashSet<String>();
+    expanded.add("ungrouped:face");
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> expandedRows =
+      rowsIgnoringDefaultCamera_onlyVisible(expanded);
+
+    assertEquals(3, expandedRows.size()); // header + count row + exactly one leaf (f1)
+    assertEquals(1, expandedRows.get(2).targets.size());
+    assertEquals(f1, expandedRows.get(2).targets.get(0).index);
+  }
+
+  @Test
+  void rows_onlyVisible_true_omitsABucketEntirelyWhenNothingInItIsVisible () {
+    // Mirrors rows_ungroupedBucket_omittedEntirelyWhenNothingIsUngrouped()
+    // above, but for visibility instead of group membership - "Ungrouped"
+    // has entities, but none of them pass the filter, so it should
+    // disappear the same way an actually-empty bucket already does
+    // (showEvenIfEmpty=false covers both reasons for ending up with zero
+    // headerTargets).
+    int f0 = makeFace();
+    app.allFaces.setVisibility(f0, 0);
+
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rows =
+      rowsIgnoringDefaultCamera_onlyVisible(new java.util.HashSet<String>());
+
+    assertEquals(0, rows.size());
+  }
+
+  @Test
+  void rows_onlyVisible_true_stillShowsARealGroupHeader_evenWithNothingVisibleInside () {
+    // showEvenIfEmpty=true for real Groups (unlike Ungrouped) applies
+    // just as much when the group's own members are all hidden as when
+    // it's genuinely empty - same reasoning as rows_emptyGroup_isStillShown
+    // above: a group with nothing currently shown is still a real,
+    // addressable, deletable group.
+    int f0 = makeFace();
+    app.allFaces.setVisibility(f0, 0);
+    app.allGroups.makeEmpty(1);
+    app.allGroups.setStart_Face(0, f0);
+    app.allGroups.setStop_Face(0, f0);
+
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rows =
+      rowsIgnoringDefaultCamera_onlyVisible(new java.util.HashSet<String>());
+
+    assertEquals(1, rows.size());
+    assertEquals("Group 0", rows.get(0).label);
+    assertTrue(rows.get(0).targets.isEmpty()); // the hidden face doesn't count toward header targets either
+  }
+
+  @Test
+  void rows_onlyVisible_true_dropsTheCamerasRowEntirely_whenTheOnlyCameraIsHidden () {
+    app.allCameras.setVisibility(0, 0); // hide the one default camera
+
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rows =
+      app.buildSceneExplorerRows(new java.util.HashSet<String>(), true);
+
+    assertEquals(0, rows.size());
+  }
+
+  // Same shape as rowsIgnoringDefaultCamera() above, but threading the
+  // onlyVisible flag through to the new three-arg overload instead.
+  private java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rowsIgnoringDefaultCamera_onlyVisible (java.util.HashSet<String> expandedKeys) {
+    java.util.ArrayList<solarchvision_bim.SceneExplorerRow> rows = app.buildSceneExplorerRows(expandedKeys, true);
+    if (rows.size() > 0 && rows.get(0).targets.size() > 0 && rows.get(0).targets.get(0).category.equals("camera")) {
+      rows.remove(0);
+    }
+    return rows;
+  }
 }

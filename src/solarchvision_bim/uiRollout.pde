@@ -2576,16 +2576,25 @@ class UI_rollout {
   // own typeable 0/1 spinner, so a HashSet is all this needs).
   java.util.HashSet<String> sceneExplorerExpandedKeys = new java.util.HashSet<String>();
 
+  // "show only visible" filter state (sceneExplorer.pde's own
+  // sceneExplorerFilterVisible()) - persists across frames the same way
+  // sceneExplorerExpandedKeys does, and the same way, is purely this
+  // tab's own UI state: it narrows which rows buildSceneExplorerRows()
+  // returns, it never touches any entity's actual visibility.
+  boolean sceneExplorerShowOnlyVisible = false;
+
   void drawSceneExplorerNavigateTab () {
 
-    ArrayList<SceneExplorerRow> rows = buildSceneExplorerRows(this.sceneExplorerExpandedKeys);
+    this.drawSceneExplorerShowOnlyVisibleToggle(this.cX + 10 * this.view_S, Y_control);
+
+    ArrayList<SceneExplorerRow> rows = buildSceneExplorerRows(this.sceneExplorerExpandedKeys, this.sceneExplorerShowOnlyVisible);
 
     if (rows.size() == 0) {
       fill(127);
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Nothing in the scene yet.",
+        this.sceneExplorerShowOnlyVisible ? "Nothing visible to show." : "Nothing in the scene yet.",
         this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
       );
       Y_control += 50 * this.view_S;
@@ -2601,6 +2610,49 @@ class UI_rollout {
       if (clicked) {
         this.selectSceneExplorerTargets(row.targets);
       }
+    }
+  }
+
+  // A small checkbox above the tree itself - same box-plus-click shape
+  // as drawSceneExplorerRow()'s own expand toggle just below (reused
+  // rather than routed through the numeric Spinner() family, which is
+  // built for the rollout's model-mutating parameters, not a plain
+  // view-only UI flag like this one), but drawn standalone since it
+  // isn't a row of the tree and has no selection highlight of its own.
+  // Flips this.sceneExplorerShowOnlyVisible directly on click; advances
+  // Y_control by its own height so the tree itself starts just below it.
+  void drawSceneExplorerShowOnlyVisibleToggle (float x, float y) {
+    float boxW = 14 * this.view_S;
+    float h = 18 * this.view_S;
+
+    Y_control += h;
+
+    float boxX0 = x;
+    float boxY0 = Y_control - h + (h - boxW) / 2.0;
+
+    strokeWeight(1);
+    stroke(0);
+    fill(this.sceneExplorerShowOnlyVisible ? 150 : 255);
+    rect(boxX0, boxY0, boxW, boxW);
+
+    if (this.sceneExplorerShowOnlyVisible) {
+      fill(0);
+      textAlign(CENTER, CENTER);
+      textSize(11 * this.view_S);
+      text("✓", boxX0 + boxW / 2.0, boxY0 + boxW / 2.0 + 1);
+    }
+
+    fill(0);
+    textAlign(LEFT, CENTER);
+    textSize(12 * this.view_S);
+    text("Show only visible", boxX0 + boxW + 6 * this.view_S, Y_control - h / 2.0);
+
+    float rowX1 = x + (this.dX - 20 * this.view_S);
+    if (isInside(X_clicked, Y_clicked, boxX0, Y_control - h, rowX1, Y_control)) {
+      this.sceneExplorerShowOnlyVisible = !this.sceneExplorerShowOnlyVisible;
+      X_clicked = -1;
+      Y_clicked = -1;
+      UI_rollout.revise();
     }
   }
 

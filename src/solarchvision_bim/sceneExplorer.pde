@@ -101,6 +101,23 @@ int[] sceneExplorerIdsInRange (String category, int start, int stop) {
   return ids;
 }
 
+// The "show only visible" filter itself - kept separate from
+// sceneExplorerIdsInRange()/sceneExplorerIdsInGroupRange() below since
+// every id list this file builds (grouped, ungrouped, and the flat
+// Cameras/Sections lists alike) passes through here the same way,
+// right before it becomes a row. onlyVisible=false is a no-op (the
+// array is returned as-is) so every existing call site keeps its old
+// behavior unless it opts in.
+int[] sceneExplorerFilterVisible (String category, int[] ids, boolean onlyVisible) {
+  if (!onlyVisible) return ids;
+
+  IntList kept = new IntList();
+  for (int id : ids) {
+    if (extraParamsIsVisible(category, id)) kept.append(id);
+  }
+  return kept.array();
+}
+
 int[] sceneExplorerIdsInGroupRange (String category, int g) {
   if (category.equals("face")) return sceneExplorerIdsInRange(category, allGroups.getStart_Face(g), allGroups.getStop_Face(g));
   if (category.equals("polyline")) return sceneExplorerIdsInRange(category, allGroups.getStart_Polyline(g), allGroups.getStop_Polyline(g));
@@ -125,13 +142,14 @@ int[] sceneExplorerIdsInGroupRange (String category, int g) {
 void sceneExplorerAppendGroupLikeRows (
   ArrayList<SceneExplorerRow> rows, String headerLabel,
   java.util.function.Function<String,int[]> idsForCategory,
-  String expandKeyPrefix, java.util.HashSet<String> expandedKeys, boolean showEvenIfEmpty
+  String expandKeyPrefix, java.util.HashSet<String> expandedKeys, boolean showEvenIfEmpty,
+  boolean onlyVisible
 ) {
   ArrayList<ExtraParamsSelectionTarget> headerTargets = new ArrayList<ExtraParamsSelectionTarget>();
   ArrayList<SceneExplorerRow> categoryRows = new ArrayList<SceneExplorerRow>();
 
   for (String category : SCENE_EXPLORER_GROUPABLE_CATEGORIES) {
-    int[] ids = idsForCategory.apply(category);
+    int[] ids = sceneExplorerFilterVisible(category, idsForCategory.apply(category), onlyVisible);
     if (ids.length == 0) continue;
 
     ArrayList<ExtraParamsSelectionTarget> categoryTargets = sceneExplorerTargetsForIds(category, ids);
@@ -164,33 +182,59 @@ void sceneExplorerAppendGroupLikeRows (
 // The whole tree, top to bottom, in the order the plan settled on:
 // Cameras, Sections (both flat - never grouped at all), then
 // "Ungrouped", then every real Group in creation order.
+//
+// onlyVisible: the "show only visible" filter - when true, every id
+// list below (Cameras/Sections' own flat lists, and every category
+// inside every Ungrouped/Group bucket) is narrowed to entities whose
+// own getVisibility() > 0 first (sceneExplorerFilterVisible() above),
+// exactly like SCENE_EXPLORER_GROUPABLE_CATEGORIES narrows which
+// categories can ever appear under a group - a row for a category/
+// bucket with nothing left after that narrowing simply isn't added,
+// the same "nothing to show" handling idsForCategory already gets when
+// a category or group is empty outright. false is the existing
+// behavior, unchanged.
+// Pre-Step-5 signature, kept so every existing caller/test that never
+// cared about the visibility filter keeps compiling unchanged - same
+// as this file's own idsForCategory lambdas being reused unmodified by
+// sceneExplorerAppendGroupLikeRows() just above. onlyVisible=false here
+// is the same "no-op" default sceneExplorerFilterVisible() itself uses.
 ArrayList<SceneExplorerRow> buildSceneExplorerRows (java.util.HashSet<String> expandedKeys) {
+  return buildSceneExplorerRows(expandedKeys, false);
+}
+
+ArrayList<SceneExplorerRow> buildSceneExplorerRows (java.util.HashSet<String> expandedKeys, boolean onlyVisible) {
   ArrayList<SceneExplorerRow> rows = new ArrayList<SceneExplorerRow>();
 
   int cameraCount = extraParamsEntityCountForCategory("camera");
   if (cameraCount > 0) {
-    int[] ids = new int[cameraCount];
-    for (int i = 0; i < cameraCount; i++) ids[i] = i;
-    rows.add(new SceneExplorerRow(
-      sceneExplorerCategoryCountLabel("camera", cameraCount), 0,
-      sceneExplorerTargetsForIds("camera", ids), false, null, false
-    ));
+    int[] allIds = new int[cameraCount];
+    for (int i = 0; i < cameraCount; i++) allIds[i] = i;
+    int[] ids = sceneExplorerFilterVisible("camera", allIds, onlyVisible);
+    if (ids.length > 0) {
+      rows.add(new SceneExplorerRow(
+        sceneExplorerCategoryCountLabel("camera", ids.length), 0,
+        sceneExplorerTargetsForIds("camera", ids), false, null, false
+      ));
+    }
   }
 
   int sectionCount = extraParamsEntityCountForCategory("section");
   if (sectionCount > 0) {
-    int[] ids = new int[sectionCount];
-    for (int i = 0; i < sectionCount; i++) ids[i] = i;
-    rows.add(new SceneExplorerRow(
-      sceneExplorerCategoryCountLabel("section", sectionCount), 0,
-      sceneExplorerTargetsForIds("section", ids), false, null, false
-    ));
+    int[] allIds = new int[sectionCount];
+    for (int i = 0; i < sectionCount; i++) allIds[i] = i;
+    int[] ids = sceneExplorerFilterVisible("section", allIds, onlyVisible);
+    if (ids.length > 0) {
+      rows.add(new SceneExplorerRow(
+        sceneExplorerCategoryCountLabel("section", ids.length), 0,
+        sceneExplorerTargetsForIds("section", ids), false, null, false
+      ));
+    }
   }
 
   sceneExplorerAppendGroupLikeRows(
     rows, "Ungrouped",
     (category) -> allGroups.ungroupedIndicesForCategory(category),
-    "ungrouped", expandedKeys, false
+    "ungrouped", expandedKeys, false, onlyVisible
   );
 
   for (int g = 0; g < allGroups.num; g++) {
@@ -198,7 +242,7 @@ ArrayList<SceneExplorerRow> buildSceneExplorerRows (java.util.HashSet<String> ex
     sceneExplorerAppendGroupLikeRows(
       rows, sceneExplorerDisplayName("group", g, "Group " + g),
       (category) -> sceneExplorerIdsInGroupRange(category, groupIndex),
-      "group:" + g, expandedKeys, true
+      "group:" + g, expandedKeys, true, onlyVisible
     );
   }
 

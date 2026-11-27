@@ -97,6 +97,29 @@ int extraParamsEntityCountForCategory (String category) {
 // file only ever needed the string side. Falls back to
 // currentObjectCategory itself (i.e. "leave it unchanged") for a
 // category this never heard of, rather than guessing.
+// Whether entity index of category is currently visible, per this
+// codebase's own "> 0 is visible" convention (see each getVisibility()
+// consumer in the export*.pde family) - every category but "group" now
+// carries its own int[] visibility (solids.pde/model1Ds.pde/model2Ds.pde/
+// cameras.pde/sections.pde/faces.pde/polylines.pde, all added the same
+// way). "group" has no visibility of its own (a group is a grouping of
+// other entities' ranges, not a visible thing in its own right - the
+// same reasoning isolate_Selection()/modify3D.pde already uses to keep
+// Faces/Polylines/Solids/Model1Ds/Model2Ds/Cameras/Sections as the only
+// real "visible entity" categories), so it falls back to true (never
+// filtered out by a "show only visible" check). Scene Explorer's own
+// "show only visible" filter (sceneExplorer.pde) is the first caller.
+boolean extraParamsIsVisible (String category, int index) {
+  if (category.equals("face")) return allFaces.getVisibility(index) > 0;
+  if (category.equals("polyline")) return allPolylines.getVisibility(index) > 0;
+  if (category.equals("model1d")) return allModel1Ds.getVisibility(index) > 0;
+  if (category.equals("model2d")) return allModel2Ds.getVisibility(index) > 0;
+  if (category.equals("solid")) return allSolids.getVisibility(index) > 0;
+  if (category.equals("camera")) return allCameras.getVisibility(index) > 0;
+  if (category.equals("section")) return allSections.getVisibility(index) > 0;
+  return true;
+}
+
 int extraParamsObjectTypeForCategory (String category) {
   if (category.equals("face")) return ObjectCategory.FACE;
   if (category.equals("polyline")) return ObjectCategory.POLYLINE;
