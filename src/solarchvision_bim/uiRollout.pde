@@ -98,6 +98,7 @@ class UI_rollout {
     PARENT_EXTRA_PARAMS = pushParent("Extra Params");
     CHILD_EXTRA_PARAMS_SELECTED_ENTITY = pushChild("Selected Entity");
     CHILD_EXTRA_PARAMS_BULK_EDIT = pushChild("Bulk Edit");
+    CHILD_EXTRA_PARAMS_ASSIGN_MISSING = pushChild("Assign Missing");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -144,6 +145,7 @@ class UI_rollout {
   int PARENT_EXTRA_PARAMS;
   int CHILD_EXTRA_PARAMS_SELECTED_ENTITY;
   int CHILD_EXTRA_PARAMS_BULK_EDIT;
+  int CHILD_EXTRA_PARAMS_ASSIGN_MISSING;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -1026,6 +1028,8 @@ class UI_rollout {
         this.drawExtraParamsSelectedEntityTab();
       } else if (this.child == CHILD_EXTRA_PARAMS_BULK_EDIT) {
         this.drawExtraParamsBulkEditTab();
+      } else if (this.child == CHILD_EXTRA_PARAMS_ASSIGN_MISSING) {
+        this.drawExtraParamsAssignMissingTab();
       }
     }
 
@@ -2435,6 +2439,118 @@ class UI_rollout {
           }
           UI_rollout.revise();
         }
+      }
+    }
+  }
+
+  // CHILD_EXTRA_PARAMS_ASSIGN_MISSING - the third PARENT_EXTRA_PARAMS
+  // tab, for topping up a key that most but not every selected entity
+  // already carries, without touching the entities that already have
+  // it (that's what sets this apart from Bulk Edit's own "+ Add" row,
+  // which always writes to every selected entity). Shows every key
+  // present on at least one selected entity but absent from at least
+  // one other - the complement of Bulk Edit's own common-keys
+  // intersection, so a key lands on exactly one of the two tabs (or
+  // neither, if it's on none of the selection) - with a running count
+  // of how many of the selection are missing it, and commits a typed
+  // value only to the entities currently missing that key. Same v1
+  // scope as Bulk Edit: flat top-level keys only, no Level toggle/
+  // child-row expansion, and no remove button - removing isn't really
+  // "filling a gap", so it's left to the Bulk Edit/Selected Entity tabs
+  // if it's ever needed here. "Missing" means the key isn't in
+  // obj.keys() at all; a key present with a JSON null value already has
+  // the key, so it isn't "missing" by this tab's own definition, same
+  // as commonKeys' own intersection above never distinguishes "absent"
+  // from "present but null" either.
+  void drawExtraParamsAssignMissingTab () {
+
+    ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
+
+    StringBuilder sigBuilder = new StringBuilder();
+    for (ExtraParamsSelectionTarget t : list) {
+      if (sigBuilder.length() > 0) sigBuilder.append(",");
+      sigBuilder.append(t.category).append(":").append(t.index);
+    }
+    String signature = sigBuilder.toString();
+    if (!signature.equals(this.extraParamsLastSelectionSignature)) {
+      this.extraParamsRowLevel.clear();
+      this.spinnerTextScroll.clear();
+      this.extraParamsLastSelectionSignature = signature;
+    }
+
+    if (list.size() < 2) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Select two or more entities to see which properties are missing from some but not all of them.",
+        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+      );
+      Y_control += 30 * this.view_S;
+      return;
+    }
+
+    ArrayList<JSONObject> objs = new ArrayList<JSONObject>();
+    for (ExtraParamsSelectionTarget t : list) objs.add(getExtraParamsObjectForSelection(t));
+
+    // Union of every key present on at least one selected entity, minus
+    // the ones present on every selected entity (the same intersection
+    // drawExtraParamsBulkEditPanel() computes as commonKeys) - what's
+    // left is "present on some, absent from others". A LinkedHashSet
+    // just to build the union without duplicates; sorted into an
+    // ArrayList right after for the same deterministic row order every
+    // other tab's own key list already uses.
+    java.util.LinkedHashSet<String> unionKeys = new java.util.LinkedHashSet<String>();
+    for (JSONObject o : objs) unionKeys.addAll(o.keys());
+
+    ArrayList<String> partialKeys = new ArrayList<String>();
+    for (String key : unionKeys) {
+      int presentCount = 0;
+      for (JSONObject o : objs) if (o.keys().contains(key)) presentCount++;
+      if (presentCount > 0 && presentCount < objs.size()) partialKeys.add(key);
+    }
+    java.util.Collections.sort(partialKeys);
+
+    if (partialKeys.size() == 0) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Every key is either on all or none of the " + list.size() + " selected entities.",
+        this.cX + 10 * this.view_S, Y_control + 10 * this.view_S
+      );
+      Y_control += 30 * this.view_S;
+      return;
+    }
+
+    for (String key : partialKeys) {
+
+      int missingCount = 0;
+      for (JSONObject o : objs) if (!o.keys().contains(key)) missingCount++;
+
+      // The row's own caption doubles as _SpinnerText()'s per-row
+      // identity key (editCaption/spinnerTextScroll, uiRollout.pde
+      // above) - safe to fold the live "missing N/M" count into it here
+      // because that count can only change right after THIS row's own
+      // commit below, by which point _SpinnerText() has already cleared
+      // editActive/editCaption for it, so there's no frame where a
+      // still-being-typed row's identity shifts out from under it.
+      this._SpinnerText(
+        X_control, Y_control,
+        key + " (missing " + missingCount + "/" + list.size() + ")",
+        "", false, "value to assign"
+      );
+
+      if (this.textEditJustCommitted) {
+        String typedValue = this.textEditCommittedValue;
+        this.textEditJustCommitted = false;
+        for (int i = 0; i < objs.size(); i++) {
+          if (!objs.get(i).keys().contains(key)) {
+            extraParamsSetAtPath(objs.get(i), key, typedValue);
+            setExtraParamsObjectForSelection(list.get(i), objs.get(i));
+          }
+        }
+        UI_rollout.revise();
       }
     }
   }
