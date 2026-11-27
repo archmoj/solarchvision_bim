@@ -2713,7 +2713,8 @@ class UI_rollout {
       setExtraParamsSelectionArrayFor(category, ids);
     }
 
-    Select3D.calculate_BoundingBox(); // same post-selection-change bookkeeping selectNewlyCreated() (mouseClicked.pde) already does after assigning a selection array directly
+    Select3D.calculate_BoundingBox(); // same post-selection-change bookkeeping selectNewlyCreated() (mouseClicked.pde) already does after assigning a selection array directly - also what revises this tab's own row highlighting, since Scene Explorer clicking itself is one of calculate_BoundingBox()'s own callers (see its own comment, select3D.pde)
+    WIN3D.revise(); // the 3D viewport needs to redraw too, to show the new selection highlight there
     UI_rollout.revise();
   }
 
