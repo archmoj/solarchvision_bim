@@ -5516,4 +5516,67 @@ class Modify3D {
 
     endScene3DChange();
   }
+
+  // Scene Explorer's own row-target-direct counterpart to
+  // isolate_Selection() above - built for the "Isolate" tab
+  // (uiRollout.pde), whose row click needs to isolate EXACTLY the
+  // entities a row represents, regardless of currentObjectCategory or
+  // whatever Select3D's own selection arrays currently hold.
+  // isolate_Selection()'s own *_Selection() helpers only ever look at
+  // ONE category at a time (gated on currentObjectCategory, with a
+  // GROUP-only exception that converts through Select3D's own
+  // convert_Groups_to_X() family) - fine for the 3D viewport, where
+  // only one category is ever "active", but a Scene Explorer row (a
+  // Group header, or "Ungrouped", say) can legitimately span several
+  // categories in one click (selectSceneExplorerTargets()'s own
+  // comment, uiRollout.pde, documents picking just the LAST one for
+  // currentObjectCategory - fine for plain selection, but would make
+  // isolate_Selection() wrongly leave every OTHER category in that row
+  // hidden). This sidesteps that entirely: group targets by their own
+  // category first, hide each "family" (the same Faces/Polylines/
+  // Solids/Model1Ds/Model2Ds grouping isolate_Selection() uses, plus
+  // Cameras/Sections each on their own) scene-wide exactly once if
+  // ANY member of it is present, then reveal exactly the {category,
+  // index} pairs targets itself named, via extraParamsSetVisibility()
+  // (extraParamsSelection.pde) - no currentObjectCategory check, no
+  // GROUP-conversion branch, so it can never under- or over-reveal
+  // relative to what targets actually lists.
+  void isolateTargets (ArrayList<ExtraParamsSelectionTarget> targets) {
+
+    HashMap<String, IntList> byCategory = new HashMap<String, IntList>();
+    for (ExtraParamsSelectionTarget t : targets) {
+      if (!byCategory.containsKey(t.category)) byCategory.put(t.category, new IntList());
+      byCategory.get(t.category).append(t.index);
+    }
+
+    boolean hasGeometry =
+      byCategory.containsKey("face") || byCategory.containsKey("polyline") ||
+      byCategory.containsKey("solid") || byCategory.containsKey("model1d") ||
+      byCategory.containsKey("model2d");
+    boolean hasCamera = byCategory.containsKey("camera");
+    boolean hasSection = byCategory.containsKey("section");
+
+    if (!hasGeometry && !hasCamera && !hasSection) return;
+
+    beginScene3DChange();
+
+    if (hasGeometry) {
+      this.changeVisibilityFaces_Scene(0);
+      this.changeVisibilityPolylines_Scene(0);
+      this.changeVisibilitySolids_Scene(0);
+      this.changeVisibilityModel1Ds_Scene(0);
+      this.changeVisibilityModel2Ds_Scene(0);
+    }
+    if (hasCamera) this.changeVisibilityCameras_Scene(0);
+    if (hasSection) this.changeVisibilitySections_Scene(0);
+
+    for (String category : byCategory.keySet()) {
+      IntList ids = byCategory.get(category);
+      for (int i = 0; i < ids.size(); i++) {
+        extraParamsSetVisibility(category, ids.get(i), 1);
+      }
+    }
+
+    endScene3DChange();
+  }
 }

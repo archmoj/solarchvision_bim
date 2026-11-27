@@ -3,7 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import processing.data.JSONObject;
 
-// PARENT_SCENE_EXPLORER/CHILD_SCENE_EXPLORER_NAVIGATE (uiRollout.pde) -
+// PARENT_SCENE_EXPLORER/CHILD_SCENE_EXPLORER_SELECT (uiRollout.pde) -
 // its own draw method isn't JUnit-reachable (no canvas under this
 // harness, same as every other Processing-drawn rollout page), but all
 // of its actual data logic lives in pure, non-drawing functions
@@ -111,7 +111,7 @@ class SceneExplorerTest {
   }
 
   // ================= selectSceneExplorerTargets ================================
-  // The row-click handler behind drawSceneExplorerNavigateTab() - not
+  // The row-click handler behind drawSceneExplorerSelectTab() - not
   // itself drawing, so directly callable here. Covers the two things
   // just added on top of the plain selection-array write: switching
   // currentObjectCategory to match the row's own last entity, and
@@ -500,5 +500,33 @@ class SceneExplorerTest {
       rows.remove(0);
     }
     return rows;
+  }
+
+  // ================= extraParamsSetVisibility ================================
+  // The write-side counterpart of extraParamsIsVisible (itself only
+  // ever exercised indirectly, through sceneExplorerFilterVisible()/
+  // buildSceneExplorerRows() above) - isolateTargets()'s (modify3D.pde)
+  // own direct dependency, so covered directly here rather than only
+  // through that function's own tests (ModifyGeometryTest.java).
+
+  @Test
+  void setVisibility_roundTripsThroughGetVisibility_forEveryRealCategory () {
+    int f0 = makeFace();
+    app.allSolids.create(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+
+    app.extraParamsSetVisibility("face", f0, 0);
+    app.extraParamsSetVisibility("solid", 0, 0);
+
+    assertEquals(0, app.allFaces.getVisibility(f0));
+    assertEquals(0, app.allSolids.getVisibility(0));
+    assertFalse(app.extraParamsIsVisible("face", f0));
+    assertFalse(app.extraParamsIsVisible("solid", 0));
+  }
+
+  @Test
+  void setVisibility_onGroupCategory_isANoOp_ratherThanAnError () {
+    // "group" carries no visibility of its own (extraParamsIsVisible()'s
+    // own comment explains why) - this must not throw or touch anything.
+    assertDoesNotThrow(() -> app.extraParamsSetVisibility("group", 0, 0));
   }
 }

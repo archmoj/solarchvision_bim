@@ -101,7 +101,9 @@ class UI_rollout {
     CHILD_EXTRA_PARAMS_ASSIGN_MISSING = pushChild("Assign Missing");
 
     PARENT_SCENE_EXPLORER = pushParent("Scene Explorer");
-    CHILD_SCENE_EXPLORER_NAVIGATE = pushChild("Navigate");
+    CHILD_SCENE_EXPLORER_SELECT = pushChild("Select");
+    CHILD_SCENE_EXPLORER_ISOLATE = pushChild("Isolate");
+    CHILD_SCENE_EXPLORER_LOOK_AT = pushChild("Look At");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -151,7 +153,9 @@ class UI_rollout {
   int CHILD_EXTRA_PARAMS_ASSIGN_MISSING;
 
   int PARENT_SCENE_EXPLORER;
-  int CHILD_SCENE_EXPLORER_NAVIGATE;
+  int CHILD_SCENE_EXPLORER_SELECT;
+  int CHILD_SCENE_EXPLORER_ISOLATE;
+  int CHILD_SCENE_EXPLORER_LOOK_AT;
 
   ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   int _lastParentIndex = -1; // which category pushChild() appends into
@@ -1039,8 +1043,12 @@ class UI_rollout {
       }
     } else if (this.parent == PARENT_SCENE_EXPLORER) {
 
-      if (this.child == CHILD_SCENE_EXPLORER_NAVIGATE) {
-        this.drawSceneExplorerNavigateTab();
+      if (this.child == CHILD_SCENE_EXPLORER_SELECT) {
+        this.drawSceneExplorerSelectTab();
+      } else if (this.child == CHILD_SCENE_EXPLORER_ISOLATE) {
+        this.drawSceneExplorerIsolateTab();
+      } else if (this.child == CHILD_SCENE_EXPLORER_LOOK_AT) {
+        this.drawSceneExplorerLookAtTab();
       }
     }
 
@@ -2565,7 +2573,7 @@ class UI_rollout {
     }
   }
 
-  // CHILD_SCENE_EXPLORER_NAVIGATE - the Scene Explorer's own tree view.
+  // CHILD_SCENE_EXPLORER_SELECT - the Scene Explorer's own tree view.
   // buildSceneExplorerRows() (sceneExplorer.pde) does all the actual
   // data work (what rows exist, in what order, which entities each one
   // represents) - this just walks its result and draws/clicks each row.
@@ -2583,7 +2591,17 @@ class UI_rollout {
   // returns, it never touches any entity's actual visibility.
   boolean sceneExplorerShowOnlyVisible = false;
 
-  void drawSceneExplorerNavigateTab () {
+  // CHILD_SCENE_EXPLORER_SELECT/_ISOLATE/_LOOK_AT share this one tree
+  // view - same rows, same expand/filter state (sceneExplorerExpandedKeys/
+  // sceneExplorerShowOnlyVisible just above are deliberately NOT
+  // per-tab: it's the same tree, so a Group expanded in one tab stays
+  // expanded after switching to another). The three tabs differ only
+  // in what a plain row click DOES once it has that row's own targets,
+  // which is exactly what onRowClicked (one short lambda per tab,
+  // below) decides - same "pass a callback instead of tripling this
+  // whole method" shape sceneExplorerAppendGroupLikeRows() already
+  // uses for its own idsForCategory (sceneExplorer.pde).
+  void drawSceneExplorerTreeTab (java.util.function.Consumer<ArrayList<ExtraParamsSelectionTarget>> onRowClicked) {
 
     this.drawSceneExplorerShowOnlyVisibleToggle(this.cX + 10 * this.view_S, Y_control);
 
@@ -2608,9 +2626,44 @@ class UI_rollout {
         row.hasToggle, row.expanded, this.sceneExplorerExpandedKeys, row.expandKey
       );
       if (clicked) {
-        this.selectSceneExplorerTargets(row.targets);
+        onRowClicked.accept(row.targets);
       }
     }
+  }
+
+  void drawSceneExplorerSelectTab () {
+    this.drawSceneExplorerTreeTab((targets) -> {
+      this.selectSceneExplorerTargets(targets);
+    });
+  }
+
+  // Isolate still selects first (same visual feedback as the Select
+  // tab - the 3D viewport highlights whatever just got isolated), then
+  // calls Modify3D.isolateTargets(targets) - the row-target-direct
+  // isolate (modify3D.pde's own comment there explains why this can't
+  // just be Modify3D.isolate_Selection() plus a currentObjectCategory
+  // left over from selectSceneExplorerTargets()).
+  void drawSceneExplorerIsolateTab () {
+    this.drawSceneExplorerTreeTab((targets) -> {
+      this.selectSceneExplorerTargets(targets);
+      Modify3D.isolateTargets(targets);
+    });
+  }
+
+  // Look At: selects first (same reasoning as Isolate above), then
+  // WIN3D.look_3DViewport_towards_Targets(targets) - the
+  // row-target-direct look-at (viewport3D.pde's own comment there) -
+  // plus the same "automatically set another choice of interest" +
+  // view_changed() wrapping UI_setTo_View_LookAtSelection() itself
+  // does around WIN3D.look_3DViewport_towards_Selection() (uiSetTo.pde).
+  void drawSceneExplorerLookAtTab () {
+    this.drawSceneExplorerTreeTab((targets) -> {
+      this.selectSceneExplorerTargets(targets);
+      WIN3D.look_3DViewport_towards_Targets(targets);
+      UI_setTo_View_CameraDistance(0);
+      UI_toolBar.revise();
+      view_changed();
+    });
   }
 
   // A small checkbox above the tree itself - same box-plus-click shape
@@ -2740,7 +2793,7 @@ class UI_rollout {
     return rowClicked;
   }
 
-  // A plain click on a Scene Explorer row (drawSceneExplorerNavigateTab(),
+  // A plain click on a Scene Explorer row (drawSceneExplorerSelectTab(),
   // above) replaces the whole current selection with that row's own
   // entity set - this is deliberately v1-scoped to "replace"; there's no
   // Shift/Ctrl-to-add-or-toggle here yet, since nothing elsewhere in this

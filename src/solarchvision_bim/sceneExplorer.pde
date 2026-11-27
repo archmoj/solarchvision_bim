@@ -1,4 +1,4 @@
-// Scene Explorer (PARENT_SCENE_EXPLORER/CHILD_SCENE_EXPLORER_NAVIGATE,
+// Scene Explorer (PARENT_SCENE_EXPLORER/CHILD_SCENE_EXPLORER_SELECT,
 // uiRollout.pde) - a read/select tree over every entity in the project,
 // grouped the way the project itself groups them (allGroups' own index
 // ranges, groups.pde), plus an "Ungrouped" bucket for whatever falls

@@ -768,6 +768,77 @@ class WIN3DTest {
     assertTrue(app.WIN3D.cameraX < 10); // closer to the pivot, not farther
   }
 
+  // ================= look_3DViewport_towards_Targets ======================
+  // Scene Explorer's own row-target-direct counterpart to
+  // look_3DViewport_towards_Selection() (which UiSetToModifyAndViewTest.java's
+  // own lookAtSelection_... test already confirms headlessly safe and
+  // rotation-mutating the same way). The real point of this one is the
+  // MERGE across categories - a single-category case first, to confirm
+  // it still does real rotation math at all, then a multi-category case
+  // that only makes sense if more than one category's own bounding box
+  // actually got folded together.
+
+  @Test
+  void lookAtTargets_singleCategory_rotatesTowardsIt_andRestoresSelectionState () {
+    app.allVertices = new float[][]{{5, 5, 5}};
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+    app.overallScale = 1;
+    app.currentObjectCategory = app.ObjectCategory.CAMERA; // deliberately something else beforehand
+    app.Select3D.faceSelection = new int[]{99}; // deliberately stale, must survive unchanged
+    float rotationZBefore = app.WIN3D.rotationZ;
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> targets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    targets.add(app.new ExtraParamsSelectionTarget("face", 0));
+
+    app.WIN3D.look_3DViewport_towards_Targets(targets);
+
+    assertNotEquals(rotationZBefore, app.WIN3D.rotationZ, 0.0001f);
+    // Snapshotted and restored exactly, not just "left non-null" -
+    // confirms the save/restore block actually runs, not merely that
+    // currentObjectCategory happens to get set back somewhere else.
+    assertEquals(app.ObjectCategory.CAMERA, app.currentObjectCategory);
+    assertArrayEquals(new int[]{99}, app.Select3D.faceSelection);
+  }
+
+  @Test
+  void lookAtTargets_multiCategory_mergesBothIntoOneWiderBox_ratherThanOnlyTheLastCategory () {
+    // Two faces far apart on the X axis, plus one solid sitting far off
+    // on Y, well outside the faces' own box - a single-category
+    // (face-only) look-at can only ever pivot somewhere on the X axis
+    // (Y=Z=0), while the correct merged box (faces' own extent AND the
+    // solid's own position folded together) must pivot with a non-zero
+    // Y component once the solid is included. Compared across two
+    // separate, freshly-built scenes (rather than reusing one WIN3D's
+    // rotationX before/after) so neither run's own starting camera
+    // orientation can bias the other.
+    solarchvision_bim appFacesOnly = new solarchvision_bim();
+    appFacesOnly.allVertices = new float[][]{{-10, 0, 0}, {10, 0, 0}};
+    appFacesOnly.allFaces.nodes = new int[][]{{0}, {1}};
+    appFacesOnly.allFaces.options = new int[2][6];
+    appFacesOnly.overallScale = 1;
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> facesOnlyTargets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    facesOnlyTargets.add(appFacesOnly.new ExtraParamsSelectionTarget("face", 0));
+    facesOnlyTargets.add(appFacesOnly.new ExtraParamsSelectionTarget("face", 1));
+    appFacesOnly.WIN3D.look_3DViewport_towards_Targets(facesOnlyTargets);
+
+    solarchvision_bim appMerged = new solarchvision_bim();
+    appMerged.allVertices = new float[][]{{-10, 0, 0}, {10, 0, 0}};
+    appMerged.allFaces.nodes = new int[][]{{0}, {1}};
+    appMerged.allFaces.options = new int[2][6];
+    appMerged.allSolids.create(0, 50, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+    appMerged.overallScale = 1;
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> mergedTargets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    mergedTargets.add(appMerged.new ExtraParamsSelectionTarget("face", 0));
+    mergedTargets.add(appMerged.new ExtraParamsSelectionTarget("face", 1));
+    mergedTargets.add(appMerged.new ExtraParamsSelectionTarget("solid", 0));
+    appMerged.WIN3D.look_3DViewport_towards_Targets(mergedTargets);
+
+    assertNotEquals(appFacesOnly.WIN3D.rotationX, appMerged.WIN3D.rotationX, 0.0001f, "folding the far-off-Y solid into the box should tilt the pivot away from the faces-only (flat, X-axis-only) case");
+  }
+
   // ================= to_XML / from_XML round trip ========================
 
   @Test

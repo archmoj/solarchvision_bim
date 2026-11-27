@@ -707,6 +707,66 @@ class ModifyGeometryTest {
     assertEquals(1, app.allFaces.getVisibility(0)); // untouched - isSection, not isGeometry
   }
 
+  // --- isolateTargets (Scene Explorer's row-target-direct isolate) -----
+
+  @Test
+  void isolateTargets_multiCategoryRow_revealsEveryCategoryTheRowItselfNames () {
+    // The exact scenario isolate_Selection() itself can't handle
+    // correctly for a multi-category row: a Group header whose own
+    // targets span Face AND Solid at once. currentObjectCategory is
+    // left at something that matches NEITHER (as a plain
+    // selectSceneExplorerTargets() call might leave it, depending on
+    // target order) - isolateTargets() must not care.
+    app.allFaces.nodes = new int[][]{{0}, {0}};
+    app.allFaces.options = new int[2][6];
+    app.allSolids.create(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+    app.allSolids.create(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+    for (int f = 0; f < 2; f++) { app.allFaces.setVisibility(f, 1); app.allSolids.setVisibility(f, 1); }
+    app.currentObjectCategory = app.ObjectCategory.CAMERA; // deliberately neither FACE nor SOLID
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> targets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    targets.add(app.new ExtraParamsSelectionTarget("face", 1));
+    targets.add(app.new ExtraParamsSelectionTarget("solid", 0));
+
+    app.Modify3D.isolateTargets(targets);
+
+    assertEquals(0, app.allFaces.getVisibility(0)); // not named - hidden
+    assertEquals(1, app.allFaces.getVisibility(1)); // named - revealed
+    assertEquals(1, app.allSolids.getVisibility(0)); // named - revealed
+    assertEquals(0, app.allSolids.getVisibility(1)); // not named - hidden
+    assertEquals(app.ObjectCategory.CAMERA, app.currentObjectCategory); // left alone entirely
+  }
+
+  @Test
+  void isolateTargets_cameraOnlyRow_leavesGeometryAndSectionsUntouched () {
+    app.allCameras.makeEmpty(0);
+    app.allCameras.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 1);
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+    for (int f = 0; f < 2; f++) app.allCameras.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> targets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    targets.add(app.new ExtraParamsSelectionTarget("camera", 1));
+
+    app.Modify3D.isolateTargets(targets);
+
+    assertEquals(0, app.allCameras.getVisibility(0));
+    assertEquals(1, app.allCameras.getVisibility(1));
+    assertEquals(1, app.allFaces.getVisibility(0)); // untouched - no geometry category in targets
+  }
+
+  @Test
+  void isolateTargets_emptyList_doesNothing () {
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+    app.allFaces.setVisibility(0, 1);
+
+    app.Modify3D.isolateTargets(new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>());
+
+    assertEquals(1, app.allFaces.getVisibility(0)); // nothing hidden, nothing to reveal either
+  }
+
   // --- selectVertices_fromCurrentSelection -----------------------
 
   @Test

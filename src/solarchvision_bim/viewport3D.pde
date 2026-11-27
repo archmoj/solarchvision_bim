@@ -892,6 +892,103 @@ class WIN3D {
     rotateXTowards(P[0], P[1], P[2]);
   }
 
+  // Scene Explorer's own row-target-direct counterpart to
+  // look_3DViewport_towards_Selection() above, for the same reason
+  // isolateTargets() (modify3D.pde) exists: Select3D.getPivot() reads
+  // whatever Select3D.calculate_BoundingBox() last computed for
+  // currentObjectCategory ALONE, but a Scene Explorer row's own target
+  // list can span more than one category at once (a Group header,
+  // say). Rather than re-deriving calculate_BoundingBox()'s own
+  // per-category position math a second time (a camera's corner, a
+  // section's world-space center, a solid's raw position, vertex
+  // positions for Face/Polyline/Model1D/Model2D - each its own small
+  // bit of real geometry, already correct and already tested), this
+  // calls calculate_BoundingBox() once PER CATEGORY PRESENT in
+  // targets, with currentObjectCategory and that one category's own
+  // Select3D selection array temporarily pointed at just that
+  // category's own ids from targets, and merges every resulting
+  // corner into one combined min/max box - reusing the exact same
+  // math instead of a second, independent copy of it.
+  // currentObjectCategory and every one of Select3D's own per-category
+  // selection arrays are snapshotted first and restored right after
+  // the loop, so this never leaves any lasting trace of its own
+  // temporary category-switching, even though the real click handler
+  // (uiRollout.pde) also calls selectSceneExplorerTargets() around the
+  // same click, which would overwrite them back to the row's own
+  // intended selection anyway.
+  //
+  // Deliberately uses the merged box's own geometric center as the
+  // look-at point, rather than routing through Select3D.getPivot()
+  // (which would also apply pivotAlignmentX/Y/Z - a user preference for
+  // which corner of a SINGLE selection's bounding box the modify-gizmo
+  // pivots around, not something "look at this named set of entities"
+  // has any business reading) - mutating Select3D.BoundingBox itself to
+  // reuse getPivot() would also risk a visible one-frame flicker of the
+  // modify-gizmo overlay (which reads it every draw), which computing
+  // the center independently here avoids entirely.
+  void look_3DViewport_towards_Targets (ArrayList<ExtraParamsSelectionTarget> targets) {
+
+    HashMap<String, IntList> byCategory = new HashMap<String, IntList>();
+    for (ExtraParamsSelectionTarget t : targets) {
+      if (!byCategory.containsKey(t.category)) byCategory.put(t.category, new IntList());
+      byCategory.get(t.category).append(t.index);
+    }
+
+    if (byCategory.size() == 0) return;
+
+    int savedCategory = currentObjectCategory;
+    int[] savedFaceSelection = Select3D.faceSelection;
+    int[] savedPolylineSelection = Select3D.polylineSelection;
+    int[] savedModel1DSelection = Select3D.model1DSelection;
+    int[] savedModel2DSelection = Select3D.model2DSelection;
+    int[] savedSolidSelection = Select3D.solidSelection;
+    int[] savedCameraSelection = Select3D.cameraSelection;
+    int[] savedSectionSelection = Select3D.sectionSelection;
+
+    float minX = FLOAT_undefined, minY = FLOAT_undefined, minZ = FLOAT_undefined;
+    float maxX = -FLOAT_undefined, maxY = -FLOAT_undefined, maxZ = -FLOAT_undefined;
+
+    for (String category : byCategory.keySet()) {
+
+      currentObjectCategory = extraParamsObjectTypeForCategory(category);
+      setExtraParamsSelectionArrayFor(category, byCategory.get(category).array());
+
+      Select3D.calculate_BoundingBox();
+
+      // BoundingBox[0] is the min corner, [2] the max corner (the same
+      // ratio-0/ratio-1 rows calculate_BoundingBox() itself fills in -
+      // see its own tail, select3D.pde).
+      float x0 = Select3D.BoundingBox[0][0], y0 = Select3D.BoundingBox[0][1], z0 = Select3D.BoundingBox[0][2];
+      float x2 = Select3D.BoundingBox[2][0], y2 = Select3D.BoundingBox[2][1], z2 = Select3D.BoundingBox[2][2];
+
+      if (minX > x0) minX = x0;
+      if (minY > y0) minY = y0;
+      if (minZ > z0) minZ = z0;
+      if (maxX < x2) maxX = x2;
+      if (maxY < y2) maxY = y2;
+      if (maxZ < z2) maxZ = z2;
+    }
+
+    currentObjectCategory = savedCategory;
+    Select3D.faceSelection = savedFaceSelection;
+    Select3D.polylineSelection = savedPolylineSelection;
+    Select3D.model1DSelection = savedModel1DSelection;
+    Select3D.model2DSelection = savedModel2DSelection;
+    Select3D.solidSelection = savedSolidSelection;
+    Select3D.cameraSelection = savedCameraSelection;
+    Select3D.sectionSelection = savedSectionSelection;
+
+    if (!is_defined(minX) || !is_defined(minY) || !is_defined(minZ) ||
+        !is_defined(-maxX) || !is_defined(-maxY) || !is_defined(-maxZ)) return;
+
+    float pivotX = 0.5 * (minX + maxX);
+    float pivotY = 0.5 * (minY + maxY);
+    float pivotZ = 0.5 * (minZ + maxZ);
+
+    rotateZTowards(pivotX, pivotY);
+    rotateXTowards(pivotX, pivotY, pivotZ);
+  }
+
   void moveCameraTowards (float xO, float yO, float zO, float t) {
     float[] A = cameraPositionScaled();
 

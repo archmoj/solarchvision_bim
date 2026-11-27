@@ -87,16 +87,6 @@ int extraParamsEntityCountForCategory (String category) {
   return 0;
 }
 
-// EXTRAPARAMS_CATEGORIES' own lowercase category strings, mapped to
-// this codebase's actual int object-type constants (ObjectCategory,
-// an OBJECTTYPE instance - objectType.pde - this app's own
-// alternative to a real Java enum, predating every extraParams file
-// here). Scene Explorer's own row clicks (selectSceneExplorerTargets(),
-// uiRollout.pde) are the first caller that needs to go the other way
-// across that gap - every other extraParams dispatch function in this
-// file only ever needed the string side. Falls back to
-// currentObjectCategory itself (i.e. "leave it unchanged") for a
-// category this never heard of, rather than guessing.
 // Whether entity index of category is currently visible, per this
 // codebase's own "> 0 is visible" convention (see each getVisibility()
 // consumer in the export*.pde family) - every category but "group" now
@@ -120,6 +110,36 @@ boolean extraParamsIsVisible (String category, int index) {
   return true;
 }
 
+// The write-side counterpart of extraParamsIsVisible() above - Scene
+// Explorer's own row-target-direct isolate (isolateTargets(),
+// modify3D.pde) is the first caller: it reveals entities by their own
+// {category, index} pair directly, rather than through
+// currentObjectCategory-gated *_Selection() helpers like
+// isolate_Selection() itself uses, since a Scene Explorer row's own
+// target list can span more than one category at once. "group" is not
+// a visibility-bearing category (same reasoning as
+// extraParamsIsVisible()'s own comment) - a no-op here rather than an
+// error, consistent with that function's own true fallback.
+void extraParamsSetVisibility (String category, int index, int visibility) {
+  if (category.equals("face")) { allFaces.setVisibility(index, visibility); return; }
+  if (category.equals("polyline")) { allPolylines.setVisibility(index, visibility); return; }
+  if (category.equals("model1d")) { allModel1Ds.setVisibility(index, visibility); return; }
+  if (category.equals("model2d")) { allModel2Ds.setVisibility(index, visibility); return; }
+  if (category.equals("solid")) { allSolids.setVisibility(index, visibility); return; }
+  if (category.equals("camera")) { allCameras.setVisibility(index, visibility); return; }
+  if (category.equals("section")) { allSections.setVisibility(index, visibility); return; }
+}
+
+// EXTRAPARAMS_CATEGORIES' own lowercase category strings, mapped to
+// this codebase's actual int object-type constants (ObjectCategory,
+// an OBJECTTYPE instance - objectType.pde - this app's own
+// alternative to a real Java enum, predating every extraParams file
+// here). Scene Explorer's own row clicks (selectSceneExplorerTargets(),
+// uiRollout.pde) are the first caller that needs to go the other way
+// across that gap - every other extraParams dispatch function in this
+// file only ever needed the string side. Falls back to
+// currentObjectCategory itself (i.e. "leave it unchanged") for a
+// category this never heard of, rather than guessing.
 int extraParamsObjectTypeForCategory (String category) {
   if (category.equals("face")) return ObjectCategory.FACE;
   if (category.equals("polyline")) return ObjectCategory.POLYLINE;
