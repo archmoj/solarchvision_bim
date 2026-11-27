@@ -882,22 +882,6 @@ class Select3D {
     this.pivotAlignmentX = keep_selection_pivotAlignmentX;
     this.pivotAlignmentY = keep_selection_pivotAlignmentY;
     this.pivotAlignmentZ = keep_selection_pivotAlignmentZ;
-
-    // Scene Explorer's own row highlighting (green/yellow background,
-    // uiRollout.pde's drawSceneExplorerRow()) reflects the LIVE 3D
-    // selection, not just whatever it was the last time its own tab
-    // happened to redraw. Every selection change in this app (a 3D
-    // click, a rectangle select, Select All, an Explorer row click
-    // itself, ...) already funnels through this same method - each one
-    // is itself the "selection just changed, recompute the bounding
-    // box" call - so this is the one place that can revise the rollout
-    // on every one of those call sites at once, without adding a
-    // matching UI_rollout.revise() at each of them individually. Only
-    // bothers when Scene Explorer is actually the tab on screen; every
-    // other tab already revises itself through its own, unrelated path.
-    if (UI_rollout.parent == UI_rollout.PARENT_SCENE_EXPLORER) {
-      UI_rollout.revise();
-    }
   }
 
 

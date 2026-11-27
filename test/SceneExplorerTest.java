@@ -92,6 +92,71 @@ class SceneExplorerTest {
     assertArrayEquals(new int[]{ 1 }, app.Select3D.groupSelection);
   }
 
+  // ================= extraParamsObjectTypeForCategory =========================
+
+  @Test
+  void objectTypeForCategory_face_mapsToTheFaceConstant () {
+    assertEquals(app.ObjectCategory.FACE, app.extraParamsObjectTypeForCategory("face"));
+  }
+
+  @Test
+  void objectTypeForCategory_group_mapsToTheGroupConstant () {
+    assertEquals(app.ObjectCategory.GROUP, app.extraParamsObjectTypeForCategory("group"));
+  }
+
+  @Test
+  void objectTypeForCategory_unknownCategory_leavesCurrentObjectCategoryUnchanged () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+    assertEquals(app.ObjectCategory.SOLID, app.extraParamsObjectTypeForCategory("not-a-category"));
+  }
+
+  // ================= selectSceneExplorerTargets ================================
+  // The row-click handler behind drawSceneExplorerNavigateTab() - not
+  // itself drawing, so directly callable here. Covers the two things
+  // just added on top of the plain selection-array write: switching
+  // currentObjectCategory to match the row's own last entity, and
+  // going through switch_category()/selection_changed() (globalFunctions.pde)
+  // rather than touching Select3D/WIN3D/UI_rollout by hand.
+
+  @Test
+  void selectTargets_switchesCurrentObjectCategory_toTheLastTargetsOwnCategory () {
+    int f0 = makeFace();
+    app.allGroups.makeEmpty(1);
+    app.currentObjectCategory = app.ObjectCategory.CAMERA; // deliberately something else beforehand
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> targets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    targets.add(app.new ExtraParamsSelectionTarget("face", f0));
+    targets.add(app.new ExtraParamsSelectionTarget("group", 0)); // last - should win
+
+    app.UI_rollout.selectSceneExplorerTargets(targets);
+
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
+  }
+
+  @Test
+  void selectTargets_writesThroughToSelect3D_forEveryCategoryInvolved () {
+    int f0 = makeFace();
+    app.allGroups.makeEmpty(1);
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> targets = new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>();
+    targets.add(app.new ExtraParamsSelectionTarget("face", f0));
+    targets.add(app.new ExtraParamsSelectionTarget("group", 0));
+
+    app.UI_rollout.selectSceneExplorerTargets(targets);
+
+    assertArrayEquals(new int[]{ f0 }, app.Select3D.faceSelection);
+    assertArrayEquals(new int[]{ 0 }, app.Select3D.groupSelection);
+  }
+
+  @Test
+  void selectTargets_emptyList_leavesCurrentObjectCategoryUnchanged () {
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+
+    app.UI_rollout.selectSceneExplorerTargets(new java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget>());
+
+    assertEquals(app.ObjectCategory.SOLID, app.currentObjectCategory);
+  }
+
   // ================= extraParamsSelectionStateFor =============================
 
   @Test

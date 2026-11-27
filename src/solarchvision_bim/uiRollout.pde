@@ -2713,9 +2713,24 @@ class UI_rollout {
       setExtraParamsSelectionArrayFor(category, ids);
     }
 
-    Select3D.calculate_BoundingBox(); // same post-selection-change bookkeeping selectNewlyCreated() (mouseClicked.pde) already does after assigning a selection array directly - also what revises this tab's own row highlighting, since Scene Explorer clicking itself is one of calculate_BoundingBox()'s own callers (see its own comment, select3D.pde)
-    WIN3D.revise(); // the 3D viewport needs to redraw too, to show the new selection highlight there
-    UI_rollout.revise();
+    if (targets.size() > 0) {
+      // currentObjectCategory is whichever category the 3D viewport's
+      // own tools/handles currently act on - a plain 3D click already
+      // keeps it in step with whatever got (re)selected via
+      // switch_category() (globalFunctions.pde), so a row click follows
+      // the same rule: match the LAST entity in this row's own target
+      // list (a Group header's targets can span more than one
+      // category). switch_category() also covers every other bit of
+      // post-selection bookkeeping a direct Select3D array assignment
+      // would otherwise need calling by hand here (UI_toolBar.revise(),
+      // then selection_changed() -> Select3D.revise_BoundingBox() +
+      // view_changed() -> WIN3D.revise() and, since view_changed() now
+      // checks for it too, this tab's own row highlighting).
+      ExtraParamsSelectionTarget last = targets.get(targets.size() - 1);
+      switch_category(extraParamsObjectTypeForCategory(last.category));
+    } else {
+      selection_changed();
+    }
   }
 
   void revise () {

@@ -87,6 +87,28 @@ int extraParamsEntityCountForCategory (String category) {
   return 0;
 }
 
+// EXTRAPARAMS_CATEGORIES' own lowercase category strings, mapped to
+// this codebase's actual int object-type constants (ObjectCategory,
+// an OBJECTTYPE instance - objectType.pde - this app's own
+// alternative to a real Java enum, predating every extraParams file
+// here). Scene Explorer's own row clicks (selectSceneExplorerTargets(),
+// uiRollout.pde) are the first caller that needs to go the other way
+// across that gap - every other extraParams dispatch function in this
+// file only ever needed the string side. Falls back to
+// currentObjectCategory itself (i.e. "leave it unchanged") for a
+// category this never heard of, rather than guessing.
+int extraParamsObjectTypeForCategory (String category) {
+  if (category.equals("face")) return ObjectCategory.FACE;
+  if (category.equals("polyline")) return ObjectCategory.POLYLINE;
+  if (category.equals("model1d")) return ObjectCategory.MODEL1D;
+  if (category.equals("model2d")) return ObjectCategory.MODEL2D;
+  if (category.equals("solid")) return ObjectCategory.SOLID;
+  if (category.equals("group")) return ObjectCategory.GROUP;
+  if (category.equals("camera")) return ObjectCategory.CAMERA;
+  if (category.equals("section")) return ObjectCategory.SECTION;
+  return currentObjectCategory;
+}
+
 // Named constants for extraParamsSelectionStateFor()'s own result -
 // this codebase's established alternative to a real Java enum
 // (objectType.pde's own OBJECTTYPE class, used the same way for

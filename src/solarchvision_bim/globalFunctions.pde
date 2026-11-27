@@ -325,6 +325,13 @@ void view_changed () {
   // every other, unrelated view_changed() call (most of them) still
   // costs nothing extra.
   if (UI_rollout.parent == UI_rollout.PARENT_EXTRA_PARAMS) UI_rollout.revise();
+
+  // PARENT_SCENE_EXPLORER's own row highlighting (green/yellow
+  // background, uiRollout.pde's drawSceneExplorerRow()) is exactly the
+  // same situation as PARENT_EXTRA_PARAMS just above - it shows the
+  // LIVE Select3D selection, so it needs the same hook, scoped the same
+  // way.
+  if (UI_rollout.parent == UI_rollout.PARENT_SCENE_EXPLORER) UI_rollout.revise();
 }
 
 void selection_changed () {
