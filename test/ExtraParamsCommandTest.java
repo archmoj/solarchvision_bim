@@ -6,10 +6,14 @@ import processing.data.JSONObject;
 // EXTRAPARAMS.SET/EXTRAPARAMS.REMOVE (extraCommands.pde, dispatched from
 // runScript.pde) and the dotted-path helpers they're built on
 // (extraParamsPath.pde) - the command-line/engine half of
-// PARENT_EXTRA_PARAMS (uiRollout.pde doesn't have JUnit-reachable tests
-// of its own, same as every other Processing-drawn rollout page in this
-// app; its row widgets are thin wrappers around exactly the path helpers
-// and commands covered here).
+// PARENT_EXTRA_PARAMS. uiRollout.pde's own draw methods still have no
+// JUnit-reachable tests of their own (nothing in this app renders a
+// canvas under this harness), but the key-set logic behind Bulk
+// Edit/Assign Missing - what's common across a selection, what's only
+// partially present, which value (if any) every selected entity agrees
+// on - has been pulled out into extraParamsHelpers.pde specifically so
+// it's covered here too; see the "extraParamsCommonKeys/.../
+// extraParamsMissingCount" section below.
 class ExtraParamsCommandTest {
 
   private solarchvision_bim app;
@@ -407,5 +411,112 @@ class ExtraParamsCommandTest {
     assertEquals("", app.allFaces.getExtraParams(fSelected));
     assertEquals("", app.allFaces.getExtraParams(fNotSelected));
     assertEquals("", app.allGroups.getExtraParams(gNotSelected));
+  }
+
+  // ================= extraParamsCommonKeys/extraParamsUniformValueForKey ====
+  // Bulk Edit tab's own key logic (uiRollout.pde's
+  // drawExtraParamsBulkEditPanel()) - pulled out into
+  // extraParamsHelpers.pde specifically so it's testable here without a
+  // canvas (step 2 of the test-coverage plan: "do the small refactor +
+  // add tests ..." for Strip was step 1; this is the bigger Bulk
+  // Edit/Assign Missing extraction that was deferred until asked for).
+
+  @Test
+  void commonKeys_singleObject_everyKeyIsCommon () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "name", "A");
+    app.extraParamsSetAtPath(a, "note", "hi");
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    java.util.ArrayList<String> common = app.extraParamsCommonKeys(objs);
+
+    assertEquals(2, common.size());
+    assertTrue(common.contains("name"));
+    assertTrue(common.contains("note"));
+  }
+
+  @Test
+  void commonKeys_isIntersectionNotUnion () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "name", "A");
+    app.extraParamsSetAtPath(a, "shared", "x");
+    JSONObject b = new JSONObject();
+    app.extraParamsSetAtPath(b, "other", "B");
+    app.extraParamsSetAtPath(b, "shared", "y");
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    objs.add(b);
+    java.util.ArrayList<String> common = app.extraParamsCommonKeys(objs);
+
+    assertEquals(1, common.size());
+    assertEquals("shared", common.get(0));
+  }
+
+  @Test
+  void uniformValueForKey_sameValueEverywhere_returnsThatValue () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "name", "Same");
+    JSONObject b = new JSONObject();
+    app.extraParamsSetAtPath(b, "name", "Same");
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    objs.add(b);
+
+    assertEquals("Same", app.extraParamsUniformValueForKey(objs, "name"));
+  }
+
+  @Test
+  void uniformValueForKey_differingValues_returnsNull () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "name", "A");
+    JSONObject b = new JSONObject();
+    app.extraParamsSetAtPath(b, "name", "B");
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    objs.add(b);
+
+    assertNull(app.extraParamsUniformValueForKey(objs, "name"));
+  }
+
+  // ================= extraParamsPartialKeys/extraParamsMissingCount =========
+  // Assign Missing tab's own key logic
+  // (drawExtraParamsAssignMissingTab()) - the complement of
+  // extraParamsCommonKeys() above.
+
+  @Test
+  void partialKeys_excludesCommonAndAbsentKeys_includesOnlyPartiallyPresentOnes () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "everyone", "x");
+    app.extraParamsSetAtPath(a, "onlyA", "y");
+    JSONObject b = new JSONObject();
+    app.extraParamsSetAtPath(b, "everyone", "x");
+    // "onlyA" is absent from b; "neither" (not set on either) never appears at all.
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    objs.add(b);
+    java.util.ArrayList<String> partial = app.extraParamsPartialKeys(objs);
+
+    assertEquals(1, partial.size());
+    assertEquals("onlyA", partial.get(0));
+  }
+
+  @Test
+  void missingCount_countsEntitiesWithoutTheKey () {
+    JSONObject a = new JSONObject();
+    app.extraParamsSetAtPath(a, "onlyA", "y");
+    JSONObject b = new JSONObject();
+    JSONObject c = new JSONObject();
+
+    java.util.ArrayList<JSONObject> objs = new java.util.ArrayList<JSONObject>();
+    objs.add(a);
+    objs.add(b);
+    objs.add(c);
+
+    assertEquals(2, app.extraParamsMissingCount(objs, "onlyA"));
   }
 }

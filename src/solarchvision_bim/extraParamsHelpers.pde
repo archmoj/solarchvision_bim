@@ -38,3 +38,75 @@ String extraParamsFromJSONObject (JSONObject obj) {
   if (obj == null || obj.keys().size() == 0) return "";
   return obj.toString();
 }
+
+// ----------------------------------------------------------------------
+// Multi-entity key logic shared by PARENT_EXTRA_PARAMS's "Bulk Edit"/
+// "Assign Missing" tabs (uiRollout.pde's drawExtraParamsBulkEditPanel()/
+// drawExtraParamsAssignMissingTab()) - pulled out here, independently
+// testable, same reasoning as stripExtraParams_Selection()/
+// stripExtraParams_Scene() (extraParamsSelection.pde): every other piece
+// of extraParams logic in this app is callable on its own, without
+// going through a draw method or the untestable action registry
+// (test/ExtraParamsCommandTest.java's own setUp() resets allActions to
+// empty), and this is no exception. Each caller still owns the
+// deterministic sort it applies to the result, and the UI-specific
+// "various"/"missing N/M" display strings - these functions return only
+// the underlying key sets/counts, nothing about how a row is drawn.
+
+// Bulk Edit's own "commonKeys" - keys present on every one of objs (an
+// intersection, not a union). Trivially every key of objs.get(0) when
+// objs has exactly one entry, same as drawExtraParamsBulkEditPanel()'s
+// own comment already notes (a single selected entity has nothing to
+// disagree with).
+ArrayList<String> extraParamsCommonKeys (ArrayList<JSONObject> objs) {
+  ArrayList<String> commonKeys = new ArrayList<String>(objs.get(0).keys());
+  for (int i = 1; i < objs.size(); i++) {
+    commonKeys.retainAll(objs.get(i).keys());
+  }
+  return commonKeys;
+}
+
+// Whether every one of objs shows the same value for key - returns that
+// shared value (JSONObject-stringified if the value is itself an
+// object, same as the row's own "shown" string) when every object
+// agrees, or null when they don't. The caller decides what null means
+// to display ("various" today); a pure function has no business owning
+// that string. Assumes every object in objs actually has key - callers
+// only ever call this for a key already known to be common (an entry of
+// extraParamsCommonKeys()'s own result).
+String extraParamsUniformValueForKey (ArrayList<JSONObject> objs, String key) {
+  String firstShown = null;
+  for (JSONObject o : objs) {
+    Object v = o.get(key);
+    String shown = (v instanceof JSONObject) ? ((JSONObject) v).toString() : String.valueOf(v);
+    if (firstShown == null) firstShown = shown;
+    else if (!firstShown.equals(shown)) return null;
+  }
+  return firstShown;
+}
+
+// Assign Missing's own "partialKeys" - the complement of
+// extraParamsCommonKeys() above: every key present on at least one of
+// objs but absent from at least one other, so a key lands on exactly
+// one of extraParamsCommonKeys()'s own result or this one's (or
+// neither, if it's on none of objs at all).
+ArrayList<String> extraParamsPartialKeys (ArrayList<JSONObject> objs) {
+  java.util.LinkedHashSet<String> unionKeys = new java.util.LinkedHashSet<String>();
+  for (JSONObject o : objs) unionKeys.addAll(o.keys());
+
+  ArrayList<String> partialKeys = new ArrayList<String>();
+  for (String key : unionKeys) {
+    int presentCount = 0;
+    for (JSONObject o : objs) if (o.keys().contains(key)) presentCount++;
+    if (presentCount > 0 && presentCount < objs.size()) partialKeys.add(key);
+  }
+  return partialKeys;
+}
+
+// How many of objs are missing key entirely - Assign Missing's own
+// per-row "missing N/M" count (drawExtraParamsAssignMissingTab()).
+int extraParamsMissingCount (ArrayList<JSONObject> objs, String key) {
+  int missingCount = 0;
+  for (JSONObject o : objs) if (!o.keys().contains(key)) missingCount++;
+  return missingCount;
+}

@@ -2366,10 +2366,7 @@ class UI_rollout {
     ArrayList<JSONObject> objs = new ArrayList<JSONObject>();
     for (ExtraParamsSelectionTarget t : list) objs.add(getExtraParamsObjectForSelection(t));
 
-    ArrayList<String> commonKeys = new ArrayList<String>(objs.get(0).keys());
-    for (int i = 1; i < objs.size(); i++) {
-      commonKeys.retainAll(objs.get(i).keys());
-    }
+    ArrayList<String> commonKeys = extraParamsCommonKeys(objs);
     java.util.Collections.sort(commonKeys); // deterministic row order, same reasoning as the Selected Entity path's own topKeys sort
 
     for (String key : commonKeys) {
@@ -2379,16 +2376,10 @@ class UI_rollout {
       // value, and editing starts from a blank box rather than any one
       // entity's own value, so a typed edit is never mistaken for "this is
       // what entity N already had".
-      String firstShown = null;
-      boolean uniform = true;
-      for (JSONObject o : objs) {
-        Object v = o.get(key);
-        String shown = (v instanceof JSONObject) ? ((JSONObject) v).toString() : String.valueOf(v);
-        if (firstShown == null) firstShown = shown;
-        else if (!firstShown.equals(shown)) uniform = false;
-      }
+      String uniformValue = extraParamsUniformValueForKey(objs, key);
+      boolean uniform = uniformValue != null;
 
-      this._SpinnerText(X_control, Y_control, key, uniform ? firstShown : "", false, uniform ? null : "various");
+      this._SpinnerText(X_control, Y_control, key, uniform ? uniformValue : "", false, uniform ? null : "various");
       float rowY = this.lastSpinnerTextRowFirstLineY;
 
       if (extraParamsRemoveButtonClicked(X_control, rowY)) {
@@ -2515,15 +2506,7 @@ class UI_rollout {
     // just to build the union without duplicates; sorted into an
     // ArrayList right after for the same deterministic row order every
     // other tab's own key list already uses.
-    java.util.LinkedHashSet<String> unionKeys = new java.util.LinkedHashSet<String>();
-    for (JSONObject o : objs) unionKeys.addAll(o.keys());
-
-    ArrayList<String> partialKeys = new ArrayList<String>();
-    for (String key : unionKeys) {
-      int presentCount = 0;
-      for (JSONObject o : objs) if (o.keys().contains(key)) presentCount++;
-      if (presentCount > 0 && presentCount < objs.size()) partialKeys.add(key);
-    }
+    ArrayList<String> partialKeys = extraParamsPartialKeys(objs);
     java.util.Collections.sort(partialKeys);
 
     if (partialKeys.size() == 0) {
@@ -2540,8 +2523,7 @@ class UI_rollout {
 
     for (String key : partialKeys) {
 
-      int missingCount = 0;
-      for (JSONObject o : objs) if (!o.keys().contains(key)) missingCount++;
+      int missingCount = extraParamsMissingCount(objs, key);
 
       // The row's own caption doubles as _SpinnerText()'s per-row
       // identity key (editCaption/spinnerTextScroll, uiRollout.pde
