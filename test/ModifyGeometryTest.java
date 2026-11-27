@@ -564,6 +564,16 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{1, 1};     // group 0 reaches only face 1
     app.allGroups.Polylines[0] = new int[]{0, 0}; // and only polyline 0
+    // makeEmpty() leaves every OTHER range (Solids/Model1Ds/Model2Ds) at
+    // Java's raw {0,0} default rather than beginNewGroup()'s own real
+    // "nothing here" sentinel {count,-1} (groups.pde's own documented
+    // discrepancy) - explicitly set here so isolate_Selection()'s new
+    // Solid/Model1D/Model2D isolation below correctly sees "group 0 owns
+    // none of these" instead of wrongly claiming index 0 while
+    // allSolids/allModel1Ds/allModel2Ds are all still empty.
+    app.allGroups.Solids[0] = new int[]{1, -1};
+    app.allGroups.Model1Ds[0] = new int[]{1, -1};
+    app.allGroups.Model2Ds[0] = new int[]{1, -1};
 
     app.Select3D.groupSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.GROUP;
@@ -576,6 +586,125 @@ class ModifyGeometryTest {
 
     assertEquals(1, app.allPolylines.getVisibility(0)); // the one polyline the group reaches
     assertEquals(0, app.allPolylines.getVisibility(1));
+  }
+
+  @Test
+  void isolateSelection_withSolidCategoryActive_isolatesSolidsAlongsideFacesAndPolylines () {
+    // SOLID is now part of the same "visible-geometry" family as FACE/
+    // POLYLINE (isGeometryCategorySelected()) - isolating with SOLID
+    // active should hide every OTHER solid/face/polyline in the scene,
+    // not just solids, and should leave Model1Ds/Model2Ds/Cameras/
+    // Sections alone entirely (their own *_Selection gates never match
+    // SOLID, so they're never even touched).
+    app.allSolids.create(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+    app.allSolids.create(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0);
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+    app.allModel1Ds.makeEmpty(1);
+    app.allModel2Ds.makeEmpty(1);
+
+    for (int f = 0; f < 2; f++) app.allSolids.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+    app.allModel1Ds.setVisibility(0, 1);
+    app.allModel2Ds.setVisibility(0, 1);
+
+    app.Select3D.solidSelection = new int[]{1}; // keep only solid 1 visible
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+
+    app.Modify3D.isolate_Selection();
+
+    assertEquals(0, app.allSolids.getVisibility(0));
+    assertEquals(1, app.allSolids.getVisibility(1)); // the one solid selected
+    assertEquals(0, app.allFaces.getVisibility(0)); // not in the (empty) face selection, so hidden
+
+    // SOLID is not MODEL1D/MODEL2D, so changeVisibilityModel1Ds_Selection/
+    // changeVisibilityModel2Ds_Selection's own gates don't match - but
+    // changeVisibilityModel1Ds_Scene(0)/changeVisibilityModel2Ds_Scene(0)
+    // still runs unconditionally as part of the same geometry family, so
+    // they get hidden too (same "isolate hides everything else" behavior
+    // Faces/Polylines already had for each other).
+    assertEquals(0, app.allModel1Ds.getVisibility(0));
+    assertEquals(0, app.allModel2Ds.getVisibility(0));
+  }
+
+  @Test
+  void isolateSelection_withModel1DCategoryActive_isolatesModel1DsAlongsideFacesAndPolylines () {
+    app.allModel1Ds.makeEmpty(2);
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+
+    for (int f = 0; f < 2; f++) app.allModel1Ds.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+
+    app.Select3D.model1DSelection = new int[]{0}; // keep only tree 0 visible
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
+
+    app.Modify3D.isolate_Selection();
+
+    assertEquals(1, app.allModel1Ds.getVisibility(0)); // the one tree selected
+    assertEquals(0, app.allModel1Ds.getVisibility(1));
+    assertEquals(0, app.allFaces.getVisibility(0)); // same geometry family, hidden since unselected
+  }
+
+  @Test
+  void isolateSelection_withModel2DCategoryActive_isolatesModel2DsAlongsideFacesAndPolylines () {
+    app.allModel2Ds.makeEmpty(2);
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+
+    for (int f = 0; f < 2; f++) app.allModel2Ds.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+
+    app.Select3D.model2DSelection = new int[]{1}; // keep only entity 1 visible
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
+
+    app.Modify3D.isolate_Selection();
+
+    assertEquals(0, app.allModel2Ds.getVisibility(0));
+    assertEquals(1, app.allModel2Ds.getVisibility(1)); // the one entity selected
+    assertEquals(0, app.allFaces.getVisibility(0)); // same geometry family, hidden since unselected
+  }
+
+  @Test
+  void isolateSelection_withCameraCategoryActive_isolatesOnlyCamerasNotGeometry () {
+    // Cameras are a separate, narrower isolate (isCamera, not
+    // isGeometry) - isolating with CAMERA active must leave Faces/
+    // Solids/etc. completely untouched, unlike the geometry family above.
+    app.allCameras.makeEmpty(0); // 1 default camera
+    app.allCameras.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 1); // camera 1
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+
+    for (int f = 0; f < 2; f++) app.allCameras.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+
+    app.Select3D.cameraSelection = new int[]{1}; // keep only camera 1 visible
+    app.currentObjectCategory = app.ObjectCategory.CAMERA;
+
+    app.Modify3D.isolate_Selection();
+
+    assertEquals(0, app.allCameras.getVisibility(0));
+    assertEquals(1, app.allCameras.getVisibility(1)); // the one camera selected
+    assertEquals(1, app.allFaces.getVisibility(0)); // untouched - isCamera, not isGeometry
+  }
+
+  @Test
+  void isolateSelection_withSectionCategoryActive_isolatesOnlySectionsNotGeometry () {
+    app.allSections.makeEmpty(2);
+    app.allFaces.nodes = new int[][]{{0}};
+    app.allFaces.options = new int[1][6];
+
+    for (int f = 0; f < 2; f++) app.allSections.setVisibility(f, 1);
+    app.allFaces.setVisibility(0, 1);
+
+    app.Select3D.sectionSelection = new int[]{0}; // keep only section 0 visible
+    app.currentObjectCategory = app.ObjectCategory.SECTION;
+
+    app.Modify3D.isolate_Selection();
+
+    assertEquals(1, app.allSections.getVisibility(0)); // the one section selected
+    assertEquals(0, app.allSections.getVisibility(1));
+    assertEquals(1, app.allFaces.getVisibility(0)); // untouched - isSection, not isGeometry
   }
 
   // --- selectVertices_fromCurrentSelection -----------------------

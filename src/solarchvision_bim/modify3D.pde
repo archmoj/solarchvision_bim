@@ -31,6 +31,22 @@ class Modify3D {
            (currentObjectCategory == ObjectCategory.VERTEX);
   }
 
+  // Broader than isPolymeshCategorySelected() above - adds SOLID/
+  // MODEL1D/MODEL2D, the other categories a Group can own (groups.pde's
+  // own Solids/Model1Ds/Model2Ds range fields). Used only by
+  // isolate_Selection() below: everything in this family is isolated
+  // TOGETHER against the whole visible-geometry scene, regardless of
+  // which one member of the family is the currently active category -
+  // unlike isPolymeshCategorySelected()'s other callers above, which
+  // each need the narrower Face/Polyline/Vertex-only meaning for their
+  // own unrelated vertex-editing operations.
+  boolean isGeometryCategorySelected () {
+    return isPolymeshCategorySelected() ||
+           (currentObjectCategory == ObjectCategory.SOLID) ||
+           (currentObjectCategory == ObjectCategory.MODEL1D) ||
+           (currentObjectCategory == ObjectCategory.MODEL2D);
+  }
+
   boolean isGroupOrFaceCategorySelected () {
     return (currentObjectCategory == ObjectCategory.GROUP) ||
            (currentObjectCategory == ObjectCategory.FACE);
@@ -5301,20 +5317,202 @@ class Modify3D {
     endScene3DChange();
   }
 
-  // Composite, same reasoning as Delete3D.selection()'s own comment: the
-  // four calls below each already wrap their own beginScene3DChange()/
+  // Same shape as changeVisibilityFaces_Selection() above, for Solids:
+  // GROUP's own selection converts via convert_Groups_to_Solids()
+  // (select3D.pde) the same way it converts to Faces/Polylines above;
+  // any other active category (FACE/POLYLINE/VERTEX/MODEL1D/MODEL2D/...)
+  // leaves Select3D.solidSelection at whatever it already is (normally
+  // empty), which is exactly what isolate_Selection() below wants - "no
+  // solids selected" isolates to "no solids visible".
+  void changeVisibilitySolids_Selection (int new_vsb) {
+    beginScene3DChange();
+
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.SOLID)) {
+
+      if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Solids();
+
+      for (int o = Select3D.solidSelection.length - 1; o >= 0; o--) {
+        int f = Select3D.solidSelection[o];
+        allSolids.setVisibility(f, new_vsb);
+      }
+    }
+
+    endScene3DChange();
+  }
+
+  void changeVisibilitySolids_Scene (int new_vsb) {
+    beginScene3DChange();
+
+    for (int f = allSolids.DEF.length - 1; f >= 0; f--) {
+      allSolids.setVisibility(f, new_vsb);
+    }
+
+    endScene3DChange();
+  }
+
+  // Same shape as changeVisibilitySolids_Selection() above, for Model1Ds
+  // (trees) - convert_Groups_to_Model1Ds() is select3D.pde's own
+  // GROUP-to-Model1D counterpart.
+  void changeVisibilityModel1Ds_Selection (int new_vsb) {
+    beginScene3DChange();
+
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.MODEL1D)) {
+
+      if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Model1Ds();
+
+      for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
+        int f = Select3D.model1DSelection[o];
+        allModel1Ds.setVisibility(f, new_vsb);
+      }
+    }
+
+    endScene3DChange();
+  }
+
+  void changeVisibilityModel1Ds_Scene (int new_vsb) {
+    beginScene3DChange();
+
+    for (int f = allModel1Ds.num - 1; f >= 0; f--) {
+      allModel1Ds.setVisibility(f, new_vsb);
+    }
+
+    endScene3DChange();
+  }
+
+  // Same shape again, for Model2Ds (trees/people) - convert_Groups_to_
+  // Model2Ds() is select3D.pde's own GROUP-to-Model2D counterpart.
+  void changeVisibilityModel2Ds_Selection (int new_vsb) {
+    beginScene3DChange();
+
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.MODEL2D)) {
+
+      if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Model2Ds();
+
+      for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
+        int f = Select3D.model2DSelection[o];
+        allModel2Ds.setVisibility(f, new_vsb);
+      }
+    }
+
+    endScene3DChange();
+  }
+
+  void changeVisibilityModel2Ds_Scene (int new_vsb) {
+    beginScene3DChange();
+
+    for (int f = allModel2Ds.num - 1; f >= 0; f--) {
+      allModel2Ds.setVisibility(f, new_vsb);
+    }
+
+    endScene3DChange();
+  }
+
+  // Cameras aren't owned by groups at all (allGroups has no Cameras
+  // field - edit3D.pde's own Cameras() method comment already notes
+  // this) - so unlike Solids/Model1Ds/Model2Ds above, there's no GROUP
+  // branch to convert through here, only the CAMERA category itself.
+  void changeVisibilityCameras_Selection (int new_vsb) {
+    beginScene3DChange();
+
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
+      for (int o = Select3D.cameraSelection.length - 1; o >= 0; o--) {
+        int f = Select3D.cameraSelection[o];
+        allCameras.setVisibility(f, new_vsb);
+      }
+    }
+
+    endScene3DChange();
+  }
+
+  void changeVisibilityCameras_Scene (int new_vsb) {
+    beginScene3DChange();
+
+    for (int f = allCameras.num - 1; f >= 0; f--) {
+      allCameras.setVisibility(f, new_vsb);
+    }
+
+    endScene3DChange();
+  }
+
+  // Sections aren't owned by groups either - same reasoning as Cameras
+  // just above.
+  void changeVisibilitySections_Selection (int new_vsb) {
+    beginScene3DChange();
+
+    if (currentObjectCategory == ObjectCategory.SECTION) {
+      for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
+        int f = Select3D.sectionSelection[o];
+        allSections.setVisibility(f, new_vsb);
+      }
+    }
+
+    endScene3DChange();
+  }
+
+  void changeVisibilitySections_Scene (int new_vsb) {
+    beginScene3DChange();
+
+    for (int f = allSections.num - 1; f >= 0; f--) {
+      allSections.setVisibility(f, new_vsb);
+    }
+
+    endScene3DChange();
+  }
+
+  // Composite, same reasoning as Delete3D.selection()'s own comment: each
+  // call below already wraps its own beginScene3DChange()/
   // endScene3DChange() pair - without this outer pair too, each would
-  // independently record its own step, turning one "Isolate" into four.
+  // independently record its own step, turning one "Isolate" into many.
+  //
+  // Previously Faces/Polylines only. Now also Solids/Model1Ds/Model2Ds,
+  // isolated together as one "visible-geometry" family whenever ANY
+  // member of that family is the active category (isGeometryCategorySelected()
+  // above) - not just the two that happen to be selected: isolating a
+  // Solid now also hides every Face/Polyline/tree/person in the scene
+  // except what's selected, the same way isolating a Face already hid
+  // every OTHER face/polyline. Cameras/Sections are a different kind of
+  // entity (viewpoints/analysis planes, not visible scene geometry) and
+  // keep their own independent isolate, only when THEIR OWN category is
+  // the one active - isolating a Face/Solid/etc. does not touch cameras
+  // or sections, and vice versa.
   void isolate_Selection () {
-    if (!isPolymeshCategorySelected()) return;
+    boolean isGeometry = isGeometryCategorySelected();
+    boolean isCamera = (currentObjectCategory == ObjectCategory.CAMERA);
+    boolean isSection = (currentObjectCategory == ObjectCategory.SECTION);
+
+    if (!isGeometry && !isCamera && !isSection) return;
 
     beginScene3DChange();
 
-    this.changeVisibilityFaces_Scene(0);
-    this.changeVisibilityFaces_Selection(1);
+    if (isGeometry) {
+      this.changeVisibilityFaces_Scene(0);
+      this.changeVisibilityFaces_Selection(1);
 
-    this.changeVisibilityPolylines_Scene(0);
-    this.changeVisibilityPolylines_Selection(1);
+      this.changeVisibilityPolylines_Scene(0);
+      this.changeVisibilityPolylines_Selection(1);
+
+      this.changeVisibilitySolids_Scene(0);
+      this.changeVisibilitySolids_Selection(1);
+
+      this.changeVisibilityModel1Ds_Scene(0);
+      this.changeVisibilityModel1Ds_Selection(1);
+
+      this.changeVisibilityModel2Ds_Scene(0);
+      this.changeVisibilityModel2Ds_Selection(1);
+    }
+
+    if (isCamera) {
+      this.changeVisibilityCameras_Scene(0);
+      this.changeVisibilityCameras_Selection(1);
+    }
+
+    if (isSection) {
+      this.changeVisibilitySections_Scene(0);
+      this.changeVisibilitySections_Selection(1);
+    }
 
     endScene3DChange();
   }

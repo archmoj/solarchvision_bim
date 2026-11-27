@@ -331,15 +331,25 @@ class SceneLifecycleTest {
     assertEquals(1, app.allModel2Ds.num);
     assertEquals(1, app.allSolids.DEF.length);
 
-    // "modify" the whole group as one unit: isolate_Selection() only
-    // ever touches Faces/Polylines visibility (see modify3D.pde's own
-    // isolate_Selection()) - Model1D/Model2D/Solid are deliberately left
-    // alone by that one function, not a gap in this test.
+    // "modify" the whole group as one unit: isolate_Selection() now
+    // isolates Faces/Polylines/Solids/Model1Ds/Model2Ds together as one
+    // "visible-geometry" family (see modify3D.pde's own
+    // isolate_Selection()/isGeometryCategorySelected()) - previously it
+    // only ever touched Faces/Polylines visibility. Here the scene has
+    // exactly one of each type, all owned by this one group, so hiding
+    // the whole scene then revealing the group's own members nets out
+    // to every type staying visible - this is deliberately a visibility
+    // no-op given this particular fixture, not proof the other 3 types
+    // are left alone (ModifyGeometryTest.java's own isolate_Selection
+    // tests cover the actual hide/reveal behavior per type directly).
     app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.groupSelection = new int[]{0};
     app.Modify3D.isolate_Selection();
     assertEquals(1, app.allFaces.getVisibility(0));
     assertEquals(1, app.allPolylines.getVisibility(0));
+    assertEquals(1, app.allModel1Ds.getVisibility(0));
+    assertEquals(1, app.allModel2Ds.getVisibility(0));
+    assertEquals(1, app.allSolids.getVisibility(0));
 
     // "edit" the whole group as one unit: Edit3D.Groups() fans the given
     // tool out across every face/polyline the group owns.
