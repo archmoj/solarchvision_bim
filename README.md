@@ -261,6 +261,20 @@ The 3D scene, 3D viewport, station, and study-graph histories are distinct; an u
 
 Additional context-specific undo/redo commands are available for the other supported histories. The exact operation that is reversed depends on the active context and command.
 
+### Extra Params: arbitrary metadata on any object
+
+Beyond its built-in properties (material, layer, visibility, and so on), any object—face, polyline, 1D/2D model, solid, group, camera, or section—can also carry its own freeform set of named key/value fields, stored as JSON. This is useful for anything the application doesn't already model directly: an IFC-style classification, a status flag, a project-specific identifier, or any other metadata worth keeping attached to an object through save/load, export, and undo/redo.
+
+The **Extra Params** rollout panel (see [Settings rollout panel](#settings-rollout-panel) above) provides three tabs, each suited to a different selection size:
+
+- **Selected Entity:** View and edit one object's own metadata—add a key, change a value, remove a key, or drill one level into an object-valued key's own children. Active when exactly one object is selected.
+- **Bulk Edit:** Edit the keys shared by every object in a multi-selection at once. A key with the same value on every selected object shows that value directly; a key present everywhere but with differing values shows a "various" placeholder, and typing a new value applies it to every selected object uniformly.
+- **Assign Missing:** Fill in a key that's present on *some* of a multi-selection but missing from others—typing a value writes it only to the objects currently missing that key, leaving the rest untouched.
+
+To remove this metadata rather than edit it, **Strip ExtraParams Selection** and **Strip ExtraParams Scene** (in the `Delete` menu) blank it out for the current selection, or for every object in the project regardless of selection. Like every other action here, both are undoable with `Ctrl+Z`.
+
+The same reading/writing is available from the command bar as `EXTRAPARAMS.SET`/`EXTRAPARAMS.REMOVE`—see the [command reference](command/README.md#extra-params) for syntax.
+
 ### Visualization
 
 The 3D environment supports perspective and orthographic views, surface and edge display, materials, layers, and analytical overlays. Switch between available shading and impact views to inspect geometry, solar exposure, and environmental results.
@@ -522,7 +536,7 @@ See the [command reference](command/README.md) for complete syntax, arguments, a
 
 ## Settings rollout panel
 
-Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 6 parents and 29 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
+Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 7 parents and 32 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
 
 | Parent | Children | Covers |
 |---|---|---|
@@ -532,6 +546,7 @@ Most persistent settings—creation defaults, camera behavior, color scales, exp
 | **Visualization Options** | 2D Layout · 2D Palette · Solar Palette · Spatial Palette · Selection · Visibility | Chart layout and color scales, selection indicators, and object visibility toggles |
 | **Export Options** | Model · Data · Content | 3D mesh export, 2D chart-data export, and image/PDF snapshot recording |
 | **Assessment Options** | Interpolation · Derived Data · Simulation | Interpolation weighting, derived analysis layers, and solar/wind impact-simulation setup |
+| **Extra Params** | Selected Entity · Bulk Edit · Assign Missing | Viewing/editing one object's own arbitrary JSON metadata, bulk-editing the keys a multi-selection shares, and filling in a key that's missing from only part of one |
 
 Every setting shown here is also reachable as a named command from the [command bar](#command-bar-scripting-and-exports)—the rollout panel and the command system are two views onto the same underlying settings.
 

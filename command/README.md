@@ -593,6 +593,51 @@ GetLength x1=? y1=? z1=? x2=? y2=? z2=?
 
 ------------------------------------------------------------------------
 
+### Extra Params
+
+`EXTRAPARAMS.SET`/`EXTRAPARAMS.REMOVE` read and write an arbitrary set
+of named, JSON-valued fields - "extra params" - attached to any single
+object (a face, polyline, model1d, model2d, solid, group, camera, or
+section). Both need **exactly one** object selected at the time, across
+every category combined; with 0 or 2+ selected, the command returns its
+own usage hint instead of acting.
+
+-   `EXTRAPARAMS.SET`: Sets a named field, by a dotted path, on the
+    selected object - `a.b` addresses `b` inside an object already
+    stored at `a`, one level deep. The value is decoded as JSON when it
+    parses as one (so `true`, `null`, and a bare number become their
+    real JSON types, not the literal text), and kept as a plain string
+    otherwise; quote a value to force it to stay a literal string even
+    when it would otherwise parse as JSON (e.g. a value that happens to
+    look like a number)
+
+```
+EXTRAPARAMS.SET <key> <value>
+```
+
+-   `EXTRAPARAMS.REMOVE`: Removes a named field, by the same dotted-path
+    addressing, from the selected object
+
+```
+EXTRAPARAMS.REMOVE <key>
+```
+
+-   `Strip ExtraParams Selection`, `Strip ExtraParams Scene`: Blank out
+    every extra-params field entirely - the first for every currently
+    selected object (any count, any category), the second for every
+    object in the project regardless of selection. Both are ordinary
+    undoable actions (`Ctrl+Z` reverses either one), reachable from the
+    `Delete` menu or by typing their caption on the command line, the
+    same as any other named action
+
+The on-screen equivalent is the **Extra Params** rollout panel - see
+[Settings rollout panel](../README.md#settings-rollout-panel) in the
+main README for its three tabs (viewing/editing one object at a time,
+bulk-editing a multi-selection's shared keys, and filling in a key
+that's missing from only part of a multi-selection).
+
+------------------------------------------------------------------------
+
 ### Object creation
 
 Most shapes below take `m=?`: the material index to paint the new face(s)
