@@ -339,6 +339,18 @@ class Faces {
     this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
+  // Resets every face's own extraParams back to "" (its documented
+  // default, above) regardless of selection - the "Strip ExtraParams
+  // Scene" action's (actions.pde) own per-category counterpart to
+  // "Strip ExtraParams Selection", which instead only reaches whatever
+  // Select3D.faceSelection currently holds (extraParamsSelection.pde).
+  // ensureExtraParamsLength() first so this reaches every face that
+  // currently exists, even one extraParams was never resized to cover.
+  void stripAllExtraParams () {
+    this.ensureExtraParamsLength();
+    for (int n = 0; n < this.extraParams.length; n++) this.extraParams[n] = "";
+  }
+
 
   void beginNewFace () {
 

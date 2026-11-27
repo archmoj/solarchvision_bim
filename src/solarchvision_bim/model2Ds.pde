@@ -233,6 +233,14 @@ class Model2Ds {
     this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
+  // Resets every model2d's own extraParams back to "" (its documented
+  // default, above) regardless of selection - see faces.pde's own
+  // identical method for the full reasoning.
+  void stripAllExtraParams () {
+    this.ensureExtraParamsLength();
+    for (int n = 0; n < this.extraParams.length; n++) this.extraParams[n] = "";
+  }
+
   // Per-instance identity: which kind (PEOPLE_KIND/TREES_KIND), which
   // local index within that kind's own Images/ImagePath/ImageRatios
   // array, and whether it's mirrored left/right. Replaces the old

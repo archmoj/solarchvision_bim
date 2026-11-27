@@ -169,6 +169,14 @@ class Groups {
     this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
+  // Resets every group's own extraParams back to "" (its documented
+  // default, above) regardless of selection - see faces.pde's own
+  // identical method for the full reasoning.
+  void stripAllExtraParams () {
+    this.ensureExtraParamsLength();
+    for (int n = 0; n < this.extraParams.length; n++) this.extraParams[n] = "";
+  }
+
 
   void inserted_nFaces (int n, int fromFace, int howMany) {
     for (int i = n + 1; i < this.num; i++) {

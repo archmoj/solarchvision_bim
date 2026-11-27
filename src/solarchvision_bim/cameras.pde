@@ -100,6 +100,14 @@ class Cameras {
     this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
+  // Resets every camera's own extraParams back to "" (its documented
+  // default, above) regardless of selection - see faces.pde's own
+  // identical method for the full reasoning.
+  void stripAllExtraParams () {
+    this.ensureExtraParamsLength();
+    for (int n = 0; n < this.extraParams.length; n++) this.extraParams[n] = "";
+  }
+
 
   float get_posX (int n) {
     return this.options[n][0];

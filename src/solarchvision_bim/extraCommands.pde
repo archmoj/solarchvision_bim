@@ -3271,7 +3271,13 @@ String extraParamsRestAfterFirstToken (String s) {
 // with the line's own raw (sanitized, but NOT tokenizeScriptLine()'d)
 // text - see runScript.pde's switch-case comment - so a value can
 // contain quotes, spaces, braces, or a JSON "\n" escape without any of
-// it being stripped or collapsed before this ever sees it.
+// it being stripped or collapsed before this ever sees it. The actual
+// write wraps in beginScene3DChange()/endScene3DChange() like every
+// other mutating command here, so Ctrl+Z undoes it the same as any
+// other edit - this one previously didn't, which is also why
+// EXTRAPARAMS.REMOVE (below) and PARENT_EXTRA_PARAMS's own three tabs
+// (uiRollout.pde) write through setExtraParamsObjectForSelection() the
+// same, now-wrapped way.
 String __EXTRAPARAMS_SET__ (String lineSTR) {
     String hint = "";
     String usage = "EXTRAPARAMS.SET <key> <value>";
@@ -3292,7 +3298,9 @@ String __EXTRAPARAMS_SET__ (String lineSTR) {
 
     JSONObject obj = getExtraParamsObjectForSelection(target);
     extraParamsSetAtPath(obj, key, value);
+    beginScene3DChange();
     setExtraParamsObjectForSelection(target, obj);
+    endScene3DChange();
     UI_rollout.revise();
 
     return hint;
@@ -3320,7 +3328,9 @@ String __EXTRAPARAMS_REMOVE__ (String[] parts) {
 
     JSONObject obj = getExtraParamsObjectForSelection(target);
     if (extraParamsRemoveAtPath(obj, parts[1])) {
+    beginScene3DChange();
     setExtraParamsObjectForSelection(target, obj);
+    endScene3DChange();
     UI_rollout.revise();
     }
 

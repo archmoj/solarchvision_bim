@@ -2292,7 +2292,16 @@ class UI_rollout {
     }
 
     if (changed) {
+      // One shared "changed" flag for every row this frame (top-level
+      // remove/edit and, for an expanded key, its own children), so
+      // wrapping just this one write-back - rather than each row's own
+      // extraParamsSetAtPath()/extraParamsRemoveAtPath() call above -
+      // already records whatever changed this frame as a single undo
+      // step, same reasoning globalFunctions.pde's own beginScene3DChange()
+      // comment gives for a composite operation.
+      beginScene3DChange();
       setExtraParamsObjectForSelection(target, obj);
+      endScene3DChange();
       UI_rollout.revise();
     }
   }
@@ -2385,10 +2394,12 @@ class UI_rollout {
       if (extraParamsRemoveButtonClicked(X_control, rowY)) {
         X_clicked = -1;
         Y_clicked = -1;
+        beginScene3DChange(); // one click, one undo step, however many entities this common-key row updates
         for (int i = 0; i < list.size(); i++) {
           extraParamsRemoveAtPath(objs.get(i), key);
           setExtraParamsObjectForSelection(list.get(i), objs.get(i));
         }
+        endScene3DChange();
         UI_rollout.revise();
       } else {
         this.drawExtraParamsRemoveButton(X_control, rowY);
@@ -2397,10 +2408,12 @@ class UI_rollout {
       if (this.textEditJustCommitted) {
         String typedValue = this.textEditCommittedValue;
         this.textEditJustCommitted = false;
+        beginScene3DChange(); // one commit, one undo step, however many entities this common-key row updates
         for (int i = 0; i < list.size(); i++) {
           extraParamsSetAtPath(objs.get(i), key, typedValue);
           setExtraParamsObjectForSelection(list.get(i), objs.get(i));
         }
+        endScene3DChange();
         UI_rollout.revise();
       }
     }
@@ -2432,11 +2445,13 @@ class UI_rollout {
           newKey = newKey.substring(1, newKey.length() - 1);
         }
         if (!newKey.equals("")) {
+          beginScene3DChange(); // one commit, one undo step, for every selected entity this "+ Add" writes to
           for (ExtraParamsSelectionTarget t : list) {
             JSONObject o = getExtraParamsObjectForSelection(t);
             extraParamsSetAtPath(o, newKey, newValue);
             setExtraParamsObjectForSelection(t, o);
           }
+          endScene3DChange();
           UI_rollout.revise();
         }
       }
@@ -2544,12 +2559,14 @@ class UI_rollout {
       if (this.textEditJustCommitted) {
         String typedValue = this.textEditCommittedValue;
         this.textEditJustCommitted = false;
+        beginScene3DChange(); // one commit, one undo step, for however many entities were missing this key
         for (int i = 0; i < objs.size(); i++) {
           if (!objs.get(i).keys().contains(key)) {
             extraParamsSetAtPath(objs.get(i), key, typedValue);
             setExtraParamsObjectForSelection(list.get(i), objs.get(i));
           }
         }
+        endScene3DChange();
         UI_rollout.revise();
       }
     }

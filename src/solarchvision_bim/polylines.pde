@@ -178,6 +178,15 @@ class Polylines {
     this.setExtraParams(n, extraParamsFromJSONObject(obj));
   }
 
+  // Resets every polyline's own extraParams back to "" (its documented
+  // default, above) regardless of selection - see faces.pde's own
+  // identical method for the full reasoning (this.nodes.length's own
+  // per-class role here is the same as faces.pde's).
+  void stripAllExtraParams () {
+    this.ensureExtraParamsLength();
+    for (int n = 0; n < this.extraParams.length; n++) this.extraParams[n] = "";
+  }
+
 
 
   void beginNewPolyline () {

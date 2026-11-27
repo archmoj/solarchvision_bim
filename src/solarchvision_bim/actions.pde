@@ -2439,6 +2439,43 @@ void build_allActions() {
     Delete3D.selection();
   });
 
+  // "Strip" rather than "Delete"/"Clear" - this never deletes an
+  // entity, only blanks its own extraParams metadata back to "" (its
+  // documented default, extraParamsHelpers.pde) - and, unlike "Clear",
+  // doesn't suggest the metadata being removed was itself bad/unwanted,
+  // just that it's being taken off these entities. Wrapped in
+  // beginScene3DChange()/endScene3DChange() like every other mutating
+  // action here, so Ctrl+Z undoes either of these the same as any other
+  // edit (extraCommands.pde's own EXTRAPARAMS.SET/REMOVE, and
+  // PARENT_EXTRA_PARAMS's three tabs in uiRollout.pde, were retrofitted
+  // the same way alongside this).
+  putAction("Strip ExtraParams Selection", () -> {
+    beginScene3DChange();
+    for (ExtraParamsSelectionTarget t : currentExtraParamsSelectionList()) {
+      setExtraParamsObjectForSelection(t, new JSONObject());
+    }
+    endScene3DChange();
+    UI_rollout.revise();
+  });
+
+  // Every entity in the project, regardless of selection - each
+  // category's own stripAllExtraParams() (faces.pde and the seven
+  // classes alongside it) rather than currentExtraParamsSelectionList(),
+  // which only ever covers what's currently selected.
+  putAction("Strip ExtraParams Scene", () -> {
+    beginScene3DChange();
+    allFaces.stripAllExtraParams();
+    allPolylines.stripAllExtraParams();
+    allModel1Ds.stripAllExtraParams();
+    allModel2Ds.stripAllExtraParams();
+    allSolids.stripAllExtraParams();
+    allGroups.stripAllExtraParams();
+    allCameras.stripAllExtraParams();
+    allSections.stripAllExtraParams();
+    endScene3DChange();
+    UI_rollout.revise();
+  });
+
   putAction("Dettach from Groups Selection", () -> {
     allGroups.dettachFromGroups_Selection();
   });
