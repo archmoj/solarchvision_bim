@@ -184,6 +184,20 @@ class Edit3DTest {
     assertEquals(0f + 1000 * 0.02f, app.allModel1Ds.getTrunkSize(0), 0.0001f);
   }
 
+  @Test
+  void model1Ds_visibility_adjustsByP_clampedToZeroToTwo () {
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+    app.allModel1Ds.setVisibility(0, 1);
+    app.Select3D.model1DSelection = new int[]{ 0 };
+    app.User3D.currentTool = app.UITASK.Visibility;
+
+    app.Edit3D.Model1Ds(5); // well past the ceiling (2)
+    assertEquals(2, app.allModel1Ds.getVisibility(0));
+
+    app.Edit3D.Model1Ds(-10); // well past the floor (0)
+    assertEquals(0, app.allModel1Ds.getVisibility(0));
+  }
+
   // ================= Model2Ds() ===========================================
 
   @Test
@@ -200,6 +214,19 @@ class Edit3DTest {
     app.Edit3D.Model2Ds(1); // 3 -> 4, past fileCount (3) - wraps to 1, mirror flips
     assertEquals(1, app.allModel2Ds.FileIndex[0]);
     assertTrue(app.allModel2Ds.Mirror[0]);
+  }
+
+  @Test
+  void model2Ds_visibility_adjustsByP_clampedToZeroToTwo_andLeavesFileIndexAlone () {
+    app.TREES_KIND.fileCount = 3;
+    app.allModel2Ds.create("TREES", 2, 0, 0, 0, 1);
+    app.allModel2Ds.setVisibility(0, 1);
+    app.Select3D.model2DSelection = new int[]{ 0 };
+    app.User3D.currentTool = app.UITASK.Visibility;
+
+    app.Edit3D.Model2Ds(5);
+    assertEquals(2, app.allModel2Ds.getVisibility(0));
+    assertEquals(2, app.allModel2Ds.FileIndex[0], "untouched - Visibility doesn't fall through to the Seed_Material branch");
   }
 
   // ================= Cameras() =============================================
@@ -230,6 +257,20 @@ class Edit3DTest {
     assertEquals(99, app.WIN3D.projectionTypeIndex, "untouched - the edited camera isn't the one currently active");
   }
 
+  @Test
+  void cameras_visibility_adjustsByP_clampedToZeroToTwo () {
+    app.allCameras.create(1, 2, 3, 4, 5, 6, 7, 8, 9, 0);
+    app.allCameras.setVisibility(0, 1);
+    app.Select3D.cameraSelection = new int[]{ 0 };
+    app.User3D.currentTool = app.UITASK.Visibility;
+
+    app.Edit3D.Cameras(5);
+    assertEquals(2, app.allCameras.getVisibility(0));
+
+    app.Edit3D.Cameras(-10);
+    assertEquals(0, app.allCameras.getVisibility(0));
+  }
+
   // ================= Sections() ===========================================
 
   @Test
@@ -255,6 +296,20 @@ class Edit3DTest {
 
     app.Edit3D.Sections(-1);
     assertEquals(200, app.allSections.get_resX(0));
+  }
+
+  @Test
+  void sections_visibility_adjustsByP_clampedToZeroToTwo () {
+    app.allSections.create(0, 0, 0, 5, 1, 1, 4, 4);
+    app.allSections.setVisibility(0, 1);
+    app.Select3D.sectionSelection = new int[]{ 0 };
+    app.User3D.currentTool = app.UITASK.Visibility;
+
+    app.Edit3D.Sections(5);
+    assertEquals(2, app.allSections.getVisibility(0));
+
+    app.Edit3D.Sections(-10);
+    assertEquals(0, app.allSections.getVisibility(0));
   }
 
   // ================= Solids() ==============================================
@@ -295,6 +350,21 @@ class Edit3DTest {
     app.Edit3D.Solids(1);
 
     assertEquals(2f, app.allSolids.get_powX(0), 0.0001f);
+  }
+
+  @Test
+  void solids_visibility_adjustsByP_clampedToZeroToTwo_andDoesNotFallThroughToPowerLogic () {
+    app.allSolids.create(0, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0);
+    app.allSolids.setVisibility(0, 1);
+    app.Select3D.solidSelection = new int[]{ 0 };
+    app.User3D.currentTool = app.UITASK.Visibility;
+
+    app.Edit3D.Solids(5);
+    assertEquals(2, app.allSolids.getVisibility(0));
+    assertEquals(2f, app.allSolids.get_powX(0), 0.0001f, "untouched - the power branch is skipped via continue");
+
+    app.Edit3D.Solids(-10);
+    assertEquals(0, app.allSolids.getVisibility(0));
   }
 
   // ================= selection() dispatcher ===============================

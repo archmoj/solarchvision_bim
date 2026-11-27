@@ -91,11 +91,6 @@ class Model1Ds {
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
-    // Same reasoning as solids.pde's own create() - keeps visibility
-    // eagerly grown alongside extraParams/f_data/i_data here, rather
-    // than relying solely on getVisibility()'s own lazy padding.
-    this.visibility = concat(this.visibility, new int[]{ 1 });
-
     this.num += 1;
 
     if (User3D.creatorMeshOrSolidMode != 0) {

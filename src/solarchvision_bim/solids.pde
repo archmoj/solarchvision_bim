@@ -380,15 +380,6 @@ class Solids {
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
-    // Keeps visibility in eager lockstep with DEF/extraParams here, the
-    // same way this.extraParams' own concat() line just above does -
-    // without this, a freshly create()'d solid would be visible only by
-    // getVisibility()'s own lazy ensureVisibilityLength() padding (still
-    // correct, since every real caller already goes through that
-    // getter), but the raw array would transiently lag this.DEF.length
-    // until the next getVisibility()/setVisibility() call touches it.
-    this.visibility = concat(this.visibility, new int[]{ 1 });
-
     if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = this.DEF.length - 1;
 
     return(this.DEF.length - 1);

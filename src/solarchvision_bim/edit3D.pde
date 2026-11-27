@@ -138,12 +138,21 @@ class Edit3D {
         User3D.creatorModel1DLeafSize = q;
         UI_rollout.revise();
       }
+
+      else if (User3D.currentTool == UITASK.Visibility) {
+        allModel1Ds.setVisibility(OBJ_ID, clamp(allModel1Ds.getVisibility(OBJ_ID) + p, 0, 2));
+      }
     }
   }
 
   void Model2Ds (int p) {
     for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
       int OBJ_ID = Select3D.model2DSelection[o];
+
+      if (User3D.currentTool == UITASK.Visibility) {
+        allModel2Ds.setVisibility(OBJ_ID, clamp(allModel2Ds.getVisibility(OBJ_ID) + p, 0, 2));
+        continue;
+      }
 
       if (User3D.currentTool != UITASK.Seed_Material) continue;
 
@@ -173,6 +182,10 @@ class Edit3D {
 
         if (f == WIN3D.currentCameraIndex) WIN3D.projectionTypeIndex = allCameras.get_type(f);
       }
+
+      else if (User3D.currentTool == UITASK.Visibility) {
+        allCameras.setVisibility(f, clamp(allCameras.getVisibility(f) + p, 0, 2));
+      }
     }
   }
 
@@ -197,6 +210,10 @@ class Edit3D {
 
         allSolids_updated = true;
       }
+
+      else if (User3D.currentTool == UITASK.Visibility) {
+        allSections.setVisibility(f, clamp(allSections.getVisibility(f) + p, 0, 2));
+      }
     }
 
     if (allSolids_updated) allSolidImpacts.calculate_ImpactOnSections();
@@ -207,6 +224,11 @@ class Edit3D {
 
     for (int o = Select3D.solidSelection.length - 1; o >= 0; o--) {
       int f = Select3D.solidSelection[o];
+
+      if (User3D.currentTool == UITASK.Visibility) {
+        allSolids.setVisibility(f, clamp(allSolids.getVisibility(f) + p, 0, 2));
+        continue;
+      }
 
       boolean isPowerTask = (User3D.currentTool == UITASK.PowerX) || (User3D.currentTool == UITASK.PowerY) ||
                             (User3D.currentTool == UITASK.PowerZ) || (User3D.currentTool == UITASK.PowerAll);
