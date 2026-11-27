@@ -340,4 +340,80 @@ class CamerasTest {
     assertEquals(2f, app.WIN3D.cameraY, 0.0001f);
     assertEquals(3f, app.WIN3D.cameraZ, 0.0001f);
   }
+
+  // ================= visibility ========================================
+
+  @Test
+  void makeEmpty_setsVisibilityToOneForTheDefaultCamera () {
+    app.allCameras.makeEmpty(0); // still ends up with exactly 1 camera, per add_first()
+    assertEquals(1, app.allCameras.visibility.length);
+    assertEquals(1, app.allCameras.getVisibility(0));
+  }
+
+  @Test
+  void setVisibilityThenGetVisibility_roundTripsTheValue () {
+    app.allCameras.visibility = new int[]{1};
+    app.allCameras.setVisibility(0, 0);
+    assertEquals(0, app.allCameras.getVisibility(0));
+  }
+
+  @Test
+  void getVisibility_isDefensiveForOutOfRangeIndexAndDefaultsToVisible () {
+    app.allCameras.options = new float[][]{new float[9], new float[9]};
+    app.allCameras.Type = new int[]{0, 0};
+    app.allCameras.num = 2;
+    assertEquals(1, app.allCameras.getVisibility(-1));
+    assertEquals(1, app.allCameras.getVisibility(5));
+  }
+
+  @Test
+  void ensureVisibilityLength_padsShortArrayWithOnesAndPreservesExisting () {
+    app.allCameras.options = new float[][]{new float[9], new float[9]};
+    app.allCameras.Type = new int[]{0, 0};
+    app.allCameras.num = 2;
+    app.allCameras.visibility = new int[]{0};
+
+    app.allCameras.ensureVisibilityLength();
+
+    assertEquals(2, app.allCameras.visibility.length);
+    assertEquals(0, app.allCameras.getVisibility(0));
+    assertEquals(1, app.allCameras.getVisibility(1));
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsVisibility () {
+    app.allCameras.options = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9}};
+    app.allCameras.Type = new int[]{2};
+    app.allCameras.extraParams = new String[]{""};
+    app.allCameras.visibility = new int[]{0};
+    app.allCameras.num = 1;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allCameras.to_XML(root);
+
+    solarchvision_bim.Cameras fresh = app.new Cameras();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getVisibility(0));
+  }
+
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed on this
+    // class at all - no "visibility" attribute on the <item> element
+    // whatsoever.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allCameras.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("1,2,3,4,5,6,7,8,9,2");
+    // deliberately no "visibility" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Cameras fresh = app.new Cameras();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
 }

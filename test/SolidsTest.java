@@ -319,4 +319,78 @@ class SolidsTest {
     assertEquals(1, fresh.DEF.length);
     assertEquals("", fresh.getExtraParams(0));
   }
+
+  // ================= visibility ========================================
+
+  @Test
+  void makeEmpty_defaultsVisibilityToOneForEveryEntry () {
+    app.allSolids.makeEmpty(3);
+    assertEquals(3, app.allSolids.visibility.length);
+    assertEquals(1, app.allSolids.getVisibility(0));
+    assertEquals(1, app.allSolids.getVisibility(1));
+    assertEquals(1, app.allSolids.getVisibility(2));
+  }
+
+  @Test
+  void setVisibilityThenGetVisibility_roundTripsTheValue () {
+    app.allSolids.makeEmpty(1);
+    app.allSolids.setVisibility(0, 0);
+    assertEquals(0, app.allSolids.getVisibility(0));
+  }
+
+  @Test
+  void getVisibility_isDefensiveForOutOfRangeIndexAndDefaultsToVisible () {
+    app.allSolids.makeEmpty(2);
+    assertEquals(1, app.allSolids.getVisibility(-1));
+    assertEquals(1, app.allSolids.getVisibility(5));
+  }
+
+  @Test
+  void ensureVisibilityLength_padsShortArrayWithOnesAndPreservesExisting () {
+    app.allSolids.DEF = new float[][]{{0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0,0}};
+    app.allSolids.visibility = new int[]{0};
+
+    app.allSolids.ensureVisibilityLength();
+
+    assertEquals(2, app.allSolids.visibility.length);
+    assertEquals(0, app.allSolids.getVisibility(0));
+    assertEquals(1, app.allSolids.getVisibility(1));
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsVisibility () {
+    app.allSolids.makeEmpty(1);
+    app.allSolids.setVisibility(0, 0);
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allSolids.to_XML(root);
+
+    solarchvision_bim.Solids fresh = app.new Solids();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getVisibility(0));
+  }
+
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed on this
+    // class at all - no "visibility" attribute on the <item> element
+    // whatsoever. The 2-arg children[i].getInt("visibility", 1) call in
+    // from_XML is what makes this fall back to 1 (visible) instead of
+    // XML's own bare default of 0 (hidden).
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allSolids.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("1,2,3,4,5,6,7,8,9,10,11,12,99");
+    // deliberately no "visibility" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Solids fresh = app.new Solids();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.DEF.length);
+    assertEquals(1, fresh.getVisibility(0));
+  }
 }

@@ -53,6 +53,12 @@ class Model2Ds {
   // below, never during to_XML/from_XML or any structural resize.
   String[] extraParams;
 
+  // Whether each instance (tree/person) is drawn/exported at all - 1
+  // (the default, see ensureVisibilityLength() below) is visible, 0 is
+  // hidden - same signed-int convention as Faces'/Polylines' own
+  // getVisibility()/setVisibility() (faces.pde).
+  int[] visibility;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
@@ -63,6 +69,8 @@ class Model2Ds {
     this.Mirror = new boolean [n];
     this.extraParams = new String [n];
     java.util.Arrays.fill(this.extraParams, "");
+    this.visibility = new int [n];
+    java.util.Arrays.fill(this.visibility, 1);
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -135,6 +143,12 @@ class Model2Ds {
     this.XYZS = (float[][]) concat(this.XYZS, Temp_XYZS);
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
+
+    // Same reasoning as solids.pde's own create() - keeps visibility
+    // eagerly grown alongside extraParams/XYZS/Kind/FileIndex/Mirror
+    // here, rather than relying solely on getVisibility()'s own lazy
+    // padding.
+    this.visibility = concat(this.visibility, new int[]{ 1 });
 
     this.num += 1;
 
@@ -220,6 +234,33 @@ class Model2Ds {
     for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
     for (int i = copyLen; i < resized.length; i++) resized[i] = "";
     this.extraParams = resized;
+  }
+
+  // Defensive against visibility being shorter than XYZS (or null) at
+  // the time of the call - self-heals via ensureVisibilityLength()
+  // below, then reads as visible (1) past the end rather than throwing.
+  int getVisibility (int n) {
+    this.ensureVisibilityLength();
+    if (n < 0 || n >= this.visibility.length) return 1;
+    return this.visibility[n];
+  }
+
+  void setVisibility (int n, int visibility) {
+    this.ensureVisibilityLength();
+    this.visibility[n] = visibility;
+  }
+
+  // Pads (or, in principle, trims) visibility to exactly this.XYZS's
+  // own current length, filling any new/missing entries with 1
+  // (visible) - same self-healing purpose/shape as
+  // ensureExtraParamsLength() just above.
+  void ensureVisibilityLength () {
+    if (this.visibility != null && this.visibility.length == this.XYZS.length) return;
+    int[] resized = new int[this.XYZS.length];
+    int copyLen = (this.visibility == null) ? 0 : min(this.visibility.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.visibility[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = 1;
+    this.visibility = resized;
   }
 
   // Convenience wrappers around extraParamsHelpers.pde's own shared
@@ -1508,6 +1549,7 @@ class Model2Ds {
         XML_setContent(child, txt);
 
         XML_setString(child, "extraParams", this.getExtraParams(i));
+        XML_setInt(child, "visibility", this.getVisibility(i));
       }
 
       XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -1557,6 +1599,10 @@ class Model2Ds {
         // the 3-arg XML_getString() overload's own comment
         // (xmlHelpers.pde).
         this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
+        // Falls back to 1 (visible) for a save file written before
+        // visibility existed on this class at all - same reasoning as
+        // extraParams' own fallback just above.
+        this.setVisibility(i, children[i].getInt("visibility", 1));
       }
 
       this.displayAll = XML_getBoolean(parent, "displayAll");

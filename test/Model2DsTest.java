@@ -641,4 +641,86 @@ class Model2DsTest {
     assertEquals(2, app.allModel2Ds.num);
     assertEquals("{\"sku\":\"T-001\"}", app.allModel2Ds.getExtraParams(1));
   }
+
+  // ================= visibility ========================================
+
+  @Test
+  void makeEmpty_defaultsVisibilityToOneForEveryEntry () {
+    app.allModel2Ds.makeEmpty(3);
+    assertEquals(3, app.allModel2Ds.visibility.length);
+    assertEquals(1, app.allModel2Ds.getVisibility(0));
+    assertEquals(1, app.allModel2Ds.getVisibility(1));
+    assertEquals(1, app.allModel2Ds.getVisibility(2));
+  }
+
+  @Test
+  void setVisibilityThenGetVisibility_roundTripsTheValue () {
+    app.allModel2Ds.makeEmpty(1);
+    app.allModel2Ds.setVisibility(0, 0);
+    assertEquals(0, app.allModel2Ds.getVisibility(0));
+  }
+
+  @Test
+  void getVisibility_isDefensiveForOutOfRangeIndexAndDefaultsToVisible () {
+    app.allModel2Ds.makeEmpty(2);
+    assertEquals(1, app.allModel2Ds.getVisibility(-1));
+    assertEquals(1, app.allModel2Ds.getVisibility(5));
+  }
+
+  @Test
+  void ensureVisibilityLength_padsShortArrayWithOnesAndPreservesExisting () {
+    app.allModel2Ds.XYZS = new float[][]{new float[4], new float[4]};
+    app.allModel2Ds.visibility = new int[]{0};
+
+    app.allModel2Ds.ensureVisibilityLength();
+
+    assertEquals(2, app.allModel2Ds.visibility.length);
+    assertEquals(0, app.allModel2Ds.getVisibility(0));
+    assertEquals(1, app.allModel2Ds.getVisibility(1));
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsVisibility () {
+    app.TREES_KIND.Filenames = new String[]{"a.png"};
+    app.TREES_KIND.fileCount = 1;
+
+    app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
+    app.allModel2Ds.Kind = new solarchvision_bim.Model2DKind[]{app.TREES_KIND};
+    app.allModel2Ds.FileIndex = new int[]{1};
+    app.allModel2Ds.Mirror = new boolean[]{false};
+    app.allModel2Ds.extraParams = new String[]{""};
+    app.allModel2Ds.visibility = new int[]{0};
+    app.allModel2Ds.num = 1;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allModel2Ds.to_XML(root);
+
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getVisibility(0));
+  }
+
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed on this
+    // class at all - no "visibility" attribute on the <item> element
+    // whatsoever.
+    app.TREES_KIND.Filenames = new String[]{"oak.png"};
+    app.TREES_KIND.fileCount = 1;
+
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allModel2Ds.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,0,0,1,TREES,oak.png,0");
+    // deliberately no "visibility" attribute
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
 }

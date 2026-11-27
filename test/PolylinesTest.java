@@ -418,4 +418,35 @@ class PolylinesTest {
     assertEquals("", fresh.getExtraParams(0));
   }
 
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed at all -
+    // no "visibility" attribute on the <item> element whatsoever. Before
+    // this fix, children[i].getInt("visibility") with no default fell
+    // back to XML's own bare default of 0 (hidden) for a missing
+    // attribute - now it falls back to 1 (visible), matching the
+    // "omitted means visible" convention Solids/Model1Ds/Model2Ds/
+    // Cameras/Sections also use.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allPolylines.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,1,2");
+    child.setInt("material", 0);
+    child.setInt("tessellation", 0);
+    child.setInt("layer", 0);
+    // deliberately no "visibility" attribute
+    child.setInt("weight", 0);
+    child.setInt("close", 0);
+    child.setInt("curveType", 0);
+    child.setInt("isArc", 0);
+    parent.setString("displayAll", "true");
+
+    solarchvision_bim.Polylines fresh = app.new Polylines();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
+
 }

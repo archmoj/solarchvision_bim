@@ -271,4 +271,82 @@ class Model1DsTest {
     assertEquals(2, app.allModel1Ds.num);
     assertEquals("{\"species\":\"oak\"}", app.allModel1Ds.getExtraParams(1));
   }
+
+  // ================= visibility ========================================
+
+  @Test
+  void makeEmpty_defaultsVisibilityToOneForEveryEntry () {
+    app.allModel1Ds.makeEmpty(3);
+    assertEquals(3, app.allModel1Ds.visibility.length);
+    assertEquals(1, app.allModel1Ds.getVisibility(0));
+    assertEquals(1, app.allModel1Ds.getVisibility(1));
+    assertEquals(1, app.allModel1Ds.getVisibility(2));
+  }
+
+  @Test
+  void setVisibilityThenGetVisibility_roundTripsTheValue () {
+    app.allModel1Ds.makeEmpty(1);
+    app.allModel1Ds.setVisibility(0, 0);
+    assertEquals(0, app.allModel1Ds.getVisibility(0));
+  }
+
+  @Test
+  void getVisibility_isDefensiveForOutOfRangeIndexAndDefaultsToVisible () {
+    app.allModel1Ds.makeEmpty(2);
+    assertEquals(1, app.allModel1Ds.getVisibility(-1));
+    assertEquals(1, app.allModel1Ds.getVisibility(5));
+  }
+
+  @Test
+  void ensureVisibilityLength_padsShortArrayWithOnesAndPreservesExisting () {
+    app.allModel1Ds.f_data = new float[][]{new float[11], new float[11]};
+    app.allModel1Ds.visibility = new int[]{0};
+
+    app.allModel1Ds.ensureVisibilityLength();
+
+    assertEquals(2, app.allModel1Ds.visibility.length);
+    assertEquals(0, app.allModel1Ds.getVisibility(0));
+    assertEquals(1, app.allModel1Ds.getVisibility(1));
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsVisibility () {
+    app.allModel1Ds.f_data = new float[][]{{10, 20, 30, 2, 45, 1, 2, 3, 4, 5, 6}};
+    app.allModel1Ds.i_data = new int[][]{{7, 99, 5}};
+    app.allModel1Ds.extraParams = new String[]{""};
+    app.allModel1Ds.visibility = new int[]{0};
+    app.allModel1Ds.num = 1;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allModel1Ds.to_XML(root);
+
+    solarchvision_bim.Model1Ds fresh = app.new Model1Ds();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getVisibility(0));
+  }
+
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed on this
+    // class at all - no "visibility" attribute on the <item> element
+    // whatsoever.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allModel1Ds.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setInt("type", 0);
+    child.setInt("seed", 0);
+    child.setInt("degreeMax", 0);
+    // deliberately no "visibility" attribute
+    child.setContent("10,20,30,2,45,1,2,3,4,5,6");
+    parent.setString("displayAll", "true");
+    parent.setString("displayLeaves", "true");
+
+    solarchvision_bim.Model1Ds fresh = app.new Model1Ds();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
 }

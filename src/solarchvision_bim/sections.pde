@@ -53,6 +53,12 @@ class Sections {
   // to_XML/from_XML or any structural resize.
   String[] extraParams = new String[0];
 
+  // Whether each section is drawn/exported at all - 1 (the default, see
+  // ensureVisibilityLength() below) is visible, 0 is hidden - same
+  // signed-int convention as Faces'/Polylines' own getVisibility()/
+  // setVisibility() (faces.pde).
+  int[] visibility = new int[0];
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
@@ -61,6 +67,8 @@ class Sections {
     this.corners = new float[n][];
     this.extraParams = new String[n];
     java.util.Arrays.fill(this.extraParams, "");
+    this.visibility = new int[n];
+    java.util.Arrays.fill(this.visibility, 1);
     this.SolidImpact = new PImage[n];
     this.SolarImpact = new PImage[n][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     this.num = n;
@@ -133,6 +141,12 @@ class Sections {
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
+    // Same reasoning as solids.pde's own create() - keeps visibility
+    // eagerly grown alongside extraParams/f_data/i_data/corners/etc.
+    // here, rather than relying solely on getVisibility()'s own lazy
+    // padding.
+    this.visibility = concat(this.visibility, new int[]{ 1 });
+
     this.num += 1;
   }
 
@@ -152,6 +166,26 @@ class Sections {
     for (int i = 0; i < copyLen; i++) resized[i] = this.extraParams[i];
     for (int i = copyLen; i < resized.length; i++) resized[i] = "";
     this.extraParams = resized;
+  }
+
+  int getVisibility (int n) {
+    this.ensureVisibilityLength();
+    if (n < 0 || n >= this.visibility.length) return 1;
+    return this.visibility[n];
+  }
+
+  void setVisibility (int n, int visibility) {
+    this.ensureVisibilityLength();
+    this.visibility[n] = visibility;
+  }
+
+  void ensureVisibilityLength () {
+    if (this.visibility != null && this.visibility.length == this.num) return;
+    int[] resized = new int[this.num];
+    int copyLen = (this.visibility == null) ? 0 : min(this.visibility.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.visibility[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = 1;
+    this.visibility = resized;
   }
 
   JSONObject getExtraParamsObject (int n) {
@@ -794,6 +828,7 @@ class Sections {
         XML_setContent(child, txt);
 
         XML_setString(child, "extraParams", this.getExtraParams(i));
+        XML_setInt(child, "visibility", this.getVisibility(i));
       }
       XML_setBoolean(parent, "displayAll", this.displayAll);
     }
@@ -848,6 +883,8 @@ class Sections {
       this.corners = new float[ni][];
       this.extraParams = new String[ni];
       java.util.Arrays.fill(this.extraParams, "");
+      this.visibility = new int[ni];
+      java.util.Arrays.fill(this.visibility, 1);
       this.num = ni;
       XML[] children = parent.getChildren("item");
       for (int i = 0; i < ni; i++) {
@@ -875,6 +912,10 @@ class Sections {
         // the 3-arg XML_getString() overload's own comment
         // (xmlHelpers.pde).
         this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
+        // Falls back to 1 (visible) for a save file written before
+        // visibility existed on this class at all - same reasoning as
+        // extraParams' own fallback just above.
+        this.setVisibility(i, children[i].getInt("visibility", 1));
       }
       this.displayAll = XML_getBoolean(parent, "displayAll");
     }

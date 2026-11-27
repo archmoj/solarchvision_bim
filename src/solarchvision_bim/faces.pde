@@ -2082,7 +2082,12 @@ class Faces {
       this.setMaterial(i, children[i].getInt("material"));
       this.setTessellation(i, children[i].getInt("tessellation"));
       this.setLayer(i, children[i].getInt("layer"));
-      this.setVisibility(i, children[i].getInt("visibility"));
+      // Falls back to 1 (visible) for a save file written before
+      // visibility existed at all, instead of XML's own bare
+      // getInt(String) default of 0 (hidden) - same "omitted means
+      // visible" convention now used by Solids/Model1Ds/Model2Ds/
+      // Cameras/Sections (see e.g. solids.pde's own from_XML).
+      this.setVisibility(i, children[i].getInt("visibility", 1));
       this.setWeight(i, children[i].getInt("weight"));
       this.setClose(i, children[i].getInt("close"));
       // Falls back to "" (this field's own "nothing here" default) for a

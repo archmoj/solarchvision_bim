@@ -515,6 +515,44 @@ class FacesTest {
   }
 
   @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed at all -
+    // no "visibility" attribute on the <item> element whatsoever. Before
+    // this fix, children[i].getInt("visibility") with no default fell
+    // back to XML's own bare default of 0 (hidden) for a missing
+    // attribute - now it falls back to 1 (visible), matching the
+    // "omitted means visible" convention Solids/Model1Ds/Model2Ds/
+    // Cameras/Sections also use.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allFaces.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("0,1,2");
+    child.setInt("material", 0);
+    child.setInt("tessellation", 0);
+    child.setInt("layer", 0);
+    // deliberately no "visibility" attribute
+    child.setInt("weight", 0);
+    child.setInt("close", 0);
+    parent.setString("displayAll", "true");
+    parent.setString("showNormalLines", "false");
+    parent.setString("displayEdges", "true");
+    parent.setInt("displayTessellation", 2);
+    parent.setInt("activeColorScaleIndex", 19);
+    parent.setInt("activeColorScaleDirection", 1);
+    parent.setFloat("activeColorScaleFactor", 0.5f);
+    parent.setInt("passiveColorScaleIndex", 1);
+    parent.setInt("passiveColorScaleDirection", 1);
+    parent.setFloat("passiveColorScaleFactor", 0.125f);
+
+    solarchvision_bim.Faces fresh = app.new Faces();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
+
+  @Test
   void mergeCoplanarFaces_newMergedFaceInheritsExtraParamsFromTheFirstOriginalFace () {
     // Same fixture as ModifyGeometryTest's own
     // mergeCoplanar_recombinesTwoTrianglesSplitFromAQuadBackIntoOneFace -

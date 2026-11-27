@@ -462,4 +462,91 @@ class SectionsTest {
     assertArrayEquals(new float[]{2, 2}, new float[]{corners[2][0], corners[2][1]}, 0.0001f);
     assertArrayEquals(new float[]{0, 2}, new float[]{corners[3][0], corners[3][1]}, 0.0001f);
   }
+
+  // ================= visibility ========================================
+
+  @Test
+  void makeEmpty_defaultsVisibilityToOneForEveryEntry () {
+    app.allSections.makeEmpty(3);
+    assertEquals(3, app.allSections.visibility.length);
+    assertEquals(1, app.allSections.getVisibility(0));
+    assertEquals(1, app.allSections.getVisibility(1));
+    assertEquals(1, app.allSections.getVisibility(2));
+  }
+
+  @Test
+  void setVisibilityThenGetVisibility_roundTripsTheValue () {
+    app.allSections.makeEmpty(1);
+    app.allSections.setVisibility(0, 0);
+    assertEquals(0, app.allSections.getVisibility(0));
+  }
+
+  @Test
+  void getVisibility_isDefensiveForOutOfRangeIndexAndDefaultsToVisible () {
+    app.allSections.makeEmpty(2);
+    assertEquals(1, app.allSections.getVisibility(-1));
+    assertEquals(1, app.allSections.getVisibility(5));
+  }
+
+  @Test
+  void ensureVisibilityLength_padsShortArrayWithOnesAndPreservesExisting () {
+    app.allSections.f_data = new float[][]{new float[6], new float[6]};
+    app.allSections.i_data = new int[][]{new int[2], new int[2]};
+    app.allSections.corners = new float[][]{new float[6], new float[6]};
+    app.allSections.num = 2;
+    app.allSections.visibility = new int[]{0};
+
+    app.allSections.ensureVisibilityLength();
+
+    assertEquals(2, app.allSections.visibility.length);
+    assertEquals(0, app.allSections.getVisibility(0));
+    assertEquals(1, app.allSections.getVisibility(1));
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsVisibility () {
+    app.allSections.f_data = new float[][]{{10, 20, 30, 45, 15, 25}};
+    app.allSections.i_data = new int[][]{{4, 4}};
+    app.allSections.corners = new float[][]{{-1, -1, 1, -1, 1, 1, -1, 1}};
+    app.allSections.extraParams = new String[]{""};
+    app.allSections.visibility = new int[]{0};
+    app.allSections.num = 1;
+    app.allSections.SolidImpact = new processing.core.PImage[0];
+    app.allSections.SolarImpact = new processing.core.PImage[0][0][0];
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.allSections.to_XML(root);
+
+    solarchvision_bim.Sections fresh = app.new Sections();
+    fresh.from_XML(root);
+
+    assertEquals(0, fresh.getVisibility(0));
+  }
+
+  @Test
+  void fromXML_defaultsVisibilityToOne_whenTheAttributeIsMissingEntirely () {
+    // Simulates a save file written before visibility existed on this
+    // class at all - no "visibility" attribute on the <item> element
+    // whatsoever.
+    processing.data.XML root = new processing.data.XML("root");
+    processing.data.XML parent = root.addChild(app.allSections.CLASS_STAMP);
+    parent.setInt("ni", 1);
+    processing.data.XML child = parent.addChild("item");
+    child.setInt("id", 0);
+    child.setContent("10,20,30,45,15,25,4,4,3,-1,-1,1,-1,1,1");
+    // deliberately no "visibility" attribute
+    parent.setString("displayAll", "true");
+
+    processing.data.XML solidImpactParent = root.addChild(app.allSections.CLASS_STAMP + "SolidImpact");
+    solidImpactParent.setInt("ni", 0);
+    processing.data.XML solarImpactParent = root.addChild(app.allSections.CLASS_STAMP + "SolarImpact");
+    solarImpactParent.setInt("ni", 0);
+    solarImpactParent.setInt("nj", 0);
+    solarImpactParent.setInt("nk", 0);
+
+    solarchvision_bim.Sections fresh = app.new Sections();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.getVisibility(0));
+  }
 }

@@ -21,12 +21,21 @@ class Solids {
   // structural resize.
   String[] extraParams;
 
+  // Whether each solid is drawn/exported at all - 1 (the default, see
+  // ensureVisibilityLength() below) is visible, 0 is hidden - same
+  // signed-int convention as Faces'/Polylines' own getVisibility()/
+  // setVisibility() (faces.pde), just not reusing their options[][3]
+  // column since Solids' own per-entity layout (DEF) doesn't have one.
+  int[] visibility;
+
   void makeEmpty (int n) {
     beginScene3DChange();
 
     this.DEF = new float [n][13];
     this.extraParams = new String [n];
     java.util.Arrays.fill(this.extraParams, "");
+    this.visibility = new int [n];
+    java.util.Arrays.fill(this.visibility, 1);
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -236,6 +245,33 @@ class Solids {
     this.extraParams = resized;
   }
 
+  // Defensive against visibility being shorter than DEF (or null) at the
+  // time of the call - self-heals via ensureVisibilityLength() below,
+  // then reads as visible (1) past the end rather than throwing.
+  int getVisibility (int n) {
+    this.ensureVisibilityLength();
+    if (n < 0 || n >= this.visibility.length) return 1;
+    return this.visibility[n];
+  }
+
+  void setVisibility (int n, int visibility) {
+    this.ensureVisibilityLength();
+    this.visibility[n] = visibility;
+  }
+
+  // Pads (or, in principle, trims) visibility to exactly this.DEF's own
+  // current length, filling any new/missing entries with 1 (visible) -
+  // same self-healing purpose/shape as ensureExtraParamsLength() just
+  // above.
+  void ensureVisibilityLength () {
+    if (this.visibility != null && this.visibility.length == this.DEF.length) return;
+    int[] resized = new int[this.DEF.length];
+    int copyLen = (this.visibility == null) ? 0 : min(this.visibility.length, resized.length);
+    for (int i = 0; i < copyLen; i++) resized[i] = this.visibility[i];
+    for (int i = copyLen; i < resized.length; i++) resized[i] = 1;
+    this.visibility = resized;
+  }
+
   // Convenience wrappers around extraParamsHelpers.pde's own shared
   // parse/stringify - nothing else in this file should call
   // JSONObject.parse()/extraParamsFromJSONObject() directly.
@@ -343,6 +379,15 @@ class Solids {
     this.DEF = (float[][]) concat(this.DEF, newSolid);
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
+
+    // Keeps visibility in eager lockstep with DEF/extraParams here, the
+    // same way this.extraParams' own concat() line just above does -
+    // without this, a freshly create()'d solid would be visible only by
+    // getVisibility()'s own lazy ensureVisibilityLength() padding (still
+    // correct, since every real caller already goes through that
+    // getter), but the raw array would transiently lag this.DEF.length
+    // until the next getVisibility()/setVisibility() call touches it.
+    this.visibility = concat(this.visibility, new int[]{ 1 });
 
     if (allGroups.num > 0) allGroups.Solids[allGroups.num - 1][1] = this.DEF.length - 1;
 
@@ -650,6 +695,7 @@ class Solids {
       XML_setContent(child, txt);
 
       XML_setString(child, "extraParams", this.getExtraParams(i));
+      XML_setInt(child, "visibility", this.getVisibility(i));
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
@@ -690,6 +736,10 @@ class Solids {
       // save file written before extraParams existed at all - see the
       // 3-arg XML_getString() overload's own comment (xmlHelpers.pde).
       this.setExtraParams(i, XML_getString(children[i], "extraParams", ""));
+      // Falls back to 1 (visible) for a save file written before
+      // visibility existed on this class at all - same reasoning as
+      // extraParams' own fallback just above.
+      this.setVisibility(i, children[i].getInt("visibility", 1));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
