@@ -281,4 +281,131 @@ class ExtraParamsCommandTest {
 
     assertFalse(app.allFaces.getExtraParamsObject(f).hasKey("name"));
   }
+
+  // ================= currentExtraParamsSelectionList =========================
+  // PARENT_EXTRA_PARAMS's "Bulk Edit"/"Assign Missing" tabs' own selection
+  // resolver (unlike currentExtraParamsSelection()'s exactly-one resolver,
+  // tested only indirectly above via EXTRAPARAMS.SET/REMOVE's own
+  // dispatch) - testable directly, since it's pure selection-array
+  // reading with no rendering involved.
+
+  @Test
+  void selectionList_nothingSelected_isEmpty () {
+    assertTrue(app.currentExtraParamsSelectionList().isEmpty());
+  }
+
+  @Test
+  void selectionList_multipleInOneCategory_preservesSelectionArrayOrder () {
+    int f0 = makeFace();
+    int f1 = makeFace();
+    app.Select3D.faceSelection = new int[]{ f1, f0 }; // deliberately not creation order
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> list = app.currentExtraParamsSelectionList();
+
+    assertEquals(2, list.size());
+    assertEquals("face", list.get(0).category);
+    assertEquals(f1, list.get(0).index);
+    assertEquals("face", list.get(1).category);
+    assertEquals(f0, list.get(1).index);
+  }
+
+  @Test
+  void selectionList_acrossCategories_ordersByEXTRAPARAMS_CATEGORIES_notSelectionOrder () {
+    app.allGroups.makeEmpty(1);
+    int g = 0;
+    int f = makeFace();
+    // Select the group first, the face second - EXTRAPARAMS_CATEGORIES
+    // itself lists "face" before "group" (extraParamsSelection.pde), so
+    // the returned order should follow that, not this selection order.
+    app.Select3D.groupSelection = new int[]{ g };
+    app.Select3D.faceSelection = new int[]{ f };
+
+    java.util.ArrayList<solarchvision_bim.ExtraParamsSelectionTarget> list = app.currentExtraParamsSelectionList();
+
+    assertEquals(2, list.size());
+    assertEquals("face", list.get(0).category);
+    assertEquals("group", list.get(1).category);
+  }
+
+  // ================= stripAllExtraParams (per-category) ======================
+  // Tested through two categories whose own entity-count field differs
+  // internally (Faces sizes off this.nodes.length; Groups tracks its own
+  // this.num directly - faces.pde/groups.pde's own ensureExtraParamsLength()
+  // comments) - same method body in each class, but exercised against
+  // both of the two counting conventions it has to work against.
+
+  @Test
+  void stripAllExtraParams_faces_blanksEveryFaceRegardlessOfSelection () {
+    int f0 = makeFace();
+    int f1 = makeFace();
+    app.allFaces.setExtraParams(f0, "{\"name\":\"A\"}");
+    app.allFaces.setExtraParams(f1, "{\"name\":\"B\"}");
+    // Selection is irrelevant to this method - intentionally left empty.
+
+    app.allFaces.stripAllExtraParams();
+
+    assertEquals("", app.allFaces.getExtraParams(f0));
+    assertEquals("", app.allFaces.getExtraParams(f1));
+  }
+
+  @Test
+  void stripAllExtraParams_groups_blanksEveryGroup_alreadyBlankOneIsANoOp () {
+    app.allGroups.makeEmpty(2);
+    app.allGroups.setExtraParams(0, "{\"name\":\"A\"}");
+    // Index 1 is left at its own default (already "")
+
+    app.allGroups.stripAllExtraParams();
+
+    assertEquals("", app.allGroups.getExtraParams(0));
+    assertEquals("", app.allGroups.getExtraParams(1));
+  }
+
+  // ================= stripExtraParams_Selection/_Scene =======================
+  // The real bodies behind the "Strip ExtraParams Selection"/"Strip
+  // ExtraParams Scene" menu actions (actions.pde) - pulled out into
+  // extraParamsSelection.pde specifically so they're callable here
+  // without going through the action registry at all (app.allActions is
+  // reset empty in setUp(), same as every other action in this file).
+
+  @Test
+  void stripSelection_blanksOnlySelected_acrossCategories_leavesOthersIntact () {
+    int fSelected = makeFace();
+    int fNotSelected = makeFace();
+    app.allGroups.makeEmpty(1);
+    int gSelected = 0;
+
+    app.allFaces.setExtraParams(fSelected, "{\"name\":\"A\"}");
+    app.allFaces.setExtraParams(fNotSelected, "{\"name\":\"B\"}");
+    app.allGroups.setExtraParams(gSelected, "{\"name\":\"C\"}");
+
+    app.Select3D.faceSelection = new int[]{ fSelected };
+    app.Select3D.groupSelection = new int[]{ gSelected };
+
+    app.stripExtraParams_Selection();
+
+    assertEquals("", app.allFaces.getExtraParams(fSelected));
+    assertEquals("", app.allGroups.getExtraParams(gSelected));
+    assertEquals("{\"name\":\"B\"}", app.allFaces.getExtraParams(fNotSelected)); // untouched
+  }
+
+  @Test
+  void stripScene_blanksEverything_regardlessOfSelection () {
+    int fSelected = makeFace();
+    int fNotSelected = makeFace();
+    app.allGroups.makeEmpty(1);
+    int gNotSelected = 0;
+
+    app.allFaces.setExtraParams(fSelected, "{\"name\":\"A\"}");
+    app.allFaces.setExtraParams(fNotSelected, "{\"name\":\"B\"}");
+    app.allGroups.setExtraParams(gNotSelected, "{\"name\":\"C\"}");
+
+    app.Select3D.faceSelection = new int[]{ fSelected }; // only one face selected...
+
+    app.stripExtraParams_Scene();
+
+    // ...yet every entity in every category is blanked, selected or not.
+    assertEquals("", app.allFaces.getExtraParams(fSelected));
+    assertEquals("", app.allFaces.getExtraParams(fNotSelected));
+    assertEquals("", app.allGroups.getExtraParams(gNotSelected));
+  }
 }

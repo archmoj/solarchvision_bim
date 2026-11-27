@@ -74,6 +74,46 @@ ArrayList<ExtraParamsSelectionTarget> currentExtraParamsSelectionList () {
   return found;
 }
 
+// "Strip ExtraParams Selection" (actions.pde/uiMenuBar.pde)'s own real
+// body - pulled out here, independently callable/testable, rather than
+// left inline inside that putAction() lambda, the same reasoning every
+// other action in actions.pde already follows (its own lambda is a thin
+// wrapper around a real method elsewhere - Delete3D.selection(),
+// allGroups.deleteEmptyGroups_Scene(), etc.). Blanks every currently
+// selected entity's own extraParams back to "" (via an empty JSONObject,
+// same as any other write through setExtraParamsObjectForSelection());
+// entities outside the current selection are never touched - that's
+// stripExtraParams_Scene()'s own job, below.
+void stripExtraParams_Selection () {
+  beginScene3DChange();
+  for (ExtraParamsSelectionTarget t : currentExtraParamsSelectionList()) {
+    setExtraParamsObjectForSelection(t, new JSONObject());
+  }
+  endScene3DChange();
+  UI_rollout.revise();
+}
+
+// "Strip ExtraParams Scene" (actions.pde/uiMenuBar.pde)'s own real body -
+// see stripExtraParams_Selection()'s own comment just above for why this
+// is pulled out the same way. Every entity in the project, regardless of
+// selection, across all 8 categories - each one's own stripAllExtraParams()
+// (faces.pde and the seven classes alongside it), not
+// currentExtraParamsSelectionList(), which only ever covers what's
+// currently selected.
+void stripExtraParams_Scene () {
+  beginScene3DChange();
+  allFaces.stripAllExtraParams();
+  allPolylines.stripAllExtraParams();
+  allModel1Ds.stripAllExtraParams();
+  allModel2Ds.stripAllExtraParams();
+  allSolids.stripAllExtraParams();
+  allGroups.stripAllExtraParams();
+  allCameras.stripAllExtraParams();
+  allSections.stripAllExtraParams();
+  endScene3DChange();
+  UI_rollout.revise();
+}
+
 JSONObject getExtraParamsObjectForSelection (ExtraParamsSelectionTarget target) {
   if (target.category.equals("face")) return allFaces.getExtraParamsObject(target.index);
   if (target.category.equals("polyline")) return allPolylines.getExtraParamsObject(target.index);

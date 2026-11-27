@@ -2443,37 +2443,19 @@ void build_allActions() {
   // entity, only blanks its own extraParams metadata back to "" (its
   // documented default, extraParamsHelpers.pde) - and, unlike "Clear",
   // doesn't suggest the metadata being removed was itself bad/unwanted,
-  // just that it's being taken off these entities. Wrapped in
-  // beginScene3DChange()/endScene3DChange() like every other mutating
-  // action here, so Ctrl+Z undoes either of these the same as any other
-  // edit (extraCommands.pde's own EXTRAPARAMS.SET/REMOVE, and
-  // PARENT_EXTRA_PARAMS's three tabs in uiRollout.pde, were retrofitted
-  // the same way alongside this).
+  // just that it's being taken off these entities. The real work is
+  // stripExtraParams_Selection()/stripExtraParams_Scene()
+  // (extraParamsSelection.pde, undo-wrapped there) - these two lambdas
+  // are thin wrappers around them, same as every other action here
+  // wraps a real method elsewhere (Delete3D.selection(),
+  // allGroups.deleteEmptyGroups_Scene(), ...) rather than putting its
+  // own logic directly in the lambda.
   putAction("Strip ExtraParams Selection", () -> {
-    beginScene3DChange();
-    for (ExtraParamsSelectionTarget t : currentExtraParamsSelectionList()) {
-      setExtraParamsObjectForSelection(t, new JSONObject());
-    }
-    endScene3DChange();
-    UI_rollout.revise();
+    stripExtraParams_Selection();
   });
 
-  // Every entity in the project, regardless of selection - each
-  // category's own stripAllExtraParams() (faces.pde and the seven
-  // classes alongside it) rather than currentExtraParamsSelectionList(),
-  // which only ever covers what's currently selected.
   putAction("Strip ExtraParams Scene", () -> {
-    beginScene3DChange();
-    allFaces.stripAllExtraParams();
-    allPolylines.stripAllExtraParams();
-    allModel1Ds.stripAllExtraParams();
-    allModel2Ds.stripAllExtraParams();
-    allSolids.stripAllExtraParams();
-    allGroups.stripAllExtraParams();
-    allCameras.stripAllExtraParams();
-    allSections.stripAllExtraParams();
-    endScene3DChange();
-    UI_rollout.revise();
+    stripExtraParams_Scene();
   });
 
   putAction("Dettach from Groups Selection", () -> {
