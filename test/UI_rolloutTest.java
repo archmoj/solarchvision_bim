@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 
 // this.Spinner(...)/_Spinner(...) touch live mouse/rendering state (stroke(),
 // fill(), text(), mouse click position) and aren't unit-testable as-is (see
@@ -25,6 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 // dragging_started/pmouseX/pmouseY/mouseY) MouseClickedTest.java/
 // MouseDraggedTest.java already drive directly, so it's covered the
 // same way those are.
+//
+// Properties/Modify Selected's own multi-entity support
+// (modifySelectedIntField()/modifySelectedFloatField(),
+// drawPropertiesModifySelectedTab() and friends) splits the same way
+// again: those two themselves call this.Spinner(), so they're not
+// covered here either, but the uniform-value/"various" check they rely
+// on (isUniformIntField()/isUniformFloatField()) is plain iteration over
+// a fake getter lambda with no canvas involved, so it is.
 class UI_rolloutTest {
 
   private solarchvision_bim app;
@@ -973,5 +982,57 @@ class UI_rolloutTest {
     assertTrue(app.UI_rollout.handleWheel(1));
 
     assertEquals(600f, app.UI_rollout.rolloutScrollY, 0.01f);
+  }
+
+  // ================= isUniformIntField / isUniformFloatField (Properties/Modify Selected multi-entity support) ====
+
+  @Test
+  void isUniformIntField_trueForASingleEntity () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(5);
+    assertTrue(app.UI_rollout.isUniformIntField(indices, (idx) -> 42));
+  }
+
+  @Test
+  void isUniformIntField_trueWhenEveryEntityAgrees () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(0);
+    indices.add(1);
+    indices.add(2);
+    assertTrue(app.UI_rollout.isUniformIntField(indices, (idx) -> 7));
+  }
+
+  @Test
+  void isUniformIntField_falseWhenAnyEntityDiffersFromTheFirst () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(0);
+    indices.add(1);
+    indices.add(2);
+    assertFalse(app.UI_rollout.isUniformIntField(indices, (idx) -> (idx == 2) ? 99 : 7));
+  }
+
+  @Test
+  void isUniformFloatField_trueForASingleEntity () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(3);
+    assertTrue(app.UI_rollout.isUniformFloatField(indices, (idx) -> 1.5f));
+  }
+
+  @Test
+  void isUniformFloatField_trueWhenEveryEntityAgrees () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(0);
+    indices.add(1);
+    indices.add(2);
+    assertTrue(app.UI_rollout.isUniformFloatField(indices, (idx) -> 2.5f));
+  }
+
+  @Test
+  void isUniformFloatField_falseWhenAnyEntityDiffersFromTheFirst () {
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    indices.add(0);
+    indices.add(1);
+    indices.add(2);
+    assertFalse(app.UI_rollout.isUniformFloatField(indices, (idx) -> (idx == 1) ? 9.9f : 2.5f));
   }
 }

@@ -2,6 +2,22 @@ int calcRolloutWidth () {
   return int(27 * MessageSize);
 }
 
+// Getter/setter pairs for UI_rollout's own modifySelectedIntField()/
+// modifySelectedFloatField() (used by drawPropertiesModifySelectedTab(),
+// below) - same FloatGetter/FloatSetter reasoning as actions.pde's own
+// pair (an existing field plugged into generic, reusable machinery),
+// just indexed by entity rather than bound to one fixed field, and an
+// int flavor added alongside since most of the fields below are
+// integers, not floats. Declared at file scope (same as actions.pde's
+// own interfaces) rather than nested inside the UI_rollout class itself:
+// UI_rollout is a non-static inner class of the sketch's own main class,
+// and a member interface (implicitly static) can't be declared inside a
+// non-static inner class.
+interface IntFieldGetter { int get (int index); }
+interface IntFieldSetter { void set (int index, int value); }
+interface FloatFieldGetter { float get (int index); }
+interface FloatFieldSetter { void set (int index, float value); }
+
 class UI_rollout {
 
   final static String CLASS_STAMP = "uiRollout";
@@ -2898,34 +2914,60 @@ class UI_rollout {
     }
   }
 
-  // CHILD_PROPERTIES_MODIFY_SELECTED - a typed, single-entity property
-  // editor, parallel to drawExtraParamsSelectedEntityTab() (below) but
-  // for an entity's own NATIVE typed fields (its own getter/setter pair -
-  // Model1D's getDegreeMax()/setDegreeMax(), model1Ds.pde) rather than
-  // its extraParams JSON blob - that gap (a proper bounded Spinner,
-  // rather than a free-text JSON row, for a value that's already a plain
-  // typed field on the entity itself) is PARENT_PROPERTIES' whole reason
-  // to be its own top-level parent, ahead of PARENT_EXTRA_PARAMS, rather
-  // than one more child tab folded into it. The Spinner itself is the
-  // same bounded shape Figure's own creatorModel1DDegreeMax spinner uses
-  // for a NEW entity's default (valueModifier.pde); this one just reads/
-  // writes the SELECTED entity's own stored value directly instead.
+  // CHILD_PROPERTIES_MODIFY_SELECTED - a typed property editor, parallel
+  // to drawExtraParamsSelectedEntityTab()/drawExtraParamsBulkEditPanel()
+  // (above) but for an entity's own NATIVE typed fields (its own
+  // getter/setter pair - Model1D's getDegreeMax()/setDegreeMax(),
+  // model1Ds.pde) rather than its extraParams JSON blob - that gap (a
+  // proper bounded Spinner, rather than a free-text JSON row, for a
+  // value that's already a plain typed field on the entity itself) is
+  // PARENT_PROPERTIES' whole reason to be its own top-level parent,
+  // ahead of PARENT_EXTRA_PARAMS, rather than one more child tab folded
+  // into it. The Spinner itself is the same bounded shape Figure's own
+  // creatorModel1DDegreeMax spinner uses for a NEW entity's default
+  // (valueModifier.pde); this one just reads/writes the SELECTED
+  // entity's own stored value directly instead.
   //
-  // v1 scope is deliberately narrow - exactly one selected entity - same
-  // "exactly one, 0 or >1 resolves to nothing to show" convention
-  // drawExtraParamsSelectedEntityTab() uses, which conveniently
-  // sidesteps the question a bounded numeric Spinner has no clean
-  // answer to anyway: there's no safe "various" sentinel for a mixed
-  // multi-entity selection the way an empty text box can stand in for
-  // drawExtraParamsBulkEditPanel()'s own non-uniform case, below.
-  // Model1D and Model2D are covered so far; further categories are each
-  // their own `target.category.equals(...)` branch here, below.
+  // Like drawExtraParamsBulkEditTab(), this now works over the WHOLE
+  // current selection (currentExtraParamsSelectionList(), any count,
+  // including one) rather than requiring exactly one entity - but
+  // unlike Bulk Edit's category-agnostic JSON keys, a typed field is
+  // inherently category-specific (Model1D's getDegreeMax() doesn't
+  // exist on a Camera), so a mixed-category selection has no single set
+  // of fields to show at all; it falls back to the same guidance
+  // message as an empty selection, just worded for "pick one category"
+  // instead of "select something". Model1D, Model2D, Face, Polyline,
+  // Camera, Solid, and Section are covered so far; further categories
+  // are each their own `category.equals(...)` branch here, below.
+  //
+  // The one real design problem multi-selection raises: a BOUNDED
+  // numeric Spinner (unlike drawExtraParamsBulkEditPanel()'s own
+  // free-text _SpinnerText() boxes) has no blank/placeholder render
+  // mode to stand in for "the selection doesn't agree on this value" -
+  // it always has to show some concrete number. modifySelectedIntField()/
+  // modifySelectedFloatField() (just below) resolve this the same way
+  // every other per-field branch here already resolves a "which bounds"
+  // question: by mirroring an existing precedent instead of inventing a
+  // new mechanism - here, drawExtraParamsBulkEditPanel()'s own "always
+  // absolute, never a per-entity delta, one shared undo step" semantics.
+  // The Spinner shows the FIRST selected entity's own current value (so
+  // a single-entity selection looks and behaves exactly as before), and
+  // appends " (various)" to the caption whenever the selection doesn't
+  // already agree on that field - a plain label with no other parsing
+  // significance anywhere in the codebase, so this is a cheap, safe way
+  // to signal the mixed state without any new Spinner plumbing. Any
+  // value the user actually commits (arrow, drag, or typed entry)
+  // overwrites EVERY selected entity with that same new value, all in
+  // one beginScene3DChange()/endScene3DChange() undo step - never a
+  // relative delta, since a delta has no obvious meaning for a typed
+  // exact-value commit, while "set them all to this" is unambiguous and
+  // matches what every entity will show afterward.
   //
   // Model1D's own field list/order/bounds mirrors CHILD_GEOMETRY_FORM's
   // own creatorModel1D* spinners exactly (valueModifier.pde) - same
   // captions (minus the "Creator" prefix, since this edits the entity
   // itself, not a creation default), same min/max/step/round per field -
-  // just reading/writing the SELECTED entity's own stored value
+  // just reading/writing each selected entity's own stored value
   // (allModel1Ds.getXxx()/setXxx(), model1Ds.pde) instead of a
   // User3D.creatorModel1DXxx default. X/Y/Z/Scale/Rotation are
   // deliberately left out - those are the generic position/rotation/
@@ -2939,36 +2981,163 @@ class UI_rollout {
   // Figure's own equivalent default-for-a-new-instance spinners), bound
   // the same way they are: 0..that Kind's own live fileCount, not a
   // fixed literal (the folder's own file count can change between
-  // sessions). X/Y/Z/S(cale) are Transform's job here too. Kind itself
-  // (switching a placed tree into a person or vice versa) and Mirror
-  // (left/right flip) are deliberately left out for now - neither has a
-  // Form/Figure creator-spinner counterpart to mirror the way FileIndex
-  // does, and switching Kind on an already-placed instance is a bigger
-  // behavioral change (isScalable() differs between the two, and this
-  // instance's current Scale may no longer make sense) than a same-kind
-  // "pick a different one of these" tweak. Kind/FileIndex/Mirror are
-  // plain public fields on Model2Ds (this.Kind[n]/FileIndex[n]/
-  // Mirror[n]) - no getter/setter pair to call, unlike every Model1D
-  // field above.
+  // sessions). Because that bound is itself per-entity (each instance's
+  // own Kind, not a single shared constant), a multi-selection only
+  // exposes FileIndex when every selected Model2D shares the same Kind -
+  // otherwise the bound itself would differ per entity, and a value
+  // valid for one could silently be out of range for another; a mixed-
+  // Kind selection falls back to the same "nothing to show" message an
+  // unsupported category would. X/Y/Z/S(cale) are Transform's job here
+  // too. Kind itself (switching a placed tree into a person or vice
+  // versa) and Mirror (left/right flip) are deliberately left out for
+  // now - neither has a Form/Figure creator-spinner counterpart to
+  // mirror the way FileIndex does, and switching Kind on an
+  // already-placed instance is a bigger behavioral change (isScalable()
+  // differs between the two, and this instance's current Scale may no
+  // longer make sense) than a same-kind "pick a different one of these"
+  // tweak. Kind/FileIndex/Mirror are plain public fields on Model2Ds
+  // (this.Kind[n]/FileIndex[n]/Mirror[n]) - no getter/setter pair to
+  // call, unlike every Model1D field above.
+
+  // IntFieldGetter/IntFieldSetter/FloatFieldGetter/FloatFieldSetter
+  // (used just below) are declared at file scope, right above this
+  // class - see the comment there for why.
+
+  // Whether every entity in `indices` currently reports the same value
+  // for a field, as read through `getter` - the "does the selection
+  // agree on this one" check modifySelectedIntField()/
+  // modifySelectedFloatField() use to decide their caption. Pulled out
+  // as its own pure function (same reasoning as every other pulled-out
+  // pure helper in this file, e.g. rolloutNeedsScrollbar() above):
+  // modifySelectedIntField()/modifySelectedFloatField() themselves call
+  // this.Spinner(), which renders, so they're not unit-testable as-is
+  // (test/README.md's own documented limitation) - but the actual
+  // uniform-or-not logic they rely on doesn't touch a canvas at all, and
+  // is worth testing on its own with nothing more than a fake getter
+  // over plain ints/floats.
+  boolean isUniformIntField (ArrayList<Integer> indices, IntFieldGetter getter) {
+    int first = getter.get(indices.get(0));
+    for (int idx : indices) { if (getter.get(idx) != first) return false; }
+    return true;
+  }
+
+  boolean isUniformFloatField (ArrayList<Integer> indices, FloatFieldGetter getter) {
+    float first = getter.get(indices.get(0));
+    for (int idx : indices) { if (getter.get(idx) != first) return false; }
+    return true;
+  }
+
+  // One bounded-int Spinner row, shared across however many entities are
+  // in `indices` - see the big comment above drawPropertiesModifySelectedTab()
+  // for the "first entity's value, ' (various)' caption, always-absolute-
+  // overwrite" design this implements. `afterAllWrites`, when non-null,
+  // runs once after every entity has been written (not once per entity) -
+  // for a side effect like allSolidImpacts.calculate_ImpactOnSections()
+  // that recomputes from the whole scene's state rather than per-entity;
+  // a PER-entity side effect (like a Camera's WIN3D re-sync) belongs in
+  // the setter lambda itself instead, where it naturally has that
+  // entity's own index in scope.
+  void modifySelectedIntField (
+    ArrayList<Integer> indices, String caption, int min_v, int max_v, int stp_v,
+    IntFieldGetter getter, IntFieldSetter setter
+  ) {
+    this.modifySelectedIntField(indices, caption, min_v, max_v, stp_v, getter, setter, null);
+  }
+
+  void modifySelectedIntField (
+    ArrayList<Integer> indices, String caption, int min_v, int max_v, int stp_v,
+    IntFieldGetter getter, IntFieldSetter setter, Runnable afterAllWrites
+  ) {
+    int first = getter.get(indices.get(0));
+    boolean uniform = this.isUniformIntField(indices, getter);
+    int updated = this.Spinner(X_control, Y_control, 0, 0, 0, uniform ? caption : caption + " (various)", first, min_v, max_v, stp_v);
+    if (updated != first) {
+      beginScene3DChange();
+      for (int idx : indices) setter.set(idx, updated);
+      if (afterAllWrites != null) afterAllWrites.run();
+      endScene3DChange();
+      UI_rollout.revise();
+    }
+  }
+
+  // Same as modifySelectedIntField() just above, but for a float field
+  // (Spinner's own float overload, with its extra roundStep argument -
+  // uiRollout.pde's Spinner() definitions).
+  void modifySelectedFloatField (
+    ArrayList<Integer> indices, String caption, float min_v, float max_v, float stp_v, float roundStep,
+    FloatFieldGetter getter, FloatFieldSetter setter
+  ) {
+    this.modifySelectedFloatField(indices, caption, min_v, max_v, stp_v, roundStep, getter, setter, null);
+  }
+
+  void modifySelectedFloatField (
+    ArrayList<Integer> indices, String caption, float min_v, float max_v, float stp_v, float roundStep,
+    FloatFieldGetter getter, FloatFieldSetter setter, Runnable afterAllWrites
+  ) {
+    float first = getter.get(indices.get(0));
+    boolean uniform = this.isUniformFloatField(indices, getter);
+    float updated = this.Spinner(X_control, Y_control, 0, 0, 0, uniform ? caption : caption + " (various)", first, min_v, max_v, stp_v, roundStep);
+    if (updated != first) {
+      beginScene3DChange();
+      for (int idx : indices) setter.set(idx, updated);
+      if (afterAllWrites != null) afterAllWrites.run();
+      endScene3DChange();
+      UI_rollout.revise();
+    }
+  }
+
+  // Shared guidance-message renderer for every "nothing to show yet"
+  // case below (empty selection, mixed-category selection, mixed-Kind
+  // Model2D selection, or an unsupported category) - same fill/align/
+  // size every such message already used individually before this was
+  // pulled out, just parameterized by the message text and how far it
+  // advances Y_control (a short one- or two-line message only needs the
+  // original 20/50 advance; a longer wrapped message needs more).
+  void modifySelectedMessage (String message, float yAdvance) {
+    fill(127);
+    textAlign(LEFT, CENTER);
+    textSize(12 * this.view_S);
+    text(message, this.cX + 10 * this.view_S, Y_control + (yAdvance / 2.5));
+    Y_control += yAdvance;
+  }
+
   void drawPropertiesModifySelectedTab () {
 
-    ExtraParamsSelectionTarget target = currentExtraParamsSelection();
+    ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
 
-    if (target == null) {
-      fill(127);
-      textAlign(LEFT, CENTER);
-      textSize(12 * this.view_S);
-      text(
-        "Select exactly one entity (e.g. a tree)\nto edit its properties.",
-        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
+    if (list.size() == 0) {
+      this.modifySelectedMessage(
+        "Select one or more entities, all of\nthe same category (e.g. trees), to\nedit their properties.",
+        70 * this.view_S
       );
-      Y_control += 50 * this.view_S;
       return;
     }
 
-    int n = target.index;
+    String category = list.get(0).category;
+    boolean sameCategory = true;
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    for (ExtraParamsSelectionTarget t : list) {
+      if (!t.category.equals(category)) { sameCategory = false; }
+      indices.add(t.index);
+    }
 
-    if (target.category.equals("face")) {
+    if (!sameCategory) {
+      this.modifySelectedMessage(
+        "Select entities of a single category\n(e.g. only trees, not trees and\ncameras together) to edit their\nproperties.",
+        90 * this.view_S
+      );
+      return;
+    }
+
+    if (list.size() > 1) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(list.size() + " entities selected", this.cX + 10 * this.view_S, Y_control + 10 * this.view_S);
+      Y_control += 30 * this.view_S;
+    }
+
+    if (category.equals("face")) {
 
     // Faces' own creator-spinner precedent (valueModifier.pde's
     // creatorMaterial/creatorTessellation/creatorLayer/creatorWeight)
@@ -2999,51 +3168,16 @@ class UI_rollout {
     //    setWeight() by mistake), not a real "edit a face's Close flag"
     //    feature to mirror.
 
-    {
-      int current = allFaces.getMaterial(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Material", current, 0, 8, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allFaces.setMaterial(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedIntField(indices, "Material", 0, 8, 1,
+      (idx) -> allFaces.getMaterial(idx), (idx, v) -> allFaces.setMaterial(idx, v));
+    this.modifySelectedIntField(indices, "Tessellation", 0, 4, 1,
+      (idx) -> allFaces.getTessellation(idx), (idx, v) -> allFaces.setTessellation(idx, v));
+    this.modifySelectedIntField(indices, "Layer", 0, 16, 1,
+      (idx) -> allFaces.getLayer(idx), (idx, v) -> allFaces.setLayer(idx, v));
+    this.modifySelectedIntField(indices, "Weight", -20, 20, 1,
+      (idx) -> allFaces.getWeight(idx), (idx, v) -> allFaces.setWeight(idx, v));
 
-    {
-      int current = allFaces.getTessellation(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tessellation", current, 0, 4, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allFaces.setTessellation(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      int current = allFaces.getLayer(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Layer", current, 0, 16, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allFaces.setLayer(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      int current = allFaces.getWeight(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Weight", current, -20, 20, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allFaces.setWeight(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    } else if (target.category.equals("polyline")) {
+    } else if (category.equals("polyline")) {
 
     // Polylines are Faces' own sibling class (polylines.pde mirrors
     // faces.pde's options[] layout field-for-field) - Material/
@@ -3074,166 +3208,60 @@ class UI_rollout {
     // tool built it (the arc tool, curve fitting, etc.), never a value
     // the user picks directly.
 
-    {
-      int current = allPolylines.getMaterial(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Material", current, 0, 8, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allPolylines.setMaterial(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedIntField(indices, "Material", 0, 8, 1,
+      (idx) -> allPolylines.getMaterial(idx), (idx, v) -> allPolylines.setMaterial(idx, v));
+    this.modifySelectedIntField(indices, "Tessellation", 0, 4, 1,
+      (idx) -> allPolylines.getTessellation(idx), (idx, v) -> allPolylines.setTessellation(idx, v));
+    this.modifySelectedIntField(indices, "Layer", 0, 16, 1,
+      (idx) -> allPolylines.getLayer(idx), (idx, v) -> allPolylines.setLayer(idx, v));
+    this.modifySelectedIntField(indices, "Weight", -20, 20, 1,
+      (idx) -> allPolylines.getWeight(idx), (idx, v) -> allPolylines.setWeight(idx, v));
 
-    {
-      int current = allPolylines.getTessellation(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tessellation", current, 0, 4, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allPolylines.setTessellation(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      int current = allPolylines.getLayer(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Layer", current, 0, 16, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allPolylines.setLayer(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      int current = allPolylines.getWeight(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Weight", current, -20, 20, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allPolylines.setWeight(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    } else if (target.category.equals("model1d")) {
+    } else if (category.equals("model1d")) {
 
     // Type Index - same degenerate 0..0 range as creatorModel1DTypeIndex()
     // itself (valueModifier.pde) - there's genuinely only the one type
     // right now, so this isn't a bug to fix on this tab's own account.
-    {
-      int current = allModel1Ds.getType(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Type Index", current, 0, 0, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setType(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedIntField(indices, "Type Index", 0, 0, 1,
+      (idx) -> allModel1Ds.getType(idx), (idx, v) -> allModel1Ds.setType(idx, v));
+    this.modifySelectedIntField(indices, "Degree Max", 0, 12, 1,
+      (idx) -> allModel1Ds.getDegreeMax(idx), (idx, v) -> allModel1Ds.setDegreeMax(idx, v));
+    this.modifySelectedIntField(indices, "Seed", -1, 32767, 1,
+      (idx) -> allModel1Ds.getSeed(idx), (idx, v) -> allModel1Ds.setSeed(idx, v));
+    this.modifySelectedFloatField(indices, "Trunk Size", 0, 10, 0.1, 0.1,
+      (idx) -> allModel1Ds.getTrunkSize(idx), (idx, v) -> allModel1Ds.setTrunkSize(idx, v));
+    this.modifySelectedFloatField(indices, "Leaf Size", 0, 1, 0.01, 0.1,
+      (idx) -> allModel1Ds.getLeafSize(idx), (idx, v) -> allModel1Ds.setLeafSize(idx, v));
+    this.modifySelectedFloatField(indices, "Branch Tilt", 0, 360, 5, 0.1,
+      (idx) -> allModel1Ds.getBranchTilt(idx), (idx, v) -> allModel1Ds.setBranchTilt(idx, v));
+    this.modifySelectedFloatField(indices, "Branch Twist", 0, 360, 5, 0.1,
+      (idx) -> allModel1Ds.getBranchTwist(idx), (idx, v) -> allModel1Ds.setBranchTwist(idx, v));
+    this.modifySelectedFloatField(indices, "Branch Ratio", 0.05, 1, 0.05, 0.01,
+      (idx) -> allModel1Ds.getBranchRatio(idx), (idx, v) -> allModel1Ds.setBranchRatio(idx, v));
+    this.modifySelectedFloatField(indices, "Tree Base", 0, 4, 0.1, 0.01,
+      (idx) -> allModel1Ds.getTreeBase(idx), (idx, v) -> allModel1Ds.setTreeBase(idx, v));
 
-    {
-      int current = allModel1Ds.getDegreeMax(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Degree Max", current, 0, 12, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setDegreeMax(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    } else if (category.equals("model2d")) {
 
-    {
-      int current = allModel1Ds.getSeed(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Seed", current, -1, 32767, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setSeed(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+      // See the big comment above this function for why a mixed-Kind
+      // selection has nothing to show: FileIndex's own upper bound is
+      // per-entity (each instance's own Kind.fileCount), so it's only
+      // safe to expose when every selected entity shares one Kind.
+      Model2DKind firstKind = allModel2Ds.Kind[indices.get(0)];
+      boolean sameKind = true;
+      for (int idx : indices) { if (allModel2Ds.Kind[idx] != firstKind) { sameKind = false; break; } }
 
-    {
-      float current = allModel1Ds.getTrunkSize(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Trunk Size", current, 0, 10, 0.1, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setTrunkSize(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allModel1Ds.getLeafSize(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Leaf Size", current, 0, 1, 0.01, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setLeafSize(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allModel1Ds.getBranchTilt(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Tilt", current, 0, 360, 5, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setBranchTilt(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allModel1Ds.getBranchTwist(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Twist", current, 0, 360, 5, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setBranchTwist(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allModel1Ds.getBranchRatio(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Ratio", current, 0.05, 1, 0.05, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setBranchRatio(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allModel1Ds.getTreeBase(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tree Base", current, 0, 4, 0.1, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel1Ds.setTreeBase(n, updated);
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    } else if (target.category.equals("model2d")) {
-
-      int current = allModel2Ds.FileIndex[n];
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "File Index", current, 0, allModel2Ds.Kind[n].fileCount, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allModel2Ds.FileIndex[n] = updated;
-        endScene3DChange();
-        UI_rollout.revise();
+      if (sameKind) {
+        this.modifySelectedIntField(indices, "File Index", 0, firstKind.fileCount, 1,
+          (idx) -> allModel2Ds.FileIndex[idx], (idx, v) -> { allModel2Ds.FileIndex[idx] = v; });
+      } else {
+        this.modifySelectedMessage(
+          "Select Model2D entities of a single\nkind (e.g. only trees, not trees and\npeople together) to edit File Index.",
+          90 * this.view_S
+        );
       }
 
-    } else if (target.category.equals("camera")) {
+    } else if (category.equals("camera")) {
 
     // Unlike Model1D/Model2D, cameras have no Form/Figure-style creation
     // tool with its own precedent spinners to mirror - "Add Camera"
@@ -3258,56 +3286,26 @@ class UI_rollout {
     // the array here, then re-sync WIN3D's copy the same way move3D.pde/
     // scale3D.pde always do - skip this and record_last3DViewport()
     // would later stomp the edit right back with the stale WIN3D value.
+    // This re-sync is a PER-entity side effect (only the one entity that
+    // happens to be currentCameraIndex needs it), so it lives in each
+    // setter lambda itself, which already has that entity's own idx in
+    // scope - not in modifySelectedIntField()/modifySelectedFloatField()'s
+    // shared afterAllWrites hook, which only ever runs once per edit.
 
-    {
-      int current = allCameras.get_type(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Type", current, 0, 1, 1);
-      if (updated != current) {
-        beginScene3DChange();
-        allCameras.set_type(n, updated);
-        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedIntField(indices, "Type", 0, 1, 1,
+      (idx) -> allCameras.get_type(idx),
+      (idx, v) -> { allCameras.set_type(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); });
+    this.modifySelectedFloatField(indices, "Zoom", 1, 170, 1, 0.1,
+      (idx) -> allCameras.get_zoom(idx),
+      (idx, v) -> { allCameras.set_zoom(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); });
+    this.modifySelectedFloatField(indices, "Position Step", 0.01, 100, 0.1, 0.01,
+      (idx) -> allCameras.get_posT(idx),
+      (idx, v) -> { allCameras.set_posT(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); });
+    this.modifySelectedFloatField(indices, "Rotation Step", 0.1, 180, 1, 0.1,
+      (idx) -> allCameras.get_rotT(idx),
+      (idx, v) -> { allCameras.set_rotT(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); });
 
-    {
-      float current = allCameras.get_zoom(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Zoom", current, 1, 170, 1, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allCameras.set_zoom(n, updated);
-        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allCameras.get_posT(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Position Step", current, 0.01, 100, 0.1, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allCameras.set_posT(n, updated);
-        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allCameras.get_rotT(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Rotation Step", current, 0.1, 180, 1, 0.1);
-      if (updated != current) {
-        beginScene3DChange();
-        allCameras.set_rotT(n, updated);
-        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    } else if (target.category.equals("solid")) {
+    } else if (category.equals("solid")) {
 
     // Solids' posX/Y/Z, scaleX/Y/Z and rotX/Y/Z (solids.pde's own DEF
     // array) are generic position/scale/rotation - Transform's job,
@@ -3331,48 +3329,24 @@ class UI_rollout {
     // PowerAll drag-tools) is a direct edit-an-existing-solid
     // precedent: it doubles/halves the value and wraps, not clamps,
     // between StarPower (0.25) and CubePower (16) (globalVariables.pde)
-    // - those are the bounds used below, and the same
-    // allSolidImpacts.calculate_ImpactOnSections() refresh the drag
-    // tool does afterward, since a solid's shape feeds the impact study
-    // too.
+    // - those are the bounds used below. allSolidImpacts.
+    // calculate_ImpactOnSections() is the same refresh the drag tool
+    // does afterward, since a solid's shape feeds the impact study too -
+    // it only needs to run ONCE per edit (it recomputes from the whole
+    // scene, not per-entity), so it's passed as afterAllWrites rather
+    // than folded into the setter lambda.
 
-    {
-      float current = allSolids.get_powX(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power X", current, 0.25, 16, 0.25, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allSolids.set_powX(n, updated);
-        allSolidImpacts.calculate_ImpactOnSections();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedFloatField(indices, "Power X", 0.25, 16, 0.25, 0.01,
+      (idx) -> allSolids.get_powX(idx), (idx, v) -> allSolids.set_powX(idx, v),
+      () -> allSolidImpacts.calculate_ImpactOnSections());
+    this.modifySelectedFloatField(indices, "Power Y", 0.25, 16, 0.25, 0.01,
+      (idx) -> allSolids.get_powY(idx), (idx, v) -> allSolids.set_powY(idx, v),
+      () -> allSolidImpacts.calculate_ImpactOnSections());
+    this.modifySelectedFloatField(indices, "Power Z", 0.25, 16, 0.25, 0.01,
+      (idx) -> allSolids.get_powZ(idx), (idx, v) -> allSolids.set_powZ(idx, v),
+      () -> allSolidImpacts.calculate_ImpactOnSections());
 
-    {
-      float current = allSolids.get_powY(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power Y", current, 0.25, 16, 0.25, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allSolids.set_powY(n, updated);
-        allSolidImpacts.calculate_ImpactOnSections();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    {
-      float current = allSolids.get_powZ(n);
-      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power Z", current, 0.25, 16, 0.25, 0.01);
-      if (updated != current) {
-        beginScene3DChange();
-        allSolids.set_powZ(n, updated);
-        allSolidImpacts.calculate_ImpactOnSections();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
-
-    } else if (target.category.equals("section")) {
+    } else if (category.equals("section")) {
 
     // Sections have almost nothing left for this tab once the usual
     // exclusions are applied: X/Y/Z/RotX/RotY/RotZ (sections.pde's own
@@ -3393,32 +3367,20 @@ class UI_rollout {
     // mirrors it onto resY right afterward (the two are always kept
     // equal - there's no way to set them independently through any
     // existing tool), clamped to 100-1600, and that's the bounds used
-    // below. That tool also recalculates the impact data afterward
-    // (allSolidImpacts.calculate_ImpactOnSections()) since the existing
-    // numbers no longer match the new resolution - this does the same.
+    // below - both writes live in the setter lambda, since they always
+    // happen together per-entity. That tool also recalculates the
+    // impact data afterward (allSolidImpacts.calculate_ImpactOnSections())
+    // since the existing numbers no longer match the new resolution -
+    // this does the same, once per edit (afterAllWrites), same
+    // reasoning as the "solid" branch just above.
 
-    {
-      int current = allSections.get_resX(n);
-      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Resolution", current, 100, 1600, 100);
-      if (updated != current) {
-        beginScene3DChange();
-        allSections.set_resX(n, updated);
-        allSections.set_resY(n, updated);
-        allSolidImpacts.calculate_ImpactOnSections();
-        endScene3DChange();
-        UI_rollout.revise();
-      }
-    }
+    this.modifySelectedIntField(indices, "Resolution", 100, 1600, 100,
+      (idx) -> allSections.get_resX(idx),
+      (idx, v) -> { allSections.set_resX(idx, v); allSections.set_resY(idx, v); },
+      () -> allSolidImpacts.calculate_ImpactOnSections());
 
     } else {
-      fill(127);
-      textAlign(LEFT, CENTER);
-      textSize(12 * this.view_S);
-      text(
-        "No typed properties yet for this entity's category.",
-        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
-      );
-      Y_control += 50 * this.view_S;
+      this.modifySelectedMessage("No typed properties yet for this entity's category.", 50 * this.view_S);
     }
   }
 
