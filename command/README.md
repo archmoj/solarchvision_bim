@@ -1493,6 +1493,28 @@ There's also a plain `Pick Select` / `Pick Select+` / `Pick Select-`
 trio that switches the click-to-select tool between replace, add, and
 subtract modes.
 
+### Reassign (typed-value property edits)
+
+`Reassign <Field> <value>` writes an exact value directly to every
+currently selected object, with no mouse involved - the command-bar
+counterpart of the rollout panel's **Properties → Modify Selected**
+tab (see the main [README.md](../README.md#properties-editing-an-objects-own-typed-fields)).
+Unlike `Change`/`Pick`/`Assign` above, which switch the active tool and
+apply a value by dragging, clicking, or reusing the current creation
+default, `Reassign` takes the new value as its own argument and applies
+it immediately to the whole current selection in one step. The
+selection must be entities of a single category (and, for
+`File Index`, a single Model2D kind) or this reports an error and
+leaves everything unchanged; with more than one object selected, the
+same value is written to every one of them, in a single undo step.
+
+`<Field>` is one of: `Material`, `Tessellation`, `Layer`, `Weight`
+(Face or Polyline); `Type Index`, `Degree Max`, `Seed`, `Trunk Size`,
+`Leaf Size`, `Branch Tilt`, `Branch Twist`, `Branch Ratio`, `Tree Base`
+(Model1D); `File Index` (Model2D); `Type`, `Zoom`, `Position Step`,
+`Rotation Step` (Camera); `Power X`, `Power Y`, `Power Z` (Solid);
+`Resolution` (Section).
+
 ### Selection
 
 -   `Select All`, `Select All Cameras`, `Select All Faces`,

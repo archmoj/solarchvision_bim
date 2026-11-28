@@ -3384,6 +3384,217 @@ class UI_rollout {
     }
   }
 
+  // Registers "Reassign <Field>" command-line equivalents of every field
+  // drawPropertiesModifySelectedTab() exposes, so each one is reachable
+  // from the command bar (e.g. "Reassign Weight 5") the same way a
+  // global setting is through registerSpinnerActions() (above) - closing
+  // the gap README.md used to call out ("Properties -> Modify Selected
+  // ... is one of two exceptions to every setting being reachable as a
+  // named command"). Called once, from build_allActions() (actions.pde),
+  // same timing as registerSpinnerActions().
+  //
+  // "Reassign" rather than the field's own bare name (the way
+  // registerSpinnerActions()'s global settings are named, e.g. "Hour"):
+  // several bare field names are already taken by unrelated existing
+  // commands (bare "Zoom"/"Default Zoom" already dolly the viewport, not
+  // a Camera entity's own field-of-view field; "PowerX"/"PowerY"/"PowerZ"
+  // are already tool-mode activators - edit3D.pde's drag-tool family,
+  // same as "ScaleX"/"RotateX"), so reusing the field's own name outright
+  // isn't safe in general. "Reassign" also reads as a distinct verb from
+  // the existing Change/Pick/Assign family (UI_setTo_Modify_*,
+  // actions.pde) on purpose: those three switch the active TOOL (a drag,
+  // a click-to-pick, or a click-to-apply-the-current-creator-default) -
+  // none of them take a typed value at all. "Reassign <Field> <value>"
+  // is different again: it writes that exact value to the CURRENT
+  // SELECTION immediately, no mouse involved, which is exactly what
+  // Modify Selected's own spinners already do - this is just that same
+  // action reachable from a script/command line instead of a rollout
+  // panel.
+  //
+  // Each entry below mirrors one modifySelectedIntField()/
+  // modifySelectedFloatField() call above field-for-field - same
+  // caption-turned-command-name, same bounds, same per-entity setter
+  // (WIN3D re-sync folded in for Camera) and the same afterAllWrites
+  // hook (Solid Power/Section Resolution's allSolidImpacts.
+  // calculate_ImpactOnSections() refresh) where that call used one.
+  // Material/Tessellation/Layer/Weight are shared by Face and Polyline
+  // (same as "Change Layer"/"Assign Layer" already dispatch across
+  // either), so those four go through the two-category HashMap form of
+  // putSelectedIntValueAction(); every other field only ever applies to
+  // one category, so those use the plain single-category overload.
+  //
+  // Model2D's File Index is the one field left out of this generic
+  // machinery entirely: its upper bound is per-entity (each instance's
+  // own Kind.fileCount, not a fixed constant), and - exactly as
+  // drawPropertiesModifySelectedTab()'s own "model2d" branch requires -
+  // it's only valid when every selected Model2D shares one Kind, a check
+  // putSelectedIntValueAction() has no way to express. It gets its own
+  // small putAction(...) body instead, mirroring that branch's own
+  // same-Kind guard directly.
+  void registerReassignActions () {
+
+    { // Material (face/polyline)
+      HashMap<String, IntFieldGetter> g = new HashMap<String, IntFieldGetter>();
+      g.put("face", (idx) -> allFaces.getMaterial(idx));
+      g.put("polyline", (idx) -> allPolylines.getMaterial(idx));
+      HashMap<String, IntFieldSetter> s = new HashMap<String, IntFieldSetter>();
+      s.put("face", (idx, v) -> allFaces.setMaterial(idx, v));
+      s.put("polyline", (idx, v) -> allPolylines.setMaterial(idx, v));
+      putSelectedIntValueAction("Reassign Material", g, s, 0, 8, 1, null);
+    }
+
+    { // Tessellation (face/polyline)
+      HashMap<String, IntFieldGetter> g = new HashMap<String, IntFieldGetter>();
+      g.put("face", (idx) -> allFaces.getTessellation(idx));
+      g.put("polyline", (idx) -> allPolylines.getTessellation(idx));
+      HashMap<String, IntFieldSetter> s = new HashMap<String, IntFieldSetter>();
+      s.put("face", (idx, v) -> allFaces.setTessellation(idx, v));
+      s.put("polyline", (idx, v) -> allPolylines.setTessellation(idx, v));
+      putSelectedIntValueAction("Reassign Tessellation", g, s, 0, 4, 1, null);
+    }
+
+    { // Layer (face/polyline)
+      HashMap<String, IntFieldGetter> g = new HashMap<String, IntFieldGetter>();
+      g.put("face", (idx) -> allFaces.getLayer(idx));
+      g.put("polyline", (idx) -> allPolylines.getLayer(idx));
+      HashMap<String, IntFieldSetter> s = new HashMap<String, IntFieldSetter>();
+      s.put("face", (idx, v) -> allFaces.setLayer(idx, v));
+      s.put("polyline", (idx, v) -> allPolylines.setLayer(idx, v));
+      putSelectedIntValueAction("Reassign Layer", g, s, 0, 16, 1, null);
+    }
+
+    { // Weight (face/polyline)
+      HashMap<String, IntFieldGetter> g = new HashMap<String, IntFieldGetter>();
+      g.put("face", (idx) -> allFaces.getWeight(idx));
+      g.put("polyline", (idx) -> allPolylines.getWeight(idx));
+      HashMap<String, IntFieldSetter> s = new HashMap<String, IntFieldSetter>();
+      s.put("face", (idx, v) -> allFaces.setWeight(idx, v));
+      s.put("polyline", (idx, v) -> allPolylines.setWeight(idx, v));
+      putSelectedIntValueAction("Reassign Weight", g, s, -20, 20, 1, null);
+    }
+
+    // Model1D
+    putSelectedIntValueAction("Reassign Type Index", "model1d",
+      (idx) -> allModel1Ds.getType(idx), (idx, v) -> allModel1Ds.setType(idx, v), 0, 0, 1);
+    putSelectedIntValueAction("Reassign Degree Max", "model1d",
+      (idx) -> allModel1Ds.getDegreeMax(idx), (idx, v) -> allModel1Ds.setDegreeMax(idx, v), 0, 12, 1);
+    putSelectedIntValueAction("Reassign Seed", "model1d",
+      (idx) -> allModel1Ds.getSeed(idx), (idx, v) -> allModel1Ds.setSeed(idx, v), -1, 32767, 1);
+    putSelectedFloatValueAction("Reassign Trunk Size", "model1d",
+      (idx) -> allModel1Ds.getTrunkSize(idx), (idx, v) -> allModel1Ds.setTrunkSize(idx, v), 0, 10, 0.1);
+    putSelectedFloatValueAction("Reassign Leaf Size", "model1d",
+      (idx) -> allModel1Ds.getLeafSize(idx), (idx, v) -> allModel1Ds.setLeafSize(idx, v), 0, 1, 0.01);
+    putSelectedFloatValueAction("Reassign Branch Tilt", "model1d",
+      (idx) -> allModel1Ds.getBranchTilt(idx), (idx, v) -> allModel1Ds.setBranchTilt(idx, v), 0, 360, 5);
+    putSelectedFloatValueAction("Reassign Branch Twist", "model1d",
+      (idx) -> allModel1Ds.getBranchTwist(idx), (idx, v) -> allModel1Ds.setBranchTwist(idx, v), 0, 360, 5);
+    putSelectedFloatValueAction("Reassign Branch Ratio", "model1d",
+      (idx) -> allModel1Ds.getBranchRatio(idx), (idx, v) -> allModel1Ds.setBranchRatio(idx, v), 0.05, 1, 0.05);
+    putSelectedFloatValueAction("Reassign Tree Base", "model1d",
+      (idx) -> allModel1Ds.getTreeBase(idx), (idx, v) -> allModel1Ds.setTreeBase(idx, v), 0, 4, 0.1);
+
+    // Model2D - File Index, bespoke (see this method's own leading
+    // comment above for why): dynamic per-Kind bound, same-Kind guard.
+    putAction("Reassign File Index", (args) -> {
+      ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
+      if (list.size() == 0) {
+        printError("Reassign File Index: select one or more entities first.");
+        return;
+      }
+
+      String category = list.get(0).category;
+      ArrayList<Integer> indices = new ArrayList<Integer>();
+      for (ExtraParamsSelectionTarget t : list) {
+        if (!t.category.equals(category)) {
+          printError("Reassign File Index: select entities of a single category.");
+          return;
+        }
+        indices.add(t.index);
+      }
+
+      if (!category.equals("model2d")) {
+        printError("Reassign File Index does not apply to this entity's category.");
+        return;
+      }
+
+      Model2DKind firstKind = allModel2Ds.Kind[indices.get(0)];
+      for (int idx : indices) {
+        if (allModel2Ds.Kind[idx] != firstKind) {
+          printError("Reassign File Index: select Model2D entities of a single kind.");
+          return;
+        }
+      }
+
+      if (args.length < 2) {
+        printError("Reassign File Index 0.." + firstKind.fileCount);
+        return;
+      }
+
+      int requested;
+      try {
+        requested = Integer.parseInt(args[1]);
+      }
+      catch (Exception ex) {
+        printError("Invalid value for Reassign File Index: " + args[1]);
+        return;
+      }
+
+      if ((requested < 0) || (requested > firstKind.fileCount)) {
+        printError("Reassign File Index must be between 0 and " + firstKind.fileCount);
+        return;
+      }
+
+      boolean changed = false;
+      for (int idx : indices) { if (allModel2Ds.FileIndex[idx] != requested) { changed = true; break; } }
+
+      if (changed) {
+        beginScene3DChange();
+        for (int idx : indices) allModel2Ds.FileIndex[idx] = requested;
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    });
+
+    // Camera - WIN3D re-sync folded into every setter, same reasoning as
+    // the "camera" branch in drawPropertiesModifySelectedTab() above.
+    putSelectedIntValueAction("Reassign Type", "camera",
+      (idx) -> allCameras.get_type(idx),
+      (idx, v) -> { allCameras.set_type(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); },
+      0, 1, 1);
+    putSelectedFloatValueAction("Reassign Zoom", "camera",
+      (idx) -> allCameras.get_zoom(idx),
+      (idx, v) -> { allCameras.set_zoom(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); },
+      1, 170, 1);
+    putSelectedFloatValueAction("Reassign Position Step", "camera",
+      (idx) -> allCameras.get_posT(idx),
+      (idx, v) -> { allCameras.set_posT(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); },
+      0.01, 100, 0.1);
+    putSelectedFloatValueAction("Reassign Rotation Step", "camera",
+      (idx) -> allCameras.get_rotT(idx),
+      (idx, v) -> { allCameras.set_rotT(idx, v); if (idx == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex(); },
+      0.1, 180, 1);
+
+    // Solid - Power X/Y/Z, each refreshing the impact study once per
+    // edit (afterAllWrites), same as the "solid" branch above.
+    putSelectedFloatValueAction("Reassign Power X", "solid",
+      (idx) -> allSolids.get_powX(idx), (idx, v) -> allSolids.set_powX(idx, v),
+      0.25, 16, 0.25, () -> allSolidImpacts.calculate_ImpactOnSections());
+    putSelectedFloatValueAction("Reassign Power Y", "solid",
+      (idx) -> allSolids.get_powY(idx), (idx, v) -> allSolids.set_powY(idx, v),
+      0.25, 16, 0.25, () -> allSolidImpacts.calculate_ImpactOnSections());
+    putSelectedFloatValueAction("Reassign Power Z", "solid",
+      (idx) -> allSolids.get_powZ(idx), (idx, v) -> allSolids.set_powZ(idx, v),
+      0.25, 16, 0.25, () -> allSolidImpacts.calculate_ImpactOnSections());
+
+    // Section - Resolution, mirroring resX onto resY exactly the way
+    // the "section" branch above does.
+    putSelectedIntValueAction("Reassign Resolution", "section",
+      (idx) -> allSections.get_resX(idx),
+      (idx, v) -> { allSections.set_resX(idx, v); allSections.set_resY(idx, v); },
+      100, 1600, 100,
+      () -> allSolidImpacts.calculate_ImpactOnSections());
+  }
+
   // CHILD_SCENE_EXPLORER_SELECT - the Scene Explorer's own tree view.
   // buildSceneExplorerRows() (sceneExplorer.pde) does all the actual
   // data work (what rows exist, in what order, which entities each one

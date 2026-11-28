@@ -210,6 +210,180 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, float m
   putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
 }
 
+// putValueAction (above)'s own counterpart for a PER-ENTITY typed field -
+// Properties/Modify Selected's own fields (uiRollout.pde's
+// drawPropertiesModifySelectedTab(), IntFieldGetter/IntFieldSetter/
+// FloatFieldGetter/FloatFieldSetter) rather than one fixed global
+// setting. putValueAction always has exactly one target to read/write;
+// here the target is "whichever entities are currently selected",
+// resolved fresh on every invocation via currentExtraParamsSelectionList()
+// - never baked in at registration time, same reasoning putValueAction's
+// own getter/setter are called fresh rather than captured once.
+//
+// gettersByCategory/settersByCategory are keyed by category
+// (extraParamsSelection.pde's own category strings - "face", "model1d",
+// etc.) rather than a single fixed getter/setter, because a few fields
+// (Material/Tessellation/Layer/Weight) are shared verbatim by more than
+// one category (Face and Polyline) - same as "Change Layer"/"Assign
+// Layer" already dispatch generically across whichever of those is
+// selected/clicked (edit3D.pde). Most fields only ever populate one
+// entry in each map - see the single-category convenience overload just
+// below for that common case.
+//
+// Semantics mirror Modify Selected's own Spinner rows exactly (same
+// "always absolute, one shared undo step" rule drawExtraParamsBulkEditPanel()
+// established first): the WHOLE current selection must share one
+// category (one of the keys in these maps) or this reports an error and
+// does nothing - there's no per-entity delta here any more than there is
+// in the rollout panel's own Spinner. `afterAllWrites`, when non-null,
+// runs once after every entity is written (Solid Power's/Section
+// Resolution's own allSolidImpacts.calculate_ImpactOnSections() refresh) -
+// a PER-entity side effect (Camera's WIN3D re-sync) belongs inside the
+// setter lambda itself instead, exactly as it does in
+// modifySelectedIntField()/modifySelectedFloatField() (uiRollout.pde).
+void putSelectedIntValueAction(String name, HashMap<String, IntFieldGetter> gettersByCategory, HashMap<String, IntFieldSetter> settersByCategory, int min_v, int max_v, int stp_v, Runnable afterAllWrites) {
+  putAction(name, (args) -> {
+    ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
+    if (list.size() == 0) {
+      printError(name + ": select one or more entities first.");
+      return;
+    }
+
+    String category = list.get(0).category;
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    for (ExtraParamsSelectionTarget t : list) {
+      if (!t.category.equals(category)) {
+        printError(name + ": select entities of a single category.");
+        return;
+      }
+      indices.add(t.index);
+    }
+
+    IntFieldGetter getter = gettersByCategory.get(category);
+    IntFieldSetter setter = settersByCategory.get(category);
+    if (getter == null || setter == null) {
+      printError(name + " does not apply to this entity's category.");
+      return;
+    }
+
+    if (args.length < 2) {
+      printError(name + " " + min_v + ".." + max_v);
+      return;
+    }
+
+    int requested;
+    try {
+      requested = Integer.parseInt(args[1]);
+    }
+    catch (Exception ex) {
+      printError("Invalid value for " + name + ": " + args[1]);
+      return;
+    }
+
+    if ((requested < min_v) || (requested > max_v)) {
+      printError(name + " must be between " + min_v + " and " + max_v);
+      return;
+    }
+
+    boolean changed = false;
+    for (int idx : indices) { if (getter.get(idx) != requested) { changed = true; break; } }
+
+    if (changed) {
+      beginScene3DChange();
+      for (int idx : indices) setter.set(idx, requested);
+      if (afterAllWrites != null) afterAllWrites.run();
+      endScene3DChange();
+      UI_rollout.revise();
+    }
+  });
+}
+
+// Convenience overload for the common case (most fields) of exactly one
+// applicable category.
+void putSelectedIntValueAction(String name, String category, IntFieldGetter getter, IntFieldSetter setter, int min_v, int max_v, int stp_v) {
+  putSelectedIntValueAction(name, category, getter, setter, min_v, max_v, stp_v, null);
+}
+
+void putSelectedIntValueAction(String name, String category, IntFieldGetter getter, IntFieldSetter setter, int min_v, int max_v, int stp_v, Runnable afterAllWrites) {
+  HashMap<String, IntFieldGetter> g = new HashMap<String, IntFieldGetter>();
+  g.put(category, getter);
+  HashMap<String, IntFieldSetter> s = new HashMap<String, IntFieldSetter>();
+  s.put(category, setter);
+  putSelectedIntValueAction(name, g, s, min_v, max_v, stp_v, afterAllWrites);
+}
+
+// Same as putSelectedIntValueAction(...) above, but for a float field.
+void putSelectedFloatValueAction(String name, HashMap<String, FloatFieldGetter> gettersByCategory, HashMap<String, FloatFieldSetter> settersByCategory, float min_v, float max_v, float stp_v, Runnable afterAllWrites) {
+  putAction(name, (args) -> {
+    ArrayList<ExtraParamsSelectionTarget> list = currentExtraParamsSelectionList();
+    if (list.size() == 0) {
+      printError(name + ": select one or more entities first.");
+      return;
+    }
+
+    String category = list.get(0).category;
+    ArrayList<Integer> indices = new ArrayList<Integer>();
+    for (ExtraParamsSelectionTarget t : list) {
+      if (!t.category.equals(category)) {
+        printError(name + ": select entities of a single category.");
+        return;
+      }
+      indices.add(t.index);
+    }
+
+    FloatFieldGetter getter = gettersByCategory.get(category);
+    FloatFieldSetter setter = settersByCategory.get(category);
+    if (getter == null || setter == null) {
+      printError(name + " does not apply to this entity's category.");
+      return;
+    }
+
+    if (args.length < 2) {
+      printError(name + " " + nf(min_v, 0, 0) + ".." + nf(max_v, 0, 0));
+      return;
+    }
+
+    float requested;
+    try {
+      requested = Float.parseFloat(args[1]);
+    }
+    catch (Exception ex) {
+      printError("Invalid value for " + name + ": " + args[1]);
+      return;
+    }
+
+    if ((requested < min_v) || (requested > max_v)) {
+      printError(name + " must be between " + nf(min_v, 0, 0) + " and " + nf(max_v, 0, 0));
+      return;
+    }
+
+    float newValue = funcs.roundTo(requested, stp_v);
+
+    boolean changed = false;
+    for (int idx : indices) { if (getter.get(idx) != newValue) { changed = true; break; } }
+
+    if (changed) {
+      beginScene3DChange();
+      for (int idx : indices) setter.set(idx, newValue);
+      if (afterAllWrites != null) afterAllWrites.run();
+      endScene3DChange();
+      UI_rollout.revise();
+    }
+  });
+}
+
+void putSelectedFloatValueAction(String name, String category, FloatFieldGetter getter, FloatFieldSetter setter, float min_v, float max_v, float stp_v) {
+  putSelectedFloatValueAction(name, category, getter, setter, min_v, max_v, stp_v, null);
+}
+
+void putSelectedFloatValueAction(String name, String category, FloatFieldGetter getter, FloatFieldSetter setter, float min_v, float max_v, float stp_v, Runnable afterAllWrites) {
+  HashMap<String, FloatFieldGetter> g = new HashMap<String, FloatFieldGetter>();
+  g.put(category, getter);
+  HashMap<String, FloatFieldSetter> s = new HashMap<String, FloatFieldSetter>();
+  s.put(category, setter);
+  putSelectedFloatValueAction(name, g, s, min_v, max_v, stp_v, afterAllWrites);
+}
+
 String[] menuItems;
 
 void build_allActions() {
@@ -3101,6 +3275,7 @@ void build_allActions() {
   }
 
   UI_rollout.registerSpinnerActions();
+  UI_rollout.registerReassignActions();
 
   // Opens the keyboard map overlay (uiKeyboardMap.pde) - same thing '?'
   // does (solarchvision_bim.pde's keyPressed()), reachable here too so
