@@ -120,11 +120,13 @@ class UI_rollout {
     CHILD_EXPORT_DATA = pushChild("Data");
     CHILD_EXPORT_CONTENT = pushChild("Content");
 
+    PARENT_PROPERTIES = pushParent("Properties");
+    CHILD_PROPERTIES_MODIFY_SELECTED = pushChild("Modify Selected");
+
     PARENT_EXTRA_PARAMS = pushParent("Extra Params");
     CHILD_EXTRA_PARAMS_SELECTED_ENTITY = pushChild("Selected Entity");
     CHILD_EXTRA_PARAMS_BULK_EDIT = pushChild("Bulk Edit");
     CHILD_EXTRA_PARAMS_ASSIGN_MISSING = pushChild("Assign Missing");
-    CHILD_EXTRA_PARAMS_PROPERTIES = pushChild("Properties");
 
     PARENT_SCENE_EXPLORER = pushParent("Scene Explorer");
     CHILD_SCENE_EXPLORER_SELECT = pushChild("Select");
@@ -173,11 +175,13 @@ class UI_rollout {
   int CHILD_EXPORT_DATA;
   int CHILD_EXPORT_CONTENT;
 
+  int PARENT_PROPERTIES;
+  int CHILD_PROPERTIES_MODIFY_SELECTED;
+
   int PARENT_EXTRA_PARAMS;
   int CHILD_EXTRA_PARAMS_SELECTED_ENTITY;
   int CHILD_EXTRA_PARAMS_BULK_EDIT;
   int CHILD_EXTRA_PARAMS_ASSIGN_MISSING;
-  int CHILD_EXTRA_PARAMS_PROPERTIES;
 
   int PARENT_SCENE_EXPLORER;
   int CHILD_SCENE_EXPLORER_SELECT;
@@ -1083,6 +1087,11 @@ class UI_rollout {
         allSolarImpacts.record_IMG = vm.Record_Solar_Analysis_in_JPG(1);
       }
 
+    } else if (this.parent == PARENT_PROPERTIES) {
+
+      if (this.child == CHILD_PROPERTIES_MODIFY_SELECTED) {
+        this.drawPropertiesModifySelectedTab();
+      }
     } else if (this.parent == PARENT_EXTRA_PARAMS) {
 
       if (this.child == CHILD_EXTRA_PARAMS_SELECTED_ENTITY) {
@@ -1091,8 +1100,6 @@ class UI_rollout {
         this.drawExtraParamsBulkEditTab();
       } else if (this.child == CHILD_EXTRA_PARAMS_ASSIGN_MISSING) {
         this.drawExtraParamsAssignMissingTab();
-      } else if (this.child == CHILD_EXTRA_PARAMS_PROPERTIES) {
-        this.drawExtraParamsPropertiesTab();
       }
     } else if (this.parent == PARENT_SCENE_EXPLORER) {
 
@@ -2891,14 +2898,18 @@ class UI_rollout {
     }
   }
 
-  // CHILD_EXTRA_PARAMS_PROPERTIES - a typed, single-entity property
-  // editor, parallel to drawExtraParamsSelectedEntityTab() above but for
-  // an entity's own NATIVE typed fields (its own getter/setter pair -
+  // CHILD_PROPERTIES_MODIFY_SELECTED - a typed, single-entity property
+  // editor, parallel to drawExtraParamsSelectedEntityTab() (below) but
+  // for an entity's own NATIVE typed fields (its own getter/setter pair -
   // Model1D's getDegreeMax()/setDegreeMax(), model1Ds.pde) rather than
-  // its extraParams JSON blob. A proper bounded Spinner (same shape
-  // Figure's own creatorModel1DDegreeMax spinner uses for a NEW entity's
-  // default - valueModifier.pde) reads/writes the SELECTED entity's own
-  // stored value directly, instead of a free-text JSON row.
+  // its extraParams JSON blob - that gap (a proper bounded Spinner,
+  // rather than a free-text JSON row, for a value that's already a plain
+  // typed field on the entity itself) is PARENT_PROPERTIES' whole reason
+  // to be its own top-level parent, ahead of PARENT_EXTRA_PARAMS, rather
+  // than one more child tab folded into it. The Spinner itself is the
+  // same bounded shape Figure's own creatorModel1DDegreeMax spinner uses
+  // for a NEW entity's default (valueModifier.pde); this one just reads/
+  // writes the SELECTED entity's own stored value directly instead.
   //
   // v1 scope is deliberately narrow - exactly one selected entity, and
   // only Model1D's degreeMax - same "exactly one, 0 or >1 resolves to
@@ -2907,10 +2918,10 @@ class UI_rollout {
   // has no clean answer to anyway: there's no safe "various" sentinel
   // for a mixed multi-entity selection the way an empty text box can
   // stand in for drawExtraParamsBulkEditPanel()'s own non-uniform case,
-  // above. Other categories/fields are a later addition, each its own
+  // below. Other categories/fields are a later addition, each its own
   // `target.category.equals(...)` branch here once there's a second one
   // to add - this is not yet the general case.
-  void drawExtraParamsPropertiesTab () {
+  void drawPropertiesModifySelectedTab () {
 
     ExtraParamsSelectionTarget target = currentExtraParamsSelection();
 
