@@ -3307,6 +3307,71 @@ class UI_rollout {
       }
     }
 
+    } else if (target.category.equals("solid")) {
+
+    // Solids' posX/Y/Z, scaleX/Y/Z and rotX/Y/Z (solids.pde's own DEF
+    // array) are generic position/scale/rotation - Transform's job,
+    // same as every other category above (see move3D.pde's/scale3D.pde's/
+    // rotate3D.pde's own Solids() methods). Visibility is the usual
+    // cross-category field.
+    //
+    // "value" (getValue()/setValue(), DEF[n][12]) is excluded too: it
+    // has no creator spinner and nothing anywhere edits it on an
+    // already-placed solid either - the only places that touch it
+    // besides solids.pde itself just read it back (solidImpacts.pde,
+    // clone3D.pde, groups.pde's own clone-into-group path) or pass it
+    // straight through unchanged when duplicating a solid. Same gap as
+    // Close had for Faces/Polylines - no legitimate edit precedent to
+    // mirror, so it stays out.
+    //
+    // What's left is powX/powY/powZ (DEF[n][3..5]) - the superellipsoid
+    // exponent along each axis that blends the solid's shape between
+    // star/concave and cube-like. No Form/Figure creator spinner here
+    // either, but edit3D.pde's own Solids() (the PowerX/PowerY/PowerZ/
+    // PowerAll drag-tools) is a direct edit-an-existing-solid
+    // precedent: it doubles/halves the value and wraps, not clamps,
+    // between StarPower (0.25) and CubePower (16) (globalVariables.pde)
+    // - those are the bounds used below, and the same
+    // allSolidImpacts.calculate_ImpactOnSections() refresh the drag
+    // tool does afterward, since a solid's shape feeds the impact study
+    // too.
+
+    {
+      float current = allSolids.get_powX(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power X", current, 0.25, 16, 0.25, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allSolids.set_powX(n, updated);
+        allSolidImpacts.calculate_ImpactOnSections();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allSolids.get_powY(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power Y", current, 0.25, 16, 0.25, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allSolids.set_powY(n, updated);
+        allSolidImpacts.calculate_ImpactOnSections();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allSolids.get_powZ(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Power Z", current, 0.25, 16, 0.25, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allSolids.set_powZ(n, updated);
+        allSolidImpacts.calculate_ImpactOnSections();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
     } else if (target.category.equals("section")) {
 
     // Sections have almost nothing left for this tab once the usual
