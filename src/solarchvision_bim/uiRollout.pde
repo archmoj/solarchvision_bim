@@ -3083,6 +3083,80 @@ class UI_rollout {
         UI_rollout.revise();
       }
 
+    } else if (target.category.equals("camera")) {
+
+    // Unlike Model1D/Model2D, cameras have no Form/Figure-style creation
+    // tool with its own precedent spinners to mirror - "Add Camera"
+    // (cameras.pde's add_first()) just snapshots WIN3D's current
+    // position/rotation/zoom/step/type, it never lets the user choose
+    // starting values via a spinner. So the bounds below come straight
+    // from each field's own known valid range instead: Type's 0..1 is
+    // the exact clamp edit3D.pde's Seed_Material cycle tool already
+    // enforces (there are only two projection types); Zoom/Position
+    // Step/Rotation Step have no existing clamp anywhere, so they're
+    // given practical ranges around their own declared defaults (zoom
+    // 90, positionStep 1.0, rotationStep 5.0 - viewport3D.pde) - X/Y/Z
+    // position and generic rotation/scale are excluded, same reasoning
+    // as Model1D/Model2D: Transform (CHILD_GEOMETRY_TRANSFORM) already
+    // edits those for any selected entity, cameras included (see
+    // move3D.pde's/scale3D.pde's own Cameras() methods).
+    //
+    // Cameras are special in one more way those two categories aren't:
+    // WIN3D keeps its own live copy of these same fields for whichever
+    // camera is currentCameraIndex (viewport3D.pde's positionX/zoom/
+    // projectionTypeIndex/etc., read every frame for rendering). Edit
+    // the array here, then re-sync WIN3D's copy the same way move3D.pde/
+    // scale3D.pde always do - skip this and record_last3DViewport()
+    // would later stomp the edit right back with the stale WIN3D value.
+
+    {
+      int current = allCameras.get_type(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Type", current, 0, 1, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allCameras.set_type(n, updated);
+        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allCameras.get_zoom(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Zoom", current, 1, 170, 1, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allCameras.set_zoom(n, updated);
+        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allCameras.get_posT(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Position Step", current, 0.01, 100, 0.1, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allCameras.set_posT(n, updated);
+        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allCameras.get_rotT(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Rotation Step", current, 0.1, 180, 1, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allCameras.set_rotT(n, updated);
+        if (n == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
     } else {
       fill(127);
       textAlign(LEFT, CENTER);
