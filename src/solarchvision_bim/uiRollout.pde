@@ -2968,7 +2968,82 @@ class UI_rollout {
 
     int n = target.index;
 
-    if (target.category.equals("model1d")) {
+    if (target.category.equals("face")) {
+
+    // Faces' own creator-spinner precedent (valueModifier.pde's
+    // creatorMaterial/creatorTessellation/creatorLayer/creatorWeight)
+    // covers four of its six typed fields (options[n][0..4] - see
+    // faces.pde's getMaterial/getTessellation/getLayer/getWeight). The
+    // bounds below come from adjustFaceProperties() (edit3D.pde)
+    // instead of those creator spinners' own start/stop, though: that's
+    // the clamp actually enforced on an already-placed face (e.g.
+    // Material 0-8, not creatorMaterial's -1-8 - that extra -1 is only
+    // ever a "pick a random material at creation time" sentinel, never
+    // a valid value for a placed face).
+    //
+    // The other two typed fields are deliberately excluded:
+    //  - Visibility (getVisibility/setVisibility) - unlike every other
+    //    category here, Faces' visibility is already a generic,
+    //    cross-category concept (extraParamsSelection.pde's own
+    //    extraParamsIsVisible()/extraParamsSetVisibility(), the one
+    //    Scene Explorer's "show only visible"/isolate mechanism already
+    //    drives for every visibility-bearing category - Face, Polyline,
+    //    Model1D, Model2D, Solid, Camera, Section alike) - duplicating
+    //    it here would just be a second, disconnected way to edit the
+    //    same bit.
+    //  - Close (getClose/setClose) - has no legitimate edit precedent
+    //    to mirror at all: its only existing write site outside
+    //    faces.pde itself is mouseClicked.pde's pickOrAssignFaceProperty(),
+    //    and that call is documented there as a pre-existing bug (the
+    //    Assign(all)/Weight case calls setClose() instead of
+    //    setWeight() by mistake), not a real "edit a face's Close flag"
+    //    feature to mirror.
+
+    {
+      int current = allFaces.getMaterial(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Material", current, 0, 8, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allFaces.setMaterial(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allFaces.getTessellation(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tessellation", current, 0, 4, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allFaces.setTessellation(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allFaces.getLayer(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Layer", current, 0, 16, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allFaces.setLayer(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allFaces.getWeight(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Weight", current, -20, 20, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allFaces.setWeight(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    } else if (target.category.equals("model1d")) {
 
     // Type Index - same degenerate 0..0 range as creatorModel1DTypeIndex()
     // itself (valueModifier.pde) - there's genuinely only the one type
