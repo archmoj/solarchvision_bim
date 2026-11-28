@@ -332,6 +332,17 @@ void view_changed () {
   // LIVE Select3D selection, so it needs the same hook, scoped the same
   // way.
   if (UI_rollout.parent == UI_rollout.PARENT_SCENE_EXPLORER) UI_rollout.revise();
+
+  // PARENT_PROPERTIES' own Modify Selected tab (uiRollout.pde's
+  // drawPropertiesModifySelectedTab()) is exactly the same situation
+  // again - it too just reads whatever Select3D currently has selected
+  // (currentExtraParamsSelectionList()) and each selected entity's own
+  // live field values, so a create/select/delete/edit anywhere left it
+  // showing stale content (or the wrong message entirely - an empty
+  // selection's own guidance text, say, after something new was just
+  // created and selected) until some unrelated click happened to revise
+  // the panel too. Same hook, same scoping.
+  if (UI_rollout.parent == UI_rollout.PARENT_PROPERTIES) UI_rollout.revise();
 }
 
 void selection_changed () {
