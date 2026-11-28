@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 // formatSpinnerValue()), plus registerSpinnerActions() itself, whose own
 // body is just a list of vm.<name>(0) calls with no rendering involved -
 // exercised per-method in more detail in ValueModifierTest.java.
+//
+// The side scrollbar (drawRolloutScrollbar() and friends, added
+// alongside the Properties/Modify Selected work) splits the same way:
+// drawRolloutScrollbar()/drawRolloutScrollArrowButton() themselves draw
+// (fill()/stroke()/text()) and aren't covered here either, but
+// everything feeding them - the rect math (rolloutScrollbarOuterRect()/
+// rolloutScrollUpButtonRect()/rolloutScrollDownButtonRect()/
+// rolloutScrollTrackRect()/rolloutScrollThumbRect()/
+// rolloutNeedsScrollbar()) and the click/drag/wheel handlers
+// (handleRolloutScrollButtonClicks()/handleRolloutScrollTrackClick()/
+// handleScrollDrag()/handleWheel()) - is plain arithmetic over fields
+// and the same global click/drag state (X_clicked/Y_clicked/
+// dragging_started/pmouseX/pmouseY/mouseY) MouseClickedTest.java/
+// MouseDraggedTest.java already drive directly, so it's covered the
+// same way those are.
 class UI_rolloutTest {
 
   private solarchvision_bim app;
@@ -568,5 +583,395 @@ class UI_rolloutTest {
     assertDoesNotThrow(() -> app.UI_rollout.handleRenderSectionsButtonClick());
 
     assertEquals(app.impactGraphIndex_URBAN_PASSIVE, app.STUDY.impactGraphIndex);
+  }
+
+  // ================= side scrollbar ==========================================
+  // Shared numbers for every test below (view_S=1 from setExplicitRolloutBounds()
+  // above, cX=100, dX=300): rolloutContentTopY=200, rolloutContentBottomY=600
+  // (visible height 400) and rolloutContentHeight=1000 (needs scrolling,
+  // maxScroll=600) unless a test says otherwise. Worked out by hand once
+  // here, then reused as the expected values across the rect/thumb/drag
+  // tests below:
+  //   rolloutScrollbarWidth() = 8.5
+  //   outer bar: x=389.5, y=200, w=8.5, h=400
+  //   up button: x=389.5, y=200, w=8.5, h=8.5 (side == bar width)
+  //   down button: x=389.5, y=591.5, w=8.5, h=8.5
+  //   track: x=389.5, y=208.5, w=8.5, h=383 (bar height minus both buttons)
+  //   thumb height: min(383, max(20, 383*(400/1000))) = 153.2
+  //   thumb travel: 383 - 153.2 = 229.8
+  //   thumb y at scrollY=0: 208.5 (track top); at scrollY=600 (max): 438.3
+
+  private void setScrollableContent () {
+    setExplicitRolloutBounds();
+    app.UI_rollout.rolloutContentTopY = 200;
+    app.UI_rollout.rolloutContentBottomY = 600;
+    app.UI_rollout.rolloutContentHeight = 1000; // taller than the 400 visible - needs a scrollbar
+  }
+
+  @Test
+  void rolloutScrollbarWidth_isTheSameSquareSizeAsASpinnersOwnArrowButtons () {
+    setExplicitRolloutBounds();
+    assertEquals(8.5f, app.UI_rollout.rolloutScrollbarWidth(), 0.001f);
+  }
+
+  @Test
+  void rolloutNeedsScrollbar_falseWhenContentFitsWithinTheVisibleArea () {
+    setExplicitRolloutBounds();
+    app.UI_rollout.rolloutContentTopY = 200;
+    app.UI_rollout.rolloutContentBottomY = 600;
+    app.UI_rollout.rolloutContentHeight = 400; // exactly fits
+    assertFalse(app.UI_rollout.rolloutNeedsScrollbar());
+  }
+
+  @Test
+  void rolloutNeedsScrollbar_trueWhenContentIsTallerThanTheVisibleArea () {
+    setScrollableContent();
+    assertTrue(app.UI_rollout.rolloutNeedsScrollbar());
+  }
+
+  @Test
+  void rolloutScrollbarOuterRect_isRightAlignedAndSpansTheVisibleContentHeight () {
+    setScrollableContent();
+    float[] bar = app.UI_rollout.rolloutScrollbarOuterRect();
+    assertEquals(389.5f, bar[0], 0.01f);
+    assertEquals(200f, bar[1], 0.01f);
+    assertEquals(8.5f, bar[2], 0.01f);
+    assertEquals(400f, bar[3], 0.01f);
+  }
+
+  @Test
+  void rolloutScrollUpButtonRect_isASquareAtTheTopOfTheBar () {
+    setScrollableContent();
+    float[] up = app.UI_rollout.rolloutScrollUpButtonRect();
+    assertEquals(389.5f, up[0], 0.01f);
+    assertEquals(200f, up[1], 0.01f);
+    assertEquals(8.5f, up[2], 0.01f);
+    assertEquals(8.5f, up[3], 0.01f);
+  }
+
+  @Test
+  void rolloutScrollDownButtonRect_isASquareAtTheBottomOfTheBar () {
+    setScrollableContent();
+    float[] down = app.UI_rollout.rolloutScrollDownButtonRect();
+    assertEquals(389.5f, down[0], 0.01f);
+    assertEquals(591.5f, down[1], 0.01f);
+    assertEquals(8.5f, down[2], 0.01f);
+    assertEquals(8.5f, down[3], 0.01f);
+  }
+
+  @Test
+  void rolloutScrollTrackRect_isTheBarMinusBothButtons () {
+    setScrollableContent();
+    float[] track = app.UI_rollout.rolloutScrollTrackRect();
+    assertEquals(389.5f, track[0], 0.01f);
+    assertEquals(208.5f, track[1], 0.01f);
+    assertEquals(8.5f, track[2], 0.01f);
+    assertEquals(383f, track[3], 0.01f);
+  }
+
+  @Test
+  void rolloutScrollThumbRect_sizedProportionallyToTheVisibleFraction_atTheTrackTopWhenUnscrolled () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 0;
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    assertEquals(208.5f, thumb[1], 0.01f); // track top
+    assertEquals(153.2f, thumb[3], 0.1f);
+  }
+
+  @Test
+  void rolloutScrollThumbRect_atTheTrackBottomWhenScrolledToTheMax () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 600; // maxScroll
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    assertEquals(438.3f, thumb[1], 0.1f); // 208.5 + travel (229.8)
+  }
+
+  @Test
+  void rolloutScrollThumbRect_neverShrinksBelowTheMinimumHandleSize () {
+    setScrollableContent();
+    app.UI_rollout.rolloutContentHeight = 100000; // tiny visible fraction of a huge tab
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    assertEquals(20f, thumb[3], 0.01f); // 20 * view_S, view_S == 1 here
+  }
+
+  // --- handleRolloutScrollButtonClicks ---------------------------------------
+
+  @Test
+  void handleRolloutScrollButtonClicks_onTheUpButton_stepsUpAndConsumesTheClick () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    float[] up = app.UI_rollout.rolloutScrollUpButtonRect();
+    app.X_clicked = (int) (up[0] + 0.5f * up[2]);
+    app.Y_clicked = (int) (up[1] + 0.5f * up[3]);
+
+    app.UI_rollout.handleRolloutScrollButtonClicks(up, app.UI_rollout.rolloutScrollDownButtonRect());
+
+    assertEquals(276f, app.UI_rollout.rolloutScrollY, 0.01f); // 300 - 24*view_S
+    assertEquals(-1, app.X_clicked);
+    assertEquals(-1, app.Y_clicked);
+  }
+
+  @Test
+  void handleRolloutScrollButtonClicks_onTheUpButton_clampsAtZero () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 10; // less than one step from zero
+    float[] up = app.UI_rollout.rolloutScrollUpButtonRect();
+    app.X_clicked = (int) (up[0] + 0.5f * up[2]);
+    app.Y_clicked = (int) (up[1] + 0.5f * up[3]);
+
+    app.UI_rollout.handleRolloutScrollButtonClicks(up, app.UI_rollout.rolloutScrollDownButtonRect());
+
+    assertEquals(0f, app.UI_rollout.rolloutScrollY, 0.01f);
+  }
+
+  @Test
+  void handleRolloutScrollButtonClicks_onTheDownButton_stepsDownAndClampsAtMaxScroll () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 590; // less than one step from the 600 max
+    float[] down = app.UI_rollout.rolloutScrollDownButtonRect();
+    app.X_clicked = (int) (down[0] + 0.5f * down[2]);
+    app.Y_clicked = (int) (down[1] + 0.5f * down[3]);
+
+    app.UI_rollout.handleRolloutScrollButtonClicks(app.UI_rollout.rolloutScrollUpButtonRect(), down);
+
+    assertEquals(600f, app.UI_rollout.rolloutScrollY, 0.01f);
+  }
+
+  @Test
+  void handleRolloutScrollButtonClicks_outsideBothButtons_doesNothing () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    app.X_clicked = 0; // nowhere near either button
+    app.Y_clicked = 0;
+
+    app.UI_rollout.handleRolloutScrollButtonClicks(app.UI_rollout.rolloutScrollUpButtonRect(), app.UI_rollout.rolloutScrollDownButtonRect());
+
+    assertEquals(300f, app.UI_rollout.rolloutScrollY, 0.01f);
+    assertEquals(0, app.X_clicked); // left alone - this click wasn't ours to consume
+  }
+
+  @Test
+  void handleRolloutScrollButtonClicks_whileEditingASpinner_doesNothing () {
+    setScrollableContent();
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.rolloutScrollY = 300;
+    float[] up = app.UI_rollout.rolloutScrollUpButtonRect();
+    app.X_clicked = (int) (up[0] + 0.5f * up[2]);
+    app.Y_clicked = (int) (up[1] + 0.5f * up[3]);
+
+    app.UI_rollout.handleRolloutScrollButtonClicks(up, app.UI_rollout.rolloutScrollDownButtonRect());
+
+    assertEquals(300f, app.UI_rollout.rolloutScrollY, 0.01f);
+    assertEquals((int) (up[0] + 0.5f * up[2]), app.X_clicked); // click left untouched/unconsumed
+  }
+
+  // --- handleRolloutScrollTrackClick ------------------------------------------
+
+  @Test
+  void handleRolloutScrollTrackClick_aboveTheThumb_pagesUp () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 600; // thumb sits at the track's own bottom
+    float[] track = app.UI_rollout.rolloutScrollTrackRect();
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    app.X_clicked = (int) (track[0] + 0.5f * track[2]);
+    app.Y_clicked = (int) (track[1] + 10); // above the thumb, inside the track
+
+    app.UI_rollout.handleRolloutScrollTrackClick(track, thumb);
+
+    assertEquals(224f, app.UI_rollout.rolloutScrollY, 0.5f); // 600 - page (376)
+    assertEquals(-1, app.X_clicked);
+  }
+
+  @Test
+  void handleRolloutScrollTrackClick_belowTheThumb_pagesDown () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 0; // thumb sits at the track's own top
+    float[] track = app.UI_rollout.rolloutScrollTrackRect();
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    app.X_clicked = (int) (track[0] + 0.5f * track[2]);
+    app.Y_clicked = (int) (track[1] + track[3] - 10); // below the thumb, inside the track
+
+    app.UI_rollout.handleRolloutScrollTrackClick(track, thumb);
+
+    assertEquals(376f, app.UI_rollout.rolloutScrollY, 0.5f); // 0 + page (376)
+  }
+
+  @Test
+  void handleRolloutScrollTrackClick_onTheThumbItself_doesNothing_leftToHandleScrollDragInstead () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    float[] track = app.UI_rollout.rolloutScrollTrackRect();
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    app.X_clicked = (int) (thumb[0] + 0.5f * thumb[2]);
+    app.Y_clicked = (int) (thumb[1] + 0.5f * thumb[3]);
+
+    app.UI_rollout.handleRolloutScrollTrackClick(track, thumb);
+
+    assertEquals(300f, app.UI_rollout.rolloutScrollY, 0.01f);
+    assertNotEquals(-1, app.X_clicked); // not consumed - a drag may still claim it
+  }
+
+  @Test
+  void handleRolloutScrollTrackClick_whileEditingASpinner_doesNothing () {
+    setScrollableContent();
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.rolloutScrollY = 0;
+    float[] track = app.UI_rollout.rolloutScrollTrackRect();
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    app.X_clicked = (int) (track[0] + 0.5f * track[2]);
+    app.Y_clicked = (int) (track[1] + track[3] - 10);
+
+    app.UI_rollout.handleRolloutScrollTrackClick(track, thumb);
+
+    assertEquals(0f, app.UI_rollout.rolloutScrollY, 0.01f);
+  }
+
+  // --- handleScrollDrag ---------------------------------------------------------
+
+  @Test
+  void handleScrollDrag_returnsFalseWhenThisTabDoesNotNeedAScrollbar () {
+    setExplicitRolloutBounds();
+    app.UI_rollout.rolloutContentTopY = 200;
+    app.UI_rollout.rolloutContentBottomY = 600;
+    app.UI_rollout.rolloutContentHeight = 400; // fits - no scrollbar
+    assertFalse(app.UI_rollout.handleScrollDrag());
+  }
+
+  @Test
+  void handleScrollDrag_returnsFalseWhenThisTabIsNotIncluded () {
+    setScrollableContent();
+    app.UI_rollout.include = false;
+    assertFalse(app.UI_rollout.handleScrollDrag());
+  }
+
+  @Test
+  void handleScrollDrag_returnsFalseWhenAnotherGestureAlreadyClaimedThisDrag () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollThumbDragging = false;
+    app.dragging_started = 1; // some other drag (e.g. WORLD panning) already claimed it
+
+    assertFalse(app.UI_rollout.handleScrollDrag());
+    assertFalse(app.UI_rollout.rolloutScrollThumbDragging);
+  }
+
+  @Test
+  void handleScrollDrag_mouseDownOutsideTheThumb_doesNotStartADrag () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollThumbDragging = false;
+    app.dragging_started = 0;
+    app.pmouseX = 0; // nowhere near the thumb
+    app.pmouseY = 0;
+
+    assertFalse(app.UI_rollout.handleScrollDrag());
+    assertFalse(app.UI_rollout.rolloutScrollThumbDragging);
+    assertEquals(0, app.dragging_started); // never claimed
+  }
+
+  @Test
+  void handleScrollDrag_mouseDownOnTheThumb_claimsTheDragAndStartsFromTheCurrentScroll () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    app.UI_rollout.rolloutScrollThumbDragging = false;
+    app.dragging_started = 0;
+    float[] thumb = app.UI_rollout.rolloutScrollThumbRect();
+    app.pmouseX = (int) (thumb[0] + 0.5f * thumb[2]);
+    app.pmouseY = (int) (thumb[1] + 0.5f * thumb[3]);
+    app.mouseY = app.pmouseY; // no movement yet this same frame
+
+    assertTrue(app.UI_rollout.handleScrollDrag());
+
+    assertTrue(app.UI_rollout.rolloutScrollThumbDragging);
+    assertEquals(1, app.dragging_started);
+    assertEquals(app.pmouseX, app.X_click1);
+    assertEquals(app.pmouseY, app.Y_click1);
+    assertEquals(300f, app.UI_rollout.rolloutScrollY, 0.01f); // unchanged - zero delta so far
+  }
+
+  @Test
+  void handleScrollDrag_alreadyDragging_movesScrollYProportionallyToMouseMovement () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollThumbDragging = true; // mid-drag already - skips the "start" branch
+    app.UI_rollout.rolloutScrollDrag_startMouseY = 100;
+    app.UI_rollout.rolloutScrollDrag_startScrollY = 0;
+    app.mouseY = 100 + 115; // mouseY is int - close to half the thumb's own travel (229.8)
+
+    assertTrue(app.UI_rollout.handleScrollDrag());
+
+    assertEquals(300f, app.UI_rollout.rolloutScrollY, 5f); // roughly half of maxScroll (600)
+  }
+
+  @Test
+  void handleScrollDrag_alreadyDragging_clampsAtTheMaxScroll () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollThumbDragging = true;
+    app.UI_rollout.rolloutScrollDrag_startMouseY = 100;
+    app.UI_rollout.rolloutScrollDrag_startScrollY = 0;
+    app.mouseY = 100 + 1000; // far past the thumb's own travel
+
+    assertTrue(app.UI_rollout.handleScrollDrag());
+
+    assertEquals(600f, app.UI_rollout.rolloutScrollY, 0.01f);
+  }
+
+  // --- handleWheel ---------------------------------------------------------------
+
+  @Test
+  void handleWheel_returnsFalseWhenThisTabIsNotIncluded () {
+    setScrollableContent();
+    app.UI_rollout.include = false;
+    assertFalse(app.UI_rollout.handleWheel(1));
+  }
+
+  @Test
+  void handleWheel_returnsFalseWhenThisTabDoesNotNeedAScrollbar () {
+    setExplicitRolloutBounds();
+    app.UI_rollout.rolloutContentTopY = 200;
+    app.UI_rollout.rolloutContentBottomY = 600;
+    app.UI_rollout.rolloutContentHeight = 400; // fits
+    assertFalse(app.UI_rollout.handleWheel(1));
+  }
+
+  @Test
+  void handleWheel_returnsFalseWhenTheMouseIsNotOverThePanel () {
+    setScrollableContent();
+    app.X_clicked = 0; // nowhere near the panel
+    app.Y_clicked = 0;
+    assertFalse(app.UI_rollout.handleWheel(1));
+  }
+
+  @Test
+  void handleWheel_positiveValue_scrollsDownByOneStepAndConsumesTheEvent () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    app.X_clicked = (int) (app.UI_rollout.cX + 0.5f * app.UI_rollout.dX);
+    app.Y_clicked = (int) (0.5f * (app.UI_rollout.rolloutContentTopY + app.UI_rollout.rolloutContentBottomY));
+
+    assertTrue(app.UI_rollout.handleWheel(1));
+
+    assertEquals(324f, app.UI_rollout.rolloutScrollY, 0.01f); // 300 + 24*view_S
+  }
+
+  @Test
+  void handleWheel_negativeValue_scrollsUpByOneStep () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 300;
+    app.X_clicked = (int) (app.UI_rollout.cX + 0.5f * app.UI_rollout.dX);
+    app.Y_clicked = (int) (0.5f * (app.UI_rollout.rolloutContentTopY + app.UI_rollout.rolloutContentBottomY));
+
+    assertTrue(app.UI_rollout.handleWheel(-1));
+
+    assertEquals(276f, app.UI_rollout.rolloutScrollY, 0.01f); // 300 - 24*view_S
+  }
+
+  @Test
+  void handleWheel_clampsAtTheScrollBounds () {
+    setScrollableContent();
+    app.UI_rollout.rolloutScrollY = 590;
+    app.X_clicked = (int) (app.UI_rollout.cX + 0.5f * app.UI_rollout.dX);
+    app.Y_clicked = (int) (0.5f * (app.UI_rollout.rolloutContentTopY + app.UI_rollout.rolloutContentBottomY));
+
+    assertTrue(app.UI_rollout.handleWheel(1));
+
+    assertEquals(600f, app.UI_rollout.rolloutScrollY, 0.01f);
   }
 }
