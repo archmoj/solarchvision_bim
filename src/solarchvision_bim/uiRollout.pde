@@ -47,6 +47,31 @@ class UI_rollout {
   // live value known (needed to seed the typed text).
   String editPendingCaption = null;
 
+  // --- Side scroll for the current tab's own content ----------------------
+  // Some tabs (a long Scene Explorer tree, Bulk Edit with many keys, ...)
+  // draw taller than the space between the parent/child tab-selector grid
+  // and the two pinned "SOLARCHVISION ..." buttons at the panel's bottom
+  // (draw(), further below, clips and offsets that content by
+  // rolloutScrollY so it can be scrolled rather than running under those
+  // buttons - see draw()'s own comment at the point it does so). These
+  // fields are all set/read there and by the scrollbar's own methods
+  // further below (drawRolloutScrollbar() and friends).
+  float rolloutScrollY = 0;          // current scroll offset into this tab's content, 0 = top
+  float rolloutContentHeight = 0;    // this tab's own unscrolled content height, measured fresh each draw()
+  float rolloutContentTopY = 0;      // absolute screen Y where the scrollable area begins, set each draw()
+  float rolloutContentBottomY = 0;   // absolute screen Y where the scrollable area ends, set each draw()
+
+  // Which parent/child this.rolloutScrollY was last measured against - a
+  // leftover scroll offset from a much taller tab would otherwise
+  // misalign (or entirely hide) a much shorter one, so switching tabs
+  // resets it back to the top (see draw()'s own check against these).
+  int _rolloutScrollParent = -1;
+  int _rolloutScrollChild = -1;
+
+  boolean rolloutScrollThumbDragging = false;
+  float rolloutScrollDrag_startMouseY = 0;
+  float rolloutScrollDrag_startScrollY = 0;
+
   void buildAllRollouts () {
 
     PARENT_LOCATION = pushParent("Location & Data");
@@ -99,6 +124,7 @@ class UI_rollout {
     CHILD_EXTRA_PARAMS_SELECTED_ENTITY = pushChild("Selected Entity");
     CHILD_EXTRA_PARAMS_BULK_EDIT = pushChild("Bulk Edit");
     CHILD_EXTRA_PARAMS_ASSIGN_MISSING = pushChild("Assign Missing");
+    CHILD_EXTRA_PARAMS_PROPERTIES = pushChild("Properties");
 
     PARENT_SCENE_EXPLORER = pushParent("Scene Explorer");
     CHILD_SCENE_EXPLORER_SELECT = pushChild("Select");
@@ -151,6 +177,7 @@ class UI_rollout {
   int CHILD_EXTRA_PARAMS_SELECTED_ENTITY;
   int CHILD_EXTRA_PARAMS_BULK_EDIT;
   int CHILD_EXTRA_PARAMS_ASSIGN_MISSING;
+  int CHILD_EXTRA_PARAMS_PROPERTIES;
 
   int PARENT_SCENE_EXPLORER;
   int CHILD_SCENE_EXPLORER_SELECT;
@@ -593,7 +620,31 @@ class UI_rollout {
       Y_control += 15 * this.view_S;
     }
 
+    // Switching tabs resets the scroll back to the top - see this.
+    // rolloutScrollY's own comment, above.
+    if ((this.parent != this._rolloutScrollParent) || (this.child != this._rolloutScrollChild)) {
+      this.rolloutScrollY = 0;
+      this._rolloutScrollParent = this.parent;
+      this._rolloutScrollChild = this.child;
+    }
 
+    // The scrollable area for whichever tab's content follows: from here
+    // (just below the parent/child tab-selector grid above) down to just
+    // above the two pinned "SOLARCHVISION ..." buttons
+    // (renderSectionsButtonBounds(), further below - the first/topmost of
+    // the two, so this never has to care that there's a second one
+    // stacked under it). clip() keeps that content from drawing over
+    // those buttons once it's scrolled; the Y_control offset is what
+    // actually scrolls it. Both are undone (noClip(), Y_control put back)
+    // right after the content dispatch below - this.drawRolloutScrollbar()
+    // itself must run unclipped and unoffset, since it's the control FOR
+    // this offset, not part of the content being offset.
+    this.rolloutContentTopY = Y_control;
+    this.rolloutContentBottomY = this.renderSectionsButtonBounds()[2] - 3 * this.view_S;
+
+    Y_control -= this.rolloutScrollY;
+
+    clip(this.cX, this.rolloutContentTopY, this.dX, this.rolloutContentBottomY - this.rolloutContentTopY);
 
     if (this.parent == PARENT_PERIOD_SCENARIOS) {
 
@@ -1040,6 +1091,8 @@ class UI_rollout {
         this.drawExtraParamsBulkEditTab();
       } else if (this.child == CHILD_EXTRA_PARAMS_ASSIGN_MISSING) {
         this.drawExtraParamsAssignMissingTab();
+      } else if (this.child == CHILD_EXTRA_PARAMS_PROPERTIES) {
+        this.drawExtraParamsPropertiesTab();
       }
     } else if (this.parent == PARENT_SCENE_EXPLORER) {
 
@@ -1051,6 +1104,26 @@ class UI_rollout {
         this.drawSceneExplorerLookAtTab();
       }
     }
+
+    // End of this tab's own (possibly clipped/offset) content - see this
+    // same method's own comment where rolloutContentTopY/
+    // rolloutContentBottomY were set, above. Measuring the content's real
+    // (unscrolled) height here needs Y_control's offset added back first
+    // (it was subtracted, not added, right before the content above) -
+    // this is the same "undo scrollY" the Y_control reassignment just
+    // below also does, just done once more here first since this line
+    // needs the IN-BETWEEN (still-offset) value for nothing else.
+    noClip();
+
+    this.rolloutContentHeight = (Y_control + this.rolloutScrollY) - this.rolloutContentTopY;
+
+    float rolloutVisibleHeight = this.rolloutContentBottomY - this.rolloutContentTopY;
+    float rolloutMaxScroll = max(0, this.rolloutContentHeight - rolloutVisibleHeight);
+    this.rolloutScrollY = constrain(this.rolloutScrollY, 0, rolloutMaxScroll);
+
+    this.drawRolloutScrollbar();
+
+    Y_control += this.rolloutScrollY; // put back to the unoffset value, for whatever (if anything) runs after this
 
     if (this.include) {
       this.drawRenderSectionsButton();
@@ -1197,6 +1270,251 @@ class UI_rollout {
     textAlign(CENTER, CENTER);
     textSize(14 * this.view_S);
     text("SOLARCHVISION all sections", 0.5 * (b[0] + b[1]), 0.5 * (b[2] + b[3]));
+  }
+
+  // --- Side scroll for the current tab's own content -----------------------
+  // A narrow vertical scrollbar, pinned to the panel's right edge, for
+  // whichever tab's content (draw(), above) is currently taller than
+  // rolloutContentTopY..rolloutContentBottomY. Drawn as an overlay (on
+  // top of, not beside, that content - the same reasoning as a browser's
+  // own overlay scrollbars: reworking every tab's own row-width math
+  // across this whole file to leave room beside it isn't worth it for a
+  // strip this narrow, and this file's own widest rows already leave a
+  // few view_S of margin at the panel's right edge for exactly this -
+  // see rolloutScrollbarWidth()'s own comment). Same two-tier "arrow vs
+  // track vs thumb-drag" click vocabulary as mouseClicked.pde's own
+  // StationPicker scrollbar (handleTrackClick()/handleScrollDrag() there),
+  // plus the up/down step buttons that one doesn't have.
+
+  // Narrow: the same square _Spinner()'s own up/down arrow buttons use -
+  // 0.5 * (h + 2*o) with h = 13*view_S, o = 2*view_S (see _Spinner(),
+  // above) - so this sits flush with that same visual scale rather than
+  // introducing its own.
+  float rolloutScrollbarWidth () {
+    return 8.5 * this.view_S;
+  }
+
+  // Outer bounds of the whole bar (up button + track + thumb + down
+  // button together), right-aligned a small margin in from the panel's
+  // own right edge.
+  float[] rolloutScrollbarOuterRect () {
+    float w = this.rolloutScrollbarWidth();
+    float x = this.cX + this.dX - w - 2 * this.view_S;
+    float y = this.rolloutContentTopY;
+    float h = this.rolloutContentBottomY - this.rolloutContentTopY;
+    return new float[]{ x, y, w, h };
+  }
+
+  float[] rolloutScrollUpButtonRect () {
+    float[] bar = this.rolloutScrollbarOuterRect();
+    return new float[]{ bar[0], bar[1], bar[2], bar[2] }; // square: side length == bar width
+  }
+
+  float[] rolloutScrollDownButtonRect () {
+    float[] bar = this.rolloutScrollbarOuterRect();
+    float side = bar[2];
+    return new float[]{ bar[0], bar[1] + bar[3] - side, side, side };
+  }
+
+  // The draggable/clickable track, i.e. the bar minus the up/down
+  // buttons at either end.
+  float[] rolloutScrollTrackRect () {
+    float[] bar = this.rolloutScrollbarOuterRect();
+    float side = bar[2];
+    return new float[]{ bar[0], bar[1] + side, bar[2], max(0, bar[3] - 2 * side) };
+  }
+
+  float[] rolloutScrollThumbRect () {
+    float[] track = this.rolloutScrollTrackRect();
+
+    float visibleH = this.rolloutContentBottomY - this.rolloutContentTopY;
+    float maxScroll = max(1, this.rolloutContentHeight - visibleH);
+
+    float thumbH = min(track[3], max(20 * this.view_S, track[3] * (visibleH / this.rolloutContentHeight)));
+    float travel = track[3] - thumbH;
+    float thumbY = track[1] + travel * (this.rolloutScrollY / maxScroll);
+
+    return new float[]{ track[0], thumbY, track[2], thumbH };
+  }
+
+  boolean rolloutNeedsScrollbar () {
+    return this.rolloutContentHeight > (this.rolloutContentBottomY - this.rolloutContentTopY) + 0.5;
+  }
+
+  // A plain click on either arrow steps by roughly one row's worth - the
+  // same 24*view_S pitch most rows in this file use for their own row
+  // height (e.g. drawSceneExplorerRow()'s own h, or close to _Spinner()'s
+  // own 20*view_S line pitch).
+  void handleRolloutScrollButtonClicks (float[] up, float[] down) {
+    if (this.editActive) return;
+
+    float step = 24 * this.view_S;
+    float visibleH = this.rolloutContentBottomY - this.rolloutContentTopY;
+    float maxScroll = max(0, this.rolloutContentHeight - visibleH);
+
+    if (isInside(X_clicked, Y_clicked, up[0], up[1], up[0] + up[2], up[1] + up[3])) {
+      this.rolloutScrollY = constrain(this.rolloutScrollY - step, 0, maxScroll);
+      X_clicked = -1;
+      Y_clicked = -1;
+      this.revise();
+    } else if (isInside(X_clicked, Y_clicked, down[0], down[1], down[0] + down[2], down[1] + down[3])) {
+      this.rolloutScrollY = constrain(this.rolloutScrollY + step, 0, maxScroll);
+      X_clicked = -1;
+      Y_clicked = -1;
+      this.revise();
+    }
+  }
+
+  // A click on the track above/below the thumb (not directly on it -
+  // that's a drag start, left alone here and handled by
+  // handleScrollDrag(), below) pages by one screenful - same "track vs
+  // thumb" split as the StationPicker scrollbar's own handleTrackClick()
+  // (mouseClicked.pde).
+  void handleRolloutScrollTrackClick (float[] track, float[] thumb) {
+    if (this.editActive) return;
+    if (!isInside(X_clicked, Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return;
+    if ((Y_clicked >= thumb[1]) && (Y_clicked <= thumb[1] + thumb[3])) return; // on the thumb itself
+
+    float visibleH = this.rolloutContentBottomY - this.rolloutContentTopY;
+    float maxScroll = max(0, this.rolloutContentHeight - visibleH);
+    float page = max(1, visibleH - 24 * this.view_S);
+
+    if (Y_clicked < thumb[1]) {
+      this.rolloutScrollY = constrain(this.rolloutScrollY - page, 0, maxScroll);
+    } else {
+      this.rolloutScrollY = constrain(this.rolloutScrollY + page, 0, maxScroll);
+    }
+
+    X_clicked = -1;
+    Y_clicked = -1;
+    this.revise();
+  }
+
+  // Drags the scrollbar thumb - called directly from mouseDragged.pde
+  // (mirroring handlePickListScrollDrag()'s own call there for the
+  // StationPicker scrollbar's thumb), ahead of WIN3D/WORLD/STUDY's own
+  // drag handling, so the same drag gesture is never also read as e.g.
+  // panning WORLD underneath. Returns true if this drag is (or just
+  // became) a thumb drag.
+  boolean handleScrollDrag () {
+    if (!this.include) return false;
+    if (!this.rolloutNeedsScrollbar()) return false;
+
+    if (!this.rolloutScrollThumbDragging) {
+      if (dragging_started != 0) return false; // some other drag already claimed this gesture
+
+      float[] thumb = this.rolloutScrollThumbRect();
+      if (!isInside(pmouseX, pmouseY, thumb[0], thumb[1], thumb[0] + thumb[2], thumb[1] + thumb[3])) return false;
+
+      this.rolloutScrollThumbDragging = true;
+      dragging_started = 1;
+      X_click1 = pmouseX;
+      Y_click1 = pmouseY;
+      this.rolloutScrollDrag_startMouseY = pmouseY;
+      this.rolloutScrollDrag_startScrollY = this.rolloutScrollY;
+    }
+
+    float[] track = this.rolloutScrollTrackRect();
+    float[] thumb = this.rolloutScrollThumbRect();
+
+    float travel = track[3] - thumb[3];
+    if (travel > 0) {
+      float visibleH = this.rolloutContentBottomY - this.rolloutContentTopY;
+      float maxScroll = max(1, this.rolloutContentHeight - visibleH);
+      float scrollPerPixel = maxScroll / travel;
+
+      float deltaY = mouseY - this.rolloutScrollDrag_startMouseY;
+      float newScroll = this.rolloutScrollDrag_startScrollY + deltaY * scrollPerPixel;
+
+      this.rolloutScrollY = constrain(newScroll, 0, maxScroll);
+    }
+
+    this.revise();
+    return true;
+  }
+
+  // Scrolls in response to the mouse wheel, if this tab's content
+  // actually needs scrolling and the mouse is over the panel - called
+  // from mouseWheel.pde's own handleRolloutWheel(). Returns true if it
+  // consumed the event, the same "did this claim it" convention as
+  // StationPicker.handleWheel() (mouseClicked.pde).
+  boolean handleWheel (float wheelValue) {
+    if (!this.include) return false;
+    if (!this.rolloutNeedsScrollbar()) return false;
+    if (!isInside(X_clicked, Y_clicked, this.cX, this.rolloutContentTopY, this.cX + this.dX, this.rolloutContentBottomY)) return false;
+
+    float visibleH = this.rolloutContentBottomY - this.rolloutContentTopY;
+    float maxScroll = max(0, this.rolloutContentHeight - visibleH);
+    if (maxScroll <= 0) return false;
+
+    float step = 24 * this.view_S;
+    this.rolloutScrollY = constrain(this.rolloutScrollY + ((wheelValue > 0) ? step : -step), 0, maxScroll);
+
+    this.revise();
+    return true;
+  }
+
+  // One arrow button's background + triangle - shared by the up and down
+  // buttons (drawRolloutScrollbar(), below), which differ only in which
+  // way the triangle points.
+  void drawRolloutScrollArrowButton (float[] b, boolean pointingUp) {
+    float bx = b[0], by = b[1], bw = b[2], bh = b[3];
+
+    stroke(0);
+    strokeWeight(1);
+    fill(255);
+    rect(bx, by, bw, bh);
+
+    noStroke();
+    fill(80);
+    float cx = bx + 0.5 * bw;
+    float pad = 0.25 * bw;
+    if (pointingUp) {
+      triangle(cx, by + pad, bx + pad, by + bh - pad, bx + bw - pad, by + bh - pad);
+    } else {
+      triangle(cx, by + bh - pad, bx + pad, by + pad, bx + bw - pad, by + pad);
+    }
+  }
+
+  // Draws (and, like drawRenderViewportButton()/drawRenderSectionsButton()
+  // just above, does its own click hit-testing inline) the whole
+  // scrollbar - a no-op whenever the current tab's content fits without
+  // scrolling, so it's simply not there the rest of the time. Must be
+  // called unclipped and at Y_control's own unoffset value (draw() calls
+  // this right after noClip() and right before undoing its own
+  // Y_control -= rolloutScrollY, above) - this bar is the control FOR
+  // that clip/offset, not part of the content it applies to.
+  void drawRolloutScrollbar () {
+    if (!this.rolloutNeedsScrollbar()) return;
+
+    float[] up = this.rolloutScrollUpButtonRect();
+    float[] down = this.rolloutScrollDownButtonRect();
+    float[] track = this.rolloutScrollTrackRect();
+
+    this.handleRolloutScrollButtonClicks(up, down);
+    // Re-fetch the thumb AFTER the button clicks above (if any) have had
+    // their chance to move rolloutScrollY, so a track click right below
+    // judges "is this on the thumb" against where the thumb actually is
+    // this frame, not where it was before those buttons ran.
+    float[] thumb = this.rolloutScrollThumbRect();
+    this.handleRolloutScrollTrackClick(track, thumb);
+    thumb = this.rolloutScrollThumbRect(); // and again, in case the track click just moved it too
+
+    pushStyle();
+
+    this.drawRolloutScrollArrowButton(up, true);
+    this.drawRolloutScrollArrowButton(down, false);
+
+    noStroke();
+    fill(230, 230);
+    rect(track[0], track[1], track[2], track[3]);
+
+    stroke(0);
+    strokeWeight(1);
+    fill(160);
+    rect(thumb[0], thumb[1], thumb[2], thumb[3]);
+
+    popStyle();
   }
 
   boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v) {
@@ -2570,6 +2888,52 @@ class UI_rollout {
         endScene3DChange();
         UI_rollout.revise();
       }
+    }
+  }
+
+  // CHILD_EXTRA_PARAMS_PROPERTIES - a typed, single-entity property
+  // editor, parallel to drawExtraParamsSelectedEntityTab() above but for
+  // an entity's own NATIVE typed fields (its own getter/setter pair -
+  // Model1D's getDegreeMax()/setDegreeMax(), model1Ds.pde) rather than
+  // its extraParams JSON blob. A proper bounded Spinner (same shape
+  // Figure's own creatorModel1DDegreeMax spinner uses for a NEW entity's
+  // default - valueModifier.pde) reads/writes the SELECTED entity's own
+  // stored value directly, instead of a free-text JSON row.
+  //
+  // v1 scope is deliberately narrow - exactly one selected entity, and
+  // only Model1D's degreeMax - same "exactly one, 0 or >1 resolves to
+  // nothing to show" convention drawExtraParamsSelectedEntityTab() uses,
+  // which conveniently sidesteps the question a bounded numeric Spinner
+  // has no clean answer to anyway: there's no safe "various" sentinel
+  // for a mixed multi-entity selection the way an empty text box can
+  // stand in for drawExtraParamsBulkEditPanel()'s own non-uniform case,
+  // above. Other categories/fields are a later addition, each its own
+  // `target.category.equals(...)` branch here once there's a second one
+  // to add - this is not yet the general case.
+  void drawExtraParamsPropertiesTab () {
+
+    ExtraParamsSelectionTarget target = currentExtraParamsSelection();
+
+    if ((target == null) || !target.category.equals("model1d")) {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "Select exactly one Model1D entity (e.g. a tree)\nto edit its properties.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
+      );
+      Y_control += 50 * this.view_S;
+      return;
+    }
+
+    int current = allModel1Ds.getDegreeMax(target.index);
+    int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Degree Max", current, 0, 12, 1);
+
+    if (updated != current) {
+      beginScene3DChange();
+      allModel1Ds.setDegreeMax(target.index, updated);
+      endScene3DChange();
+      UI_rollout.revise();
     }
   }
 

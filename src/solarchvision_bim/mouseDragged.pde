@@ -16,6 +16,10 @@ void mouseDragged() {
   // let WORLD interpret the same drag as panning the map.
   if (handlePickListScrollDrag()) return;
 
+  // Same reasoning, for the rollout panel's own side-scroll thumb
+  // (uiRollout.pde's drawRolloutScrollbar()).
+  if (UI_rollout.handleScrollDrag()) return;
+
   // Not mutually exclusive: both handlers internally gate on whether the
   // mouse is actually within their own view's rectangle, so a drag over
   // WORLD still reaches handleWorldDrag() even when WIN3D.include is also

@@ -20,6 +20,14 @@ void mouseWheel(MouseEvent event) {
   }
   handleWin3DWheel(Wheel_Value);
   handleStudyWheel(Wheel_Value);
+  handleRolloutWheel(Wheel_Value);
+}
+
+// Scrolls the rollout panel's current tab, if it's showing a scrollbar
+// (uiRollout.pde's rolloutNeedsScrollbar()) and the mouse is over its
+// scrollable content area - see UI_rollout.handleWheel()'s own comment.
+void handleRolloutWheel (float wheelValue) {
+  UI_rollout.handleWheel(wheelValue);
 }
 
 

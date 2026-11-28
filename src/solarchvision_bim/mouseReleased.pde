@@ -4,6 +4,7 @@ void mouseReleased() {
   if (dragging_started == 0) return;
 
   resetPickListDragState();
+  UI_rollout.rolloutScrollThumbDragging = false;
 
   normalizeClickRegion();
 
