@@ -3307,6 +3307,44 @@ class UI_rollout {
       }
     }
 
+    } else if (target.category.equals("section")) {
+
+    // Sections have almost nothing left for this tab once the usual
+    // exclusions are applied: X/Y/Z/RotX/RotY/RotZ (sections.pde's own
+    // f_data) are generic position/rotation, Transform's job just like
+    // every other category above; Visibility is the same cross-category
+    // field extraParamsSelection.pde already handles for every
+    // category; and the section's own corner outline (getCornersXY()/
+    // getNumCorners(), corner-by-corner shape data) isn't a bounded
+    // scalar param at all, so there's no Spinner to mirror it with.
+    //
+    // The one field left is resX/resY (sections.pde's i_data) - the
+    // raster resolution the solar-impact study renders this section at.
+    // There's no Form/Figure-style creator spinner for it (sections
+    // aren't built that way - see create3D.pde's own Section tool,
+    // which starts every new section at a fixed 200 or 400), but there
+    // IS a real edit-an-existing-section precedent: edit3D.pde's own
+    // Sections() (the Tessellation drag-tool) doubles/halves resX,
+    // mirrors it onto resY right afterward (the two are always kept
+    // equal - there's no way to set them independently through any
+    // existing tool), clamped to 100-1600, and that's the bounds used
+    // below. That tool also recalculates the impact data afterward
+    // (allSolidImpacts.calculate_ImpactOnSections()) since the existing
+    // numbers no longer match the new resolution - this does the same.
+
+    {
+      int current = allSections.get_resX(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Resolution", current, 100, 1600, 100);
+      if (updated != current) {
+        beginScene3DChange();
+        allSections.set_resX(n, updated);
+        allSections.set_resY(n, updated);
+        allSolidImpacts.calculate_ImpactOnSections();
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
     } else {
       fill(127);
       textAlign(LEFT, CENTER);
