@@ -3,6 +3,33 @@ boolean draw_initial_frames () {
 
     background(223);
 
+    // Warm up clip()/noClip() once, here, before anything real ever
+    // needs them. UI_rollout.draw() (uiRollout.pde) is the only caller
+    // of clip() anywhere in this sketch (added by the scrollbar-and-
+    // properties commit) - the very first clip() call of the whole
+    // sketch's lifetime therefore used to land on UI_rollout's own first
+    // real draw, post-initialization. That first call's content would
+    // come out visually blank/gray (no console error, nothing logically
+    // wrong - cX/cY/dX/dY/view_S/parent/child are all already correct by
+    // then), and only a second UI_rollout.draw() - triggered by clicking
+    // directly on the panel, which is the one thing that calls
+    // UI_rollout.revise() unconditionally (mouseClicked.pde) - would
+    // render it correctly; waiting without clicking never recovered it,
+    // and this reproduced even loading a blank scene, ruling out an
+    // exception, a stale/uninitialized field, and any async load/bake
+    // gate (isInProgress()) as the cause. That combination - correct the
+    // second time, silently wrong the first, nothing logically
+    // distinguishing the two calls - matches a known P2D/JOGL quirk
+    // where the GL scissor rect from a clip() call doesn't actually take
+    // effect until the frame after its first-ever use in a sketch's
+    // lifetime. Exercising clip()/noClip() once here, during frame 1 of
+    // the splash (which the user already watches regardless, and which
+    // overdraws this exact area again on every later splash frame
+    // anyway), spends that one-time cost before UI_rollout.draw() ever
+    // runs for real, instead of on the user's first real frame.
+    clip(0, 0, 1, 1);
+    noClip();
+
     reset_project_folder_to_default(); // see updateFolders.pde's own comment on why this is now separate
     update_project_folders();
 

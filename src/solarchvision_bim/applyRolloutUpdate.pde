@@ -122,6 +122,37 @@ void applyRolloutUpdate() {
 
   UI_rollout.draw();
 
+  // The panel's very first post-initialization draw() reliably renders
+  // blank/gray, even though every input it reads (cX/cY/dX/dY/view_S,
+  // parent/child) is byte-identical to a later, correctly-rendering
+  // call - confirmed by logging that exact state frame-by-frame: frame
+  // 23's own first call and a much later call (triggered by a user
+  // click) printed the same cX/cY/dX/dY/view_S, parent=0, child=1 both
+  // times, with nothing printed to console (no exception) either time.
+  // That rules out every logic-level cause reachable from here - a
+  // stale/uninitialized layout field, an exception, this very
+  // include/update gate, and any async load/bake gate (isInProgress())
+  // reproduces even on a blank scene with nothing loading - and points
+  // at a one-time rendering/presentation quirk on this sketch's very
+  // first real UI_rollout.draw() call specifically (P2D/JOGL are known
+  // to have this class of issue on a freshly created surface). Not
+  // something fixable by changing what draw() itself computes, since
+  // what it computes is already correct the first time too.
+  //
+  // What IS confirmed to fix it, every time, is simply calling
+  // UI_rollout.draw() a second time - that's all a click on the panel
+  // (or anywhere else that happens to call UI_rollout.revise(), e.g.
+  // uiToolBar.pde) actually does. So rather than depend on the user
+  // clicking the right thing before they can trust what the panel shows,
+  // force exactly one extra automatic redraw right after the very first
+  // one, using that same mechanism: set update back to true so next
+  // frame's applyRolloutUpdate() call runs normally again, with nothing
+  // about THIS frame skipped or duplicated.
+  if (!UI_rollout_hasDrawnOnceSinceInit) {
+    UI_rollout_hasDrawnOnceSinceInit = true;
+    UI_rollout.revise();
+  }
+
   if (pre_STUDY_impactGraphIndex != STUDY.impactGraphIndex) {
     STUDY.revise();
 
@@ -398,3 +429,13 @@ boolean pre_WindFlow_display;
 float pre_USER_createUniformSuperellipsoidPower;
 
 PImage pre_screen;
+
+// See applyRolloutUpdate()'s own use of this, right after its main
+// UI_rollout.draw() call, for why it exists - forces exactly one
+// automatic extra redraw right after the panel's very first one, which
+// otherwise reliably renders blank/gray for a reason that isn't a logic
+// bug reachable from this sketch's own code (see that comment for what
+// was actually ruled out). Stays true for the rest of the session once
+// set - this only needs to happen once, immediately after
+// initialization, not on every later tab switch or edit.
+boolean UI_rollout_hasDrawnOnceSinceInit = false;
