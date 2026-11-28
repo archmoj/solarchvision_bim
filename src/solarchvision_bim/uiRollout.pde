@@ -2911,37 +2911,55 @@ class UI_rollout {
   // for a NEW entity's default (valueModifier.pde); this one just reads/
   // writes the SELECTED entity's own stored value directly instead.
   //
-  // v1 scope is deliberately narrow - exactly one selected entity, and
-  // only Model1D's degreeMax - same "exactly one, 0 or >1 resolves to
-  // nothing to show" convention drawExtraParamsSelectedEntityTab() uses,
-  // which conveniently sidesteps the question a bounded numeric Spinner
-  // has no clean answer to anyway: there's no safe "various" sentinel
-  // for a mixed multi-entity selection the way an empty text box can
-  // stand in for drawExtraParamsBulkEditPanel()'s own non-uniform case,
-  // below. Other categories are a later addition, each its own
-  // `target.category.equals(...)` branch here once there's a second one
-  // to add - this is not yet the general case.
+  // v1 scope is deliberately narrow - exactly one selected entity - same
+  // "exactly one, 0 or >1 resolves to nothing to show" convention
+  // drawExtraParamsSelectedEntityTab() uses, which conveniently
+  // sidesteps the question a bounded numeric Spinner has no clean
+  // answer to anyway: there's no safe "various" sentinel for a mixed
+  // multi-entity selection the way an empty text box can stand in for
+  // drawExtraParamsBulkEditPanel()'s own non-uniform case, below.
+  // Model1D and Model2D are covered so far; further categories are each
+  // their own `target.category.equals(...)` branch here, below.
   //
-  // Model1D's own field list/order/bounds below mirrors
-  // CHILD_GEOMETRY_FORM's own creatorModel1D* spinners exactly
-  // (valueModifier.pde) - same captions (minus the "Creator" prefix,
-  // since this edits the entity itself, not a creation default), same
-  // min/max/step/round per field - just reading/writing the SELECTED
-  // entity's own stored value (allModel1Ds.getXxx()/setXxx(),
-  // model1Ds.pde) instead of a User3D.creatorModel1DXxx default. X/Y/Z/
-  // Scale/Rotation are deliberately left out - those are the generic
-  // position/rotation/scale editor's own job (CHILD_GEOMETRY_TRANSFORM),
-  // not a species/shape parameter specific to Model1D.
+  // Model1D's own field list/order/bounds mirrors CHILD_GEOMETRY_FORM's
+  // own creatorModel1D* spinners exactly (valueModifier.pde) - same
+  // captions (minus the "Creator" prefix, since this edits the entity
+  // itself, not a creation default), same min/max/step/round per field -
+  // just reading/writing the SELECTED entity's own stored value
+  // (allModel1Ds.getXxx()/setXxx(), model1Ds.pde) instead of a
+  // User3D.creatorModel1DXxx default. X/Y/Z/Scale/Rotation are
+  // deliberately left out - those are the generic position/rotation/
+  // scale editor's own job (CHILD_GEOMETRY_TRANSFORM), not a species/
+  // shape parameter specific to Model1D.
+  //
+  // Model2D (model2Ds.pde) only has one such field, FileIndex - which
+  // file, within this instance's own Kind's folder (PEOPLE_KIND/
+  // TREES_KIND, model2DKind.pde), it's pasted from - mirroring
+  // creatorPersonTypeIndex()/creatorPlantTypeIndex() (valueModifier.pde,
+  // Figure's own equivalent default-for-a-new-instance spinners), bound
+  // the same way they are: 0..that Kind's own live fileCount, not a
+  // fixed literal (the folder's own file count can change between
+  // sessions). X/Y/Z/S(cale) are Transform's job here too. Kind itself
+  // (switching a placed tree into a person or vice versa) and Mirror
+  // (left/right flip) are deliberately left out for now - neither has a
+  // Form/Figure creator-spinner counterpart to mirror the way FileIndex
+  // does, and switching Kind on an already-placed instance is a bigger
+  // behavioral change (isScalable() differs between the two, and this
+  // instance's current Scale may no longer make sense) than a same-kind
+  // "pick a different one of these" tweak. Kind/FileIndex/Mirror are
+  // plain public fields on Model2Ds (this.Kind[n]/FileIndex[n]/
+  // Mirror[n]) - no getter/setter pair to call, unlike every Model1D
+  // field above.
   void drawPropertiesModifySelectedTab () {
 
     ExtraParamsSelectionTarget target = currentExtraParamsSelection();
 
-    if ((target == null) || !target.category.equals("model1d")) {
+    if (target == null) {
       fill(127);
       textAlign(LEFT, CENTER);
       textSize(12 * this.view_S);
       text(
-        "Select exactly one Model1D entity (e.g. a tree)\nto edit its properties.",
+        "Select exactly one entity (e.g. a tree)\nto edit its properties.",
         this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
       );
       Y_control += 50 * this.view_S;
@@ -2949,6 +2967,8 @@ class UI_rollout {
     }
 
     int n = target.index;
+
+    if (target.category.equals("model1d")) {
 
     // Type Index - same degenerate 0..0 range as creatorModel1DTypeIndex()
     // itself (valueModifier.pde) - there's genuinely only the one type
@@ -3050,6 +3070,28 @@ class UI_rollout {
         endScene3DChange();
         UI_rollout.revise();
       }
+    }
+
+    } else if (target.category.equals("model2d")) {
+
+      int current = allModel2Ds.FileIndex[n];
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "File Index", current, 0, allModel2Ds.Kind[n].fileCount, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel2Ds.FileIndex[n] = updated;
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+
+    } else {
+      fill(127);
+      textAlign(LEFT, CENTER);
+      textSize(12 * this.view_S);
+      text(
+        "No typed properties yet for this entity's category.",
+        this.cX + 10 * this.view_S, Y_control + 20 * this.view_S
+      );
+      Y_control += 50 * this.view_S;
     }
   }
 
