@@ -659,7 +659,26 @@ class UI_rollout {
     // right after the content dispatch below - this.drawRolloutScrollbar()
     // itself must run unclipped and unoffset, since it's the control FOR
     // this offset, not part of the content being offset.
-    this.rolloutContentTopY = Y_control;
+    //
+    // Y_control at this exact point is where the FIRST row's own y will
+    // land (e.g. the first this.Spinner(...) call in whichever tab's
+    // content follows) - and every row is drawn CENTERED on its own y,
+    // not top-aligned to it (_Spinner()'s own rect(x.., y - (h/2) - o, ..)
+    // above). Clipping starting exactly at Y_control therefore cut the
+    // first row's own top half clean off (its box/arrows draw from
+    // y - 8.5*view_S up to y + 8.5*view_S, and the clip rect's top edge
+    // sat right at that center). Backing the clip's top edge up by that
+    // same half-row margin - this.rolloutScrollbarWidth()'s own 8.5*view_S
+    // (its own comment notes it already matches _Spinner()'s half-height
+    // on purpose) - gives the first row room to draw whole, the same way
+    // every row after it already had room below it from the next row's
+    // own margin. rolloutContentHeight (just below, in
+    // applyRolloutUpdate.pde's own per-frame diff) and every scrollbar
+    // computation derived from rolloutContentTopY grow by this same
+    // fixed amount on both the "content" and "visible" side at once, so
+    // the gap between them - what actually decides whether a scrollbar
+    // appears, and the thumb's own proportions - is unchanged.
+    this.rolloutContentTopY = Y_control - this.rolloutScrollbarWidth();
     this.rolloutContentBottomY = this.renderSectionsButtonBounds()[2] - 3 * this.view_S;
 
     Y_control -= this.rolloutScrollY;
