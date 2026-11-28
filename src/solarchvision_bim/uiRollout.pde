@@ -2918,9 +2918,20 @@ class UI_rollout {
   // has no clean answer to anyway: there's no safe "various" sentinel
   // for a mixed multi-entity selection the way an empty text box can
   // stand in for drawExtraParamsBulkEditPanel()'s own non-uniform case,
-  // below. Other categories/fields are a later addition, each its own
+  // below. Other categories are a later addition, each its own
   // `target.category.equals(...)` branch here once there's a second one
   // to add - this is not yet the general case.
+  //
+  // Model1D's own field list/order/bounds below mirrors
+  // CHILD_GEOMETRY_FORM's own creatorModel1D* spinners exactly
+  // (valueModifier.pde) - same captions (minus the "Creator" prefix,
+  // since this edits the entity itself, not a creation default), same
+  // min/max/step/round per field - just reading/writing the SELECTED
+  // entity's own stored value (allModel1Ds.getXxx()/setXxx(),
+  // model1Ds.pde) instead of a User3D.creatorModel1DXxx default. X/Y/Z/
+  // Scale/Rotation are deliberately left out - those are the generic
+  // position/rotation/scale editor's own job (CHILD_GEOMETRY_TRANSFORM),
+  // not a species/shape parameter specific to Model1D.
   void drawPropertiesModifySelectedTab () {
 
     ExtraParamsSelectionTarget target = currentExtraParamsSelection();
@@ -2937,14 +2948,108 @@ class UI_rollout {
       return;
     }
 
-    int current = allModel1Ds.getDegreeMax(target.index);
-    int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Degree Max", current, 0, 12, 1);
+    int n = target.index;
 
-    if (updated != current) {
-      beginScene3DChange();
-      allModel1Ds.setDegreeMax(target.index, updated);
-      endScene3DChange();
-      UI_rollout.revise();
+    // Type Index - same degenerate 0..0 range as creatorModel1DTypeIndex()
+    // itself (valueModifier.pde) - there's genuinely only the one type
+    // right now, so this isn't a bug to fix on this tab's own account.
+    {
+      int current = allModel1Ds.getType(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Type Index", current, 0, 0, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setType(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allModel1Ds.getDegreeMax(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Degree Max", current, 0, 12, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setDegreeMax(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allModel1Ds.getSeed(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Seed", current, -1, 32767, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setSeed(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getTrunkSize(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Trunk Size", current, 0, 10, 0.1, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setTrunkSize(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getLeafSize(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Leaf Size", current, 0, 1, 0.01, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setLeafSize(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getBranchTilt(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Tilt", current, 0, 360, 5, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setBranchTilt(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getBranchTwist(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Twist", current, 0, 360, 5, 0.1);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setBranchTwist(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getBranchRatio(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Branch Ratio", current, 0.05, 1, 0.05, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setBranchRatio(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      float current = allModel1Ds.getTreeBase(n);
+      float updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tree Base", current, 0, 4, 0.1, 0.01);
+      if (updated != current) {
+        beginScene3DChange();
+        allModel1Ds.setTreeBase(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
     }
   }
 
