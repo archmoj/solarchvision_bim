@@ -312,37 +312,29 @@ void view_changed () {
   // gets consumed and cleared again.
   if (WIN3D.showShading) WIN3D.shadingNeedsRebuild = true;
 
-  // PARENT_EXTRA_PARAMS (uiRollout.pde) shows whatever Select3D currently
-  // has selected - stale otherwise, since UI_rollout.draw() only runs
-  // when UI_rollout.update is set (applyRolloutUpdate.pde's own guard),
-  // and nothing before this routed a plain selection/model change into
-  // that. view_changed() is the one place both selection_changed() (a
-  // new/changed selection, below) and endScene3DChange() (every create/
-  // edit/move/delete/import site) already funnel through, so hooking it
-  // here - rather than each of those call sites individually - covers a
-  // new selection, a new addition, and a deletion alike in one place.
-  // Scoped to only fire while that panel is actually the one showing, so
-  // every other, unrelated view_changed() call (most of them) still
-  // costs nothing extra.
-  if (UI_rollout.parent == UI_rollout.PARENT_EXTRA_PARAMS) UI_rollout.revise();
-
+  // PARENT_EXTRA_PARAMS, PARENT_SCENE_EXPLORER and PARENT_PROPERTIES
+  // (uiRollout.pde) each just show whatever Select3D currently has
+  // selected - PARENT_EXTRA_PARAMS's own Selected Entity/Bulk Edit tabs,
   // PARENT_SCENE_EXPLORER's own row highlighting (green/yellow
-  // background, uiRollout.pde's drawSceneExplorerRow()) is exactly the
-  // same situation as PARENT_EXTRA_PARAMS just above - it shows the
-  // LIVE Select3D selection, so it needs the same hook, scoped the same
-  // way.
-  if (UI_rollout.parent == UI_rollout.PARENT_SCENE_EXPLORER) UI_rollout.revise();
-
-  // PARENT_PROPERTIES' own Modify Selected tab (uiRollout.pde's
-  // drawPropertiesModifySelectedTab()) is exactly the same situation
-  // again - it too just reads whatever Select3D currently has selected
-  // (currentExtraParamsSelectionList()) and each selected entity's own
-  // live field values, so a create/select/delete/edit anywhere left it
-  // showing stale content (or the wrong message entirely - an empty
-  // selection's own guidance text, say, after something new was just
-  // created and selected) until some unrelated click happened to revise
-  // the panel too. Same hook, same scoping.
-  if (UI_rollout.parent == UI_rollout.PARENT_PROPERTIES) UI_rollout.revise();
+  // background, drawSceneExplorerRow()), and PARENT_PROPERTIES' own
+  // Modify Selected tab (drawPropertiesModifySelectedTab()) and each
+  // selected entity's own live field values. All three are stale
+  // otherwise, since UI_rollout.draw() only runs when UI_rollout.update
+  // is set (applyRolloutUpdate.pde's own guard), and nothing before this
+  // routed a plain selection/model change into that. view_changed() is
+  // the one place both selection_changed() (a new/changed selection,
+  // below) and endScene3DChange() (every create/edit/move/delete/import
+  // site) already funnel through, so hooking it here - rather than each
+  // of those call sites individually - covers a new selection, a new
+  // addition, and a deletion alike, for all three tabs, in one place.
+  // Scoped to only fire while one of these three is actually the panel
+  // showing, so every other, unrelated view_changed() call (most of
+  // them) still costs nothing extra.
+  if ((UI_rollout.parent == UI_rollout.PARENT_EXTRA_PARAMS) ||
+      (UI_rollout.parent == UI_rollout.PARENT_SCENE_EXPLORER) ||
+      (UI_rollout.parent == UI_rollout.PARENT_PROPERTIES)) {
+    UI_rollout.revise();
+  }
 }
 
 void selection_changed () {
