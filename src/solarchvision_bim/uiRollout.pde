@@ -3043,6 +3043,81 @@ class UI_rollout {
       }
     }
 
+    } else if (target.category.equals("polyline")) {
+
+    // Polylines are Faces' own sibling class (polylines.pde mirrors
+    // faces.pde's options[] layout field-for-field) - Material/
+    // Tessellation/Layer/Weight get the same treatment here, same
+    // creator-spinner precedent (creatorMaterial/creatorTessellation/
+    // creatorLayer/creatorWeight, valueModifier.pde) and the same
+    // already-placed-entity bounds from adjustPolylineProperties()
+    // (edit3D.pde), for the same reasons given in the "face" branch
+    // just above.
+    //
+    // Visibility is excluded for the same cross-category reason as
+    // there (extraParamsSelection.pde's generic extraParamsIsVisible()/
+    // extraParamsSetVisibility(), already covering every
+    // visibility-bearing category including this one).
+    //
+    // Close/CurveType/IsArc/ArcParams are excluded too, kept consistent
+    // with Close's exclusion on the "face" branch: User3D.creatorClosed
+    // (valueModifier.pde) does exist and does feed a handful of
+    // creation paths (land3D.pde's Land tool; most importers instead
+    // compute their own current_Closed per-geometry, e.g. importDxf.pde/
+    // importStl.pde's "clz"), but nothing anywhere edits Close on an
+    // already-placed polyline the way adjustPolylineProperties() does
+    // for Material/Tessellation/Layer/Weight - same gap as Faces had,
+    // so it's left out here too rather than drawing an inconsistent
+    // line between two sibling classes that share this exact field.
+    // CurveType/IsArc/ArcParams have no creator-spinner precedent at
+    // all - they're derived from the polyline's own points by whichever
+    // tool built it (the arc tool, curve fitting, etc.), never a value
+    // the user picks directly.
+
+    {
+      int current = allPolylines.getMaterial(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Material", current, 0, 8, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allPolylines.setMaterial(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allPolylines.getTessellation(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Tessellation", current, 0, 4, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allPolylines.setTessellation(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allPolylines.getLayer(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Layer", current, 0, 16, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allPolylines.setLayer(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
+    {
+      int current = allPolylines.getWeight(n);
+      int updated = this.Spinner(X_control, Y_control, 0, 0, 0, "Weight", current, -20, 20, 1);
+      if (updated != current) {
+        beginScene3DChange();
+        allPolylines.setWeight(n, updated);
+        endScene3DChange();
+        UI_rollout.revise();
+      }
+    }
+
     } else if (target.category.equals("model1d")) {
 
     // Type Index - same degenerate 0..0 range as creatorModel1DTypeIndex()
