@@ -261,6 +261,14 @@ The 3D scene, 3D viewport, station, and study-graph histories are distinct; an u
 
 Additional context-specific undo/redo commands are available for the other supported histories. The exact operation that is reversed depends on the active context and command.
 
+### Properties: editing an object's own typed fields
+
+Beyond the generic material/layer/visibility/weight properties shared by most objects, many object categories also carry their own category-specific typed fields—a tree's branching parameters, a placed figure's file index, a camera's field of view and nudge step sizes, a section's render resolution, a solid's per-axis shape exponent. These are genuine typed fields on the object itself (not freeform JSON—see Extra Params below), the same fields each category's own creation tool (Form, Figure, and so on) sets a starting value for.
+
+The **Properties → Modify Selected** rollout panel exposes whichever of these fields apply to the current selection, using the same bounded spinners the creation tools use, bound directly to the selected object's own value instead of a creation default. It's active only when exactly one object is selected; position, rotation, and scale are deliberately left out here since **Transform** already edits those for any category. Coverage so far: Face, Polyline, Model1D (tree), Model2D (figure), Solid, Camera, and Section each have their own fields; Group has none of its own yet (a group's position/rotation/scale pivot is Transform's job, and a group's other properties live on its members instead).
+
+Modify Selected itself doesn't register a named command the way most other settings do—it edits the selected object directly rather than a generic setting. Several of the same fields are nonetheless already reachable from the command bar a different way, through the [object-property tools](command/README.md#object-property-tools-pick--change--assign) (`Change <property>`/`Assign <property>`, e.g. `Layer`, `Weight`, `DegreeMax`, `Power`)—those work by click-and-drag or by applying the current creation default, rather than by typing an exact value the way Modify Selected's spinners do.
+
 ### Extra Params: arbitrary metadata on any object
 
 Beyond its built-in properties (material, layer, visibility, and so on), any object—face, polyline, 1D/2D model, solid, group, camera, or section—can also carry its own freeform set of named key/value fields, stored as JSON. This is useful for anything the application doesn't already model directly: an IFC-style classification, a status flag, a project-specific identifier, or any other metadata worth keeping attached to an object through save/load, export, and undo/redo.
@@ -536,7 +544,7 @@ See the [command reference](command/README.md) for complete syntax, arguments, a
 
 ## Settings rollout panel
 
-Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 7 parents and 32 child panels in all, each holding a cluster of spinners, toggles, and dropdowns.
+Most persistent settings—creation defaults, camera behavior, color scales, export options, and more—live in a single resizable rollout panel, organized as a two-level hierarchy: a row of top-level **parent** categories, each opening onto its own row of **child** panels. By now it's a fairly sprawling animal: 9 parents and 36 child panels in all, each holding a cluster of spinners, toggles, and dropdowns (or, for Scene Explorer, a tree view). When a tab's content runs taller than the panel, a narrow side scrollbar (with up/down buttons and a drag thumb, much like the station picker's own scrollbar) appears along its right edge.
 
 | Parent | Children | Covers |
 |---|---|---|
@@ -546,9 +554,11 @@ Most persistent settings—creation defaults, camera behavior, color scales, exp
 | **Visualization Options** | 2D Layout · 2D Palette · Solar Palette · Spatial Palette · Selection · Visibility | Chart layout and color scales, selection indicators, and object visibility toggles |
 | **Export Options** | Model · Data · Content | 3D mesh export, 2D chart-data export, and image/PDF snapshot recording |
 | **Assessment Options** | Interpolation · Derived Data · Simulation | Interpolation weighting, derived analysis layers, and solar/wind impact-simulation setup |
+| **Properties** | Modify Selected | Editing the selected object's own typed fields directly (see [Properties](#properties-editing-an-objects-own-typed-fields) above) |
 | **Extra Params** | Selected Entity · Bulk Edit · Assign Missing | Viewing/editing one object's own arbitrary JSON metadata, bulk-editing the keys a multi-selection shares, and filling in a key that's missing from only part of one |
+| **Scene Explorer** | Select · Isolate · Look At | A read/select tree over every object in the project, grouped the way the project itself groups them, for selecting, isolating (hiding everything else), or jumping the camera to look at whatever is clicked |
 
-Every setting shown here is also reachable as a named command from the [command bar](#command-bar-scripting-and-exports)—the rollout panel and the command system are two views onto the same underlying settings.
+Every setting shown here is also reachable as a named command from the [command bar](#command-bar-scripting-and-exports)—the rollout panel and the command system are two views onto the same underlying settings. The two exceptions are Properties → Modify Selected (see [Properties](#properties-editing-an-objects-own-typed-fields) above, though several of the fields it edits are also reachable a different way, through the existing object-property tools) and Scene Explorer, both of which act directly on the selection/scene rather than reading or writing a named setting.
 
 ## Menu bar
 
