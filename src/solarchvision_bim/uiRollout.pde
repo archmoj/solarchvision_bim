@@ -3271,7 +3271,16 @@ class UI_rollout {
       for (int idx : indices) { if (allModel2Ds.Kind[idx] != firstKind) { sameKind = false; break; } }
 
       if (sameKind) {
-        this.modifySelectedIntField(indices, "File Index", 0, firstKind.fileCount, 1,
+        // 1..fileCount, not 0..fileCount: Model2DKind.Images (model2DKind.
+        // pde) is 1-indexed with [0] deliberately left null - that
+        // convention is this class's own, not incidental (indexOfFile()
+        // there returns 0 as its own "not found" sentinel, and
+        // filenameOf() there explicitly treats < 1 as invalid). Allowing
+        // 0 through here let this field write that sentinel value into a
+        // real, already-placed entity's own FileIndex, which then NPEs
+        // the next time anything renders it (model2Ds.pde's own
+        // kind.Images[n] lookup finds null at n == 0).
+        this.modifySelectedIntField(indices, "File Index", 1, firstKind.fileCount, 1,
           (idx) -> allModel2Ds.FileIndex[idx], (idx, v) -> { allModel2Ds.FileIndex[idx] = v; });
       } else {
         this.modifySelectedMessage(
@@ -3545,7 +3554,7 @@ class UI_rollout {
       }
 
       if (args.length < 2) {
-        printError("Reassign File Index 0.." + firstKind.fileCount);
+        printError("Reassign File Index 1.." + firstKind.fileCount);
         return;
       }
 
@@ -3558,8 +3567,13 @@ class UI_rollout {
         return;
       }
 
-      if ((requested < 0) || (requested > firstKind.fileCount)) {
-        printError("Reassign File Index must be between 0 and " + firstKind.fileCount);
+      // 1..fileCount, not 0..fileCount - see drawPropertiesModifySelectedTab()'s
+      // own "model2d" branch (this same file, above) for why: index 0 is
+      // Model2DKind's own deliberate null placeholder (model2DKind.pde),
+      // not a real file, and writing it into an already-placed entity's
+      // FileIndex NPEs the next time anything renders it.
+      if ((requested < 1) || (requested > firstKind.fileCount)) {
+        printError("Reassign File Index must be between 1 and " + firstKind.fileCount);
         return;
       }
 

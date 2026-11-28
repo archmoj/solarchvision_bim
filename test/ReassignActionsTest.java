@@ -212,6 +212,23 @@ class ReassignActionsTest {
     assertEquals(1, app.allModel2Ds.FileIndex[0]);
   }
 
+  // Model2DKind.Images (model2DKind.pde) is 1-indexed with [0]
+  // deliberately left null, so 0 is not a valid FileIndex for an
+  // already-placed entity - it used to be accepted (0..fileCount), which
+  // let this write that null slot's index straight into FileIndex and
+  // NPE the next time anything rendered that entity (model2Ds.pde's own
+  // kind.Images[n] lookup).
+  @Test
+  void reassignFileIndex_zero_reportsErrorAndLeavesItUnchanged () {
+    app.TREES_KIND.fileCount = 3;
+    app.allModel2Ds.create("TREES", 1, 0, 0, 0, 1);
+    app.Select3D.model2DSelection = new int[]{ 0 };
+
+    run("Reassign File Index", "0");
+
+    assertEquals(1, app.allModel2Ds.FileIndex[0]);
+  }
+
   @Test
   void reassignFileIndex_mixedKindSelection_reportsErrorAndDoesNothing () {
     app.TREES_KIND.fileCount = 3;
