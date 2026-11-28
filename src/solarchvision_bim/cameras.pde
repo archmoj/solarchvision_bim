@@ -78,6 +78,14 @@ class Cameras {
 
     this.extraParams = (String[]) concat(this.extraParams, new String[]{ extraParams });
 
+    // Same reasoning as solids.pde's own create() - keeps visibility
+    // eagerly grown alongside extraParams/Type/options here, rather
+    // than relying solely on getVisibility()'s own lazy padding - this
+    // is also what add_first() (called by makeEmpty(), just above)
+    // relies on to end up with a visibility array that's already the
+    // right length for the one default camera it creates.
+    this.visibility = concat(this.visibility, new int[]{ 1 });
+
     this.num += 1;
   }
 
